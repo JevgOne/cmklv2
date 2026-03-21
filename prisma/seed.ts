@@ -9,6 +9,8 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log("Clearing existing data...");
+  await prisma.notification.deleteMany();
+  await prisma.commission.deleteMany();
   await prisma.vehicleChangeLog.deleteMany();
   await prisma.vehicleImage.deleteMany();
   await prisma.vehicle.deleteMany();
@@ -881,6 +883,138 @@ async function main() {
   console.log(`Created ${vehicleImages.length} vehicle images`);
 
   // ============================================
+  // 5. COMMISSIONS
+  // ============================================
+
+  console.log("Seeding commissions...");
+
+  await prisma.commission.createMany({
+    data: [
+      {
+        brokerId: janNovak.id,
+        vehicleId: v1.id,
+        salePrice: 575000,
+        commission: 28750,
+        rate: 5.0,
+        status: "PAID",
+        soldAt: new Date("2026-02-15"),
+        paidAt: new Date("2026-03-01"),
+      },
+      {
+        brokerId: janNovak.id,
+        vehicleId: v4.id,
+        salePrice: 960000,
+        commission: 48000,
+        rate: 5.0,
+        status: "APPROVED",
+        soldAt: new Date("2026-03-10"),
+        paidAt: null,
+      },
+      {
+        brokerId: petraMala.id,
+        vehicleId: v2.id,
+        salePrice: 1120000,
+        commission: 56000,
+        rate: 5.0,
+        status: "PAID",
+        soldAt: new Date("2026-01-20"),
+        paidAt: new Date("2026-02-05"),
+      },
+      {
+        brokerId: petraMala.id,
+        vehicleId: v8.id,
+        salePrice: 505000,
+        commission: 25250,
+        rate: 5.0,
+        status: "PENDING",
+        soldAt: new Date("2026-03-18"),
+        paidAt: null,
+      },
+      {
+        brokerId: karelDvorak.id,
+        vehicleId: v3.id,
+        salePrice: 470000,
+        commission: 23500,
+        rate: 5.0,
+        status: "APPROVED",
+        soldAt: new Date("2026-03-05"),
+        paidAt: null,
+      },
+    ],
+  });
+
+  console.log("Created 5 commissions");
+
+  // ============================================
+  // 6. NOTIFICATIONS
+  // ============================================
+
+  console.log("Seeding notifications...");
+
+  await prisma.notification.createMany({
+    data: [
+      {
+        userId: janNovak.id,
+        type: "COMMISSION",
+        title: "Provize vyplacena",
+        body: "Provize 28 750 Kč za prodej Škoda Octavia RS byla vyplacena na váš účet.",
+        link: "/makler/commissions",
+        read: true,
+      },
+      {
+        userId: janNovak.id,
+        type: "COMMISSION",
+        title: "Provize schválena",
+        body: "Provize 48 000 Kč za prodej Mercedes C300 byla schválena. Vyplacení do 14 dnů.",
+        link: "/makler/commissions",
+        read: false,
+      },
+      {
+        userId: janNovak.id,
+        type: "VEHICLE",
+        title: "Nový zájemce",
+        body: "O váš inzerát Hyundai Tucson má zájem nový kupující.",
+        link: "/makler/vehicles",
+        read: false,
+      },
+      {
+        userId: petraMala.id,
+        type: "COMMISSION",
+        title: "Nová provize k vyřízení",
+        body: "Provize 25 250 Kč za Škoda Superb Combi čeká na schválení.",
+        link: "/makler/commissions",
+        read: false,
+      },
+      {
+        userId: petraMala.id,
+        type: "SYSTEM",
+        title: "Vítejte v CarMakléř Pro",
+        body: "Děkujeme za registraci. Začněte přidáním svého prvního vozu.",
+        link: "/makler/vehicles/new",
+        read: true,
+      },
+      {
+        userId: karelDvorak.id,
+        type: "VEHICLE",
+        title: "Inzerát schválen",
+        body: "Váš inzerát VW Golf GTI byl schválen a je nyní aktivní.",
+        link: "/makler/vehicles",
+        read: false,
+      },
+      {
+        userId: admin.id,
+        type: "SYSTEM",
+        title: "Nový makléř čeká na schválení",
+        body: "Tomáš Nováček se zaregistroval a čeká na schválení účtu.",
+        link: "/admin/users",
+        read: false,
+      },
+    ],
+  });
+
+  console.log("Created 7 notifications");
+
+  // ============================================
   // SUMMARY
   // ============================================
 
@@ -888,12 +1022,16 @@ async function main() {
   const userCount = await prisma.user.count();
   const vehicleCount = await prisma.vehicle.count();
   const imageCount = await prisma.vehicleImage.count();
+  const commissionCount = await prisma.commission.count();
+  const notificationCount = await prisma.notification.count();
 
   console.log("\n--- Seed complete ---");
-  console.log(`Regions:  ${regionCount}`);
-  console.log(`Users:    ${userCount}`);
-  console.log(`Vehicles: ${vehicleCount}`);
-  console.log(`Images:   ${imageCount}`);
+  console.log(`Regions:       ${regionCount}`);
+  console.log(`Users:         ${userCount}`);
+  console.log(`Vehicles:      ${vehicleCount}`);
+  console.log(`Images:        ${imageCount}`);
+  console.log(`Commissions:   ${commissionCount}`);
+  console.log(`Notifications: ${notificationCount}`);
   console.log("\nDemo login: admin@carmakler.cz / heslo123");
 }
 

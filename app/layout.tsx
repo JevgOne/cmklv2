@@ -29,6 +29,7 @@ export const metadata: Metadata = {
     "ojeté auto",
     "autobazar online",
   ],
+  manifest: "/manifest.json",
   openGraph: {
     type: "website",
     locale: "cs_CZ",

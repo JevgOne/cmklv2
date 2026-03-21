@@ -38,7 +38,9 @@ model User {
   slug            String? @unique
 
   // Relace
-  vehicles Vehicle[]
+  vehicles      Vehicle[]
+  commissions   Commission[] @relation("BrokerCommissions")
+  notifications Notification[]
 
   // Auth
   emailVerified DateTime?
@@ -130,8 +132,9 @@ model Vehicle {
   viewCount Int @default(0)
 
   // Relace
-  images    VehicleImage[]
-  changeLog VehicleChangeLog[]
+  images      VehicleImage[]
+  changeLog   VehicleChangeLog[]
+  commissions Commission[]
 
   // Timestamps
   createdAt   DateTime  @default(now())
@@ -174,4 +177,45 @@ model VehicleChangeLog {
   createdAt DateTime @default(now())
 
   @@index([vehicleId])
+}
+
+model Commission {
+  id        String   @id @default(cuid())
+  brokerId  String
+  broker    User     @relation("BrokerCommissions", fields: [brokerId], references: [id])
+  vehicleId String
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id])
+
+  salePrice  Int
+  commission Int
+  rate       Float
+  status     String   @default("PENDING") // PENDING, APPROVED, PAID, CANCELLED
+
+  soldAt  DateTime
+  paidAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([brokerId])
+  @@index([status])
+  @@index([soldAt])
+}
+
+model Notification {
+  id     String  @id @default(cuid())
+  userId String
+  user   User    @relation(fields: [userId], references: [id])
+
+  type  String  // COMMISSION, VEHICLE, SYSTEM, MESSAGE
+  title String
+  body  String
+  link  String?
+  read  Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([read])
+  @@index([createdAt])
 }

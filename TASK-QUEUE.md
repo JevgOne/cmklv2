@@ -906,7 +906,7 @@ API routes pro správu vozidel. Toto propojí frontend (katalog, detail, admin t
 
 ## TASK-015: PWA Setup — layout, dashboard, offline infrastruktura
 Priorita: 1
-Stav: zpracovává se
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:
@@ -1061,75 +1061,152 @@ Vytvořit základ PWA aplikace v `app/(pwa)/` — technickou infrastrukturu, lay
 
 ---
 
-## TASK-016: PWA Nabrat auto — 8-krokový flow + post-submission
+## TASK-016: PWA Nabrat auto — 7-krokový flow + post-submission + editace
 Priorita: 1
 Stav: čeká
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:
 
-Implementovat kompletní 8-krokový flow "Nabrat auto" v `app/(pwa)/vehicles/new/`. Makléř projde kroky od kontaktu na prodejce po odeslání ke schválení. Celý flow funguje offline (data v IndexedDB z TASK-015), na každém kroku lze uložit draft a pokračovat později.
+Implementovat kompletní 7-krokový flow "Nabrat auto" v `app/(pwa)/vehicles/new/`. Makléř projde kroky od kontaktu na prodejce po odeslání ke schválení. Celý flow funguje offline (data v IndexedDB z TASK-015), na každém kroku lze uložit draft a pokračovat později.
 
 **Společné prvky pro všechny kroky:**
-- **Progress bar** nahoře — "Step X / 8" + vizuální progress bar (oranžový)
+- **Progress bar** nahoře — "Step X / 7" + vizuální progress bar (oranžový)
 - **Navigace** — šipka zpět (předchozí krok), křížek vpravo (uložit draft a odejít na Dashboard)
 - **Tlačítko "Uložit draft"** dole na každém kroku — uloží aktuální stav do IndexedDB
 - **Auto-save** — při odchodu z kroku se data automaticky uloží do draftu
 - **Validace** — povinná pole označena *, validace při přechodu na další krok, ale neblokuje uložení draftu
 - Všechny kroky sdílí jeden objekt draftu v IndexedDB, každý krok zapisuje do své sekce
 
-**Step 1: Kontakt na prodejce (`/app/vehicles/new/contact`)**
-- Formulář:
+**Struktura routování:**
+```
+/app/vehicles/new                 → Přehled kroků (rozcestník)
+/app/vehicles/new/contact         → Step 1: Kontakt + navigace
+/app/vehicles/new/inspection      → Step 2: Prohlídka vozu
+/app/vehicles/new/vin             → Step 3: VIN zadání + dekódování
+/app/vehicles/new/photos          → Step 4: Fotodokumentace
+/app/vehicles/new/details         → Step 5: Údaje a výbava
+/app/vehicles/new/pricing         → Step 6: Cena, provize a lokace
+/app/vehicles/new/review          → Step 7: Kontrola a odeslání
+/app/vehicles/new/success         → Potvrzení odeslání
+```
+
+---
+
+**Step 1: Kontakt na prodejce + navigace (`/app/vehicles/new/contact`)**
+
+Sloučený krok — kontaktní údaje, info o autě předem, navigace na místo a příjezd.
+
+- **Zdroj leadu** — select: Vlastní kontakt / Inzerát (odkaz) / Lead z webu Carmakler / Doporučení / Jiné
+  - Pokud "Inzerát" → zobrazit URL pole pro odkaz na původní inzerát (Sauto, Bazoš, FB Marketplace...)
+  - Pokud "Lead z webu" → automaticky předvyplnit data z leadu (jméno, telefon, info o autě)
+- **Kontaktní údaje prodejce:**
   - Jméno prodejce * (text input)
   - Telefon * (tel input, formát +420 XXX XXX XXX)
   - Akční tlačítka u telefonu: 📞 Zavolat (tel: link), 💬 SMS (sms: link), 📱 WhatsApp (wa.me link) — otevřou příslušnou appku
   - Email (email input, volitelné)
-- Adresa pro prohlídku:
-  - Adresa * (text input)
+  - "Najít v kontaktech" — modální okno s hledáním v IndexedDB store `contacts`, pokud nalezeno → předvyplnit formulář
+- **Předběžné info o autě** (co prodejce řekl po telefonu):
+  - Značka + model (text nebo select, volitelné)
+  - Rok (number, volitelné)
+  - Přibližný nájezd km (number, volitelné)
+  - Očekávaná cena prodejce (number, volitelné)
+  - Poznámka (textarea — "říkal že 1. majitel, servis u Škodovky, drobná škrábka na dveřích")
+- **Adresa a navigace:**
+  - Adresa pro prohlídku * (text input)
   - Tlačítko "📍 Použít aktuální polohu" — Geolocation API, reverse geocoding na adresu
   - Poznámka k místu (textarea, volitelné, placeholder "Parkoviště za domem, vůz je stříbrná Octavia")
-- Termín schůzky — date picker + time picker
-- "Najít v kontaktech" — modální okno s hledáním v IndexedDB store `contacts`, pokud nalezeno → předvyplnit formulář
-- Tlačítko "Navigovat na místo" — otevře Mapy.cz nebo Google Maps s adresou (intent link)
-- Tlačítko "Pokračovat" → Step 2
+  - Termín schůzky — date picker + time picker
+  - Tlačítka navigace: "🗺️ Otevřít v Mapy.cz", "🗺️ Google Maps" (intent linky s adresou)
+  - Tlačítko "💬 Jsem na cestě" — otevře SMS s předpřipraveným textem: "Dobrý den, jsem na cestě. Budu u Vás přibližně za X minut."
+- **Checklist před odjezdem** (skrytý po prvním použití, odkaz "Zobrazit checklist", stav v localStorage):
+  - [ ] Mám nabitý telefon
+  - [ ] Mám baterku (pro kontrolu podvozku)
+  - [ ] Mám OBD čtečku (volitelné)
+  - [ ] Prodejce potvrdil schůzku
+- Tlačítko "✅ Jsem na místě — pokračovat na prohlídku" → Step 2
 
-**Step 2: Příjezd na místo (`/app/vehicles/new/arrival`)**
-- Mapa — statický obrázek mapy s pinem na adresu (Mapy.cz Static API nebo placeholder) nebo odkaz na otevření mapy
-- Info: adresa, vzdálenost z aktuální polohy (Geolocation), odhadovaný čas dojezdu
-- Tlačítka: "Otevřít v Mapy.cz", "Google Maps" (intent linky)
-- Info o prodejci: jméno, telefon, tlačítka Zavolat / "Jsem na cestě" (předpřipravená SMS "Dobrý den, jsem na cestě. Budu u Vás přibližně za X minut.")
-- Poznámka k místu (readonly, z kroku 1)
-- Checklist před odjezdem — checkboxy:
-  - Mám nabitý telefon
-  - Mám baterku (pro kontrolu podvozku)
-  - Mám OBD čtečku (volitelné)
-  - Prodejce potvrdil schůzku
-  - **Zobrazení checklistu**: při prvním použití zobrazit automaticky. Při dalším použití skrýt, zobrazit jen odkaz "Zobrazit checklist". Stav uložit do localStorage.
-- Tlačítko "✅ Jsem na místě" → Step 3
+---
 
-**Step 3: Prohlídka vozu (`/app/vehicles/new/inspection`)**
+**Step 2: Prohlídka vozu (`/app/vehicles/new/inspection`)**
+
+Kompletní profesionální prohlídka s checklistem a možností odmítnutí vozu.
+
 - Text nahoře: "Projděte checklist a zaznamenejte stav vozu. Můžete přeskočit a vrátit se později."
+
 - Sekce **Dokumenty** — checkboxy:
-  - Velký technický průkaz
-  - Malý technický průkaz (osvědčení)
-  - Servisní kniha
-  - Doklad o poslední STK
-  - Doklad o měření emisí
-- Sekce **Exteriér**:
+  - [ ] Velký technický průkaz
+  - [ ] Malý technický průkaz (osvědčení)
+  - [ ] Servisní kniha
+  - [ ] Doklad o poslední STK
+  - [ ] Doklad o měření emisí
+  - [ ] Počet klíčů: input (1/2/3) — **1 klíč = zobrazit varování "Pouze 1 klíč — může indikovat problém (ztráta, krádež)"**
+
+- Sekce **Exteriér** — vizuální kontrola:
   - Stav laku — 4 tlačítka (Výborný 😊 / Dobrý 😐 / Horší 😕 / Špatný 😢), jedno aktivní
-  - Checkboxy: bez škrábanců, bez koroze, skla OK, světla OK, pneumatiky OK (4mm+), disky OK
-  - "Přidat defekt s fotkou" — otevře kameru, po vyfocení dialog pro popis defektu (text input), fotka + popis se uloží k draftu
+  - Checkboxy:
+    - [ ] Bez viditelných škrábanců a promáčklin
+    - [ ] Bez koroze
+    - [ ] Všechna skla bez prasklin
+    - [ ] Světla funkční a nepoškozené
+    - [ ] Pneumatiky v dobrém stavu (vzorek 4mm+)
+    - [ ] Disky bez poškození
+    - [ ] **Rovnoměrné spáry mezi panely** (nerovnoměrné = možná bouraná)
+    - [ ] **Barva laku konzistentní** (odlišný odstín = přelakováno/opraveno)
+    - [ ] Náhradní kolo / sada na opravu v kufru
+  - "Přidat defekt s fotkou" — otevře kameru, po vyfocení dialog pro popis defektu (text input + select závažnosti: kosmetický/funkční/vážný), fotka + popis se uloží k draftu
+
 - Sekce **Interiér**:
   - Stav interiéru — 4 tlačítka (stejné emoji)
-  - Checkboxy: sedadla, čalounění/kůže, palubka, volant, vůně, klimatizace, ovládací prvky
-- Sekce **Motor a technika**:
-  - Checkboxy: start OK, žádné zvuky, bez úniků, výfuk OK, kontrolky OK, převodovka OK
+  - Checkboxy:
+    - [ ] Sedadla bez poškození
+    - [ ] Čalounění/kůže v dobrém stavu
+    - [ ] Palubní deska bez prasklin
+    - [ ] Volant bez opotřebení
+    - [ ] Vůně OK (nekuřácké, bez plísně)
+    - [ ] Klimatizace funguje (foukání, chlazení)
+    - [ ] Všechny ovládací prvky funkční
+    - [ ] **Bez známek vytopení** (vlhkost pod koberci, zápach, mlžení skel, bílé fleky na čalounění)
+
+- Sekce **Motor a technika** (statická kontrola):
+  - Checkboxy:
+    - [ ] Motor startuje bez problémů
+    - [ ] Žádné neobvyklé zvuky při startu
+    - [ ] Bez úniků oleje/kapalin pod vozem
+    - [ ] Výfuk — kouř normální (ne bílý/modrý/černý)
+    - [ ] Kontrolky na palubce OK (žádné varovné)
+    - [ ] **Stav kapalin OK** (olej, chladicí, brzdová)
+    - [ ] **Motorový prostor bez koroze** (blatníky zevnitř)
   - Tlačítko "Připojit OBD čtečku" — **fáze 2, v MVP neaktivní** s textem "Již brzy"
+
+- Sekce **Testovací jízda** (volitelná ale doporučená):
+  - Checkbox "Testovací jízda provedena" — pokud zaškrtnuto, rozbalí se:
+    - [ ] Jízda plynulá, bez vibrací
+    - [ ] Brzdy reagují správně, bez pulsování
+    - [ ] Řízení přesné, bez vůle
+    - [ ] Převodovka řadí plynule (manuál/automat)
+    - [ ] Žádné klepání/rány z podvozku
+    - [ ] Podvozek tichý (žádné skřípání v zatáčkách)
+    - [ ] Auto jede rovně (neuhýbá do strany)
+    - [ ] Klimatizace chladí i za jízdy
+  - Pokud nebyla provedena → v kroku 7 (kontrola) zobrazit upozornění "Testovací jízda nebyla provedena"
+
 - **Poznámky z prohlídky** — textarea, volný text
 - **Celkový dojem** — 5 hvězdiček (klikací)
-- Tlačítko "Pokračovat na VIN" → Step 4
 
-**Step 4: VIN zadání + dekódování (`/app/vehicles/new/vin`)**
+- **Odmítnutí vozu** — tlačítko "❌ Odmítnout vůz" (červený outline button):
+  - Otevře modální okno:
+    - Důvod odmítnutí — select: Špatný technický stav / Podezření na stočený tachometr / Podezření na nehodu / Nereálná cena prodejce / Chybějící dokumenty / Nespolehlivý prodejce / Jiné
+    - Poznámka (textarea, volitelné)
+  - Po potvrzení: draft se uloží se statusem "REJECTED_BY_BROKER", kontakt prodejce se uloží do CRM s poznámkou
+  - Přesměrování na Dashboard s hláškou "Vůz odmítnut — důvod zaznamenán"
+  - Důležité pro statistiky: kolik % vozů makléř odmítne a proč
+
+- Tlačítko "Pokračovat na VIN" → Step 3
+
+---
+
+**Step 3: VIN zadání + dekódování (`/app/vehicles/new/vin`)**
 - Nápověda "VIN najdete:" s 3 ikonkami/obrázky: dveře řidiče, palubka, technický průkaz
 - **Ruční zadání VIN**:
   - Input pole, uppercase, max 17 znaků
@@ -1137,6 +1214,10 @@ Implementovat kompletní 8-krokový flow "Nabrat auto" v `app/(pwa)/vehicles/new
   - Po zadání 17 validních znaků → aktivuje se tlačítko "Dekódovat"
 - Tlačítko "📷 Skenovat kamerou" — **neaktivní v MVP**, šedé s textem "Již brzy"
 - Varování: "⚠️ VIN nelze po uložení změnit!"
+- **VIN duplikát check** — po zadání VIN okamžitě ověřit přes API `/api/vin/check-duplicate`:
+  - Pokud VIN už existuje v systému → zobrazit varování: "⚠️ Tento VIN je již v systému! Makléř: {jméno}, zadáno: {datum}, stav: {status}." Blokovat pokračování — makléř musí kontaktovat BackOffice.
+  - Pokud neexistuje → pokračovat normálně
+  - Offline: duplikát check přeskočit, provést při sync
 - **Online flow** (po kliknutí "Dekódovat"):
   - Loading stav: spinner + "Dekóduji VIN... Načítám data o vozidle"
   - Volání API `/api/vin/decode?vin=XXX`
@@ -1152,24 +1233,30 @@ Implementovat kompletní 8-krokový flow "Nabrat auto" v `app/(pwa)/vehicles/new
   - Nejdřív zkusit IndexedDB `vinCache` — pokud tam VIN je, zobrazit cached data
   - Pokud ne: zobrazit "📴 Nejste připojeni k internetu. VIN byl uložen a bude dekódován po připojení."
   - Dvě možnosti: "Pokračovat offline (ruční zadání údajů)" nebo "Uložit a dokončit později"
-- Tlačítko "Pokračovat na fotky" → Step 5
+- Tlačítko "Pokračovat na fotky" → Step 4
 
-**Step 5: Fotodokumentace (`/app/vehicles/new/photos`)**
-- Text: "Nafoťte vůz podle průvodce. Minimum 10 fotek, doporučeno 15-20."
+---
+
+**Step 4: Fotodokumentace (`/app/vehicles/new/photos`)**
+- Text: "Nafoťte vůz podle průvodce. Minimum 12 fotek, doporučeno 15-20."
 - **Kategorie fotek** — každá s miniaturami (grid 4 sloupce):
-  - Exteriér (min. 8): přední 3/4, zadní 3/4, levý bok, pravý bok, přední pohled, zadní pohled, detail světel, kola
-  - Interiér (min. 4): palubka, přední sedadla, zadní sedadla, kufr
-  - Motor (min. 1): motorový prostor
-  - Doklady (volitelné): TP, servisní kniha
-  - Defekty: fotky z kroku 3 + tlačítko "Přidat další"
+  - **Exteriér** (min. 8): přední 3/4, zadní 3/4, levý bok, pravý bok, přední pohled, zadní pohled, detail světel, kola/pneumatiky detail
+  - **Interiér** (min. 4): palubka, přední sedadla, zadní sedadla, kufr/zavazadlový prostor
+  - **Motor** (min. 1): motorový prostor
+  - **Důkazní fotky** (povinné):
+    - 📸 **Tachometr/budíky** (povinná! — důkaz stavu km)
+    - 📸 **VIN štítek** (povinná — důkaz že VIN souhlasí s vozem)
+    - 📸 **Klíče** (kolik jich je — důkaz počtu klíčů)
+  - **Doklady** (volitelné): TP, servisní kniha
+  - **Defekty**: fotky nalezených defektů z kroku 2 + tlačítko "Přidat další"
 - Každý slot: prázdný (šedý placeholder s názvem + ikonka fotoaparátu) nebo vyplněný (miniatura fotky s checkmark)
 - Kliknutí na prázdný slot → **průvodce focením**:
   - Fullscreen kamera (MediaDevices API, facingMode: environment)
   - Overlay s obrysem auta v požadovaném úhlu (SVG/PNG overlay přes video stream)
   - Název pozice nahoře ("PŘEDNÍ 3/4 POHLED")
-  - Tip dole ("Foťte za denního světla, vůz by měl být čistý")
+  - Tip dole (kontextový — u exteriéru: "Foťte za denního světla, vůz by měl být čistý", u tachometru: "Zapalte zapalování aby svítily budíky", u VIN: "Zaostřete na štítek, musí být čitelný")
   - Tlačítko vyfotit (velký kruh dole uprostřed)
-  - Tlačítko přeskočit (vpravo dole)
+  - Tlačítko přeskočit (vpravo dole) — NE u povinných fotek
   - Counter: "Fotka 1 / 8 (Exteriér)"
   - Po vyfocení: preview s možností "Použít" nebo "Vyfotit znovu"
 - **Zpracování fotky při pořízení**:
@@ -1178,15 +1265,31 @@ Implementovat kompletní 8-krokový flow "Nabrat auto" v `app/(pwa)/vehicles/new
   - Max velikost 2 MB
   - Uložení do IndexedDB store `images` jako blob
   - Vygenerování thumbnailů (200px) pro náhledy v UI
-- **Progress bar** dole: "5 / 10 (minimum)" + vizuální bar
+- **Progress bar** dole: "8 / 12 (minimum)" + vizuální bar
 - Drag & drop pro změnu pořadí fotek (long press + drag na mobilu)
 - Tap na existující fotku → možnosti: zobrazit fullscreen, smazat, označit jako hlavní
-- Tlačítko "Pokračovat na údaje" (aktivní jen pokud min. 10 fotek) → Step 6
+- Tlačítko "Pokračovat na údaje" (aktivní jen pokud min. 12 fotek včetně 3 povinných důkazních) → Step 5
 
-**Step 6: Údaje a výbava (`/app/vehicles/new/details`)**
+---
+
+**Step 5: Údaje a výbava (`/app/vehicles/new/details`)**
 - **Základní údaje z VIN** (zobrazit jen pokud VIN byl dekódován, needitovatelné, 🔒):
   - Značka, Model, Varianta, Rok, Karoserie
-  - Pokud VIN nebyl dekódován → tyto pole zobrazit jako editovatelné (select pro značku/model, input pro rok)
+  - Pokud VIN nebyl dekódován → tyto pole zobrazit jako editovatelné:
+    - Značka * — select (Škoda, VW, BMW, Audi, Mercedes, Ford, Toyota, Hyundai, Kia, Renault, Peugeot, Citroën, Opel, Seat, Fiat, Dacia, Mazda, Honda, Volvo, Jeep, Land Rover, Porsche, Tesla, ostatní...)
+    - Model * — text input (nebo select filtrovaný podle značky)
+    - Varianta — text input (RS, GTI, M Sport, S-line...)
+    - Rok výroby * — number (1990-2026)
+    - Karoserie * — select: Sedan, Kombi, Hatchback, SUV, Liftback, Kupé, Kabriolet, MPV, Pick-up, Dodávka
+- **Technické údaje** (z VIN pokud dostupné, jinak makléř vyplní):
+  - Palivo * — select: Benzín / Nafta / LPG / CNG / Hybrid (HEV) / Plug-in hybrid (PHEV) / Elektro
+  - Objem motoru — number input (ccm), např. 1984
+  - Výkon * — number input (kW) + automatický přepočet na PS vedle ("= 180 kW / 245 PS")
+  - Převodovka * — select: Manuální / Automatická / DSG / CVT
+  - Pohon — select: Přední / Zadní / 4x4 (AWD)
+  - Barva * — select: Bílá, Černá, Šedá/Stříbrná, Modrá, Červená, Zelená, Hnědá/Béžová, Zlatá/Champagne, Oranžová, Žlutá, Fialová, Jiná
+  - Počet dveří — select: 3 / 5
+  - Počet míst — select: 2 / 4 / 5 / 7 / 9
 - **Stav vozu** (makléř vyplní):
   - Najeto km * — number input s formátováním (mezery po tisících)
   - Stav tachometru — radio: Originál / Nelze ověřit / Stočeno
@@ -1206,16 +1309,27 @@ Implementovat kompletní 8-krokový flow "Nabrat auto" v `app/(pwa)/vehicles/new
   - "Přidat vlastní položku" — text input pro free-text výbavu
   - Katalog se cachuje v IndexedDB pro offline přístup
 - **Hlavní přednosti** (tagy):
-  - Předdefinované: 1. majitel, Servis u autorizovaného, Nekuřácké, Garážované, Nehavarované, Nový rozvod, Nové brzdy, Zimní pneu, Druhá sada kol
+  - Předdefinované: 1. majitel, Servis u autorizovaného, Nekuřácké, Garážované, Nehavarované, Nový rozvod, Nové brzdy, Zimní pneu, Druhá sada kol, Nezávislé topení, Tažné zařízení
   - Kliknutím přidat/odebrat, zobrazené jako chips/tagy
   - "Přidat vlastní" — text input
-- Tlačítko "Pokračovat" → Step 7
+- Tlačítko "Pokračovat" → Step 6
 
-**Step 7: Cena a lokace (`/app/vehicles/new/pricing`)**
+---
+
+**Step 6: Cena, provize a lokace (`/app/vehicles/new/pricing`)**
 - **Prodejní cena**:
   - Požadovaná cena * — number input, formátování s mezerami, suffix "Kč"
   - Checkbox "Cena k jednání"
-  - (Bez tržního odhadu — Cebia není integrováno)
+  - **DPH** — radio: "Cena včetně DPH" / "Cena bez DPH (plátce)" / "Není plátce DPH"
+    - Pokud "bez DPH" → zobrazit dopočítanou cenu s DPH: "= XXX Kč včetně DPH"
+- **Provize makléře** (automatický výpočet, readonly zobrazení):
+  - Vzorec: **5% z prodejní ceny, minimálně 25 000 Kč**
+  - Zobrazení: "💰 Vaše provize: {vypočtená částka} Kč" (zelený box)
+  - Příklady:
+    - Cena 300 000 Kč → provize 25 000 Kč (5% = 15 000 < minimum)
+    - Cena 750 000 Kč → provize 37 500 Kč (5%)
+    - Cena 1 500 000 Kč → provize 75 000 Kč (5%)
+  - Přepočítává se live při změně ceny
 - **Lokace vozu**:
   - Město * — select s autocomplete (seznam českých měst) nebo text input
   - Městská část — text input (volitelné)
@@ -1225,10 +1339,13 @@ Implementovat kompletní 8-krokový flow "Nabrat auto" v `app/(pwa)/vehicles/new
   - Tlačítko "🤖 Vygenerovat popis AI" — volá API `/api/assistant/generate-description` s daty vozu (značka, model, rok, km, výbava, stav, přednosti), vrátí vygenerovaný text, makléř může upravit
   - (AI generování závisí na TASK-018, pokud není hotový → tlačítko neaktivní s textem "Již brzy")
 - **Zdroj vozu** — radio: Soukromý prodejce / Autobazar / Dovoz
-- Tlačítko "Pokračovat na kontrolu" → Step 8
+- **Možnost financování** — checkbox "Nabídnout financování kupujícímu" (pokud Carmakler spolupracuje s leasingovou společností — fáze 2, v MVP jen checkbox, bez integrace)
+- Tlačítko "Pokračovat na kontrolu" → Step 7
 
-**Step 8: Kontrola a odeslání (`/app/vehicles/new/review`)**
-- **Náhled inzerátu** — vizuální preview:
+---
+
+**Step 7: Kontrola a odeslání (`/app/vehicles/new/review`)**
+- **Náhled inzerátu** — vizuální preview jak bude vypadat na webu:
   - Hlavní fotka (carousel pokud víc fotek)
   - Název: ZNAČKA MODEL VARIANTA KAROSERIE
   - Parametry: motor výkon | převodovka | pohon
@@ -1237,49 +1354,81 @@ Implementovat kompletní 8-krokový flow "Nabrat auto" v `app/(pwa)/vehicles/new
   - Lokace
 - **Checklist kompletnosti** — automaticky vyhodnotit:
   - ✅/❌ VIN zadán a dekódován
-  - ✅/❌ Základní údaje kompletní (km, stav, STK)
+  - ✅/❌ Základní údaje kompletní (značka, model, rok, km, palivo, výkon, barva, stav, STK)
   - ✅/❌ Výbava vybrána (alespoň 1 položka)
-  - ✅/❌ Fotografie (min. 10 nahrány)
+  - ✅/❌ Fotografie (min. 12 nahrány, včetně tachometr + VIN štítek + klíče)
   - ✅/❌ Cena vyplněna
   - ✅/❌ Lokace vyplněna
   - ✅/❌ Popis napsán (min. 50 znaků)
+  - ⚠️ Upozornění (nefatální): "Testovací jízda nebyla provedena" (pokud v kroku 2 nebyla zaškrtnuta)
   - Nesplněné položky červeně, kliknutí → navigace na příslušný krok
-  - Tlačítko "Odeslat" aktivní jen pokud vše ✅
-- **Shrnutí** — tabulka s klíčovými údaji: vozidlo, VIN, km, cena, počet fotek, počet položek výbavy, lokace, prodejce
+  - Tlačítko "Odeslat" aktivní jen pokud všechny ✅ jsou splněny (upozornění ⚠️ neblokují)
+- **Shrnutí** — tabulka s klíčovými údaji:
+  - Vozidlo, VIN, km, cena, DPH info
+  - Provize makléře (zvýrazněně)
+  - Počet fotek, počet položek výbavy
+  - Lokace, prodejce, zdroj leadu
 - **Dvě akce**:
   - "Uložit jako draft" (sekundární button) — uloží do IndexedDB, přesměruje na Dashboard
   - "Odeslat ke schválení" (primární button, oranžový) — online: POST na API `/api/vehicles` s kompletními daty + upload fotek na Cloudinary → po úspěchu přesměrování na potvrzení. Offline: uloží jako draft se syncStatus 'pending', registruje background sync, přesměruje na potvrzení s textem "Bude odesláno po připojení"
+
+---
 
 **Post-submission flow:**
 - **Potvrzovací obrazovka** (`/app/vehicles/new/success`):
   - Ikona ✅, text "Odesláno ke schválení!"
   - "BackOffice zkontroluje váš inzerát. Obvykle do 24 hodin."
+  - Zobrazení provize: "Při prodeji vyděláte: {provize} Kč"
   - Tlačítka: "Zpět na Dashboard", "Nabrat další auto"
 - **V seznamu "Moje vozy"**: stav "Ke schválení" (žlutý badge)
 - **Při schválení BackOffice**: push notifikace "Inzerát schválen: Škoda Octavia RS", stav se změní na "Aktivní" (zelený badge)
 - **Při zamítnutí**: push notifikace "Inzerát zamítnut: Škoda Octavia RS", stav "Zamítnuto" (červený badge), v detailu vozu zobrazit:
   - Důvod zamítnutí (text od BackOffice)
-  - Tlačítko "Opravit a odeslat znovu" → otevře editační flow (`/app/vehicles/[id]/edit`) s předvyplněnými daty, makléř opraví a znovu odešle
+  - Tlačítko "Opravit a odeslat znovu" → otevře editační flow s předvyplněnými daty
+
+---
+
+**Editace vozu (`/app/vehicles/[id]/edit`)**
+
+- Otevře se jako **stejný 7-krokový flow** ale s předvyplněnými daty z databáze
+- **Co lze editovat závisí na stavu vozu:**
+  - **DRAFT** — vše editovatelné (kromě VIN pokud byl uložen)
+  - **REJECTED** (zamítnutý) — vše editovatelné kromě VIN, zobrazit důvod zamítnutí nahoře s červeným bannerem
+  - **PENDING** (ke schválení) — nelze editovat, zobrazit info "Čeká na schválení, nelze editovat"
+  - **ACTIVE** (aktivní/publikovaný) — editovatelné: cena, popis, fotky (přidat/odebrat), výbava, lokace. Needitovatelné: VIN, značka, model, rok, km. Změny jdou znovu ke schválení.
+  - **SOLD** (prodáno) — nelze editovat
+- **VIN je VŽDY needitovatelný** po prvním uložení (🔒)
+- Po odeslání editace: stejný post-submission flow (ke schválení → schváleno/zamítnuto)
+
+---
 
 ### Kontext:
 - Závisí na: TASK-015 (layout, offline infrastruktura, IndexedDB)
 - Layout: `app/(pwa)/layout.tsx` s bottom nav
 - Offline storage: `lib/offline-storage.ts` (třída OfflineStorage)
-- Vehicle API: z TASK-014 (POST/PUT /api/vehicles)
+- Vehicle API: z TASK-014 (POST/PUT /api/vehicles), rozšířit o nová pole (palivo, výkon, barva, dveře, místa, DPH, zdroj leadu)
 - VIN dekodér: implementovat `lib/vin-decoder.ts` + API route `/api/vin/decode`
+- VIN duplikát check: API route `/api/vin/check-duplicate`
+- Provize: výpočet na frontendu (5% z ceny, min 25 000 Kč), uložení do draftu
 - Fotky: MediaDevices API pro kameru, canvas pro resize/kompresi, IndexedDB pro offline, Cloudinary pro upload
 - Geolokace: navigator.geolocation pro aktuální polohu
 - Auth: NextAuth session (role BROKER)
 - AI generování popisu: závisí na TASK-018, pokud není → tlačítko neaktivní
 
 ### Očekávaný výsledek:
-- Kompletní 8-krokový flow od kontaktu po odeslání
+- Kompletní 7-krokový flow od kontaktu po odeslání
 - Každý krok ukládá data do jednoho sdíleného draftu v IndexedDB
-- Funkční offline — všechny kroky fungují bez internetu (kromě VIN dekódování a AI popisu)
-- VIN ruční zadání s validací + dekódování přes API + cache
-- Fotodokumentace s průvodcem, overlay, kompresí, min. 10 fotek
-- Výbava: dvouvrstvě (z VIN + ruční výběr z katalogu)
+- Funkční offline — všechny kroky fungují bez internetu (kromě VIN dekódování, duplikát check a AI popisu)
+- Zdroj leadu + předběžné info o autě pro tracking
+- Profesionální prohlídka s testovací jízdou, kontrolou spár, vytopení, počtem klíčů
+- Možnost odmítnutí vozu s důvodem
+- VIN ruční zadání s validací + dekódování + duplikát check
+- Povinné důkazní fotky: tachometr, VIN štítek, klíče
+- Kompletní technické údaje: palivo, výkon, barva, dveře, místa
+- Provize 5% min 25 000 Kč s live výpočtem
+- DPH info pro firemní vozy
 - Post-submission: stavy schvalování, zamítnutí s důvodem, oprava
+- Editace vozu s pravidly podle stavu
 - Background sync pro offline odeslání
 
 ---
@@ -1517,6 +1666,800 @@ model AiConversation {
 - Generování popisů inzerátů z dat vozu
 - Offline: informace o nutnosti připojení
 - Knowledge base soubory s placeholder obsahem
+
+---
+
+## TASK-019: Inzertní platforma — digitální inzerce vozidel
+Priorita: 2
+Stav: čeká
+Projekt: /Users/lunagroup/carmakler
+
+### Kompletní zadání:
+
+Vytvořit digitální inzertní platformu pro prodej vozidel — veřejně přístupný portál kde mohou inzerovat jak makléři Carmakler, tak registrovaní uživatelé (dealeři, soukromí prodejci). Obdoba Sauto/Bazoš ale s vyšší kvalitou inzerátů a propojením na makléřskou síť.
+
+**1. Nové uživatelské role a registrace:**
+
+- **Nová role: ADVERTISER** (inzerent) — přidat do NextAuth/Prisma
+- **Registrace inzerenta:**
+  - Email + heslo, nebo Google/Apple login
+  - Typ účtu: Soukromý prodejce / Autobazar (IČO povinné) / Dealer
+  - Ověření emailu (potvrzovací odkaz)
+  - Autobazar/Dealer: ověření IČO přes ARES API (automatická validace)
+  - Profil: jméno/název firmy, telefon, adresa, logo (u firem), popis
+
+- **Registrace kupujícího (BUYER role):**
+  - Email + heslo, nebo Google/Apple login
+  - Jednoduchý profil: jméno, telefon, email
+  - Funkce po přihlášení: oblíbené vozy (❤️), hlídací pes, historie dotazů, předvyplněný kontaktní formulář
+
+**2. Podání inzerátu (web rozhraní pro inzerenty):**
+
+- Přístup přes `app/(web)/inzerat/novy` (veřejný web, ne PWA)
+- **Zjednodušený flow oproti makléřskému** (bez prohlídky, checklistu, smluv):
+  - Krok 1: VIN zadání + dekódování (stejná logika jako TASK-016 Step 3)
+  - Krok 2: Údaje (značka, model, rok, km, palivo, výkon, barva, karoserie, převodovka, pohon, počet dveří/míst, stav, STK, servisní kniha, země původu)
+  - Krok 3: Výbava (katalog checkboxů, stejný jako TASK-016 Step 5)
+  - Krok 4: Fotky (upload z galerie, min. 5, drag & drop řazení, komprese)
+  - Krok 5: Cena + popis + lokace + kontakt
+  - Krok 6: Preview + odeslání
+- **Cenový model inzerce:**
+  - Základní inzerát: zdarma (limit 1 aktivní inzerát pro soukromé, 5 pro firmy)
+  - Premium inzerát: placený — zvýraznění na webu (TOP badge, vyšší pozice), sdílení na sociálních sítích
+  - Neomezená inzerce: měsíční předplatné pro autobazary/dealery
+  - (Konkrétní ceny nastavitelné v admin panelu)
+- **Schvalovací proces:**
+  - Soukromý prodejce → automatické schválení (moderace ex-post)
+  - Autobazar/Dealer → automatické schválení (ověřené IČO)
+  - Flagované inzeráty (podezřelá cena, duplicitní VIN) → ruční kontrola BackOffice
+- **Propojení s makléřskou sítí:**
+  - Inzerent může zaškrtnout "Chci pomoc s prodejem od makléře Carmakler" → vytvoří se lead pro nejbližšího makléře
+  - Makléřské inzeráty (z TASK-016) se zobrazují na stejné platformě s badge "Ověřeno makléřem Carmakler"
+
+**3. Portál inzerenta (`app/(web)/moje-inzeraty/`):**
+
+- **Dashboard inzerenta** (po přihlášení):
+  - Moje inzeráty: seznam s filtrací (aktivní, neaktivní, prodané)
+  - U každého inzerátu: počet zobrazení, počet dotazů, datum publikace, stav
+  - Tlačítko "Přidat inzerát"
+- **Detail inzerátu** (správa):
+  - Editace údajů, fotek, ceny, popisu
+  - Statistiky: zobrazení za den/týden/měsíc, graf
+  - Dotazy od zájemců (seznam s možností odpovědět)
+  - Akce: deaktivovat, smazat, označit jako prodáno, obnovit (topovat)
+- **Zprávy**: jednoduchý messaging mezi inzerentem a zájemci
+
+**4. Funkce pro kupující (registrované):**
+
+- **Oblíbené** (❤️) — ukládání vozů do seznamu oblíbených
+- **Hlídací pes** — nastavení filtru (značka, model, cena od-do, rok od-do, km max, palivo, region) → emailová notifikace když přibude odpovídající vůz
+- **Historie dotazů** — přehled odeslaných dotazů a odpovědí
+- **Předvyplněný kontakt** — při dotazu na vůz se automaticky vyplní jméno, telefon, email z profilu
+
+**5. Rozšíření veřejného katalogu:**
+
+- Stávající katalog (`app/(web)/nabidka/`) rozšířit o inzeráty od inzerentů
+- **Rozlišení inzerátů:**
+  - Badge "Ověřeno makléřem" (oranžový) — od makléřů Carmakler
+  - Badge "Autobazar" (modrý) — od ověřených autobazarů
+  - Badge "Soukromý prodejce" (šedý) — od soukromých inzerentů
+  - Badge "TOP" (zlatý) — placené zvýraznění
+- **Řazení:** TOP inzeráty nahoře, pak dle data/ceny/relevance
+- **Nové filtry:** typ prodejce (makléř/autobazar/soukromý), ověřené vozy
+
+**6. API routes:**
+- `POST /api/listings` — vytvoření inzerátu
+- `GET /api/listings` — seznam inzerátů (s filtrací)
+- `GET /api/listings/[id]` — detail inzerátu
+- `PUT /api/listings/[id]` — editace
+- `DELETE /api/listings/[id]` — smazání
+- `POST /api/listings/[id]/promote` — zvýraznění (TOP)
+- `GET /api/listings/stats/[id]` — statistiky inzerátu
+- `POST /api/watchdog` — vytvoření hlídacího psa
+- `GET /api/watchdog` — seznam hlídacích psů uživatele
+
+**7. Nové Prisma modely:**
+```
+model Listing {
+  id            String   @id @default(cuid())
+  advertiserId  String
+  advertiser    User     @relation(fields: [advertiserId], references: [id])
+
+  // Může být propojený s Vehicle (pokud od makléře) nebo standalone
+  vehicleId     String?  @unique
+  vehicle       Vehicle? @relation(fields: [vehicleId], references: [id])
+
+  // Základní údaje (pokud standalone, bez Vehicle)
+  vin           String?
+  brand         String
+  model         String
+  variant       String?
+  year          Int
+  mileage       Int
+  fuelType      FuelType
+  power         Int?      // kW
+  transmission  String?
+  drivetrain    String?
+  color         String?
+  bodyType      String?
+  doors         Int?
+  seats         Int?
+
+  // Stav
+  condition     String?
+  stkValidUntil DateTime?
+  serviceBook   String?
+  countryOfOrigin String?
+  ownerCount    Int?
+
+  // Cena
+  price         Int
+  priceNegotiable Boolean @default(false)
+  vatIncluded   String?  // WITH_VAT, WITHOUT_VAT, NOT_VAT_PAYER
+
+  // Inzerce
+  description   String
+  location      String
+  district      String?
+  equipment     Json?     // Array of equipment items
+  highlights    Json?     // Array of highlight tags
+
+  // Typ
+  listingType   ListingType  // BROKER, DEALER, PRIVATE
+  isPremium     Boolean @default(false)
+  premiumUntil  DateTime?
+
+  // Stav
+  status        ListingStatus  // ACTIVE, INACTIVE, SOLD, PENDING, REJECTED
+  views         Int @default(0)
+
+  // Fotky
+  images        ListingImage[]
+
+  // Dotazy
+  inquiries     Inquiry[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model ListingImage {
+  id        String  @id @default(cuid())
+  listingId String
+  listing   Listing @relation(fields: [listingId], references: [id])
+  url       String
+  order     Int
+  isPrimary Boolean @default(false)
+}
+
+model Inquiry {
+  id        String   @id @default(cuid())
+  listingId String
+  listing   Listing  @relation(fields: [listingId], references: [id])
+  buyerId   String?
+  buyer     User?    @relation(fields: [buyerId], references: [id])
+  name      String
+  email     String
+  phone     String?
+  message   String
+  reply     String?
+  repliedAt DateTime?
+  createdAt DateTime @default(now())
+}
+
+model Watchdog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  name      String   // "Octavia RS do 800k"
+  filters   Json     // { brand, model, priceMin, priceMax, yearMin, yearMax, mileageMax, fuelType, region }
+  isActive  Boolean  @default(true)
+  lastNotified DateTime?
+  createdAt DateTime @default(now())
+}
+
+enum ListingType {
+  BROKER
+  DEALER
+  PRIVATE
+}
+
+enum ListingStatus {
+  ACTIVE
+  INACTIVE
+  SOLD
+  PENDING
+  REJECTED
+}
+
+enum FuelType {
+  PETROL
+  DIESEL
+  LPG
+  CNG
+  HYBRID
+  PLUGIN_HYBRID
+  ELECTRIC
+}
+```
+
+### Kontext:
+- Závisí na: TASK-002 (web layout), TASK-007 (katalog), TASK-008 (detail vozu), TASK-013 (auth)
+- Rozšiřuje stávající katalog o inzeráty od externích inzerentů
+- Auth: rozšířit NextAuth o role ADVERTISER a BUYER
+- VIN dekodér: sdílený s TASK-016 (`lib/vin-decoder.ts`)
+- Fotky: Cloudinary upload
+- Email notifikace: Resend (hlídací pes, nový dotaz, odpověď)
+- ARES API pro ověření IČO: `https://ares.gov.cz/`
+
+### Očekávaný výsledek:
+- Registrace a přihlášení inzerentů (soukromý/autobazar/dealer) a kupujících
+- 6-krokový flow podání inzerátu přes web
+- Dashboard inzerenta se statistikami, dotazy, správou inzerátů
+- Oblíbené, hlídací pes, historie dotazů pro kupující
+- Rozšířený katalog s rozlišením typů inzerátů (makléř/dealer/soukromý)
+- Propojení s makléřskou sítí ("chci pomoc od makléře")
+- Premium inzeráty (TOP) pro monetizaci
+
+---
+
+## TASK-020: Eshop autodíly — e-shop s použitými a aftermarket díly
+Priorita: 3
+Stav: čeká
+Projekt: /Users/lunagroup/carmakler
+
+### Kompletní zadání:
+
+Vytvořit e-shop s autodíly integrovaný do platformy Carmakler. Dva zdroje dílů: (1) použité díly z vrakovišť (dodavatelé přidávají přes jednoduchou PWA) a (2) nové aftermarket díly (katalogový import). Zákazník najde díl podle vozu, objedná a nechá doručit.
+
+**1. Struktura eshopu (`app/(web)/dily/`):**
+
+- **Homepage eshopu** (`/dily`):
+  - Vyhledávání: "Zadejte VIN nebo vyberte vůz" → filtruje kompatibilní díly
+  - Rychlý výběr: Značka → Model → Rok → Motorizace (kaskádové selecty)
+  - Kategorie dílů: Motor, Převodovka, Karoserie, Interiér, Elektro, Podvozek, Brzdy, Výfuk, Klimatizace, Osvětlení, Ostatní
+  - Akční nabídky / nejprodávanější / nově přidané
+  - Banner: "Máte vrakoviště? Přidávejte díly přes naši aplikaci" → odkaz na registraci dodavatele
+
+- **Katalog dílů** (`/dily/katalog`):
+  - Filtrování: kategorie, značka vozu, model, rok, cena od-do, stav (použitý/nový/aftermarket), dostupnost, lokalita dodavatele
+  - Řazení: cena, datum přidání, relevance
+  - Karta dílu: fotka, název, kompatibilita (pro jaký vůz), cena, stav (Použitý/Nový/Aftermarket badge), dodavatel, dostupnost
+
+- **Detail dílu** (`/dily/[slug]`):
+  - Galerie fotek
+  - Název, popis, stav (detailní — "demontováno z vozu s 85 000 km, plně funkční")
+  - Kompatibilita: seznam vozů se kterými je díl kompatibilní (značka + model + rok od-do)
+  - Cena + DPH info
+  - Dodavatel: jméno/firma, lokalita, hodnocení, počet prodaných dílů
+  - Dostupnost: skladem / na objednávku / rezervováno
+  - Tlačítka: "Přidat do košíku", "Kontaktovat dodavatele" (dotaz)
+  - Podobné díly / další díly od tohoto dodavatele
+
+- **Košík a objednávka:**
+  - Košík: seznam dílů, množství, celková cena
+  - Objednávkový flow:
+    1. Košík (kontrola)
+    2. Doručení: osobní odběr u dodavatele / zásilkovna / PPL / Česká pošta
+    3. Platba: bankovní převod / kartou (Stripe) / dobírka
+    4. Potvrzení objednávky
+  - Po objednávce: email potvrzení, notifikace dodavateli
+  - Sledování stavu objednávky (přijata → zpracovává se → odesláno → doručeno)
+
+**2. PWA pro vrakoviště/dodavatele (`app/(pwa-parts)/`):**
+
+Jednoduchá mobilní aplikace pro dodavatele dílů — co nejrychlejší přidání dílu.
+
+- **Registrace dodavatele:**
+  - Nová role: PARTS_SUPPLIER
+  - Registrace: firma/jméno, IČO (ověření ARES), telefon, email, adresa (lokace vrakoviště/skladu)
+  - Ověření: BackOffice schvaluje nové dodavatele
+
+- **Dashboard dodavatele** (`/parts/`):
+  - Statistiky: aktivní díly, prodané tento měsíc, tržby, průměrná cena
+  - Rychlé přidání dílu (velké CTA tlačítko)
+  - Objednávky k vyřízení (nové, balení, odeslané)
+  - Moje díly (seznam s filtry)
+
+- **Přidání dílu — maximálně jednoduché (3 kroky):**
+
+  **Krok 1: Fotka + rozpoznání**
+  - Otevře kameru → makléř/dodavatel vyfotí díl
+  - Min. 1 fotka, doporučeno 3-5
+  - (Fáze 2: AI rozpoznání dílu z fotky → automatický návrh kategorie a názvu)
+
+  **Krok 2: Údaje**
+  - Název dílu * (text, nebo select z katalogu běžných dílů: "Přední nárazník", "Alternátor", "Levé zpětné zrcátko"...)
+  - Kategorie * (select: Motor, Karoserie, Interiér, Elektro, Podvozek, Brzdy...)
+  - Stav * — select: Plně funkční / Funkční s vadou (popsat) / Na díly (nefunkční)
+  - Kompatibilita *:
+    - Značka (select) → Model (select) → Rok od-do (range input)
+    - Možnost přidat víc kompatibilních vozů (+ Přidat další vůz)
+    - Nebo: VIN zdrojového vozu (z kterého byl díl demontován) → systém doplní kompatibilitu
+  - Popis (textarea — "Demontováno z vozu s 85 000 km, bez poškození, plně funkční")
+  - OEM číslo dílu (volitelné, text — pro přesnou identifikaci)
+
+  **Krok 3: Cena a publikace**
+  - Cena * (number, Kč)
+  - DPH: s DPH / bez DPH
+  - Množství na skladě (number, default 1)
+  - Doručení: osobní odběr / zásilkovna / PPL / všechny možnosti
+  - Preview → Publikovat
+
+- **Hromadné přidání** (pro větší vrakoviště):
+  - Import z Excel/CSV: název, kategorie, cena, kompatibilita, popis
+  - Šablona ke stažení
+
+- **Správa objednávek:**
+  - Seznam objednávek: nové (zvýrazněné), zpracovávané, odeslané, dokončené
+  - Detail objednávky: díl, kupující, doručení, platba
+  - Akce: potvrdit objednávku → zabalit → odeslat (zadat tracking číslo) → hotovo
+  - Push notifikace na novou objednávku
+
+- **Offline podpora:**
+  - Přidání dílu funguje offline (fotky + údaje do IndexedDB)
+  - Sync po připojení
+
+**3. Nové Prisma modely:**
+```
+model Part {
+  id            String   @id @default(cuid())
+  supplierId    String
+  supplier      User     @relation(fields: [supplierId], references: [id])
+
+  name          String       // "Přední nárazník"
+  category      PartCategory // MOTOR, BODYWORK, INTERIOR, ELECTRO, SUSPENSION, BRAKES, EXHAUST, AC, LIGHTS, OTHER
+  description   String?
+  oemNumber     String?      // OEM číslo dílu
+
+  condition     PartCondition // FUNCTIONAL, FUNCTIONAL_WITH_DEFECT, FOR_PARTS
+  conditionNote String?       // Popis vady pokud FUNCTIONAL_WITH_DEFECT
+
+  // Kompatibilita
+  compatibility Json          // [{ brand, model, yearFrom, yearTo }]
+  sourceVin     String?       // VIN vozu ze kterého byl demontován
+
+  // Cena
+  price         Int
+  vatIncluded   Boolean @default(true)
+  quantity      Int @default(1)
+
+  // Doručení
+  deliveryOptions Json       // ["PICKUP", "ZASILKOVNA", "PPL", "CESKA_POSTA"]
+
+  // Typ
+  partType      PartType     // USED, NEW, AFTERMARKET
+
+  // Stav
+  status        PartStatus   // ACTIVE, INACTIVE, SOLD, RESERVED
+  views         Int @default(0)
+
+  images        PartImage[]
+  orders        OrderItem[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model PartImage {
+  id      String @id @default(cuid())
+  partId  String
+  part    Part   @relation(fields: [partId], references: [id])
+  url     String
+  order   Int
+}
+
+model Order {
+  id            String   @id @default(cuid())
+  buyerId       String
+  buyer         User     @relation(fields: [buyerId], references: [id])
+
+  items         OrderItem[]
+
+  // Doručení
+  deliveryMethod String   // PICKUP, ZASILKOVNA, PPL, CESKA_POSTA
+  deliveryAddress String?
+  trackingNumber String?
+
+  // Platba
+  paymentMethod  String   // BANK_TRANSFER, CARD, COD
+  paymentStatus  PaymentStatus // PENDING, PAID, REFUNDED
+
+  // Stav
+  status        OrderStatus  // NEW, CONFIRMED, PACKING, SHIPPED, DELIVERED, CANCELLED
+
+  totalPrice    Int
+  note          String?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model OrderItem {
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id])
+  partId  String
+  part    Part   @relation(fields: [partId], references: [id])
+  quantity Int
+  price   Int
+}
+
+enum PartCategory {
+  MOTOR
+  TRANSMISSION
+  BODYWORK
+  INTERIOR
+  ELECTRO
+  SUSPENSION
+  BRAKES
+  EXHAUST
+  AC
+  LIGHTS
+  OTHER
+}
+
+enum PartCondition {
+  FUNCTIONAL
+  FUNCTIONAL_WITH_DEFECT
+  FOR_PARTS
+}
+
+enum PartType {
+  USED
+  NEW
+  AFTERMARKET
+}
+
+enum PartStatus {
+  ACTIVE
+  INACTIVE
+  SOLD
+  RESERVED
+}
+
+enum OrderStatus {
+  NEW
+  CONFIRMED
+  PACKING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+}
+```
+
+**4. API routes:**
+- `POST /api/parts` — přidání dílu
+- `GET /api/parts` — katalog s filtrací
+- `GET /api/parts/[id]` — detail dílu
+- `PUT /api/parts/[id]` — editace
+- `DELETE /api/parts/[id]` — smazání
+- `GET /api/parts/compatible?vin=XXX` — díly kompatibilní s VIN
+- `POST /api/orders` — vytvoření objednávky
+- `GET /api/orders` — seznam objednávek (kupující/dodavatel)
+- `PUT /api/orders/[id]/status` — změna stavu objednávky
+- `POST /api/parts/import` — hromadný import z CSV
+
+### Kontext:
+- Eshop je nová sekce webu `/dily/` + nová PWA `/parts/` pro dodavatele
+- Sdílí auth systém s hlavní platformou (NextAuth, nová role PARTS_SUPPLIER)
+- Platby: Stripe pro platby kartou (fáze 2, v MVP jen bankovní převod a dobírka)
+- VIN dekodér: sdílený pro filtrování kompatibilních dílů
+- Fotky: Cloudinary
+- Email: Resend (potvrzení objednávky, notifikace dodavateli)
+- PWA pro dodavatele: jednoduchý manifest, offline přidávání dílů
+
+### Očekávaný výsledek:
+- Veřejný eshop s autodíly (katalog, filtrování, detail, košík, objednávka)
+- PWA pro dodavatele (3-krokové přidání dílu, správa objednávek)
+- Registrace a ověření dodavatelů
+- VIN kompatibilita (zákazník zadá VIN → vidí jen kompatibilní díly)
+- Objednávkový systém s tracking stavů
+- Offline přidávání dílů pro dodavatele
+- Hromadný import z CSV
+
+---
+
+## TASK-021: Marketplace — investiční platforma pro flipping aut (VIP)
+Priorita: 3
+Stav: čeká
+Projekt: /Users/lunagroup/carmakler
+
+### Kompletní zadání:
+
+Vytvořit uzavřenou VIP investiční platformu uvnitř Carmakler. Ověření dealeři (autoservisy, dovozci) nabízí investiční příležitosti — auta k nákupu a opravě se ziskovým potenciálem. Ověření investoři financují tyto příležitosti. Carmakler zajišťuje celý proces: auto koupí na svou firmu, dealer opraví, Carmakler prodá a vyplatí podíly.
+
+**Byznys model:**
+- Dealer najde auto k flipu (např. koupě 200k, oprava 80k, prodej 350k = zisk 70k)
+- Investoři (jeden nebo víc) zainvestují nákup + opravu
+- Auto se koupí na firmu Carmakler (bezpečnost pro investora)
+- Dealer auto opraví ve svém servisu
+- Auto se prodá přes Carmakler platformu
+- **Dělení zisku: 40% investor, 40% dealer, 20% Carmakler**
+- Pokud víc investorů → výnos poměrově podle vkladu (kdo dal 60% kapitálu, dostane 60% z investorského podílu = 24% celkového zisku)
+
+**1. Přístup a ověřování:**
+
+- **Uzavřená platforma** — přístupná pouze po schválení:
+  - Nová role: INVESTOR, VERIFIED_DEALER
+  - Na webu: landing page "Carmakler Marketplace" s vysvětlením konceptu + tlačítko "Požádat o přístup"
+
+- **Žádost o přístup — Dealer:**
+  - Formulář: firma, IČO, DIČ, adresa servisu, popis činnosti, reference (kolik aut ročně opraví/prodá), fotky servisu
+  - Ověření BackOffice: kontrola IČO (ARES), osobní návštěva/videocall, prověrka referencí
+  - Po schválení: přístup do dealer dashboardu
+
+- **Žádost o přístup — Investor:**
+  - Formulář: jméno, email, telefon, proč chce investovat, zkušenosti s investováním, plánovaný objem investice
+  - KYC (Know Your Customer): občanský průkaz (upload), adresa, datum narození
+  - Souhlas s podmínkami investování (právní dokument)
+  - Po schválení BackOffice: přístup do investor dashboardu
+
+**2. Dealer Dashboard (`app/(web)/marketplace/dealer/`):**
+
+- **Moje příležitosti** — seznam nabídek k investování:
+  - Aktivní (čeká na investory)
+  - Plně financované (investoři se složili)
+  - V opravě (auto koupeno, dealer opravuje)
+  - Na prodej (opraveno, inzerováno)
+  - Prodáno (dokončeno, výplata)
+- **Přidat příležitost:**
+  - Krok 1: **Auto k nákupu**
+    - Odkud (odkaz na inzerát, aukci, nebo popis)
+    - Značka, model, rok, km, stav, VIN (pokud známý)
+    - Fotky současného stavu (min. 5)
+    - Nákupní cena *
+  - Krok 2: **Plán opravy**
+    - Seznam plánovaných oprav (textarea nebo strukturovaný seznam):
+      - Položka opravy, odhadovaná cena, doba trvání
+      - Např.: "Výměna rozvodů — 15 000 Kč — 1 den"
+      - "Lakování předních dveří — 8 000 Kč — 2 dny"
+    - Celkové náklady na opravu (automatický součet)
+    - Odhadovaná doba opravy (dny/týdny)
+  - Krok 3: **Prodejní odhad**
+    - Odhadovaná prodejní cena po opravě *
+    - Zdůvodnění (srovnání s trhem, odkaz na podobné inzeráty)
+    - Automatický výpočet:
+      - Celková investice: nákup + oprava = X Kč
+      - Očekávaný zisk: prodej - investice = Y Kč
+      - ROI: Y/X * 100 = Z%
+      - **Dělení zisku:**
+        - Investoři (40%): Y * 0.4 = ... Kč
+        - Dealer (40%): Y * 0.4 = ... Kč
+        - Carmakler (20%): Y * 0.2 = ... Kč
+  - Krok 4: **Odeslání ke schválení** — BackOffice prověří odhady, schválí/zamítne
+
+- **Správa probíhajícího flipu:**
+  - Timeline/progress: Financováno → Koupeno → V opravě → Opraveno → Na prodej → Prodáno → Vyplaceno
+  - Fotky průběhu opravy (dealer uploaduje fotky jak auto opravuje — budování důvěry investorů)
+  - Reporting: skutečné náklady vs odhad
+  - Po prodeji: finální kalkulace, potvrzení výplaty
+
+**3. Investor Dashboard (`app/(web)/marketplace/investor/`):**
+
+- **Dostupné příležitosti** — seznam schválených investičních příležitostí:
+  - Karta příležitosti:
+    - Fotky auta (před)
+    - Značka, model, rok
+    - Nákupní cena, náklady na opravu, odhadovaná prodejní cena
+    - **Očekávaný ROI** (zvýrazněně)
+    - **Očekávaný výnos pro investora** (zvýrazněně)
+    - Dealer: jméno, hodnocení, počet dokončených flipů, úspěšnost
+    - Stav financování: "Financováno 120 000 / 280 000 Kč (43%)" + progress bar
+    - Počet investorů: "2 investoři"
+    - Tlačítko "Investovat"
+  - Filtrování: ROI, cena investice, značka, dealer
+
+- **Investování do příležitosti:**
+  - Kliknutí na "Investovat" → modal:
+    - Shrnutí příležitosti
+    - Celková potřebná investice: X Kč
+    - Už financováno: Y Kč (Z%)
+    - Zbývá: X - Y Kč
+    - **Kolik chcete investovat:** number input (min. 10 000 Kč, max. zbývající částka)
+    - Automatický výpočet: "Při prodeji za odhadovanou cenu vyděláte: {výnos} Kč ({ROI}%)"
+    - Pokyny k platbě: bankovní převod na účet Carmakler s variabilním symbolem
+    - Checkbox: "Souhlasím s podmínkami investování"
+    - Tlačítko "Potvrdit investici"
+  - Po potvrzení platby (BackOffice ověří příchod peněz): investice se zobrazí v portfoliu
+
+- **Moje portfolio:**
+  - Aktivní investice — seznam investovaných příležitostí s aktuálním stavem:
+    - Auto, dealer, investováno (Kč), podíl (%), stav (koupeno/v opravě/na prodej)
+    - Fotky průběhu opravy (od dealera)
+    - Očekávaný výnos
+  - Dokončené investice — historie:
+    - Auto, dealer, investováno, výnos, ROI, doba trvání
+  - **Statistiky:**
+    - Celkem investováno (Kč)
+    - Celkem vyděláno (Kč)
+    - Průměrné ROI (%)
+    - Počet dokončených flipů
+    - Peníze aktuálně v oběhu (investované, čeká na prodej)
+
+- **Výplata:**
+  - Po prodeji auta: BackOffice provede finální kalkulaci
+  - Investor vidí: skutečná prodejní cena, skutečné náklady, skutečný zisk, jeho podíl
+  - Výplata na bankovní účet investora (ten zadal při registraci)
+  - Stav: Čeká na výplatu → Vyplaceno + datum
+
+**4. BackOffice správa marketplace (`app/(admin)/marketplace/`):**
+
+- Schvalování žádostí o přístup (dealeři, investoři)
+- Schvalování investičních příležitostí
+- Správa probíhajících flipů (timeline, finance)
+- Potvrzení příchozích plateb od investorů
+- Finální kalkulace po prodeji
+- Výplata podílů
+- Přehled: celkový objem investic, aktivní flipy, průměrné ROI, úspěšnost
+
+**5. Landing page marketplace (`app/(web)/marketplace/`):**
+
+- **Veřejná stránka** (pro neregistrované):
+  - Hero: "Investujte do aut s ověřeným výnosem"
+  - Jak to funguje (3-4 kroky s ikonkami):
+    1. Ověřený dealer najde výhodné auto
+    2. Vy zainvestujete nákup a opravu
+    3. Dealer auto profesionálně opraví
+    4. Auto se prodá, vy dostanete podíl na zisku
+  - Statistiky: "Průměrné ROI 18%", "23 dokončených flipů", "98% úspěšnost"
+  - Sekce pro dealery: "Máte autoservis? Přidejte se"
+  - Sekce pro investory: "Chcete aby vaše peníze pracovaly?"
+  - FAQ: nejčastější dotazy
+  - CTA: "Požádat o přístup"
+
+**6. Nové Prisma modely:**
+```
+model FlipOpportunity {
+  id            String   @id @default(cuid())
+  dealerId      String
+  dealer        User     @relation("DealerFlips", fields: [dealerId], references: [id])
+
+  // Auto
+  brand         String
+  model         String
+  year          Int
+  mileage       Int?
+  vin           String?
+  currentCondition String  // Popis současného stavu
+  sourceUrl     String?    // Odkaz na inzerát/aukci
+
+  // Finance
+  purchasePrice   Int      // Nákupní cena
+  repairCost      Int      // Odhadované náklady na opravu
+  estimatedSalePrice Int   // Odhadovaná prodejní cena
+  actualSalePrice Int?     // Skutečná prodejní cena (po prodeji)
+  actualRepairCost Int?    // Skutečné náklady na opravu
+
+  // Oprava
+  repairPlan    Json       // [{ item, cost, duration }]
+  repairDuration Int?      // Odhadovaná doba opravy (dny)
+
+  // Stav
+  status        FlipStatus // PENDING_APPROVAL, APPROVED, FUNDING, FUNDED, PURCHASED, IN_REPAIR, REPAIRED, FOR_SALE, SOLD, PAYOUT_PENDING, COMPLETED, REJECTED
+
+  // Investice
+  investments   Investment[]
+  totalFunded   Int @default(0)
+  totalNeeded   Int        // purchasePrice + repairCost
+
+  // Fotky
+  beforeImages  Json       // URLs fotek před opravou
+  repairImages  Json?      // URLs fotek průběhu opravy
+  afterImages   Json?      // URLs fotek po opravě
+
+  // Propojení s prodejem
+  vehicleId     String?    // Propojení s Vehicle po nákupu
+  listingId     String?    // Propojení s Listing při prodeji
+
+  // Timeline
+  approvedAt    DateTime?
+  fundedAt      DateTime?
+  purchasedAt   DateTime?
+  repairStartAt DateTime?
+  repairEndAt   DateTime?
+  listedAt      DateTime?
+  soldAt        DateTime?
+  payoutAt      DateTime?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Investment {
+  id              String   @id @default(cuid())
+  investorId      String
+  investor        User     @relation(fields: [investorId], references: [id])
+  opportunityId   String
+  opportunity     FlipOpportunity @relation(fields: [opportunityId], references: [id])
+
+  amount          Int      // Investovaná částka
+  sharePercent    Float    // Podíl na investorské části (automaticky vypočtený)
+
+  // Výplata
+  expectedReturn  Int?     // Očekávaný výnos
+  actualReturn    Int?     // Skutečný výnos
+  paidOut         Boolean @default(false)
+  paidOutAt       DateTime?
+
+  // Platba
+  paymentReference String? // Variabilní symbol
+  paymentConfirmed Boolean @default(false)
+  paymentConfirmedAt DateTime?
+
+  status          InvestmentStatus // PLEDGED, PAID, ACTIVE, PAYOUT_PENDING, COMPLETED, CANCELLED
+
+  createdAt       DateTime @default(now())
+}
+
+enum FlipStatus {
+  PENDING_APPROVAL
+  APPROVED
+  FUNDING
+  FUNDED
+  PURCHASED
+  IN_REPAIR
+  REPAIRED
+  FOR_SALE
+  SOLD
+  PAYOUT_PENDING
+  COMPLETED
+  REJECTED
+}
+
+enum InvestmentStatus {
+  PLEDGED       // Investor řekl že investuje
+  PAID          // Platba přijata
+  ACTIVE        // Auto v procesu
+  PAYOUT_PENDING // Čeká na výplatu
+  COMPLETED     // Vyplaceno
+  CANCELLED     // Zrušeno
+}
+```
+
+**7. API routes:**
+- `POST /api/marketplace/opportunities` — vytvoření příležitosti (dealer)
+- `GET /api/marketplace/opportunities` — seznam příležitostí (filtry: status, ROI, cena)
+- `GET /api/marketplace/opportunities/[id]` — detail
+- `PUT /api/marketplace/opportunities/[id]` — aktualizace (stav, fotky opravy)
+- `POST /api/marketplace/opportunities/[id]/approve` — schválení (admin)
+- `POST /api/marketplace/investments` — investice do příležitosti
+- `GET /api/marketplace/investments` — moje investice (investor)
+- `PUT /api/marketplace/investments/[id]/confirm-payment` — potvrzení platby (admin)
+- `POST /api/marketplace/opportunities/[id]/payout` — výplata podílů (admin)
+- `GET /api/marketplace/stats` — statistiky (admin, dealer, investor)
+- `POST /api/marketplace/apply` — žádost o přístup
+
+**8. Právní poznámky:**
+- Celý marketplace musí být konzultován s právníkem — může spadat pod regulaci ČNB (investiční platformy)
+- Na webu NESLIBOVAT konkrétní výnosy — používat formulace "očekávaný", "odhadovaný"
+- Podmínky investování: disclaimer o riziku (i když auto je reálné aktivum s hodnotou)
+- GDPR: KYC dokumenty šifrovat, ukládat bezpečně
+- Smlouvy: investiční smlouva mezi investorem a Carmakler s.r.o.
+
+### Kontext:
+- Uzavřená sekce, přístupná jen po ověření
+- Auth: nové role INVESTOR, VERIFIED_DEALER v NextAuth
+- Platby: bankovní převod (v MVP), Stripe (fáze 2)
+- Propojení s Vehicle/Listing modely pro prodej flipnutého auta
+- Email: Resend (notifikace o stavech, výplatách)
+- Admin panel: rozšířit o marketplace správu
+
+### Očekávaný výsledek:
+- Landing page marketplace s vysvětlením konceptu
+- Registrace a ověřování dealerů a investorů
+- Dealer dashboard: přidání příležitosti (4 kroky), správa flipů, fotky průběhu
+- Investor dashboard: dostupné příležitosti, investování, portfolio, statistiky, výplaty
+- BackOffice správa: schvalování, potvrzení plateb, finální kalkulace, výplaty
+- Dělení zisku 40/40/20 s podporou více investorů na jednu příležitost
+- Timeline/progress tracking celého flipu
+- Právní framework (disclaimery, podmínky, smlouvy)
 
 ---
 

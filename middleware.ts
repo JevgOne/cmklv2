@@ -31,8 +31,15 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Chráněné makléř routy — POUZE /makler/dashboard (ne veřejné profily /makler/[slug])
-  if (pathname.startsWith("/makler/dashboard")) {
+  // Chranene makler routy — PWA stranky (ne verejne profily /makler/[slug])
+  const protectedMaklerPaths = [
+    "/makler/dashboard",
+    "/makler/vehicles",
+    "/makler/commissions",
+    "/makler/profile",
+    "/makler/offline",
+  ];
+  if (protectedMaklerPaths.some((p) => pathname.startsWith(p))) {
     const token = await getToken({
       req: request,
       secret: process.env.NEXTAUTH_SECRET,
@@ -53,5 +60,17 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/makler/dashboard", "/makler/dashboard/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/makler/dashboard",
+    "/makler/dashboard/:path*",
+    "/makler/vehicles",
+    "/makler/vehicles/:path*",
+    "/makler/commissions",
+    "/makler/commissions/:path*",
+    "/makler/profile",
+    "/makler/profile/:path*",
+    "/makler/offline",
+    "/makler/offline/:path*",
+  ],
 };
