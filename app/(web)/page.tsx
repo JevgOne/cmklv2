@@ -1,8 +1,21 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { TrustScore } from "@/components/ui/TrustScore";
 import { Card } from "@/components/ui/Card";
+
+export const metadata: Metadata = {
+  title: "CarMakléř | Prodej aut přes certifikované makléře",
+  description:
+    "Prodejte nebo kupte auto bezpečně přes síť ověřených makléřů. Rychle, transparentně a bez starostí. Průměrná doba prodeje 20 dní.",
+  openGraph: {
+    title: "CarMakléř | Prodej aut přes certifikované makléře",
+    description:
+      "Prodejte nebo kupte auto bezpečně přes síť ověřených makléřů. Rychle, transparentně a bez starostí.",
+    type: "website",
+  },
+};
 
 /* ------------------------------------------------------------------ */
 /*  Dummy data                                                         */
@@ -193,9 +206,37 @@ const proKoho = [
 /*  Page                                                               */
 /* ------------------------------------------------------------------ */
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "CarMakléř",
+  url: "https://www.carmakler.cz",
+  logo: "https://www.carmakler.cz/brand/logo.svg",
+  description:
+    "Prodejte nebo kupte auto bezpečně přes síť ověřených makléřů. Rychle, transparentně a bez starostí.",
+  contactPoint: {
+    "@type": "ContactPoint",
+    telephone: "+420-800-123-456",
+    contactType: "customer service",
+    areaServed: "CZ",
+    availableLanguage: "Czech",
+  },
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Vinohradská 123",
+    addressLocality: "Praha",
+    postalCode: "120 00",
+    addressCountry: "CZ",
+  },
+};
+
 export default function HomePage() {
   return (
     <main className="min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* ============================================================ */}
       {/* Section 1 — Hero + Pro koho strip                            */}
       {/* ============================================================ */}
@@ -243,7 +284,11 @@ export default function HomePage() {
                 />
                 {/* Play button overlay */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg cursor-pointer hover:bg-white transition-colors">
+                  <button
+                    type="button"
+                    aria-label="Přehrát video"
+                    className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg cursor-pointer hover:bg-white transition-colors border-none"
+                  >
                     <svg
                       className="w-6 h-6 text-orange-500 ml-1"
                       fill="currentColor"
@@ -251,7 +296,7 @@ export default function HomePage() {
                     >
                       <path d="M8 5v14l11-7z" />
                     </svg>
-                  </div>
+                  </button>
                 </div>
               </div>
             </div>
@@ -598,9 +643,9 @@ export default function HomePage() {
                 </Button>
               </Link>
               <Link href="/o-nas" className="no-underline">
-                <button className="inline-flex items-center justify-center gap-2 font-semibold rounded-full border-2 border-white/30 text-white bg-transparent py-4 px-8 text-[17px] cursor-pointer transition-all duration-200 hover:bg-white/10 hover:border-white/50">
+                <Button variant="outline" size="lg" className="!border-2 !border-white/30 !text-white !bg-transparent !shadow-none hover:!bg-white/10 hover:!border-white/50">
                   Více informací
-                </button>
+                </Button>
               </Link>
             </div>
           </div>

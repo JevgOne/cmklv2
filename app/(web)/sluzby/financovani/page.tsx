@@ -1,5 +1,17 @@
+import type { Metadata } from "next";
 import { ServicePage } from "@/components/web/ServicePage";
 import { FinancovaniCalc } from "@/components/web/FinancovaniCalc";
+
+export const metadata: Metadata = {
+  title: "Financování",
+  description:
+    "Výhodné financování auta na splátky do 30 minut. Bez zálohy, nízký úrok od 3,9 %, schválení online.",
+  openGraph: {
+    title: "Financování auta | CarMakléř",
+    description:
+      "Auto na splátky do 30 minut. Bez zálohy, nízký úrok od 3,9 %.",
+  },
+};
 
 const steps = [
   {

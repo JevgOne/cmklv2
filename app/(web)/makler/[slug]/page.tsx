@@ -1,9 +1,16 @@
+import type { Metadata } from "next";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { VehicleCard } from "@/components/web/VehicleCard";
 import { MaklerContactForm } from "./MaklerContactForm";
 import type { VehicleData } from "@/components/web/VehicleCard";
+
+export const metadata: Metadata = {
+  title: "Profil makléře",
+  description:
+    "Profil certifikovaného automakléře CarMakléř. Hodnocení, recenze, aktivní vozidla a kontakt.",
+};
 
 /* ------------------------------------------------------------------ */
 /*  Static params                                                      */

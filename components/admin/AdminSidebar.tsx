@@ -8,25 +8,25 @@ const navSections = [
   {
     title: "HLAVNÍ",
     items: [
-      { href: "/admin/dashboard", icon: "📊", label: "Dashboard" },
-      { href: "/admin/vehicles", icon: "🚗", label: "Vozidla", badge: "23" },
-      { href: "/admin/brokers", icon: "👥", label: "Makléři" },
-      { href: "/admin/dashboard", icon: "✅", label: "Schvalování", badge: "5" },
+      { id: "dashboard", href: "/admin/dashboard", icon: "📊", label: "Dashboard" },
+      { id: "vehicles", href: "/admin/vehicles", icon: "🚗", label: "Vozidla", badge: "23" },
+      { id: "brokers", href: "/admin/brokers", icon: "👥", label: "Makléři" },
+      { id: "approvals", href: "/admin/approvals", icon: "✅", label: "Schvalování", badge: "5" },
     ],
   },
   {
     title: "SPRÁVA",
     items: [
-      { href: "/admin/dashboard", icon: "📍", label: "Regiony" },
-      { href: "/admin/dashboard", icon: "💰", label: "Provize" },
-      { href: "/admin/dashboard", icon: "🔧", label: "Uživatelé" },
+      { id: "regions", href: "/admin/regions", icon: "📍", label: "Regiony" },
+      { id: "commissions", href: "/admin/commissions", icon: "💰", label: "Provize" },
+      { id: "users", href: "/admin/users", icon: "🔧", label: "Uživatelé" },
     ],
   },
   {
     title: "SYSTÉM",
     items: [
-      { href: "/admin/dashboard", icon: "⚙️", label: "Nastavení" },
-      { href: "/admin/dashboard", icon: "📋", label: "Logy" },
+      { id: "settings", href: "/admin/settings", icon: "⚙️", label: "Nastavení" },
+      { id: "logs", href: "/admin/logs", icon: "📋", label: "Logy" },
     ],
   },
 ];
@@ -76,7 +76,7 @@ export function AdminSidebar({ open, onClose }: AdminSidebarProps) {
                 const isActive = pathname === item.href;
                 return (
                   <Link
-                    key={item.href}
+                    key={item.id}
                     href={item.href}
                     onClick={onClose}
                     className={cn(

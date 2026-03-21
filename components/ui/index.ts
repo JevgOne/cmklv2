@@ -35,13 +35,13 @@ export { Modal } from "./Modal";
 export type { ModalProps } from "./Modal";
 
 export { Tabs } from "./Tabs";
-export type { TabsProps } from "./Tabs";
+export type { TabsProps, TabItem } from "./Tabs";
 
 export { Pagination } from "./Pagination";
 export type { PaginationProps } from "./Pagination";
 
 export { Dropdown } from "./Dropdown";
-export type { DropdownProps } from "./Dropdown";
+export type { DropdownProps, DropdownItem } from "./Dropdown";
 
 export { ProgressBar } from "./ProgressBar";
 export type { ProgressBarProps } from "./ProgressBar";

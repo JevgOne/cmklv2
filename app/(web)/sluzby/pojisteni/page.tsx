@@ -1,5 +1,17 @@
+import type { Metadata } from "next";
 import { ServicePage } from "@/components/web/ServicePage";
 import { PojisteniForm } from "@/components/web/PojisteniForm";
+
+export const metadata: Metadata = {
+  title: "Pojištění",
+  description:
+    "Povinné ručení i havarijní pojištění online. Srovnání nabídek všech pojišťoven, nejlepší cena, sjednání bez papírování.",
+  openGraph: {
+    title: "Pojištění auta online | CarMakléř",
+    description:
+      "Srovnání nabídek všech pojišťoven. Nejlepší cena, sjednání online bez papírování.",
+  },
+};
 
 const steps = [
   {

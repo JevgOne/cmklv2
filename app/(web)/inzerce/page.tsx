@@ -1,6 +1,18 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+
+export const metadata: Metadata = {
+  title: "Inzerce — vložte inzerát zdarma",
+  description:
+    "Vložte inzerát na prodej auta zdarma za minutu. Bez registrace, bez poplatků. Vaše auto uvidí tisíce kupujících denně.",
+  openGraph: {
+    title: "Inzerce zdarma | CarMakléř",
+    description:
+      "Prodejte své auto online. Vložte inzerát za minutu, zcela zdarma.",
+  },
+};
 
 /* ------------------------------------------------------------------ */
 /*  Data                                                                */

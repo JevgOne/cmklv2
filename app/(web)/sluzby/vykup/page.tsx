@@ -1,5 +1,17 @@
+import type { Metadata } from "next";
 import { ServicePage } from "@/components/web/ServicePage";
 import { VykupForm } from "@/components/web/VykupForm";
+
+export const metadata: Metadata = {
+  title: "Výkup vozidel",
+  description:
+    "Rychlý a férový výkup vašeho auta. Peníze na účtu do 24 hodin, bez skrytých poplatků, přepis na počkání.",
+  openGraph: {
+    title: "Výkup auta za hotové | CarMakléř",
+    description:
+      "Férový výkup auta. Peníze na účtu do 24 hodin, bez skrytých poplatků.",
+  },
+};
 
 const steps = [
   {

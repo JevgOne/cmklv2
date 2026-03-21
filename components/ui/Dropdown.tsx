@@ -44,7 +44,7 @@ export function Dropdown({ trigger, items, dividerAfter = [], className }: Dropd
                   setOpen(false);
                 }}
                 className={cn(
-                  "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-[10px] text-sm font-medium text-gray-700 cursor-pointer transition-all duration-200 hover:bg-gray-100 hover:text-gray-900 text-left",
+                  "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-[10px] text-sm font-medium text-gray-700 cursor-pointer transition-all duration-200 hover:bg-gray-100 hover:text-gray-900 text-left border-none bg-transparent",
                   item.danger && "text-error-500 hover:bg-error-50 hover:text-error-500"
                 )}
               >

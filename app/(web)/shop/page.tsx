@@ -1,9 +1,21 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { PartsSearch } from "@/components/web/PartsSearch";
 import { ProductCard } from "@/components/web/ProductCard";
 import type { ProductCardProps } from "@/components/web/ProductCard";
+
+export const metadata: Metadata = {
+  title: "Shop — autodíly a příslušenství",
+  description:
+    "Použité autodíly z vrakovišť, aftermarket díly a autokosmetika. Garantovaná kvalita, rychlé doručení, 6 měsíců záruka.",
+  openGraph: {
+    title: "Autodíly a příslušenství | CarMakléř Shop",
+    description:
+      "Největší výběr dílů z vrakovišť. Garantovaná kvalita, expedice do 24h.",
+  },
+};
 
 /* ------------------------------------------------------------------ */
 /*  Dummy data                                                         */

@@ -62,7 +62,13 @@ export default async function AdminDashboardPage() {
   const recentVehicles = await prisma.vehicle.findMany({
     where: { status: "PENDING" },
     include: {
-      broker: true,
+      broker: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
       images: { where: { isPrimary: true }, take: 1 },
     },
     take: 5,

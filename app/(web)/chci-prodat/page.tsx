@@ -1,6 +1,18 @@
+import type { Metadata } from "next";
 import { Card } from "@/components/ui/Card";
 import { SellCarForm } from "@/components/web/SellCarForm";
 import { FAQ } from "@/components/web/FAQ";
+
+export const metadata: Metadata = {
+  title: "Chci prodat auto",
+  description:
+    "Prodáme vaše auto rychleji a za lepší cenu. Průměrná doba prodeje 20 dní. Nechte to na certifikovaném makléři.",
+  openGraph: {
+    title: "Prodejte auto přes makléře | CarMakléř",
+    description:
+      "Prodáme vaše auto rychleji a za lepší cenu. Průměrná doba prodeje 20 dní.",
+  },
+};
 
 const steps = [
   {
@@ -78,9 +90,26 @@ const faqItems = [
   },
 ];
 
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.answer,
+    },
+  })),
+};
+
 export default function ChciProdatPage() {
   return (
     <div className="flex flex-col gap-16 md:gap-24 pb-16 md:pb-24">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       {/* SECTION 1: Hero */}
       <section className="max-w-6xl mx-auto w-full px-4 pt-8 md:pt-12">
         <div className="bg-orange-50 rounded-2xl p-5 sm:p-8 md:p-12 lg:p-16 flex flex-col lg:flex-row items-center gap-6 sm:gap-8 lg:gap-16">

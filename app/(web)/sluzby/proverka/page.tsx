@@ -1,5 +1,17 @@
+import type { Metadata } from "next";
 import { ServicePage } from "@/components/web/ServicePage";
 import { ProverkaForm } from "@/components/web/ProverkaForm";
+
+export const metadata: Metadata = {
+  title: "Prověrka vozidla",
+  description:
+    "Kompletní prověrka historie a technického stavu vozidla. Kontrola původu, havárií, servisní historie a stočení tachometru.",
+  openGraph: {
+    title: "Prověrka vozidla | CarMakléř",
+    description:
+      "Kompletní prověrka historie a technického stavu vozidla. Kupte auto s jistotou.",
+  },
+};
 
 const steps = [
   {

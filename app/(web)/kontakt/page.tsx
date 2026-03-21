@@ -1,5 +1,17 @@
+import type { Metadata } from "next";
 import { Card } from "@/components/ui/Card";
 import { ContactPageForm } from "@/components/web/ContactPageForm";
+
+export const metadata: Metadata = {
+  title: "Kontakt",
+  description:
+    "Kontaktujte CarMakléř. Centrála Praha, pobočky Brno a Ostrava. Telefon +420 800 123 456, e-mail info@carmakler.cz.",
+  openGraph: {
+    title: "Kontakt | CarMakléř",
+    description:
+      "Kontaktujte nás. Centrála Praha, pobočky Brno a Ostrava. Telefon +420 800 123 456.",
+  },
+};
 
 /* ------------------------------------------------------------------ */
 /*  Dummy data                                                         */

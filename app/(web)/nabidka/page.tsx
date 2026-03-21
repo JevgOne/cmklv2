@@ -1,9 +1,21 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { VehicleCard } from "@/components/web/VehicleCard";
 import { VehicleFilters } from "@/components/web/VehicleFilters";
 import { Button } from "@/components/ui/Button";
 import { prisma } from "@/lib/prisma";
 import type { VehicleData } from "@/components/web/VehicleCard";
+
+export const metadata: Metadata = {
+  title: "Nabídka vozidel",
+  description:
+    "Prohlédněte si nabídku prověřených ojetých vozidel od certifikovaných makléřů i soukromých prodejců. Filtry, řazení a snadné vyhledávání.",
+  openGraph: {
+    title: "Nabídka vozidel | CarMakléř",
+    description:
+      "Prověřená ojetá vozidla od makléřů i soukromých prodejců. Snadné vyhledávání s filtry.",
+  },
+};
 
 /* ------------------------------------------------------------------ */
 /*  Fuel / Transmission label mapování                                 */

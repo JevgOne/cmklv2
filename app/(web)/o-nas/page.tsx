@@ -1,4 +1,16 @@
+import type { Metadata } from "next";
 import { Card } from "@/components/ui/Card";
+
+export const metadata: Metadata = {
+  title: "O nás",
+  description:
+    "CarMakléř — nová éra prodeje aut v Česku. 186 certifikovaných makléřů, 1 247 vozidel, 920+ spokojených klientů.",
+  openGraph: {
+    title: "O nás | CarMakléř",
+    description:
+      "186 certifikovaných makléřů, 1 247 vozidel, 920+ spokojených klientů. Poznejte náš příběh.",
+  },
+};
 
 /* ------------------------------------------------------------------ */
 /*  Dummy data                                                         */

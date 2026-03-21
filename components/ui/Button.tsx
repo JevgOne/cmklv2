@@ -29,7 +29,7 @@ export function Button({ variant = "primary", size = "default", icon = false, cl
         "inline-flex items-center justify-center gap-2 font-semibold rounded-full border-none cursor-pointer transition-all duration-200 whitespace-nowrap",
         variantStyles[variant],
         icon ? "w-[44px] h-[44px] p-0 rounded-lg" : sizeStyles[size],
-        disabled && "opacity-50 cursor-not-allowed !transform-none",
+        disabled && "opacity-50 cursor-not-allowed hover:!transform-none",
         className
       )}
       disabled={disabled}

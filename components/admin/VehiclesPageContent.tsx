@@ -114,7 +114,7 @@ const columns = [
   },
   {
     key: "trustScore",
-    header: "Trust Score",
+    header: "Skóre důvěry",
     render: (item: Vehicle) => (
       <TrustScore value={item.trustScore} className="!shadow-none !p-0 !bg-transparent" />
     ),

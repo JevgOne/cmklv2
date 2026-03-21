@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
@@ -12,6 +13,34 @@ import { VehicleCard } from "@/components/web/VehicleCard";
 import { ContactBrokerButton } from "./ContactBrokerButton";
 import { prisma } from "@/lib/prisma";
 import type { VehicleData } from "@/components/web/VehicleCard";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const vehicle = await prisma.vehicle.findFirst({
+    where: { slug },
+    select: { brand: true, model: true, variant: true, year: true, price: true, city: true },
+  });
+
+  if (!vehicle) {
+    return { title: "Vozidlo nenalezeno" };
+  }
+
+  const name = `${vehicle.brand} ${vehicle.model}${vehicle.variant ? " " + vehicle.variant : ""}`;
+  const price = new Intl.NumberFormat("cs-CZ").format(vehicle.price);
+
+  return {
+    title: `${name} (${vehicle.year}) — ${price} Kč`,
+    description: `${name}, rok ${vehicle.year}, cena ${price} Kč. ${vehicle.city}. Prověřené vozidlo na CarMakléř.`,
+    openGraph: {
+      title: `${name} — ${price} Kč`,
+      description: `${name}, rok ${vehicle.year}. Prověřené vozidlo od makléře.`,
+    },
+  };
+}
 
 /* ------------------------------------------------------------------ */
 /*  Label mapování                                                     */
@@ -291,8 +320,72 @@ export default async function VehicleDetailPage({
   const isBrokerListing = vehicle.sellerType === "broker" && broker;
   const isPrivateListing = vehicle.sellerType === "private";
 
+  // JSON-LD: Vehicle + BreadcrumbList
+  const vehicleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Vehicle",
+    name: vehicleName,
+    brand: { "@type": "Brand", name: vehicle.brand },
+    model: vehicle.model,
+    vehicleModelDate: String(vehicle.year),
+    mileageFromOdometer: {
+      "@type": "QuantitativeValue",
+      value: vehicle.mileage,
+      unitCode: "KMT",
+    },
+    fuelType: fuelLabel,
+    vehicleTransmission: transLabel,
+    color: vehicle.color || undefined,
+    offers: {
+      "@type": "Offer",
+      price: vehicle.price,
+      priceCurrency: "CZK",
+      availability: vehicle.status === "ACTIVE"
+        ? "https://schema.org/InStock"
+        : "https://schema.org/SoldOut",
+      seller: isBrokerListing
+        ? { "@type": "Person", name: brokerName }
+        : { "@type": "Person", name: vehicle.contactName || "Soukromý prodejce" },
+    },
+    image: photos.map((p) => p.src),
+    url: `https://www.carmakler.cz/nabidka/${slug}`,
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Domů",
+        item: "https://www.carmakler.cz",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Nabídka",
+        item: "https://www.carmakler.cz/nabidka",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: vehicleName,
+        item: `https://www.carmakler.cz/nabidka/${slug}`,
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(vehicleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       {/* Breadcrumb */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
         <nav className="text-sm text-gray-500 flex items-center gap-2 overflow-hidden">
