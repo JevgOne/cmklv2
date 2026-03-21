@@ -1,0 +1,2657 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CARMAKLER - Design System + Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================
+           CSS RESET & VARIABLES
+        ============================================ */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Orange */
+            --orange-50: #FFF7ED;
+            --orange-100: #FFEDD5;
+            --orange-200: #FED7AA;
+            --orange-300: #FDBA74;
+            --orange-400: #FB923C;
+            --orange-500: #F97316;
+            --orange-600: #EA580C;
+            --orange-700: #C2410C;
+
+            /* Gray */
+            --gray-50: #FAFAFA;
+            --gray-100: #F4F4F5;
+            --gray-200: #E4E4E7;
+            --gray-300: #D4D4D8;
+            --gray-400: #A1A1AA;
+            --gray-500: #71717A;
+            --gray-600: #52525B;
+            --gray-700: #3F3F46;
+            --gray-800: #27272A;
+            --gray-900: #18181B;
+            --gray-950: #09090B;
+
+            /* Semantic */
+            --success-50: #F0FDF4;
+            --success-500: #22C55E;
+            --success-600: #16A34A;
+            --error-50: #FEF2F2;
+            --error-500: #EF4444;
+            --error-600: #DC2626;
+            --warning-50: #FFFBEB;
+            --warning-500: #F59E0B;
+            --info-50: #EFF6FF;
+            --info-500: #3B82F6;
+
+            /* Gradients */
+            --gradient-orange: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+            --gradient-dark: linear-gradient(135deg, #18181B 0%, #09090B 100%);
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1);
+            --shadow-2xl: 0 25px 50px -12px rgba(0,0,0,0.25);
+            --shadow-card: 0 0 0 1px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.05), 0 12px 24px rgba(0,0,0,0.05);
+            --shadow-orange: 0 20px 40px -10px rgba(249,115,22,0.35);
+
+            /* Radius */
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-2xl: 20px;
+            --radius-full: 9999px;
+
+            /* Admin Sidebar */
+            --sidebar-width: 280px;
+            --header-height: 72px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Outfit', system-ui, sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-900);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::selection {
+            background: var(--orange-200);
+        }
+
+        /* ============================================
+           DESIGN SYSTEM SHOWCASE WRAPPER
+        ============================================ */
+        .showcase {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .showcase-header {
+            text-align: center;
+            margin-bottom: 80px;
+            padding: 60px 40px;
+            background: var(--gradient-dark);
+            border-radius: var(--radius-2xl);
+            color: white;
+        }
+
+        .showcase-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .showcase-logo-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--gradient-orange);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 24px;
+            box-shadow: var(--shadow-orange);
+        }
+
+        .showcase-logo-text {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .showcase-title {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        .showcase-subtitle {
+            font-size: 20px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .section {
+            margin-bottom: 80px;
+        }
+
+        .section-header {
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+        }
+
+        .section-desc {
+            color: var(--gray-500);
+        }
+
+        .component-grid {
+            display: grid;
+            gap: 24px;
+        }
+
+        .component-box {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 32px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .component-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .flex-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .flex-col {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* ============================================
+           BUTTONS
+        ============================================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: var(--radius-full);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn-sm { padding: 8px 16px; font-size: 13px; }
+        .btn-lg { padding: 16px 32px; font-size: 17px; }
+
+        .btn-primary {
+            background: var(--gradient-orange);
+            color: white;
+            box-shadow: var(--shadow-orange);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 24px 48px -12px rgba(249,115,22,0.4);
+        }
+
+        .btn-secondary {
+            background: var(--gray-900);
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: var(--gray-800);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: white;
+            color: var(--gray-800);
+            box-shadow: inset 0 0 0 2px var(--gray-200);
+        }
+        .btn-outline:hover {
+            background: var(--gray-50);
+            box-shadow: inset 0 0 0 2px var(--gray-300);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--gray-700);
+        }
+        .btn-ghost:hover {
+            background: var(--gray-100);
+        }
+
+        .btn-success {
+            background: var(--success-500);
+            color: white;
+        }
+        .btn-success:hover {
+            background: var(--success-600);
+        }
+
+        .btn-danger {
+            background: var(--error-500);
+            color: white;
+        }
+        .btn-danger:hover {
+            background: var(--error-600);
+        }
+
+        .btn-icon {
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            border-radius: var(--radius-lg);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* ============================================
+           BADGES
+        ============================================ */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: var(--radius-md);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .badge-verified {
+            background: var(--success-50);
+            color: var(--success-500);
+        }
+
+        .badge-top {
+            background: var(--gradient-orange);
+            color: white;
+        }
+
+        .badge-live {
+            background: var(--gray-900);
+            color: white;
+        }
+
+        .badge-pending {
+            background: var(--warning-50);
+            color: var(--warning-500);
+        }
+
+        .badge-rejected {
+            background: var(--error-50);
+            color: var(--error-500);
+        }
+
+        .badge-new {
+            background: var(--info-50);
+            color: var(--info-500);
+        }
+
+        .badge-default {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--error-500);
+            border-radius: 50%;
+            animation: pulse-dot 1.5s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        /* ============================================
+           TRUST SCORE
+        ============================================ */
+        .trust-score {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 10px 14px;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .trust-score-value {
+            font-size: 24px;
+            font-weight: 800;
+            background: var(--gradient-orange);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .trust-score-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+        }
+
+        /* ============================================
+           FORM ELEMENTS
+        ============================================ */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray-700);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 14px 18px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--gray-900);
+            background: var(--gray-50);
+            border: 2px solid transparent;
+            border-radius: var(--radius-lg);
+            transition: all 0.2s;
+        }
+
+        .form-input:hover,
+        .form-select:hover {
+            background: var(--gray-100);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            background: white;
+            border-color: var(--orange-500);
+            box-shadow: 0 0 0 4px var(--orange-100);
+        }
+
+        .form-select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23A1A1AA' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 20px;
+            padding-right: 48px;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .form-checkbox input {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--orange-500);
+            cursor: pointer;
+        }
+
+        .form-error {
+            font-size: 13px;
+            color: var(--error-500);
+        }
+
+        /* ============================================
+           CARDS
+        ============================================ */
+        .card {
+            background: white;
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-card);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 0 0 1px rgba(0,0,0,0.03), 0 8px 16px rgba(0,0,0,0.08), 0 32px 64px rgba(0,0,0,0.1);
+        }
+
+        /* Car Card */
+        .car-card {
+            cursor: pointer;
+        }
+
+        .car-card-image {
+            position: relative;
+            aspect-ratio: 4/3;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--gray-100), var(--gray-200));
+        }
+
+        .car-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .car-card:hover .car-card-image img {
+            transform: scale(1.05);
+        }
+
+        .car-card-badges {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .car-card-favorite {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.2s;
+        }
+
+        .car-card:hover .car-card-favorite {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .car-card-favorite:hover {
+            background: var(--error-500);
+            color: white;
+        }
+
+        .car-card-trust {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+        }
+
+        .car-card-content {
+            padding: 20px;
+        }
+
+        .car-card-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .car-card-specs {
+            font-size: 14px;
+            color: var(--gray-500);
+            margin-bottom: 16px;
+        }
+
+        .car-card-features {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .car-card-feature {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--gray-600);
+        }
+
+        .car-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 16px;
+            border-top: 1px solid var(--gray-100);
+        }
+
+        .car-card-price {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--gray-900);
+        }
+
+        .car-card-price span {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-400);
+        }
+
+        /* Broker Card */
+        .broker-card {
+            padding: 28px;
+            position: relative;
+        }
+
+        .broker-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-orange);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s;
+        }
+
+        .broker-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .broker-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .broker-avatar {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-orange);
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 800;
+            color: white;
+        }
+
+        .broker-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .broker-region {
+            font-size: 14px;
+            color: var(--gray-500);
+        }
+
+        .broker-badges {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .broker-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            padding-top: 20px;
+            border-top: 1px solid var(--gray-100);
+        }
+
+        .broker-stat {
+            text-align: center;
+        }
+
+        .broker-stat-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--gray-900);
+        }
+
+        .broker-stat-value.orange {
+            background: var(--gradient-orange);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .broker-stat-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--gray-500);
+            margin-top: 4px;
+        }
+
+        /* Stat Card */
+        .stat-card {
+            padding: 24px;
+        }
+
+        .stat-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .stat-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .stat-card-icon.orange { background: var(--orange-100); }
+        .stat-card-icon.green { background: var(--success-50); }
+        .stat-card-icon.blue { background: var(--info-50); }
+        .stat-card-icon.red { background: var(--error-50); }
+
+        .stat-card-trend {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .stat-card-trend.up { color: var(--success-500); }
+        .stat-card-trend.down { color: var(--error-500); }
+
+        .stat-card-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+
+        .stat-card-label {
+            font-size: 14px;
+            color: var(--gray-500);
+        }
+
+        /* ============================================
+           TABLES
+        ============================================ */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            text-align: left;
+            padding: 14px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--gray-100);
+            font-size: 14px;
+        }
+
+        .table tr:hover td {
+            background: var(--gray-50);
+        }
+
+        .table-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .table-user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-lg);
+            background: var(--gradient-orange);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .table-user-name {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .table-user-email {
+            font-size: 13px;
+            color: var(--gray-500);
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .table-action {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: var(--gray-100);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-600);
+            transition: all 0.2s;
+        }
+
+        .table-action:hover {
+            background: var(--gray-200);
+            color: var(--gray-900);
+        }
+
+        .table-action.danger:hover {
+            background: var(--error-50);
+            color: var(--error-500);
+        }
+
+        /* ============================================
+           ADMIN LAYOUT
+        ============================================ */
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+            background: var(--gray-100);
+        }
+
+        /* Sidebar */
+        .admin-sidebar {
+            width: var(--sidebar-width);
+            background: var(--gray-950);
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-logo-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--gradient-orange);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 18px;
+        }
+
+        .sidebar-logo-text {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .sidebar-logo-badge {
+            font-size: 10px;
+            font-weight: 700;
+            background: var(--orange-500);
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+            margin-left: 8px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px 12px;
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            margin-bottom: 24px;
+        }
+
+        .sidebar-section-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 8px 12px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: var(--radius-lg);
+            color: var(--gray-400);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            margin-bottom: 4px;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(255,255,255,0.05);
+            color: white;
+        }
+
+        .sidebar-link.active {
+            background: rgba(249,115,22,0.15);
+            color: var(--orange-500);
+        }
+
+        .sidebar-link-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .sidebar-link-badge {
+            margin-left: auto;
+            background: var(--error-500);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+        }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-lg);
+        }
+
+        .sidebar-user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-orange);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .sidebar-user-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .sidebar-user-role {
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+
+        /* Main Content */
+        .admin-main {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+        }
+
+        .admin-header {
+            position: sticky;
+            top: 0;
+            background: white;
+            border-bottom: 1px solid var(--gray-200);
+            padding: 0 32px;
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 50;
+        }
+
+        .admin-search {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--gray-100);
+            padding: 10px 16px;
+            border-radius: var(--radius-full);
+            width: 320px;
+        }
+
+        .admin-search input {
+            border: none;
+            background: none;
+            font-family: inherit;
+            font-size: 14px;
+            width: 100%;
+            outline: none;
+        }
+
+        .admin-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-icon-btn {
+            width: 44px;
+            height: 44px;
+            border: none;
+            background: var(--gray-100);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .header-icon-btn:hover {
+            background: var(--gray-200);
+        }
+
+        .header-icon-btn .notification-dot {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background: var(--error-500);
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .admin-content {
+            padding: 32px;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+        }
+
+        .page-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--gray-500);
+            margin-bottom: 8px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--gray-900);
+        }
+
+        .page-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* ============================================
+           ADMIN SPECIFIC COMPONENTS
+        ============================================ */
+        
+        /* Status Pills */
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: var(--success-50);
+            color: var(--success-600);
+        }
+
+        .status-pending {
+            background: var(--warning-50);
+            color: var(--warning-500);
+        }
+
+        .status-rejected {
+            background: var(--error-50);
+            color: var(--error-500);
+        }
+
+        .status-draft {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+
+        .status-sold {
+            background: var(--info-50);
+            color: var(--info-500);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            background: var(--gray-100);
+            padding: 4px;
+            border-radius: var(--radius-lg);
+            margin-bottom: 24px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-600);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            color: var(--gray-900);
+        }
+
+        .tab.active {
+            background: white;
+            color: var(--gray-900);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 24px;
+        }
+
+        .modal {
+            background: white;
+            border-radius: var(--radius-2xl);
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow: auto;
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: var(--gray-100);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 24px;
+        }
+
+        .empty-state-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--gray-100);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 32px;
+        }
+
+        .empty-state-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+        }
+
+        .empty-state-text {
+            color: var(--gray-500);
+            margin-bottom: 24px;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 32px;
+        }
+
+        .pagination-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--gray-200);
+            background: white;
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pagination-btn:hover {
+            border-color: var(--gray-300);
+            background: var(--gray-50);
+        }
+
+        .pagination-btn.active {
+            background: var(--gray-900);
+            border-color: var(--gray-900);
+            color: white;
+        }
+
+        /* Progress Bar */
+        .progress {
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--gradient-orange);
+            border-radius: var(--radius-full);
+            transition: width 0.3s ease;
+        }
+
+        .progress-bar.green { background: var(--success-500); }
+        .progress-bar.blue { background: var(--info-500); }
+
+        /* Alert */
+        .alert {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            border-radius: var(--radius-lg);
+            margin-bottom: 16px;
+        }
+
+        .alert-success {
+            background: var(--success-50);
+            color: var(--success-600);
+        }
+
+        .alert-error {
+            background: var(--error-50);
+            color: var(--error-600);
+        }
+
+        .alert-warning {
+            background: var(--warning-50);
+            color: var(--warning-500);
+        }
+
+        .alert-info {
+            background: var(--info-50);
+            color: var(--info-500);
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            min-width: 200px;
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--gray-200);
+            padding: 8px;
+            z-index: 100;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-700);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background: var(--gray-100);
+            color: var(--gray-900);
+        }
+
+        .dropdown-item.danger {
+            color: var(--error-500);
+        }
+
+        .dropdown-item.danger:hover {
+            background: var(--error-50);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--gray-200);
+            margin: 8px 0;
+        }
+
+        /* Toggle Switch */
+        .toggle {
+            position: relative;
+            width: 48px;
+            height: 28px;
+            cursor: pointer;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            inset: 0;
+            background: var(--gray-300);
+            border-radius: var(--radius-full);
+            transition: all 0.3s;
+        }
+
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .toggle input:checked + .toggle-slider {
+            background: var(--success-500);
+        }
+
+        .toggle input:checked + .toggle-slider::before {
+            transform: translateX(20px);
+        }
+
+        /* Charts Container */
+        .chart-container {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .chart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .chart-placeholder {
+            height: 300px;
+            background: var(--gray-50);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-400);
+        }
+
+        /* Notification Item */
+        .notification-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            border-radius: var(--radius-lg);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .notification-item:hover {
+            background: var(--gray-50);
+        }
+
+        .notification-item.unread {
+            background: var(--orange-50);
+        }
+
+        .notification-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+
+        .notification-text {
+            font-size: 14px;
+            color: var(--gray-500);
+        }
+
+        .notification-time {
+            font-size: 12px;
+            color: var(--gray-400);
+            white-space: nowrap;
+        }
+
+        /* Activity Feed */
+        .activity-feed {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--orange-500);
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            font-size: 14px;
+            color: var(--gray-700);
+            margin-bottom: 4px;
+        }
+
+        .activity-text strong {
+            color: var(--gray-900);
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: var(--gray-400);
+        }
+
+        /* Approval Card */
+        .approval-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            box-shadow: var(--shadow-card);
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .approval-card:hover {
+            border-color: var(--orange-200);
+        }
+
+        .approval-card-header {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .approval-card-image {
+            width: 120px;
+            height: 90px;
+            border-radius: var(--radius-lg);
+            object-fit: cover;
+            background: var(--gray-100);
+        }
+
+        .approval-card-info {
+            flex: 1;
+        }
+
+        .approval-card-title {
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+
+        .approval-card-meta {
+            font-size: 14px;
+            color: var(--gray-500);
+        }
+
+        .approval-card-broker {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .approval-card-broker-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: var(--radius-md);
+            background: var(--gradient-orange);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .approval-card-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Checklist */
+        .checklist {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--gray-50);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .checklist-item:hover {
+            background: var(--gray-100);
+        }
+
+        .checklist-item.checked {
+            background: var(--success-50);
+        }
+
+        .checklist-checkbox {
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--gray-300);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .checklist-item.checked .checklist-checkbox {
+            background: var(--success-500);
+            border-color: var(--success-500);
+            color: white;
+        }
+
+        .checklist-text {
+            font-size: 14px;
+            color: var(--gray-700);
+        }
+
+        .checklist-item.checked .checklist-text {
+            color: var(--success-600);
+        }
+
+        /* Grid Layouts */
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+
+        @media (max-width: 1200px) {
+            .grid-4 { grid-template-columns: repeat(2, 1fr); }
+            .grid-3 { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
+        }
+
+        /* ============================================
+           RESPONSIVE ADMIN
+        ============================================ */
+        @media (max-width: 1024px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+            }
+            .admin-main {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="showcase">
+        <!-- Header -->
+        <header class="showcase-header">
+            <div class="showcase-logo">
+                <div class="showcase-logo-icon">C</div>
+                <div class="showcase-logo-text">CARMAKLER</div>
+            </div>
+            <h1 class="showcase-title">Design System + Admin Panel</h1>
+            <p class="showcase-subtitle">Kompletní UI komponenty pro web, PWA a BackOffice</p>
+        </header>
+
+        <!-- ============================================
+             BUTTONS
+        ============================================ -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Buttons</h2>
+                <p class="section-desc">Všechny varianty tlačítek</p>
+            </div>
+            
+            <div class="component-grid">
+                <div class="component-box">
+                    <div class="component-label">Primary Buttons</div>
+                    <div class="flex-row">
+                        <button class="btn btn-primary btn-sm">Small</button>
+                        <button class="btn btn-primary">Default</button>
+                        <button class="btn btn-primary btn-lg">Large</button>
+                        <button class="btn btn-primary" disabled>Disabled</button>
+                    </div>
+                </div>
+
+                <div class="component-box">
+                    <div class="component-label">All Variants</div>
+                    <div class="flex-row">
+                        <button class="btn btn-primary">Primary</button>
+                        <button class="btn btn-secondary">Secondary</button>
+                        <button class="btn btn-outline">Outline</button>
+                        <button class="btn btn-ghost">Ghost</button>
+                        <button class="btn btn-success">Success</button>
+                        <button class="btn btn-danger">Danger</button>
+                    </div>
+                </div>
+
+                <div class="component-box">
+                    <div class="component-label">With Icons</div>
+                    <div class="flex-row">
+                        <button class="btn btn-primary">
+                            <span>➕</span> Přidat vůz
+                        </button>
+                        <button class="btn btn-secondary">
+                            <span>📥</span> Export
+                        </button>
+                        <button class="btn btn-outline">
+                            <span>🔍</span> Hledat
+                        </button>
+                        <button class="btn btn-icon btn-primary">✓</button>
+                        <button class="btn btn-icon btn-outline">✕</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             BADGES & STATUS
+        ============================================ -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Badges & Status</h2>
+                <p class="section-desc">Štítky a statusy</p>
+            </div>
+            
+            <div class="component-grid">
+                <div class="component-box">
+                    <div class="component-label">Badges</div>
+                    <div class="flex-row">
+                        <span class="badge badge-verified">✓ Ověřeno</span>
+                        <span class="badge badge-top">🔥 TOP</span>
+                        <span class="badge badge-live"><span class="live-dot"></span> 8 prohlíží</span>
+                        <span class="badge badge-new">Nové</span>
+                        <span class="badge badge-pending">Čeká</span>
+                        <span class="badge badge-rejected">Zamítnuto</span>
+                        <span class="badge badge-default">Default</span>
+                    </div>
+                </div>
+
+                <div class="component-box">
+                    <div class="component-label">Status Pills</div>
+                    <div class="flex-row">
+                        <span class="status status-active"><span class="status-dot"></span> Aktivní</span>
+                        <span class="status status-pending"><span class="status-dot"></span> Čeká na schválení</span>
+                        <span class="status status-rejected"><span class="status-dot"></span> Zamítnuto</span>
+                        <span class="status status-draft"><span class="status-dot"></span> Draft</span>
+                        <span class="status status-sold"><span class="status-dot"></span> Prodáno</span>
+                    </div>
+                </div>
+
+                <div class="component-box">
+                    <div class="component-label">Trust Score</div>
+                    <div class="flex-row">
+                        <div class="trust-score">
+                            <span class="trust-score-value">96</span>
+                            <span class="trust-score-label">Trust<br>Score</span>
+                        </div>
+                        <div class="trust-score">
+                            <span class="trust-score-value">78</span>
+                            <span class="trust-score-label">Trust<br>Score</span>
+                        </div>
+                        <div class="trust-score">
+                            <span class="trust-score-value">54</span>
+                            <span class="trust-score-label">Trust<br>Score</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             FORM ELEMENTS
+        ============================================ -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Form Elements</h2>
+                <p class="section-desc">Formulářové prvky</p>
+            </div>
+            
+            <div class="component-grid" style="grid-template-columns: repeat(2, 1fr);">
+                <div class="component-box">
+                    <div class="component-label">Inputs</div>
+                    <div class="flex-col">
+                        <div class="form-group">
+                            <label class="form-label">Jméno</label>
+                            <input type="text" class="form-input" placeholder="Zadejte jméno">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-input" value="jan@carmakler.cz">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Chyba</label>
+                            <input type="text" class="form-input" style="border-color: var(--error-500);" value="Neplatný email">
+                            <span class="form-error">Zadejte platný email</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="component-box">
+                    <div class="component-label">Selects & Other</div>
+                    <div class="flex-col">
+                        <div class="form-group">
+                            <label class="form-label">Značka</label>
+                            <select class="form-select">
+                                <option>Vyberte značku</option>
+                                <option>Škoda</option>
+                                <option>Volkswagen</option>
+                                <option>BMW</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Popis</label>
+                            <textarea class="form-textarea" placeholder="Napište popis vozidla..."></textarea>
+                        </div>
+                        <label class="form-checkbox">
+                            <input type="checkbox" checked>
+                            <span>Servisní knížka</span>
+                        </label>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 14px; color: var(--gray-600);">Email notifikace</span>
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             CARDS
+        ============================================ -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Cards</h2>
+                <p class="section-desc">Karty vozů a makléřů</p>
+            </div>
+            
+            <div class="component-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <!-- Car Card -->
+                <div class="card card-hover car-card">
+                    <div class="car-card-image">
+                        <img src="https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=600&q=80" alt="Car">
+                        <div class="car-card-badges">
+                            <span class="badge badge-verified">✓ Ověřeno</span>
+                        </div>
+                        <button class="car-card-favorite">❤</button>
+                        <div class="car-card-trust">
+                            <div class="trust-score">
+                                <span class="trust-score-value">96</span>
+                                <span class="trust-score-label">Trust<br>Score</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="car-card-content">
+                        <h3 class="car-card-title">Škoda Octavia RS Combi</h3>
+                        <p class="car-card-specs">2021 · 45 000 km · Benzín · DSG</p>
+                        <div class="car-card-features">
+                            <span class="car-card-feature">📍 Praha</span>
+                            <span class="car-card-feature">⚡ 245 HP</span>
+                        </div>
+                        <div class="car-card-footer">
+                            <div class="car-card-price">589 000 <span>Kč</span></div>
+                            <button class="btn btn-secondary btn-sm">Detail →</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Car Card 2 -->
+                <div class="card card-hover car-card">
+                    <div class="car-card-image">
+                        <img src="https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=600&q=80" alt="Car">
+                        <div class="car-card-badges">
+                            <span class="badge badge-top">🔥 TOP</span>
+                            <span class="badge badge-live"><span class="live-dot"></span> 8</span>
+                        </div>
+                        <button class="car-card-favorite">❤</button>
+                        <div class="car-card-trust">
+                            <div class="trust-score">
+                                <span class="trust-score-value">98</span>
+                                <span class="trust-score-label">Trust<br>Score</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="car-card-content">
+                        <h3 class="car-card-title">BMW 330i xDrive M Sport</h3>
+                        <p class="car-card-specs">2022 · 28 000 km · Benzín · Automat</p>
+                        <div class="car-card-features">
+                            <span class="car-card-feature">📍 Brno</span>
+                            <span class="car-card-feature">⚡ 258 HP</span>
+                        </div>
+                        <div class="car-card-footer">
+                            <div class="car-card-price">1 150 000 <span>Kč</span></div>
+                            <button class="btn btn-secondary btn-sm">Detail →</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Broker Card -->
+                <div class="card card-hover broker-card">
+                    <div class="broker-header">
+                        <div class="broker-avatar">JN</div>
+                        <div>
+                            <h4 class="broker-name">Jan Novák</h4>
+                            <p class="broker-region">📍 Praha a okolí</p>
+                        </div>
+                    </div>
+                    <div class="broker-badges">
+                        <span class="badge badge-top">⭐ TOP Makléř</span>
+                        <span class="badge badge-default">⚡ Rychlá reakce</span>
+                    </div>
+                    <div class="broker-stats">
+                        <div class="broker-stat">
+                            <div class="broker-stat-value orange">4.9</div>
+                            <div class="broker-stat-label">Hodnocení</div>
+                        </div>
+                        <div class="broker-stat">
+                            <div class="broker-stat-value">156</div>
+                            <div class="broker-stat-label">Prodejů</div>
+                        </div>
+                        <div class="broker-stat">
+                            <div class="broker-stat-value">14</div>
+                            <div class="broker-stat-label">Dní Ø</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             STAT CARDS
+        ============================================ -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Stat Cards</h2>
+                <p class="section-desc">Statistiky pro dashboard</p>
+            </div>
+            
+            <div class="grid-4">
+                <div class="card stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-icon orange">🚗</div>
+                        <div class="stat-card-trend up">↑ 12%</div>
+                    </div>
+                    <div class="stat-card-value">1,247</div>
+                    <div class="stat-card-label">Aktivních vozidel</div>
+                </div>
+
+                <div class="card stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-icon green">💰</div>
+                        <div class="stat-card-trend up">↑ 8%</div>
+                    </div>
+                    <div class="stat-card-value">2.4M Kč</div>
+                    <div class="stat-card-label">Provize tento měsíc</div>
+                </div>
+
+                <div class="card stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-icon blue">👥</div>
+                        <div class="stat-card-trend down">↓ 3%</div>
+                    </div>
+                    <div class="stat-card-value">186</div>
+                    <div class="stat-card-label">Aktivních makléřů</div>
+                </div>
+
+                <div class="card stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-icon red">⏳</div>
+                    </div>
+                    <div class="stat-card-value">23</div>
+                    <div class="stat-card-label">Čeká na schválení</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             TABLES
+        ============================================ -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Tables</h2>
+                <p class="section-desc">Datové tabulky</p>
+            </div>
+            
+            <div class="card" style="padding: 0; overflow: hidden;">
+                <div class="table-wrapper">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Makléř</th>
+                                <th>Region</th>
+                                <th>Vozidla</th>
+                                <th>Provize</th>
+                                <th>Status</th>
+                                <th>Akce</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="table-user">
+                                        <div class="table-user-avatar">JN</div>
+                                        <div>
+                                            <div class="table-user-name">Jan Novák</div>
+                                            <div class="table-user-email">jan.novak@email.cz</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Praha</td>
+                                <td>24</td>
+                                <td><strong>186 500 Kč</strong></td>
+                                <td><span class="status status-active"><span class="status-dot"></span> Aktivní</span></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <button class="table-action">👁</button>
+                                        <button class="table-action">✏️</button>
+                                        <button class="table-action danger">🗑</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="table-user">
+                                        <div class="table-user-avatar">PM</div>
+                                        <div>
+                                            <div class="table-user-name">Petra Malá</div>
+                                            <div class="table-user-email">petra.mala@email.cz</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Brno</td>
+                                <td>18</td>
+                                <td><strong>142 300 Kč</strong></td>
+                                <td><span class="status status-active"><span class="status-dot"></span> Aktivní</span></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <button class="table-action">👁</button>
+                                        <button class="table-action">✏️</button>
+                                        <button class="table-action danger">🗑</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="table-user">
+                                        <div class="table-user-avatar">KD</div>
+                                        <div>
+                                            <div class="table-user-name">Karel Dvořák</div>
+                                            <div class="table-user-email">karel.dvorak@email.cz</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Ostrava</td>
+                                <td>12</td>
+                                <td><strong>98 700 Kč</strong></td>
+                                <td><span class="status status-pending"><span class="status-dot"></span> Čeká</span></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <button class="table-action">👁</button>
+                                        <button class="table-action">✏️</button>
+                                        <button class="table-action danger">🗑</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <button class="pagination-btn">←</button>
+                    <button class="pagination-btn active">1</button>
+                    <button class="pagination-btn">2</button>
+                    <button class="pagination-btn">3</button>
+                    <button class="pagination-btn">→</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             TABS & NAVIGATION
+        ============================================ -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Tabs & Navigation</h2>
+                <p class="section-desc">Navigační prvky</p>
+            </div>
+            
+            <div class="component-box">
+                <div class="component-label">Tabs</div>
+                <div class="tabs">
+                    <button class="tab active">Všechna</button>
+                    <button class="tab">Aktivní</button>
+                    <button class="tab">Čekající</button>
+                    <button class="tab">Zamítnutá</button>
+                    <button class="tab">Prodaná</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             ALERTS & NOTIFICATIONS
+        ============================================ -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Alerts & Notifications</h2>
+                <p class="section-desc">Upozornění a notifikace</p>
+            </div>
+            
+            <div class="component-box">
+                <div class="component-label">Alerts</div>
+                <div class="flex-col">
+                    <div class="alert alert-success">
+                        ✓ Vozidlo bylo úspěšně schváleno a publikováno.
+                    </div>
+                    <div class="alert alert-error">
+                        ✕ Došlo k chybě při ukládání. Zkuste to prosím znovu.
+                    </div>
+                    <div class="alert alert-warning">
+                        ⚠ Vaše předplatné vyprší za 7 dní.
+                    </div>
+                    <div class="alert alert-info">
+                        ℹ Nová verze aplikace je k dispozici.
+                    </div>
+                </div>
+            </div>
+
+            <div class="component-box" style="margin-top: 24px;">
+                <div class="component-label">Notification Items</div>
+                <div class="flex-col" style="gap: 0;">
+                    <div class="notification-item unread">
+                        <div class="notification-icon" style="background: var(--success-50);">✓</div>
+                        <div class="notification-content">
+                            <div class="notification-title">Vozidlo schváleno</div>
+                            <div class="notification-text">Škoda Octavia RS byla schválena a publikována</div>
+                        </div>
+                        <div class="notification-time">před 5 min</div>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-icon" style="background: var(--info-50);">💬</div>
+                        <div class="notification-content">
+                            <div class="notification-title">Nový dotaz</div>
+                            <div class="notification-text">Máte nový dotaz k BMW 330i od Jana</div>
+                        </div>
+                        <div class="notification-time">před 1 hod</div>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-icon" style="background: var(--warning-50);">⏰</div>
+                        <div class="notification-content">
+                            <div class="notification-title">Prohlídka</div>
+                            <div class="notification-text">Zítra v 14:00 - VW Passat, Karlovo nám.</div>
+                        </div>
+                        <div class="notification-time">před 2 hod</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             APPROVAL QUEUE
+        ============================================ -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Approval Queue</h2>
+                <p class="section-desc">Fronta ke schválení</p>
+            </div>
+            
+            <div class="grid-2">
+                <div class="approval-card">
+                    <div class="approval-card-header">
+                        <img src="https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=200&q=80" alt="" class="approval-card-image">
+                        <div class="approval-card-info">
+                            <h4 class="approval-card-title">Škoda Octavia RS Combi</h4>
+                            <p class="approval-card-meta">2021 · 45 000 km · 589 000 Kč</p>
+                            <div class="approval-card-broker">
+                                <div class="approval-card-broker-avatar">JN</div>
+                                <span style="font-size: 13px; color: var(--gray-600);">Jan Novák</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="approval-card-actions">
+                        <button class="btn btn-success" style="flex: 1;">✓ Schválit</button>
+                        <button class="btn btn-danger" style="flex: 1;">✕ Zamítnout</button>
+                        <button class="btn btn-outline">Detail</button>
+                    </div>
+                </div>
+
+                <div class="approval-card">
+                    <div class="approval-card-header">
+                        <img src="https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=200&q=80" alt="" class="approval-card-image">
+                        <div class="approval-card-info">
+                            <h4 class="approval-card-title">BMW 330i xDrive</h4>
+                            <p class="approval-card-meta">2022 · 28 000 km · 1 150 000 Kč</p>
+                            <div class="approval-card-broker">
+                                <div class="approval-card-broker-avatar">PM</div>
+                                <span style="font-size: 13px; color: var(--gray-600);">Petra Malá</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="approval-card-actions">
+                        <button class="btn btn-success" style="flex: 1;">✓ Schválit</button>
+                        <button class="btn btn-danger" style="flex: 1;">✕ Zamítnout</button>
+                        <button class="btn btn-outline">Detail</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             CHECKLIST
+        ============================================ -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Checklist</h2>
+                <p class="section-desc">Kontrolní seznam pro schválení</p>
+            </div>
+            
+            <div class="component-box" style="max-width: 500px;">
+                <div class="checklist">
+                    <div class="checklist-item checked">
+                        <div class="checklist-checkbox">✓</div>
+                        <span class="checklist-text">VIN číslo odpovídá</span>
+                    </div>
+                    <div class="checklist-item checked">
+                        <div class="checklist-checkbox">✓</div>
+                        <span class="checklist-text">Fotky jsou kvalitní</span>
+                    </div>
+                    <div class="checklist-item checked">
+                        <div class="checklist-checkbox">✓</div>
+                        <span class="checklist-text">Cena je realistická</span>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="checklist-checkbox"></div>
+                        <span class="checklist-text">Technické údaje jsou kompletní</span>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="checklist-checkbox"></div>
+                        <span class="checklist-text">Popis neobsahuje kontaktní údaje</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             PROGRESS & CHARTS
+        ============================================ -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Progress & Charts</h2>
+                <p class="section-desc">Progressbary a grafy</p>
+            </div>
+            
+            <div class="grid-2">
+                <div class="component-box">
+                    <div class="component-label">Progress Bars</div>
+                    <div class="flex-col" style="gap: 20px;">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px;">
+                                <span>Měsíční cíl</span>
+                                <span style="font-weight: 600;">78%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 78%;"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px;">
+                                <span>Konverze</span>
+                                <span style="font-weight: 600;">45%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar green" style="width: 45%;"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px;">
+                                <span>Aktivita</span>
+                                <span style="font-weight: 600;">92%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar blue" style="width: 92%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Prodeje za měsíc</h3>
+                        <select class="form-select" style="width: auto; padding: 8px 40px 8px 12px;">
+                            <option>Tento měsíc</option>
+                            <option>Minulý měsíc</option>
+                            <option>Tento rok</option>
+                        </select>
+                    </div>
+                    <div class="chart-placeholder">
+                        📊 Graf bude zde (Recharts / Chart.js)
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             ACTIVITY FEED
+        ============================================ -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Activity Feed</h2>
+                <p class="section-desc">Historie aktivit</p>
+            </div>
+            
+            <div class="component-box" style="max-width: 600px;">
+                <div class="activity-feed">
+                    <div class="activity-item">
+                        <div class="activity-dot"></div>
+                        <div class="activity-content">
+                            <div class="activity-text"><strong>Jan Novák</strong> přidal nové vozidlo <strong>Škoda Octavia RS</strong></div>
+                            <div class="activity-time">před 5 minutami</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-dot" style="background: var(--success-500);"></div>
+                        <div class="activity-content">
+                            <div class="activity-text">Vozidlo <strong>BMW 330i</strong> bylo schváleno</div>
+                            <div class="activity-time">před 1 hodinou</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-dot" style="background: var(--info-500);"></div>
+                        <div class="activity-content">
+                            <div class="activity-text"><strong>Petra Malá</strong> dokončila prodej - <strong>156 000 Kč</strong> provize</div>
+                            <div class="activity-time">před 2 hodinami</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-dot" style="background: var(--error-500);"></div>
+                        <div class="activity-content">
+                            <div class="activity-text">Vozidlo <strong>Audi A4</strong> bylo zamítnuto - chybí fotky</div>
+                            <div class="activity-time">před 3 hodinami</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             EMPTY STATE
+        ============================================ -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Empty State</h2>
+                <p class="section-desc">Prázdný stav</p>
+            </div>
+            
+            <div class="card" style="max-width: 500px;">
+                <div class="empty-state">
+                    <div class="empty-state-icon">🚗</div>
+                    <h3 class="empty-state-title">Žádná vozidla</h3>
+                    <p class="empty-state-text">Zatím nemáte žádná vozidla. Přidejte první vůz a začněte prodávat.</p>
+                    <button class="btn btn-primary">➕ Přidat vozidlo</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             MODAL
+        ============================================ -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Modal</h2>
+                <p class="section-desc">Modální okno</p>
+            </div>
+            
+            <div style="background: var(--gray-200); border-radius: var(--radius-2xl); padding: 40px; display: flex; justify-content: center;">
+                <div class="modal" style="position: relative;">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Zamítnout vozidlo</h3>
+                        <button class="modal-close">✕</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="form-label">Důvod zamítnutí</label>
+                            <select class="form-select">
+                                <option>Vyberte důvod</option>
+                                <option>Nekvalitní fotky</option>
+                                <option>Neúplné údaje</option>
+                                <option>Podezřelá cena</option>
+                                <option>Jiný důvod</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-top: 16px;">
+                            <label class="form-label">Poznámka</label>
+                            <textarea class="form-textarea" placeholder="Napište poznámku pro makléře..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-ghost">Zrušit</button>
+                        <button class="btn btn-danger">Zamítnout</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             ADMIN PANEL PREVIEW
+        ============================================ -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Admin Panel Layout</h2>
+                <p class="section-desc">Kompletní admin layout preview</p>
+            </div>
+            
+            <div style="border: 2px solid var(--gray-200); border-radius: var(--radius-2xl); overflow: hidden; height: 800px;">
+                <div class="admin-layout" style="height: 100%;">
+                    <!-- Sidebar -->
+                    <aside class="admin-sidebar" style="position: relative; height: 100%;">
+                        <div class="sidebar-header">
+                            <div class="sidebar-logo">
+                                <div class="sidebar-logo-icon">C</div>
+                                <div class="sidebar-logo-text">CARMAKLER<span class="sidebar-logo-badge">ADMIN</span></div>
+                            </div>
+                        </div>
+
+                        <nav class="sidebar-nav">
+                            <div class="sidebar-section">
+                                <div class="sidebar-section-title">Menu</div>
+                                <a href="#" class="sidebar-link active">
+                                    <span class="sidebar-link-icon">📊</span>
+                                    Dashboard
+                                </a>
+                                <a href="#" class="sidebar-link">
+                                    <span class="sidebar-link-icon">👥</span>
+                                    Uživatelé
+                                    <span class="sidebar-link-badge">5</span>
+                                </a>
+                                <a href="#" class="sidebar-link">
+                                    <span class="sidebar-link-icon">🚗</span>
+                                    Vozidla
+                                    <span class="sidebar-link-badge">23</span>
+                                </a>
+                                <a href="#" class="sidebar-link">
+                                    <span class="sidebar-link-icon">💰</span>
+                                    Provize
+                                </a>
+                                <a href="#" class="sidebar-link">
+                                    <span class="sidebar-link-icon">⭐</span>
+                                    Recenze
+                                </a>
+                            </div>
+
+                            <div class="sidebar-section">
+                                <div class="sidebar-section-title">Nastavení</div>
+                                <a href="#" class="sidebar-link">
+                                    <span class="sidebar-link-icon">🌍</span>
+                                    Regiony
+                                </a>
+                                <a href="#" class="sidebar-link">
+                                    <span class="sidebar-link-icon">📧</span>
+                                    Email šablony
+                                </a>
+                                <a href="#" class="sidebar-link">
+                                    <span class="sidebar-link-icon">⚙️</span>
+                                    Konfigurace
+                                </a>
+                            </div>
+                        </nav>
+
+                        <div class="sidebar-footer">
+                            <div class="sidebar-user">
+                                <div class="sidebar-user-avatar">A</div>
+                                <div>
+                                    <div class="sidebar-user-name">Admin</div>
+                                    <div class="sidebar-user-role">Administrátor</div>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <!-- Main Content -->
+                    <main class="admin-main" style="margin-left: 280px; overflow: auto;">
+                        <header class="admin-header">
+                            <div class="admin-search">
+                                <span>🔍</span>
+                                <input type="text" placeholder="Hledat...">
+                            </div>
+                            <div class="admin-header-actions">
+                                <button class="header-icon-btn">
+                                    🔔
+                                    <span class="notification-dot"></span>
+                                </button>
+                                <button class="header-icon-btn">⚙️</button>
+                            </div>
+                        </header>
+
+                        <div class="admin-content">
+                            <div class="page-header">
+                                <div>
+                                    <div class="page-breadcrumb">
+                                        <span>Admin</span>
+                                        <span>/</span>
+                                        <span>Dashboard</span>
+                                    </div>
+                                    <h1 class="page-title">Dashboard</h1>
+                                </div>
+                                <div class="page-actions">
+                                    <button class="btn btn-outline">📥 Export</button>
+                                    <button class="btn btn-primary">➕ Přidat</button>
+                                </div>
+                            </div>
+
+                            <!-- Stats -->
+                            <div class="grid-4" style="margin-bottom: 32px;">
+                                <div class="card stat-card">
+                                    <div class="stat-card-header">
+                                        <div class="stat-card-icon orange">🚗</div>
+                                        <div class="stat-card-trend up">↑ 12%</div>
+                                    </div>
+                                    <div class="stat-card-value">1,247</div>
+                                    <div class="stat-card-label">Aktivních vozidel</div>
+                                </div>
+
+                                <div class="card stat-card">
+                                    <div class="stat-card-header">
+                                        <div class="stat-card-icon green">💰</div>
+                                        <div class="stat-card-trend up">↑ 8%</div>
+                                    </div>
+                                    <div class="stat-card-value">2.4M</div>
+                                    <div class="stat-card-label">Provize</div>
+                                </div>
+
+                                <div class="card stat-card">
+                                    <div class="stat-card-header">
+                                        <div class="stat-card-icon blue">👥</div>
+                                    </div>
+                                    <div class="stat-card-value">186</div>
+                                    <div class="stat-card-label">Makléřů</div>
+                                </div>
+
+                                <div class="card stat-card">
+                                    <div class="stat-card-header">
+                                        <div class="stat-card-icon red">⏳</div>
+                                    </div>
+                                    <div class="stat-card-value">23</div>
+                                    <div class="stat-card-label">Ke schválení</div>
+                                </div>
+                            </div>
+
+                            <!-- Quick Actions -->
+                            <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">Čeká na schválení</h3>
+                            <div class="grid-2">
+                                <div class="approval-card">
+                                    <div class="approval-card-header">
+                                        <div class="approval-card-image" style="background: var(--gray-200);"></div>
+                                        <div class="approval-card-info">
+                                            <h4 class="approval-card-title">Škoda Octavia RS</h4>
+                                            <p class="approval-card-meta">2021 · 45 000 km</p>
+                                            <div class="approval-card-broker">
+                                                <div class="approval-card-broker-avatar">JN</div>
+                                                <span style="font-size: 13px;">Jan Novák</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="approval-card-actions">
+                                        <button class="btn btn-success btn-sm" style="flex: 1;">✓</button>
+                                        <button class="btn btn-danger btn-sm" style="flex: 1;">✕</button>
+                                        <button class="btn btn-outline btn-sm">Detail</button>
+                                    </div>
+                                </div>
+
+                                <div class="approval-card">
+                                    <div class="approval-card-header">
+                                        <div class="approval-card-image" style="background: var(--gray-200);"></div>
+                                        <div class="approval-card-info">
+                                            <h4 class="approval-card-title">BMW 330i xDrive</h4>
+                                            <p class="approval-card-meta">2022 · 28 000 km</p>
+                                            <div class="approval-card-broker">
+                                                <div class="approval-card-broker-avatar">PM</div>
+                                                <span style="font-size: 13px;">Petra Malá</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="approval-card-actions">
+                                        <button class="btn btn-success btn-sm" style="flex: 1;">✓</button>
+                                        <button class="btn btn-danger btn-sm" style="flex: 1;">✕</button>
+                                        <button class="btn btn-outline btn-sm">Detail</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>
