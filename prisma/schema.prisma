@@ -41,6 +41,7 @@ model User {
   vehicles      Vehicle[]
   commissions   Commission[] @relation("BrokerCommissions")
   notifications Notification[]
+  contracts     Contract[]   @relation("BrokerContracts")
 
   // Auth
   emailVerified DateTime?
@@ -162,6 +163,7 @@ model Vehicle {
   images      VehicleImage[]
   changeLog   VehicleChangeLog[]
   commissions Commission[]
+  contracts   Contract[]
 
   // Timestamps
   createdAt   DateTime  @default(now())
@@ -244,5 +246,50 @@ model Notification {
 
   @@index([userId])
   @@index([read])
+  @@index([createdAt])
+}
+
+model Contract {
+  id        String @id @default(cuid())
+  type      String // BROKERAGE (zprostředkovatelská), HANDOVER (předávací protokol)
+
+  vehicleId String?
+  vehicle   Vehicle? @relation(fields: [vehicleId], references: [id])
+  brokerId  String
+  broker    User     @relation("BrokerContracts", fields: [brokerId], references: [id])
+
+  // Prodejce
+  sellerName        String
+  sellerPhone       String
+  sellerEmail       String?
+  sellerAddress     String?
+  sellerIdNumber    String? // Rodné číslo
+  sellerIdCard      String? // Číslo OP
+  sellerBankAccount String?
+
+  // Obsah smlouvy
+  content    String? // JSON - strukturovaná data smlouvy
+  price      Int?    // Dohodnutá cena
+  commission Int?    // Provize
+
+  // Podpisy
+  sellerSignature String?   // Base64 PNG podpisu
+  brokerSignature String?   // Base64 PNG podpisu
+  signedAt        DateTime?
+  signedLocation  String?   // GPS souřadnice při podpisu
+
+  // PDF
+  pdfUrl String? // URL vygenerovaného PDF
+
+  // Stav
+  status String @default("DRAFT") // DRAFT, SIGNED, SENT, ARCHIVED
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([brokerId])
+  @@index([vehicleId])
+  @@index([status])
   @@index([createdAt])
 }

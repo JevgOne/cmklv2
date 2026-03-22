@@ -1435,7 +1435,7 @@ Kompletní profesionální prohlídka s checklistem a možností odmítnutí voz
 
 ## TASK-017: PWA Smlouvy — generování, předvyplnění, digitální podpis
 Priorita: 2
-Stav: čeká
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:
@@ -2460,6 +2460,863 @@ enum InvestmentStatus {
 - Dělení zisku 40/40/20 s podporou více investorů na jednu příležitost
 - Timeline/progress tracking celého flipu
 - Právní framework (disclaimery, podmínky, smlouvy)
+
+---
+
+## TASK-022: Onboarding makléře — pozvánkový link, registrace, školení
+Priorita: 1
+Stav: čeká
+Projekt: /Users/lunagroup/carmakler
+
+### Kompletní zadání:
+
+Implementovat kompletní onboarding nového makléře — od pozvánky manažerem po aktivaci účtu.
+
+**1. Pozvánkový systém:**
+
+- **Manažer v admin panelu** klikne "Pozvat makléře" → formulář:
+  - Email makléře * (validace)
+  - Jméno (volitelné, pro personalizaci emailu)
+- Systém vygeneruje **unikátní pozvánkový token** (UUID), platný 7 dní
+- Odešle email přes Resend:
+  - Předmět: "Pozvánka do týmu Carmakler"
+  - Obsah: "Ahoj {jméno}, {manažer} tě zve do týmu Carmakler. Klikni sem pro registraci."
+  - CTA tlačítko → `carmakler.cz/registrace?token=XXX`
+- Pozvánka se uloží do DB:
+  - Token, email, managerId, regionId, status (PENDING/USED/EXPIRED), expiresAt, createdAt
+
+**2. Registrační flow přes pozvánku:**
+
+- Makléř klikne na link → stránka `/registrace?token=XXX`:
+  - Ověření tokenu (platný, nepoužitý, neexpirovaný)
+  - Neplatný token → "Pozvánka vypršela nebo byla již použita. Kontaktujte svého manažera."
+  - Platný token → registrační formulář:
+    - Email (předvyplněný z pozvánky, readonly)
+    - Heslo * + potvrzení hesla
+    - Jméno * + příjmení *
+    - Telefon *
+    - IČO * (makléři jsou na živnostenský list)
+    - Souhlas s podmínkami (checkbox)
+- Po registraci:
+  - User se vytvoří s rolí BROKER, status ONBOARDING
+  - Automaticky se přiřadí pod manažera z pozvánky
+  - Automaticky se zařadí do regionu manažera
+  - Token se označí jako USED
+  - Přesměrování na onboarding flow
+
+**3. Onboarding flow (`/app/onboarding`):**
+
+Nový makléř po registraci musí projít onboardingem. Dokud nedokončí, nemůže nabírat auta (routes chráněné middleware — status ONBOARDING → redirect na onboarding).
+
+- **Krok 1: Profil** — vyplnit:
+  - Profilová fotka * (upload nebo kamera)
+  - Bio (textarea, krátké představení)
+  - Specializace — checkboxy: Osobní vozy, SUV, Dodávky, Luxusní vozy, Elektromobily
+  - Města kde působím — multi-select nebo tagy
+  - Bankovní účet pro výplatu provizí * (IBAN)
+
+- **Krok 2: Dokumenty** — nahrát:
+  - Živnostenský list nebo výpis z ARES (PDF/foto)
+  - Občanský průkaz (foto přední + zadní strana) — pro ověření identity
+  - (Smlouva s Carmakler — tu dodá systém k podpisu v kroku 4)
+
+- **Krok 3: Školení** — interaktivní průvodce (série karet/slidů):
+  - **Jak funguje Carmakler** (5 slidů) — co děláme, jak funguje provize, exkluzivní smlouva
+  - **Jak nabrat auto** (5 slidů) — 7 kroků, co kontrolovat, jak fotit
+  - **Jak jednat s prodejcem** (3 slidy) — tipy, red flags, komunikace
+  - **Právní minimum** (3 slidy) — exkluzivita, odpovědnost, GDPR
+  - Na konci: **Kvíz** (5-10 otázek, multiple choice):
+    - "Kolik je minimální provize?" → 25 000 Kč
+    - "Co znamená exkluzivní smlouva?" → prodejce nesmí prodávat jinde
+    - "Kolik fotek je minimum?" → 12
+    - "Může prodejce auto používat během inzerce?" → Ano
+    - "Co uděláte když zjistíte stočený tachometr?" → Odmítnout vůz
+  - Musí odpovědět správně min. 80% → jinak opakování
+  - Obsah školení bere z AI knowledge base (docs/knowledge-base/)
+
+- **Krok 4: Smlouva s Carmakler** — digitální podpis:
+  - Zobrazí se smlouva o spolupráci (Carmakler ↔ makléř na IČO)
+  - Makléř podepíše prstem na displeji (stejný mechanismus jako TASK-017)
+  - PDF se vygeneruje a uloží
+
+- **Krok 5: Čeká na schválení**
+  - Status makléře: ONBOARDING → PENDING
+  - Manažer dostane notifikaci: "Nový makléř {jméno} dokončil onboarding, čeká na schválení"
+  - Manažer v admin panelu zkontroluje profil, dokumenty, kvíz → schválí
+  - Po schválení: status PENDING → ACTIVE
+  - Makléř dostane push + email: "Váš účet byl aktivován! Můžete začít nabírat auta."
+
+**4. Nové Prisma modely:**
+```
+model Invitation {
+  id          String   @id @default(cuid())
+  email       String
+  name        String?
+  token       String   @unique
+  managerId   String
+  manager     User     @relation("ManagerInvitations", fields: [managerId], references: [id])
+  regionId    String
+  region      Region   @relation(fields: [regionId], references: [id])
+  status      InvitationStatus  // PENDING, USED, EXPIRED
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+}
+
+enum InvitationStatus {
+  PENDING
+  USED
+  EXPIRED
+}
+```
+
+- Rozšíření User modelu: přidat status ONBOARDING, pole `icoNumber`, `bankAccount`, `documents` (Json — URLs nahraných dokumentů), `onboardingCompleted` (Boolean), `quizScore` (Int)
+
+**5. API routes:**
+- `POST /api/invitations` — vytvoření pozvánky (manažer/admin)
+- `GET /api/invitations/[token]` — ověření tokenu
+- `GET /api/invitations` — seznam pozvánek manažera
+- `PUT /api/onboarding/profile` — uložení profilu
+- `POST /api/onboarding/documents` — upload dokumentů
+- `POST /api/onboarding/quiz` — odeslání kvízu, vyhodnocení
+- `POST /api/onboarding/contract` — podpis smlouvy
+- `PUT /api/admin/brokers/[id]/activate` — aktivace makléře (manažer/admin)
+
+### Kontext:
+- Závisí na: TASK-013 (auth), TASK-015 (PWA layout), TASK-017 (podpis smlouvy — sdílený mechanismus)
+- Email: Resend pro odesílání pozvánek
+- Middleware: rozšířit o status ONBOARDING → redirect na /app/onboarding
+- Knowledge base: docs/knowledge-base/ z TASK-018 pro školení
+- Dokumenty: upload na Cloudinary
+
+### Očekávaný výsledek:
+- Manažer může pozvat makléře přes email
+- Makléř se zaregistruje přes pozvánkový link, automaticky pod manažerem a v regionu
+- 5-krokový onboarding: profil → dokumenty → školení s kvízem → smlouva → schválení
+- Makléř nemůže nabírat auta dokud nedokončí onboarding a není schválen
+- Manažer schvaluje nové makléře
+
+---
+
+## TASK-023: Manažerský dashboard — správa makléřů, schvalování, statistiky
+Priorita: 1
+Stav: čeká
+Projekt: /Users/lunagroup/carmakler
+
+### Kompletní zadání:
+
+Implementovat manažerský pohled v admin panelu — manažer vidí a spravuje jen své makléře, schvaluje jejich inzeráty, sleduje statistiky a výkon.
+
+**1. Manažerský dashboard (`app/(admin)/manager/page.tsx`):**
+
+- **Přehled týmu:**
+  - Počet makléřů pod manažerem
+  - Celkové provize týmu tento měsíc
+  - Celkem aktivních vozů týmu
+  - Celkem prodejů týmu tento měsíc
+- **TOP makléři** — žebříček: jméno, počet prodejů, provize, konverzní poměr
+- **Čeká na schválení** — počet inzerátů ke schválení (badge)
+- **Novinky** — poslední aktivity makléřů (kdo co nabral, prodal, odmítl)
+
+**2. Seznam makléřů manažera (`app/(admin)/manager/brokers/page.tsx`):**
+
+- Tabulka: jméno, foto, telefon, počet aktivních aut, prodeje tento měsíc, provize, stav (active/pending/onboarding)
+- Proklik na detail makléře:
+  - Profil (editovatelný manažerem)
+  - Vozidla makléře (seznam s filtry)
+  - Provize (historie)
+  - Aktivita (timeline: co kdy udělal)
+  - Statistiky: průměrná doba prodeje, konverze, oblíbené značky
+- **Pozvat makléře** — tlačítko, formulář s emailem
+- **Deaktivovat makléře** — se záznamem důvodu, jeho auta se přeřadí (na manažera nebo jiného makléře)
+
+**3. Schvalování inzerátů (`app/(admin)/manager/approvals/page.tsx`):**
+
+Manažer schvaluje inzeráty svých makléřů. BackOffice schvaluje inzeráty manažerů.
+
+- **Fronta ke schválení** — seznam inzerátů se stavem PENDING od makléřů pod tímto manažerem
+- Každý inzerát zobrazí:
+  - Náhled (foto, název, cena)
+  - Kdo zadal a kdy
+  - Checklist kvality:
+    - ✅/❌ VIN dekódován
+    - ✅/❌ Min. 12 fotek (včetně tachometr, VIN, klíče)
+    - ✅/❌ Prohlídka provedena (celkový dojem 3+)
+    - ✅/❌ Testovací jízda provedena
+    - ✅/❌ Cena odpovídá trhu (± 15% od průměru podobných)
+    - ✅/❌ Popis min. 50 znaků
+    - ✅/❌ Exkluzivní smlouva podepsána
+  - Proklik na plný detail vozu
+- **Akce:**
+  - ✅ **Schválit** → stav PENDING → ACTIVE, publikace na web, notifikace makléři
+  - ❌ **Vrátit k dopracování** — s poznámkou (textarea): "Doplň fotku motoru" / "Cena je moc vysoká" → stav zůstane PENDING, makléř dostane notifikaci s důvodem
+  - 🚫 **Zamítnout** — s důvodem → stav REJECTED, makléř dostane notifikaci
+- **Schvalovací flow (hierarchie):**
+  - Makléřův inzerát → schvaluje jeho Manažer
+  - Manažerův inzerát → schvaluje BackOffice
+  - BackOffice/Admin → automaticky schváleno (nebo vzájemně)
+
+**4. Editace inzerátů makléřů:**
+
+- Manažer může editovat inzeráty svých makléřů:
+  - Úprava ceny (s důvodem → change log)
+  - Úprava popisu
+  - Přidání/odebrání fotek
+  - Úprava výbavy
+  - Změna stavu (aktivní → neaktivní)
+- Každá změna se loguje do VehicleChangeLog s tím, kdo změnil (manažer)
+
+**5. Notifikace pro manažera:**
+- Nový makléř dokončil onboarding → schválit
+- Makléř odeslal inzerát ke schválení
+- Makléř odmítl vůz při prohlídce (s důvodem)
+- Makléř označil auto jako prodané
+- Auto se neprodalo 30 dní (automatický alert)
+- Nový lead přiřazen do regionu
+
+**6. Manažerský bonus:**
+- Manažer dostává **2 500 Kč z každého prodeje jeho makléře** (bude upřesněno)
+- V dashboardu zobrazit: "Bonusy tento měsíc: X Kč (Y prodejů)"
+- Historie bonusů s výplatami
+
+**7. Middleware / přístupová práva:**
+- Manažer vidí POUZE data svých makléřů (filtr podle managerId v DB)
+- Nesmí vidět makléře jiného manažera
+- Admin/BackOffice vidí vše
+
+### Kontext:
+- Závisí na: TASK-013 (auth + role), TASK-004 (admin layout)
+- Rozšíření admin panelu o manažerské routy
+- Manažer používá admin panel (web), ne PWA
+- Prisma: filtrování přes `where: { managerId: session.user.id }`
+- Notifikace: rozšíření Notification modelu o typ APPROVAL_REQUEST
+- Change log: VehicleChangeLog pro auditování manažerských editací
+
+### Očekávaný výsledek:
+- Manažerský dashboard se statistikami týmu
+- Seznam makléřů s detaily, pozvánkami, deaktivací
+- Schvalovací fronta s checklistem kvality
+- Editace inzerátů makléřů s logováním změn
+- Notifikace o aktivitách makléřů
+- Manažerský bonus 2 500 Kč/prodej
+- Přístupová práva — manažer vidí jen své makléře
+
+---
+
+## TASK-024: Lead management — příjem leadů, přiřazení, tracking
+Priorita: 1
+Stav: čeká
+Projekt: /Users/lunagroup/carmakler
+
+### Kompletní zadání:
+
+Implementovat systém pro příjem a distribuci leadů — z externího systému přes API a z webového formuláře "Chci prodat auto".
+
+**1. Lead model (Prisma):**
+```
+model Lead {
+  id            String   @id @default(cuid())
+
+  // Kontakt
+  name          String
+  phone         String
+  email         String?
+
+  // Auto
+  brand         String?
+  model         String?
+  year          Int?
+  mileage       Int?
+  expectedPrice Int?
+  description   String?
+
+  // Zdroj
+  source        LeadSource  // WEB_FORM, EXTERNAL_APP, MANUAL, REFERRAL
+  externalId    String?     // ID z externího systému
+  sourceDetail  String?     // Název externího systému
+
+  // Lokace
+  city          String?
+  regionId      String?
+  region        Region?     @relation(fields: [regionId], references: [id])
+
+  // Přiřazení
+  assignedToId  String?
+  assignedTo    User?       @relation("AssignedLeads", fields: [assignedToId], references: [id])
+  assignedById  String?
+  assignedBy    User?       @relation("LeadAssigner", fields: [assignedById], references: [id])
+  assignedAt    DateTime?
+
+  // Stav
+  status        LeadStatus  // NEW, ASSIGNED, CONTACTED, MEETING_SCHEDULED, VEHICLE_ADDED, REJECTED, EXPIRED
+  rejectionReason String?
+
+  // Propojení
+  vehicleId     String?     // Propojení s Vehicle pokud makléř nabral auto
+  vehicle       Vehicle?    @relation(fields: [vehicleId], references: [id])
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+enum LeadSource {
+  WEB_FORM
+  EXTERNAL_APP
+  MANUAL
+  REFERRAL
+}
+
+enum LeadStatus {
+  NEW
+  ASSIGNED
+  CONTACTED
+  MEETING_SCHEDULED
+  VEHICLE_ADDED
+  REJECTED
+  EXPIRED
+}
+```
+
+**2. Příjem leadů — 3 zdroje:**
+
+- **Webový formulář** ("Chci prodat auto" — existující):
+  - Stávající POST `/api/sell-request` → rozšířit o vytvoření Lead záznamu
+  - Automatické přiřazení regionu podle města
+  - Notifikace manažerovi regionu
+
+- **Externí app (API)**:
+  - Nový endpoint `POST /api/leads/external` s API key autentizací
+  - Přijímá: name, phone, email, brand, model, year, mileage, city, externalId
+  - API key v headeru: `X-API-Key: xxx` — klíč nastavitelný v admin panelu
+  - Rate limiting: max 100 leadů/hodinu
+  - Validace: Zod schema, duplicit check (telefon + značka + model za posledních 30 dní)
+  - Response: { id, status } nebo { error }
+
+- **Ruční vytvoření** (manažer/admin):
+  - V admin panelu formulář "Přidat lead"
+  - Manažer může přidat lead a rovnou přiřadit svému makléři
+
+**3. Přiřazení leadů:**
+
+- **Automatické** (default):
+  - Lead přijde → systém najde region podle města
+  - V regionu najde manažera
+  - Manažer dostane notifikaci → v admin panelu přiřadí konkrétnímu makléři
+  - Nebo: round-robin — systém přiřadí automaticky makléři s nejmenším počtem aktivních leadů v regionu (konfigurovatelné v nastavení)
+
+- **Ruční** (manažer):
+  - Manažer vidí nové leady ve svém regionu
+  - Klikne na lead → vybere makléře ze svého týmu → přiřadí
+  - Makléř dostane push notifikaci: "Nový lead: Škoda Octavia, Praha 2"
+
+**4. Lead v PWA makléře:**
+
+- **Dashboard** — sekce "Nové leady" (nad rozpracovanými drafty):
+  - Badge s počtem nepřijatých leadů
+  - Karta leadu: jméno prodejce, telefon, značka+model, město
+  - Akce: "Přijmout" (stav → ASSIGNED), "Odmítnout" (s důvodem)
+- **Přijatý lead** → makléř vidí kontakt, může:
+  - Zavolat (tel: link)
+  - Poslat SMS/WhatsApp
+  - Poslat prezentaci emailem
+  - Zaznamenat "Kontaktováno" (stav → CONTACTED)
+  - Zaznamenat "Schůzka domluvena" (stav → MEETING_SCHEDULED) + datum
+  - Spustit flow "Nabrat auto" → lead se propojí s vozidlem (stav → VEHICLE_ADDED)
+  - Odmítnout (stav → REJECTED) s důvodem: nezvedá telefon, nechce prodávat, nereálná cena, mimo region
+
+**5. Lead tracking v admin panelu:**
+
+- **Seznam leadů** — tabulka s filtry: stav, region, zdroj, makléř, datum
+- **Statistiky leadů:**
+  - Celkem leadů / přiřazených / kontaktovaných / nabraných / odmítnutých
+  - Konverzní poměr (lead → nabráno auto)
+  - Průměrná doba od leadu po kontakt
+  - Zdroj leadů (kolik z webu, kolik z externí app)
+- **Automatická expirace:** lead bez aktivity 14 dní → stav EXPIRED, notifikace manažerovi
+
+**6. API routes:**
+- `POST /api/leads/external` — příjem z externí app (API key auth)
+- `GET /api/leads` — seznam leadů (filtrovaný podle role: makléř své, manažer svého regionu, admin vše)
+- `GET /api/leads/[id]` — detail leadu
+- `PUT /api/leads/[id]/assign` — přiřazení makléři
+- `PUT /api/leads/[id]/status` — změna stavu
+- `GET /api/leads/stats` — statistiky
+
+### Kontext:
+- Závisí na: TASK-013 (auth), TASK-015 (PWA dashboard), TASK-022 (manažer přiřazuje leady)
+- Stávající `/api/sell-request` rozšířit o Lead vytvoření
+- Externí API key: uložit v env nebo v DB (admin nastavení)
+- Push notifikace: na nový lead pro manažera + makléře
+- Propojení: Lead → Vehicle (když makléř nabere auto z leadu)
+
+### Očekávaný výsledek:
+- Příjem leadů ze 3 zdrojů (web, externí API, ruční)
+- Přiřazení leadům makléřům (automaticky nebo manažerem)
+- Lead tracking v PWA makléře (přijetí, kontakt, schůzka, nabírání)
+- Statistiky leadů v admin panelu
+- Propojení leadu s vozidlem
+- Automatická expirace
+
+---
+
+## TASK-025: Prodejní flow — od dotazu po předání vozu
+Priorita: 1
+Stav: čeká
+Projekt: /Users/lunagroup/carmakler
+
+### Kompletní zadání:
+
+Implementovat kompletní prodejní flow — co se děje po publikaci inzerátu až po předání vozu kupujícímu. Makléř koordinuje celý proces a je přítomný při předání.
+
+**1. Dotazy od kupujících:**
+
+- **Kontaktní formulář na detailu vozu** (existující) → rozšířit:
+  - Po odeslání se vytvoří záznam v DB (model Inquiry nebo rozšířit existující)
+  - Makléř dostane push notifikaci + email: "Nový dotaz na {auto}: {zpráva}"
+  - V PWA sekce "Zprávy" (`/app/messages`):
+    - Seznam dotazů seskupený podle vozu
+    - Každý dotaz: jméno, telefon, email, zpráva, datum
+    - Akce: Odpovědět (email z appky), Zavolat (tel: link), Zaznamenat prohlídku
+
+- **Odpověď makléře:**
+  - Makléř odpoví emailem přímo z appky (textarea + odeslat)
+  - Nebo zavolá → zaznamená výsledek hovoru (dropdown: "Zájem, domlouvám prohlídku" / "Jen se ptá" / "Nezájem")
+
+**2. Prohlídka kupujícím:**
+
+- Makléř domluví prohlídku → v appce zaznamená:
+  - Datum a čas prohlídky
+  - Jméno kupujícího
+  - Kontakt na kupujícího
+  - Místo (u prodejce — adresa je v systému)
+- **Před prohlídkou:**
+  - Makléř kontaktuje prodejce — potvrdí termín ("Přijede zájemce v sobotu v 10:00")
+  - Tlačítko "Informovat prodejce" → předpřipravená SMS/email prodejci
+- **Po prohlídce:**
+  - Zaznamenat výsledek: "Zájem — jedná o ceně" / "Chce rozmýšlet" / "Bez zájmu"
+  - Pokud zájem → pokračuje jednání
+
+**3. Jednání o ceně:**
+
+- Kupující nabídne jinou cenu → makléř zaznamená:
+  - Požadovaná cena kupujícího
+  - Reakce prodejce (souhlas / protinávrh / odmítnutí)
+- Makléř vyjedná finální cenu → zaznamená do systému
+- Změna ceny → VehicleChangeLog s důvodem "Dojednáno s kupujícím"
+
+**4. Rezervace:**
+
+- Kupující souhlasí → makléř označí auto jako **RESERVED**:
+  - V PWA: tlačítko "Rezervovat" na detailu vozu
+  - Vyplní: jméno kupujícího, kontakt, dohodnutá cena, plánované datum předání
+  - Auto zmizí z veřejného katalogu (nebo se zobrazí s badge "Rezervováno")
+  - Notifikace manažerovi: "Auto {název} rezervováno, cena {cena}"
+
+**5. Předání vozu:**
+
+Makléř je přítomný při předání. V appce zaznamená:
+
+- **Předávací checklist** (`/app/vehicles/[id]/handover`):
+  - [ ] Prodejce přítomen
+  - [ ] Kupující přítomen
+  - [ ] Velký TP předán
+  - [ ] Malý TP předán
+  - [ ] Klíče předány (počet: __)
+  - [ ] Servisní kniha předána
+  - [ ] Vůz ve sjednaném stavu (bez nových poškození)
+  - [ ] Platba proběhla (jakým způsobem: hotovost / převod / financování)
+  - [ ] Předávací protokol podepsán (link na TASK-017)
+
+- **Generování předávacího protokolu** — TASK-017 (smlouvy):
+  - Automaticky předvyplněný z dat vozu + kupující + prodejce
+  - Podpis všech tří stran (prodejce, kupující, makléř)
+  - PDF + email všem stranám
+
+- **Označení jako PRODÁNO:**
+  - Makléř potvrdí předání → stav RESERVED → SOLD
+  - Zadá skutečnou prodejní cenu (může se lišit od inzerované)
+  - Automatický výpočet provize:
+    - 5% z prodejní ceny, min 25 000 Kč
+    - 50% makléř, 50% firma
+    - Manažerský bonus: 2 500 Kč (bude upřesněno)
+  - Notifikace: makléři ("Provize: X Kč"), manažerovi ("Makléř {jméno} prodal {auto}"), BackOffice
+
+**6. Po prodeji:**
+
+- **Provize** se zobrazí v `/app/commissions` se stavem "Čeká na výplatu"
+- **Nabídka doplňkových služeb** (automaticky po prodeji):
+  - Email kupujícímu: nabídka pojištění (šablona)
+  - Email kupujícímu: nabídka financování (pokud platil na splátky)
+- **Follow-up** — automaticky 7 dní po prodeji:
+  - Připomínka makléři: "Zavolej kupujícímu, zeptej se jestli je spokojený"
+  - Po zavolání: zaznamenat spokojenost (1-5 hvězdek)
+- **Recenze** — email kupujícímu 14 dní po prodeji:
+  - "Jak jste spokojeni s makléřem {jméno}? Ohodnoťte."
+  - Link na formulář recenze → zobrazí se na profilu makléře
+
+**7. Záznam poškození vozu během inzerce:**
+
+Auto zůstává u prodejce a může se poškodit. Makléř nebo prodejce nahlásí:
+
+- **V detailu vozu** (`/app/vehicles/[id]`) tlačítko "Nahlásit poškození":
+  - Popis poškození (textarea)
+  - Fotky poškození (kamera)
+  - Závažnost: Kosmetické / Funkční / Vážné
+  - Akce po nahlášení:
+    - Kosmetické → aktualizace popisu inzerátu, přidání fotek
+    - Funkční → deaktivace inzerátu dokud se neopraví, notifikace manažerovi
+    - Vážné → deaktivace inzerátu, notifikace manažerovi + BackOffice, přehodnocení ceny
+- Záznam se uloží do VehicleChangeLog s typem DAMAGE_REPORT
+- Po opravě: makléř zaznamená opravu + nové fotky → reaktivace inzerátu
+
+**8. Nové Prisma modely / rozšíření:**
+```
+model VehicleInquiry {
+  id          String   @id @default(cuid())
+  vehicleId   String
+  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id])
+  brokerId    String
+  broker      User     @relation(fields: [brokerId], references: [id])
+
+  // Kupující
+  buyerName   String
+  buyerPhone  String
+  buyerEmail  String?
+  message     String
+
+  // Stav
+  status      InquiryStatus // NEW, REPLIED, VIEWING_SCHEDULED, NEGOTIATING, RESERVED, SOLD, NO_INTEREST
+  reply       String?
+  repliedAt   DateTime?
+
+  // Prohlídka
+  viewingDate     DateTime?
+  viewingResult   String?   // INTERESTED, THINKING, NO_INTEREST
+
+  // Jednání
+  offeredPrice    Int?
+  agreedPrice     Int?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model DamageReport {
+  id          String   @id @default(cuid())
+  vehicleId   String
+  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id])
+  reportedById String
+  reportedBy  User     @relation(fields: [reportedById], references: [id])
+
+  description String
+  severity    DamageSeverity  // COSMETIC, FUNCTIONAL, SEVERE
+  images      Json            // Array of image URLs
+  repaired    Boolean @default(false)
+  repairedAt  DateTime?
+  repairNote  String?
+
+  createdAt   DateTime @default(now())
+}
+
+enum InquiryStatus {
+  NEW
+  REPLIED
+  VIEWING_SCHEDULED
+  NEGOTIATING
+  RESERVED
+  SOLD
+  NO_INTEREST
+}
+
+enum DamageSeverity {
+  COSMETIC
+  FUNCTIONAL
+  SEVERE
+}
+```
+
+- Rozšíření Vehicle modelu: přidat pole `reservedFor` (String?), `reservedAt` (DateTime?), `soldPrice` (Int?), `soldAt` (DateTime?), `handoverCompleted` (Boolean)
+
+**9. API routes:**
+- `GET /api/vehicles/[id]/inquiries` — dotazy na vůz
+- `POST /api/vehicles/[id]/inquiries` — nový dotaz (z webu)
+- `PUT /api/vehicles/[id]/inquiries/[inquiryId]` — odpověď, změna stavu
+- `POST /api/vehicles/[id]/reserve` — rezervace
+- `POST /api/vehicles/[id]/handover` — předání (checklist + prodej)
+- `POST /api/vehicles/[id]/damage` — nahlášení poškození
+- `PUT /api/vehicles/[id]/damage/[damageId]/repair` — záznam opravy
+
+### Kontext:
+- Závisí na: TASK-016 (vozidla v systému), TASK-017 (předávací protokol), TASK-015 (PWA zprávy)
+- Propojení s TASK-017: předávací protokol se generuje jako smlouva s digitálním podpisem
+- Provize: sdílená logika s provizním systémem (TASK-015 provize, upřesnit v separátním tasku)
+- Email šablony: Resend (nabídka pojištění, financování, follow-up, recenze)
+- Push notifikace: nový dotaz, rezervace, prodej
+
+### Očekávaný výsledek:
+- Dotazy od kupujících v PWA se stavem a odpovídáním
+- Záznam prohlídek kupujícími
+- Jednání o ceně s historií
+- Rezervace vozu
+- Předávací checklist s digitálním protokolem
+- Automatický výpočet provize při prodeji
+- Nabídka pojištění a financování po prodeji
+- Follow-up a sběr recenzí
+- Záznam poškození vozu během inzerce
+
+---
+
+## TASK-026: Email systém — šablony, personalizace, odesílání z PWA
+Priorita: 2
+Stav: čeká
+Projekt: /Users/lunagroup/carmakler
+
+### Kompletní zadání:
+
+Implementovat emailový systém s personalizovanými šablonami. Makléř odesílá emaily přímo z PWA. Každý email má šablonu s proměnnými, podpis makléře a preview před odesláním.
+
+**1. Emailové šablony (7 typů):**
+
+Každá šablona: HTML + text verze, responsive design, Carmakler branding (logo, barvy), personalizovatelné proměnné.
+
+| # | Šablona | Proměnné | Kdy se posílá |
+|---|---|---|---|
+| 1 | **Prezentace Carmakler** | {prodejce_jmeno}, {makler_jmeno}, {makler_telefon}, {makler_foto}, {makler_podpis} | Před schůzkou s prodejcem |
+| 2 | **Návrh smlouvy** | {prodejce_jmeno}, {auto_nazev}, {vin}, {cena} + PDF příloha | Po nabírání auta |
+| 3 | **Follow-up po schůzce** | {prodejce_jmeno}, {auto_nazev}, {makler_jmeno} | Po nabírání — "auto jsem zadal, budu informovat" |
+| 4 | **Nabídka pojištění** | {kupujici_jmeno}, {auto_nazev}, {auto_rok} | Po prodeji — kupujícímu |
+| 5 | **Nabídka financování** | {kupujici_jmeno}, {auto_nazev}, {cena}, {splatka_mesicni} | Při zájmu o financování |
+| 6 | **Doporučení snížení ceny** | {prodejce_jmeno}, {auto_nazev}, {aktualni_cena}, {nova_cena}, {duvod} | Když se auto neprodává |
+| 7 | **Auto prodáno** | {prodejce_jmeno}, {auto_nazev}, {prodejni_cena} | Po prodeji — prodejci |
+
+**2. Podpis makléře:**
+
+- Každý email má na konci podpis makléře:
+  ```
+  S pozdravem,
+  {jméno makléře}
+  Makléř Carmakler
+  📞 {telefon}
+  📧 {email}
+  🌐 carmakler.cz/makler/{slug}
+  [Carmakler logo]
+  ```
+- Podpis se generuje automaticky z profilu makléře
+- Volitelně: profilová fotka makléře v podpisu
+
+**3. Odesílání z PWA:**
+
+- V appce na různých místech tlačítko "Poslat email":
+  - Detail vozu → "Poslat prodejci" (follow-up, změna ceny, prodáno)
+  - Kontakt z kroku 1 flow → "Poslat prezentaci"
+  - Smlouvy → "Poslat smlouvu" (PDF příloha)
+  - Po prodeji → "Nabídnout pojištění", "Nabídnout financování"
+
+- **Flow odeslání emailu:**
+  1. Makléř klikne na typ emailu
+  2. Systém předvyplní šablonu s daty z kontextu (jméno, auto, cena...)
+  3. **Preview** — makléř vidí jak bude email vypadat
+  4. Makléř může **upravit text** (editovatelná textarea nad šablonou)
+  5. Tlačítko "Odeslat" → API → Resend
+  6. Potvrzení: "Email odeslán na {email}"
+  7. Záznam v historii emailů vozu
+
+**4. Prezentační šablona "O nás":**
+
+Speciální šablona — makléř posílá prodejci před schůzkou. Obsahuje:
+- Logo Carmakler
+- "Dobrý den, {prodejce_jmeno},"
+- "Jmenuji se {makler_jmeno} a jsem certifikovaný makléř Carmakler."
+- Jak Carmakler funguje (3-4 bodů s ikonkami):
+  - ✅ Bezplatně nafotíme a zadáme vaše auto
+  - ✅ Inzerujeme na předních portálech
+  - ✅ Auto zůstává u vás, můžete ho používat
+  - ✅ Platíte pouze provizi z úspěšného prodeje
+- Proč Carmakler (trust):
+  - Síť X makléřů po celé ČR
+  - Průměrné hodnocení X.X hvězdiček
+  - X prodaných aut
+- Podpis makléře (foto, telefon, email)
+- CTA: "Zavolejte mi nebo odpovězte na tento email"
+
+**5. Technická implementace:**
+- Backend: Resend API přes `POST /api/emails/send`
+- Šablony: React Email (`@react-email/components`) nebo HTML šablony v `lib/email-templates/`
+- Přílohy: PDF smlouvy (URL z Cloudinary)
+- Tracking: uložit do DB každý odeslaný email (emailId, typ, příjemce, vehicleId, datum, status)
+- Rate limiting: max 50 emailů/den na makléře
+
+**6. API routes:**
+- `POST /api/emails/send` — odeslání emailu (typ, příjemce, vehicleId, customText)
+- `GET /api/emails/preview` — preview šablony s daty
+- `GET /api/emails/history/[vehicleId]` — historie emailů k vozu
+- `GET /api/emails/templates` — seznam dostupných šablon
+
+**7. Nový Prisma model:**
+```
+model EmailLog {
+  id          String   @id @default(cuid())
+  type        String   // PRESENTATION, CONTRACT, FOLLOWUP, INSURANCE, FINANCING, PRICE_CHANGE, SOLD
+  senderId    String
+  sender      User     @relation(fields: [senderId], references: [id])
+  vehicleId   String?
+  vehicle     Vehicle? @relation(fields: [vehicleId], references: [id])
+  recipientEmail String
+  recipientName  String?
+  subject     String
+  status      String   // SENT, DELIVERED, OPENED, FAILED
+  resendId    String?  // ID z Resend API
+  createdAt   DateTime @default(now())
+}
+```
+
+### Kontext:
+- Závisí na: TASK-013 (auth — podpis z profilu), TASK-017 (smlouvy — PDF přílohy)
+- Resend: API klíč v env RESEND_API_KEY, doména carmakler.cz ověřená
+- React Email: pro HTML šablony s komponentami
+- Přílohy: PDF smlouvy z Cloudinary URL
+- Offline: emaily nelze posílat offline → zobrazit "Vyžaduje připojení"
+
+### Očekávaný výsledek:
+- 7 emailových šablon s personalizací a Carmakler brandingem
+- Podpis makléře generovaný z profilu
+- Odesílání přímo z PWA s preview a editací textu
+- Prezentační šablona "O nás" pro prodejce
+- Historie odeslaných emailů u každého vozu
+- PDF přílohy (smlouvy)
+
+---
+
+## TASK-027: Gamifikace a statistiky makléřů
+Priorita: 2
+Stav: čeká
+Projekt: /Users/lunagroup/carmakler
+
+### Kompletní zadání:
+
+Implementovat motivační systém pro makléře — úrovně, žebříček, achievementy, detailní statistiky a automatické notifikace.
+
+**1. Úrovně makléřů:**
+
+| Úroveň | Podmínka | Badge | Benefit |
+|---|---|---|---|
+| Junior makléř | 0-4 prodejů celkem | 🥉 Bronzový | — |
+| Makléř | 5-19 prodejů | 🥈 Stříbrný | Zobrazení na webu |
+| Senior makléř | 20-49 prodejů | 🥇 Zlatý | Prioritní leady |
+| Top makléř | 50+ prodejů | 💎 Diamantový | TOP pozice na webu, speciální badge |
+
+- Úroveň se počítá automaticky z celkového počtu prodejů
+- Badge se zobrazuje: v PWA profilu, na veřejném profilu makléře na webu, v detailu vozu vedle jména makléře
+- Při dosažení nové úrovně: push notifikace + gratulace v dashboardu
+
+**2. Měsíční žebříček:**
+
+- **TOP 10 makléřů** tento měsíc (podle celkových provizí)
+- Zobrazení v PWA dashboardu: pořadí, jméno, počet prodejů, provize
+- Makléř vidí své pořadí i když není v TOP 10: "Vaše pozice: 15. z 48 makléřů"
+- Na konci měsíce: notifikace s výsledky ("Tento měsíc jste byl 3. nejlepší makléř!")
+- Manažer vidí žebříček svých makléřů
+
+**3. Achievementy:**
+
+| Achievement | Podmínka | Ikona |
+|---|---|---|
+| První nabírání | Nabral první auto | 🚗 |
+| První prodej | Prodal první auto | 🎉 |
+| Rychlý prodej | Auto prodáno do 7 dní | ⚡ |
+| Pětka | 5 prodejů za měsíc | 🖐️ |
+| Desítka | 10 prodejů za měsíc | 🔟 |
+| Milionář | Celkové provize přes 1M Kč | 💰 |
+| Foto profesionál | 20+ fotek u jednoho auta | 📸 |
+| Perfekcionista | 5x schválení na první pokus (bez vrácení) | ✨ |
+| Věrný klient | Prodejce přes něj prodal 2+ aut | 🤝 |
+
+- Achievementy se zobrazují v profilu makléře (PWA + veřejný web)
+- Při získání: push notifikace + animace v dashboardu
+- Uložení v DB: `UserAchievement` (userId, achievementId, unlockedAt)
+
+**4. Statistiky makléře (`/app/stats`):**
+
+- **Přehled:**
+  - Celkem nabraných aut / celkem prodaných / konverzní poměr
+  - Průměrná doba prodeje (dny)
+  - Průměrná provize
+  - Celkové provize (all time)
+- **Porovnání s průměrem:**
+  - "Vaše průměrná doba prodeje: 18 dní (průměr všech: 25 dní)" — s vizuálním indikátorem (lepší/horší)
+  - "Váš konverzní poměr: 78% (průměr: 65%)"
+- **Grafy:**
+  - Prodeje po měsících (bar chart, posledních 6 měsíců)
+  - Provize po měsících (line chart)
+- **Nejúspěšnější kategorie:**
+  - Top značky (kolik aut jaké značky prodal)
+  - Top cenový segment (do 300k / 300-600k / 600k-1M / nad 1M)
+
+**5. Automatický návrh snížení ceny:**
+
+- Auto je aktivní 30 dní bez prodeje → systém:
+  - Spočítá průměrnou dobu prodeje podobných aut
+  - Navrhne snížení ceny (např. -5% nebo -10%)
+  - Pošle makléři notifikaci: "Auto {název} je v nabídce 30 dní. Doporučujeme snížit cenu z {cena} na {nova_cena}."
+  - Makléř může: přijmout (cena se změní + notifikace prodejci) / zamítnout / upravit
+- Po 60 dnech bez prodeje → notifikace manažerovi: "Auto {název} makléře {jméno} se neprodalo 60 dní"
+- Po 90 dnech → zvážit deaktivaci, kontaktovat prodejce
+
+**6. Kalkulačka financování (`/app/financing-calculator`):**
+
+- Makléř zadá:
+  - Cena vozu
+  - Akontace (%, slider 0-50%)
+  - Počet splátek (select: 12, 24, 36, 48, 60, 72 měsíců)
+  - Úroková sazba (předvyplněná, editovatelná)
+- Výpočet:
+  - Měsíční splátka
+  - Celkem zaplaceno
+  - Přeplatek
+- Tlačítko "Poslat nabídku kupujícímu" → email šablona č.5 (financování) s vyplněnými údaji
+- Orientační výpočet — disclaimer: "Jedná se o orientační kalkulaci. Skutečnou nabídku poskytne leasingová společnost."
+
+**7. Nové Prisma modely:**
+```
+model UserAchievement {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  achievementKey String  // FIRST_VEHICLE, FIRST_SALE, QUICK_SALE, etc.
+  unlockedAt    DateTime @default(now())
+
+  @@unique([userId, achievementKey])
+}
+
+model PriceReduction {
+  id          String   @id @default(cuid())
+  vehicleId   String
+  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id])
+  currentPrice Int
+  suggestedPrice Int
+  reason      String
+  status      String   // PENDING, ACCEPTED, REJECTED, MODIFIED
+  acceptedPrice Int?
+  respondedAt DateTime?
+  createdAt   DateTime @default(now())
+}
+```
+
+- Rozšíření User modelu: `level` (String: JUNIOR, BROKER, SENIOR, TOP), `totalSales` (Int), `achievements` relation
+
+### Kontext:
+- Závisí na: TASK-015 (PWA dashboard — zobrazení statistik, žebříčku), TASK-025 (prodeje — data pro výpočty)
+- Výpočty úrovní a achievementů: spouštět po každém prodeji (trigger v prodejním flow)
+- Žebříček: API endpoint `GET /api/broker/leaderboard`
+- Grafy: použít knihovnu Recharts nebo Chart.js (lightweight)
+- Cron/scheduled: kontrola 30/60/90 dní bez prodeje (nebo při každém načtení dashboardu)
+
+### Očekávaný výsledek:
+- 4 úrovně makléřů s automatickým postupem a badges
+- Měsíční žebříček TOP 10 s pozicí makléře
+- 9 achievementů s notifikacemi
+- Detailní statistiky s grafy a porovnáním
+- Automatický návrh snížení ceny po 30 dnech
+- Kalkulačka financování s odesláním nabídky emailem
 
 ---
 

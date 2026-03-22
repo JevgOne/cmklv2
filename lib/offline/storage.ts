@@ -113,6 +113,83 @@ export class OfflineStorage {
     const db = await getDB();
     return db.get("vinCache", vin);
   }
+
+  // ============================================
+  // CONTRACTS
+  // ============================================
+
+  async saveContract(
+    id: string,
+    vehicleId: string,
+    data: Record<string, unknown>,
+    status: string = "DRAFT"
+  ): Promise<void> {
+    const db = await getDB();
+    await db.put("contracts", {
+      id,
+      vehicleId,
+      data,
+      status,
+      createdAt: Date.now(),
+    });
+  }
+
+  async getContracts(): Promise<
+    Array<{
+      id: string;
+      vehicleId: string;
+      data: Record<string, unknown>;
+      status: string;
+      createdAt: number;
+    }>
+  > {
+    const db = await getDB();
+    const all = await db.getAll("contracts");
+    // Sort by createdAt descending
+    return all.sort((a, b) => b.createdAt - a.createdAt);
+  }
+
+  async getContractsByStatus(
+    status: string
+  ): Promise<
+    Array<{
+      id: string;
+      vehicleId: string;
+      data: Record<string, unknown>;
+      status: string;
+      createdAt: number;
+    }>
+  > {
+    const db = await getDB();
+    return db.getAllFromIndex("contracts", "by-status", status);
+  }
+
+  async getContract(
+    id: string
+  ): Promise<{
+    id: string;
+    vehicleId: string;
+    data: Record<string, unknown>;
+    status: string;
+    createdAt: number;
+  } | undefined> {
+    const db = await getDB();
+    return db.get("contracts", id);
+  }
+
+  async deleteContract(id: string): Promise<void> {
+    const db = await getDB();
+    await db.delete("contracts", id);
+  }
+
+  async updateContractStatus(id: string, status: string): Promise<void> {
+    const db = await getDB();
+    const contract = await db.get("contracts", id);
+    if (contract) {
+      contract.status = status;
+      await db.put("contracts", contract);
+    }
+  }
 }
 
 export const offlineStorage = new OfflineStorage();

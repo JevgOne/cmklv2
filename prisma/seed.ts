@@ -9,6 +9,7 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log("Clearing existing data...");
+  await prisma.contract.deleteMany();
   await prisma.notification.deleteMany();
   await prisma.commission.deleteMany();
   await prisma.vehicleChangeLog.deleteMany();
@@ -1015,6 +1016,84 @@ async function main() {
   console.log("Created 7 notifications");
 
   // ============================================
+  // 7. CONTRACTS
+  // ============================================
+
+  console.log("Seeding contracts...");
+
+  await prisma.contract.createMany({
+    data: [
+      {
+        type: "BROKERAGE",
+        vehicleId: v1.id,
+        brokerId: janNovak.id,
+        sellerName: "František Horák",
+        sellerPhone: "+420602111222",
+        sellerEmail: "horak@email.cz",
+        sellerAddress: "Vinohradská 42, Praha 2",
+        sellerIdNumber: "8501151234",
+        sellerIdCard: "204567890",
+        content: JSON.stringify({
+          type: "BROKERAGE",
+          vehicleName: "Škoda Octavia RS Combi",
+          vin: "TMBGE61Z9N2012345",
+          price: 589000,
+          commission: 29450,
+          sections: ["Hlavička", "Strany", "Předmět", "Podmínky", "Podpisy"],
+        }),
+        price: 589000,
+        commission: 29450,
+        sellerSignature: null,
+        brokerSignature: null,
+        signedAt: new Date("2026-03-10T14:30:00"),
+        signedLocation: "Praha",
+        status: "SIGNED",
+      },
+      {
+        type: "HANDOVER",
+        vehicleId: v2.id,
+        brokerId: petraMala.id,
+        sellerName: "Milan Dvořák",
+        sellerPhone: "+420603222333",
+        content: JSON.stringify({
+          type: "HANDOVER",
+          vehicleName: "BMW 330i xDrive",
+          vin: "WBA5E51040G123456",
+          mileageAtHandover: 28000,
+          fuelLevel: "3/4",
+          accessories: ["2x klíče", "Servisní knížka", "Povinná výbava"],
+          damages: [],
+          sections: ["Hlavička", "Strany", "Stav vozidla", "Příslušenství", "Podpisy"],
+        }),
+        price: 1150000,
+        commission: 57500,
+        status: "SENT",
+      },
+      {
+        type: "BROKERAGE",
+        vehicleId: v3.id,
+        brokerId: janNovak.id,
+        sellerName: "Jiřina Veselá",
+        sellerPhone: "+420604333444",
+        sellerEmail: "vesela@email.cz",
+        content: JSON.stringify({
+          type: "BROKERAGE",
+          vehicleName: "Volkswagen Golf GTI",
+          vin: "WVWZZZCDZMW234567",
+          price: 485000,
+          commission: 25000,
+          sections: ["Hlavička", "Strany", "Předmět", "Podmínky", "Podpisy"],
+        }),
+        price: 485000,
+        commission: 25000,
+        status: "DRAFT",
+      },
+    ],
+  });
+
+  console.log("Created 3 contracts");
+
+  // ============================================
   // SUMMARY
   // ============================================
 
@@ -1024,6 +1103,7 @@ async function main() {
   const imageCount = await prisma.vehicleImage.count();
   const commissionCount = await prisma.commission.count();
   const notificationCount = await prisma.notification.count();
+  const contractCount = await prisma.contract.count();
 
   console.log("\n--- Seed complete ---");
   console.log(`Regions:       ${regionCount}`);
@@ -1032,6 +1112,7 @@ async function main() {
   console.log(`Images:        ${imageCount}`);
   console.log(`Commissions:   ${commissionCount}`);
   console.log(`Notifications: ${notificationCount}`);
+  console.log(`Contracts:     ${contractCount}`);
   console.log("\nDemo login: admin@carmakler.cz / heslo123");
 }
 
