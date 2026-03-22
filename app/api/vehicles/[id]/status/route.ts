@@ -9,7 +9,7 @@ import { prisma } from "@/lib/prisma";
 /* ------------------------------------------------------------------ */
 
 const statusChangeSchema = z.object({
-  status: z.enum(["PENDING", "ACTIVE", "REJECTED", "SOLD"]),
+  status: z.enum(["PENDING", "ACTIVE", "REJECTED", "RESERVED", "SOLD"]),
   reason: z.string().optional(),
 });
 
@@ -18,7 +18,8 @@ const ALLOWED_TRANSITIONS: Record<string, string[]> = {
   DRAFT: ["PENDING"],              // Makléř odešle ke schválení
   PENDING: ["ACTIVE", "REJECTED"], // Admin schválí nebo zamítne
   REJECTED: ["PENDING"],           // Makléř opraví a znovu odešle
-  ACTIVE: ["SOLD"],                // Makléř označí jako prodané
+  ACTIVE: ["RESERVED", "SOLD"],    // Makléř rezervuje nebo prodá
+  RESERVED: ["ACTIVE", "SOLD"],    // Zrušení rezervace nebo prodej
 };
 
 // Přechody vyžadující admin roli

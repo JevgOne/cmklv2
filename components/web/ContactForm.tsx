@@ -10,10 +10,11 @@ import { Button } from "@/components/ui/Button";
 export interface ContactFormProps {
   vehicleName?: string;
   vehicleId?: string;
+  brokerId?: string;
   className?: string;
 }
 
-export function ContactForm({ vehicleName, vehicleId, className }: ContactFormProps) {
+export function ContactForm({ vehicleName, vehicleId, brokerId, className }: ContactFormProps) {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -33,21 +34,43 @@ export function ContactForm({ vehicleName, vehicleId, className }: ContactFormPr
     setError(null);
 
     try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          phone,
-          email,
-          message: message + (wantsVisit ? "\n\nMám zájem o prohlídku vozidla." : ""),
-          vehicleId: vehicleId || undefined,
-        }),
-      });
+      const fullMessage = message + (wantsVisit ? "\n\nMám zájem o prohlídku vozidla." : "");
 
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Nepodařilo se odeslat poptávku");
+      // Pokud je to maklerske vozidlo, vytvorit VehicleInquiry
+      if (vehicleId && brokerId) {
+        const inquiryRes = await fetch(`/api/vehicles/${vehicleId}/inquiries`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            buyerName: name,
+            buyerPhone: phone,
+            buyerEmail: email || undefined,
+            message: fullMessage,
+          }),
+        });
+
+        if (!inquiryRes.ok) {
+          const data = await inquiryRes.json();
+          throw new Error(data.error || "Nepodařilo se odeslat poptávku");
+        }
+      } else {
+        // Obecny kontaktni formular
+        const res = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name,
+            phone,
+            email,
+            message: fullMessage,
+            vehicleId: vehicleId || undefined,
+          }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || "Nepodařilo se odeslat poptávku");
+        }
       }
 
       setSubmitted(true);

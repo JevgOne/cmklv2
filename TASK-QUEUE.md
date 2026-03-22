@@ -2108,23 +2108,241 @@ enum PaymentStatus {
 - `PUT /api/orders/[id]/status` — změna stavu objednávky
 - `POST /api/parts/import` — hromadný import z CSV
 
+**DOPLNĚNO — Kritické funkce které v původním zadání chyběly:**
+
+**A) Split objednávky podle dodavatele (SubOrder):**
+
+Zákazník může mít v košíku díly od 3 různých dodavatelů — každý s jiným doručením. Jeden Order se rozpadne na SubOrders per dodavatel.
+
+```
+Order (zákazník vidí jednu objednávku)
+├── orderNumber: "CM-2026-00123"
+├── buyerEmail, buyerName, buyerPhone (guest nebo BUYER)
+├── buyerAddress
+├── paymentMethod: CARD | TRANSFER | COD
+├── paymentStatus, totalPrice, stripePaymentIntentId
+├── guestToken (pro guest sledování)
+│
+├── SubOrder A (vrakoviště Brno — osobní odběr)
+│   ├── supplierId, deliveryMethod: PICKUP, deliveryPrice: 0
+│   ├── status: NEW → CONFIRMED → READY_FOR_PICKUP → COMPLETED
+│   ├── items: [OrderItem: přední nárazník, 3 200 Kč]
+│   └── supplierPayout: 3 200 * 0.85 = 2 720 Kč (po 15% provizi)
+│
+├── SubOrder B (Carmakler Shop = aftermarket Auto Kelly — zásilkovna)
+│   ├── deliveryMethod: ZASILKOVNA, deliveryPrice: 89 Kč
+│   ├── trackingNumber, zasilkovnaPointId
+│   ├── status: NEW → CONFIRMED → SHIPPED → DELIVERED
+│   ├── items: [OrderItem: brzdový kotouč TRW, 1 890 Kč]
+│   └── supplierPayout: N/A (Carmakler sám prodává, marže v ceně)
+│
+└── SubOrder C (vrakoviště Praha — PPL)
+    ├── deliveryMethod: PPL, deliveryPrice: 149 Kč
+    ├── trackingNumber
+    ├── items: [OrderItem: zpětné zrcátko, 1 120 Kč]
+    └── supplierPayout: 1 120 * 0.85 = 952 Kč
+```
+
+Pravidla:
+- Jeden checkout, jedna platba, více doručení (zákazník vybírá dopravu per dodavatel)
+- Každý SubOrder má vlastní stav (nezávislý fulfillment)
+- Stav Order = nejhorší stav SubOrders
+- Aftermarket díly = Carmakler je prodejce (zákazník nekomunikuje s Auto Kelly)
+- Použité díly = vrakoviště je prodejce, Carmakler zprostředkovatel (15% provize)
+
+**B) Guest checkout (bez registrace — P0):**
+
+- Zákazník NEMUSÍ vytvářet účet pro objednání
+- Zadá jen: email, telefon, jméno, adresa doručení
+- Po objednávce dostane email s unikátním odkazem na sledování (`/objednavky/sledovani/[token]`)
+- Po objednávce nabídka: "Chcete sledovat budoucí objednávky? Vytvořte si účet." (volitelné)
+- Registrovaný zákazník = sdílená role BUYER z TASK-019
+
+**C) Rezervace unikátních dílů při checkoutu:**
+
+Použité díly jsou unikáty (quantity=1). Bez rezervace dva zákazníci objednají totéž.
+
+- Díl se rezervuje při **zahájení checkoutu** (ne při přidání do košíku)
+- Rezervace trvá **30 minut**
+- Po zaplacení → SOLD (definitivní)
+- Po 30 min bez platby → automaticky uvolněno (cron/background job)
+- Databázová transakce s optimistickým zamykáním (race condition prevence)
+- Pokud je díl RESERVED a jiný zákazník chce přidat → "Díl je dočasně rezervován"
+
+**D) Vrácení a reklamace (zákonná povinnost):**
+
+- **Odstoupení od smlouvy (14 dní):** zákonný nárok u distančního prodeje
+  - Platí jen pro díly s doručením (ne osobní odběr)
+  - Použité díly: vracení pokud nebyl namontován/změněn
+  - Náklady na zpětné zaslání nese zákazník
+  - Flow: zákazník klikne "Chci vrátit" → vybere důvod → systém generuje RMA číslo → zákazník odešle zpět → dodavatel zkontroluje → schválí → Stripe refund
+
+- **Reklamace (12-24 měsíců záruky):**
+  - Nové díly: 24 měsíců
+  - Použité díly: 12 měsíců (zákon pro e-shop)
+  - Flow: zákazník klikne "Reklamovat" → fotky závady + popis → dodavatel + Carmakler BackOffice řeší → 30 dní na vyřízení
+
+```
+model Return {
+  id          String @id @default(cuid())
+  subOrderId  String
+  subOrder    SubOrder @relation(fields: [subOrderId], references: [id])
+  type        ReturnType   // WITHDRAWAL (odstoupení) | COMPLAINT (reklamace)
+  reason      String
+  description String?
+  images      Json?        // URLs fotek
+  rmaNumber   String @unique
+  status      ReturnStatus // REQUESTED → SHIPPED_BACK → RECEIVED → APPROVED → REFUNDED | REJECTED
+  refundAmount Int?
+  resolution  String?
+  resolvedAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum ReturnType { WITHDRAWAL COMPLAINT }
+enum ReturnStatus { REQUESTED SHIPPED_BACK RECEIVED APPROVED REFUNDED REJECTED }
+```
+
+**E) Výpočet dopravy podle rozměrů/hmotnosti:**
+
+- Přidat do Part modelu: `weight` (Int? v gramech), `dimensions` (Json? — délka/šířka/výška v cm)
+- Velké díly (>30 kg nebo >120 cm) → zásilkovna nedostupná, jen PPL/ČP nebo osobní odběr
+- Dopravné se počítá per SubOrder (ne per díl)
+- Integrace API: Zásilkovna widget (výběr výdejního místa), PPL/ČP paušální sazby
+
+**F) Vyhledávání podle OEM čísla + křížové reference:**
+
+Zákazník často zná OEM číslo dílu. Zadá "1K0615301AC" → vidí originální díl + levnější aftermarket alternativy.
+
+```
+model PartCrossReference {
+  id                String @id @default(cuid())
+  oemNumber         String       // Originální OEM číslo
+  aftermarketNumber String       // Aftermarket číslo
+  manufacturer      String       // Výrobce (TRW, Bosch, LUK...)
+  partId            String?      // Propojení na Part pokud existuje
+  part              Part?        @relation(fields: [partId], references: [id])
+  @@index([oemNumber])
+  @@index([aftermarketNumber])
+}
+```
+
+- Feed import automaticky plní křížové reference
+- Na detailu dílu sekce "Alternativní čísla dílu"
+- Vyhledávání hledá přes OEM i aftermarket čísla
+
+**G) Stripe Connect pro marketplace platby (fáze 2):**
+
+- Carmakler = Stripe Connect platform
+- Vrakoviště = connected accounts
+- Zákazník platí Carmakler → po DELIVERED se automaticky vytvoří Stripe Transfer na vrakoviště (minus 15%)
+- Aftermarket díly: Carmakler sám nakupuje a prodává (žádný Transfer, marže je v ceně)
+
+**H) SEO struktura:**
+
+URL:
+```
+/dily                                    → hlavní landing
+/dily/motor                              → kategorie
+/dily/skoda                              → značka
+/dily/skoda/octavia                      → značka + model
+/dily/skoda/octavia/2017                 → značka + model + rok
+/dily/predni-naraznik-skoda-octavia-abc  → detail dílu (slug)
+```
+
+- Title, meta description, H1 optimalizované per stránka
+- JSON-LD Product schema na detailu dílu (name, image, price, availability, brand, sku)
+- Dynamická sitemap.xml se všemi díly a kategoriemi
+- Breadcrumbs (JSON-LD BreadcrumbList)
+- Automatické alt texty fotek: "Přední nárazník Škoda Octavia III 2017 - použitý, funkční"
+- FAQ sekce na kategoriích (FAQ schema markup)
+
+**I) Zákaznický účet (sdílený BUYER z TASK-019):**
+
+- Historie objednávek
+- Sledování stavu objednávek
+- Uložené adresy (doručení, fakturační)
+- **"Moje garáž"** — zákazník uloží své auto (VIN nebo značka/model/rok) → při návštěvě vidí jen kompatibilní díly
+- Oblíbené díly (wishlist)
+- Notifikace "opět skladem"
+- Hodnocení dílů/dodavatelů (jen po nákupu, 1-5 hvězd + text)
+
+**J) Rozšíření Prisma modelů:**
+
+Nové modely:
+- `SubOrder` — dílčí objednávka per dodavatel
+- `Return` + `ReturnImage` — vrácení a reklamace
+- `PartCrossReference` — křížové reference OEM čísel
+- `SupplierReview` — hodnocení dodavatelů
+- `CustomerGarage` — uložené auto zákazníka
+
+Rozšíření Part:
+- `weight` Int? (gramy), `dimensions` Json? (cm), `slug` String unique
+- `wholesalePrice` Int?, `feedConfigId` String?, `externalId` String?, `manufacturer` String?, `warranty` String?
+
+Rozšíření Order:
+- `orderNumber` String unique, `guestEmail`, `guestName`, `guestPhone`, `guestToken` String unique
+- `buyerId` optional (guest checkout)
+
+**K) Rozšířené API routes:**
+
+```
+// Díly
+GET    /api/parts/search?q=OEM_CISLO    — vyhledávání OEM + křížové reference
+GET    /api/parts/[id]/alternatives     — aftermarket alternativy
+
+// Objednávky (rozšíření)
+GET    /api/orders/track/[token]        — sledování pro guest (bez auth)
+POST   /api/orders/[id]/returns         — žádost o vrácení/reklamaci
+GET    /api/orders/[id]/returns         — stav vrácení
+
+// SubOrders
+PUT    /api/suborders/[id]/status       — změna stavu (dodavatel)
+PUT    /api/suborders/[id]/tracking     — zadání tracking čísla
+
+// Doprava
+POST   /api/shipping/calculate          — výpočet dopravného per SubOrder
+GET    /api/shipping/zasilkovna-points  — proxy na Zásilkovna API
+
+// Zákaznický účet
+POST   /api/garage                      — uložení auta do garáže
+GET    /api/garage                      — moje auta
+POST   /api/parts/[id]/notify-stock     — notifikace "opět skladem"
+POST   /api/suppliers/[id]/review       — hodnocení dodavatele
+
+// Stripe Connect
+POST   /api/stripe/connect/onboard     — onboarding dodavatele na Stripe Connect
+POST   /api/stripe/connect/payout      — výplata dodavateli
+```
+
 ### Kontext:
-- Eshop je nová sekce webu `/dily/` + nová PWA `/parts/` pro dodavatele
-- Sdílí auth systém s hlavní platformou (NextAuth, nová role PARTS_SUPPLIER)
-- Platby: Stripe pro platby kartou (fáze 2, v MVP jen bankovní převod a dobírka)
+- Závisí na: TASK-013 (auth — sdílená role BUYER), TASK-019 (kupující účet — sdílený), TASK-031 (partneři vrakoviště = dodavatelé dílů)
+- Stripe Connect: Carmakler = platform, vrakoviště = connected accounts
+- Zásilkovna API: widget pro výběr výdejního místa + API pro generování zásilek
 - VIN dekodér: sdílený pro filtrování kompatibilních dílů
 - Fotky: Cloudinary
-- Email: Resend (potvrzení objednávky, notifikace dodavateli)
-- PWA pro dodavatele: jednoduchý manifest, offline přidávání dílů
+- Email: Resend (potvrzení, stav, tracking, vrácení, hodnocení)
+- SEO: next/metadata, JSON-LD, sitemap.xml
+- Cron: expirace rezervací (30 min), feed import, notifikace "opět skladem"
 
 ### Očekávaný výsledek:
-- Veřejný eshop s autodíly (katalog, filtrování, detail, košík, objednávka)
-- PWA pro dodavatele (3-krokové přidání dílu, správa objednávek)
-- Registrace a ověření dodavatelů
-- VIN kompatibilita (zákazník zadá VIN → vidí jen kompatibilní díly)
-- Objednávkový systém s tracking stavů
-- Offline přidávání dílů pro dodavatele
-- Hromadný import z CSV
+- Veřejný eshop s autodíly (katalog, filtrování, detail, košík, checkout)
+- **3 zdroje dílů:** použité (vrakoviště), nové aftermarket (feed import), manuální
+- **Guest checkout** bez registrace (P0)
+- **Split objednávky** per dodavatel (SubOrder) s nezávislým fulfillmentem
+- **Rezervace unikátních dílů** (30 min timeout při checkoutu)
+- **Vrácení/reklamace** (14 dní odstoupení, 12-24 měsíců záruka)
+- VIN kompatibilita + OEM vyhledávání + křížové reference
+- **Výpočet dopravy** podle rozměrů/hmotnosti + Zásilkovna widget
+- Stripe Connect pro automatické výplaty dodavatelům (minus 15%)
+- SEO optimalizace (URL struktura, JSON-LD, sitemap, meta)
+- "Moje garáž" — uložené auto zákazníka pro filtrování
+- Hodnocení dodavatelů (po nákupu)
+- Hromadný import CSV + XML feed import od velkoobchodů (Auto Kelly, Elit...)
+- Partnerský portál pro vrakoviště (TASK-031) + PWA pro rychlé přidání dílů
+- Offline přidávání dílů
+- 25+ API routes
 
 ---
 
@@ -2666,7 +2884,7 @@ Manažer schvaluje inzeráty svých makléřů. BackOffice schvaluje inzeráty m
 
 ## TASK-024: Lead management — příjem leadů, přiřazení, tracking
 Priorita: 1
-Stav: zpracovává se
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:
@@ -2822,6 +3040,7 @@ enum LeadStatus {
 
 ## TASK-025: Prodejní flow — od dotazu po předání vozu
 Priorita: 1
+Stav: zpracovává se
 Stav: čeká
 Projekt: /Users/lunagroup/carmakler
 

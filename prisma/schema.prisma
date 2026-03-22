@@ -61,6 +61,10 @@ model User {
   aiConversations AiConversation[]
   sentInvitations Invitation[]     @relation("ManagerInvitations")
 
+  // Prodejní flow relace
+  vehicleInquiries VehicleInquiry[] @relation("BrokerInquiries")
+  damageReports    DamageReport[]   @relation("DamageReports")
+
   // Lead management relace
   assignedLeads   Lead[]           @relation("AssignedLeads")
   assignedByLeads Lead[]           @relation("AssignedByLeads")
@@ -221,13 +225,24 @@ model Vehicle {
   // Stats
   viewCount Int @default(0)
 
+  // Rezervace a prodej
+  reservedFor        String?
+  reservedAt         DateTime?
+  reservedPrice      Int?
+  soldPrice          Int?
+  soldAt             DateTime?
+  handoverCompleted  Boolean   @default(false)
+  handoverDate       DateTime?
+
   // Relace
-  images      VehicleImage[]
-  changeLog   VehicleChangeLog[]
-  commissions Commission[]
-  contracts   Contract[]
-  listing     Listing?
-  leads       Lead[]
+  images        VehicleImage[]
+  changeLog     VehicleChangeLog[]
+  commissions   Commission[]
+  contracts     Contract[]
+  listing       Listing?
+  leads         Lead[]
+  inquiries     VehicleInquiry[]
+  damageReports DamageReport[]
 
   // Timestamps
   createdAt   DateTime  @default(now())
@@ -270,6 +285,69 @@ model VehicleChangeLog {
   createdAt DateTime @default(now())
 
   @@index([vehicleId])
+}
+
+// ============================================
+// PRODEJNÍ FLOW
+// ============================================
+
+model VehicleInquiry {
+  id        String  @id @default(cuid())
+  vehicleId String
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  brokerId  String
+  broker    User    @relation("BrokerInquiries", fields: [brokerId], references: [id])
+
+  // Kupující
+  buyerName  String
+  buyerPhone String
+  buyerEmail String?
+  message    String
+
+  // Stav dotazu
+  status String @default("NEW") // NEW, REPLIED, VIEWING_SCHEDULED, NEGOTIATING, RESERVED, SOLD, NO_INTEREST
+
+  // Odpověď makléře
+  reply     String?
+  repliedAt DateTime?
+
+  // Prohlídka
+  viewingDate   DateTime?
+  viewingResult String? // INTERESTED, THINKING, NO_INTEREST
+
+  // Cena
+  offeredPrice Int?
+  agreedPrice  Int?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([vehicleId])
+  @@index([brokerId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model DamageReport {
+  id           String  @id @default(cuid())
+  vehicleId    String
+  vehicle      Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  reportedById String
+  reportedBy   User    @relation("DamageReports", fields: [reportedById], references: [id])
+
+  description String
+  severity    String // COSMETIC, FUNCTIONAL, SEVERE
+  images      String? // JSON array of image URLs
+
+  repaired   Boolean   @default(false)
+  repairedAt DateTime?
+  repairNote String?
+
+  createdAt DateTime @default(now())
+
+  @@index([vehicleId])
+  @@index([reportedById])
 }
 
 model Commission {

@@ -629,7 +629,7 @@ export default async function VehicleDetailPage({
       {isBrokerListing && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-6">
-            <ContactForm vehicleName={vehicleName} />
+            <ContactForm vehicleName={vehicleName} vehicleId={vehicle.id} brokerId={vehicle.brokerId || undefined} />
             <BrokerBox
               name={brokerName!}
               initials={brokerInitials}

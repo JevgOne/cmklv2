@@ -9,6 +9,8 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log("Clearing existing data...");
+  await prisma.damageReport.deleteMany();
+  await prisma.vehicleInquiry.deleteMany();
   await prisma.lead.deleteMany();
   await prisma.investment.deleteMany();
   await prisma.flipOpportunity.deleteMany();
@@ -2196,6 +2198,95 @@ async function main() {
   const leadCount = await prisma.lead.count();
   console.log(`Leads: ${leadCount}`);
 
+  // ============================================
+  // PRODEJNÍ FLOW — VehicleInquiry + DamageReport
+  // ============================================
+  console.log("Seeding vehicle inquiries and damage reports...");
+
+  await prisma.vehicleInquiry.create({
+    data: {
+      vehicleId: v1.id,
+      brokerId: janNovak.id,
+      buyerName: "Martin Horák",
+      buyerPhone: "+420777111222",
+      buyerEmail: "martin.horak@email.cz",
+      message: "Dobrý den, mám zájem o toto vozidlo. Lze domluvit prohlídku?",
+      status: "VIEWING_SCHEDULED",
+      reply: "Dobrý den, samozřejmě. Navrhuji příští středu v 14:00.",
+      repliedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      viewingDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+    },
+  });
+
+  await prisma.vehicleInquiry.create({
+    data: {
+      vehicleId: v1.id,
+      brokerId: janNovak.id,
+      buyerName: "Eva Nováková",
+      buyerPhone: "+420608333444",
+      message: "Je možné domluvit test drive?",
+      status: "NEW",
+    },
+  });
+
+  await prisma.vehicleInquiry.create({
+    data: {
+      vehicleId: v2.id,
+      brokerId: petraMala.id,
+      buyerName: "Tomáš Krejčí",
+      buyerPhone: "+420602555666",
+      buyerEmail: "tomas.krejci@seznam.cz",
+      message: "Jaká je finální cena? Mohu nabídnout 480 000 Kč.",
+      status: "NEGOTIATING",
+      reply: "Děkuji za nabídku. Pojďme se setkat a domluvit se.",
+      repliedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+      offeredPrice: 480000,
+    },
+  });
+
+  await prisma.vehicleInquiry.create({
+    data: {
+      vehicleId: v3.id,
+      brokerId: karelDvorak.id,
+      buyerName: "Lucie Procházková",
+      buyerPhone: "+420773777888",
+      message: "Uvažuji o koupi, je vůz stále k dispozici?",
+      status: "NO_INTEREST",
+      reply: "Ano, vůz je stále k dispozici.",
+      repliedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+      viewingDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+      viewingResult: "NO_INTEREST",
+    },
+  });
+
+  const vehicleInquiryCount = await prisma.vehicleInquiry.count();
+  console.log(`Vehicle Inquiries: ${vehicleInquiryCount}`);
+
+  await prisma.damageReport.create({
+    data: {
+      vehicleId: v4.id,
+      reportedById: janNovak.id,
+      description: "Drobný škrábanec na předním nárazníku vlevo",
+      severity: "COSMETIC",
+      images: JSON.stringify(["https://placehold.co/800x600/orange/white?text=Skrabanec"]),
+      repaired: true,
+      repairedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      repairNote: "Opraveno leštěním",
+    },
+  });
+
+  await prisma.damageReport.create({
+    data: {
+      vehicleId: v5.id,
+      reportedById: petraMala.id,
+      description: "Nefunkční klimatizace — nechladí",
+      severity: "FUNCTIONAL",
+    },
+  });
+
+  const damageReportCount = await prisma.damageReport.count();
+  console.log(`Damage Reports: ${damageReportCount}`);
+
   const regionCount = await prisma.region.count();
   const userCount = await prisma.user.count();
   const vehicleCount = await prisma.vehicle.count();
@@ -2229,6 +2320,8 @@ async function main() {
   console.log(`Order Items:    ${orderItemCount}`);
   console.log(`Invitations:    ${await prisma.invitation.count()}`);
   console.log(`Leads:          ${await prisma.lead.count()}`);
+  console.log(`Veh. Inquiries: ${await prisma.vehicleInquiry.count()}`);
+  console.log(`Damage Reports: ${await prisma.damageReport.count()}`);
   console.log("\nDemo login: admin@carmakler.cz / heslo123");
   console.log("Advertiser login: prodejce@email.cz / heslo123");
   console.log("Buyer login: kupujici@email.cz / heslo123");
