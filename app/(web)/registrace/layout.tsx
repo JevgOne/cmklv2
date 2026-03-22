@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Registrace makléře",
+  title: "Registrace",
   description:
-    "Zaregistrujte se jako automakléř CarMakléř. Vytvořte si účet a začněte prodávat.",
+    "Zaregistrujte se na CarMakléř. Prodávejte, kupujte nebo se staňte makléřem.",
   robots: { index: false, follow: true },
 };
 

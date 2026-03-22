@@ -66,7 +66,8 @@ const bodyTypeOptions = [
 ];
 
 const sellerTypeOptions = [
-  { value: "broker", label: "Makléř" },
+  { value: "broker", label: "Makléř (ověřeno)" },
+  { value: "dealer", label: "Autobazar" },
   { value: "private", label: "Soukromý prodejce" },
 ];
 

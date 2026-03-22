@@ -19,8 +19,11 @@ export interface VehicleData {
   badge: "verified" | "top" | "default";
   photo: string;
   slug?: string;
-  sellerType?: "broker" | "private";
+  sellerType?: "broker" | "private" | "dealer" | "listing";
   brokerName?: string;
+  listingType?: "BROKER" | "DEALER" | "PRIVATE";
+  isPremium?: boolean;
+  source?: "vehicle" | "listing";
 }
 
 export interface VehicleCardProps {
@@ -51,23 +54,38 @@ export function VehicleCard({ car, className }: VehicleCardProps) {
             {car.badge === "top" && (
               <Badge variant="top">⭐ TOP</Badge>
             )}
+            {car.isPremium && car.badge !== "top" && (
+              <Badge variant="top">⭐ TOP</Badge>
+            )}
+            {car.listingType === "DEALER" && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-500/90 backdrop-blur-sm rounded-lg text-[11px] font-semibold text-white">
+                Autobazar
+              </span>
+            )}
           </div>
 
           {/* Favorite button (visual only) */}
           <FavoriteButton />
 
-          {/* Trust Score — only for broker listings */}
-          {(!car.sellerType || car.sellerType === "broker") && (
+          {/* Trust Score — only for broker vehicle listings */}
+          {(!car.sellerType || car.sellerType === "broker") && !car.listingType && (
             <div className="absolute bottom-3 left-3">
               <TrustScore value={car.trust} />
             </div>
           )}
 
-          {/* Private seller badge on image */}
-          {car.sellerType === "private" && (
+          {/* Seller type badge on image */}
+          {(car.sellerType === "private" || car.listingType === "PRIVATE") && (
             <div className="absolute bottom-3 left-3">
               <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-500/80 backdrop-blur-sm rounded-lg text-[12px] font-medium text-white">
                 Soukromý prodejce
+              </span>
+            </div>
+          )}
+          {car.listingType === "BROKER" && (
+            <div className="absolute bottom-3 left-3">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-orange-500/90 backdrop-blur-sm rounded-lg text-[12px] font-semibold text-white">
+                ✓ Ověřeno makléřem
               </span>
             </div>
           )}

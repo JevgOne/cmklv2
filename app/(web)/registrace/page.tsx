@@ -11,6 +11,10 @@ export default function RegistracePage() {
     phone: "",
     password: "",
     passwordConfirm: "",
+    role: "ADVERTISER" as "BROKER" | "ADVERTISER" | "BUYER",
+    accountType: "PRIVATE" as "PRIVATE" | "DEALER" | "BAZAAR",
+    companyName: "",
+    ico: "",
   });
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -73,6 +77,10 @@ export default function RegistracePage() {
           email: formData.email,
           phone: formData.phone || undefined,
           password: formData.password,
+          role: formData.role,
+          accountType: formData.role === "ADVERTISER" ? formData.accountType : undefined,
+          companyName: formData.role === "ADVERTISER" && formData.accountType !== "PRIVATE" ? formData.companyName || undefined : undefined,
+          ico: formData.role === "ADVERTISER" && formData.accountType !== "PRIVATE" ? formData.ico || undefined : undefined,
         }),
       });
 
@@ -123,8 +131,9 @@ export default function RegistracePage() {
               Registrace úspěšná!
             </h2>
             <p className="mt-3 text-sm text-gray-500">
-              Váš účet čeká na schválení. Po aktivaci vás budeme informovat
-              emailem.
+              {formData.role === "BROKER"
+                ? "Váš účet čeká na schválení. Po aktivaci vás budeme informovat emailem."
+                : "Váš účet je aktivní. Můžete se přihlásit."}
             </p>
             <Link
               href="/login"
@@ -144,12 +153,68 @@ export default function RegistracePage() {
         <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-card">
           <div className="mb-8 text-center">
             <h1 className="text-2xl font-bold text-gray-900">
-              Registrace makléře
+              Registrace
             </h1>
             <p className="mt-2 text-sm text-gray-500">
-              Vytvořte si účet a staňte se součástí sítě CarMakléř
+              Vytvořte si účet na CarMakléř
             </p>
           </div>
+
+          {/* Výběr typu účtu */}
+          <div className="mb-6">
+            <label className="mb-2 block text-sm font-medium text-gray-700">
+              Typ účtu
+            </label>
+            <div className="grid grid-cols-3 gap-2">
+              {([
+                { value: "BUYER", label: "Kupující" },
+                { value: "ADVERTISER", label: "Prodávající" },
+                { value: "BROKER", label: "Makléř" },
+              ] as const).map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => setFormData((prev) => ({ ...prev, role: option.value }))}
+                  className={`rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors ${
+                    formData.role === option.value
+                      ? "border-orange-500 bg-orange-50 text-orange-700"
+                      : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"
+                  }`}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Typ prodejce (pokud ADVERTISER) */}
+          {formData.role === "ADVERTISER" && (
+            <div className="mb-6">
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Typ prodejce
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {([
+                  { value: "PRIVATE", label: "Soukromý" },
+                  { value: "BAZAAR", label: "Autobazar" },
+                  { value: "DEALER", label: "Dealer" },
+                ] as const).map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => setFormData((prev) => ({ ...prev, accountType: option.value }))}
+                    className={`rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors ${
+                      formData.accountType === option.value
+                        ? "border-orange-500 bg-orange-50 text-orange-700"
+                        : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {error && (
             <div className="mb-6 rounded-lg bg-error-50 px-4 py-3 text-sm text-error-600">
@@ -253,6 +318,46 @@ export default function RegistracePage() {
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 text-base sm:text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
               />
             </div>
+
+            {/* Firemní údaje pro autobazar/dealer */}
+            {formData.role === "ADVERTISER" && formData.accountType !== "PRIVATE" && (
+              <>
+                <div>
+                  <label
+                    htmlFor="companyName"
+                    className="mb-1.5 block text-sm font-medium text-gray-700"
+                  >
+                    Název firmy
+                  </label>
+                  <input
+                    id="companyName"
+                    name="companyName"
+                    type="text"
+                    value={formData.companyName}
+                    onChange={handleChange}
+                    placeholder="AutoBazar s.r.o."
+                    className="w-full rounded-lg border border-gray-300 px-4 py-3 text-base sm:text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="ico"
+                    className="mb-1.5 block text-sm font-medium text-gray-700"
+                  >
+                    IČO
+                  </label>
+                  <input
+                    id="ico"
+                    name="ico"
+                    type="text"
+                    value={formData.ico}
+                    onChange={handleChange}
+                    placeholder="12345678"
+                    className="w-full rounded-lg border border-gray-300 px-4 py-3 text-base sm:text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
+                  />
+                </div>
+              </>
+            )}
 
             <div>
               <label

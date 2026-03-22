@@ -1671,7 +1671,7 @@ model AiConversation {
 
 ## TASK-019: Inzertní platforma — digitální inzerce vozidel
 Priorita: 2
-Stav: čeká
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:

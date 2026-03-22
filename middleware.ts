@@ -9,6 +9,8 @@ const MAKLER_ROLES = [
   "REGIONAL_DIRECTOR",
   "ADMIN",
 ];
+const INZERENT_ROLES = ["ADVERTISER", "ADMIN", "BACKOFFICE"];
+const BUYER_ROLES = ["BUYER", "ADVERTISER", "ADMIN", "BACKOFFICE"];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -57,6 +59,24 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Chráněné routy inzertní platformy (moje-inzeraty, muj-ucet)
+  // Přístup má každý přihlášený uživatel
+  if (
+    pathname.startsWith("/moje-inzeraty") ||
+    pathname.startsWith("/muj-ucet")
+  ) {
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+
+    if (!token) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
   return NextResponse.next();
 }
 
@@ -75,5 +95,9 @@ export const config = {
     "/makler/offline/:path*",
     "/makler/assistant",
     "/makler/assistant/:path*",
+    "/moje-inzeraty",
+    "/moje-inzeraty/:path*",
+    "/muj-ucet",
+    "/muj-ucet/:path*",
   ],
 };

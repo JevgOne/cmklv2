@@ -1,15 +1,12 @@
 import Link from "next/link";
-import { AddListingForm } from "@/components/web/AddListingForm";
+import { ListingFormWizard } from "@/components/web/listing-form";
 
 export default function PridatInzeratPage() {
   return (
     <main className="min-h-screen bg-gray-50">
-      {/* ============================================================ */}
-      {/* Header + Breadcrumb                                           */}
-      {/* ============================================================ */}
+      {/* Header + Breadcrumb */}
       <section className="bg-white border-b border-gray-200">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
-          {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm text-gray-400 mb-4">
             <Link
               href="/inzerce"
@@ -30,11 +27,9 @@ export default function PridatInzeratPage() {
         </div>
       </section>
 
-      {/* ============================================================ */}
-      {/* Form                                                          */}
-      {/* ============================================================ */}
+      {/* Form */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <AddListingForm />
+        <ListingFormWizard />
       </div>
     </main>
   );

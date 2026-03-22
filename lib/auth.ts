@@ -36,6 +36,7 @@ export const authOptions: NextAuthOptions = {
           firstName: user.firstName,
           lastName: user.lastName,
           avatar: user.avatar ?? null,
+          accountType: user.accountType ?? null,
         };
       },
     }),
@@ -52,6 +53,7 @@ export const authOptions: NextAuthOptions = {
         token.firstName = user.firstName;
         token.lastName = user.lastName;
         token.avatar = user.avatar;
+        token.accountType = user.accountType;
       }
       return token;
     },
@@ -63,6 +65,7 @@ export const authOptions: NextAuthOptions = {
         session.user.firstName = (token.firstName as string) ?? "";
         session.user.lastName = (token.lastName as string) ?? "";
         session.user.avatar = (token.avatar as string | null) ?? null;
+        session.user.accountType = (token.accountType as string | null) ?? null;
       }
       return session;
     },

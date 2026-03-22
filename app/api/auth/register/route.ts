@@ -9,6 +9,11 @@ const registerSchema = z.object({
   firstName: z.string().min(1, "Jméno je povinné"),
   lastName: z.string().min(1, "Příjmení je povinné"),
   phone: z.string().optional(),
+  // Inzertní platforma
+  role: z.enum(["ADVERTISER", "BUYER"]).default("ADVERTISER"),
+  accountType: z.enum(["PRIVATE", "DEALER", "BAZAAR"]).optional(),
+  companyName: z.string().optional(),
+  ico: z.string().optional(),
 });
 
 export async function POST(request: Request) {
@@ -31,6 +36,10 @@ export async function POST(request: Request) {
     // Hash hesla
     const passwordHash = await bcrypt.hash(data.password, 12);
 
+    // Určení statusu — ADVERTISER a BUYER se aktivují rovnou
+    const role = data.role ?? "BROKER";
+    const autoActivate = role === "ADVERTISER" || role === "BUYER";
+
     // Vytvoření uživatele
     const user = await prisma.user.create({
       data: {
@@ -39,8 +48,12 @@ export async function POST(request: Request) {
         firstName: data.firstName,
         lastName: data.lastName,
         phone: data.phone ?? null,
-        role: "BROKER",
-        status: "PENDING",
+        role,
+        status: autoActivate ? "ACTIVE" : "PENDING",
+        // Inzertní platforma
+        accountType: data.accountType ?? null,
+        companyName: data.companyName ?? null,
+        ico: data.ico ?? null,
       },
       select: {
         id: true,
@@ -50,6 +63,7 @@ export async function POST(request: Request) {
         phone: true,
         role: true,
         status: true,
+        accountType: true,
         createdAt: true,
       },
     });

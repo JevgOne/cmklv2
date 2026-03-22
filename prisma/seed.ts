@@ -9,6 +9,11 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log("Clearing existing data...");
+  await prisma.favorite.deleteMany();
+  await prisma.inquiry.deleteMany();
+  await prisma.watchdog.deleteMany();
+  await prisma.listingImage.deleteMany();
+  await prisma.listing.deleteMany();
   await prisma.contract.deleteMany();
   await prisma.notification.deleteMany();
   await prisma.commission.deleteMany();
@@ -1094,6 +1099,340 @@ async function main() {
   console.log("Created 3 contracts");
 
   // ============================================
+  // 8. ADVERTISER & BUYER USERS
+  // ============================================
+
+  console.log("Seeding advertiser and buyer users...");
+
+  const advertiser1 = await prisma.user.create({
+    data: {
+      email: "prodejce@email.cz",
+      firstName: "Tomáš",
+      lastName: "Prodejce",
+      passwordHash,
+      role: "BROKER",
+      accountType: "PRIVATE",
+      status: "ACTIVE",
+    },
+  });
+
+  const advertiser2 = await prisma.user.create({
+    data: {
+      email: "autobazar@email.cz",
+      firstName: "Autobazar",
+      lastName: "Královo Pole",
+      passwordHash,
+      role: "BROKER",
+      accountType: "DEALER",
+      companyName: "Autobazar Královo Pole s.r.o.",
+      ico: "12345678",
+      icoVerified: true,
+      status: "ACTIVE",
+    },
+  });
+
+  const buyer1 = await prisma.user.create({
+    data: {
+      email: "kupujici@email.cz",
+      firstName: "Petr",
+      lastName: "Kupující",
+      passwordHash,
+      role: "BROKER",
+      accountType: "BUYER",
+      status: "ACTIVE",
+    },
+  });
+
+  console.log("Created 3 advertiser/buyer users");
+
+  // ============================================
+  // 9. LISTINGS (inzertní platforma)
+  // ============================================
+
+  console.log("Seeding listings...");
+
+  const listing1 = await prisma.listing.create({
+    data: {
+      slug: "renault-megane-gt-2020",
+      listingType: "PRIVATE",
+      userId: advertiser1.id,
+      brand: "Renault",
+      model: "Mégane",
+      variant: "GT",
+      year: 2020,
+      mileage: 55000,
+      fuelType: "PETROL",
+      transmission: "AUTOMATIC",
+      enginePower: 160,
+      engineCapacity: 1332,
+      bodyType: "HATCHBACK",
+      color: "Černá",
+      doorsCount: 5,
+      seatsCount: 5,
+      condition: "EXCELLENT",
+      serviceBook: true,
+      stkValidUntil: new Date("2026-08-15"),
+      ownerCount: 1,
+      originCountry: "CZ",
+      price: 385000,
+      priceNegotiable: true,
+      contactName: "Tomáš Prodejce",
+      contactPhone: "+420607111222",
+      contactEmail: "prodejce@email.cz",
+      city: "Praha",
+      district: "Praha 4",
+      description: "Prodám Renault Mégane GT v černé metalíze. Vůz je v perfektním stavu, pravidelně servisovaný u autorizovaného dealera. Nekouřeno, bez domácích mazlíčků.",
+      equipment: JSON.stringify(["Klimatizace", "Navigace", "Parkovací senzory", "LED světlomety", "Vyhřívaná sedadla", "Kamera"]),
+      highlights: JSON.stringify(["1 majitel", "Plný servis", "STK do 08/2026"]),
+      status: "ACTIVE",
+      publishedAt: now,
+      expiresAt: new Date("2026-05-22"),
+    },
+  });
+
+  const listing2 = await prisma.listing.create({
+    data: {
+      slug: "ford-focus-st-line-2021",
+      listingType: "PRIVATE",
+      userId: advertiser1.id,
+      brand: "Ford",
+      model: "Focus",
+      variant: "ST-Line",
+      year: 2021,
+      mileage: 32000,
+      fuelType: "DIESEL",
+      transmission: "AUTOMATIC",
+      enginePower: 150,
+      engineCapacity: 1499,
+      bodyType: "COMBI",
+      color: "Modrá",
+      doorsCount: 5,
+      seatsCount: 5,
+      condition: "LIKE_NEW",
+      serviceBook: true,
+      stkValidUntil: new Date("2027-03-20"),
+      ownerCount: 1,
+      originCountry: "CZ",
+      price: 450000,
+      priceNegotiable: true,
+      contactName: "Tomáš Prodejce",
+      contactPhone: "+420607111222",
+      city: "Praha",
+      district: "Praha 9",
+      description: "Ford Focus ST-Line Combi s automatickou převodovkou. Úsporný diesel, výborný stav. Head-up display, matrix LED.",
+      equipment: JSON.stringify(["Klimatizace", "Navigace", "Head-up displej", "Matrix LED", "Adaptivní tempomat", "Elektrická páta dveře"]),
+      highlights: JSON.stringify(["Záruka do 2027", "Matrix LED", "Head-up displej"]),
+      status: "ACTIVE",
+      publishedAt: now,
+      expiresAt: new Date("2026-06-22"),
+    },
+  });
+
+  const listing3 = await prisma.listing.create({
+    data: {
+      slug: "skoda-octavia-bazaar-2019",
+      listingType: "DEALER",
+      userId: advertiser2.id,
+      brand: "Škoda",
+      model: "Octavia",
+      variant: "Ambition",
+      year: 2019,
+      mileage: 78000,
+      fuelType: "DIESEL",
+      transmission: "DSG",
+      enginePower: 150,
+      engineCapacity: 1968,
+      bodyType: "COMBI",
+      color: "Stříbrná",
+      doorsCount: 5,
+      seatsCount: 5,
+      condition: "GOOD",
+      serviceBook: true,
+      ownerCount: 2,
+      originCountry: "CZ",
+      price: 395000,
+      priceNegotiable: true,
+      vatStatus: "NON_DEDUCTIBLE",
+      contactName: "Autobazar Královo Pole",
+      contactPhone: "+420541234567",
+      contactEmail: "autobazar@email.cz",
+      city: "Brno",
+      district: "Královo Pole",
+      description: "Škoda Octavia Combi v lince Ambition. Pravidelný servis, nehavarované. K dispozici ihned.",
+      equipment: JSON.stringify(["Klimatizace", "Navigace", "Parkovací senzory", "Vyhřívaná sedadla", "Tempomat"]),
+      highlights: JSON.stringify(["Servisovaná", "DSG", "Ihned k odběru"]),
+      status: "ACTIVE",
+      publishedAt: now,
+      expiresAt: new Date("2026-06-01"),
+    },
+  });
+
+  const listing4 = await prisma.listing.create({
+    data: {
+      slug: "peugeot-3008-gt-2022",
+      listingType: "DEALER",
+      userId: advertiser2.id,
+      brand: "Peugeot",
+      model: "3008",
+      variant: "GT",
+      year: 2022,
+      mileage: 25000,
+      fuelType: "PLUGIN_HYBRID",
+      transmission: "AUTOMATIC",
+      enginePower: 300,
+      engineCapacity: 1598,
+      bodyType: "SUV",
+      color: "Zelená",
+      doorsCount: 5,
+      seatsCount: 5,
+      condition: "LIKE_NEW",
+      serviceBook: true,
+      stkValidUntil: new Date("2028-01-10"),
+      ownerCount: 1,
+      originCountry: "FR",
+      price: 750000,
+      priceNegotiable: false,
+      vatStatus: "DEDUCTIBLE",
+      contactName: "Autobazar Královo Pole",
+      contactPhone: "+420541234567",
+      city: "Brno",
+      description: "Peugeot 3008 GT Plug-in Hybrid s 300 HP. Maximální výbava, noční vidění, masážní sedadla. Odpočet DPH možný.",
+      equipment: JSON.stringify(["Klimatizace", "Navigace", "Noční vidění", "Masážní sedadla", "Focal audio", "Panoramatická střecha", "360° kamera"]),
+      highlights: JSON.stringify(["Plug-in Hybrid 300 HP", "Noční vidění", "Odpočet DPH"]),
+      status: "ACTIVE",
+      isPremium: true,
+      premiumUntil: new Date("2026-04-22"),
+      publishedAt: now,
+      expiresAt: new Date("2026-07-01"),
+    },
+  });
+
+  const listing5 = await prisma.listing.create({
+    data: {
+      slug: "mazda-cx5-2021-draft",
+      listingType: "PRIVATE",
+      userId: advertiser1.id,
+      brand: "Mazda",
+      model: "CX-5",
+      year: 2021,
+      mileage: 42000,
+      fuelType: "PETROL",
+      transmission: "AUTOMATIC",
+      enginePower: 194,
+      engineCapacity: 2488,
+      bodyType: "SUV",
+      color: "Červená",
+      condition: "EXCELLENT",
+      price: 620000,
+      contactName: "Tomáš Prodejce",
+      contactPhone: "+420607111222",
+      city: "Praha",
+      description: "Mazda CX-5 — rozpracovaný inzerát.",
+      status: "DRAFT",
+    },
+  });
+
+  console.log("Created 5 listings");
+
+  // ============================================
+  // 10. LISTING IMAGES
+  // ============================================
+
+  console.log("Seeding listing images...");
+
+  await prisma.listingImage.createMany({
+    data: [
+      { listingId: listing1.id, url: "https://images.unsplash.com/photo-1549317661-bd32c8ce0afe?w=800&q=80", order: 0, isPrimary: true },
+      { listingId: listing1.id, url: "https://images.unsplash.com/photo-1502877338535-766e1452684a?w=800&q=80", order: 1, isPrimary: false },
+      { listingId: listing2.id, url: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&q=80", order: 0, isPrimary: true },
+      { listingId: listing2.id, url: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=800&q=80", order: 1, isPrimary: false },
+      { listingId: listing3.id, url: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&q=80", order: 0, isPrimary: true },
+      { listingId: listing3.id, url: "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?w=800&q=80", order: 1, isPrimary: false },
+      { listingId: listing4.id, url: "https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800&q=80", order: 0, isPrimary: true },
+      { listingId: listing4.id, url: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&q=80", order: 1, isPrimary: false },
+      { listingId: listing4.id, url: "https://images.unsplash.com/photo-1542362567-b07e54358753?w=800&q=80", order: 2, isPrimary: false },
+    ],
+  });
+
+  console.log("Created 9 listing images");
+
+  // ============================================
+  // 11. INQUIRIES
+  // ============================================
+
+  console.log("Seeding inquiries...");
+
+  await prisma.inquiry.createMany({
+    data: [
+      {
+        listingId: listing1.id,
+        senderId: buyer1.id,
+        name: "Petr Kupující",
+        email: "kupujici@email.cz",
+        phone: "+420608333444",
+        message: "Dobrý den, mám zájem o tento Renault Mégane. Je možné si ho prohlédnout tento víkend?",
+        read: false,
+      },
+      {
+        listingId: listing1.id,
+        name: "Jana Nováková",
+        email: "jana.novakova@email.cz",
+        message: "Zdravím, je cena konečná nebo je prostor k jednání? Díky.",
+        read: true,
+        reply: "Dobrý den, cena je k jednání, ale nečekejte zázraky. Napište mi a domluvíme se.",
+        repliedAt: new Date("2026-03-20T15:30:00"),
+      },
+      {
+        listingId: listing3.id,
+        senderId: buyer1.id,
+        name: "Petr Kupující",
+        email: "kupujici@email.cz",
+        message: "Dobrý den, je Octavia k dispozici? Mám zájem o zkušební jízdu.",
+        read: false,
+      },
+      {
+        listingId: listing4.id,
+        name: "Martin Říha",
+        email: "riha.m@email.cz",
+        phone: "+420609444555",
+        message: "Je možný odpočet DPH? Kupuji na firmu.",
+        read: true,
+        reply: "Ano, odpočet DPH je možný. Vůz je evidovaný na firmu s DPH. Zavolejte nám pro více info.",
+        repliedAt: new Date("2026-03-21T09:00:00"),
+      },
+    ],
+  });
+
+  console.log("Created 4 inquiries");
+
+  // ============================================
+  // 12. WATCHDOGS
+  // ============================================
+
+  console.log("Seeding watchdogs...");
+
+  await prisma.watchdog.createMany({
+    data: [
+      {
+        userId: buyer1.id,
+        brand: "Škoda",
+        model: "Octavia",
+        maxPrice: 500000,
+        minYear: 2018,
+        fuelType: "DIESEL",
+      },
+      {
+        userId: buyer1.id,
+        bodyType: "SUV",
+        maxPrice: 800000,
+        minYear: 2020,
+      },
+    ],
+  });
+
+  console.log("Created 2 watchdogs");
+
+  // ============================================
   // SUMMARY
   // ============================================
 
@@ -1104,16 +1443,26 @@ async function main() {
   const commissionCount = await prisma.commission.count();
   const notificationCount = await prisma.notification.count();
   const contractCount = await prisma.contract.count();
+  const listingCount = await prisma.listing.count();
+  const listingImageCount = await prisma.listingImage.count();
+  const inquiryCount = await prisma.inquiry.count();
+  const watchdogCount = await prisma.watchdog.count();
 
   console.log("\n--- Seed complete ---");
-  console.log(`Regions:       ${regionCount}`);
-  console.log(`Users:         ${userCount}`);
-  console.log(`Vehicles:      ${vehicleCount}`);
-  console.log(`Images:        ${imageCount}`);
-  console.log(`Commissions:   ${commissionCount}`);
-  console.log(`Notifications: ${notificationCount}`);
-  console.log(`Contracts:     ${contractCount}`);
+  console.log(`Regions:        ${regionCount}`);
+  console.log(`Users:          ${userCount}`);
+  console.log(`Vehicles:       ${vehicleCount}`);
+  console.log(`Vehicle Images: ${imageCount}`);
+  console.log(`Commissions:    ${commissionCount}`);
+  console.log(`Notifications:  ${notificationCount}`);
+  console.log(`Contracts:      ${contractCount}`);
+  console.log(`Listings:       ${listingCount}`);
+  console.log(`Listing Images: ${listingImageCount}`);
+  console.log(`Inquiries:      ${inquiryCount}`);
+  console.log(`Watchdogs:      ${watchdogCount}`);
   console.log("\nDemo login: admin@carmakler.cz / heslo123");
+  console.log("Advertiser login: prodejce@email.cz / heslo123");
+  console.log("Buyer login: kupujici@email.cz / heslo123");
 }
 
 main()

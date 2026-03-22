@@ -49,87 +49,94 @@ export default async function NabidkaPage({
 }) {
   const params = await searchParams;
 
-  // Build Prisma where clause
-  const where: Record<string, unknown> = { status: "ACTIVE" };
+  // Determine if filtering by seller type
+  const sellerTypeFilter = params.sellerType;
+  // "dealer" maps to Listing.listingType === "DEALER"
+  // "broker" maps to Vehicle.sellerType === "broker" or Listing.listingType === "BROKER"
+  // "private" maps to Vehicle.sellerType === "private" or Listing.listingType === "PRIVATE"
 
-  if (params.brand) where.brand = params.brand;
-  if (params.model) where.model = params.model;
-  if (params.fuelType) where.fuelType = params.fuelType;
-  if (params.transmission) where.transmission = params.transmission;
-  if (params.bodyType) where.bodyType = params.bodyType;
-  if (params.sellerType) where.sellerType = params.sellerType;
+  // Build Vehicle where clause
+  const vehicleWhere: Record<string, unknown> = { status: "ACTIVE" };
+  if (params.brand) vehicleWhere.brand = params.brand;
+  if (params.model) vehicleWhere.model = params.model;
+  if (params.fuelType) vehicleWhere.fuelType = params.fuelType;
+  if (params.transmission) vehicleWhere.transmission = params.transmission;
+  if (params.bodyType) vehicleWhere.bodyType = params.bodyType;
+  if (sellerTypeFilter === "broker") vehicleWhere.sellerType = "broker";
+  else if (sellerTypeFilter === "private") vehicleWhere.sellerType = "private";
+  else if (sellerTypeFilter === "dealer") {
+    // No Vehicle results for dealer filter
+    vehicleWhere.id = "__NONE__";
+  }
 
-  // Price range
+  // Build Listing where clause
+  const listingWhere: Record<string, unknown> = { status: "ACTIVE" };
+  if (params.brand) listingWhere.brand = params.brand;
+  if (params.model) listingWhere.model = params.model;
+  if (params.fuelType) listingWhere.fuelType = params.fuelType;
+  if (params.transmission) listingWhere.transmission = params.transmission;
+  if (params.bodyType) listingWhere.bodyType = params.bodyType;
+  if (sellerTypeFilter === "broker") listingWhere.listingType = "BROKER";
+  else if (sellerTypeFilter === "private") listingWhere.listingType = "PRIVATE";
+  else if (sellerTypeFilter === "dealer") listingWhere.listingType = "DEALER";
+
+  // Price range — shared
   if (params.minPrice || params.maxPrice) {
     const priceFilter: Record<string, number> = {};
     if (params.minPrice) priceFilter.gte = parseInt(params.minPrice, 10);
     if (params.maxPrice) priceFilter.lte = parseInt(params.maxPrice, 10);
-    where.price = priceFilter;
+    vehicleWhere.price = priceFilter;
+    listingWhere.price = { ...priceFilter };
   }
 
-  // Year range
+  // Year range — shared
   if (params.minYear || params.maxYear) {
     const yearFilter: Record<string, number> = {};
     if (params.minYear) yearFilter.gte = parseInt(params.minYear, 10);
     if (params.maxYear) yearFilter.lte = parseInt(params.maxYear, 10);
-    where.year = yearFilter;
-  }
-
-  // Sort
-  type SortOrder = "asc" | "desc";
-  let orderBy: Record<string, SortOrder>;
-  switch (params.sort) {
-    case "cheapest":
-      orderBy = { price: "asc" };
-      break;
-    case "expensive":
-      orderBy = { price: "desc" };
-      break;
-    case "lowestkm":
-      orderBy = { mileage: "asc" };
-      break;
-    case "newest":
-    default:
-      orderBy = { createdAt: "desc" };
-      break;
+    vehicleWhere.year = yearFilter;
+    listingWhere.year = { ...yearFilter };
   }
 
   // Pagination
   const page = Math.max(1, parseInt(params.page || "1", 10));
   const limit = 18;
-  const skip = (page - 1) * limit;
 
-  const [dbVehicles, total] = await Promise.all([
+  // Fetch both Vehicle and Listing counts
+  const [dbVehicles, vehicleTotal, dbListings, listingTotal] = await Promise.all([
     prisma.vehicle.findMany({
-      where,
+      where: vehicleWhere,
       include: {
         images: { where: { isPrimary: true }, take: 1 },
         broker: {
           select: { id: true, firstName: true, lastName: true, slug: true },
         },
       },
-      orderBy,
-      skip,
-      take: limit,
+      orderBy: { createdAt: "desc" },
     }),
-    prisma.vehicle.count({ where }),
+    prisma.vehicle.count({ where: vehicleWhere }),
+    prisma.listing.findMany({
+      where: listingWhere,
+      include: {
+        images: { where: { isPrimary: true }, take: 1 },
+        user: {
+          select: { id: true, firstName: true, lastName: true, companyName: true },
+        },
+      },
+      orderBy: [{ isPremium: "desc" }, { createdAt: "desc" }],
+    }),
+    prisma.listing.count({ where: listingWhere }),
   ]);
 
-  const totalPages = Math.ceil(total / limit);
+  const total = vehicleTotal + listingTotal;
 
-  // Map DB data to VehicleData format
-  const vehicles: VehicleData[] = dbVehicles.map((v) => {
+  // Map Vehicle data
+  const vehicleCards: VehicleData[] = dbVehicles.map((v) => {
     const primaryImage = v.images[0];
-    const formattedKm =
-      new Intl.NumberFormat("cs-CZ").format(v.mileage) + " km";
-    const formattedPrice = new Intl.NumberFormat("cs-CZ").format(v.price);
-    const fuelLabel = fuelLabels[v.fuelType] || v.fuelType;
-    const transLabel = transmissionLabels[v.transmission] || v.transmission;
     const brokerName = v.broker
       ? `${v.broker.firstName} ${v.broker.lastName}`
       : undefined;
 
-    // Badge logic
     let badge: "verified" | "top" | "default" = "default";
     if (v.trustScore >= 95) badge = "top";
     else if (v.trustScore >= 80) badge = "verified";
@@ -138,20 +145,66 @@ export default async function NabidkaPage({
       id: v.id,
       name: `${v.brand} ${v.model}${v.variant ? " " + v.variant : ""}`,
       year: v.year,
-      km: formattedKm,
-      fuel: fuelLabel,
-      transmission: transLabel,
+      km: new Intl.NumberFormat("cs-CZ").format(v.mileage) + " km",
+      fuel: fuelLabels[v.fuelType] || v.fuelType,
+      transmission: transmissionLabels[v.transmission] || v.transmission,
       city: v.city,
       hp: v.enginePower ? `${v.enginePower} HP` : "",
-      price: formattedPrice,
+      price: new Intl.NumberFormat("cs-CZ").format(v.price),
       trust: v.trustScore,
       badge,
       photo: primaryImage?.url || "/images/placeholder-car.jpg",
       slug: v.slug || v.id,
       sellerType: v.sellerType as "broker" | "private",
       brokerName,
+      source: "vehicle" as const,
     };
   });
+
+  // Map Listing data
+  const listingCards: VehicleData[] = dbListings.map((l) => {
+    const primaryImage = l.images[0];
+    const sellerName = l.user.companyName || `${l.user.firstName} ${l.user.lastName}`;
+
+    return {
+      id: l.id,
+      name: `${l.brand} ${l.model}${l.variant ? " " + l.variant : ""}`,
+      year: l.year,
+      km: new Intl.NumberFormat("cs-CZ").format(l.mileage) + " km",
+      fuel: fuelLabels[l.fuelType] || l.fuelType,
+      transmission: transmissionLabels[l.transmission] || l.transmission,
+      city: l.city,
+      hp: l.enginePower ? `${l.enginePower} HP` : "",
+      price: new Intl.NumberFormat("cs-CZ").format(l.price),
+      trust: 0,
+      badge: l.isPremium ? ("top" as const) : ("default" as const),
+      photo: primaryImage?.url || "/images/placeholder-car.jpg",
+      slug: l.slug,
+      sellerType: "listing" as const,
+      listingType: l.listingType as "BROKER" | "DEALER" | "PRIVATE",
+      isPremium: l.isPremium,
+      brokerName: l.listingType === "DEALER" ? sellerName : undefined,
+      source: "listing" as const,
+    };
+  });
+
+  // Merge and sort
+  let allCards = [...listingCards.filter((c) => c.isPremium), ...vehicleCards, ...listingCards.filter((c) => !c.isPremium)];
+
+  // Apply sort
+  type SortOrder = "asc" | "desc";
+  const sortKey = params.sort || "newest";
+  if (sortKey === "cheapest") {
+    allCards.sort((a, b) => parseInt(a.price.replace(/\s/g, ""), 10) - parseInt(b.price.replace(/\s/g, ""), 10));
+  } else if (sortKey === "expensive") {
+    allCards.sort((a, b) => parseInt(b.price.replace(/\s/g, ""), 10) - parseInt(a.price.replace(/\s/g, ""), 10));
+  }
+  // newest and lowestkm are already ordered from DB queries
+
+  // Paginate the merged results
+  const skip = (page - 1) * limit;
+  const vehicles = allCards.slice(skip, skip + limit);
+  const totalPages = Math.ceil(total / limit);
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -167,7 +220,7 @@ export default async function NabidkaPage({
               </h1>
               <p className="text-gray-500 mt-2">
                 <span className="font-bold text-orange-500">{total}</span>{" "}
-                vozidel od makléřů i soukromých prodejců
+                vozidel od makléřů, autobazarů i soukromých prodejců
               </p>
             </div>
             <Link href="/inzerce/pridat" className="no-underline shrink-0">
