@@ -15,6 +15,12 @@ const navSections = [
     ],
   },
   {
+    title: "MARKETPLACE",
+    items: [
+      { id: "marketplace", href: "/admin/marketplace", icon: "📈", label: "Marketplace" },
+    ],
+  },
+  {
     title: "SPRÁVA",
     items: [
       { id: "regions", href: "/admin/regions", icon: "📍", label: "Regiony" },

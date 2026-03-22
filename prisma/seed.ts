@@ -9,6 +9,8 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log("Clearing existing data...");
+  await prisma.investment.deleteMany();
+  await prisma.flipOpportunity.deleteMany();
   await prisma.orderItem.deleteMany();
   await prisma.order.deleteMany();
   await prisma.partImage.deleteMany();
@@ -1742,6 +1744,242 @@ async function main() {
     },
   });
 
+  // ============================================
+  // MARKETPLACE — INVESTIČNÍ PLATFORMA
+  // ============================================
+
+  console.log("Seeding marketplace...");
+
+  const hashedPassword = await bcrypt.hash("heslo123", 10);
+
+  // 2 dealeři
+  const dealer1 = await prisma.user.create({
+    data: {
+      email: "dealer1@carmakler.cz",
+      phone: "+420777111222",
+      passwordHash: hashedPassword,
+      firstName: "Martin",
+      lastName: "Novotný",
+      role: "VERIFIED_DEALER",
+      status: "ACTIVE",
+      accountType: "DEALER",
+      companyName: "AutoFlip Praha s.r.o.",
+      ico: "12345678",
+      icoVerified: true,
+    },
+  });
+
+  const dealer2 = await prisma.user.create({
+    data: {
+      email: "dealer2@carmakler.cz",
+      phone: "+420777333444",
+      passwordHash: hashedPassword,
+      firstName: "Tomáš",
+      lastName: "Procházka",
+      role: "VERIFIED_DEALER",
+      status: "ACTIVE",
+      accountType: "DEALER",
+      companyName: "Car Investment Brno s.r.o.",
+      ico: "87654321",
+      icoVerified: true,
+    },
+  });
+
+  // 3 investoři
+  const investor1 = await prisma.user.create({
+    data: {
+      email: "investor1@carmakler.cz",
+      phone: "+420777555666",
+      passwordHash: hashedPassword,
+      firstName: "Petr",
+      lastName: "Svoboda",
+      role: "INVESTOR",
+      status: "ACTIVE",
+    },
+  });
+
+  const investor2 = await prisma.user.create({
+    data: {
+      email: "investor2@carmakler.cz",
+      phone: "+420777777888",
+      passwordHash: hashedPassword,
+      firstName: "Jana",
+      lastName: "Králová",
+      role: "INVESTOR",
+      status: "ACTIVE",
+    },
+  });
+
+  const investor3 = await prisma.user.create({
+    data: {
+      email: "investor3@carmakler.cz",
+      phone: "+420777999000",
+      passwordHash: hashedPassword,
+      firstName: "Lukáš",
+      lastName: "Dvořák",
+      role: "INVESTOR",
+      status: "ACTIVE",
+    },
+  });
+
+  // Příležitost 1: FUNDING — sbírá investice
+  const flip1 = await prisma.flipOpportunity.create({
+    data: {
+      dealerId: dealer1.id,
+      brand: "Škoda",
+      model: "Octavia",
+      year: 2018,
+      mileage: 85000,
+      vin: "TMBAH7NP5J0123456",
+      condition: "GOOD",
+      photos: JSON.stringify([
+        "https://placehold.co/800x600/f97316/white?text=Octavia+1",
+        "https://placehold.co/800x600/f97316/white?text=Octavia+2",
+      ]),
+      purchasePrice: 250000,
+      repairCost: 45000,
+      estimatedSalePrice: 380000,
+      repairDescription: "Výměna rozvodů, nové brzdy, lakování předního nárazníku",
+      status: "FUNDING",
+      fundedAmount: 150000,
+    },
+  });
+
+  // Příležitost 2: COMPLETED — dokončený deal
+  const flip2 = await prisma.flipOpportunity.create({
+    data: {
+      dealerId: dealer1.id,
+      brand: "Volkswagen",
+      model: "Passat",
+      year: 2017,
+      mileage: 120000,
+      condition: "FAIR",
+      photos: JSON.stringify([
+        "https://placehold.co/800x600/f97316/white?text=Passat+1",
+      ]),
+      purchasePrice: 180000,
+      repairCost: 60000,
+      estimatedSalePrice: 310000,
+      repairDescription: "Oprava turbodmychadla, nové pneumatiky, čištění interiéru",
+      actualSalePrice: 320000,
+      soldAt: new Date("2026-02-15"),
+      status: "COMPLETED",
+      fundedAmount: 240000,
+    },
+  });
+
+  // Příležitost 3: PENDING_APPROVAL — čeká na schválení
+  await prisma.flipOpportunity.create({
+    data: {
+      dealerId: dealer2.id,
+      brand: "BMW",
+      model: "320d",
+      year: 2016,
+      mileage: 145000,
+      condition: "FAIR",
+      photos: JSON.stringify([
+        "https://placehold.co/800x600/f97316/white?text=BMW+320d",
+      ]),
+      purchasePrice: 320000,
+      repairCost: 80000,
+      estimatedSalePrice: 520000,
+      repairDescription: "Výměna řetězu, nové tlumiče, oprava klimatizace, detailing",
+      status: "PENDING_APPROVAL",
+    },
+  });
+
+  // Příležitost 4: IN_REPAIR — probíhá oprava
+  const flip4 = await prisma.flipOpportunity.create({
+    data: {
+      dealerId: dealer2.id,
+      brand: "Audi",
+      model: "A4 Avant",
+      year: 2019,
+      mileage: 72000,
+      condition: "GOOD",
+      photos: JSON.stringify([
+        "https://placehold.co/800x600/f97316/white?text=Audi+A4",
+      ]),
+      purchasePrice: 420000,
+      repairCost: 35000,
+      estimatedSalePrice: 560000,
+      repairDescription: "Výměna oleje, nové brzdové kotouče, leštění laku",
+      status: "IN_REPAIR",
+      fundedAmount: 455000,
+    },
+  });
+
+  // Investice pro flip1 (FUNDING)
+  await prisma.investment.create({
+    data: {
+      investorId: investor1.id,
+      opportunityId: flip1.id,
+      amount: 100000,
+      paymentStatus: "CONFIRMED",
+      paymentReference: "VS2026001",
+    },
+  });
+
+  await prisma.investment.create({
+    data: {
+      investorId: investor2.id,
+      opportunityId: flip1.id,
+      amount: 50000,
+      paymentStatus: "CONFIRMED",
+      paymentReference: "VS2026002",
+    },
+  });
+
+  await prisma.investment.create({
+    data: {
+      investorId: investor3.id,
+      opportunityId: flip1.id,
+      amount: 80000,
+      paymentStatus: "PENDING",
+    },
+  });
+
+  // Investice pro flip2 (COMPLETED) — vyplacené
+  await prisma.investment.create({
+    data: {
+      investorId: investor1.id,
+      opportunityId: flip2.id,
+      amount: 150000,
+      paymentStatus: "CONFIRMED",
+      paymentReference: "VS2025010",
+      returnAmount: 170000, // vklad 150k + podíl na zisku 20k
+      paidOutAt: new Date("2026-02-20"),
+    },
+  });
+
+  await prisma.investment.create({
+    data: {
+      investorId: investor2.id,
+      opportunityId: flip2.id,
+      amount: 90000,
+      paymentStatus: "CONFIRMED",
+      paymentReference: "VS2025011",
+      returnAmount: 102000, // vklad 90k + podíl na zisku 12k
+      paidOutAt: new Date("2026-02-20"),
+    },
+  });
+
+  // Investice pro flip4 (IN_REPAIR)
+  await prisma.investment.create({
+    data: {
+      investorId: investor1.id,
+      opportunityId: flip4.id,
+      amount: 250000,
+      paymentStatus: "CONFIRMED",
+      paymentReference: "VS2026005",
+    },
+  });
+
+  const flipCount = await prisma.flipOpportunity.count();
+  const investmentCount = await prisma.investment.count();
+  console.log(`Flip Opportunities: ${flipCount}`);
+  console.log(`Investments:        ${investmentCount}`);
+
   const regionCount = await prisma.region.count();
   const userCount = await prisma.user.count();
   const vehicleCount = await prisma.vehicle.count();
@@ -1777,6 +2015,8 @@ async function main() {
   console.log("Advertiser login: prodejce@email.cz / heslo123");
   console.log("Buyer login: kupujici@email.cz / heslo123");
   console.log("Supplier login: dodavatel@vrakoviste.cz / heslo123");
+  console.log("Dealer login: dealer1@carmakler.cz / heslo123");
+  console.log("Investor login: investor1@carmakler.cz / heslo123");
 }
 
 main()

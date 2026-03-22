@@ -2296,7 +2296,7 @@ enum PaymentStatus {
 
 ## TASK-021: Marketplace — investiční platforma pro flipping aut (VIP)
 Priorita: 3
-Stav: čeká
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:

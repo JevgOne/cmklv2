@@ -62,6 +62,10 @@ model User {
   ordersAsBuyer         Order[]
   orderItemsAsSupplier  OrderItem[]  @relation("SupplierOrderItems")
 
+  // Marketplace relace
+  dealerFlips FlipOpportunity[]
+  investments Investment[]
+
   // Auth
   emailVerified DateTime?
 
@@ -622,4 +626,77 @@ model OrderItem {
   @@index([orderId])
   @@index([partId])
   @@index([supplierId])
+}
+
+// ============================================
+// MARKETPLACE — INVESTIČNÍ PLATFORMA
+// ============================================
+
+model FlipOpportunity {
+  id       String @id @default(cuid())
+  dealerId String
+  dealer   User   @relation(fields: [dealerId], references: [id])
+
+  // Auto
+  brand     String
+  model     String
+  year      Int
+  mileage   Int
+  vin       String?
+  condition String // NEW, LIKE_NEW, EXCELLENT, GOOD, FAIR, DAMAGED
+  photos    String? // JSON array of URLs
+
+  // Finance
+  purchasePrice      Int
+  repairCost         Int
+  estimatedSalePrice Int
+
+  // Opravy
+  repairDescription String?
+  repairPhotos      String? // JSON array of URLs
+
+  // Prodej
+  actualSalePrice Int?
+  soldAt          DateTime?
+
+  // Status
+  status          String @default("PENDING_APPROVAL")
+  // PENDING_APPROVAL, APPROVED, FUNDING, FUNDED, IN_REPAIR, FOR_SALE, SOLD, PAYOUT_PENDING, COMPLETED, CANCELLED
+  fundedAmount    Int    @default(0)
+  adminNotes      String?
+  rejectionReason String?
+
+  // Relace
+  investments Investment[]
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([dealerId])
+  @@index([status])
+}
+
+model Investment {
+  id            String          @id @default(cuid())
+  investorId    String
+  investor      User            @relation(fields: [investorId], references: [id])
+  opportunityId String
+  opportunity   FlipOpportunity @relation(fields: [opportunityId], references: [id])
+
+  amount           Int
+  paymentStatus    String @default("PENDING") // PENDING, CONFIRMED, REFUNDED
+  paymentReference String?
+
+  // Výplata
+  returnAmount Int?
+  paidOutAt    DateTime?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([investorId])
+  @@index([opportunityId])
+  @@index([paymentStatus])
 }
