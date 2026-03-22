@@ -13,15 +13,17 @@ export interface ProductCardProps {
   condition?: number;
   price: number;
   oldPrice?: number;
-  badge: "used" | "new" | "sale";
+  badge: "used" | "new" | "sale" | "aftermarket";
   image?: string;
   slug?: string;
   stock?: number;
+  basePath?: string;
 }
 
 const badgeConfig = {
-  used: { label: "Z vraku", bg: "bg-gray-200 text-gray-700" },
-  new: { label: "Nové", bg: "bg-green-100 text-green-700" },
+  used: { label: "Použitý", bg: "bg-gray-200 text-gray-700" },
+  new: { label: "Nový díl", bg: "bg-green-100 text-green-700" },
+  aftermarket: { label: "Aftermarket", bg: "bg-blue-100 text-blue-700" },
   sale: { label: "-25%", bg: "bg-red-100 text-red-600" },
 };
 
@@ -56,10 +58,11 @@ export function ProductCard({
   image,
   slug,
   stock,
+  basePath = "/shop",
 }: ProductCardProps) {
   const [added, setAdded] = useState(false);
   const cfg = badgeConfig[badge];
-  const href = slug ? `/shop/produkt/${slug}` : "/shop/katalog";
+  const href = slug ? `${basePath}/produkt/${slug}` : `${basePath}/katalog`;
 
   return (
     <Card hover className="group flex flex-col">

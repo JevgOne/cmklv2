@@ -19,6 +19,7 @@ import { CebiaCheck } from "@/components/web/CebiaCheck";
 import { LoanCalculator } from "@/components/web/LoanCalculator";
 import { UpsellBanner } from "@/components/web/UpsellBanner";
 import { ListingFlagButton } from "@/components/web/ListingFlagButton";
+import { RecommendedParts } from "@/components/web/RecommendedParts";
 import { prisma } from "@/lib/prisma";
 import { listingTypeLabels } from "@/lib/listings";
 import type { VehicleData } from "@/components/web/VehicleCard";
@@ -777,6 +778,17 @@ export default async function VehicleDetailPage({
       </section>
 
       {/* ============================================================ */}
+      {/* Recommended parts for this vehicle                           */}
+      {/* ============================================================ */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <RecommendedParts
+          brand={vehicle.brand}
+          model={vehicle.model}
+          year={vehicle.year}
+        />
+      </section>
+
+      {/* ============================================================ */}
       {/* Similar vehicles                                             */}
       {/* ============================================================ */}
       {similarCars.length > 0 && (
@@ -1040,6 +1052,15 @@ function renderListingDetail(listing: ListingWithRelations, slug: string) {
             vehicleName={name}
           />
         </div>
+      </section>
+
+      {/* Recommended parts for this vehicle */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <RecommendedParts
+          brand={listing.brand}
+          model={listing.model}
+          year={listing.year}
+        />
       </section>
 
       {/* Upsell banner (private listings only) */}

@@ -92,6 +92,7 @@ export async function GET(request: NextRequest) {
 
     if (filters.category) where.category = filters.category;
     if (filters.condition) where.condition = filters.condition;
+    if (filters.partType) where.partType = filters.partType;
 
     if (filters.brand) {
       where.compatibleBrands = { contains: filters.brand };

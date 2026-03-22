@@ -43,6 +43,22 @@ const navSections: NavSection[] = [
     roles: ["MANAGER"],
   },
   {
+    title: "PARTNERI",
+    items: [
+      { id: "partners", href: "/admin/partners", icon: "🏢", label: "Vsichni partneri" },
+      { id: "partners-bazar", href: "/admin/partners?type=AUTOBAZAR", icon: "🚗", label: "Autobazary" },
+      { id: "partners-vrakov", href: "/admin/partners?type=VRAKOVISTE", icon: "🔧", label: "Vrakoviste" },
+    ],
+    roles: ["ADMIN", "BACKOFFICE", "MANAGER"],
+  },
+  {
+    title: "ESHOP",
+    items: [
+      { id: "feeds", href: "/admin/feeds", icon: "📡", label: "Feed importy" },
+    ],
+    roles: ["ADMIN", "BACKOFFICE"],
+  },
+  {
     title: "FINANCE",
     items: [
       { id: "payments", href: "/admin/payments", icon: "💳", label: "Platby" },

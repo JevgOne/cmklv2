@@ -43,6 +43,7 @@ export const updatePartSchema = createPartSchema.partial();
 export const partFilterSchema = z.object({
   category: z.string().optional(),
   condition: z.string().optional(),
+  partType: z.string().optional(), // USED, NEW, AFTERMARKET
   brand: z.string().optional(),
   model: z.string().optional(),
   year: z.coerce.number().int().optional(),

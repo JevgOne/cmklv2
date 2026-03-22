@@ -199,7 +199,7 @@ export default async function ShopPage() {
                           : 5
                 }
                 price={part.price}
-                badge={part.condition === "NEW" ? "new" : "used"}
+                badge={part.partType === "NEW" ? "new" : part.partType === "AFTERMARKET" ? "aftermarket" : "used"}
                 slug={part.slug}
                 image={part.images[0]?.url}
                 stock={part.stock}

@@ -19,6 +19,8 @@ export type PartCondition =
   | "USED_POOR"
   | "REFURBISHED";
 
+export type PartType = "USED" | "NEW" | "AFTERMARKET";
+
 export type PartStatus = "DRAFT" | "ACTIVE" | "SOLD" | "INACTIVE";
 
 export type OrderStatus =
@@ -47,12 +49,15 @@ export interface Part {
   slug: string;
   supplierId: string;
   category: PartCategory;
+  partType: PartType;
   name: string;
   description: string | null;
   partNumber: string | null;
   oemNumber: string | null;
   condition: PartCondition;
   price: number;
+  wholesalePrice: number | null;
+  markupPercent: number | null;
   currency: string;
   vatIncluded: boolean;
   stock: number;

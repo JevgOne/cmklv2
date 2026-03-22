@@ -24,6 +24,7 @@ interface PartResult {
   name: string;
   category: string;
   condition: string;
+  partType: string;
   price: number;
   stock: number;
   compatibleBrands: string | null;
@@ -276,7 +277,7 @@ export default function KatalogPage() {
                 }
                 condition={conditionToStars(part.condition)}
                 price={part.price}
-                badge={part.condition === "NEW" ? "new" : "used"}
+                badge={part.partType === "NEW" ? "new" : part.partType === "AFTERMARKET" ? "aftermarket" : "used"}
                 slug={part.slug}
                 image={part.images[0]?.url}
                 stock={part.stock}

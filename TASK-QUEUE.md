@@ -1739,7 +1739,7 @@ Kompletní specifikace je v sekci "Očekávaný výsledek" níže. Detailní zad
 
 ## TASK-020: Eshop autodíly — e-shop s použitými a aftermarket díly
 Priorita: 3
-Stav: čeká
+Stav: zpracovává se
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:

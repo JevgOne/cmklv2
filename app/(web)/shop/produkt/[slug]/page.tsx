@@ -186,8 +186,8 @@ export default async function ProductDetailPage({
           <div>
             {/* Badge */}
             <div className="mb-3">
-              <Badge variant="default">
-                {part.condition === "NEW" ? "Nový" : "Z vraku"}
+              <Badge variant={part.partType === "NEW" ? "success" : part.partType === "AFTERMARKET" ? "default" : "default"}>
+                {part.partType === "NEW" ? "Nový díl" : part.partType === "AFTERMARKET" ? "Aftermarket" : "Použitý"}
               </Badge>
             </div>
 
@@ -368,7 +368,7 @@ export default async function ProductDetailPage({
                             : 5
                   }
                   price={p.price}
-                  badge={p.condition === "NEW" ? "new" : "used"}
+                  badge={p.partType === "NEW" ? "new" : p.partType === "AFTERMARKET" ? "aftermarket" : "used"}
                   slug={p.slug}
                   image={p.images[0]?.url}
                   stock={p.stock}

@@ -114,7 +114,11 @@ const years = generateYears();
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
 
-export function PartsSearch() {
+interface PartsSearchProps {
+  basePath?: string;
+}
+
+export function PartsSearch({ basePath = "/shop" }: PartsSearchProps) {
   const router = useRouter();
   const [brand, setBrand] = useState("");
   const [model, setModel] = useState("");
@@ -160,12 +164,12 @@ export function PartsSearch() {
       // Po krátkém zpoždění přesměrovat na katalog s filtry
       setTimeout(() => {
         if (mode === "vin") {
-          router.push(`/shop/katalog`);
+          router.push(`${basePath}/katalog`);
         } else {
           const katalogParams = new URLSearchParams();
           if (brand) katalogParams.set("brand", brand);
           if (model) katalogParams.set("model", model);
-          router.push(`/shop/katalog?${katalogParams.toString()}`);
+          router.push(`${basePath}/katalog?${katalogParams.toString()}`);
         }
       }, 1500);
     } catch {
