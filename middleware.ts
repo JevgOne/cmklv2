@@ -65,6 +65,7 @@ export async function middleware(request: NextRequest) {
     "/makler/contracts",
     "/makler/leads",
     "/makler/messages",
+    "/makler/contacts",
   ];
   if (protectedMaklerPaths.some((p) => pathname.startsWith(p))) {
     const token = await getToken({
@@ -189,6 +190,8 @@ export const config = {
     "/makler/leads/:path*",
     "/makler/messages",
     "/makler/messages/:path*",
+    "/makler/contacts",
+    "/makler/contacts/:path*",
     "/moje-inzeraty",
     "/moje-inzeraty/:path*",
     "/muj-ucet",

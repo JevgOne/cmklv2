@@ -1,0 +1,557 @@
+"use client";
+
+import Link from "next/link";
+import Image from "next/image";
+import { Badge } from "@/components/ui/Badge";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { VehiclePhotoCarousel } from "./VehiclePhotoCarousel";
+import { VehicleSpecs } from "./VehicleSpecs";
+import { VehicleStatusActions } from "./VehicleStatusActions";
+import { VehicleContracts } from "./VehicleContracts";
+import { ExclusiveSection } from "./ExclusiveSection";
+import { EmailButton } from "@/components/pwa/emails/EmailButton";
+import { EmailHistory } from "@/components/pwa/emails/EmailHistory";
+import { formatPrice, formatMileage } from "@/lib/utils";
+
+// ---- Types ----
+
+interface VehicleImage {
+  id: string;
+  url: string;
+  order: number;
+  isPrimary: boolean;
+}
+
+interface VehicleInquiry {
+  id: string;
+  buyerName: string;
+  buyerPhone: string;
+  buyerEmail: string | null;
+  message: string;
+  status: string;
+  createdAt: string;
+  viewingDate: string | null;
+}
+
+interface DamageReport {
+  id: string;
+  description: string;
+  severity: string;
+  images: string | null;
+  repaired: boolean;
+  repairedAt: string | null;
+  repairNote: string | null;
+  createdAt: string;
+  reportedBy: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  };
+}
+
+interface Contract {
+  id: string;
+  type: string;
+  status: string;
+  sellerName: string;
+  pdfUrl: string | null;
+  signedAt: string | null;
+  createdAt: string;
+}
+
+interface ChangeLogEntry {
+  id: string;
+  field: string;
+  oldValue: string | null;
+  newValue: string | null;
+  reason: string | null;
+  flagged: boolean;
+  createdAt: string;
+}
+
+interface VehicleData {
+  id: string;
+  vin: string;
+  vinLocked: boolean;
+  brand: string;
+  model: string;
+  variant: string | null;
+  year: number;
+  mileage: number;
+  fuelType: string;
+  transmission: string;
+  enginePower: number | null;
+  engineCapacity: number | null;
+  bodyType: string | null;
+  color: string | null;
+  doorsCount: number | null;
+  seatsCount: number | null;
+  drivetrain: string | null;
+  ownerCount: number | null;
+  serviceBookStatus: string | null;
+  odometerStatus: string | null;
+  originCountry: string | null;
+  condition: string;
+  stkValidUntil: string | null;
+  serviceBook: boolean;
+  price: number;
+  priceNegotiable: boolean;
+  equipment: string | null;
+  description: string | null;
+  inspectionData: string | null;
+  overallRating: number | null;
+  status: string;
+  rejectionReason: string | null;
+  commission: number | null;
+  viewCount: number;
+  reservedFor: string | null;
+  reservedAt: string | null;
+  reservedPrice: number | null;
+  soldPrice: number | null;
+  soldAt: string | null;
+  handoverCompleted: boolean;
+  sellerName: string | null;
+  sellerPhone: string | null;
+  sellerEmail: string | null;
+  city: string;
+  publishedAt: string | null;
+  createdAt: string;
+  exclusiveUntil: string | null;
+  exclusiveContractId: string | null;
+  images: VehicleImage[];
+  inquiries: VehicleInquiry[];
+  damageReports: DamageReport[];
+  contracts: Contract[];
+  changeLog: ChangeLogEntry[];
+}
+
+interface ExclusiveContractData {
+  id: string;
+  exclusiveEndDate: string | null;
+  earlyTermination: boolean;
+  terminationReason: string | null;
+  violationReported: boolean;
+  violationDetails: string | null;
+  penaltyAmount: number | null;
+  pdfUrl: string | null;
+  status: string;
+}
+
+interface VehicleStats {
+  viewCount: number;
+  totalInquiries: number;
+  newInquiries: number;
+  daysOnPlatform: number;
+  damageReportsCount: number;
+  contractsCount: number;
+}
+
+interface VehicleDetailHubProps {
+  vehicle: VehicleData;
+  stats: VehicleStats;
+  exclusiveContract: ExclusiveContractData | null;
+}
+
+// ---- Labels ----
+
+const statusMap: Record<string, { variant: "verified" | "top" | "pending" | "rejected" | "default"; label: string }> = {
+  ACTIVE: { variant: "verified", label: "Aktivni" },
+  PENDING: { variant: "pending", label: "Ke schvaleni" },
+  REJECTED: { variant: "rejected", label: "Zamitnuto" },
+  DRAFT: { variant: "default", label: "Draft" },
+  SOLD: { variant: "top", label: "Prodano" },
+  RESERVED: { variant: "pending", label: "Rezervovano" },
+  ARCHIVED: { variant: "default", label: "Archivovano" },
+};
+
+const fuelLabels: Record<string, string> = {
+  PETROL: "Benzin",
+  DIESEL: "Diesel",
+  ELECTRIC: "Elektro",
+  HYBRID: "Hybrid",
+  PLUGIN_HYBRID: "Plug-in hybrid",
+  LPG: "LPG",
+  CNG: "CNG",
+};
+
+const transmissionLabels: Record<string, string> = {
+  MANUAL: "Manual",
+  AUTOMATIC: "Automat",
+  DSG: "DSG",
+  CVT: "CVT",
+};
+
+const inquiryStatusLabels: Record<string, string> = {
+  NEW: "Novy",
+  REPLIED: "Odpovezeno",
+  VIEWING_SCHEDULED: "Prohlidka",
+  NEGOTIATING: "Vyjednavani",
+  RESERVED: "Rezervovano",
+  SOLD: "Prodano",
+  NO_INTEREST: "Bez zajmu",
+};
+
+const severityLabels: Record<string, string> = {
+  COSMETIC: "Kosmeticke",
+  FUNCTIONAL: "Funkcni",
+  SEVERE: "Vazne",
+};
+
+const changeLogFieldLabels: Record<string, string> = {
+  price: "Cena",
+  mileage: "Najezd",
+  year: "Rok vyroby",
+  status: "Stav",
+};
+
+// ---- Component ----
+
+export function VehicleDetailHub({ vehicle, stats, exclusiveContract }: VehicleDetailHubProps) {
+  const statusInfo = statusMap[vehicle.status] || { variant: "default" as const, label: vehicle.status };
+  const title = `${vehicle.brand} ${vehicle.model}${vehicle.variant ? ` ${vehicle.variant}` : ""}`;
+  const newInquiries = vehicle.inquiries.filter((i) => i.status === "NEW");
+
+  return (
+    <div className="pb-24">
+      {/* Back button overlay */}
+      <div className="relative">
+        <VehiclePhotoCarousel images={vehicle.images} title={title} />
+        <Link
+          href="/makler/vehicles"
+          className="absolute top-4 left-4 z-10 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+            <path fillRule="evenodd" d="M17 10a.75.75 0 01-.75.75H5.612l4.158 3.96a.75.75 0 11-1.04 1.08l-5.5-5.25a.75.75 0 010-1.08l5.5-5.25a.75.75 0 111.04 1.08L5.612 9.25H16.25A.75.75 0 0117 10z" clipRule="evenodd" />
+          </svg>
+        </Link>
+        <div className="absolute top-4 right-4 z-10">
+          <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="p-4 space-y-6">
+        {/* Header info */}
+        <div>
+          <h1 className="text-xl font-extrabold text-gray-900">{title}</h1>
+          <p className="text-sm text-gray-500 mt-1">
+            {vehicle.year} · {formatMileage(vehicle.mileage)} · {fuelLabels[vehicle.fuelType] || vehicle.fuelType} · {transmissionLabels[vehicle.transmission] || vehicle.transmission}
+            {vehicle.enginePower && ` · ${vehicle.enginePower} kW`}
+          </p>
+          <div className="flex items-center gap-2 mt-2">
+            <p className="text-2xl font-extrabold text-gray-900">
+              {formatPrice(vehicle.price)}
+            </p>
+            {vehicle.priceNegotiable && (
+              <Badge variant="default">K jednani</Badge>
+            )}
+          </div>
+        </div>
+
+        {/* Exclusive contract */}
+        <ExclusiveSection
+          vehicleId={vehicle.id}
+          exclusiveUntil={vehicle.exclusiveUntil}
+          contract={exclusiveContract}
+        />
+
+        {/* Seller info */}
+        {vehicle.sellerName && (
+          <Card className="p-4">
+            <h3 className="font-semibold text-gray-900 mb-3">Prodejce</h3>
+            <div className="space-y-2">
+              <p className="text-sm text-gray-700 font-medium">{vehicle.sellerName}</p>
+              {vehicle.sellerPhone && (
+                <div className="flex gap-2">
+                  <a href={`tel:${vehicle.sellerPhone}`} className="no-underline flex-1">
+                    <Button variant="primary" size="sm" className="w-full">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                        <path fillRule="evenodd" d="M2 3.5A1.5 1.5 0 013.5 2h1.148a1.5 1.5 0 011.465 1.175l.716 3.223a1.5 1.5 0 01-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 006.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 011.767-1.052l3.223.716A1.5 1.5 0 0118 15.352V16.5a1.5 1.5 0 01-1.5 1.5H15c-1.149 0-2.263-.15-3.326-.43A13.022 13.022 0 012.43 8.326 13.019 13.019 0 012 5V3.5z" clipRule="evenodd" />
+                      </svg>
+                      Zavolat
+                    </Button>
+                  </a>
+                  <a href={`sms:${vehicle.sellerPhone}`} className="no-underline flex-1">
+                    <Button variant="outline" size="sm" className="w-full">
+                      SMS
+                    </Button>
+                  </a>
+                  <a href={`https://wa.me/${vehicle.sellerPhone.replace(/\s/g, "")}`} className="no-underline flex-1" target="_blank" rel="noopener noreferrer">
+                    <Button variant="outline" size="sm" className="w-full">
+                      WhatsApp
+                    </Button>
+                  </a>
+                </div>
+              )}
+              {vehicle.sellerEmail && (
+                <a href={`mailto:${vehicle.sellerEmail}`} className="no-underline block">
+                  <Button variant="ghost" size="sm" className="w-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                      <path d="M3 4a2 2 0 00-2 2v1.161l8.441 4.221a1.25 1.25 0 001.118 0L19 7.162V6a2 2 0 00-2-2H3z" />
+                      <path d="M19 8.839l-7.77 3.885a2.75 2.75 0 01-2.46 0L1 8.839V14a2 2 0 002 2h14a2 2 0 002-2V8.839z" />
+                    </svg>
+                    {vehicle.sellerEmail}
+                  </Button>
+                </a>
+              )}
+            </div>
+          </Card>
+        )}
+
+        {/* Inquiries alert */}
+        {newInquiries.length > 0 && (
+          <Link href={`/makler/messages/${vehicle.id}`} className="block no-underline">
+            <Card className="p-4 flex items-center justify-between bg-orange-50 border border-orange-200">
+              <div>
+                <p className="font-semibold text-gray-900">
+                  {newInquiries.length}{" "}
+                  {newInquiries.length === 1
+                    ? "novy dotaz"
+                    : newInquiries.length < 5
+                    ? "nove dotazy"
+                    : "novych dotazu"}
+                </p>
+                <p className="text-sm text-gray-500">Kliknutim zobrazite</p>
+              </div>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-orange-500">
+                <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+              </svg>
+            </Card>
+          </Link>
+        )}
+
+        {/* Statistics */}
+        <div>
+          <h3 className="font-semibold text-gray-900 mb-3">Statistiky</h3>
+          <div className="grid grid-cols-3 gap-3">
+            <Card className="p-3 text-center">
+              <p className="text-lg font-bold text-gray-900">{stats.viewCount}</p>
+              <p className="text-xs text-gray-500">Zobrazeni</p>
+            </Card>
+            <Card className="p-3 text-center">
+              <p className="text-lg font-bold text-gray-900">{stats.totalInquiries}</p>
+              <p className="text-xs text-gray-500">Dotazy</p>
+            </Card>
+            <Card className="p-3 text-center">
+              <p className="text-lg font-bold text-gray-900">{stats.daysOnPlatform}</p>
+              <p className="text-xs text-gray-500">Dni na platforme</p>
+            </Card>
+          </div>
+          {vehicle.status === "ACTIVE" && vehicle.publishedAt && (
+            <Link
+              href={`/vozidla/${vehicle.id}`}
+              target="_blank"
+              className="block mt-2 text-center text-sm text-orange-600 font-medium no-underline hover:underline"
+            >
+              Zobrazit verejny inzerat
+            </Link>
+          )}
+        </div>
+
+        {/* Vehicle Specs */}
+        <div>
+          <h3 className="font-semibold text-gray-900 mb-3">Udaje vozu</h3>
+          <VehicleSpecs vehicle={vehicle} />
+        </div>
+
+        {/* Photos grid */}
+        {vehicle.images.length > 0 && (
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold text-gray-900">
+                Fotky <span className="text-gray-400 font-normal">({vehicle.images.length})</span>
+              </h3>
+              {["DRAFT", "ACTIVE"].includes(vehicle.status) && (
+                <Link href={`/makler/vehicles/${vehicle.id}/edit?step=photos`} className="no-underline">
+                  <Button variant="outline" size="sm">Upravit fotky</Button>
+                </Link>
+              )}
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {vehicle.images.slice(0, 9).map((img) => (
+                <div key={img.id} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
+                  <Image
+                    src={img.url}
+                    alt={`${title} foto`}
+                    fill
+                    className="object-cover"
+                    sizes="33vw"
+                  />
+                </div>
+              ))}
+              {vehicle.images.length > 9 && (
+                <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-800 flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">+{vehicle.images.length - 9}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Damage Reports */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-semibold text-gray-900">
+              Poskozeni{" "}
+              {vehicle.damageReports.length > 0 && (
+                <span className="text-gray-400 font-normal">({vehicle.damageReports.length})</span>
+              )}
+            </h3>
+          </div>
+          {vehicle.damageReports.length > 0 ? (
+            <div className="space-y-2">
+              {vehicle.damageReports.map((report) => (
+                <Card key={report.id} className="p-3">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">{report.description}</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {severityLabels[report.severity] || report.severity}
+                        {" · "}
+                        {report.reportedBy.firstName} {report.reportedBy.lastName}
+                        {" · "}
+                        {new Date(report.createdAt).toLocaleDateString("cs-CZ")}
+                      </p>
+                      {report.repairNote && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          Oprava: {report.repairNote}
+                        </p>
+                      )}
+                    </div>
+                    {report.repaired ? (
+                      <Badge variant="verified">Opraveno</Badge>
+                    ) : (
+                      <Badge variant="rejected">Neopraveno</Badge>
+                    )}
+                  </div>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <Card className="p-4 text-center">
+              <p className="text-sm text-gray-400">Zadna poskozeni</p>
+            </Card>
+          )}
+        </div>
+
+        {/* Inquiries list */}
+        {vehicle.inquiries.length > 0 && (
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold text-gray-900">
+                Dotazy kupujicich{" "}
+                <span className="text-gray-400 font-normal">({vehicle.inquiries.length})</span>
+              </h3>
+              <Link href={`/makler/messages/${vehicle.id}`} className="no-underline">
+                <Button variant="ghost" size="sm">Zobrazit vse</Button>
+              </Link>
+            </div>
+            <div className="space-y-2">
+              {vehicle.inquiries.slice(0, 5).map((inquiry) => {
+                const statusLabel = inquiryStatusLabels[inquiry.status] || inquiry.status;
+                const isNew = inquiry.status === "NEW";
+                return (
+                  <Card key={inquiry.id} className={`p-3 ${isNew ? "border border-orange-200 bg-orange-50/50" : ""}`}>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-medium text-gray-900">{inquiry.buyerName}</p>
+                          <Badge variant={isNew ? "new" : "default"}>{statusLabel}</Badge>
+                        </div>
+                        <p className="text-xs text-gray-600 mt-1 truncate">{inquiry.message}</p>
+                        <p className="text-xs text-gray-400 mt-1">
+                          {new Date(inquiry.createdAt).toLocaleDateString("cs-CZ")}
+                        </p>
+                      </div>
+                      <div className="flex gap-1 ml-2">
+                        <a
+                          href={`tel:${inquiry.buyerPhone}`}
+                          className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-green-600">
+                            <path fillRule="evenodd" d="M2 3.5A1.5 1.5 0 013.5 2h1.148a1.5 1.5 0 011.465 1.175l.716 3.223a1.5 1.5 0 01-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 006.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 011.767-1.052l3.223.716A1.5 1.5 0 0118 15.352V16.5a1.5 1.5 0 01-1.5 1.5H15c-1.149 0-2.263-.15-3.326-.43A13.022 13.022 0 012.43 8.326 13.019 13.019 0 012 5V3.5z" clipRule="evenodd" />
+                          </svg>
+                        </a>
+                      </div>
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Contracts */}
+        <VehicleContracts contracts={vehicle.contracts} vehicleId={vehicle.id} />
+
+        {/* Emaily */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-semibold text-gray-900">Emaily</h3>
+            <EmailButton
+              vehicleId={vehicle.id}
+              vehicleName={title}
+              defaultRecipientEmail={vehicle.sellerEmail || undefined}
+              defaultRecipientName={vehicle.sellerName || undefined}
+              variant="outline"
+              size="sm"
+            />
+          </div>
+          <EmailHistory vehicleId={vehicle.id} />
+        </div>
+
+        {/* Change Log / Timeline */}
+        {vehicle.changeLog.length > 0 && (
+          <div>
+            <h3 className="font-semibold text-gray-900 mb-3">Historie zmen</h3>
+            <div className="relative pl-4 border-l-2 border-gray-200 space-y-4">
+              {vehicle.changeLog.slice(0, 10).map((entry) => (
+                <div key={entry.id} className="relative">
+                  <div
+                    className={`absolute -left-[21px] w-3 h-3 rounded-full border-2 border-white ${
+                      entry.flagged ? "bg-red-500" : "bg-gray-300"
+                    }`}
+                  />
+                  <div className="ml-2">
+                    <p className="text-sm text-gray-700">
+                      <span className="font-medium">
+                        {changeLogFieldLabels[entry.field] || entry.field}
+                      </span>
+                      {": "}
+                      {entry.oldValue && (
+                        <span className="text-gray-400 line-through">{entry.oldValue}</span>
+                      )}
+                      {entry.oldValue && entry.newValue && " -> "}
+                      {entry.newValue && (
+                        <span className="font-medium">{entry.newValue}</span>
+                      )}
+                    </p>
+                    {entry.reason && (
+                      <p className="text-xs text-gray-500 mt-0.5">Duvod: {entry.reason}</p>
+                    )}
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      {new Date(entry.createdAt).toLocaleDateString("cs-CZ", {
+                        day: "numeric",
+                        month: "short",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Status Actions - at the bottom */}
+        <div>
+          <h3 className="font-semibold text-gray-900 mb-3">Akce</h3>
+          <VehicleStatusActions vehicle={vehicle} />
+        </div>
+      </div>
+    </div>
+  );
+}

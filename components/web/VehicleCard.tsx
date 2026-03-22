@@ -4,6 +4,7 @@ import { TrustScore } from "@/components/ui/TrustScore";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { FavoriteButton } from "@/components/web/FavoriteButton";
+import { CompareButton } from "@/components/web/CompareButton";
 
 export interface VehicleData {
   id: string;
@@ -63,6 +64,16 @@ export function VehicleCard({ car, className }: VehicleCardProps) {
               </span>
             )}
           </div>
+
+          {/* Compare button */}
+          <CompareButton
+            vehicle={{
+              id: car.id,
+              name: car.name,
+              photo: car.photo,
+              slug: car.slug || car.name.toLowerCase().replace(/\s+/g, '-'),
+            }}
+          />
 
           {/* Favorite button (visual only) */}
           <FavoriteButton />

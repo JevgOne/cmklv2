@@ -9,6 +9,11 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log("Clearing existing data...");
+  await prisma.sellerCommunication.deleteMany();
+  await prisma.sellerContact.deleteMany();
+  await prisma.sellerPayout.deleteMany();
+  await prisma.brokerPayout.deleteMany();
+  await prisma.payment.deleteMany();
   await prisma.damageReport.deleteMany();
   await prisma.vehicleInquiry.deleteMany();
   await prisma.lead.deleteMany();
@@ -2287,6 +2292,191 @@ async function main() {
   const damageReportCount = await prisma.damageReport.count();
   console.log(`Damage Reports: ${damageReportCount}`);
 
+  // ============================================
+  // PAYMENTS & PAYOUTS
+  // ============================================
+
+  console.log("Seeding payments...");
+
+  // Platba kartou — zaplacená
+  const payment1 = await prisma.payment.create({
+    data: {
+      vehicleId: v1.id,
+      buyerName: "Martin Kupující",
+      buyerEmail: "martin.kupujici@email.cz",
+      buyerPhone: "+420 777 111 222",
+      amount: 575000,
+      method: "CARD",
+      status: "PAID",
+      stripeSessionId: "cs_test_demo_001",
+      stripePaymentIntent: "pi_test_demo_001",
+      confirmedAt: new Date("2026-02-15"),
+    },
+  });
+
+  // Platba převodem — čeká potvrzení
+  await prisma.payment.create({
+    data: {
+      vehicleId: v4.id,
+      buyerName: "Eva Novotná",
+      buyerEmail: "eva.novotna@email.cz",
+      buyerPhone: "+420 605 333 444",
+      amount: 960000,
+      method: "BANK_TRANSFER",
+      status: "PENDING",
+      variableSymbol: "00123456",
+    },
+  });
+
+  // Platba kartou — selhala
+  await prisma.payment.create({
+    data: {
+      vehicleId: v3.id,
+      buyerName: "Tomáš Neplatič",
+      buyerEmail: "tomas@email.cz",
+      amount: 470000,
+      method: "CARD",
+      status: "FAILED",
+      stripeSessionId: "cs_test_demo_003",
+    },
+  });
+
+  // SellerPayout pro v1
+  await prisma.sellerPayout.create({
+    data: {
+      vehicleId: v1.id,
+      paymentId: payment1.id,
+      sellerName: "Jiří Prodejce",
+      sellerBankAccount: "CZ6508000000001234567890",
+      amount: 546250, // 575000 - 28750
+      commissionAmount: 28750,
+      status: "PAID",
+      paidAt: new Date("2026-02-20"),
+      bankReference: "REF-2026-001",
+    },
+  });
+
+  console.log("Created 3 payments, 1 seller payout");
+
+  // ============================================
+  // CRM — SELLER CONTACTS
+  // ============================================
+
+  console.log("Seeding seller contacts...");
+
+  const contact1 = await prisma.sellerContact.create({
+    data: {
+      brokerId: janNovak.id,
+      name: "Jiří Prodejce",
+      phone: "+420 602 111 222",
+      email: "jiri.prodejce@email.cz",
+      address: "Vinohradská 42",
+      city: "Praha",
+      note: "Pravidelný prodejce, má garáž se 3 vozy",
+      totalVehicles: 3,
+      totalSold: 2,
+      lastContactAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      nextFollowUp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // vcera — due!
+      followUpNote: "Nabidnout prodej dalsiho vozu",
+    },
+  });
+
+  const contact2 = await prisma.sellerContact.create({
+    data: {
+      brokerId: janNovak.id,
+      name: "Marie Svobodová",
+      phone: "+420 603 333 444",
+      city: "Praha",
+      totalVehicles: 1,
+      totalSold: 1,
+      lastContactAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+    },
+  });
+
+  await prisma.sellerContact.create({
+    data: {
+      brokerId: janNovak.id,
+      name: "Tomáš Veselý",
+      phone: "+420 777 555 666",
+      email: "tomas.vesely@email.cz",
+      city: "Kladno",
+      note: "Zájem o prodej starší Fabie",
+      totalVehicles: 0,
+      nextFollowUp: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+      followUpNote: "Zavolat ohledně focení vozu",
+    },
+  });
+
+  await prisma.sellerContact.create({
+    data: {
+      brokerId: petraMala.id,
+      name: "Pavel Novotný",
+      phone: "+420 608 999 888",
+      city: "Brno",
+      totalVehicles: 2,
+      totalSold: 1,
+      lastContactAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+    },
+  });
+
+  // Komunikace pro contact1
+  await prisma.sellerCommunication.create({
+    data: {
+      contactId: contact1.id,
+      brokerId: janNovak.id,
+      type: "CALL",
+      direction: "OUTGOING",
+      summary: "Domluvena schůzka na čtvrtek. Prodejce má zájem prodat Superb.",
+      duration: 180,
+      result: "INTERESTED",
+    },
+  });
+
+  await prisma.sellerCommunication.create({
+    data: {
+      contactId: contact1.id,
+      brokerId: janNovak.id,
+      type: "MEETING",
+      summary: "Prohlídka Superbu — auto v dobrém stavu, nafoceno, podepsána smlouva.",
+      result: "FOLLOW_UP",
+    },
+  });
+
+  await prisma.sellerCommunication.create({
+    data: {
+      contactId: contact1.id,
+      brokerId: janNovak.id,
+      type: "SMS",
+      direction: "OUTGOING",
+      summary: "Odeslán link na inzerát, ať si zkontroluje fotky.",
+    },
+  });
+
+  await prisma.sellerCommunication.create({
+    data: {
+      contactId: contact2.id,
+      brokerId: janNovak.id,
+      type: "CALL",
+      direction: "INCOMING",
+      summary: "Paní volala s dotazem na stav prodeje jejího Golfu.",
+      duration: 120,
+      result: "NOT_NOW",
+    },
+  });
+
+  await prisma.sellerCommunication.create({
+    data: {
+      contactId: contact2.id,
+      brokerId: janNovak.id,
+      type: "NOTE",
+      summary: "Golf prodán, paní spokojená. Doporučí nás známým.",
+      result: "INTERESTED",
+    },
+  });
+
+  console.log(`Seller Contacts: ${await prisma.sellerContact.count()}`);
+  console.log(`Communications:  ${await prisma.sellerCommunication.count()}`);
+
   const regionCount = await prisma.region.count();
   const userCount = await prisma.user.count();
   const vehicleCount = await prisma.vehicle.count();
@@ -2322,6 +2512,11 @@ async function main() {
   console.log(`Leads:          ${await prisma.lead.count()}`);
   console.log(`Veh. Inquiries: ${await prisma.vehicleInquiry.count()}`);
   console.log(`Damage Reports: ${await prisma.damageReport.count()}`);
+  console.log(`Payments:       ${await prisma.payment.count()}`);
+  console.log(`Seller Payouts: ${await prisma.sellerPayout.count()}`);
+  console.log(`Broker Payouts: ${await prisma.brokerPayout.count()}`);
+  console.log(`Seller Contacts: ${await prisma.sellerContact.count()}`);
+  console.log(`Communications:  ${await prisma.sellerCommunication.count()}`);
   console.log("\nDemo login: admin@carmakler.cz / heslo123");
   console.log("Advertiser login: prodejce@email.cz / heslo123");
   console.log("Buyer login: kupujici@email.cz / heslo123");

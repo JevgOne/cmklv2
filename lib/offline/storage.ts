@@ -190,6 +190,101 @@ export class OfflineStorage {
       await db.put("contracts", contract);
     }
   }
+  // ============================================
+  // CONTACTS (CRM)
+  // ============================================
+
+  async saveContact(
+    id: string,
+    name: string,
+    phone: string,
+    email?: string
+  ): Promise<void> {
+    const db = await getDB();
+    await db.put("contacts", {
+      id,
+      name,
+      phone,
+      email,
+      syncedAt: Date.now(),
+    });
+  }
+
+  async getContacts(): Promise<
+    Array<{
+      id: string;
+      name: string;
+      phone: string;
+      email?: string;
+      syncedAt: number;
+    }>
+  > {
+    const db = await getDB();
+    const all = await db.getAll("contacts");
+    return all.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  async getContact(
+    id: string
+  ): Promise<{
+    id: string;
+    name: string;
+    phone: string;
+    email?: string;
+    syncedAt: number;
+  } | undefined> {
+    const db = await getDB();
+    return db.get("contacts", id);
+  }
+
+  async deleteContact(id: string): Promise<void> {
+    const db = await getDB();
+    await db.delete("contacts", id);
+  }
+
+  async searchContacts(
+    query: string
+  ): Promise<
+    Array<{
+      id: string;
+      name: string;
+      phone: string;
+      email?: string;
+      syncedAt: number;
+    }>
+  > {
+    const db = await getDB();
+    const all = await db.getAll("contacts");
+    const q = query.toLowerCase();
+    return all.filter(
+      (c) =>
+        c.name.toLowerCase().includes(q) ||
+        c.phone.includes(q) ||
+        (c.email && c.email.toLowerCase().includes(q))
+    );
+  }
+
+  async syncContactsFromServer(
+    contacts: Array<{
+      id: string;
+      name: string;
+      phone: string;
+      email?: string;
+    }>
+  ): Promise<void> {
+    const db = await getDB();
+    const tx = db.transaction("contacts", "readwrite");
+    // Clear old data
+    await tx.store.clear();
+    // Insert fresh server data
+    for (const c of contacts) {
+      await tx.store.put({
+        ...c,
+        syncedAt: Date.now(),
+      });
+    }
+    await tx.done;
+  }
 }
 
 export const offlineStorage = new OfflineStorage();

@@ -272,6 +272,15 @@ export function ManagerBrokerDetailContent({
             </div>
           </div>
           <div className="flex gap-2 shrink-0">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() =>
+                router.push(`/admin/manager/brokers/${broker.id}/transfer`)
+              }
+            >
+              Přenést vozy
+            </Button>
             {broker.status === "ACTIVE" && (
               <Button
                 variant="danger"

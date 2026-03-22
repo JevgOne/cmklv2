@@ -8,6 +8,7 @@ import { TrustScore } from "@/components/ui/TrustScore";
 import { ProfileForm } from "@/components/pwa/profile/ProfileForm";
 import { BrokerStats } from "@/components/pwa/profile/BrokerStats";
 import { NotificationSettings } from "@/components/pwa/profile/NotificationSettings";
+import { QuickModeToggle } from "@/components/pwa/profile/QuickModeToggle";
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
@@ -30,6 +31,7 @@ export default async function ProfilePage() {
         avatar: true,
         bio: true,
         role: true,
+        quickModeEnabled: true,
         createdAt: true,
       },
     }),
@@ -119,6 +121,11 @@ export default async function ProfilePage() {
           }}
         />
       </Card>
+
+      {/* Rychlé nabírání — toggle (pro makléře) */}
+      {user.role === "BROKER" || user.role === "MANAGER" || user.role === "REGIONAL_DIRECTOR" ? (
+        <QuickModeToggle initialEnabled={user.quickModeEnabled} />
+      ) : null}
 
       {/* Nastaveni notifikaci */}
       <NotificationSettings />

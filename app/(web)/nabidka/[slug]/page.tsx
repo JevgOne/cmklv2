@@ -11,6 +11,8 @@ import { ContactForm } from "@/components/web/ContactForm";
 import { VehicleDetailTabs } from "./VehicleDetailTabs";
 import { VehicleCard } from "@/components/web/VehicleCard";
 import { ContactBrokerButton } from "./ContactBrokerButton";
+import { PriceHistory } from "@/components/web/PriceHistory";
+import { VehicleTimeline } from "@/components/web/VehicleTimeline";
 import { prisma } from "@/lib/prisma";
 import { listingTypeLabels } from "@/lib/listings";
 import type { VehicleData } from "@/components/web/VehicleCard";
@@ -180,21 +182,61 @@ export default async function VehicleDetailPage({
       /* noncritical */
     });
 
-  // Načtení podobných vozidel
-  const similarDb = await prisma.vehicle.findMany({
-    where: {
-      status: "ACTIVE",
-      brand: vehicle.brand,
-      id: { not: vehicle.id },
-    },
-    include: {
-      images: { where: { isPrimary: true }, take: 1 },
-      broker: {
-        select: { id: true, firstName: true, lastName: true },
-      },
-    },
-    take: 3,
+  // Načtení podobných vozidel (multi-tier: brand+model, brand+price, bodyType+price, fallback price)
+  const yearMin = vehicle.year - 3;
+  const yearMax = vehicle.year + 3;
+  const priceMin = Math.round(vehicle.price * 0.8);
+  const priceMax = Math.round(vehicle.price * 1.2);
+  const similarLimit = 6;
+
+  const similarInclude = {
+    images: { where: { isPrimary: true }, take: 1 },
+    broker: { select: { id: true, firstName: true, lastName: true } },
+  } as const;
+
+  // Tier 1: Same brand + model
+  let similarDb = await prisma.vehicle.findMany({
+    where: { status: "ACTIVE", id: { not: vehicle.id }, brand: vehicle.brand, model: vehicle.model, year: { gte: yearMin, lte: yearMax } },
+    include: similarInclude,
+    take: similarLimit,
+    orderBy: { createdAt: "desc" },
   });
+
+  // Tier 2: Same brand + similar price
+  if (similarDb.length < similarLimit) {
+    const existingIds = [vehicle.id, ...similarDb.map((r) => r.id)];
+    const tier2 = await prisma.vehicle.findMany({
+      where: { status: "ACTIVE", id: { notIn: existingIds }, brand: vehicle.brand, price: { gte: priceMin, lte: priceMax }, year: { gte: yearMin, lte: yearMax } },
+      include: similarInclude,
+      take: similarLimit - similarDb.length,
+      orderBy: { createdAt: "desc" },
+    });
+    similarDb = [...similarDb, ...tier2];
+  }
+
+  // Tier 3: Same body type + similar price
+  if (similarDb.length < similarLimit && vehicle.bodyType) {
+    const existingIds = [vehicle.id, ...similarDb.map((r) => r.id)];
+    const tier3 = await prisma.vehicle.findMany({
+      where: { status: "ACTIVE", id: { notIn: existingIds }, bodyType: vehicle.bodyType, price: { gte: priceMin, lte: priceMax }, year: { gte: yearMin, lte: yearMax } },
+      include: similarInclude,
+      take: similarLimit - similarDb.length,
+      orderBy: { createdAt: "desc" },
+    });
+    similarDb = [...similarDb, ...tier3];
+  }
+
+  // Tier 4: Fallback - same price range
+  if (similarDb.length < similarLimit) {
+    const existingIds = [vehicle.id, ...similarDb.map((r) => r.id)];
+    const tier4 = await prisma.vehicle.findMany({
+      where: { status: "ACTIVE", id: { notIn: existingIds }, price: { gte: priceMin, lte: priceMax } },
+      include: similarInclude,
+      take: similarLimit - similarDb.length,
+      orderBy: { createdAt: "desc" },
+    });
+    similarDb = [...similarDb, ...tier4];
+  }
 
   // Map podobná vozidla na VehicleData
   const similarCars: VehicleData[] = similarDb.map((v) => {
@@ -624,6 +666,16 @@ export default async function VehicleDetailPage({
       </section>
 
       {/* ============================================================ */}
+      {/* Price History + Timeline                                      */}
+      {/* ============================================================ */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <PriceHistory vehicleId={vehicle.id} />
+          <VehicleTimeline vehicleId={vehicle.id} />
+        </div>
+      </section>
+
+      {/* ============================================================ */}
       {/* Contact Form + Broker Box (only for broker listings)         */}
       {/* ============================================================ */}
       {isBrokerListing && (
@@ -675,10 +727,10 @@ export default async function VehicleDetailPage({
       {similarCars.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
           <h2 className="text-[22px] font-extrabold text-gray-900 mb-6">
-            Podobná vozidla
+            Podobna vozidla
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {similarCars.map((car) => (
+            {similarCars.slice(0, 6).map((car) => (
               <VehicleCard key={car.id} car={car} />
             ))}
           </div>
