@@ -27,6 +27,7 @@ const createListingSchema = z.object({
   color: z.string().optional(),
   doorsCount: z.number().int().optional(),
   seatsCount: z.number().int().optional(),
+  drivetrain: z.string().optional(),
 
   // Stav
   condition: z.string().min(1),
@@ -53,9 +54,13 @@ const createListingSchema = z.object({
   equipment: z.array(z.string()).optional(),
   highlights: z.array(z.string()).optional(),
 
-  // Propojení
+  // Propojení — akceptujeme obě varianty názvu pole
   wantsBrokerHelp: z.boolean().default(false),
+  wantBrokerHelp: z.boolean().optional(),
   vehicleId: z.string().optional(),
+
+  // Status (z klienta pro draft/active)
+  status: z.enum(["DRAFT", "ACTIVE"]).optional(),
 });
 
 /* ------------------------------------------------------------------ */
@@ -65,28 +70,54 @@ const createListingSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
-    }
 
     const body = await request.json();
     const data = createListingSchema.parse(body);
 
-    // Určit listingType na základě role uživatele
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { role: true, accountType: true },
-    });
+    // Resolve wantBrokerHelp vs wantsBrokerHelp mismatch
+    const wantsBrokerHelp = data.wantsBrokerHelp || data.wantBrokerHelp || false;
 
+    // Určit listingType na základě role uživatele (nebo PRIVATE pro nepřihlášené)
     let listingType = "PRIVATE";
-    if (user?.role === "BROKER" || user?.role === "MANAGER") {
-      listingType = "BROKER";
-    } else if (user?.accountType === "DEALER" || user?.accountType === "BAZAAR") {
-      listingType = "DEALER";
+    let userId: string | null = session?.user?.id ?? null;
+
+    if (userId) {
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { role: true, accountType: true },
+      });
+
+      if (user?.role === "BROKER" || user?.role === "MANAGER") {
+        listingType = "BROKER";
+      } else if (user?.accountType === "DEALER" || user?.accountType === "BAZAAR") {
+        listingType = "DEALER";
+      }
     }
 
-    // Automatické schválení
-    const autoApprove = listingType === "BROKER" || listingType === "DEALER";
+    // Nepřihlášený uživatel — vytvořit anonymní účet (ADVERTISER)
+    if (!userId) {
+      const email = data.contactEmail || `anon-${Date.now()}@carmakler.local`;
+      let anonUser = await prisma.user.findUnique({ where: { email } });
+
+      if (!anonUser) {
+        anonUser = await prisma.user.create({
+          data: {
+            email,
+            firstName: data.contactName.split(" ")[0] || "Anonym",
+            lastName: data.contactName.split(" ").slice(1).join(" ") || "Inzerent",
+            phone: data.contactPhone,
+            passwordHash: "", // Bez hesla — uživatel se může zaregistrovat později
+            role: "ADVERTISER",
+            status: "ACTIVE",
+          },
+        });
+      }
+
+      userId = anonUser.id;
+    }
+
+    // Resolve požadovaný status (z klienta DRAFT/ACTIVE, default ACTIVE)
+    const requestedStatus = data.status || "ACTIVE";
 
     const slug = generateListingSlug(data.brand, data.model, data.year);
 
@@ -94,7 +125,7 @@ export async function POST(request: NextRequest) {
       data: {
         slug,
         listingType,
-        userId: session.user.id,
+        userId,
         vehicleId: data.vehicleId ?? null,
         vin: data.vin ?? null,
         brand: data.brand,
@@ -110,6 +141,7 @@ export async function POST(request: NextRequest) {
         color: data.color ?? null,
         doorsCount: data.doorsCount ?? null,
         seatsCount: data.seatsCount ?? null,
+        drivetrain: data.drivetrain ?? null,
         condition: data.condition,
         serviceBook: data.serviceBook ?? false,
         stkValidUntil: data.stkValidUntil ? new Date(data.stkValidUntil) : null,
@@ -127,9 +159,9 @@ export async function POST(request: NextRequest) {
         description: data.description ?? null,
         equipment: data.equipment ? JSON.stringify(data.equipment) : null,
         highlights: data.highlights ? JSON.stringify(data.highlights) : null,
-        wantsBrokerHelp: data.wantsBrokerHelp,
-        status: autoApprove ? "ACTIVE" : "ACTIVE", // V MVP automatické schválení pro všechny
-        publishedAt: new Date(),
+        wantsBrokerHelp,
+        status: requestedStatus,
+        publishedAt: requestedStatus === "ACTIVE" ? new Date() : null,
       },
       include: {
         images: true,

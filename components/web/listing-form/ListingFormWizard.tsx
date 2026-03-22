@@ -173,7 +173,7 @@ export function ListingFormWizard() {
         contactEmail: data.contactEmail || undefined,
         equipment: [...data.equipment, ...data.customEquipment],
         highlights: data.highlights,
-        wantBrokerHelp: data.wantBrokerHelp,
+        wantsBrokerHelp: data.wantBrokerHelp,
         status: asDraft ? "DRAFT" : "ACTIVE",
       };
 

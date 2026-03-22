@@ -13,24 +13,30 @@ export async function POST(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
-    }
 
     const { id } = await params;
 
-    // Ověřit vlastnictví
+    // Ověřit existenci inzerátu
     const listing = await prisma.listing.findUnique({
       where: { id },
-      select: { userId: true },
+      select: { userId: true, createdAt: true },
     });
 
     if (!listing) {
       return NextResponse.json({ error: "Inzerát nenalezen" }, { status: 404 });
     }
 
-    if (listing.userId !== session.user.id) {
-      return NextResponse.json({ error: "Nemáte oprávnění" }, { status: 403 });
+    // Vlastnictví: přihlášený uživatel musí být vlastníkem
+    // Nepřihlášený uživatel může přidat fotky k inzerátu vytvořenému v posledních 30 minutách
+    if (session?.user?.id) {
+      if (listing.userId !== session.user.id) {
+        return NextResponse.json({ error: "Nemáte oprávnění" }, { status: 403 });
+      }
+    } else {
+      const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+      if (listing.createdAt < thirtyMinutesAgo) {
+        return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
+      }
     }
 
     const formData = await request.formData();

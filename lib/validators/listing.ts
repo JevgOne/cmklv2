@@ -19,6 +19,7 @@ export const createListingSchema = z.object({
   color: z.string().optional(),
   doorsCount: z.number().int().min(2).max(6).optional(),
   seatsCount: z.number().int().min(1).max(9).optional(),
+  drivetrain: z.enum(["FRONT", "REAR", "4x4"]).optional(),
 
   // Stav
   condition: z.enum(["NEW", "LIKE_NEW", "EXCELLENT", "GOOD", "FAIR", "DAMAGED"]),

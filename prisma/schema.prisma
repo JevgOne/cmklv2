@@ -103,10 +103,16 @@ model User {
   suppliedParts         Part[]
   ordersAsBuyer         Order[]
   orderItemsAsSupplier  OrderItem[]  @relation("SupplierOrderItems")
+  partsFeedConfigs      PartsFeedConfig[]
 
   // Marketplace relace
   dealerFlips FlipOpportunity[]
   investments Investment[]
+
+  // Partnerský modul relace
+  managedPartners    Partner[]         @relation("PartnerManager")
+  partnerAccount     Partner?          @relation("PartnerUser")
+  partnerActivities  PartnerActivity[]
 
   // Platební systém relace
   confirmedPayments Payment[]      @relation("PaymentConfirmer")
@@ -286,6 +292,7 @@ model Vehicle {
   emailLogs       EmailLog[]
   priceReductions PriceReduction[]
   escalations     Escalation[]
+  partnerLeads    PartnerLead[]
 
   // Timestamps
   createdAt   DateTime  @default(now())
@@ -605,6 +612,7 @@ model Listing {
   color          String?
   doorsCount     Int?
   seatsCount     Int?
+  drivetrain     String? // FRONT, REAR, 4x4
 
   // Stav vozidla
   condition      String // NEW, LIKE_NEW, EXCELLENT, GOOD, FAIR, DAMAGED
@@ -880,13 +888,18 @@ model Part {
   partNumber  String?
   oemNumber   String?
 
+  // Typ dílu
+  partType String @default("USED") // USED, NEW, AFTERMARKET
+
   // Stav
   condition String // NEW, USED_GOOD, USED_FAIR, USED_POOR, REFURBISHED
 
   // Cena
-  price       Int
-  currency    String  @default("CZK")
-  vatIncluded Boolean @default(true)
+  price          Int
+  wholesalePrice Int?    // Nákupní cena z feedu
+  markupPercent  Float?  // Přirážka v %
+  currency       String  @default("CZK")
+  vatIncluded    Boolean @default(true)
 
   // Sklad
   stock      Int     @default(1)
@@ -904,6 +917,11 @@ model Part {
   status    String @default("DRAFT") // DRAFT, ACTIVE, SOLD, INACTIVE
   viewCount Int    @default(0)
 
+  // Feed import
+  feedConfigId String?
+  feedConfig   PartsFeedConfig? @relation(fields: [feedConfigId], references: [id])
+  externalId   String?  // ID dílu v externím feedu
+
   // Relace
   images     PartImage[]
   orderItems OrderItem[]
@@ -916,6 +934,9 @@ model Part {
   @@index([category])
   @@index([status])
   @@index([price])
+  @@index([partType])
+  @@index([feedConfigId])
+  @@index([externalId])
 }
 
 model PartImage {
@@ -1387,3 +1408,146 @@ model FeedImportLog {
   @@index([createdAt])
 }
 
+// ============================================
+// ESHOP — FEED IMPORT DÍLŮ (VELKOOBCHOD)
+// ============================================
+
+model PartsFeedConfig {
+  id              String  @id @default(cuid())
+  supplierId      String
+  supplier        User    @relation(fields: [supplierId], references: [id])
+  name            String                     // "Auto Kelly katalog"
+  feedUrl         String                     // URL feedu
+  feedFormat      String  @default("XML")    // XML, CSV, JSON
+  fieldMapping    String?                    // JSON: { name: "nazev", price: "cena_s_dph", ... }
+  updateFrequency String  @default("DAILY")  // DAILY, WEEKLY, MANUAL
+  markupType      String  @default("PERCENT") // PERCENT, FIXED
+  markupValue     Float   @default(25)        // 25% nebo 25 Kč
+  categoryMarkups String?                    // JSON: { "BRAKES": 15, "BODY": 35 }
+  defaultPartType String  @default("AFTERMARKET") // NEW, AFTERMARKET
+  isActive        Boolean @default(true)
+  lastImportAt    DateTime?
+  lastImportCount Int?
+  lastImportErrors Int?
+
+  // Relace
+  parts      Part[]
+  importLogs PartsFeedImportLog[]
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([supplierId])
+  @@index([isActive])
+  @@index([updateFrequency])
+}
+
+model PartsFeedImportLog {
+  id           String          @id @default(cuid())
+  feedConfigId String
+  feedConfig   PartsFeedConfig @relation(fields: [feedConfigId], references: [id], onDelete: Cascade)
+  status       String          // SUCCESS, PARTIAL, FAILED
+  totalItems   Int             @default(0)
+  created      Int             @default(0)
+  updated      Int             @default(0)
+  deactivated  Int             @default(0)
+  errors       Int             @default(0)
+  errorDetails String?         // JSON: [{ line, error }]
+  duration     Int             @default(0) // ms
+  createdAt    DateTime        @default(now())
+
+  @@index([feedConfigId])
+  @@index([createdAt])
+}
+
+// ============================================
+// PARTNERSKY MODUL
+// ============================================
+
+model Partner {
+  id              String   @id @default(cuid())
+  name            String                           // Nazev firmy
+  type            String                           // AUTOBAZAR | VRAKOVISTE
+  ico             String?  @unique                 // ICO
+  address         String?                          // Ulice + cislo
+  city            String?                          // Mesto
+  region          String?                          // Kraj
+  zip             String?                          // PSC
+  latitude        Float?                           // GPS
+  longitude       Float?                           // GPS
+  phone           String?
+  email           String?
+  web             String?
+  contactPerson   String?                          // Jmeno kontaktni osoby
+  estimatedSize   String?                          // SMALL | MEDIUM | LARGE
+  googleRating    Float?
+  googleReviewCount Int?
+  source          String?                          // FIRMY_CZ | GOOGLE | SAUTO | TIPCARS | BAZOS | MANUAL
+  notes           String?                          // Poznamky
+  logo            String?                          // URL loga
+  description     String?                          // Popis firmy
+  openingHours    String?                          // JSON - oteviraci doba
+  slug            String   @unique                 // Pro verejny profil
+
+  // Akvizice
+  status          String @default("NEOSLOVENY")    // NEOSLOVENY | PRIRAZENY | OSLOVEN | JEDNAME | AKTIVNI_PARTNER | ODMITNUTO | POZASTAVENO
+  score           Int @default(0)                  // Prioritizacni skore
+  rejectionReason String?
+  managerId       String?
+  manager         User? @relation("PartnerManager", fields: [managerId], references: [id])
+
+  // Partnersky ucet (vytvoren pri aktivaci)
+  userId          String? @unique
+  user            User? @relation("PartnerUser", fields: [userId], references: [id])
+
+  activities      PartnerActivity[]
+  leads           PartnerLead[]
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([type])
+  @@index([status])
+  @@index([managerId])
+  @@index([city])
+  @@index([region])
+  @@index([score])
+}
+
+model PartnerActivity {
+  id              String   @id @default(cuid())
+  partnerId       String
+  partner         Partner  @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  type            String   // POZNAMKA | NAVSTEVA | TELEFONAT | EMAIL | ZMENA_STAVU | SYSTEM
+  title           String
+  description     String?
+  oldStatus       String?
+  newStatus       String?
+  nextContactDate DateTime?
+  createdAt       DateTime @default(now())
+
+  @@index([partnerId])
+  @@index([createdAt])
+}
+
+model PartnerLead {
+  id          String   @id @default(cuid())
+  partnerId   String
+  partner     Partner  @relation(fields: [partnerId], references: [id])
+  vehicleId   String?
+  vehicle     Vehicle? @relation(fields: [vehicleId], references: [id])
+  name        String
+  phone       String?
+  email       String?
+  message     String?
+  status      String @default("NOVY")              // NOVY | KONTAKTOVAN | DOMLUVENO | PRODANO | NEZAJEM
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([partnerId])
+  @@index([status])
+}
