@@ -38,6 +38,7 @@ export async function middleware(request: NextRequest) {
     "/makler/commissions",
     "/makler/profile",
     "/makler/offline",
+    "/makler/assistant",
   ];
   if (protectedMaklerPaths.some((p) => pathname.startsWith(p))) {
     const token = await getToken({
@@ -72,5 +73,7 @@ export const config = {
     "/makler/profile/:path*",
     "/makler/offline",
     "/makler/offline/:path*",
+    "/makler/assistant",
+    "/makler/assistant/:path*",
   ],
 };

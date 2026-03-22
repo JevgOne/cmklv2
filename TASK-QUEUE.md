@@ -1578,7 +1578,7 @@ enum ContractStatus {
 
 ## TASK-018: PWA AI Asistent — chat, knowledge base, kontextová nápověda
 Priorita: 2
-Stav: čeká
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:
@@ -3317,6 +3317,636 @@ model PriceReduction {
 - Detailní statistiky s grafy a porovnáním
 - Automatický návrh snížení ceny po 30 dnech
 - Kalkulačka financování s odesláním nabídky emailem
+
+---
+
+## TASK-028: UX vylepšení — srovnání vozů, cenová historie, podobné vozy, transparentní timeline
+Priorita: 2
+Stav: čeká
+Projekt: /Users/lunagroup/carmakler
+
+### Kompletní zadání:
+
+Implementovat 4 funkce které zvyšují hodnotu platformy pro kupující — srovnání vozů, cenová historie, doporučení podobných vozů a transparentní historie vozu.
+
+**1. Srovnání vozů (max 3):**
+- Tlačítko "Porovnat" na kartě vozu v katalogu (ikona vah, vedle ❤️)
+- Porovnávací lišta (fixed bar dole): miniatura + název vybraných aut + "Porovnat (2)" tlačítko
+- Max 3 vozy, uložení v localStorage
+- Stránka `/nabidka/porovnani`:
+  - 2-3 sloupce vedle sebe (mobil: horizontální scroll)
+  - Sekce: Cena, Základní (rok/km/palivo), Motor (výkon/objem), Stav (STK/servis/majitelé), Trust Score
+  - Zvýraznění nejlepší hodnoty zeleně (nejnižší cena, nejnižší km, nejvyšší výkon, nejnovější rok)
+  - Výbava: ✅/❌ matice
+  - Tlačítko "Kontaktovat makléře" u každého
+
+**2. Cenová historie:**
+- Na detailu vozu sekce "Cenová historie" (jen pokud existuje změna ceny)
+- Line chart (Recharts): osa X čas, osa Y cena, bod = změna ceny
+- Pod grafem textově: "Publikováno {datum} za {cena}" + seznam změn
+- Zdroj: VehicleChangeLog kde field === 'price'
+- API: `GET /api/vehicles/[id]/price-history`
+
+**3. Podobné vozy:**
+- Na detailu vozu sekce "Podobné vozy" (3-6 aut)
+- Logika: (1) stejná značka+model, (2) stejná značka+podobná cena ±20%, (3) stejný segment+cena, (4) fallback stejná cenová kategorie
+- Rok ±3 roky, jen ACTIVE, max 6 výsledků
+- API: `GET /api/vehicles/[id]/similar?limit=6`
+
+**4. Transparentní timeline vozu:**
+- Na detailu vozu sekce "Historie na Carmakler" — vertikální timeline:
+  - 🟢 Zadáno makléřem (datum, jméno makléře)
+  - 🔍 Prohlídka (celkový dojem hvězdičky, testovací jízda ✅/❌)
+  - ✅ Schváleno a publikováno (datum)
+  - 👁 Zájem (počet zobrazení, počet dotazů)
+  - 💰 Změna ceny (datum, z→na)
+  - ⚠️ Aktualizace (datum)
+- Nezobrazovat: jméno prodejce, důvod změny, interní poznámky, odmítnutí
+- API: `GET /api/vehicles/[id]/timeline`
+
+### Kontext:
+- Závisí na: TASK-008 (detail vozu), TASK-007 (katalog)
+- Recharts pro grafy, localStorage pro porovnání
+- Žádné nové DB modely — čtení z existujících dat
+
+### Očekávaný výsledek:
+- Porovnání vozů s tabulkou a zvýrazněním
+- Cenová historie jako graf
+- Podobné vozy na detailu
+- Transparentní timeline
+
+---
+
+## TASK-029: SMS notifikace + notifikační centrum + denní shrnutí
+Priorita: 2
+Stav: čeká
+Projekt: /Users/lunagroup/carmakler
+
+### Kompletní zadání:
+
+SMS notifikace pro prodejce, notifikační centrum s preferencemi pro všechny role, denní shrnutí pro makléře.
+
+**1. SMS pro prodejce (5 typů):**
+- Auto schváleno: "Carmakler: Váš vůz {auto} byl publikován. Makléř {jméno}, tel: {tel}"
+- Nový zájemce: "O váš vůz {auto} se zajímá kupující. Makléř vás kontaktuje."
+- Prohlídka domluvena: "Prohlídka {auto} domluvena na {datum} v {čas}."
+- Auto prodáno: "Váš vůz {auto} byl prodán za {cena} Kč!"
+- Návrh snížení ceny: "Doporučujeme snížit cenu {auto} z {stará} na {nová} Kč."
+- Provider: GoSMS.cz nebo Twilio, `lib/sms.ts` wrapper
+- Rate limiting: max 5 SMS/den na číslo, opt-out přes "STOP"
+- Logging: SmsLog model (phone, message, status, cost, vehicleId)
+
+**2. Notifikační centrum:**
+
+Makléř (v PWA `/app/settings/notifications`) — toggle push/email per událost:
+- Nový lead, nový dotaz, inzerát schválen/zamítnut, auto prodáno, denní shrnutí, auto 30 dní, achievement, žebříček
+
+Prodejce — přes link v SMS/emailu (`/notifikace/{token}`, bez přihlášení):
+- Toggle SMS ano/ne, Email ano/ne per událost
+
+Manažer (v admin panelu):
+- Onboarding dokončen, inzerát ke schválení, makléř odmítl vůz, prodej, 60 dní alert, nový lead, týdenní report
+
+**3. Denní shrnutí pro makléře (7:00 ráno):**
+- Push: "Včera: {zobrazení} zobrazení, {dotazy} dotazů, {leady} leadů"
+- Email (detailní): TOP 3 nejprohlíženější auta, nové dotazy, čekající leady, auta blížící se 30 dnům
+- Cron: Vercel Cron 7:00 → `POST /api/cron/daily-summary`
+- Vypnutelné v nastavení
+
+**4. Nové modely:**
+```
+model NotificationPreference {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  eventType   String
+  pushEnabled Boolean  @default(true)
+  emailEnabled Boolean @default(true)
+  smsEnabled  Boolean  @default(false)
+  @@unique([userId, eventType])
+}
+model SmsLog {
+  id             String   @id @default(cuid())
+  recipientPhone String
+  message        String
+  vehicleId      String?
+  status         String   // SENT, DELIVERED, FAILED
+  cost           Float?
+  createdAt      DateTime @default(now())
+}
+```
+
+### Kontext:
+- Závisí na: TASK-015 (push), TASK-026 (email)
+- GoSMS API klíč v env, Vercel Cron pro denní shrnutí
+
+### Očekávaný výsledek:
+- SMS prodejcům v 5 momentech
+- Notifikační centrum pro makléře/prodejce/manažery
+- Denní shrnutí 7:00 push+email
+- Opt-out, rate limiting, logging
+
+---
+
+## TASK-030: Rychlé nabírání — zkrácený 3-krokový flow
+Priorita: 2
+Stav: čeká
+Projekt: /Users/lunagroup/carmakler
+
+### Kompletní zadání:
+
+Zkrácená verze nabírání pro zkušené makléře. 3 kroky místo 7. Dostupné od úrovně Makléř (TASK-027).
+
+**1. Aktivace:**
+- Toggle v nastavení PWA: "Rychlý režim nabírání"
+- Jen pro úroveň Makléř a výš (Junior ne — musí se učit plný flow)
+- V dashboardu: "⚡ Rychle nabrat" + "📋 Kompletně"
+
+**2. Rychlý flow — 3 kroky:**
+
+Krok 1: VIN + kontakt (sloučené)
+- VIN * (validace, duplikát check, dekódování)
+- Telefon prodejce * + jméno *
+- Geolokace (auto — "Použít aktuální polohu")
+
+Krok 2: Fotky (min 5)
+- Přední 3/4, zadní 3/4, interiér, tachometr, VIN štítek (všechny povinné)
+- Tlačítko "Přidat další"
+
+Krok 3: Cena + odeslání
+- Najeto km *, cena *, stav vozidla *
+- Live provize výpočet
+- AI popis (volitelné)
+- "⚡ Odeslat"
+
+**3. Po rychlém nabírání:**
+- Stav DRAFT_QUICK — ne PENDING
+- Badge "⚡ Rychlý draft — doplnit údaje"
+- 48h deadline na doplnění: prohlídka, výbava, barva/dveře, lokace, smlouva, další fotky (na 12)
+- Po doplnění → PENDING → schválení manažerem
+- 48h bez doplnění → notifikace, 72h → automatická deaktivace
+- Manažer vidí "rychlý/kompletní" ve frontě
+
+**4. Rozšíření:**
+- Vehicle stav: DRAFT_QUICK
+- User: `quickModeEnabled` (Boolean)
+
+### Kontext:
+- Závisí na: TASK-016 (sdílené komponenty), TASK-027 (úrovně)
+
+### Očekávaný výsledek:
+- 3-krokový flow pro zkušené makléře
+- 48h deadline na doplnění
+- Plynulý přechod do plného flow
+
+---
+
+## TASK-031: Partnerský modul — CRM akvizice, portál pro bazary a vrakoviště, veřejné profily
+Priorita: 2
+Stav: čeká
+Projekt: /Users/lunagroup/carmakler
+
+### Kompletní zadání:
+
+Kompletní partnerský modul — CRM pro akvizici autobazarů a vrakovišť, partnerský portál pro správu aut/dílů, veřejné profily na webu, prezentace pro schůzky.
+
+**Provizní model partnerství:**
+- **Autobazar:** dává auta na platformu Carmakler, zákazník (kupující) platí provizi z prodeje. Pokud se auto prodá na úvěr/financování, Carmakler vyplatí provizi autobazaru ze zprostředkování financování.
+- **Vrakoviště:** prodává díly přes eshop Carmakler, Carmakler si bere 15% provizi z prodeje dílů.
+
+---
+
+**1. Prisma schema — nové modely a role:**
+
+Nové role do enum Role:
+- `PARTNER_BAZAR` (autobazar)
+- `PARTNER_VRAKOVISTE` (autovrakoviště)
+
+```
+model Partner {
+  id              String   @id @default(cuid())
+  name            String                           // Název firmy
+  type            PartnerType                      // AUTOBAZAR | VRAKOVISTE
+  ico             String?  @unique                 // IČO
+  address         String?                          // Ulice + číslo
+  city            String?                          // Město
+  region          String?                          // Kraj
+  zip             String?                          // PSČ
+  latitude        Float?                           // GPS
+  longitude       Float?                           // GPS
+  phone           String?
+  email           String?
+  web             String?
+  contactPerson   String?                          // Jméno kontaktní osoby
+  estimatedSize   PartnerSize?                     // SMALL | MEDIUM | LARGE
+  googleRating    Float?
+  googleReviewCount Int?
+  source          PartnerSource?                   // FIRMY_CZ | GOOGLE | SAUTO | TIPCARS | BAZOS | MANUAL
+  notes           String?                          // Poznámky
+  logo            String?                          // URL loga
+  description     String?                          // Popis firmy
+  openingHours    Json?                            // Otevírací doba
+  slug            String   @unique                 // Pro veřejný profil
+
+  // Akvizice
+  status          PartnerStatus @default(NEOSLOVENY)
+  score           Int @default(0)                  // Prioritizační skóre
+  rejectionReason String?
+  managerId       String?
+  manager         User? @relation("PartnerManager", fields: [managerId], references: [id])
+
+  // Partnerský účet (vytvořen při aktivaci)
+  userId          String? @unique
+  user            User? @relation("PartnerUser", fields: [userId], references: [id])
+
+  activities      PartnerActivity[]
+  leads           PartnerLead[]
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([type])
+  @@index([status])
+  @@index([managerId])
+  @@index([city])
+  @@index([region])
+  @@index([score])
+}
+
+model PartnerActivity {
+  id              String   @id @default(cuid())
+  partnerId       String
+  partner         Partner  @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  type            ActivityType  // POZNAMKA | NAVSTEVA | TELEFONAT | EMAIL | ZMENA_STAVU | SYSTEM
+  title           String
+  description     String?
+  oldStatus       String?
+  newStatus       String?
+  nextContactDate DateTime?
+  createdAt       DateTime @default(now())
+
+  @@index([partnerId])
+  @@index([createdAt])
+}
+
+model PartnerLead {
+  id          String   @id @default(cuid())
+  partnerId   String
+  partner     Partner  @relation(fields: [partnerId], references: [id])
+  vehicleId   String?
+  vehicle     Vehicle? @relation(fields: [vehicleId], references: [id])
+  name        String
+  phone       String?
+  email       String?
+  message     String?
+  status      PartnerLeadStatus @default(NOVY)
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([partnerId])
+  @@index([status])
+}
+
+enum PartnerType {
+  AUTOBAZAR
+  VRAKOVISTE
+}
+
+enum PartnerSize {
+  SMALL    // < 20 aut
+  MEDIUM   // 20-100 aut
+  LARGE    // 100+ aut
+}
+
+enum PartnerSource {
+  FIRMY_CZ
+  GOOGLE
+  SAUTO
+  TIPCARS
+  BAZOS
+  MANUAL
+}
+
+enum PartnerStatus {
+  NEOSLOVENY
+  PRIRAZENY
+  OSLOVEN
+  JEDNAME
+  AKTIVNI_PARTNER
+  ODMITNUTO
+  POZASTAVENO
+}
+
+enum ActivityType {
+  POZNAMKA
+  NAVSTEVA
+  TELEFONAT
+  EMAIL
+  ZMENA_STAVU
+  SYSTEM
+}
+
+enum PartnerLeadStatus {
+  NOVY
+  KONTAKTOVAN
+  DOMLUVENO
+  PRODANO
+  NEZAJEM
+}
+```
+
+Po úpravě schema: `npx prisma migrate dev --name add-partner-models`
+
+---
+
+**2. Seed script (`prisma/seed-partners.ts`):**
+
+- Načte `prisma/data/partners-seed.json` (data se připraví zvlášť, ne scraping)
+- Pro každý záznam vytvoří Partner v DB
+- Vypočítá score podle logiky:
+  - +30 LARGE bazar, +20 MEDIUM, +5 SMALL
+  - +15 Google rating > 4.0
+  - +10 má web
+  - +5 má email
+  - +10 region kde ještě nemáme partnera
+  - -10 Google rating < 3.0
+- Vygeneruje slug z názvu (slugify)
+- Všechny mají status NEOSLOVENY
+- Spustitelný: `npx tsx prisma/seed-partners.ts`
+
+---
+
+**3. Admin panel — CRM partnerů (`app/(admin)/admin/partners/`):**
+
+**Seznam partnerů (`/admin/partners/page.tsx`):**
+
+- **Záložky nahoře:** Autobazary | Autovrakoviště | Všichni
+- **Dashboard widgety:**
+  - Celkem partnerů | Aktivních | Rozpracovaných | Nepřiřazených
+  - Mini funnel: Neosloveno → Přiřazeno → Osloveno → Jednáme → Partner (s počty a vizuálním funnelem)
+- **Mapa** (horní polovina stránky):
+  - Mapbox GL JS (free tier) nebo Leaflet + OpenStreetMap
+  - Piny s barvou podle stavu:
+    - Šedá = NEOSLOVENY
+    - Modrá = PRIRAZENY
+    - Žlutá = OSLOVEN
+    - Oranžová = JEDNAME
+    - Zelená = AKTIVNI_PARTNER
+    - Červená = ODMITNUTO
+  - Klik na pin → popup: název, město, stav + odkaz na detail
+  - Clustering při oddálení
+  - Filtrování mapy reaguje na filtry tabulky
+- **Filtry:** stav, kraj, přiřazený manažer, velikost (SMALL/MEDIUM/LARGE)
+- **Tabulka** (spodní polovina):
+  - Sloupce: Název | Typ | Město | Manažer | Stav (badge) | Score | Poslední kontakt
+  - Řádek kliknutelný → detail
+  - Hromadné akce: přiřadit manažerovi (select), změnit stav (select)
+  - Řazení: default podle score DESC
+  - Stránkování
+
+**Detail partnera (`/admin/partners/[id]/page.tsx`):**
+
+- **Levý sloupec:**
+  - Všechny údaje partnera (editovatelné formulář)
+  - Mapa s jedním pinem (adresa partnera)
+  - Přiřazení manažera (select z User kde role = MANAGER)
+  - Změna stavu (dropdown) — u ODMITNUTO povinná poznámka (modal s textarea)
+  - Score badge (číslo + barevný indikátor)
+  - Tlačítka:
+    - "Aktivovat partnerství" → změní stav na AKTIVNI_PARTNER + vytvoří User účet s rolí PARTNER_BAZAR nebo PARTNER_VRAKOVISTE + odešle email s přihlašovacími údaji (heslo vygenerované, výzva ke změně)
+    - "Odeslat prezentaci" → email s odkazem na /prezentace
+    - "Otevřít prezentaci" → fullscreen pitch (pro tablet na schůzce)
+- **Pravý sloupec — Timeline:**
+  - Chronologický seznam PartnerActivity (nejnovější nahoře)
+  - Ikony podle typu: 📝 poznámka, 🏢 návštěva, 📞 telefonát, 📧 email, 🔄 změna stavu
+  - Formulář "Zaznamenat kontakt":
+    - Typ: select (Návštěva / Telefonát / Email / Poznámka)
+    - Popis (textarea)
+    - Datum dalšího kontaktu (date picker, volitelné)
+    - Tlačítko "Uložit"
+  - Automatické záznamy: změna stavu, přiřazení manažera (typ SYSTEM/ZMENA_STAVU)
+
+---
+
+**4. Partnerský portál (`app/(partner)/`):**
+
+Nová route group s vlastním layoutem. Přístup jen pro PARTNER_BAZAR a PARTNER_VRAKOVISTE.
+
+**Layout (`components/partner/PartnerLayout.tsx`):**
+- Sidebar s navigací (desktop: fixed, mobile: hamburger)
+- Header: logo Carmakler + název partnera + notifikační zvoneček
+- Responzivní — funguje na tabletu i mobilu
+
+**Pro AUTOBAZAR (PARTNER_BAZAR):**
+
+a) **Dashboard** (`/partner/dashboard`):
+- Stat karty: Vozidla v systému | Zájemci tento měsíc | Prodáno přes Carmakler | Celkový výdělek
+- Graf: aktivita za posledních 12 měsíců (zobrazení, zájemci, prodeje) — Recharts bar/line chart
+- Poslední zájemci (quick list, max 5)
+- Tlačítko "Přidat vozidlo"
+
+b) **Moje vozidla** (`/partner/vehicles`):
+- Seznam aut přidaných do Carmakler
+- Filtry: stav (DRAFT, PENDING, ACTIVE, RESERVED, SOLD)
+- Karta: foto, název, cena, stav badge, počet zobrazení, počet zájemců
+- **Přidání vozidla** (`/partner/vehicles/new`) — zjednodušený flow (oproti makléři: BEZ inspekce, BEZ exkluzivní smlouvy, BEZ testovací jízdy):
+  - Krok 1: VIN zadání + dekódování (stejná logika)
+  - Krok 2: Fotky (min 5, bez guided overlay — jednoduchý upload z galerie/kamery)
+  - Krok 3: Údaje + výbava (z VIN předvyplněné + ruční doplnění, km, stav, barva)
+  - Krok 4: Cena + popis + odeslání
+  - Po odeslání: stav PENDING → BackOffice schválí
+- Editace a smazání vlastních aut
+- Statistiky u každého auta: zobrazení, dotazy
+
+c) **Zájemci** (`/partner/leads`):
+- Seznam PartnerLead (kupující co se ozvali přes Carmakler)
+- Filtry: stav (NOVY, KONTAKTOVAN, DOMLUVENO, PRODANO, NEZAJEM)
+- Detail: jméno, telefon, email, na jaké auto, zpráva
+- Akce: změna stavu (dropdown), přidání poznámky (textarea)
+- Push + email notifikace při novém leadu
+
+d) **Statistiky** (`/partner/stats`):
+- Funnel: Zobrazení → Zájemci → Prodeje (vizuální funnel chart)
+- Porovnání s průměrem sítě ("Vaše konverze: 8%, průměr partnerů: 5%")
+- Nejúspěšnější vozidla (top 5 podle zobrazení/zájemců)
+- Měsíční přehled (tabulka: měsíc, počet aut, zobrazení, zájemci, prodeje)
+
+e) **Profil** (`/partner/profile`):
+- Editace veřejného profilu: logo (upload), popis (textarea), otevírací doba (JSON editor nebo strukturovaný formulář po-ne), fotky provozovny (upload, max 10)
+- Náhled jak vypadá `carmakler.cz/bazar/[slug]`
+- Kontaktní údaje (telefon, email, adresa)
+
+f) **Dokumenty** (`/partner/documents`):
+- Partnerská smlouva (PDF ke stažení)
+- Měsíční vyúčtování (PDF, generované systémem)
+- Obchodní podmínky (PDF)
+
+g) **Zprávy** (`/partner/messages`):
+- Jednoduchý chat s přiřazeným manažerem Carmakler
+- Systémová oznámení (schválení auta, nový lead, výplata)
+
+**Pro AUTOVRAKOVIŠTĚ (PARTNER_VRAKOVISTE):**
+
+a) **Dashboard** (`/partner/dashboard`):
+- Stat karty: Díly v systému | Objednávky tento měsíc | Celkový obrat
+- Poslední objednávky (quick list, max 5)
+- Tlačítko "Přidat díl"
+
+b) **Moje díly** (`/partner/parts`):
+- Seznam dílů v eshopu
+- Přidání dílu — 3 kroky (stejné jako TASK-020 PWA pro vrakoviště):
+  - Fotka (kamera/upload, min 1)
+  - Údaje (název, kategorie, stav, kompatibilita = značka+model+rok nebo VIN zdroje, OEM číslo)
+  - Cena + DPH + množství + doručení → publikovat
+- Stav: SKLADEM | REZERVOVANO | PRODANO | NEDOSTUPNE
+- Hromadný import z CSV (šablona ke stažení)
+- Mobile-friendly (fotit telefonem)
+
+c) **Objednávky** (`/partner/orders`):
+- Seznam objednávek z eshopu
+- Stav: NOVA | POTVRZENA | ODESLANA | DORUCENA
+- Detail: co (díl + foto), komu (jméno, adresa), kam (doručení), za kolik
+- Akce: potvrdit → zabalit → odeslat (zadat tracking číslo)
+- Push notifikace na novou objednávku
+
+d) **Profil** (`/partner/profile`):
+- Stejné jako u bazaru, ale pro `carmakler.cz/dodavatel/[slug]`
+
+e) **Vyúčtování** (`/partner/billing`):
+- Přehled plateb: Carmakler vyplácí po odečtu 15% provize
+- Měsíční tabulka: obrat, provize Carmakler (15%), výplata partnerovi (85%)
+- Stav výplaty: Čeká | Vyplaceno + datum
+- Detail: seznam prodaných dílů za období
+
+---
+
+**5. Veřejné profily:**
+
+**Autobazar** (`app/(web)/bazar/[slug]/page.tsx`):
+- Název, logo, popis, otevírací doba
+- Adresa + mapa (embed)
+- Badge "Ověřený partner Carmakler" (oranžový)
+- Seznam jejich vozidel na platformě (grid karet)
+- Google hodnocení (pokud dostupné)
+- Kontaktní formulář
+- Statistiky: "Na Carmakler od {datum}" + "X prodaných aut"
+
+**Vrakoviště** (`app/(web)/dodavatel/[slug]/page.tsx`):
+- Analogicky — název, popis, adresa + mapa
+- Badge "Ověřený dodavatel"
+- Seznam jejich dílů v eshopu
+- Kontaktní formulář
+
+---
+
+**6. Prezentace / Pitch deck (`app/(web)/prezentace/page.tsx`):**
+
+Fullscreen stránka BEZ navigace (navbar/footer skryté). Pro tablet na schůzce. Swipe/click mezi sekcemi.
+
+8 sekcí (celá šířka, celá výška, jedna za druhou):
+1. **Kdo jsme** — Carmakler logo (velké, uprostřed), "Jsme síť certifikovaných automakléřů", čísla: X makléřů, X prodaných aut, X partnerů
+2. **Jak to funguje** — 3 kroky vizuálně s ikonkami (nabírání → inzerce → prodej)
+3. **Pro autobazary** — co z toho mají: leads od kupujících, větší viditelnost, badge "Ověřený partner", žádné náklady na start, provize jen z úspěšného prodeje
+4. **Pro vrakoviště** — co z toho mají: online prodej dílů bez vlastního eshopu, objednávkový systém, platby za vás
+5. **Provizní model** — transparentní přehled: bazary (provize z prodeje platí kupující, bonus za financování), vrakoviště (15% z prodeje dílů, 85% pro vás)
+6. **Naši partneři** — mapa partnerů s piny + čísla (X partnerů v Y krajích)
+7. **Další kroky** — "1. Podepíšeme smlouvu → 2. Nastavíme profil → 3. Do týdne jste online"
+8. **Kontakt** — dynamicky jméno manažera (z URL parametru `?manager=slug` nebo z session) + telefon + email + QR kód (odkaz na registraci/kontakt)
+
+Design: oranžová (#F97316) + bílá + tmavá (gray-900), velké fonty (Outfit), málo textu, hodně vizuálů, animace přechodů mezi sekcemi (Framer Motion fade/slide).
+
+---
+
+**7. API routes:**
+
+```
+// Admin CRM
+POST   /api/partners              — vytvořit partnera (admin/backoffice)
+GET    /api/partners              — seznam s filtry, stránkování (admin/backoffice/manager)
+GET    /api/partners/[id]         — detail (admin/backoffice/manager)
+PATCH  /api/partners/[id]         — update (admin/backoffice/manager svých)
+DELETE /api/partners/[id]         — smazat (admin)
+
+POST   /api/partners/[id]/activities  — přidat aktivitu (admin/backoffice/manager)
+GET    /api/partners/[id]/activities  — seznam aktivit
+
+POST   /api/partners/[id]/activate   — aktivovat partnerství (admin/backoffice)
+                                       → vytvoří User účet + odešle email s credentials
+
+// Partnerský portál
+GET    /api/partner/dashboard     — dashboard data pro přihlášeného partnera
+GET    /api/partner/vehicles      — vozidla partnera (jen PARTNER_BAZAR)
+POST   /api/partner/vehicles      — přidat vozidlo (zjednodušená validace)
+GET    /api/partner/parts         — díly partnera (jen PARTNER_VRAKOVISTE)
+POST   /api/partner/parts         — přidat díl
+GET    /api/partner/leads         — zájemci
+PATCH  /api/partner/leads/[id]    — update stavu leadu
+GET    /api/partner/orders        — objednávky (vrakoviště)
+PATCH  /api/partner/orders/[id]   — update stavu objednávky
+GET    /api/partner/billing       — vyúčtování
+GET    /api/partner/stats         — statistiky
+
+// Veřejné
+GET    /api/partners/public/[slug] — veřejný profil partnera
+```
+
+Všechny routes: Zod validace na vstupu, auth check, role check.
+
+---
+
+**8. Navigace a middleware:**
+
+Admin sidebar — přidat sekci:
+```
+PARTNEŘI
+├── 🏢 Autobazary (/admin/partners?type=AUTOBAZAR)
+├── 🔧 Vrakoviště (/admin/partners?type=VRAKOVISTE)
+└── 📊 Mapa partnerů (/admin/partners)
+```
+
+Middleware — updatovat:
+- `/admin/*` → jen ADMIN, BACKOFFICE
+- `/partner/*` → jen PARTNER_BAZAR, PARTNER_VRAKOVISTE
+- `/app/*` (PWA) → jen BROKER, MANAGER (stávající)
+
+---
+
+**9. Pořadí implementace:**
+
+1. Prisma schema + migrace
+2. Seed script (bez scrapingu — data se připraví zvlášť)
+3. API routes (CRUD partnerů + aktivit)
+4. Admin stránka /admin/partners (seznam + mapa + filtry)
+5. Admin detail partnera /admin/partners/[id] (editace + timeline)
+6. Sidebar navigace update
+7. Partnerský portál layout + dashboard
+8. Partner bazar: vozidla správa + přidání
+9. Partner vrakoviště: díly správa + objednávky
+10. Partner: leads, zprávy, statistiky, profil, dokumenty, vyúčtování
+11. Prezentace/pitch stránka
+12. Veřejné profily (/bazar/[slug], /dodavatel/[slug])
+13. Middleware + auth update
+
+### Kontext:
+- Závisí na: TASK-013 (auth — nové role), TASK-014 (vehicle API — sdílené pro partnery), TASK-020 (eshop — díly logika sdílená s vrakovišti)
+- Mapa: Mapbox GL JS (free tier) nebo Leaflet + OpenStreetMap
+- Grafy: Recharts
+- Email: Resend (pozvánka, credentials, notifikace)
+- Data partnerů: seed z JSON souboru, reálná data se připraví zvlášť (scraping mimo scope)
+- Partnerský portál sdílí komponenty s admin panelem (DataTable, Card, Badge...)
+
+### Očekávaný výsledek:
+- CRM pipeline pro akvizici partnerů v admin panelu (mapa + tabulka + detail s timeline)
+- Scoring a prioritizace partnerů
+- Aktivace partnerství jedním kliknutím (vytvoření účtu + email)
+- Partnerský portál pro autobazary (vozidla, zájemci, statistiky, profil, dokumenty)
+- Partnerský portál pro vrakoviště (díly, objednávky, vyúčtování 85/15)
+- Veřejné profily partnerů na webu s badge "Ověřený partner"
+- Prezentace/pitch deck pro schůzky (fullscreen, 8 sekcí)
+- 2 nové role (PARTNER_BAZAR, PARTNER_VRAKOVISTE) s middleware ochranou
 
 ---
 

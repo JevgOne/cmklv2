@@ -4,6 +4,7 @@ import { OnlineStatusProvider } from "@/components/pwa/OnlineStatusProvider";
 import { TopBar } from "@/components/pwa/TopBar";
 import { OfflineBanner } from "@/components/pwa/OfflineBanner";
 import { BottomNav } from "@/components/pwa/BottomNav";
+import { AiAssistant } from "@/components/pwa/AiAssistant";
 
 export default function PwaLayout({
   children,
@@ -19,6 +20,7 @@ export default function PwaLayout({
           <main className="pb-20">{children}</main>
         </div>
         <BottomNav />
+        <AiAssistant />
       </div>
     </OnlineStatusProvider>
   );

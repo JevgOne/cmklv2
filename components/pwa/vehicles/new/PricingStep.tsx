@@ -65,6 +65,7 @@ export function PricingStep() {
   const [address, setAddress] = useState("");
   const [description, setDescription] = useState("");
   const [source, setSource] = useState<VehicleSource>("private");
+  const [isGenerating, setIsGenerating] = useState(false);
 
   // Load from draft
   useEffect(() => {
@@ -132,6 +133,47 @@ export function PricingStep() {
     source,
     commission,
   ]);
+
+  const handleGenerateDescription = useCallback(async () => {
+    if (!draft?.details) return;
+    const d = draft.details;
+    if (!d.brand || !d.model || !d.year || !d.mileage || !d.condition) return;
+
+    setIsGenerating(true);
+    try {
+      const res = await fetch("/api/assistant/generate-description", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          brand: d.brand,
+          model: d.model,
+          year: d.year,
+          mileage: d.mileage,
+          condition: d.condition,
+          fuelType: d.fuelType,
+          transmission: d.transmission,
+          enginePower: d.enginePower,
+          bodyType: d.bodyType,
+          color: d.color,
+          equipment: d.equipment ?? [],
+          highlights: d.highlights ?? [],
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Chyba při generování popisu");
+      }
+
+      const data = await res.json();
+      if (data.description) {
+        setDescription(data.description);
+      }
+    } catch (error) {
+      console.error("Chyba při generování AI popisu:", error);
+    } finally {
+      setIsGenerating(false);
+    }
+  }, [draft?.details]);
 
   const handleContinue = useCallback(() => {
     handleSave();
@@ -289,13 +331,26 @@ export function PricingStep() {
           </div>
 
           <button
-            disabled
-            className="mt-3 flex items-center gap-2 px-4 py-2.5 bg-gray-100 text-gray-400 rounded-lg text-sm font-medium cursor-not-allowed"
+            onClick={handleGenerateDescription}
+            disabled={isGenerating || !draft?.details?.brand || !draft?.details?.model}
+            className="mt-3 flex items-center gap-2 px-4 py-2.5 bg-orange-50 text-orange-700 rounded-lg text-sm font-medium hover:bg-orange-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            🤖 Vygenerovat popis AI
-            <span className="text-xs bg-gray-200 text-gray-500 px-2 py-0.5 rounded-full">
-              Již brzy
-            </span>
+            {isGenerating ? (
+              <>
+                <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                Generuji popis...
+              </>
+            ) : (
+              <>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-4 h-4">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+                </svg>
+                Vygenerovat popis AI
+              </>
+            )}
           </button>
         </div>
 

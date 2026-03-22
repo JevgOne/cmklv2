@@ -133,10 +133,14 @@ export function DetailsStep() {
     originCountry: draft?.details?.originCountry ?? "CZ",
     equipment: draft?.details?.equipment ?? vinDecoded?.equipment ?? [],
     highlights: draft?.details?.highlights ?? [],
+    description: draft?.details?.description ?? "",
   }));
 
   // Custom highlight input
   const [customHighlight, setCustomHighlight] = useState("");
+
+  // AI description generation
+  const [generatingDescription, setGeneratingDescription] = useState(false);
 
   // Computed PS from kW
   const powerPS = useMemo(() => {
@@ -190,6 +194,40 @@ export function DetailsStep() {
     }
     setCustomHighlight("");
   }, [customHighlight, form.highlights, updateField]);
+
+  // Generate AI description
+  const handleGenerateDescription = useCallback(async () => {
+    if (generatingDescription) return;
+    setGeneratingDescription(true);
+    try {
+      const res = await fetch("/api/assistant/generate-description", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          brand: form.brand,
+          model: form.model,
+          variant: form.variant,
+          year: form.year,
+          mileage: form.mileage,
+          fuelType: form.fuelType,
+          transmission: form.transmission,
+          enginePower: form.enginePower,
+          bodyType: form.bodyType,
+          condition: form.condition,
+          color: form.color,
+          equipment: form.equipment,
+          highlights: form.highlights,
+        }),
+      });
+      if (!res.ok) throw new Error("Chyba při generování");
+      const data = (await res.json()) as { description: string };
+      updateField("description", data.description);
+    } catch {
+      // Silently fail — user can write manually
+    } finally {
+      setGeneratingDescription(false);
+    }
+  }, [generatingDescription, form, updateField]);
 
   // Pokračovat
   const handleNext = useCallback(async () => {
@@ -614,6 +652,47 @@ export function DetailsStep() {
                 Přidat
               </Button>
             </div>
+          </div>
+        </section>
+
+        {/* =========================================== */}
+        {/* SEKCE: Popis vozidla */}
+        {/* =========================================== */}
+        <section>
+          <SectionHeader title="Popis vozidla" />
+
+          <div className="mt-4 space-y-3">
+            <textarea
+              value={form.description ?? ""}
+              onChange={(e) => updateField("description", e.target.value)}
+              placeholder="Napište popis vozidla pro inzerát..."
+              rows={6}
+              className="w-full rounded-lg border-2 border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-orange-300 focus:bg-white resize-none transition-colors"
+            />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleGenerateDescription}
+              disabled={generatingDescription || !form.brand || !form.model}
+              className="w-full"
+            >
+              {generatingDescription ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                  Generuji popis...
+                </span>
+              ) : (
+                <span className="flex items-center justify-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                    <path fillRule="evenodd" d="M9 4.5a.75.75 0 01.721.544l.813 2.846a3.75 3.75 0 002.576 2.576l2.846.813a.75.75 0 010 1.442l-2.846.813a3.75 3.75 0 00-2.576 2.576l-.813 2.846a.75.75 0 01-1.442 0l-.813-2.846a3.75 3.75 0 00-2.576-2.576l-2.846-.813a.75.75 0 010-1.442l2.846-.813A3.75 3.75 0 007.466 7.89l.813-2.846A.75.75 0 019 4.5zM18 1.5a.75.75 0 01.728.568l.258 1.036c.236.94.97 1.674 1.91 1.91l1.036.258a.75.75 0 010 1.456l-1.036.258c-.94.236-1.674.97-1.91 1.91l-.258 1.036a.75.75 0 01-1.456 0l-.258-1.036a2.625 2.625 0 00-1.91-1.91l-1.036-.258a.75.75 0 010-1.456l1.036-.258a2.625 2.625 0 001.91-1.91l.258-1.036A.75.75 0 0118 1.5z" clipRule="evenodd" />
+                  </svg>
+                  Vygenerovat popis AI
+                </span>
+              )}
+            </Button>
           </div>
         </section>
       </div>

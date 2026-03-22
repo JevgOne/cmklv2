@@ -41,7 +41,8 @@ model User {
   vehicles      Vehicle[]
   commissions   Commission[] @relation("BrokerCommissions")
   notifications Notification[]
-  contracts     Contract[]   @relation("BrokerContracts")
+  contracts       Contract[]       @relation("BrokerContracts")
+  aiConversations AiConversation[]
 
   // Auth
   emailVerified DateTime?
@@ -291,5 +292,19 @@ model Contract {
   @@index([brokerId])
   @@index([vehicleId])
   @@index([status])
+  @@index([createdAt])
+}
+
+model AiConversation {
+  id       String @id @default(cuid())
+  userId   String
+  user     User   @relation(fields: [userId], references: [id])
+  messages Json   // Array of { role: 'user'|'assistant', content: string, timestamp: string }
+  context  Json?  // { step?: string, vehicleId?: string }
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
   @@index([createdAt])
 }
