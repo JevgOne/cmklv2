@@ -20,6 +20,7 @@ async function main() {
   await prisma.watchdog.deleteMany();
   await prisma.listingImage.deleteMany();
   await prisma.listing.deleteMany();
+  await prisma.invitation.deleteMany();
   await prisma.contract.deleteMany();
   await prisma.notification.deleteMany();
   await prisma.commission.deleteMany();
@@ -185,9 +186,80 @@ async function main() {
     },
   });
 
+  // 9. Onboarding broker — makléř v procesu onboardingu
+  const onboardingBroker = await prisma.user.create({
+    data: {
+      email: "onboarding@carmakler.cz",
+      firstName: "Lukáš",
+      lastName: "Onboardingový",
+      passwordHash,
+      role: "BROKER",
+      status: "ONBOARDING",
+      managerId: manazer.id,
+      regionId: regionPraha.id,
+      onboardingStep: 2,
+      onboardingCompleted: false,
+      ico: "87654321",
+    },
+  });
+
   console.log(
-    `Created ${8} users: ${admin.email}, ${backoffice.email}, ${reditel.email}, ${manazer.email}, ${janNovak.email}, ${petraMala.email}, ${karelDvorak.email}, ${pendingBroker.email}`
+    `Created ${9} users: ${admin.email}, ${backoffice.email}, ${reditel.email}, ${manazer.email}, ${janNovak.email}, ${petraMala.email}, ${karelDvorak.email}, ${pendingBroker.email}, ${onboardingBroker.email}`
   );
+
+  // ============================================
+  // 2b. INVITATIONS
+  // ============================================
+
+  console.log("Seeding invitations...");
+
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + 7);
+
+  const pastDate = new Date();
+  pastDate.setDate(pastDate.getDate() - 1);
+
+  // Pozvánka 1: PENDING (platná)
+  await prisma.invitation.create({
+    data: {
+      email: "novy.makler@email.cz",
+      name: "Jakub Nový",
+      token: "inv-token-pending-001",
+      managerId: manazer.id,
+      regionId: regionPraha.id,
+      status: "PENDING",
+      expiresAt,
+    },
+  });
+
+  // Pozvánka 2: USED (použitá — onboardingBroker)
+  await prisma.invitation.create({
+    data: {
+      email: "onboarding@carmakler.cz",
+      name: "Lukáš Onboardingový",
+      token: "inv-token-used-002",
+      managerId: manazer.id,
+      regionId: regionPraha.id,
+      status: "USED",
+      expiresAt,
+    },
+  });
+
+  // Pozvánka 3: EXPIRED
+  await prisma.invitation.create({
+    data: {
+      email: "expired@email.cz",
+      name: "Starý Zájemce",
+      token: "inv-token-expired-003",
+      managerId: manazer.id,
+      regionId: regionJihomoravsky.id,
+      status: "EXPIRED",
+      expiresAt: pastDate,
+    },
+  });
+
+  const invitationCount = await prisma.invitation.count();
+  console.log(`Created ${invitationCount} invitations`);
 
   // ============================================
   // 3. VEHICLES
@@ -2011,12 +2083,14 @@ async function main() {
   console.log(`Parts:          ${partCount}`);
   console.log(`Orders:         ${orderCount}`);
   console.log(`Order Items:    ${orderItemCount}`);
+  console.log(`Invitations:    ${await prisma.invitation.count()}`);
   console.log("\nDemo login: admin@carmakler.cz / heslo123");
   console.log("Advertiser login: prodejce@email.cz / heslo123");
   console.log("Buyer login: kupujici@email.cz / heslo123");
   console.log("Supplier login: dodavatel@vrakoviste.cz / heslo123");
   console.log("Dealer login: dealer1@carmakler.cz / heslo123");
   console.log("Investor login: investor1@carmakler.cz / heslo123");
+  console.log("Onboarding broker: onboarding@carmakler.cz / heslo123");
 }
 
 main()

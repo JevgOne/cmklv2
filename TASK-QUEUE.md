@@ -2593,7 +2593,7 @@ enum InvestmentStatus {
 
 ## TASK-022: Onboarding makléře — pozvánkový link, registrace, školení
 Priorita: 1
-Stav: čeká
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:
@@ -2727,7 +2727,7 @@ enum InvitationStatus {
 
 ## TASK-023: Manažerský dashboard — správa makléřů, schvalování, statistiky
 Priorita: 1
-Stav: čeká
+Stav: zpracovává se
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:

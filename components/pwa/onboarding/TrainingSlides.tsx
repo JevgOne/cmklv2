@@ -1,0 +1,142 @@
+"use client";
+
+import { useState } from "react";
+import { Button } from "@/components/ui/Button";
+import { cn } from "@/lib/utils";
+
+interface Slide {
+  title: string;
+  icon: string;
+  points: string[];
+}
+
+const SLIDES: Slide[] = [
+  {
+    title: "Jak funguje Carmakler",
+    icon: "1",
+    points: [
+      "Carmakler propojuje prodejce vozidel s overenymi makleri",
+      "Makler nabere auto v terenu a zada ho do systemu",
+      "BackOffice schvali vozidlo a publikuje inzerat",
+      "Po uspesnem prodeji makler ziska provizi 5% z prodejni ceny (min. 25 000 Kc)",
+    ],
+  },
+  {
+    title: "Jak nabrat auto",
+    icon: "2",
+    points: [
+      "Pouzijte VIN dekoder pro automaticke nacteni udaju",
+      "Poridite kvalitni fotky podle fotopruvodce (min. 15 fotek)",
+      "Provedete inspekci a zaznamenejte stav vozu",
+      "Nastavte realnou cenu na zaklade trzni analyzy",
+      "Vse zadejte do PWA aplikace — funguje i offline",
+    ],
+  },
+  {
+    title: "Jednani s prodejcem",
+    icon: "3",
+    points: [
+      "Vzdy jednejte profesionalne a transparentne",
+      "Vysvetlete prodejci cely proces a vyhody spoluprace",
+      "Podepiste maklerskou smlouvu pred zahajenim inzerce",
+      "Pravidelne informujte prodejce o stavu prodeje",
+      "Pri prohlidce budte dukladni — vyhnete se reklamacim",
+    ],
+  },
+  {
+    title: "Pravni minimum",
+    icon: "4",
+    points: [
+      "Maklerska smlouva je povinny prvni krok pred inzerci",
+      "Nikdy neslibujte garantovany prodej ani konkretni cas",
+      "Overujte vlastnictvi vozu v registru vozidel",
+      "Provize se vyplaci az po uspesnem prodeji a uhrade",
+      "Dodrzujte GDPR — osobni udaje klientu nedejtedal",
+    ],
+  },
+];
+
+interface TrainingSlidesProps {
+  onComplete: () => void;
+}
+
+export function TrainingSlides({ onComplete }: TrainingSlidesProps) {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const slide = SLIDES[currentSlide];
+
+  return (
+    <div>
+      {/* Slide counter */}
+      <div className="flex items-center justify-between mb-4">
+        <span className="text-xs font-medium text-gray-500">
+          {currentSlide + 1} / {SLIDES.length}
+        </span>
+        <div className="flex gap-1.5">
+          {SLIDES.map((_, i) => (
+            <div
+              key={i}
+              className={cn(
+                "w-2 h-2 rounded-full transition-colors",
+                i === currentSlide ? "bg-orange-500" : i < currentSlide ? "bg-success-500" : "bg-gray-300"
+              )}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Slide content */}
+      <div className="bg-white rounded-2xl shadow-card p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center text-white font-bold">
+            {slide.icon}
+          </div>
+          <h3 className="text-lg font-bold text-gray-900">{slide.title}</h3>
+        </div>
+
+        <ul className="space-y-3">
+          {slide.points.map((point, i) => (
+            <li key={i} className="flex items-start gap-3">
+              <svg className="w-5 h-5 text-orange-500 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="text-sm text-gray-700">{point}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Navigation */}
+      <div className="flex gap-3 mt-6">
+        {currentSlide > 0 && (
+          <Button
+            variant="outline"
+            size="default"
+            onClick={() => setCurrentSlide((p) => p - 1)}
+            className="flex-1"
+          >
+            Zpet
+          </Button>
+        )}
+        {currentSlide < SLIDES.length - 1 ? (
+          <Button
+            variant="primary"
+            size="default"
+            onClick={() => setCurrentSlide((p) => p + 1)}
+            className="flex-1"
+          >
+            Dalsi
+          </Button>
+        ) : (
+          <Button
+            variant="primary"
+            size="default"
+            onClick={onComplete}
+            className="flex-1"
+          >
+            Prejit na kviz
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}

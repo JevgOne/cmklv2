@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button, Tabs, Pagination, StatusPill, Card } from "@/components/ui";
 import { DataTable } from "@/components/admin/DataTable";
+import { InviteBrokerModal } from "@/components/admin/InviteBrokerModal";
+import { BrokerApprovalCard } from "@/components/admin/BrokerApprovalCard";
 
 interface Broker {
   id: string;
@@ -15,10 +17,29 @@ interface Broker {
   createdAt: string;
 }
 
+interface OnboardingBroker {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  initials: string;
+  avatar?: string | null;
+  ico?: string;
+  bio?: string;
+  specializations: string[];
+  cities: string[];
+  quizScore?: number;
+  quizTotal?: number;
+  documentsUploaded: boolean;
+  contractSigned: boolean;
+  onboardingStep: string;
+  createdAt: string;
+}
+
 const statusLabels: Record<Broker["status"], string> = {
-  active: "Aktivní",
-  pending: "Čekající",
-  rejected: "Zamítnutý",
+  active: "Aktivni",
+  pending: "Cekajici",
+  rejected: "Zamitnuty",
 };
 
 function TableActions() {
@@ -27,14 +48,14 @@ function TableActions() {
       <button
         className="w-9 h-9 flex items-center justify-center bg-gray-100 rounded-[10px] text-sm cursor-pointer transition-colors hover:bg-gray-200 border-none"
         title="Zobrazit"
-        onClick={() => alert("Detail makléře bude brzy dostupný.")}
+        onClick={() => alert("Detail maklere bude brzy dostupny.")}
       >
         👁
       </button>
       <button
         className="w-9 h-9 flex items-center justify-center bg-gray-100 rounded-[10px] text-sm cursor-pointer transition-colors hover:bg-gray-200 border-none"
         title="Upravit"
-        onClick={() => alert("Úprava makléře bude brzy dostupná.")}
+        onClick={() => alert("Uprava maklere bude brzy dostupna.")}
       >
         ✏️
       </button>
@@ -42,8 +63,8 @@ function TableActions() {
         className="w-9 h-9 flex items-center justify-center bg-gray-100 rounded-[10px] text-sm cursor-pointer transition-colors hover:bg-error-50 hover:text-error-500 border-none"
         title="Smazat"
         onClick={() => {
-          if (confirm("Opravdu chcete smazat tohoto makléře?")) {
-            alert("Smazání makléře bude brzy dostupné.");
+          if (confirm("Opravdu chcete smazat tohoto maklere?")) {
+            alert("Smazani maklere bude brzy dostupne.");
           }
         }}
       >
@@ -56,7 +77,7 @@ function TableActions() {
 const columns = [
   {
     key: "broker",
-    header: "Makléř",
+    header: "Makler",
     render: (item: Broker) => (
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0">
@@ -97,30 +118,36 @@ export function BrokersPageContent() {
   const [activeTab, setActiveTab] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [brokers, setBrokers] = useState<Broker[]>([]);
+  const [onboardingBrokers, setOnboardingBrokers] = useState<OnboardingBroker[]>([]);
   const [loading, setLoading] = useState(true);
+  const [inviteModalOpen, setInviteModalOpen] = useState(false);
+
+  const fetchBrokers = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/admin/brokers");
+      if (res.ok) {
+        const data = await res.json();
+        setBrokers(data.brokers || []);
+        setOnboardingBrokers(data.onboardingBrokers || []);
+      }
+    } catch (err) {
+      console.error("Chyba pri nacitani makleru:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    async function fetchBrokers() {
-      setLoading(true);
-      try {
-        const res = await fetch("/api/admin/brokers");
-        if (res.ok) {
-          const data = await res.json();
-          setBrokers(data.brokers);
-        }
-      } catch (err) {
-        console.error("Chyba při načítání makléřů:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchBrokers();
-  }, []);
+  }, [fetchBrokers]);
 
   const filteredBrokers =
     activeTab === "all"
       ? brokers
-      : brokers.filter((b) => b.status === activeTab);
+      : activeTab === "onboarding"
+        ? [] // Onboarding tab shows cards, not table
+        : brokers.filter((b) => b.status === activeTab);
 
   const perPage = 10;
   const totalPages = Math.max(1, Math.ceil(filteredBrokers.length / perPage));
@@ -134,25 +161,36 @@ export function BrokersPageContent() {
   const rejectedCnt = brokers.filter((b) => b.status === "rejected").length;
 
   const tabs = [
-    { value: "all", label: `Všichni (${brokers.length})` },
-    { value: "active", label: `Aktivní (${activeCnt})` },
-    { value: "pending", label: `Čekající (${pendingCnt})` },
-    { value: "rejected", label: `Zamítnutí (${rejectedCnt})` },
+    { value: "all", label: `Vsichni (${brokers.length})` },
+    { value: "active", label: `Aktivni (${activeCnt})` },
+    { value: "onboarding", label: `Onboarding (${onboardingBrokers.length})` },
+    { value: "pending", label: `Cekajici (${pendingCnt})` },
+    { value: "rejected", label: `Zamitnuti (${rejectedCnt})` },
   ];
+
+  const handleBrokerActivated = (id: string) => {
+    setOnboardingBrokers((prev) => prev.filter((b) => b.id !== id));
+    fetchBrokers();
+  };
+
+  const handleBrokerRejected = (id: string) => {
+    setOnboardingBrokers((prev) => prev.filter((b) => b.id !== id));
+    fetchBrokers();
+  };
 
   return (
     <div className="space-y-6">
       {/* Page header */}
       <div>
-        <p className="text-sm text-gray-500 mb-1">Admin / Makléři</p>
+        <p className="text-sm text-gray-500 mb-1">Admin / Makleri</p>
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">Makléři</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Makleri</h1>
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" onClick={() => alert("Export makléřů bude brzy dostupný.")}>
+            <Button variant="outline" size="sm" onClick={() => alert("Export makleru bude brzy dostupny.")}>
               Exportovat
             </Button>
-            <Button variant="primary" size="sm" onClick={() => alert("Přidání makléře bude brzy dostupné.")}>
-              Přidat makléře
+            <Button variant="primary" size="sm" onClick={() => setInviteModalOpen(true)}>
+              Pozvat maklere
             </Button>
           </div>
         </div>
@@ -168,26 +206,62 @@ export function BrokersPageContent() {
         }}
       />
 
-      {/* Table */}
-      <Card className="!p-0 overflow-hidden">
-        {loading ? (
-          <div className="p-12 text-center text-gray-400">
-            Načítám makléře...
-          </div>
-        ) : paginatedBrokers.length === 0 ? (
-          <div className="p-12 text-center text-gray-400">
-            Žádní makléři k zobrazení.
-          </div>
-        ) : (
-          <DataTable columns={columns} data={paginatedBrokers} />
-        )}
-      </Card>
+      {/* Content */}
+      {activeTab === "onboarding" ? (
+        // Onboarding tab - show approval cards
+        <div>
+          {loading ? (
+            <div className="p-12 text-center text-gray-400">
+              Nacitam maklere...
+            </div>
+          ) : onboardingBrokers.length === 0 ? (
+            <div className="p-12 text-center text-gray-400">
+              Zadni makleri v onboardingu.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {onboardingBrokers.map((broker) => (
+                <BrokerApprovalCard
+                  key={broker.id}
+                  broker={broker}
+                  onActivate={handleBrokerActivated}
+                  onReject={handleBrokerRejected}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        <>
+          {/* Table */}
+          <Card className="!p-0 overflow-hidden">
+            {loading ? (
+              <div className="p-12 text-center text-gray-400">
+                Nacitam maklere...
+              </div>
+            ) : paginatedBrokers.length === 0 ? (
+              <div className="p-12 text-center text-gray-400">
+                Zadni makleri k zobrazeni.
+              </div>
+            ) : (
+              <DataTable columns={columns} data={paginatedBrokers} />
+            )}
+          </Card>
 
-      {/* Pagination */}
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
+          {/* Pagination */}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        </>
+      )}
+
+      {/* Invite modal */}
+      <InviteBrokerModal
+        open={inviteModalOpen}
+        onClose={() => setInviteModalOpen(false)}
+        onSuccess={fetchBrokers}
       />
     </div>
   );

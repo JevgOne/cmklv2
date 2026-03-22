@@ -36,6 +36,24 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Chráněné onboarding routy — přístup jen pro BROKER v ONBOARDING stavu
+  if (pathname.startsWith("/makler/onboarding")) {
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+
+    if (!token) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    if (!MAKLER_ROLES.includes(token.role as string)) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+  }
+
   // Chranene makler routy — PWA stranky (ne verejne profily /makler/[slug])
   const protectedMaklerPaths = [
     "/makler/dashboard",
@@ -44,6 +62,7 @@ export async function middleware(request: NextRequest) {
     "/makler/profile",
     "/makler/offline",
     "/makler/assistant",
+    "/makler/contracts",
   ];
   if (protectedMaklerPaths.some((p) => pathname.startsWith(p))) {
     const token = await getToken({
@@ -59,6 +78,11 @@ export async function middleware(request: NextRequest) {
 
     if (!MAKLER_ROLES.includes(token.role as string)) {
       return NextResponse.redirect(new URL("/", request.url));
+    }
+
+    // Makléř v ONBOARDING stavu → přesměrovat na onboarding (kromě /makler/onboarding)
+    if (token.status === "ONBOARDING") {
+      return NextResponse.redirect(new URL("/makler/onboarding", request.url));
     }
   }
 
@@ -143,6 +167,8 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     "/admin/:path*",
+    "/makler/onboarding",
+    "/makler/onboarding/:path*",
     "/makler/dashboard",
     "/makler/dashboard/:path*",
     "/makler/vehicles",
@@ -155,6 +181,8 @@ export const config = {
     "/makler/offline/:path*",
     "/makler/assistant",
     "/makler/assistant/:path*",
+    "/makler/contracts",
+    "/makler/contracts/:path*",
     "/moje-inzeraty",
     "/moje-inzeraty/:path*",
     "/muj-ucet",

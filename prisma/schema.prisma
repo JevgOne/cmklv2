@@ -37,10 +37,19 @@ model User {
   bio             String?
   slug            String? @unique
 
+  // Onboarding makléře
+  bankAccount         String?  // IBAN pro výplatu provizí
+  documents           String?  // JSON: { tradeLicense?: string, idFront?: string, idBack?: string }
+  onboardingStep      Int      @default(1) // 1-5 aktuální krok onboardingu
+  onboardingCompleted Boolean  @default(false)
+  quizScore           Int?     // Výsledek kvízu (procenta)
+  brokerContractUrl   String?  // URL podepsané smlouvy s Carmakler
+  brokerSignature     String?  // Base64 PNG podpisu makléře (onboarding smlouva)
+
   // Profil inzerenta (ADVERTISER)
   accountType String? // PRIVATE, DEALER, BAZAAR
   companyName String?
-  ico         String? // IČO pro firmy
+  ico         String? // IČO pro firmy/makléře
   icoVerified Boolean @default(false)
   logo        String?
 
@@ -50,6 +59,7 @@ model User {
   notifications   Notification[]
   contracts       Contract[]       @relation("BrokerContracts")
   aiConversations AiConversation[]
+  sentInvitations Invitation[]     @relation("ManagerInvitations")
 
   // Inzertní platforma relace
   listings  Listing[]
@@ -84,8 +94,32 @@ model Region {
   cities String? // JSON array
   users  User[]
 
+  invitations Invitation[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// ============================================
+// ONBOARDING MAKLÉŘŮ
+// ============================================
+
+model Invitation {
+  id        String @id @default(cuid())
+  email     String
+  name      String?
+  token     String @unique
+  managerId String
+  manager   User   @relation("ManagerInvitations", fields: [managerId], references: [id])
+  regionId  String
+  region    Region @relation(fields: [regionId], references: [id])
+  status    String @default("PENDING") // PENDING, USED, EXPIRED
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([managerId])
+  @@index([status])
 }
 
 model Vehicle {

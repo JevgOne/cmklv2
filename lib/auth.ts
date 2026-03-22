@@ -19,7 +19,8 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!user) return null;
-        if (user.status !== "ACTIVE") return null;
+        // Povolit přihlášení pro ACTIVE a ONBOARDING (makléři v onboarding procesu)
+        if (user.status !== "ACTIVE" && user.status !== "ONBOARDING") return null;
 
         const isValid = await bcrypt.compare(
           credentials.password,
@@ -37,6 +38,8 @@ export const authOptions: NextAuthOptions = {
           lastName: user.lastName,
           avatar: user.avatar ?? null,
           accountType: user.accountType ?? null,
+          onboardingStep: user.onboardingStep,
+          onboardingCompleted: user.onboardingCompleted,
         };
       },
     }),
@@ -54,6 +57,8 @@ export const authOptions: NextAuthOptions = {
         token.lastName = user.lastName;
         token.avatar = user.avatar;
         token.accountType = user.accountType;
+        token.onboardingStep = user.onboardingStep;
+        token.onboardingCompleted = user.onboardingCompleted;
       }
       return token;
     },
@@ -66,6 +71,8 @@ export const authOptions: NextAuthOptions = {
         session.user.lastName = (token.lastName as string) ?? "";
         session.user.avatar = (token.avatar as string | null) ?? null;
         session.user.accountType = (token.accountType as string | null) ?? null;
+        session.user.onboardingStep = (token.onboardingStep as number) ?? 1;
+        session.user.onboardingCompleted = (token.onboardingCompleted as boolean) ?? false;
       }
       return session;
     },

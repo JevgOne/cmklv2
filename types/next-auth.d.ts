@@ -8,6 +8,8 @@ declare module "next-auth" {
     lastName?: string;
     avatar?: string | null;
     accountType?: string | null;
+    onboardingStep?: number;
+    onboardingCompleted?: boolean;
   }
   interface Session {
     user: {
@@ -20,6 +22,8 @@ declare module "next-auth" {
       lastName: string;
       avatar: string | null;
       accountType: string | null;
+      onboardingStep: number;
+      onboardingCompleted: boolean;
     };
   }
 }
@@ -32,5 +36,7 @@ declare module "next-auth/jwt" {
     lastName?: string;
     avatar?: string | null;
     accountType?: string | null;
+    onboardingStep?: number;
+    onboardingCompleted?: boolean;
   }
 }
