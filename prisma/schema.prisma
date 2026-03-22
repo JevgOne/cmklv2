@@ -91,21 +91,34 @@ model Vehicle {
   doorsCount Int?
   seatsCount Int?
 
+  // Pohon a historie
+  drivetrain        String?  // FWD, RWD, AWD, 4WD
+  ownerCount        Int?
+  serviceBookStatus String?  // COMPLETE, PARTIAL, NONE, ELECTRONIC
+  odometerStatus    String?  // VERIFIED, UNVERIFIED, TAMPERED
+  originCountry     String?
+
   // Stav
   condition     String // NEW, LIKE_NEW, EXCELLENT, GOOD, FAIR, DAMAGED
   stkValidUntil DateTime?
   serviceBook   Boolean @default(false)
 
-  // Cena
+  // Cena a DPH
   price           Int
   priceNegotiable Boolean @default(true)
+  vatStatus       String? // DEDUCTIBLE, NON_DEDUCTIBLE, MARGIN_SCHEME
 
   // Popis
   equipment   String? // JSON array
   description String?
+  highlights  String? // JSON array - klíčové přednosti vozidla
+
+  // Zdroj vozidla
+  vehicleSource String? // OWNER, DEALER, AUCTION, IMPORT, LEASING_RETURN
 
   // Status
-  status String @default("DRAFT") // DRAFT, PENDING, REJECTED, ACTIVE, RESERVED, SOLD, ARCHIVED
+  status          String  @default("DRAFT") // DRAFT, PENDING, REJECTED, ACTIVE, RESERVED, SOLD, ARCHIVED
+  rejectionReason String?
 
   // Typ prodejce
   sellerType String @default("broker") // broker, private
@@ -118,6 +131,20 @@ model Vehicle {
   contactName  String?
   contactPhone String?
   contactEmail String?
+
+  // Lead info (kontakt na prodejce pro makléře)
+  leadSource  String? // BAZOS, SAUTO, FACEBOOK, REFERRAL, COLD_CALL, OTHER
+  leadUrl     String?
+  sellerName  String?
+  sellerPhone String?
+  sellerEmail String?
+
+  // Provize makléře
+  commission Int? // výše provize v CZK
+
+  // Inspekce
+  inspectionData String? // JSON - kompletní data z prohlídky
+  overallRating  Int?    // 1-5 hvězdiček
 
   // Lokace
   city      String

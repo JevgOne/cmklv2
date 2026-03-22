@@ -1063,7 +1063,7 @@ Vytvořit základ PWA aplikace v `app/(pwa)/` — technickou infrastrukturu, lay
 
 ## TASK-016: PWA Nabrat auto — 7-krokový flow + post-submission + editace
 Priorita: 1
-Stav: čeká
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:

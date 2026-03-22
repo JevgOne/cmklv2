@@ -1,18 +1,27 @@
-# Carmakler - Auto portál se sítí makléřů
+# Carmakler — Automobilová platforma
 
 ## Přehled
-Auto portál inspirovaný Autorro.sk. Zprostředkování prodeje vozidel přes síť certifikovaných makléřů.
+Carmakler je ekosystém 4 propojených produktů pod jednou značkou:
+
+1. **Carmakler (makléřská síť)** — Zprostředkování prodeje vozidel přes síť certifikovaných makléřů. Makléř nabere auto v terénu, zadá do systému, BackOffice schválí, auto se prodá. Provize: 5% z prodejní ceny, min. 25 000 Kč.
+2. **Inzertní platforma** — Digitální inzerce aut pro soukromé prodejce, autobazary a dealery. Obdoba Sauto/Bazoš s vyšší kvalitou. Propojení s makléřskou sítí.
+3. **Eshop autodíly** — E-shop s použitými díly z vrakovišť + nové aftermarket díly. Vrakoviště přidávají díly přes jednoduchou PWA. Zákazník hledá díly podle VIN/vozu.
+4. **Marketplace (VIP)** — Uzavřená investiční platforma pro flipping aut. Ověření dealeři nabízí příležitosti (nákup + oprava + prodej), ověření investoři financují. Dělení zisku: 40% investor, 40% dealer, 20% Carmakler. Auto se kupuje na firmu Carmakler.
 
 ## Tech Stack
 - **Framework:** Next.js 15 (App Router, Server Components)
 - **Jazyk:** TypeScript (strict mode)
 - **Styling:** Tailwind CSS 4 + Outfit font
 - **ORM:** Prisma + PostgreSQL
-- **Auth:** NextAuth.js (role: ADMIN, BACKOFFICE, REGIONAL_DIRECTOR, MANAGER, BROKER)
-- **PWA:** Serwist (offline-first pro makléře)
+- **Auth:** NextAuth.js (role: ADMIN, BACKOFFICE, REGIONAL_DIRECTOR, MANAGER, BROKER, ADVERTISER, BUYER, PARTS_SUPPLIER, INVESTOR, VERIFIED_DEALER)
+- **PWA:** Serwist (offline-first pro makléře + dodavatele dílů)
+- **Offline:** Service Worker + IndexedDB (idb) + Background Sync
+- **AI:** Claude API (@anthropic-ai/sdk) — AI asistent pro makléře, generování popisů
+- **VIN:** vindecoder.eu API + NHTSA fallback
 - **Real-time:** Pusher
 - **Email:** Resend
 - **Obrázky:** Cloudinary
+- **Platby:** Stripe (fáze 2, v MVP bankovní převod + dobírka)
 - **Validace:** Zod
 - **Formuláře:** React Hook Form
 - **Animace:** Framer Motion
@@ -20,10 +29,14 @@ Auto portál inspirovaný Autorro.sk. Zprostředkování prodeje vozidel přes s
 ## Architektura
 ```
 app/
-  (web)/     → veřejný web (katalog, makléři, landing pages)
-  (pwa)/     → PWA pro makléře (dashboard, správa vozů, provize)
-  (admin)/   → BackOffice admin panel
-  api/       → API routes
+  (web)/           → veřejný web (katalog, makléři, landing pages)
+  (web)/inzerat/   → inzertní platforma (podání inzerátu, správa)
+  (web)/dily/      → eshop autodíly (katalog, košík, objednávky)
+  (web)/marketplace/ → marketplace landing + dealer/investor dashboardy
+  (pwa)/           → PWA pro makléře (dashboard, nabírání aut, smlouvy, AI asistent)
+  (pwa-parts)/     → PWA pro dodavatele dílů (přidávání dílů, objednávky)
+  (admin)/         → BackOffice admin panel
+  api/             → API routes
 ```
 
 ## Pravidla pro vývoj

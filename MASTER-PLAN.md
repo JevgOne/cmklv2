@@ -7,12 +7,30 @@
 ## PŘEHLED EKOSYSTÉMU
 
 ```
-CarMakléř Ekosystém
-├── carmakler.cz          — Hlavní web portál + admin panel
-├── carmakler.cz/makler   — PWA pro makléře
-├── carmakler.cz/inzerce  — Bezplatná inzerce pro soukromé prodejce
-├── carmakler.cz/shop     — E-shop (díly z vrakovišť + autokosmetika)
-└── marketplace.carmakler.cz — Investiční platforma (P3, later)
+CarMakléř Ekosystém — 4 produkty pod jednou značkou
+│
+├── 1. MAKLÉŘSKÁ SÍŤ (jádro businessu)
+│   ├── carmakler.cz              — Veřejný web (katalog, makléři, landing pages)
+│   ├── carmakler.cz/app          — PWA pro makléře (7-krokové nabírání aut, smlouvy, AI asistent)
+│   ├── carmakler.cz/admin        — BackOffice admin panel
+│   └── Provize: 5% z prodejní ceny, min. 25 000 Kč
+│
+├── 2. INZERTNÍ PLATFORMA
+│   ├── carmakler.cz/inzerat      — Podání inzerátu (soukromí, autobazary, dealeři)
+│   ├── carmakler.cz/nabidka      — Společný katalog (makléřské + soukromé inzeráty)
+│   └── Monetizace: Premium/TOP inzeráty, měsíční předplatné pro firmy
+│
+├── 3. ESHOP AUTODÍLY
+│   ├── carmakler.cz/dily         — E-shop (použité díly z vrakovišť + aftermarket)
+│   ├── carmakler.cz/parts        — PWA pro dodavatele dílů (3-krokové přidání)
+│   └── Monetizace: marže na dílech, provize z prodeje
+│
+└── 4. MARKETPLACE (VIP — uzavřená sekce)
+    ├── carmakler.cz/marketplace  — Investiční platforma pro flipping aut
+    ├── Ověření dealeři nabízí příležitosti (nákup + oprava + prodej)
+    ├── Ověření investoři financují (jeden nebo víc na jedno auto)
+    ├── Auto se kupuje na firmu Carmakler (bezpečnost)
+    └── Dělení zisku: 40% investor, 40% dealer, 20% Carmakler
 ```
 
 ---
@@ -84,37 +102,52 @@ CarMakléř Ekosystém
 ---
 
 ### FÁZE A: PWA PRO MAKLÉŘE (Kritické — bez toho nejde fungovat)
-> Makléř se přihlásí a musí mít kompletní nástroj pro práci
+> Kompletní mobilní aplikace pro makléře v terénu. Offline-first, 7-krokové nabírání aut, smlouvy s digitálním podpisem, AI asistent.
+> **TASK-015, TASK-016, TASK-017, TASK-018**
 
 ```
-A1. Makléř Dashboard (/makler/dashboard)
-├── Přehled: moje aktivní vozy, celkové provize, čekající schválení
-├── Rychlé akce: Přidat vůz, Zobrazit provize
-├── Notifikace: nový dotaz, schválení/zamítnutí vozu
-└── Bottom navigation: Dashboard, Vozy, Provize, Profil
+A1. PWA Setup + Layout + Dashboard (TASK-015)
+├── Serwist PWA (manifest, service worker, offline strategie)
+├── Install prompt (výzva k instalaci na homescreen)
+├── Layout: bottom nav (Domů, Vozy, ➕Přidat, Provize, Profil), top bar, offline banner
+├── Dashboard: pozdrav, statistiky měsíce, CTA "Nabrat auto", rozpracované drafty, notifikace
+├── IndexedDB infrastruktura (drafts, vehicles, images, contacts, vinCache, equipmentCatalog, contracts)
+├── Background Sync (sync-vehicles, sync-images, sync-contracts)
+├── Online/offline detekce (useOnlineStatus hook)
+├── Stránka offline draftů (/app/offline)
+├── Moje vozy (/app/vehicles) — seznam s filtry a stavy
+├── Provize (/app/commissions) — statistiky, historie, výplaty (5% min 25k Kč)
+└── Profil (/app/profile) — údaje, Trust Score, statistiky, nastavení notifikací
 
-A2. Správa vozů (/makler/vozy)
-├── Seznam mých vozů s filtrem podle statusu (Draft/Pending/Active/Sold)
-├── Přidání vozu — 4-krokový wizard:
-│   ├── Krok 1: VIN zadání (+ budoucí VIN scanner)
-│   ├── Krok 2: Základní údaje (auto-fill z VIN pokud možné)
-│   ├── Krok 3: Fotky (mobilní focení, drag&drop, pořadí)
-│   └── Krok 4: Cena + popis + publikace
-├── Editace vozu (VIN nelze změnit!)
-├── Změna ceny (vyžaduje důvod → change log)
-├── Změna statusu (Draft→Pending odeslání ke schválení)
-└── Smazání/archivace vozu
+A2. Nabrat auto — 7-krokový flow (TASK-016)
+├── Step 1: Kontakt + navigace (zdroj leadu, předběžné info, kontakt, adresa, Mapy.cz/Google Maps)
+├── Step 2: Prohlídka vozu (dokumenty, exteriér+spáry+přelakování, interiér+vytopení, motor, testovací jízda, odmítnutí vozu s důvodem, celkový dojem)
+├── Step 3: VIN zadání + dekódování (ruční zadání, validace, duplikát check, vindecoder.eu API, offline cache)
+├── Step 4: Fotodokumentace (guided focení s overlay, min 12 fotek, povinné: tachometr+VIN štítek+klíče, komprese 1920px/80%/2MB)
+├── Step 5: Údaje + výbava (z VIN zamčené, ruční: palivo/výkon/barva/dveře/místa, km, stav, výbava z katalogu, přednosti)
+├── Step 6: Cena + provize + lokace (cena, DPH, live výpočet provize 5%/25k, lokace, popis, AI generování popisu)
+├── Step 7: Kontrola + odeslání (preview inzerátu, checklist kompletnosti, odeslání ke schválení)
+├── Post-submission: stavy (ke schválení→schváleno/zamítnuto), push notifikace, oprava a znovuodeslání
+├── Editace vozu (/app/vehicles/[id]/edit) — pravidla podle stavu (draft=vše, active=omezené, sold=nic)
+└── Offline: vše funguje bez internetu, auto-save, background sync
 
-A3. Profil makléře (/makler/profil)
-├── Editace: jméno, bio, specializace, města, telefon, avatar
-├── Veřejný profil preview
-└── Nastavení notifikací
+A3. Smlouvy s digitálním podpisem (TASK-017)
+├── Typy: zprostředkovatelská smlouva, předávací protokol
+├── Generování: automatické předvyplnění z dat vozu + kontaktu
+├── Makléř doplní: rodné číslo, OP, bankovní účet prodejce
+├── Digitální podpis: canvas (prst na displeji), prodejce + makléř
+├── Geolokace + timestamp při podpisu
+├── PDF generování s podpisy, odeslání emailem, stažení
+└── Offline: generování + podpis bez internetu, sync PDF po připojení
 
-A4. Provize (/makler/provize)
-├── Přehled: tento měsíc, celkem, čeká na výplatu
-├── Historie provizí (tabulka: vůz, cena prodeje, provize, datum)
-├── Detail provize (rozpis: makléř 50%, firma 50%)
-└── Export do CSV
+A4. AI Asistent (TASK-018)
+├── Plovoucí chat bubble v celé PWA
+├── Knowledge base: smlouvy, focení, prohlídky, cenotvorba, právo, procesy Carmakler
+├── Kontextové odpovědi (ví na jakém kroku makléř je)
+├── Quick actions (nejčastější dotazy)
+├── Generování popisů inzerátů z dat vozu
+├── Claude API (Sonnet pro rychlost), konverzační paměť, rate limiting
+└── Offline: informace o nutnosti připojení
 ```
 
 ### FÁZE B: ADMIN PANEL KOMPLET
@@ -169,11 +202,12 @@ C1. Databáze — nové modely
 
 C2. Výpočet provize
 ├── Automaticky při označení vozu jako SOLD
-├── Provize = 5% z prodejní ceny (min 25 000 Kč)
+├── Provize = 5% z prodejní ceny, minimálně 25 000 Kč
 ├── Split: 50% makléř / 50% firma
 ├── Bonus manažer: 5% z firemní části
 ├── Bonus ředitel: 3% z firemní části
-└── Bonusy za pojištění/leasing (pokud dojednáno)
+├── Bonusy za pojištění/leasing (pokud dojednáno)
+└── Live výpočet provize v PWA při zadávání ceny (motivace makléře)
 
 C3. API endpointy
 ├── POST /api/vehicles/[id]/sell — označení jako prodané + výpočet provize
@@ -183,66 +217,86 @@ C3. API endpointy
 └── PATCH /api/admin/payouts/[id] — schválení výplaty
 ```
 
-### FÁZE D: INZERCE — DOKONČENÍ
-> Soukromí prodejci potřebují správu svých inzerátů
+### FÁZE D: INZERTNÍ PLATFORMA — KOMPLETNÍ
+> Digitální inzerce aut pro soukromé prodejce, autobazary a dealery. Propojení s makléřskou sítí.
+> **TASK-019**
 
 ```
-D1. Správa mých inzerátů (/inzerce/moje)
-├── Login/registrace pro soukromé prodejce (jednodušší než makléř)
-├── Seznam mých inzerátů
-├── Editace inzerátu
-├── Smazání/deaktivace inzerátu
-├── Statistiky: zobrazení, dotazy
-└── Prodloužení inzerátu
+D1. Registrace a role
+├── Nová role ADVERTISER (inzerent): soukromý / autobazar (IČO+ARES) / dealer
+├── Nová role BUYER (kupující): email/Google/Apple login
+├── Ověření firem přes ARES API
 
-D2. Komunikace prodejce ↔ kupující
-├── Kontaktní formulář na inzerátu → email prodejci
-├── Notifikace o zájmu
-└── (budoucí: chat)
+D2. Podání inzerátu (/inzerat/novy) — 6-krokový flow
+├── Krok 1: VIN + dekódování (sdílená logika s makléřským flow)
+├── Krok 2: Údaje (značka, model, rok, km, palivo, výkon, barva, karoserie, stav...)
+├── Krok 3: Výbava (katalog checkboxů)
+├── Krok 4: Fotky (upload z galerie, min. 5, komprese)
+├── Krok 5: Cena + popis + lokace + kontakt
+├── Krok 6: Preview + odeslání
+└── Checkbox "Chci pomoc s prodejem od makléře" → lead pro makléřskou síť
 
-D3. Boost/Topování (monetizace — LATER)
-├── Topování za 199 Kč / 24h
-├── Zvýraznění za X Kč / 7 dní
-└── Platební brána (Stripe/GoPay)
+D3. Portál inzerenta (/moje-inzeraty)
+├── Dashboard: moje inzeráty, statistiky (zobrazení, dotazy), graf
+├── Správa: editace, deaktivace, smazání, označit jako prodáno
+├── Dotazy od zájemců (seznam s odpovídáním)
+└── Zprávy (messaging inzerent ↔ zájemce)
+
+D4. Funkce pro kupující (registrované)
+├── Oblíbené (❤️) — ukládání vozů
+├── Hlídací pes — filtr + emailová notifikace při nových vozech
+├── Historie dotazů
+└── Předvyplněný kontaktní formulář z profilu
+
+D5. Rozšíření katalogu
+├── Společný katalog: makléřské + soukromé + dealerské inzeráty
+├── Badge rozlišení: "Ověřeno makléřem" / "Autobazar" / "Soukromý" / "TOP"
+├── TOP inzeráty nahoře, filtr podle typu prodejce
+└── VIN duplikát check napříč celou platformou
+
+D6. Monetizace
+├── Základní inzerát zdarma (limit: 1 soukromý, 5 firma)
+├── Premium/TOP inzerát (zvýraznění, vyšší pozice)
+├── Měsíční předplatné pro neomezené inzeráty (autobazary)
+└── Ceny nastavitelné v admin panelu
 ```
 
-### FÁZE E: SHOP — DOKONČENÍ
-> E-shop musí fungovat end-to-end
+### FÁZE E: ESHOP AUTODÍLY — KOMPLETNÍ
+> E-shop s použitými díly z vrakovišť + aftermarket díly. PWA pro dodavatele.
+> **TASK-020**
 
 ```
-E1. Košík
-├── Přidání produktu do košíku (localStorage + state)
-├── Změna množství
-├── Odebrání položky
-├── Sidebar/drawer košík
-├── Trvalý mezi stránkami (context/zustand)
-└── Počet položek v navbaru
+E1. Veřejný eshop (/dily)
+├── Homepage: VIN vyhledávání, výběr vozu (značka→model→rok), kategorie dílů
+├── Katalog: filtrování (kategorie, vůz, cena, stav, dostupnost, lokalita)
+├── Detail dílu: galerie, popis, kompatibilita, dodavatel+hodnocení, dostupnost
+├── VIN kompatibilita: zákazník zadá VIN → vidí jen kompatibilní díly
+└── Banner: "Máte vrakoviště? Přidávejte díly přes naši aplikaci"
 
-E2. Checkout
-├── Krok 1: Dodací údaje (jméno, adresa, telefon, email)
-├── Krok 2: Doprava (Zásilkovna 69 Kč, PPL 299 Kč, osobní odběr zdarma)
-├── Krok 3: Platba (karta, převod, dobírka)
-├── Krok 4: Shrnutí + potvrzení
-└── Potvrzovací email
+E2. Košík a objednávky
+├── Košík (localStorage + context)
+├── Checkout: dodací údaje → doprava (osobní/zásilkovna/PPL/ČP) → platba (převod/karta/dobírka) → potvrzení
+├── Sledování stavu: přijata → zpracovává se → odesláno → doručeno
+├── Email notifikace (potvrzení, stav, tracking)
+└── Stripe platby (fáze 2, v MVP převod + dobírka)
 
-E3. Objednávky
-├── DB modely: Order, OrderItem
-├── Správa objednávek v adminu
-├── Stavy: Nová → Zaplacená → Odeslaná → Doručená
-├── Tracking number
-└── Email notifikace o stavu
+E3. PWA pro dodavatele dílů (/parts) — TASK-020
+├── Nová role PARTS_SUPPLIER, registrace + ověření (IČO/ARES, schválení BackOffice)
+├── Dashboard: aktivní díly, prodané, tržby, objednávky k vyřízení
+├── Přidání dílu — 3 jednoduché kroky:
+│   ├── Krok 1: Fotka (kamera, min 1, doporučeno 3-5)
+│   ├── Krok 2: Údaje (název/kategorie, stav, kompatibilita=značka+model+rok nebo VIN zdroje, OEM číslo)
+│   └── Krok 3: Cena + DPH + množství + doručení → publikovat
+├── Hromadný import z CSV/Excel (šablona ke stažení)
+├── Správa objednávek: nové → potvrdit → zabalit → odeslat (tracking) → hotovo
+├── Push notifikace na novou objednávku
+└── Offline: přidání dílu bez internetu, sync po připojení
 
-E4. Správa produktů (admin)
-├── CRUD produktů
-├── Kategorie (strom)
-├── Fotky, varianty, sklad
-├── Správa vraků (zdroj dílů)
-└── Import/export
-
-E5. Platební brána
-├── Stripe nebo GoPay integrace
-├── Webhook pro potvrzení platby
-└── Automatická změna stavu objednávky
+E4. Správa v admin panelu
+├── Schvalování dodavatelů
+├── Správa kategorií dílů
+├── Přehled objednávek
+└── Statistiky: obraty, top dodavatelé, nejprodávanější díly
 ```
 
 ### FÁZE F: INTEGRACE & KOMUNIKACE
@@ -318,16 +372,51 @@ G6. Rezervace prohlídek
 └── Připomínky
 ```
 
-### FÁZE H: MARKETPLACE (P3 — podpultovka)
-> Investiční platforma — invite only
+### FÁZE H: MARKETPLACE — INVESTIČNÍ PLATFORMA (VIP, uzavřená)
+> Uzavřená platforma pro flipping aut. Ověření dealeři + ověření investoři.
+> **TASK-021**
 
 ```
-H1. DB modely — MarketplaceDealer, MarketplaceInvestor, MarketplaceDeal, MarketplaceInvestment
-H2. Dealer dashboard — vytvoření dealu, kalkulace, fotky, updates
-H3. Investor dashboard — portfolio, nové příležitosti, výnosy
-H4. Admin — schvalování dealů, správa obchodníků a investorů
-H5. Deal lifecycle: Draft → Funding → Bought → Repair → Selling → Done
-H6. Notifikace a reporting
+H1. Přístup a ověřování
+├── Landing page: "Investujte do aut s ověřeným výnosem", jak to funguje, FAQ
+├── Žádost o přístup — Dealer: firma, IČO, adresa servisu, reference, fotky servisu → schválení BackOffice
+├── Žádost o přístup — Investor: jméno, zkušenosti, plánovaný objem, KYC (občanka) → schválení BackOffice
+├── Nové role: INVESTOR, VERIFIED_DEALER
+└── Uzavřená sekce — bez schválení žádný přístup
+
+H2. Dealer dashboard (/marketplace/dealer)
+├── Přidat příležitost — 4 kroky:
+│   ├── Krok 1: Auto k nákupu (odkud, značka, model, stav, fotky, nákupní cena)
+│   ├── Krok 2: Plán opravy (seznam oprav + ceny + doby, celkové náklady)
+│   ├── Krok 3: Prodejní odhad (odhadovaná prodejní cena, zdůvodnění, auto-kalkulace ROI)
+│   └── Krok 4: Odeslání ke schválení BackOffice
+├── Auto-kalkulace: celková investice, očekávaný zisk, ROI%, dělení 40/40/20
+├── Správa flipu: timeline (financováno→koupeno→v opravě→opraveno→na prodej→prodáno→vyplaceno)
+├── Fotky průběhu opravy (budování důvěry investorů)
+└── Reporting: skutečné vs odhadované náklady
+
+H3. Investor dashboard (/marketplace/investor)
+├── Dostupné příležitosti: karta s fotkami, ROI, dealer rating, stav financování, tlačítko "Investovat"
+├── Investování: modal s výběrem částky (min 10k), výpočet podílu, pokyny k platbě (var. symbol)
+├── Víc investorů na jedno auto — výnos poměrově podle vkladu
+├── Portfolio: aktivní investice (stav, fotky opravy), dokončené (výnos, ROI)
+├── Statistiky: celkem investováno, vyděláno, průměrné ROI, peníze v oběhu
+└── Výplata: po prodeji finální kalkulace, výplata na účet, stav "Vyplaceno"
+
+H4. BackOffice správa (/admin/marketplace)
+├── Schvalování žádostí (dealeři, investoři)
+├── Schvalování investičních příležitostí
+├── Potvrzení příchozích plateb od investorů
+├── Správa probíhajících flipů
+├── Finální kalkulace po prodeji, výplata podílů
+└── Přehled: celkový objem, aktivní flipy, průměrné ROI
+
+H5. Právní framework
+├── Konzultace s právníkem (ČNB regulace?)
+├── Neslibovat konkrétní výnosy — "očekávaný", "odhadovaný"
+├── Podmínky investování + disclaimer o riziku
+├── Investiční smlouva mezi investorem a Carmakler s.r.o.
+└── KYC dokumenty šifrovat (GDPR)
 ```
 
 ---
@@ -335,17 +424,18 @@ H6. Notifikace a reporting
 ## DOPORUČENÉ POŘADÍ IMPLEMENTACE
 
 ```
-SPRINT 1 (teď):  A1-A2 — Makléř dashboard + správa vozů
-SPRINT 2:        A3-A4 + C1-C3 — Profil + provize
-SPRINT 3:        B1-B3 — Admin komplet
-SPRINT 4:        E1-E3 — Shop košík + checkout
-SPRINT 5:        F1-F2 — Emaily + VIN dekodér
-SPRINT 6:        D1-D2 — Inzerce správa
-SPRINT 7:        G1-G3 — Trust Score, Live viewers, AI search
-SPRINT 8:        F3-F5 — Mapy, export, push notifikace
-SPRINT 9:        E4-E5 + B4-B5 — Shop admin + platby
-SPRINT 10:       G4-G6 — Chat, hlídač, rezervace
-SPRINT 11:       H1-H6 — Marketplace
+SPRINT 1 (teď):  TASK-015      — PWA setup + layout + dashboard + offline infrastruktura
+SPRINT 2:        TASK-016      — Nabrat auto (7-krokový flow) + post-submission + editace
+SPRINT 3:        TASK-017+018  — Smlouvy + AI asistent
+SPRINT 4:        C1-C3         — Provizní systém (5% min 25k, výpočty, výplaty)
+SPRINT 5:        B1-B5         — Admin panel komplet
+SPRINT 6:        TASK-019      — Inzertní platforma (registrace, podání inzerátu, hlídací pes)
+SPRINT 7:        F1-F2         — Emaily (Resend) + VIN dekodér integrace
+SPRINT 8:        TASK-020      — Eshop autodíly + PWA pro vrakoviště
+SPRINT 9:        G1-G3         — Trust Score, Live viewers, AI search
+SPRINT 10:       F3-F5         — Mapy.cz, export na portály, push notifikace
+SPRINT 11:       G4-G6         — Chat, hlídač ceny, rezervace prohlídek
+SPRINT 12:       TASK-021      — Marketplace (investiční platforma, právní příprava)
 ```
 
 ---
@@ -355,17 +445,36 @@ SPRINT 11:       H1-H6 — Marketplace
 K existujícím (User, Region, Vehicle, VehicleImage, VehicleChangeLog) přidat:
 
 ```
-Commission          — provize z prodeje
-Payout              — výplata makléři
-ShopProduct         — produkt v e-shopu
-ShopCategory        — kategorie produktů
-ShopOrder           — objednávka
-ShopOrderItem       — položka objednávky
-WreckedCar          — vrak (zdroj dílů)
-MarketplaceDealer   — obchodník (marketplace)
-MarketplaceInvestor — investor
-MarketplaceDeal     — investiční deal
-MarketplaceInvestment — investice do dealu
+Makléřská síť (TASK-015–018):
+├── Commission          — provize z prodeje (5% min 25k)
+├── Payout              — výplata makléři
+├── Contract            — smlouvy (zprostředkovatelská, předávací protokol)
+├── Notification        — notifikace makléřů
+├── AiConversation      — chat historie s AI asistentem
+└── SellerContact       — CRM kontakty prodejců
+
+Inzertní platforma (TASK-019):
+├── Listing             — inzerát (standalone nebo propojený s Vehicle)
+├── ListingImage        — fotky inzerátu
+├── Inquiry             — dotazy na inzerát
+└── Watchdog            — hlídací pes (uložené filtry + notifikace)
+
+Eshop autodíly (TASK-020):
+├── Part                — autodíl (použitý/nový/aftermarket)
+├── PartImage           — fotky dílu
+├── Order               — objednávka
+└── OrderItem           — položka objednávky
+
+Marketplace (TASK-021):
+├── FlipOpportunity     — investiční příležitost (nákup+oprava+prodej)
+└── Investment          — investice do příležitosti (investor+částka+podíl)
+
+Rozšíření User role:
+├── ADVERTISER          — inzerent (soukromý/autobazar/dealer)
+├── BUYER               — registrovaný kupující
+├── PARTS_SUPPLIER      — dodavatel dílů (vrakoviště)
+├── INVESTOR            — ověřený investor (marketplace)
+└── VERIFIED_DEALER     — ověřený dealer (marketplace)
 ```
 
 ---
@@ -377,12 +486,19 @@ DEV:      localhost:3000 (SQLite) ← TEĎ JSME TADY
 STAGING:  carmakler-staging.vercel.app (PostgreSQL Neon)
 PROD:     carmakler.cz (PostgreSQL Neon, custom doména)
 
-Subdomény:
-├── marketplace.carmakler.cz → samostatný deploy nebo route group
-├── inzerce → /inzerce route (součást hlavní appky)
-└── shop → /shop route (součást hlavní appky)
+Routy (vše pod jednou Next.js appkou):
+├── carmakler.cz/              → Veřejný web (katalog, makléři, landing)
+├── carmakler.cz/app/          → PWA pro makléře
+├── carmakler.cz/parts/        → PWA pro dodavatele dílů
+├── carmakler.cz/inzerat/      → Inzertní platforma (podání inzerátu)
+├── carmakler.cz/moje-inzeraty/→ Portál inzerenta
+├── carmakler.cz/dily/         → Eshop autodíly
+├── carmakler.cz/marketplace/  → Marketplace (VIP investice)
+├── carmakler.cz/admin/        → BackOffice admin panel
+└── carmakler.cz/api/          → API routes
 ```
 
 ---
 
-*Kompletní specifikace jednotlivých modulů viz ~/carmakler/docs/*
+*Kompletní specifikace jednotlivých modulů viz TASK-QUEUE.md (TASK-015 až TASK-021)*
+*Aktualizováno: 21.3.2026*
