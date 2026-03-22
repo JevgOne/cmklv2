@@ -61,6 +61,10 @@ model User {
   aiConversations AiConversation[]
   sentInvitations Invitation[]     @relation("ManagerInvitations")
 
+  // Lead management relace
+  assignedLeads   Lead[]           @relation("AssignedLeads")
+  assignedByLeads Lead[]           @relation("AssignedByLeads")
+
   // Inzertní platforma relace
   listings  Listing[]
   inquiries Inquiry[]  @relation("BuyerInquiries")
@@ -95,6 +99,7 @@ model Region {
   users  User[]
 
   invitations Invitation[]
+  leads       Lead[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -222,6 +227,7 @@ model Vehicle {
   commissions Commission[]
   contracts   Contract[]
   listing     Listing?
+  leads       Lead[]
 
   // Timestamps
   createdAt   DateTime  @default(now())
@@ -364,6 +370,63 @@ model AiConversation {
 
   @@index([userId])
   @@index([createdAt])
+}
+
+// ============================================
+// LEAD MANAGEMENT
+// ============================================
+
+model Lead {
+  id String @id @default(cuid())
+
+  // Kontakt
+  name  String
+  phone String
+  email String?
+
+  // Auto info
+  brand         String?
+  model         String?
+  year          Int?
+  mileage       Int?
+  expectedPrice Int?
+  description   String?
+
+  // Zdroj
+  source       String // WEB_FORM, EXTERNAL_APP, MANUAL, REFERRAL
+  externalId   String?
+  sourceDetail String?
+
+  // Lokace
+  city     String?
+  regionId String?
+  region   Region? @relation(fields: [regionId], references: [id])
+
+  // Přiřazení
+  assignedToId String?
+  assignedTo   User?    @relation("AssignedLeads", fields: [assignedToId], references: [id])
+  assignedById String?
+  assignedBy   User?    @relation("AssignedByLeads", fields: [assignedById], references: [id])
+  assignedAt   DateTime?
+
+  // Stav
+  status          String @default("NEW") // NEW, ASSIGNED, CONTACTED, MEETING_SCHEDULED, VEHICLE_ADDED, REJECTED, EXPIRED
+  rejectionReason String?
+  meetingDate     DateTime?
+
+  // Propojení na vozidlo
+  vehicleId String?
+  vehicle   Vehicle? @relation(fields: [vehicleId], references: [id])
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([assignedToId])
+  @@index([regionId])
+  @@index([source])
+  @@index([phone, brand, model])
 }
 
 // ============================================

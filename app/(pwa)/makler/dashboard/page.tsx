@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { StatsRow } from "@/components/pwa/dashboard/StatsRow";
 import { AddVehicleCTA } from "@/components/pwa/dashboard/AddVehicleCTA";
+import { NewLeadsSection } from "@/components/pwa/dashboard/NewLeadsSection";
 import { DraftsList } from "@/components/pwa/dashboard/DraftsList";
 import { NotificationsList } from "@/components/pwa/dashboard/NotificationsList";
 
@@ -75,6 +76,9 @@ export default async function DashboardPage() {
 
       {/* CTA pridat vozidlo */}
       <AddVehicleCTA />
+
+      {/* Nove leady */}
+      <NewLeadsSection />
 
       {/* Drafty z IndexedDB */}
       <DraftsList />

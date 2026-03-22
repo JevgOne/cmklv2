@@ -9,6 +9,7 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log("Clearing existing data...");
+  await prisma.lead.deleteMany();
   await prisma.investment.deleteMany();
   await prisma.flipOpportunity.deleteMany();
   await prisma.orderItem.deleteMany();
@@ -2052,6 +2053,149 @@ async function main() {
   console.log(`Flip Opportunities: ${flipCount}`);
   console.log(`Investments:        ${investmentCount}`);
 
+  // ============================================
+  // LEADS
+  // ============================================
+
+  console.log("Seeding leads...");
+
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+  // Lead 1: NEW — z webového formuláře, čeká na přiřazení
+  await prisma.lead.create({
+    data: {
+      name: "Tomáš Horák",
+      phone: "+420602111222",
+      email: "horak.tomas@email.cz",
+      brand: "Škoda",
+      model: "Octavia",
+      year: 2019,
+      mileage: 85000,
+      expectedPrice: 350000,
+      description: "Chci prodat svou Octavii, servisní kniha kompletní.",
+      city: "Praha",
+      regionId: regionPraha.id,
+      source: "WEB_FORM",
+      status: "NEW",
+    },
+  });
+
+  // Lead 2: ASSIGNED — přiřazený makléři
+  await prisma.lead.create({
+    data: {
+      name: "Marie Nováková",
+      phone: "+420603222333",
+      email: "novakova.m@email.cz",
+      brand: "Volkswagen",
+      model: "Golf",
+      year: 2020,
+      mileage: 45000,
+      expectedPrice: 420000,
+      city: "Brno",
+      regionId: regionJihomoravsky.id,
+      source: "EXTERNAL_APP",
+      externalId: "ext-lead-001",
+      sourceDetail: "partnersky-portal.cz",
+      status: "ASSIGNED",
+      assignedToId: petraMala.id,
+      assignedById: manazer.id,
+      assignedAt: new Date(),
+    },
+  });
+
+  // Lead 3: CONTACTED — makléř kontaktoval prodejce
+  await prisma.lead.create({
+    data: {
+      name: "Petr Svoboda",
+      phone: "+420604333444",
+      brand: "BMW",
+      model: "320d",
+      year: 2018,
+      mileage: 120000,
+      expectedPrice: 480000,
+      description: "Auto po prvním majiteli, nebourané.",
+      city: "Praha",
+      regionId: regionPraha.id,
+      source: "MANUAL",
+      status: "CONTACTED",
+      assignedToId: janNovak.id,
+      assignedById: manazer.id,
+      assignedAt: thirtyDaysAgo,
+    },
+  });
+
+  // Lead 4: VEHICLE_ADDED — úspěšně nabráno vozidlo
+  await prisma.lead.create({
+    data: {
+      name: "Jana Králová",
+      phone: "+420605444555",
+      email: "kralova@email.cz",
+      brand: "Toyota",
+      model: "RAV4",
+      year: 2021,
+      mileage: 30000,
+      expectedPrice: 650000,
+      city: "Praha",
+      regionId: regionPraha.id,
+      source: "REFERRAL",
+      sourceDetail: "Doporučení od Tomáše Horáka",
+      status: "VEHICLE_ADDED",
+      assignedToId: janNovak.id,
+      assignedById: manazer.id,
+      assignedAt: thirtyDaysAgo,
+      vehicleId: v7.id,
+    },
+  });
+
+  // Lead 5: REJECTED — odmítnutý lead
+  await prisma.lead.create({
+    data: {
+      name: "Pavel Černý",
+      phone: "+420606555666",
+      brand: "Dacia",
+      model: "Duster",
+      year: 2015,
+      mileage: 200000,
+      expectedPrice: 120000,
+      description: "Prodej po havárii.",
+      city: "Ostrava",
+      regionId: regionMoravskoslezsky.id,
+      source: "WEB_FORM",
+      status: "REJECTED",
+      rejectionReason: "Vozidlo po havárii — nesplňuje podmínky pro zprostředkování.",
+      assignedToId: karelDvorak.id,
+      assignedById: manazer.id,
+      assignedAt: thirtyDaysAgo,
+    },
+  });
+
+  // Lead 6: MEETING_SCHEDULED — domluvená schůzka
+  await prisma.lead.create({
+    data: {
+      name: "Lucie Veselá",
+      phone: "+420607666777",
+      email: "vesela.lucie@email.cz",
+      brand: "Hyundai",
+      model: "Tucson",
+      year: 2022,
+      mileage: 18000,
+      expectedPrice: 560000,
+      city: "Brno",
+      regionId: regionJihomoravsky.id,
+      source: "EXTERNAL_APP",
+      externalId: "ext-lead-002",
+      status: "MEETING_SCHEDULED",
+      assignedToId: petraMala.id,
+      assignedById: manazer.id,
+      assignedAt: new Date(),
+      meetingDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // za 3 dny
+    },
+  });
+
+  const leadCount = await prisma.lead.count();
+  console.log(`Leads: ${leadCount}`);
+
   const regionCount = await prisma.region.count();
   const userCount = await prisma.user.count();
   const vehicleCount = await prisma.vehicle.count();
@@ -2084,6 +2228,7 @@ async function main() {
   console.log(`Orders:         ${orderCount}`);
   console.log(`Order Items:    ${orderItemCount}`);
   console.log(`Invitations:    ${await prisma.invitation.count()}`);
+  console.log(`Leads:          ${await prisma.lead.count()}`);
   console.log("\nDemo login: admin@carmakler.cz / heslo123");
   console.log("Advertiser login: prodejce@email.cz / heslo123");
   console.log("Buyer login: kupujici@email.cz / heslo123");

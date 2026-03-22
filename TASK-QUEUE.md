@@ -1669,243 +1669,77 @@ model AiConversation {
 
 ---
 
-## TASK-019: Inzertní platforma — digitální inzerce vozidel
+## TASK-019: Inzertní platforma — kompletní digitální inzerce vozidel
 Priorita: 2
-Stav: hotovo
+Stav: čeká
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:
 
-Vytvořit digitální inzertní platformu pro prodej vozidel — veřejně přístupný portál kde mohou inzerovat jak makléři Carmakler, tak registrovaní uživatelé (dealeři, soukromí prodejci). Obdoba Sauto/Bazoš ale s vyšší kvalitou inzerátů a propojením na makléřskou síť.
+Digitální inzertní platforma pro prodej vozidel — veřejný portál kde inzerují makléři Carmakler, partnerské autobazary (TASK-031) i soukromí prodejci. Inzerce je **marketingový nástroj** — přitahuje traffic na platformu a konvertuje soukromé inzerenty do makléřského modelu (upsell). Veškerá komunikace u soukromých inzerátů probíhá přes Carmakler. Partnerské bazary mají přímý kontakt.
 
-**1. Nové uživatelské role a registrace:**
+Kompletní specifikace je v sekci "Očekávaný výsledek" níže. Detailní zadání obsahuje:
 
-- **Nová role: ADVERTISER** (inzerent) — přidat do NextAuth/Prisma
-- **Registrace inzerenta:**
-  - Email + heslo, nebo Google/Apple login
-  - Typ účtu: Soukromý prodejce / Autobazar (IČO povinné) / Dealer
-  - Ověření emailu (potvrzovací odkaz)
-  - Autobazar/Dealer: ověření IČO přes ARES API (automatická validace)
-  - Profil: jméno/název firmy, telefon, adresa, logo (u firem), popis
-
-- **Registrace kupujícího (BUYER role):**
-  - Email + heslo, nebo Google/Apple login
-  - Jednoduchý profil: jméno, telefon, email
-  - Funkce po přihlášení: oblíbené vozy (❤️), hlídací pes, historie dotazů, předvyplněný kontaktní formulář
-
-**2. Podání inzerátu (web rozhraní pro inzerenty):**
-
-- Přístup přes `app/(web)/inzerat/novy` (veřejný web, ne PWA)
-- **Zjednodušený flow oproti makléřskému** (bez prohlídky, checklistu, smluv):
-  - Krok 1: VIN zadání + dekódování (stejná logika jako TASK-016 Step 3)
-  - Krok 2: Údaje (značka, model, rok, km, palivo, výkon, barva, karoserie, převodovka, pohon, počet dveří/míst, stav, STK, servisní kniha, země původu)
-  - Krok 3: Výbava (katalog checkboxů, stejný jako TASK-016 Step 5)
-  - Krok 4: Fotky (upload z galerie, min. 5, drag & drop řazení, komprese)
-  - Krok 5: Cena + popis + lokace + kontakt
-  - Krok 6: Preview + odeslání
-- **Cenový model inzerce:**
-  - Základní inzerát: zdarma (limit 1 aktivní inzerát pro soukromé, 5 pro firmy)
-  - Premium inzerát: placený — zvýraznění na webu (TOP badge, vyšší pozice), sdílení na sociálních sítích
-  - Neomezená inzerce: měsíční předplatné pro autobazary/dealery
-  - (Konkrétní ceny nastavitelné v admin panelu)
-- **Schvalovací proces:**
-  - Soukromý prodejce → automatické schválení (moderace ex-post)
-  - Autobazar/Dealer → automatické schválení (ověřené IČO)
-  - Flagované inzeráty (podezřelá cena, duplicitní VIN) → ruční kontrola BackOffice
-- **Propojení s makléřskou sítí:**
-  - Inzerent může zaškrtnout "Chci pomoc s prodejem od makléře Carmakler" → vytvoří se lead pro nejbližšího makléře
-  - Makléřské inzeráty (z TASK-016) se zobrazují na stejné platformě s badge "Ověřeno makléřem Carmakler"
-
-**3. Portál inzerenta (`app/(web)/moje-inzeraty/`):**
-
-- **Dashboard inzerenta** (po přihlášení):
-  - Moje inzeráty: seznam s filtrací (aktivní, neaktivní, prodané)
-  - U každého inzerátu: počet zobrazení, počet dotazů, datum publikace, stav
-  - Tlačítko "Přidat inzerát"
-- **Detail inzerátu** (správa):
-  - Editace údajů, fotek, ceny, popisu
-  - Statistiky: zobrazení za den/týden/měsíc, graf
-  - Dotazy od zájemců (seznam s možností odpovědět)
-  - Akce: deaktivovat, smazat, označit jako prodáno, obnovit (topovat)
-- **Zprávy**: jednoduchý messaging mezi inzerentem a zájemci
-
-**4. Funkce pro kupující (registrované):**
-
-- **Oblíbené** (❤️) — ukládání vozů do seznamu oblíbených
-- **Hlídací pes** — nastavení filtru (značka, model, cena od-do, rok od-do, km max, palivo, region) → emailová notifikace když přibude odpovídající vůz
-- **Historie dotazů** — přehled odeslaných dotazů a odpovědí
-- **Předvyplněný kontakt** — při dotazu na vůz se automaticky vyplní jméno, telefon, email z profilu
-
-**5. Rozšíření veřejného katalogu:**
-
-- Stávající katalog (`app/(web)/nabidka/`) rozšířit o inzeráty od inzerentů
-- **Rozlišení inzerátů:**
-  - Badge "Ověřeno makléřem" (oranžový) — od makléřů Carmakler
-  - Badge "Autobazar" (modrý) — od ověřených autobazarů
-  - Badge "Soukromý prodejce" (šedý) — od soukromých inzerentů
-  - Badge "TOP" (zlatý) — placené zvýraznění
-- **Řazení:** TOP inzeráty nahoře, pak dle data/ceny/relevance
-- **Nové filtry:** typ prodejce (makléř/autobazar/soukromý), ověřené vozy
-
-**6. API routes:**
-- `POST /api/listings` — vytvoření inzerátu
-- `GET /api/listings` — seznam inzerátů (s filtrací)
-- `GET /api/listings/[id]` — detail inzerátu
-- `PUT /api/listings/[id]` — editace
-- `DELETE /api/listings/[id]` — smazání
-- `POST /api/listings/[id]/promote` — zvýraznění (TOP)
-- `GET /api/listings/stats/[id]` — statistiky inzerátu
-- `POST /api/watchdog` — vytvoření hlídacího psa
-- `GET /api/watchdog` — seznam hlídacích psů uživatele
-
-**7. Nové Prisma modely:**
-```
-model Listing {
-  id            String   @id @default(cuid())
-  advertiserId  String
-  advertiser    User     @relation(fields: [advertiserId], references: [id])
-
-  // Může být propojený s Vehicle (pokud od makléře) nebo standalone
-  vehicleId     String?  @unique
-  vehicle       Vehicle? @relation(fields: [vehicleId], references: [id])
-
-  // Základní údaje (pokud standalone, bez Vehicle)
-  vin           String?
-  brand         String
-  model         String
-  variant       String?
-  year          Int
-  mileage       Int
-  fuelType      FuelType
-  power         Int?      // kW
-  transmission  String?
-  drivetrain    String?
-  color         String?
-  bodyType      String?
-  doors         Int?
-  seats         Int?
-
-  // Stav
-  condition     String?
-  stkValidUntil DateTime?
-  serviceBook   String?
-  countryOfOrigin String?
-  ownerCount    Int?
-
-  // Cena
-  price         Int
-  priceNegotiable Boolean @default(false)
-  vatIncluded   String?  // WITH_VAT, WITHOUT_VAT, NOT_VAT_PAYER
-
-  // Inzerce
-  description   String
-  location      String
-  district      String?
-  equipment     Json?     // Array of equipment items
-  highlights    Json?     // Array of highlight tags
-
-  // Typ
-  listingType   ListingType  // BROKER, DEALER, PRIVATE
-  isPremium     Boolean @default(false)
-  premiumUntil  DateTime?
-
-  // Stav
-  status        ListingStatus  // ACTIVE, INACTIVE, SOLD, PENDING, REJECTED
-  views         Int @default(0)
-
-  // Fotky
-  images        ListingImage[]
-
-  // Dotazy
-  inquiries     Inquiry[]
-
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-}
-
-model ListingImage {
-  id        String  @id @default(cuid())
-  listingId String
-  listing   Listing @relation(fields: [listingId], references: [id])
-  url       String
-  order     Int
-  isPrimary Boolean @default(false)
-}
-
-model Inquiry {
-  id        String   @id @default(cuid())
-  listingId String
-  listing   Listing  @relation(fields: [listingId], references: [id])
-  buyerId   String?
-  buyer     User?    @relation(fields: [buyerId], references: [id])
-  name      String
-  email     String
-  phone     String?
-  message   String
-  reply     String?
-  repliedAt DateTime?
-  createdAt DateTime @default(now())
-}
-
-model Watchdog {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  name      String   // "Octavia RS do 800k"
-  filters   Json     // { brand, model, priceMin, priceMax, yearMin, yearMax, mileageMax, fuelType, region }
-  isActive  Boolean  @default(true)
-  lastNotified DateTime?
-  createdAt DateTime @default(now())
-}
-
-enum ListingType {
-  BROKER
-  DEALER
-  PRIVATE
-}
-
-enum ListingStatus {
-  ACTIVE
-  INACTIVE
-  SOLD
-  PENDING
-  REJECTED
-}
-
-enum FuelType {
-  PETROL
-  DIESEL
-  LPG
-  CNG
-  HYBRID
-  PLUGIN_HYBRID
-  ELECTRIC
-}
-```
+- **3 úrovně inzerce:** Soukromý (1 zdarma/60 dní), Bazar ADVERTISER (10 zdarma), Partner (TASK-031, neomezeno + badge + TOP v ceně)
+- **Hybridní kontakt:** soukromé přes Carmakler formulář, partneři přímý kontakt (telefon, adresa)
+- **6-krokový flow:** VIN → údaje → výbava → fotky → cena+popis → preview (sdílená logika s TASK-016)
+- **Portál inzerenta** (`/moje-inzeraty`): dashboard, správa, dotazy, zprávy, statistiky
+- **Kupující funkce:** oblíbené ❤️, hlídací pes (i bez registrace email-only), quick questions, historie dotazů, porovnání (TASK-028)
+- **Inteligentní makléřský upsell:** dynamické bannery (14/30/45 dní bez prodeje), follow-up emaily, case studies
+- **Badge systém:** 🟠 Ověřeno makléřem > 🔵 Ověřený partner > ⚪ Soukromý, + ⭐ TOP, 🏷️ Zlevněno, ✅ STK
+- **Kalkulačka splátek** na detailu vozu (affiliate monetizace financování)
+- **CEBIA prověrka historie** na detailu (499 Kč/report, marže ~200 Kč, makléřská auta zdarma)
+- **Kauční rezervace** (5 000 Kč, 48h, Stripe, jen makléřská/partnerská)
+- **XML/CSV import** pro bazary (Sauto/TipCars/vlastní formát, cron auto-sync)
+- **XML export** na Sauto/TipCars/Bazoš (generované feedy)
+- **Quick filtry:** "SUV do 500k", "Elektro", "Pro rodinu", "První auto do 200k"
+- **Flagování:** podezřele nízká cena, duplicitní VIN, fotky bez EXIF, klíčová slova
+- **Response SLA:** 48h odpověď, auto-deaktivace po 7 dnech nereagování
+- **Moderace:** soukromé auto-schválení (ex-post), flagované → BackOffice, nahlášení kupujícím
+- **Monetizace:** TOP 199 Kč/7d, prodloužení 99 Kč/30d, balíček 1990 Kč/30 inz., CEBIA 499 Kč, affiliate, partnerství 4990 Kč/měs.
+- **Role:** ADVERTISER (soukromý/bazar s IČO), BUYER (registrovaný kupující)
+- **Modely:** Listing, ListingImage, Inquiry (se statusy NEW/READ/REPLIED/CLOSED), Watchdog (i bez userId — email-only), Favorite, Reservation, CebiaReport, ListingFeedConfig, ListingImportLog
+- **30+ API routes** pro kompletní platformu (listings CRUD, inquiries, favorites, watchdogs, reservations, CEBIA, feeds import/export)
 
 ### Kontext:
-- Závisí na: TASK-002 (web layout), TASK-007 (katalog), TASK-008 (detail vozu), TASK-013 (auth)
-- Rozšiřuje stávající katalog o inzeráty od externích inzerentů
-- Auth: rozšířit NextAuth o role ADVERTISER a BUYER
-- VIN dekodér: sdílený s TASK-016 (`lib/vin-decoder.ts`)
-- Fotky: Cloudinary upload
-- Email notifikace: Resend (hlídací pes, nový dotaz, odpověď)
-- ARES API pro ověření IČO: `https://ares.gov.cz/`
+- Závisí na: TASK-002 (web layout), TASK-007 (katalog — rozšířit filtry), TASK-008 (detail vozu — rozšířit), TASK-013 (auth — nové role ADVERTISER, BUYER), TASK-028 (cenová historie, podobné vozy, porovnání, timeline), TASK-031 (partneři — badge, profil)
+- Auth: rozšířit NextAuth o role ADVERTISER a BUYER, middleware pro `/moje-inzeraty/*` a `/muj-ucet/*`
+- VIN dekodér: sdílený `lib/vin-decoder.ts`
+- Fotky: Cloudinary upload, EXIF check pro flagování
+- Platby: Stripe (TOP, prodloužení, kauce, CEBIA report)
+- Email: Resend (dotazy, hlídací pes, follow-up upsell, response SLA remindery)
+- CEBIA API: B2B přístup pro prověrku historie vozu
+- ARES API: ověření IČO autobazarů (`https://ares.gov.cz/`)
+- Feed import: `lib/listing-import.ts` (Sauto XML, TipCars XML, vlastní CSV)
+- Feed export: XML generátory `/api/feeds/sauto.xml`, `/api/feeds/tipcars.xml`
+- Cron: watchdog matching, reservation expiry (48h), listing expiry (60 dní), upsell follow-up (14/30/45 dní), response SLA check
 
 ### Očekávaný výsledek:
-- Registrace a přihlášení inzerentů (soukromý/autobazar/dealer) a kupujících
-- 6-krokový flow podání inzerátu přes web
-- Dashboard inzerenta se statistikami, dotazy, správou inzerátů
-- Oblíbené, hlídací pes, historie dotazů pro kupující
-- Rozšířený katalog s rozlišením typů inzerátů (makléř/dealer/soukromý)
-- Propojení s makléřskou sítí ("chci pomoc od makléře")
-- Premium inzeráty (TOP) pro monetizaci
+- 3 úrovně inzerce (soukromý 1 zdarma/60 dní, bazar 10 zdarma, partner neomezeno)
+- 6-krokový flow podání inzerátu s VIN dekódováním a AI popisem
+- Hybridní kontakt (přes Carmakler pro soukromé, přímý pro partnery/bazary)
+- Inteligentní makléřský upsell (dynamické bannery po 14/30/45 dnech + follow-up emaily)
+- Portál inzerenta (dashboard, správa, dotazy, zprávy, statistiky)
+- Funkce pro kupující (oblíbené ❤️, hlídací pes, quick questions, historie dotazů)
+- Badge systém (makléř 🟠 / partner 🔵 / soukromý ⚪ / TOP ⭐ / zlevněno 🏷️ / STK ✅)
+- Quick filtry ("SUV do 500k", "Elektro", "Pro rodinu")
+- Kalkulačka splátek na detailu vozu (affiliate monetizace)
+- CEBIA prověrka historie vozu (monetizace 499 Kč/report, marže ~200 Kč)
+- Kauční rezervace (5 000 Kč, 48h, Stripe, jen makléřská/partnerská auta)
+- XML/CSV import inzerátů pro bazary (feed config, cron auto-sync)
+- XML export na Sauto/TipCars/Bazoš (generované feedy)
+- Automatické flagování podezřelých inzerátů (nízká cena, duplicita VIN, fotky bez EXIF)
+- Response time SLA (48h, auto-deaktivace po 7 dnech nereagování)
+- Monetizace: TOP 199 Kč/7d, prodloužení 99 Kč/30d, balíček 1990 Kč/30 inz., CEBIA 499 Kč, affiliate financování/pojištění
+- Registrace ADVERTISER (soukromý/bazar s IČO/ARES) a BUYER (oblíbené, hlídací pes)
+- Nové modely: Listing, ListingImage, Inquiry, Watchdog, Favorite, Reservation, CebiaReport, ListingFeedConfig, ListingImportLog
+- 30+ API routes pro kompletní inzertní platformu
 
 ---
 
 ## TASK-020: Eshop autodíly — e-shop s použitými a aftermarket díly
 Priorita: 3
-Stav: hotovo
+Stav: čeká
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:
@@ -2832,7 +2666,7 @@ Manažer schvaluje inzeráty svých makléřů. BackOffice schvaluje inzeráty m
 
 ## TASK-024: Lead management — příjem leadů, přiřazení, tracking
 Priorita: 1
-Stav: čeká
+Stav: zpracovává se
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:
