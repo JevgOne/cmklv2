@@ -1671,7 +1671,7 @@ model AiConversation {
 
 ## TASK-019: Inzertní platforma — kompletní digitální inzerce vozidel
 Priorita: 2
-Stav: čeká
+Stav: zpracovává se
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:
@@ -2109,6 +2109,127 @@ enum PaymentStatus {
 - `POST /api/parts/import` — hromadný import z CSV
 
 **DOPLNĚNO — Kritické funkce které v původním zadání chyběly:**
+
+**0) Propracovaný vyhledávací systém:**
+
+Eshop musí mít víc než jen filtry — potřebujeme chytrý, intuitivní search.
+
+**Smart Search — "piš jak mluvíš":**
+- Zákazník napíše přirozeně: "brzdové destičky octavia 2017 přední"
+- Systém parsuje na: kategorie=brzdy, značka=Škoda, model=Octavia, rok=2017, pozice=přední
+- Implementace: tokenizace + slovník synonym (destičky = brzdové destičky, okýnko = boční sklo...) + fuzzy matching
+- Fallback: pokud neparsuje → fulltext search přes název + popis + OEM čísla
+
+**Autocomplete s náhledy (instant results):**
+- Při psaní do searchbaru (debounce 200ms, min 2 znaky) okamžitě zobrazí dropdown:
+  - **Díly:** miniatura + název + cena ("Brzdový kotouč TRW DF4276 — 890 Kč")
+  - **Kategorie:** "Brzdy pro Škoda Octavia (45 dílů)"
+  - **Vozy:** "Škoda Octavia III 2017 — 234 dílů skladem"
+  - **OEM čísla:** "1K0615301AC — 3 alternativy od 350 Kč"
+- Max 3 výsledky per sekce, celkem max 12 řádků
+- Klávesnice: šipky pro navigaci, Enter pro výběr
+- API: `GET /api/parts/autocomplete?q=XXX`
+
+**Vizuální výběr dílu (klikací auto):**
+- Na homepage eshopu a stránce kategorie: interaktivní obrázek auta
+- SVG/canvas s klikatelnými zónami (kapota, dveře, světla, nárazník, kola, interiér, motor...)
+- Zákazník klikne na část auta → přesměruje na kategorii dílů pro tu část
+- 3 pohledy: zepředu, zboku, zezadu (tabs nebo swipe)
+- Pokud má zákazník vybraný vůz (garáž nebo filtr) → zobrazí obrys jeho auta
+- Mobile-friendly: dostatečně velké touch zóny
+
+**Foto vyhledávání (fáze 2 — AI):**
+- Tlačítko "📷 Vyfotit díl" vedle searchbaru
+- Zákazník vyfotí starý/poškozený díl
+- AI (Claude Vision nebo Google Cloud Vision) rozpozná:
+  - Typ dílu (nárazník, světlo, zrcátko...)
+  - Pokud viditelné: OEM číslo, výrobce
+- Nabídne kompatibilní díly z katalogu
+- Fallback: "Nepodařilo se rozpoznat. Zkuste popsat díl textově."
+- API: `POST /api/parts/visual-search` (upload foto → AI → results)
+
+**"Nenašli jste díl?" poptávka (burza dílů):**
+- Na stránce výsledků pokud 0 nálezů: prominent CTA "Nenašli jste? Poptejte u vrakovišť"
+- Formulář:
+  - Co hledáte * (text — "Přední nárazník")
+  - Pro jaký vůz * (značka/model/rok nebo VIN)
+  - Popis (volitelné — barva, stav, poznámka)
+  - Kontakt (email *, telefon)
+- Po odeslání:
+  - Systém rozešle poptávku všem aktivním vrakovištím (push + email)
+  - Vrakoviště vidí poptávku v portálu → může nabídnout díl + cenu + fotku
+  - Zákazník dostane email s nabídkami → vybere si → objedná
+- Prisma model:
+```
+model PartRequest {
+  id          String @id @default(cuid())
+  description String
+  vehicleBrand String?
+  vehicleModel String?
+  vehicleYear  Int?
+  vin          String?
+  buyerEmail   String
+  buyerPhone   String?
+  buyerName    String?
+  status       PartRequestStatus // OPEN, OFFERS_RECEIVED, ORDERED, CLOSED, EXPIRED
+  offers       PartRequestOffer[]
+  expiresAt    DateTime  // +14 dní
+  createdAt    DateTime @default(now())
+}
+
+model PartRequestOffer {
+  id          String @id @default(cuid())
+  requestId   String
+  request     PartRequest @relation(fields: [requestId], references: [id])
+  supplierId  String
+  supplier    User @relation(fields: [supplierId], references: [id])
+  partName    String
+  price       Int
+  condition   String    // FUNCTIONAL, WITH_DEFECT
+  description String?
+  imageUrl    String?
+  status      String    // OFFERED, ACCEPTED, REJECTED
+  createdAt   DateTime @default(now())
+}
+
+enum PartRequestStatus { OPEN OFFERS_RECEIVED ORDERED CLOSED EXPIRED }
+```
+
+**Srovnání alternativ:**
+- Když zákazník hledá konkrétní díl (např. "brzdový kotouč Octavia") → nad výsledky sekce "Porovnání alternativ":
+  - Tabulka: Originál | Aftermarket A | Aftermarket B | Použitý
+  - Řádky: Cena, Výrobce, Záruka, Stav, Hodnocení, Dostupnost
+  - Zvýraznění: nejlevnější (zelená cena), nejlepší hodnocení (hvězdičky)
+- Automaticky seskupené přes křížové reference (OEM číslo → všechny alternativy)
+
+**Historie hledání + "Hledali jste naposledy":**
+- Pro přihlášené: uložit posledních 10 hledání (v DB)
+- Pro nepřihlášené: localStorage posledních 5
+- Na homepage eshopu po přihlášení: sekce "Hledali jste naposledy" s rychlými linky
+- V searchbaru: při focus (prázdný input) zobrazit poslední hledání jako suggestions
+
+**Cross-sell: Díly na detailu vozu v katalogu (/nabidka/[slug]):**
+- Na detailu vozu v katalogu aut (ne eshopu) dole sekce: **"Díly pro tento vůz skladem"**
+- Systém automaticky matchne značka+model+rok vozu → kompatibilní díly z eshopu
+- Zobrazí 4-6 dílů (nejpopulárnější kategorie: brzdy, filtry, světla, karoserie)
+- Karta dílu: fotka, název, cena, badge (Nový/Použitý), dostupnost
+- CTA: "Zobrazit všech {X} dílů pro tento vůz →" (link na `/dily/[značka]/[model]/[rok]`)
+- Funguje pro makléřské, partnerské i soukromé inzeráty
+- **Proč:** kupující vidí že díly jsou dostupné → menší strach z údržby → vyšší konverze prodeje auta + traffic z katalogu do eshopu zdarma
+
+API routes pro vyhledávání:
+```
+GET  /api/parts/autocomplete?q=XXX     — instant autocomplete (díly, kategorie, vozy, OEM)
+GET  /api/parts/smart-search?q=XXX     — smart search (parsování přirozeného jazyka)
+POST /api/parts/visual-search          — foto vyhledávání (upload → AI → results)
+POST /api/part-requests                — poptávka dílu (burza)
+GET  /api/part-requests                — seznam poptávek (dodavatel)
+POST /api/part-requests/[id]/offer     — nabídka na poptávku (dodavatel)
+GET  /api/parts/compare?oemNumber=XXX  — srovnání alternativ přes OEM
+GET  /api/parts/for-vehicle?brand=X&model=Y&year=Z — díly pro konkrétní vůz (cross-sell)
+```
+
+---
 
 **A) Split objednávky podle dodavatele (SubOrder):**
 

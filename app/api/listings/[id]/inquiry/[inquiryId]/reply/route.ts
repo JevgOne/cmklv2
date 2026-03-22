@@ -55,7 +55,14 @@ export async function POST(
         reply: data.reply,
         repliedAt: new Date(),
         read: true,
+        status: "REPLIED",
       },
+    });
+
+    // Aktualizovat lastResponseAt na listingu
+    await prisma.listing.update({
+      where: { id },
+      data: { lastResponseAt: new Date() },
     });
 
     return NextResponse.json({ inquiry: updated });

@@ -10,7 +10,10 @@ export async function POST(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user || session.user.role !== "MANAGER") {
+    if (!session?.user) {
+      return NextResponse.json({ error: "Nepřihlášen" }, { status: 401 });
+    }
+    if (session.user.role !== "MANAGER") {
       return NextResponse.json({ error: "Nemáte oprávnění" }, { status: 403 });
     }
 

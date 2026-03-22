@@ -13,12 +13,19 @@ export function ApprovalActions({ vehicleId, onAction }: ApprovalActionsProps) {
   const [done, setDone] = useState(false);
 
   const handleAction = async (action: "approve" | "reject") => {
+    let reason: string | undefined;
+    if (action === "reject") {
+      const input = prompt("Důvod zamítnutí:");
+      if (!input?.trim()) return;
+      reason = input.trim();
+    }
+
     setLoading(action);
     try {
       const res = await fetch(`/api/admin/vehicles/${vehicleId}/approve`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action }),
+        body: JSON.stringify({ action, reason }),
       });
 
       if (!res.ok) {

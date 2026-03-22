@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { FavoriteButton } from "@/components/web/FavoriteButton";
 import { CompareButton } from "@/components/web/CompareButton";
+import { ListingBadge } from "@/components/web/ListingBadge";
 
 export interface VehicleData {
   id: string;
@@ -25,6 +26,12 @@ export interface VehicleData {
   listingType?: "BROKER" | "DEALER" | "PRIVATE";
   isPremium?: boolean;
   source?: "vehicle" | "listing";
+  /** Původní cena (pro zobrazení "Zlevněno") */
+  originalPrice?: number;
+  /** Aktuální cena jako číslo */
+  priceNum?: number;
+  /** STK platnost (ISO string) */
+  stkValidUntil?: string;
 }
 
 export interface VehicleCardProps {
@@ -48,20 +55,35 @@ export function VehicleCard({ car, className }: VehicleCardProps) {
           />
 
           {/* Badges */}
-          <div className="absolute top-3 left-3 flex gap-2">
-            {car.badge === "verified" && (
-              <Badge variant="verified">✓ Ověřeno</Badge>
+          <div className="absolute top-3 left-3 flex gap-1.5 flex-wrap max-w-[calc(100%-60px)]">
+            {(car.isPremium || car.badge === "top") && (
+              <ListingBadge type="top" />
             )}
-            {car.badge === "top" && (
-              <Badge variant="top">⭐ TOP</Badge>
-            )}
-            {car.isPremium && car.badge !== "top" && (
-              <Badge variant="top">⭐ TOP</Badge>
+            {car.listingType === "BROKER" && (
+              <ListingBadge type="broker" />
             )}
             {car.listingType === "DEALER" && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-500/90 backdrop-blur-sm rounded-lg text-[11px] font-semibold text-white">
-                Autobazar
-              </span>
+              <ListingBadge type="partner" />
+            )}
+            {car.listingType === "PRIVATE" && (
+              <ListingBadge type="private" />
+            )}
+            {!car.listingType && car.badge === "verified" && (
+              <ListingBadge type="broker" />
+            )}
+            {car.originalPrice && car.priceNum && car.originalPrice > car.priceNum && (
+              <ListingBadge
+                type="discounted"
+                discountPercent={Math.round(
+                  ((car.originalPrice - car.priceNum) / car.originalPrice) * 100
+                )}
+              />
+            )}
+            {car.stkValidUntil && new Date(car.stkValidUntil) > new Date() && (
+              <ListingBadge
+                type="stk_valid"
+                stkDate={`${String(new Date(car.stkValidUntil).getMonth() + 1).padStart(2, "0")}/${new Date(car.stkValidUntil).getFullYear()}`}
+              />
             )}
           </div>
 
@@ -85,21 +107,8 @@ export function VehicleCard({ car, className }: VehicleCardProps) {
             </div>
           )}
 
-          {/* Seller type badge on image */}
-          {(car.sellerType === "private" || car.listingType === "PRIVATE") && (
-            <div className="absolute bottom-3 left-3">
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-500/80 backdrop-blur-sm rounded-lg text-[12px] font-medium text-white">
-                Soukromý prodejce
-              </span>
-            </div>
-          )}
-          {car.listingType === "BROKER" && (
-            <div className="absolute bottom-3 left-3">
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-orange-500/90 backdrop-blur-sm rounded-lg text-[12px] font-semibold text-white">
-                ✓ Ověřeno makléřem
-              </span>
-            </div>
-          )}
+          {/* Trust Score — only for non-listing broker vehicles */}
+          {/* (seller type badges are now in the top-left badge row) */}
         </div>
 
         {/* Content */}

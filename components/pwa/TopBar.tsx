@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useOnlineStatusContext } from "./OnlineStatusProvider";
 import { GlobalSearch } from "./GlobalSearch";
 
@@ -12,8 +13,8 @@ export function TopBar() {
     <>
       <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 pt-[env(safe-area-inset-top)]">
         <div className="flex items-center justify-between h-14 px-4 max-w-lg mx-auto">
-          {/* Hamburger placeholder */}
-          <button className="p-2 -ml-2 text-gray-600" aria-label="Menu">
+          {/* Menu — navigace do nastaveni */}
+          <Link href="/makler/settings" className="p-2 -ml-2 text-gray-600" aria-label="Menu">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -28,7 +29,7 @@ export function TopBar() {
                 d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
               />
             </svg>
-          </button>
+          </Link>
 
           {/* Logo */}
           <div className="flex items-center gap-2">
@@ -73,7 +74,7 @@ export function TopBar() {
             </button>
 
             {/* Notifications */}
-            <button className="relative p-1 text-gray-600" aria-label="Notifikace">
+            <Link href="/makler/settings/notifications" className="relative p-1 text-gray-600" aria-label="Notifikace">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -88,14 +89,10 @@ export function TopBar() {
                   d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
                 />
               </svg>
-              {/* Badge */}
-              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-orange-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
-                3
-              </span>
-            </button>
+            </Link>
 
-            {/* Avatar placeholder */}
-            <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+            {/* Avatar — navigace do profilu */}
+            <Link href="/makler/profile" className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center" aria-label="Profil">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -108,7 +105,7 @@ export function TopBar() {
                   clipRule="evenodd"
                 />
               </svg>
-            </div>
+            </Link>
           </div>
         </div>
       </header>

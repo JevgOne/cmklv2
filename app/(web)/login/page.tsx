@@ -103,12 +103,12 @@ export default function LoginPage() {
             </div>
 
             <div className="flex items-center justify-end">
-              <span
-                className="text-sm text-orange-600 hover:text-orange-700 cursor-pointer"
-                onClick={() => alert("Funkce obnovy hesla bude brzy dostupná. Kontaktujte nás na info@carmakler.cz.")}
+              <a
+                href="mailto:info@carmakler.cz?subject=Obnova%20hesla"
+                className="text-sm text-orange-600 hover:text-orange-700 no-underline"
               >
                 Zapomenuté heslo?
-              </span>
+              </a>
             </div>
 
             <button

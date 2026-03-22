@@ -103,16 +103,35 @@ export default function DodavatelRegistracePage() {
     return Object.keys(newErrors).length === 0;
   };
 
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
   const handleSubmit = async () => {
     if (!validate()) return;
 
     setSubmitting(true);
+    setSubmitError(null);
     try {
-      // Demo: simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.contactName,
+          email: form.email,
+          phone: form.phone,
+          message: `[Registrace dodavatele] Firma: ${form.companyName}, IČO: ${form.ico}, Adresa: ${form.street}, ${form.city} ${form.zip}. ${form.description || ""}`,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Nepodařilo se odeslat registraci");
+      }
+
       setSubmitted(true);
-    } catch {
-      // Error handling
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error ? err.message : "Nepodařilo se odeslat registraci"
+      );
     } finally {
       setSubmitting(false);
     }
@@ -266,6 +285,12 @@ export default function DodavatelRegistracePage() {
             placeholder="Popište váš podnik — typ dílů, specializace, kapacita..."
             className="min-h-[100px]"
           />
+
+          {submitError && (
+            <Alert variant="error">
+              {submitError}
+            </Alert>
+          )}
 
           <Alert variant="info">
             Po odeslání registrace ověříme vaše údaje a do 1-2 pracovních dnů vám zašleme přístup do dodavatelské aplikace.

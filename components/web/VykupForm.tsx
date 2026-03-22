@@ -36,11 +36,43 @@ const yearOptions = Array.from({ length: 27 }, (_, i) => {
 
 export function VykupForm() {
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [brand, setBrand] = useState("");
+  const [model, setModel] = useState("");
+  const [year, setYear] = useState("");
+  const [mileage, setMileage] = useState("");
+  const [phone, setPhone] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: "Výkup vozidla",
+          phone,
+          message: `[Výkup] Značka: ${brand}, Model: ${model}, Rok: ${year}, Najeto: ${mileage} km`,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Nepodařilo se odeslat požadavek");
+      }
+
+      setSubmitted(true);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Nepodařilo se odeslat požadavek"
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -64,15 +96,27 @@ export function VykupForm() {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+              {error}
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <Select
               label="Značka"
               placeholder="Vyberte značku"
               options={carBrands}
+              value={brand}
+              onChange={(e) => setBrand(e.target.value)}
+              required
             />
             <Input
               label="Model"
               placeholder="např. Octavia, Golf..."
+              value={model}
+              onChange={(e) => setModel(e.target.value)}
+              required
             />
           </div>
 
@@ -81,11 +125,17 @@ export function VykupForm() {
               label="Rok výroby"
               placeholder="Vyberte rok"
               options={yearOptions}
+              value={year}
+              onChange={(e) => setYear(e.target.value)}
+              required
             />
             <Input
               label="Najeto km"
               type="number"
               placeholder="např. 85000"
+              value={mileage}
+              onChange={(e) => setMileage(e.target.value)}
+              required
             />
           </div>
 
@@ -93,10 +143,13 @@ export function VykupForm() {
             label="Telefon"
             type="tel"
             placeholder="+420 777 123 456"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            required
           />
 
-          <Button variant="primary" size="lg" className="w-full" type="submit">
-            Chci nabídku na výkup
+          <Button variant="primary" size="lg" className="w-full" type="submit" disabled={submitting}>
+            {submitting ? "Odesílám..." : "Chci nabídku na výkup"}
           </Button>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-1 text-[14px] text-gray-500">

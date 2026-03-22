@@ -14,6 +14,8 @@ async function main() {
   await prisma.sellerPayout.deleteMany();
   await prisma.brokerPayout.deleteMany();
   await prisma.payment.deleteMany();
+  await prisma.escalation.deleteMany();
+  await prisma.priceReduction.deleteMany();
   await prisma.damageReport.deleteMany();
   await prisma.vehicleInquiry.deleteMany();
   await prisma.lead.deleteMany();
@@ -30,7 +32,12 @@ async function main() {
   await prisma.listing.deleteMany();
   await prisma.invitation.deleteMany();
   await prisma.contract.deleteMany();
+  await prisma.emailLog.deleteMany();
+  await prisma.smsLog.deleteMany();
   await prisma.notification.deleteMany();
+  await prisma.notificationPreference.deleteMany();
+  await prisma.userAchievement.deleteMany();
+  await prisma.aiConversation.deleteMany();
   await prisma.commission.deleteMany();
   await prisma.vehicleChangeLog.deleteMany();
   await prisma.vehicleImage.deleteMany();
@@ -2477,6 +2484,188 @@ async function main() {
   console.log(`Seller Contacts: ${await prisma.sellerContact.count()}`);
   console.log(`Communications:  ${await prisma.sellerCommunication.count()}`);
 
+  // ============================================
+  // GAMIFIKACE — UserAchievement
+  // ============================================
+
+  console.log("Seeding achievements...");
+
+  await prisma.userAchievement.createMany({
+    data: [
+      { userId: janNovak.id, achievementKey: "FIRST_VEHICLE" },
+      { userId: janNovak.id, achievementKey: "FIRST_SALE" },
+      { userId: janNovak.id, achievementKey: "FIVE_SALES" },
+      { userId: petraMala.id, achievementKey: "FIRST_VEHICLE" },
+      { userId: petraMala.id, achievementKey: "FIRST_SALE" },
+      { userId: karelDvorak.id, achievementKey: "FIRST_VEHICLE" },
+    ],
+  });
+
+  console.log(`Achievements: ${await prisma.userAchievement.count()}`);
+
+  // ============================================
+  // PRICE REDUCTIONS
+  // ============================================
+
+  console.log("Seeding price reductions...");
+
+  await prisma.priceReduction.createMany({
+    data: [
+      {
+        vehicleId: v5.id,
+        currentPrice: 890000,
+        suggestedPrice: 839000,
+        reason: "Vůz na inzerci 30+ dní bez poptávky",
+        status: "PENDING",
+      },
+      {
+        vehicleId: v8.id,
+        currentPrice: 520000,
+        suggestedPrice: 489000,
+        reason: "Podobné vozy v okolí levnější o 5-10%",
+        status: "ACCEPTED",
+        acceptedPrice: 499000,
+        respondedAt: new Date("2026-03-18"),
+      },
+    ],
+  });
+
+  console.log(`Price Reductions: ${await prisma.priceReduction.count()}`);
+
+  // ============================================
+  // ESCALATIONS
+  // ============================================
+
+  console.log("Seeding escalations...");
+
+  await prisma.escalation.createMany({
+    data: [
+      {
+        brokerId: janNovak.id,
+        managerId: manazer.id,
+        vehicleId: v4.id,
+        type: "SELLER_ISSUE",
+        urgency: "NORMAL",
+        description: "Prodejce nereaguje na telefonáty ani SMS déle než 7 dní.",
+        status: "OPEN",
+      },
+      {
+        brokerId: petraMala.id,
+        managerId: manazer.id,
+        type: "TECHNICAL",
+        urgency: "URGENT",
+        description: "Nelze nahrát fotky vozidla — chyba při uploadu na Cloudinary.",
+        status: "RESOLVED",
+        resolution: "Bug opraven v poslední verzi aplikace.",
+        resolvedAt: new Date("2026-03-15"),
+      },
+    ],
+  });
+
+  console.log(`Escalations: ${await prisma.escalation.count()}`);
+
+  // ============================================
+  // EMAIL LOG
+  // ============================================
+
+  console.log("Seeding email logs...");
+
+  await prisma.emailLog.createMany({
+    data: [
+      {
+        senderId: janNovak.id,
+        vehicleId: v1.id,
+        recipientEmail: "horak@email.cz",
+        recipientName: "František Horák",
+        subject: "Prezentace vozu Škoda Octavia RS Combi",
+        templateType: "PRESENTATION",
+        status: "DELIVERED",
+      },
+      {
+        senderId: petraMala.id,
+        vehicleId: v2.id,
+        recipientEmail: "dvorak@email.cz",
+        recipientName: "Milan Dvořák",
+        subject: "Předávací protokol BMW 330i xDrive",
+        templateType: "CONTRACT_OFFER",
+        status: "OPENED",
+      },
+      {
+        recipientEmail: "jan.novak@carmakler.cz",
+        recipientName: "Jan Novák",
+        subject: "Vítejte v CarMakléř",
+        templateType: "WELCOME",
+        status: "DELIVERED",
+      },
+    ],
+  });
+
+  console.log(`Email Logs: ${await prisma.emailLog.count()}`);
+
+  // ============================================
+  // NOTIFICATION PREFERENCES
+  // ============================================
+
+  console.log("Seeding notification preferences...");
+
+  await prisma.notificationPreference.createMany({
+    data: [
+      { userId: janNovak.id, eventType: "NEW_LEAD", pushEnabled: true, emailEnabled: true, smsEnabled: false },
+      { userId: janNovak.id, eventType: "NEW_INQUIRY", pushEnabled: true, emailEnabled: true, smsEnabled: true },
+      { userId: janNovak.id, eventType: "VEHICLE_APPROVED", pushEnabled: true, emailEnabled: false, smsEnabled: false },
+      { userId: janNovak.id, eventType: "DAILY_SUMMARY", pushEnabled: false, emailEnabled: true, smsEnabled: false },
+      { userId: petraMala.id, eventType: "NEW_LEAD", pushEnabled: true, emailEnabled: true, smsEnabled: false },
+      { userId: petraMala.id, eventType: "NEW_INQUIRY", pushEnabled: true, emailEnabled: false, smsEnabled: false },
+    ],
+  });
+
+  console.log(`Notif. Preferences: ${await prisma.notificationPreference.count()}`);
+
+  // ============================================
+  // SMS LOG
+  // ============================================
+
+  console.log("Seeding SMS logs...");
+
+  await prisma.smsLog.createMany({
+    data: [
+      {
+        recipientPhone: "+420602111222",
+        message: "Dobrý den, máme zájem o Vaše auto. Zavoláme Vám dnes.",
+        vehicleId: v1.id,
+        status: "DELIVERED",
+        cost: 0.45,
+      },
+      {
+        recipientPhone: "+420603222333",
+        message: "Připomínka: zítra schůzka ohledně prodeje vozu.",
+        status: "SENT",
+        cost: 0.45,
+      },
+    ],
+  });
+
+  console.log(`SMS Logs: ${await prisma.smsLog.count()}`);
+
+  // ============================================
+  // AI CONVERSATIONS
+  // ============================================
+
+  console.log("Seeding AI conversations...");
+
+  await prisma.aiConversation.create({
+    data: {
+      userId: janNovak.id,
+      messages: JSON.stringify([
+        { role: "user", content: "Pomoz mi napsat popis vozu Škoda Octavia RS", timestamp: "2026-03-20T10:00:00Z" },
+        { role: "assistant", content: "Škoda Octavia RS Combi ve výborném stavu...", timestamp: "2026-03-20T10:00:05Z" },
+      ]),
+      context: JSON.stringify({ step: "description", vehicleId: v1.id }),
+    },
+  });
+
+  console.log(`AI Conversations: ${await prisma.aiConversation.count()}`);
+
   const regionCount = await prisma.region.count();
   const userCount = await prisma.user.count();
   const vehicleCount = await prisma.vehicle.count();
@@ -2517,6 +2706,13 @@ async function main() {
   console.log(`Broker Payouts: ${await prisma.brokerPayout.count()}`);
   console.log(`Seller Contacts: ${await prisma.sellerContact.count()}`);
   console.log(`Communications:  ${await prisma.sellerCommunication.count()}`);
+  console.log(`Achievements:    ${await prisma.userAchievement.count()}`);
+  console.log(`Price Reductions:${await prisma.priceReduction.count()}`);
+  console.log(`Escalations:     ${await prisma.escalation.count()}`);
+  console.log(`Email Logs:      ${await prisma.emailLog.count()}`);
+  console.log(`Notif. Prefs:    ${await prisma.notificationPreference.count()}`);
+  console.log(`SMS Logs:        ${await prisma.smsLog.count()}`);
+  console.log(`AI Conversations:${await prisma.aiConversation.count()}`);
   console.log("\nDemo login: admin@carmakler.cz / heslo123");
   console.log("Advertiser login: prodejce@email.cz / heslo123");
   console.log("Buyer login: kupujici@email.cz / heslo123");

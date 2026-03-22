@@ -13,6 +13,12 @@ import { VehicleCard } from "@/components/web/VehicleCard";
 import { ContactBrokerButton } from "./ContactBrokerButton";
 import { PriceHistory } from "@/components/web/PriceHistory";
 import { VehicleTimeline } from "@/components/web/VehicleTimeline";
+import { ListingBadge } from "@/components/web/ListingBadge";
+import { ReservationButton } from "@/components/web/ReservationButton";
+import { CebiaCheck } from "@/components/web/CebiaCheck";
+import { LoanCalculator } from "@/components/web/LoanCalculator";
+import { UpsellBanner } from "@/components/web/UpsellBanner";
+import { ListingFlagButton } from "@/components/web/ListingFlagButton";
 import { prisma } from "@/lib/prisma";
 import { listingTypeLabels } from "@/lib/listings";
 import type { VehicleData } from "@/components/web/VehicleCard";
@@ -666,6 +672,33 @@ export default async function VehicleDetailPage({
       </section>
 
       {/* ============================================================ */}
+      {/* Cebia + Loan Calculator + Reservation                        */}
+      {/* ============================================================ */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="space-y-6">
+            <CebiaCheck
+              vehicleId={vehicle.id}
+              vin={vehicle.vin}
+              isBrokerListing={!!isBrokerListing}
+            />
+            {isBrokerListing && (
+              <ReservationButton
+                vehicleId={vehicle.id}
+                vehicleName={vehicleName}
+                listingType="BROKER"
+                price={vehicle.price}
+              />
+            )}
+          </div>
+          <LoanCalculator
+            vehiclePrice={vehicle.price}
+            vehicleName={vehicleName}
+          />
+        </div>
+      </section>
+
+      {/* ============================================================ */}
       {/* Price History + Timeline                                      */}
       {/* ============================================================ */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
@@ -719,6 +752,28 @@ export default async function VehicleDetailPage({
             </div>
           </div>
         </Card>
+      </section>
+
+      {/* ============================================================ */}
+      {/* Upsell banner (private listings only)                        */}
+      {/* ============================================================ */}
+      {isPrivateListing && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+          <UpsellBanner
+            daysOnline={Math.floor((Date.now() - new Date(vehicle.createdAt).getTime()) / (1000 * 60 * 60 * 24))}
+            listingId={vehicle.slug || vehicle.id}
+            isPrivate={true}
+          />
+        </section>
+      )}
+
+      {/* ============================================================ */}
+      {/* Flag button                                                   */}
+      {/* ============================================================ */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <div className="flex justify-end">
+          <ListingFlagButton listingId={vehicle.id} source="vehicle" />
+        </div>
       </section>
 
       {/* ============================================================ */}
@@ -960,6 +1015,49 @@ function renderListingDetail(listing: ListingWithRelations, slug: string) {
             detail: null,
           }]}
         />
+      </section>
+
+      {/* Cebia + Loan Calculator + Reservation */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="space-y-6">
+            <CebiaCheck
+              vehicleId={listing.id}
+              vin={listing.vin || undefined}
+              isBrokerListing={listing.listingType === "BROKER"}
+            />
+            {(listing.listingType === "BROKER" || listing.listingType === "DEALER") && (
+              <ReservationButton
+                vehicleId={listing.id}
+                vehicleName={name}
+                listingType={listing.listingType as "BROKER" | "DEALER"}
+                price={listing.price}
+              />
+            )}
+          </div>
+          <LoanCalculator
+            vehiclePrice={listing.price}
+            vehicleName={name}
+          />
+        </div>
+      </section>
+
+      {/* Upsell banner (private listings only) */}
+      {listing.listingType === "PRIVATE" && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+          <UpsellBanner
+            daysOnline={Math.floor((Date.now() - new Date(listing.createdAt).getTime()) / (1000 * 60 * 60 * 24))}
+            listingId={listing.slug}
+            isPrivate={true}
+          />
+        </section>
+      )}
+
+      {/* Flag button */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div className="flex justify-end">
+          <ListingFlagButton listingId={listing.id} source="listing" />
+        </div>
       </section>
     </div>
   );

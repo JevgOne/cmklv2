@@ -24,9 +24,9 @@ const navSections: NavSection[] = [
     title: "HLAVNI",
     items: [
       { id: "dashboard", href: "/admin/dashboard", icon: "📊", label: "Dashboard" },
-      { id: "vehicles", href: "/admin/vehicles", icon: "🚗", label: "Vozidla", badge: "23" },
+      { id: "vehicles", href: "/admin/vehicles", icon: "🚗", label: "Vozidla" },
+      { id: "inzerce", href: "/admin/inzerce", icon: "📋", label: "Inzerce" },
       { id: "brokers", href: "/admin/brokers", icon: "👥", label: "Makleri" },
-      { id: "approvals", href: "/admin/approvals", icon: "✅", label: "Schvalovani", badge: "5" },
       { id: "leads", href: "/admin/leads", icon: "📨", label: "Leady" },
     ],
     roles: ["ADMIN", "BACKOFFICE"],
@@ -43,26 +43,17 @@ const navSections: NavSection[] = [
     roles: ["MANAGER"],
   },
   {
+    title: "FINANCE",
+    items: [
+      { id: "payments", href: "/admin/payments", icon: "💳", label: "Platby" },
+      { id: "payouts", href: "/admin/payouts", icon: "💰", label: "Vyplaty" },
+    ],
+    roles: ["ADMIN", "BACKOFFICE"],
+  },
+  {
     title: "MARKETPLACE",
     items: [
       { id: "marketplace", href: "/admin/marketplace", icon: "📈", label: "Marketplace" },
-    ],
-    roles: ["ADMIN", "BACKOFFICE"],
-  },
-  {
-    title: "SPRAVA",
-    items: [
-      { id: "regions", href: "/admin/regions", icon: "📍", label: "Regiony" },
-      { id: "commissions", href: "/admin/commissions", icon: "💰", label: "Provize" },
-      { id: "users", href: "/admin/users", icon: "🔧", label: "Uzivatele" },
-    ],
-    roles: ["ADMIN", "BACKOFFICE"],
-  },
-  {
-    title: "SYSTEM",
-    items: [
-      { id: "settings", href: "/admin/settings", icon: "⚙️", label: "Nastaveni" },
-      { id: "logs", href: "/admin/logs", icon: "📋", label: "Logy" },
     ],
     roles: ["ADMIN", "BACKOFFICE"],
   },

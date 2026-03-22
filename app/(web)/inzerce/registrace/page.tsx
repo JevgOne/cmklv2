@@ -29,11 +29,11 @@ interface AresData {
   address?: string;
 }
 
-const accountTypes: { value: AccountType; label: string; desc: string }[] = [
-  { value: "PRIVATE", label: "Soukromý prodejce", desc: "Prodáváte vlastní auto" },
-  { value: "BAZAAR", label: "Autobazar", desc: "Provozujete autobazar" },
-  { value: "DEALER", label: "Dealer / autosalon", desc: "Autorizovaný prodejce" },
-  { value: "BUYER", label: "Kupující", desc: "Hledáte auto ke koupi" },
+const accountTypes: { value: AccountType; label: string; desc: string; tier: string }[] = [
+  { value: "PRIVATE", label: "Soukromý prodejce", desc: "1 inzerát zdarma / 60 dní", tier: "1 zdarma" },
+  { value: "BAZAAR", label: "Autobazar", desc: "10 inzerátů zdarma, vyžaduje IČO", tier: "10 zdarma" },
+  { value: "DEALER", label: "Dealer / autosalon", desc: "Neomezeno, autorizovaný prodejce", tier: "Neomezeno" },
+  { value: "BUYER", label: "Kupující", desc: "Hledáte auto ke koupi", tier: "" },
 ];
 
 const initial: FormState = {
@@ -225,7 +225,14 @@ export default function InzerceRegistracePage() {
                         : "border-gray-200 hover:border-gray-300"
                     )}
                   >
-                    <div className="font-semibold text-gray-900 text-sm">{type.label}</div>
+                    <div className="flex items-center justify-between">
+                      <div className="font-semibold text-gray-900 text-sm">{type.label}</div>
+                      {type.tier && (
+                        <span className="text-[11px] font-bold bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                          {type.tier}
+                        </span>
+                      )}
+                    </div>
                     <div className="text-xs text-gray-500 mt-1">{type.desc}</div>
                   </button>
                 ))}

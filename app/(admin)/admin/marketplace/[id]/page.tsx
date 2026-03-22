@@ -271,7 +271,11 @@ export default function AdminFlipDetailPage() {
                   Spustit vyplatu
                 </Button>
               )}
-              <Button variant="outline" className="w-full">
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => window.location.href = `mailto:${flipDetail.dealerEmail}`}
+              >
                 Kontaktovat dealera
               </Button>
             </div>

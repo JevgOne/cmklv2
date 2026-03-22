@@ -4,6 +4,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { generateListingSlug } from "@/lib/listings";
+import { autoFlagListing } from "@/lib/listing-flagging";
+import { getQuickFilterBySlug, quickFilterToWhere } from "@/lib/listing-quick-filters";
 
 /* ------------------------------------------------------------------ */
 /*  Zod schemas                                                        */
@@ -134,7 +136,10 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({ listing }, { status: 201 });
+    // Auto-flag po vytvoření
+    const flagResult = await autoFlagListing(listing.id);
+
+    return NextResponse.json({ listing, flagResult }, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -162,6 +167,17 @@ export async function GET(request: NextRequest) {
     // Build where clause
     const where: Record<string, unknown> = { status: "ACTIVE" };
 
+    // Quick filter — předdefinované presety
+    const quickFilterSlug = params.get("quickFilter");
+    if (quickFilterSlug) {
+      const quickFilter = getQuickFilterBySlug(quickFilterSlug);
+      if (quickFilter) {
+        const presetWhere = quickFilterToWhere(quickFilter);
+        Object.assign(where, presetWhere);
+      }
+    }
+
+    // Manuální filtry (přepisují quick filter pokud jsou zadané)
     if (params.get("brand")) where.brand = params.get("brand");
     if (params.get("model")) where.model = params.get("model");
     if (params.get("fuelType")) where.fuelType = params.get("fuelType");

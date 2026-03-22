@@ -20,7 +20,7 @@ model User {
   lastName     String
   avatar       String?
   role         String  @default("BROKER") // ADMIN, BACKOFFICE, REGIONAL_DIRECTOR, MANAGER, BROKER, ADVERTISER, BUYER
-  status       String  @default("PENDING") // PENDING, ACTIVE, SUSPENDED, INACTIVE
+  status       String  @default("PENDING") // PENDING, ONBOARDING, ACTIVE, SUSPENDED, INACTIVE
 
   // Hierarchie
   managerId   String?
@@ -92,10 +92,12 @@ model User {
   escalationsAsManager Escalation[] @relation("ManagerEscalations")
 
   // Inzertní platforma relace
-  listings  Listing[]
-  inquiries Inquiry[]  @relation("BuyerInquiries")
-  watchdogs Watchdog[]
-  favorites Favorite[]
+  listings    Listing[]
+  inquiries   Inquiry[]  @relation("BuyerInquiries")
+  watchdogs   Watchdog[]
+  favorites   Favorite[]
+  cebiaReports    CebiaReport[]
+  feedConfigs     ListingFeedConfig[]
 
   // Eshop autodíly relace
   suppliedParts         Part[]
@@ -637,6 +639,23 @@ model Listing {
   // Propojení s makléřskou sítí
   wantsBrokerHelp Boolean @default(false)
 
+  // Flagování a moderace
+  flagged          Boolean   @default(false)
+  flagReasons      String?   // JSON array of reasons
+  flaggedAt        DateTime?
+  moderationStatus String?   // AUTO_APPROVED, PENDING_REVIEW, APPROVED, REJECTED
+
+  // SLA a response tracking
+  lastResponseAt   DateTime?
+  responseDeadline DateTime?
+
+  // Upsell tracking
+  upsellStage  Int       @default(0) // 0=none, 1=14d, 2=30d, 3=45d
+  upsellSentAt DateTime?
+
+  // Tier inzerátu
+  listingTier String @default("PRIVATE") // PRIVATE, ADVERTISER, PARTNER
+
   // Stats
   viewCount    Int @default(0)
   inquiryCount Int @default(0)
@@ -648,9 +667,11 @@ model Listing {
   expiresAt   DateTime?
 
   // Relace
-  images    ListingImage[]
-  inquiries Inquiry[]
-  favorites Favorite[]
+  images       ListingImage[]
+  inquiries    Inquiry[]
+  favorites    Favorite[]
+  reservations Reservation[]
+  cebiaReports CebiaReport[]
 
   @@index([userId])
   @@index([status])
@@ -660,6 +681,9 @@ model Listing {
   @@index([city])
   @@index([listingType])
   @@index([isPremium])
+  @@index([flagged])
+  @@index([moderationStatus])
+  @@index([listingTier])
 }
 
 model ListingImage {
@@ -692,17 +716,22 @@ model Inquiry {
   reply     String?
   repliedAt DateTime?
 
+  // Status flow
+  status String @default("NEW") // NEW, READ, REPLIED, CLOSED
+
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
 
   @@index([listingId])
   @@index([senderId])
+  @@index([status])
 }
 
 model Watchdog {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
+  id     String  @id @default(cuid())
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+  email  String? // Pro email-only watchdog (bez registrace)
 
   // Kritéria
   brand    String?
@@ -720,6 +749,7 @@ model Watchdog {
   createdAt    DateTime  @default(now())
 
   @@index([userId])
+  @@index([email])
 }
 
 model Favorite {
@@ -733,6 +763,104 @@ model Favorite {
 
   @@unique([userId, listingId])
   @@index([userId])
+}
+
+// ============================================
+// REZERVACE INZERÁTŮ
+// ============================================
+
+model Reservation {
+  id        String  @id @default(cuid())
+  listingId String
+  listing   Listing @relation(fields: [listingId], references: [id])
+
+  // Kupující
+  buyerName  String
+  buyerEmail String
+  buyerPhone String
+
+  // Platba
+  amount          Int     @default(5000) // Kauce v CZK
+  status          String  @default("PENDING") // PENDING, PAID, EXPIRED, CANCELLED, REFUNDED
+  stripeSessionId String?
+
+  // Časy
+  expiresAt DateTime // 48h po vytvoření
+  createdAt DateTime @default(now())
+
+  @@index([listingId])
+  @@index([status])
+  @@index([stripeSessionId])
+  @@index([expiresAt])
+}
+
+// ============================================
+// CEBIA OVĚŘENÍ VOZIDEL
+// ============================================
+
+model CebiaReport {
+  id        String   @id @default(cuid())
+  listingId String?
+  listing   Listing? @relation(fields: [listingId], references: [id])
+  vin       String
+
+  status    String @default("PENDING") // PENDING, COMPLETED, FAILED
+  reportUrl String?
+  price     Int    @default(499) // Cena v CZK
+
+  orderedById String
+  orderedBy   User   @relation(fields: [orderedById], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([listingId])
+  @@index([vin])
+  @@index([orderedById])
+  @@index([status])
+}
+
+// ============================================
+// FEED IMPORT INZERÁTŮ
+// ============================================
+
+model ListingFeedConfig {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  name          String
+  feedUrl       String
+  format        String  @default("XML") // XML, CSV, JSON
+  mappingConfig String? // JSON mapping konfigurace
+
+  autoSync     Boolean  @default(false)
+  syncInterval String   @default("daily") // daily, hourly, manual
+  lastSyncAt   DateTime?
+
+  // Relace
+  importLogs ListingImportLog[]
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model ListingImportLog {
+  id       String            @id @default(cuid())
+  configId String
+  config   ListingFeedConfig @relation(fields: [configId], references: [id], onDelete: Cascade)
+
+  status        String @default("PENDING") // SUCCESS, PARTIAL, FAILED
+  importedCount Int    @default(0)
+  updatedCount  Int    @default(0)
+  errorCount    Int    @default(0)
+  errors        String? // JSON array of error details
+
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  @@index([configId])
+  @@index([status])
 }
 
 // ============================================
@@ -1208,6 +1336,54 @@ model SmsLog {
   createdAt      DateTime @default(now())
 
   @@index([recipientPhone])
+  @@index([createdAt])
+}
+
+// ============================================
+// FEED IMPORT/EXPORT
+// ============================================
+
+model FeedImportConfig {
+  id     String @id @default(cuid())
+  userId String
+
+  name     String  // Pojmenování feedu (např. "Můj Sauto export")
+  url      String  // URL XML/CSV souboru
+  format   String  // SAUTO_XML, TIPCARS_XML, CSV
+  mapping  String? // JSON — vlastní mapování sloupců (pro CSV)
+  active   Boolean @default(true)
+
+  // Statistiky
+  lastRunAt     DateTime?
+  lastRunStatus String?   // SUCCESS, PARTIAL, FAILED
+  lastRunCount  Int?      // Počet importovaných/aktualizovaných
+
+  // Relace
+  logs FeedImportLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([active])
+}
+
+model FeedImportLog {
+  id       String @id @default(cuid())
+  configId String
+  config   FeedImportConfig @relation(fields: [configId], references: [id], onDelete: Cascade)
+
+  status     String   // SUCCESS, PARTIAL, FAILED
+  created    Int      @default(0) // Počet nově vytvořených
+  updated    Int      @default(0) // Počet aktualizovaných
+  skipped    Int      @default(0) // Počet přeskočených (duplikáty)
+  errors     Int      @default(0) // Počet chyb
+  errorLog   String?  // JSON array chybových zpráv
+  duration   Int?     // Délka importu v ms
+
+  createdAt DateTime @default(now())
+
+  @@index([configId])
   @@index([createdAt])
 }
 

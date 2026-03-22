@@ -88,7 +88,6 @@ export function SellCarForm() {
       }
 
       setSubmitted(true);
-      setTimeout(() => setSubmitted(false), 3000);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Nepodařilo se odeslat požadavek"

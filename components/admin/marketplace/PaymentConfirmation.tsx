@@ -21,6 +21,7 @@ export interface PaymentConfirmationProps {
 
 export function PaymentConfirmation({ payments }: PaymentConfirmationProps) {
   const [confirming, setConfirming] = useState<string | null>(null);
+  const [rejecting, setRejecting] = useState<string | null>(null);
 
   const handleConfirm = async (paymentId: string, variableSymbol: string) => {
     setConfirming(paymentId);
@@ -33,6 +34,21 @@ export function PaymentConfirmation({ payments }: PaymentConfirmationProps) {
       window.location.reload();
     } finally {
       setConfirming(null);
+    }
+  };
+
+  const handleReject = async (paymentId: string) => {
+    if (!confirm("Opravdu chcete zamítnout tuto platbu?")) return;
+    setRejecting(paymentId);
+    try {
+      await fetch(`/api/marketplace/investments/${paymentId}/confirm-payment`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rejected: true }),
+      });
+      window.location.reload();
+    } finally {
+      setRejecting(null);
     }
   };
 
@@ -88,8 +104,13 @@ export function PaymentConfirmation({ payments }: PaymentConfirmationProps) {
                     >
                       {confirming === payment.id ? "..." : "Potvrdit"}
                     </Button>
-                    <Button variant="danger" size="sm">
-                      Zamitnout
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => handleReject(payment.id)}
+                      disabled={rejecting === payment.id}
+                    >
+                      {rejecting === payment.id ? "..." : "Zamitnout"}
                     </Button>
                   </div>
                 </td>

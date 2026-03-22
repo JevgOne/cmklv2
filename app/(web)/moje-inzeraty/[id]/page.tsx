@@ -47,6 +47,7 @@ interface InquiryItem {
   message: string;
   reply: string | null;
   repliedAt: string | null;
+  status: string; // NEW, READ, REPLIED, CLOSED
   read: boolean;
   createdAt: string;
 }
@@ -210,6 +211,74 @@ export default function ListingDetailPage() {
         />
       </div>
 
+      {/* Promote / Extend actions */}
+      {listing.status === "ACTIVE" && (
+        <Card className="p-5">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="font-bold text-gray-900 text-sm">Zvýšit viditelnost</h3>
+              <p className="text-xs text-gray-500 mt-0.5">
+                Více zobrazení = více zájemců = rychlejší prodej
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={async () => {
+                  try {
+                    const res = await fetch(`/api/listings/${id}/promote`, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ action: "extend" }),
+                    });
+                    if (res.ok) {
+                      const data = await res.json();
+                      if (data.checkoutUrl) window.location.href = data.checkoutUrl;
+                    }
+                  } catch { /* ignore */ }
+                }}
+              >
+                Prodloužit (99 Kč)
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={async () => {
+                  try {
+                    const res = await fetch(`/api/listings/${id}/promote`, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ action: "promote" }),
+                    });
+                    if (res.ok) {
+                      const data = await res.json();
+                      if (data.checkoutUrl) window.location.href = data.checkoutUrl;
+                    }
+                  } catch { /* ignore */ }
+                }}
+              >
+                Zvýraznit TOP (199 Kč)
+              </Button>
+            </div>
+          </div>
+          {listing.isPremium && (
+            <div className="mt-3 flex items-center gap-2">
+              <Badge variant="top">TOP</Badge>
+              <span className="text-xs text-gray-500">Váš inzerát je aktuálně zvýrazněný</span>
+            </div>
+          )}
+        </Card>
+      )}
+
+      {/* SLA warning for unreplied inquiries */}
+      {listing.inquiries && listing.inquiries.some((inq) => !inq.reply && !inq.repliedAt) && (
+        <Alert variant="warning" className="flex items-center gap-2">
+          <span className="font-semibold">Máte neodpovězené dotazy!</span>
+          {" "}Odpovězte do 24 hodin, jinak může být inzerát snížen ve vyhledávání.
+        </Alert>
+      )}
+
       {/* Photos */}
       {listing.images && listing.images.length > 0 && (
         <Card className="p-0 overflow-hidden">
@@ -282,9 +351,22 @@ export default function ListingDetailPage() {
                       {inquiry.email} &middot; {formatDate(inquiry.createdAt)}
                     </span>
                   </div>
-                  {!inquiry.read && (
-                    <Badge variant="new">Nový</Badge>
-                  )}
+                  <div className="flex gap-1.5">
+                    {inquiry.status === "NEW" && <Badge variant="new">Nový</Badge>}
+                    {inquiry.status === "READ" && <Badge variant="pending">Přečteno</Badge>}
+                    {inquiry.status === "REPLIED" && <Badge variant="verified">Odpovězeno</Badge>}
+                    {inquiry.status === "CLOSED" && <Badge variant="default">Uzavřeno</Badge>}
+                    {!inquiry.reply && !inquiry.repliedAt && (() => {
+                      const hours = Math.floor((Date.now() - new Date(inquiry.createdAt).getTime()) / (1000 * 60 * 60));
+                      if (hours >= 24) {
+                        return <span className="text-xs text-red-500 font-semibold">SLA překročeno</span>;
+                      }
+                      if (hours >= 12) {
+                        return <span className="text-xs text-orange-500 font-semibold">Odpovězte do {24 - hours}h</span>;
+                      }
+                      return null;
+                    })()}
+                  </div>
                 </div>
 
                 <p className="text-sm text-gray-700 mt-2">{inquiry.message}</p>

@@ -20,6 +20,8 @@ export function NewLeadsSection() {
   const [leads, setLeads] = useState<LeadSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [rejectingLeadId, setRejectingLeadId] = useState<string | null>(null);
+  const [rejectReason, setRejectReason] = useState("");
 
   async function fetchLeads() {
     try {
@@ -57,24 +59,30 @@ export function NewLeadsSection() {
     }
   }
 
-  async function handleReject(leadId: string) {
-    const reason = prompt("Duvod odmitnuti:");
-    if (!reason) return;
+  function handleRejectOpen(leadId: string) {
+    setRejectingLeadId(leadId);
+    setRejectReason("");
+  }
 
-    setActionLoading(leadId);
+  async function handleRejectConfirm() {
+    if (!rejectingLeadId || !rejectReason.trim()) return;
+
+    setActionLoading(rejectingLeadId);
     try {
-      const res = await fetch(`/api/leads/${leadId}/status`, {
+      const res = await fetch(`/api/leads/${rejectingLeadId}/status`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "REJECTED", rejectionReason: reason }),
+        body: JSON.stringify({ status: "REJECTED", rejectionReason: rejectReason.trim() }),
       });
       if (res.ok) {
-        setLeads((prev) => prev.filter((l) => l.id !== leadId));
+        setLeads((prev) => prev.filter((l) => l.id !== rejectingLeadId));
       }
     } catch {
       // chyba
     } finally {
       setActionLoading(null);
+      setRejectingLeadId(null);
+      setRejectReason("");
     }
   }
 
@@ -146,7 +154,7 @@ export function NewLeadsSection() {
                 variant="ghost"
                 size="sm"
                 disabled={actionLoading === lead.id}
-                onClick={() => handleReject(lead.id)}
+                onClick={() => handleRejectOpen(lead.id)}
               >
                 Odmit
               </Button>
@@ -162,6 +170,45 @@ export function NewLeadsSection() {
         >
           Zobrazit vse ({leads.length})
         </Link>
+      )}
+
+      {/* Reject modal */}
+      {rejectingLeadId && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-end justify-center" onClick={() => setRejectingLeadId(null)}>
+          <div
+            className="w-full max-w-lg bg-white rounded-t-2xl p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-base font-bold text-gray-900 mb-3">Duvod odmitnuti</h3>
+            <textarea
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              placeholder="Proc lead odmitnete?"
+              className="w-full border border-gray-200 rounded-xl p-3 text-sm text-gray-900 placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-orange-500"
+              rows={3}
+              autoFocus
+            />
+            <div className="flex gap-3 mt-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex-1"
+                onClick={() => setRejectingLeadId(null)}
+              >
+                Zrusit
+              </Button>
+              <Button
+                variant="danger"
+                size="sm"
+                className="flex-1"
+                disabled={!rejectReason.trim() || actionLoading === rejectingLeadId}
+                onClick={handleRejectConfirm}
+              >
+                Odmitnout
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

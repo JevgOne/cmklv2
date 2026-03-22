@@ -7,7 +7,10 @@ import { Card } from "@/components/ui/Card";
 
 export function FinancovaniCalc() {
   const [price, setPrice] = useState("");
+  const [phone, setPhone] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const numericPrice = Number(price.replace(/\s/g, "")) || 0;
   const monthlyPayment = numericPrice > 0 ? Math.round(numericPrice / 48) : 0;
@@ -15,10 +18,35 @@ export function FinancovaniCalc() {
   const formatNumber = (n: number) =>
     n.toLocaleString("cs-CZ");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: "Žádost o financování",
+          phone,
+          message: `[Financování] Cena vozidla: ${price} Kč, orientační splátka: ${formatNumber(monthlyPayment)} Kč/měs.`,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Nepodařilo se odeslat požadavek");
+      }
+
+      setSubmitted(true);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Nepodařilo se odeslat požadavek"
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -42,12 +70,19 @@ export function FinancovaniCalc() {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+              {error}
+            </div>
+          )}
+
           <Input
             label="Cena vozidla (Kč)"
             type="number"
             placeholder="např. 450000"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
+            required
           />
 
           {monthlyPayment > 0 && (
@@ -64,8 +99,17 @@ export function FinancovaniCalc() {
             </div>
           )}
 
-          <Button variant="primary" size="lg" className="w-full" type="submit">
-            Chci financování
+          <Input
+            label="Váš telefon"
+            type="tel"
+            placeholder="+420 777 123 456"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            required
+          />
+
+          <Button variant="primary" size="lg" className="w-full" type="submit" disabled={submitting}>
+            {submitting ? "Odesílám..." : "Chci financování"}
           </Button>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-1 text-[14px] text-gray-500">

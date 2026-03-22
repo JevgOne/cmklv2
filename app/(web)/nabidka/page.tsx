@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { VehicleCard } from "@/components/web/VehicleCard";
 import { VehicleFilters } from "@/components/web/VehicleFilters";
+import { QuickFilters } from "@/components/web/QuickFilters";
+import { WatchdogEmailForm } from "@/components/web/WatchdogEmailForm";
 import { Button } from "@/components/ui/Button";
 import { prisma } from "@/lib/prisma";
 import type { VehicleData } from "@/components/web/VehicleCard";
@@ -236,9 +238,19 @@ export default async function NabidkaPage({
       {/* Filters + Grid                                                */}
       {/* ============================================================ */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Quick filters */}
+        <div className="mb-4">
+          <QuickFilters />
+        </div>
+
         {/* Filter bar */}
-        <div className="mb-8">
+        <div className="mb-4">
           <VehicleFilters resultCount={total} />
+        </div>
+
+        {/* Watchdog email-only form */}
+        <div className="mb-8">
+          <WatchdogEmailForm />
         </div>
 
         {/* Vehicle grid or empty state */}

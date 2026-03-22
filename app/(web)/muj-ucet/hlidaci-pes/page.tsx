@@ -21,6 +21,7 @@ interface Watchdog {
   fuelType: string | null;
   bodyType: string | null;
   city: string | null;
+  email: string | null;
   active: boolean;
   createdAt: string;
 }
@@ -225,6 +226,11 @@ export default function HlidaciPesPage() {
                     <Badge variant={wd.active ? "verified" : "default"}>
                       {wd.active ? "Aktivní" : "Pozastaven"}
                     </Badge>
+                    {wd.email && (
+                      <Badge variant="default">
+                        Email: {wd.email}
+                      </Badge>
+                    )}
                   </div>
                   <p className="text-xs text-gray-500 mt-1 truncate">
                     {formatCriteria(wd)}

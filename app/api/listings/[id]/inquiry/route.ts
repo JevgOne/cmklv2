@@ -103,10 +103,31 @@ export async function GET(
       return NextResponse.json({ error: "Nemáte oprávnění" }, { status: 403 });
     }
 
+    // Filtrovat podle statusu
+    const statusFilter = request.nextUrl.searchParams.get("status");
+    const where: Record<string, unknown> = { listingId: id };
+    if (statusFilter) {
+      where.status = statusFilter;
+    }
+
     const inquiries = await prisma.inquiry.findMany({
-      where: { listingId: id },
+      where,
       orderBy: { createdAt: "desc" },
     });
+
+    // Označit nepřečtené jako READ (pokud vlastník inzerátu)
+    if (listing.userId === session.user.id) {
+      const unreadIds = inquiries
+        .filter((i) => i.status === "NEW")
+        .map((i) => i.id);
+
+      if (unreadIds.length > 0) {
+        await prisma.inquiry.updateMany({
+          where: { id: { in: unreadIds } },
+          data: { status: "READ", read: true },
+        });
+      }
+    }
 
     return NextResponse.json({ inquiries });
   } catch (error) {

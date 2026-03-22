@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { TrustScore } from "@/components/ui/TrustScore";
 import { Card } from "@/components/ui/Card";
+import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "CarMakléř | Prodej aut přes certifikované makléře",
@@ -18,98 +19,103 @@ export const metadata: Metadata = {
 };
 
 /* ------------------------------------------------------------------ */
-/*  Dummy data                                                         */
+/*  Fuel / Transmission label mapování                                 */
 /* ------------------------------------------------------------------ */
 
-const cars = [
-  {
-    name: "Škoda Octavia RS Combi",
-    slug: "skoda-octavia-rs-combi",
-    year: 2021,
-    km: "45 000 km",
-    fuel: "Benzín",
-    transmission: "DSG",
-    city: "Praha",
-    hp: "245 HP",
-    price: "589 000",
-    trust: 96,
-    badge: "verified" as const,
-    photo: "photo-1606664515524-ed2f786a0bd6",
-  },
-  {
-    name: "BMW 330i xDrive M Sport",
-    slug: "bmw-330i-xdrive-m-sport",
-    year: 2022,
-    km: "28 000 km",
-    fuel: "Benzín",
-    transmission: "Automat",
-    city: "Brno",
-    hp: "258 HP",
-    price: "1 150 000",
-    trust: 98,
-    badge: "top" as const,
-    photo: "photo-1617531653332-bd46c24f2068",
-  },
-  {
-    name: "VW Golf GTI",
-    slug: "vw-golf-gti",
-    year: 2020,
-    km: "52 000 km",
-    fuel: "Benzín",
-    transmission: "DSG",
-    city: "Ostrava",
-    hp: "245 HP",
-    price: "485 000",
-    trust: 92,
-    badge: "verified" as const,
-    photo: "photo-1552519507-da3b142c6e3d",
-  },
-];
+const fuelLabels: Record<string, string> = {
+  PETROL: "Benzín", DIESEL: "Diesel", ELECTRIC: "Elektro", HYBRID: "Hybrid",
+  PLUGIN_HYBRID: "Plug-in Hybrid", LPG: "LPG", CNG: "CNG",
+};
 
-const brokers = [
-  {
-    name: "Jan Novák",
-    initials: "JN",
-    slug: "jan-novak-praha",
-    region: "Praha a okolí",
-    photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80",
-    bio: "Specialista na prémiové vozy s 5 lety zkušeností. Pomohl jsem prodat přes 150 vozidel.",
-    badges: ["top", "default"] as const,
-    badgeLabels: ["⭐ TOP Makléř", "⚡ Rychlá reakce"],
-    rating: "4.9",
-    sales: "156",
-    avgDays: "14",
-    activeVehicles: 8,
-  },
-  {
-    name: "Petra Malá",
-    initials: "PM",
-    slug: "petra-mala-brno",
-    region: "Brno a okolí",
-    photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80",
-    bio: "Zaměřuji se na rodinná auta a SUV. Každému klientovi věnuji individuální péči.",
-    badges: ["top"] as const,
-    badgeLabels: ["⭐ TOP Makléř"],
-    rating: "4.7",
-    sales: "98",
-    avgDays: "18",
-    activeVehicles: 6,
-  },
-  {
-    name: "Karel Dvořák",
-    initials: "KD",
-    slug: "karel-dvorak-ostrava",
-    region: "Ostrava a okolí",
-    photo: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80",
-    bio: "Nejrychlejší prodejní časy v regionu. Průměrně prodám auto za 12 dní.",
-    badges: ["default"] as const,
-    badgeLabels: ["⚡ Rychlá reakce"],
-    rating: "4.8",
-    sales: "124",
-    avgDays: "12",
-    activeVehicles: 5,
-  },
-];
+const transmissionLabels: Record<string, string> = {
+  MANUAL: "Manuál", AUTOMATIC: "Automat", DSG: "DSG", CVT: "CVT",
+};
+
+/* ------------------------------------------------------------------ */
+/*  Data loaders                                                       */
+/* ------------------------------------------------------------------ */
+
+async function getFeaturedCars() {
+  try {
+    const dbVehicles = await prisma.vehicle.findMany({
+      where: { status: "ACTIVE" },
+      include: { images: { where: { isPrimary: true }, take: 1 } },
+      orderBy: { trustScore: "desc" },
+      take: 3,
+    });
+
+    if (dbVehicles.length > 0) {
+      return dbVehicles.map((v) => {
+        let badge: "verified" | "top" | "default" = "default";
+        if (v.trustScore >= 95) badge = "top";
+        else if (v.trustScore >= 80) badge = "verified";
+
+        return {
+          name: `${v.brand} ${v.model}${v.variant ? " " + v.variant : ""}`,
+          slug: v.slug || v.id,
+          year: v.year,
+          km: new Intl.NumberFormat("cs-CZ").format(v.mileage) + " km",
+          fuel: fuelLabels[v.fuelType] || v.fuelType,
+          transmission: transmissionLabels[v.transmission] || v.transmission,
+          city: v.city,
+          hp: v.enginePower ? `${v.enginePower} HP` : "",
+          price: new Intl.NumberFormat("cs-CZ").format(v.price),
+          trust: v.trustScore,
+          badge,
+          photo: v.images[0]?.url || "/images/placeholder-car.jpg",
+          isExternal: false,
+        };
+      });
+    }
+  } catch {
+    /* DB unavailable — fall back to empty */
+  }
+  return [];
+}
+
+async function getFeaturedBrokers() {
+  try {
+    const dbBrokers = await prisma.user.findMany({
+      where: { role: "BROKER", status: "ACTIVE" },
+      select: {
+        firstName: true,
+        lastName: true,
+        slug: true,
+        avatar: true,
+        cities: true,
+        bio: true,
+        _count: { select: { vehicles: { where: { status: "ACTIVE" } } } },
+      },
+      take: 3,
+      orderBy: { vehicles: { _count: "desc" } },
+    });
+
+    if (dbBrokers.length > 0) {
+      return dbBrokers.map((b) => {
+        const name = `${b.firstName} ${b.lastName}`;
+        const initials = `${(b.firstName || "")[0] || ""}${(b.lastName || "")[0] || ""}`;
+        const cities = b.cities ? (typeof b.cities === "string" ? JSON.parse(b.cities) : b.cities) : [];
+        return {
+          name,
+          initials,
+          slug: b.slug || "makler",
+          region: (cities as string[])[0] || "Česká republika",
+          photo: b.avatar || "",
+          bio: b.bio || `Certifikovaný makléř CarMakléř`,
+          badges: ["verified"] as const,
+          badgeLabels: ["✓ Ověřený"],
+          rating: "4.8",
+          sales: "0",
+          avgDays: "20",
+          activeVehicles: b._count.vehicles,
+        };
+      });
+    }
+  } catch {
+    /* DB unavailable — fall back to empty */
+  }
+  return [];
+}
 
 const services = [
   {
@@ -230,7 +236,10 @@ const jsonLd = {
   },
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const cars = await getFeaturedCars();
+  const brokers = await getFeaturedBrokers();
+
   return (
     <main className="min-h-screen">
       <script
@@ -282,22 +291,8 @@ export default function HomePage() {
                   alt="Auto na prodej"
                   className="w-full h-full object-cover"
                 />
-                {/* Play button overlay */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <button
-                    type="button"
-                    aria-label="Přehrát video"
-                    className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg cursor-pointer hover:bg-white transition-colors border-none"
-                  >
-                    <svg
-                      className="w-6 h-6 text-orange-500 ml-1"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  </button>
-                </div>
+                {/* Overlay gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
               </div>
             </div>
           </div>
@@ -368,6 +363,7 @@ export default function HomePage() {
       {/* ============================================================ */}
       {/* Section 4 — Nabídka vozidel                                  */}
       {/* ============================================================ */}
+      {cars.length > 0 && (
       <section className="py-12 sm:py-16 lg:py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
@@ -386,12 +382,12 @@ export default function HomePage() {
           {/* Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {cars.map((car) => (
-              <Link key={car.photo} href={`/nabidka/${car.slug}`} className="no-underline block">
+              <Link key={car.slug} href={`/nabidka/${car.slug}`} className="no-underline block">
                 <Card hover className="group">
                   {/* Image */}
                   <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
                     <img
-                      src={`https://images.unsplash.com/${car.photo}?w=600&q=80`}
+                      src={car.photo}
                       alt={car.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
@@ -443,6 +439,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      )}
 
       {/* ============================================================ */}
       {/* Section 5 — Proč CarMakléř / Benefity                       */}
@@ -513,6 +510,7 @@ export default function HomePage() {
       {/* ============================================================ */}
       {/* Section 7 — TOP Makléři                                      */}
       {/* ============================================================ */}
+      {brokers.length > 0 && (
       <section className="py-12 sm:py-16 lg:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
@@ -531,15 +529,17 @@ export default function HomePage() {
           {/* Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {brokers.map((broker) => (
-              <Link key={broker.initials} href={`/makler/${broker.slug}`} className="no-underline block group">
+              <Link key={broker.slug} href={`/makler/${broker.slug}`} className="no-underline block group">
                 <Card hover className="overflow-hidden">
                   {/* Header s fotkou a gradient overlay */}
                   <div className="relative h-[200px] bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden">
+                    {broker.photo && (
                     <img
                       src={broker.photo}
                       alt={broker.name}
                       className="w-full h-full object-cover opacity-40 group-hover:opacity-50 group-hover:scale-105 transition-all duration-500"
                     />
+                    )}
                     {/* Badges */}
                     <div className="absolute top-4 left-4 flex gap-2">
                       {broker.badges.map((variant, i) => (
@@ -622,6 +622,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      )}
 
       {/* ============================================================ */}
       {/* Section 8 — CTA                                              */}
