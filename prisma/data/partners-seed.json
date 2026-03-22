@@ -732,7 +732,7 @@
   },
   {
     "name": "KLIMEX CZ, spol. s r.o.",
-    "ico": null,
+    "ico": "49549693",
     "address": "Melnik, 276 01",
     "city": "Melnik",
     "region": "Stredocesky kraj",
@@ -1084,8 +1084,8 @@
     "googleRating": null,
     "googleReviewCount": null,
     "source": "firmy.cz, aaaauto.cz",
-    "lat": null,
-    "lng": null
+    "lat": 49.1766774,
+    "lng": 16.6311913
   },
   {
     "name": "Auto ESA a.s. - pobočka Brno",
@@ -1101,8 +1101,8 @@
     "googleRating": null,
     "googleReviewCount": null,
     "source": "autoesa.cz, firmy.cz",
-    "lat": null,
-    "lng": null
+    "lat": 49.183816,
+    "lng": 16.6067872
   },
   {
     "name": "AUTO COM Brno",
@@ -1118,8 +1118,8 @@
     "googleRating": null,
     "googleReviewCount": null,
     "source": "autocombrno.cz",
-    "lat": null,
-    "lng": null
+    "lat": 49.1899674,
+    "lng": 16.6478191
   },
   {
     "name": "R&H spol. s r.o. - AUTOCENTRUM SLATINA",
@@ -1135,12 +1135,12 @@
     "googleRating": null,
     "googleReviewCount": null,
     "source": "autocentrumslatina.cz, firmy.cz",
-    "lat": null,
-    "lng": null
+    "lat": 49.18528,
+    "lng": 16.6551075
   },
   {
     "name": "CarDeal - lepší autobazar",
-    "ico": null,
+    "ico": "29268052",
     "address": "Šmahova 364/110, 627 00 Brno, Slatina",
     "city": "Brno",
     "region": "Jihomoravský kraj",
@@ -1152,12 +1152,12 @@
     "googleRating": null,
     "googleReviewCount": null,
     "source": "firmy.cz, cardeal.cz",
-    "lat": null,
-    "lng": null
+    "lat": 49.1714084,
+    "lng": 16.6838713
   },
   {
     "name": "Auta Brno s.r.o.",
-    "ico": null,
+    "ico": "07509758",
     "address": "Kaštanová 435/127, 620 00 Brno, Brněnské Ivanovice",
     "city": "Brno",
     "region": "Jihomoravský kraj",
@@ -1169,8 +1169,8 @@
     "googleRating": null,
     "googleReviewCount": null,
     "source": "firmy.cz, autabrno.cz",
-    "lat": null,
-    "lng": null
+    "lat": 49.1606651,
+    "lng": 16.6371755
   },
   {
     "name": "STOP CARS s.r.o.",
@@ -1186,8 +1186,8 @@
     "googleRating": null,
     "googleReviewCount": null,
     "source": "stopcars.cz, firmy.cz",
-    "lat": null,
-    "lng": null
+    "lat": 48.851695,
+    "lng": 16.066746
   },
   {
     "name": "Autodružstvo Znojmo",
@@ -1203,8 +1203,8 @@
     "googleRating": null,
     "googleReviewCount": null,
     "source": "autodruzstvo-znojmo.cz, firmy.cz",
-    "lat": null,
-    "lng": null
+    "lat": 48.8480609,
+    "lng": 16.0572529
   },
   {
     "name": "Cars Trade M&M s.r.o.",
@@ -1220,8 +1220,8 @@
     "googleRating": null,
     "googleReviewCount": null,
     "source": "carstrade.cz, firmy.cz",
-    "lat": null,
-    "lng": null
+    "lat": 48.8499965,
+    "lng": 16.1135602
   },
   {
     "name": "AAA AUTO a.s. - pobočka Znojmo",
@@ -1237,8 +1237,8 @@
     "googleRating": null,
     "googleReviewCount": null,
     "source": "aaaauto.cz, firmy.cz",
-    "lat": null,
-    "lng": null
+    "lat": 48.8459989,
+    "lng": 16.0679715
   },
   {
     "name": "AUTO DOBROVOLNÝ V.M. s.r.o. - pobočka Znojmo",
@@ -1254,8 +1254,8 @@
     "googleRating": null,
     "googleReviewCount": null,
     "source": "autodobrovolny.cz, firmy.cz",
-    "lat": null,
-    "lng": null
+    "lat": 48.8311138,
+    "lng": 16.0711088
   },
   {
     "name": "TOP CENTRUM car s.r.o. - Hodonín",
@@ -1271,8 +1271,8 @@
     "googleRating": null,
     "googleReviewCount": null,
     "source": "topcentrumcar.cz, firmy.cz",
-    "lat": null,
-    "lng": null
+    "lat": 48.8723803,
+    "lng": 17.1156182
   },
   {
     "name": "VISTA car s.r.o. - Hodonín",
@@ -1288,8 +1288,8 @@
     "googleRating": null,
     "googleReviewCount": null,
     "source": "vistacar.cz, firmy.cz",
-    "lat": null,
-    "lng": null
+    "lat": 48.8732516,
+    "lng": 17.1155411
   },
   {
     "name": "MAXIMCAR s.r.o.",
@@ -1305,8 +1305,8 @@
     "googleRating": null,
     "googleReviewCount": null,
     "source": "ojeteauto.cz, firmy.cz",
-    "lat": null,
-    "lng": null
+    "lat": 48.8463908,
+    "lng": 17.1259817
   },
   {
     "name": "Autobazar PATKA",
@@ -1322,8 +1322,8 @@
     "googleRating": null,
     "googleReviewCount": null,
     "source": "ojeteauto.cz",
-    "lat": null,
-    "lng": null
+    "lat": 48.8563155,
+    "lng": 17.1220509
   },
   {
     "name": "Autocentrum hm s.r.o.",
@@ -1339,8 +1339,8 @@
     "googleRating": null,
     "googleReviewCount": null,
     "source": "ojeteauto.cz, firmy.cz",
-    "lat": null,
-    "lng": null
+    "lat": 48.756246,
+    "lng": 16.8763749
   },
   {
     "name": "Cars Centre - Aleš Procházka",
@@ -1356,8 +1356,8 @@
     "googleRating": null,
     "googleReviewCount": null,
     "source": "edb.cz, portalridice.cz",
-    "lat": null,
-    "lng": null
+    "lat": 48.749423,
+    "lng": 16.8942995
   },
   {
     "name": "AUTO HRAZDIRA s.r.o.",
@@ -1373,8 +1373,8 @@
     "googleRating": null,
     "googleReviewCount": null,
     "source": "autohrazdira.cz, firmy.cz",
-    "lat": null,
-    "lng": null
+    "lat": 49.3718428,
+    "lng": 16.640621
   },
   {
     "name": "AUTO-PYTELA s.r.o.",
@@ -1390,8 +1390,8 @@
     "googleRating": null,
     "googleReviewCount": null,
     "source": "ojeteauto.cz, firmy.cz",
-    "lat": null,
-    "lng": null
+    "lat": 49.2802849,
+    "lng": 16.9969147
   },
   {
     "name": "Autobazar Bláha - Libor Bláha",
@@ -1407,8 +1407,8 @@
     "googleRating": null,
     "googleReviewCount": null,
     "source": "firmy.cz, auto-blaha.cz",
-    "lat": null,
-    "lng": null
+    "lat": 49.2800068,
+    "lng": 17.0082949
   },
   {
     "name": "AUTOTRADE s.r.o.",
@@ -3894,7 +3894,7 @@
   },
   {
     "name": "MAGIC-CARS s.r.o.",
-    "ico": null,
+    "ico": "26388120",
     "address": "Plana u Mar. Lazni, 348 15",
     "city": "Plana",
     "region": "Plzensky kraj",
@@ -3911,7 +3911,7 @@
   },
   {
     "name": "AUTOWELT s.r.o.",
-    "ico": null,
+    "ico": "17582911",
     "address": "Sytno u Stribra, 349 01",
     "city": "Sytno",
     "region": "Plzensky kraj",
@@ -4234,7 +4234,7 @@
   },
   {
     "name": "AUTO CITYDC s.r.o.",
-    "ico": null,
+    "ico": "27293289",
     "address": "Dobkovice 130, 407 03 Dobkovice",
     "city": "Dobkovice",
     "region": "Ustecky kraj",
@@ -4404,7 +4404,7 @@
   },
   {
     "name": "AUTO J&E s.r.o.",
-    "ico": null,
+    "ico": "26031914",
     "address": "Novohradska 1815, 370 08 Ceske Budejovice",
     "city": "Ceske Budejovice",
     "region": "Jihocesky kraj",
@@ -4421,7 +4421,7 @@
   },
   {
     "name": "CB Auto a.s.",
-    "ico": null,
+    "ico": "26031868",
     "address": "Milady Horakove 1477, 370 05 Ceske Budejovice",
     "city": "Ceske Budejovice",
     "region": "Jihocesky kraj",
@@ -4455,7 +4455,7 @@
   },
   {
     "name": "AUTOSALON Tabor s.r.o.",
-    "ico": null,
+    "ico": "26029928",
     "address": "Kamenicka 2860/1, 390 02 Tabor",
     "city": "Tabor",
     "region": "Jihocesky kraj",
@@ -4710,7 +4710,7 @@
   },
   {
     "name": "Auto ELIVA s.r.o.",
-    "ico": null,
+    "ico": "08682381",
     "address": "Chodov u Karlovych Varu",
     "city": "Chodov",
     "region": "Karlovarsky kraj",

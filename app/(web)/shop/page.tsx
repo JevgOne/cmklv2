@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { PartsSearch } from "@/components/web/PartsSearch";
 import { ProductCard } from "@/components/web/ProductCard";
-import type { ProductCardProps } from "@/components/web/ProductCard";
+import { prisma } from "@/lib/prisma";
+import { PART_CATEGORIES } from "@/lib/parts-categories";
 
 export const metadata: Metadata = {
   title: "Shop — autodíly a příslušenství",
@@ -18,79 +19,8 @@ export const metadata: Metadata = {
 };
 
 /* ------------------------------------------------------------------ */
-/*  Dummy data                                                         */
+/*  Static data                                                        */
 /* ------------------------------------------------------------------ */
-
-const categories = [
-  { icon: "🚗", title: "Karoserie", count: "245 dílů", slug: "karoserie" },
-  { icon: "⚙️", title: "Motor", count: "189 dílů", slug: "motor" },
-  { icon: "🔧", title: "Podvozek", count: "312 dílů", slug: "podvozek" },
-  { icon: "💡", title: "Elektro", count: "156 dílů", slug: "elektro" },
-  { icon: "🪟", title: "Skla", count: "78 dílů", slug: "skla" },
-  { icon: "🛋️", title: "Interiér", count: "203 dílů", slug: "interier" },
-  {
-    icon: "🧴",
-    title: "Autokosmetika",
-    count: "450+ produktů",
-    slug: "autokosmetika",
-  },
-  {
-    icon: "🔩",
-    title: "Servisní díly",
-    count: "380+ produktů",
-    slug: "servisni-dily",
-  },
-];
-
-const featuredProducts: ProductCardProps[] = [
-  {
-    name: "Dveře přední levé",
-    compatibility: "Škoda Octavia III 2013-2020",
-    condition: 4,
-    price: 4500,
-    badge: "used",
-    slug: "dvere-predni-leve-octavia-iii",
-  },
-  {
-    name: "Turbodmychadlo",
-    compatibility: "2.0 TDI VW Group",
-    condition: 5,
-    price: 12000,
-    badge: "used",
-    slug: "turbodmychadlo-2-0-tdi",
-  },
-  {
-    name: "Koch Chemie GSF",
-    compatibility: "Autošampon 1L",
-    price: 299,
-    oldPrice: 399,
-    badge: "sale",
-    slug: "koch-chemie-gsf-1l",
-  },
-  {
-    name: "LED světlomet přední",
-    compatibility: "BMW F30 2012-2018",
-    condition: 4,
-    price: 8500,
-    badge: "used",
-    slug: "led-svetlomet-bmw-f30",
-  },
-  {
-    name: "Brzdové destičky přední",
-    compatibility: "VW Group",
-    price: 890,
-    badge: "new",
-    slug: "brzdove-desticky-vw-group",
-  },
-  {
-    name: "Sedačka řidiče",
-    compatibility: "Škoda Octavia RS 2017-2020",
-    condition: 3,
-    price: 6200,
-    badge: "used",
-    slug: "sedacka-ridice-octavia-rs",
-  },
-];
 
 const benefits = [
   {
@@ -115,11 +45,52 @@ const benefits = [
   },
 ];
 
+const categoryIcons: Record<string, string> = {
+  ENGINE: "⚙️",
+  TRANSMISSION: "🔧",
+  BRAKES: "🛑",
+  SUSPENSION: "🔩",
+  BODY: "🚗",
+  ELECTRICAL: "💡",
+  INTERIOR: "🛋️",
+  WHEELS: "🛞",
+  EXHAUST: "💨",
+  COOLING: "❄️",
+  FUEL: "⛽",
+  OTHER: "📦",
+};
+
 /* ------------------------------------------------------------------ */
 /*  Page                                                               */
 /* ------------------------------------------------------------------ */
 
-export default function ShopPage() {
+export default async function ShopPage() {
+  // Načíst featured produkty z DB
+  const featuredParts = await prisma.part.findMany({
+    where: { status: "ACTIVE" },
+    include: {
+      images: { where: { isPrimary: true }, take: 1 },
+    },
+    orderBy: { viewCount: "desc" },
+    take: 6,
+  });
+
+  // Načíst počty dílů pro kategorie
+  const categoryCounts = await prisma.part.groupBy({
+    by: ["category"],
+    where: { status: "ACTIVE" },
+    _count: true,
+  });
+
+  const countMap = new Map(categoryCounts.map((c) => [c.category, c._count]));
+
+  const categories = PART_CATEGORIES.map((cat) => ({
+    icon: categoryIcons[cat.value] ?? "📦",
+    title: cat.label,
+    count: countMap.get(cat.value) ?? 0,
+    slug: cat.value.toLowerCase(),
+  }));
+
   return (
     <div className="min-h-screen">
       {/* ============================================================ */}
@@ -168,7 +139,7 @@ export default function ShopPage() {
             {categories.map((cat) => (
               <Link
                 key={cat.slug}
-                href="/shop/katalog"
+                href={`/shop/katalog?category=${cat.slug.toUpperCase()}`}
                 className="no-underline block"
               >
                 <Card hover className="p-6 text-center group">
@@ -178,7 +149,9 @@ export default function ShopPage() {
                   <h3 className="font-bold text-gray-900 mt-4 text-[15px]">
                     {cat.title}
                   </h3>
-                  <p className="text-xs text-gray-500 mt-1">{cat.count}</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {cat.count} {cat.count === 1 ? "díl" : cat.count < 5 ? "díly" : "dílů"}
+                  </p>
                 </Card>
               </Link>
             ))}
@@ -204,10 +177,41 @@ export default function ShopPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredProducts.map((product) => (
-              <ProductCard key={product.name} {...product} />
+            {featuredParts.map((part) => (
+              <ProductCard
+                key={part.id}
+                partId={part.id}
+                name={part.name}
+                compatibility={
+                  part.compatibleBrands
+                    ? JSON.parse(part.compatibleBrands).join(", ")
+                    : "Univerzální"
+                }
+                condition={
+                  part.condition === "NEW"
+                    ? undefined
+                    : part.condition === "USED_GOOD"
+                      ? 4
+                      : part.condition === "USED_FAIR"
+                        ? 3
+                        : part.condition === "USED_POOR"
+                          ? 2
+                          : 5
+                }
+                price={part.price}
+                badge={part.condition === "NEW" ? "new" : "used"}
+                slug={part.slug}
+                image={part.images[0]?.url}
+                stock={part.stock}
+              />
             ))}
           </div>
+
+          {featuredParts.length === 0 && (
+            <p className="text-center text-gray-400 py-12">
+              Zatím nejsou k dispozici žádné díly.
+            </p>
+          )}
         </div>
       </section>
 

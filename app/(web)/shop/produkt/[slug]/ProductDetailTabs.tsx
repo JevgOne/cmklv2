@@ -4,6 +4,21 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ */
+/*  Props                                                               */
+/* ------------------------------------------------------------------ */
+
+interface ProductDetailTabsProps {
+  description: string | null;
+  compatibleBrands: string[];
+  compatibleModels: string[];
+  yearFrom: number | null;
+  yearTo: number | null;
+  universalFit: boolean;
+  weight: number | null;
+  dimensions: string | null;
+}
+
+/* ------------------------------------------------------------------ */
 /*  Tab data                                                           */
 /* ------------------------------------------------------------------ */
 
@@ -13,17 +28,20 @@ const tabList = [
   { value: "zaruka", label: "Záruka" },
 ];
 
-const compatibleVehicles = [
-  { name: "Škoda Octavia III (5E) 2013-2020", status: "ok" as const },
-  { name: "Škoda Octavia III Combi (5E) 2013-2020", status: "ok" as const },
-  { name: "Škoda Octavia IV (NX) 2020+", status: "no" as const },
-];
-
 /* ------------------------------------------------------------------ */
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
 
-export function ProductDetailTabs() {
+export function ProductDetailTabs({
+  description,
+  compatibleBrands,
+  compatibleModels,
+  yearFrom,
+  yearTo,
+  universalFit,
+  weight,
+  dimensions,
+}: ProductDetailTabsProps) {
   const [active, setActive] = useState("popis");
 
   return (
@@ -48,40 +66,28 @@ export function ProductDetailTabs() {
       <div className="mt-6 bg-white rounded-2xl p-4 sm:p-6 md:p-8 shadow-sm">
         {active === "popis" && (
           <div className="prose prose-gray max-w-none">
-            <h3 className="text-lg font-bold text-gray-900">
-              Dveře přední levé — Škoda Octavia III
-            </h3>
-            <p className="text-gray-600 leading-relaxed mt-3">
-              Originální přední levé dveře ze Škody Octavia III generace (5E),
-              rok výroby 2019. Díl pochází z vozu s nájezdem 85 000 km, který
-              byl vyřazen z provozu kvůli nárazu do zadní části — přední díly
-              včetně těchto dveří zůstaly nepoškozené.
-            </p>
-            <p className="text-gray-600 leading-relaxed mt-3">
-              Dveře jsou v originální bílé barvě Candy (kód LS9R), kompletní
-              včetně skla, vnitřního obložení, madla, elektrického stahování
-              oken a zámku. Mechanismus otevírání a zavírání je plně funkční.
-              Na spodní hraně jsou drobné oděrky z běžného provozu (viditelné na
-              fotografii č. 3).
-            </p>
-            <h4 className="text-base font-bold text-gray-900 mt-6">
-              Co je v balení:
-            </h4>
-            <ul className="text-gray-600 space-y-1 mt-2">
-              <li>Dveře komplet s obložením</li>
-              <li>Originální sklo s ovládáním</li>
-              <li>Vnější madlo a zámek</li>
-              <li>Vnitřní obložení dveří</li>
-              <li>Kabelový svazek</li>
-            </ul>
-            <h4 className="text-base font-bold text-gray-900 mt-6">
-              Rozměry a hmotnost:
-            </h4>
-            <p className="text-gray-600 mt-2">
-              Hmotnost cca 22 kg. Doporučujeme přepravu na paletě nebo osobní
-              odběr. Při přepravě kurýrní službou je díl pojištěn proti
-              poškození.
-            </p>
+            <h3 className="text-lg font-bold text-gray-900">Popis dílu</h3>
+            {description ? (
+              <p className="text-gray-600 leading-relaxed mt-3">
+                {description}
+              </p>
+            ) : (
+              <p className="text-gray-400 mt-3">
+                Popis není k dispozici.
+              </p>
+            )}
+            {(weight || dimensions) && (
+              <>
+                <h4 className="text-base font-bold text-gray-900 mt-6">
+                  Rozměry a hmotnost:
+                </h4>
+                <p className="text-gray-600 mt-2">
+                  {weight ? `Hmotnost: ${weight} kg` : ""}
+                  {weight && dimensions ? " | " : ""}
+                  {dimensions ? `Rozměry: ${dimensions}` : ""}
+                </p>
+              </>
+            )}
           </div>
         )}
 
@@ -94,36 +100,35 @@ export function ProductDetailTabs() {
               Ověřte, zda díl pasuje do vašeho vozu. V případě pochybností nás
               kontaktujte s VIN kódem.
             </p>
-            <div className="space-y-3">
-              {compatibleVehicles.map((v) => (
-                <div
-                  key={v.name}
-                  className={cn(
-                    "flex items-center gap-3 p-4 rounded-xl",
-                    v.status === "ok"
-                      ? "bg-green-50 border border-green-200"
-                      : "bg-red-50 border border-red-200",
-                  )}
-                >
-                  <span className="text-lg">
-                    {v.status === "ok" ? "✅" : "⚠️"}
-                  </span>
-                  <span
-                    className={cn(
-                      "font-medium",
-                      v.status === "ok" ? "text-green-700" : "text-red-700",
-                    )}
+
+            {universalFit ? (
+              <div className="flex items-center gap-3 p-4 rounded-xl bg-green-50 border border-green-200">
+                <span className="text-lg">✅</span>
+                <span className="font-medium text-green-700">
+                  Univerzální díl — pasuje na většinu vozů
+                </span>
+              </div>
+            ) : compatibleBrands.length > 0 ? (
+              <div className="space-y-3">
+                {compatibleBrands.map((brand, idx) => (
+                  <div
+                    key={brand}
+                    className="flex items-center gap-3 p-4 rounded-xl bg-green-50 border border-green-200"
                   >
-                    {v.name}
-                  </span>
-                  {v.status === "no" && (
-                    <span className="ml-auto text-xs font-bold text-red-500 uppercase">
-                      Nehodí se
+                    <span className="text-lg">✅</span>
+                    <span className="font-medium text-green-700">
+                      {brand}
+                      {compatibleModels[idx] ? ` ${compatibleModels[idx]}` : ""}
+                      {yearFrom && yearTo ? ` ${yearFrom}-${yearTo}` : ""}
                     </span>
-                  )}
-                </div>
-              ))}
-            </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-400">
+                Informace o kompatibilitě nejsou k dispozici.
+              </p>
+            )}
           </div>
         )}
 

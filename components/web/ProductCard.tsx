@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { addToCart } from "@/lib/cart";
 import Link from "next/link";
 
 export interface ProductCardProps {
+  partId?: string;
   name: string;
   compatibility: string;
   condition?: number;
@@ -14,6 +16,7 @@ export interface ProductCardProps {
   badge: "used" | "new" | "sale";
   image?: string;
   slug?: string;
+  stock?: number;
 }
 
 const badgeConfig = {
@@ -43,6 +46,7 @@ function formatCzk(price: number): string {
 }
 
 export function ProductCard({
+  partId,
   name,
   compatibility,
   condition,
@@ -51,6 +55,7 @@ export function ProductCard({
   badge,
   image,
   slug,
+  stock,
 }: ProductCardProps) {
   const [added, setAdded] = useState(false);
   const cfg = badgeConfig[badge];
@@ -117,6 +122,16 @@ export function ProductCard({
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
+            if (partId) {
+              addToCart({
+                id: partId,
+                name,
+                price,
+                slug: slug ?? "",
+                image: image ?? undefined,
+                stock: stock ?? 1,
+              });
+            }
             setAdded(true);
             setTimeout(() => setAdded(false), 2000);
           }}

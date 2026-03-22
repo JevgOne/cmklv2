@@ -9,6 +9,10 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log("Clearing existing data...");
+  await prisma.orderItem.deleteMany();
+  await prisma.order.deleteMany();
+  await prisma.partImage.deleteMany();
+  await prisma.part.deleteMany();
   await prisma.favorite.deleteMany();
   await prisma.inquiry.deleteMany();
   await prisma.watchdog.deleteMany();
@@ -1436,6 +1440,308 @@ async function main() {
   // SUMMARY
   // ============================================
 
+  // ============================================
+  // ESHOP AUTODÍLY — Dodavatel + díly + objednávky
+  // ============================================
+
+  console.log("Seeding parts supplier...");
+
+  const supplier1 = await prisma.user.create({
+    data: {
+      email: "dodavatel@vrakoviste.cz",
+      passwordHash,
+      firstName: "Karel",
+      lastName: "Vrátný",
+      phone: "+420777888999",
+      role: "PARTS_SUPPLIER",
+      status: "ACTIVE",
+      companyName: "Vrakoviště Praha s.r.o.",
+      ico: "12345678",
+      icoVerified: true,
+      cities: JSON.stringify(["Praha 9"]),
+      bio: "Vrakoviště s 15letou tradicí. Specializujeme se na díly z vozů Škoda, VW a BMW.",
+    },
+  });
+
+  const supplier2 = await prisma.user.create({
+    data: {
+      email: "dodavatel2@autodily.cz",
+      passwordHash,
+      firstName: "Martin",
+      lastName: "Šroubek",
+      phone: "+420666777888",
+      role: "PARTS_SUPPLIER",
+      status: "ACTIVE",
+      companyName: "AutoDíly Brno",
+      ico: "87654321",
+      icoVerified: true,
+      cities: JSON.stringify(["Brno"]),
+    },
+  });
+
+  console.log("Seeding parts...");
+
+  const part1 = await prisma.part.create({
+    data: {
+      slug: "dvere-predni-leve-octavia-iii",
+      supplierId: supplier1.id,
+      name: "Dveře přední levé",
+      category: "BODY",
+      description: "Originální přední levé dveře ze Škody Octavia III (5E), rok 2019. Díl z vozu s 85 000 km, bez koroze, plně funkční mechanismus.",
+      oemNumber: "5E4 831 051",
+      condition: "USED_GOOD",
+      price: 4500,
+      stock: 1,
+      weight: 22,
+      compatibleBrands: JSON.stringify(["Škoda"]),
+      compatibleModels: JSON.stringify(["Octavia"]),
+      compatibleYearFrom: 2013,
+      compatibleYearTo: 2020,
+      status: "ACTIVE",
+      viewCount: 127,
+    },
+  });
+
+  const part2 = await prisma.part.create({
+    data: {
+      slug: "turbodmychadlo-2-0-tdi",
+      supplierId: supplier1.id,
+      name: "Turbodmychadlo",
+      category: "ENGINE",
+      description: "Turbodmychadlo pro motory 2.0 TDI (DFGA/DTTA). Demontováno z vozu s 62 000 km. Plně funkční, bez axiální vůle.",
+      oemNumber: "04L 253 010 T",
+      condition: "USED_GOOD",
+      price: 12000,
+      stock: 2,
+      weight: 8.5,
+      compatibleBrands: JSON.stringify(["Škoda", "Volkswagen", "Audi"]),
+      compatibleModels: JSON.stringify(["Octavia", "Passat", "A4"]),
+      compatibleYearFrom: 2015,
+      compatibleYearTo: 2022,
+      status: "ACTIVE",
+      viewCount: 89,
+    },
+  });
+
+  const part3 = await prisma.part.create({
+    data: {
+      slug: "brzdove-desticky-predni-vw-group",
+      supplierId: supplier2.id,
+      name: "Brzdové destičky přední",
+      category: "BRAKES",
+      description: "Nové aftermarket brzdové destičky pro vozy VW Group. Odpovídají OE kvalitě.",
+      partNumber: "BD-VW-001",
+      condition: "NEW",
+      price: 890,
+      stock: 15,
+      compatibleBrands: JSON.stringify(["Škoda", "Volkswagen", "Audi"]),
+      compatibleModels: JSON.stringify(["Octavia", "Golf", "A3"]),
+      compatibleYearFrom: 2012,
+      compatibleYearTo: 2024,
+      status: "ACTIVE",
+      viewCount: 234,
+    },
+  });
+
+  const part4 = await prisma.part.create({
+    data: {
+      slug: "led-svetlomet-bmw-f30",
+      supplierId: supplier1.id,
+      name: "LED světlomet přední pravý",
+      category: "ELECTRICAL",
+      description: "Originální LED světlomet z BMW řady 3 (F30). Kompletní s řídící jednotkou.",
+      oemNumber: "63 11 7 419 630",
+      condition: "USED_GOOD",
+      price: 8500,
+      stock: 1,
+      weight: 4.2,
+      compatibleBrands: JSON.stringify(["BMW"]),
+      compatibleModels: JSON.stringify(["Řada 3"]),
+      compatibleYearFrom: 2012,
+      compatibleYearTo: 2018,
+      status: "ACTIVE",
+      viewCount: 56,
+    },
+  });
+
+  const part5 = await prisma.part.create({
+    data: {
+      slug: "sedacka-ridice-octavia-rs",
+      supplierId: supplier1.id,
+      name: "Sedačka řidiče komplet",
+      category: "INTERIOR",
+      description: "Sportovní sedačka řidiče ze Škody Octavia RS. Alcantara/látka, elektrické ovládání, vyhřívání.",
+      condition: "USED_FAIR",
+      price: 6200,
+      stock: 1,
+      weight: 18,
+      compatibleBrands: JSON.stringify(["Škoda"]),
+      compatibleModels: JSON.stringify(["Octavia"]),
+      compatibleYearFrom: 2017,
+      compatibleYearTo: 2020,
+      status: "ACTIVE",
+      viewCount: 42,
+    },
+  });
+
+  const part6 = await prisma.part.create({
+    data: {
+      slug: "olejovy-filtr-mann-2-0-tdi",
+      supplierId: supplier2.id,
+      name: "Olejový filtr Mann",
+      category: "ENGINE",
+      description: "Nový olejový filtr Mann-Filter pro motory 2.0 TDI.",
+      partNumber: "HU 7020 z",
+      condition: "NEW",
+      price: 189,
+      stock: 30,
+      compatibleBrands: JSON.stringify(["Škoda", "Volkswagen", "Audi"]),
+      compatibleModels: JSON.stringify(["Octavia", "Passat", "Golf", "A4"]),
+      compatibleYearFrom: 2012,
+      compatibleYearTo: 2024,
+      universalFit: false,
+      status: "ACTIVE",
+      viewCount: 312,
+    },
+  });
+
+  const part7 = await prisma.part.create({
+    data: {
+      slug: "tlumic-predni-levy-octavia",
+      supplierId: supplier2.id,
+      name: "Tlumič přední levý",
+      category: "SUSPENSION",
+      description: "Nový aftermarket přední tlumič pro Škoda Octavia III. Odpovídá OE specifikaci.",
+      partNumber: "TL-OCT-FL",
+      condition: "NEW",
+      price: 1890,
+      stock: 8,
+      compatibleBrands: JSON.stringify(["Škoda"]),
+      compatibleModels: JSON.stringify(["Octavia"]),
+      compatibleYearFrom: 2013,
+      compatibleYearTo: 2020,
+      status: "ACTIVE",
+      viewCount: 67,
+    },
+  });
+
+  const part8 = await prisma.part.create({
+    data: {
+      slug: "motor-2-0-tdi-dfga-komplet",
+      supplierId: supplier1.id,
+      name: "Motor 2.0 TDI DFGA komplet",
+      category: "ENGINE",
+      description: "Kompletní motor 2.0 TDI 110 kW z vozu s nájezdem 94 000 km. Plně funkční, bez závad.",
+      oemNumber: "04L 100 033 T",
+      condition: "USED_GOOD",
+      price: 45000,
+      stock: 1,
+      weight: 145,
+      compatibleBrands: JSON.stringify(["Škoda", "Volkswagen"]),
+      compatibleModels: JSON.stringify(["Octavia", "Superb", "Passat"]),
+      compatibleYearFrom: 2015,
+      compatibleYearTo: 2020,
+      status: "ACTIVE",
+      viewCount: 178,
+    },
+  });
+
+  console.log("Seeding orders...");
+
+  const order1 = await prisma.order.create({
+    data: {
+      orderNumber: "OBJ-260315-A1B2C",
+      buyerId: buyer1.id,
+      status: "DELIVERED",
+      deliveryName: "Jan Kupující",
+      deliveryPhone: "+420111222333",
+      deliveryEmail: "kupujici@email.cz",
+      deliveryAddress: "Vinohradská 42",
+      deliveryCity: "Praha 2",
+      deliveryZip: "12000",
+      paymentMethod: "BANK_TRANSFER",
+      paymentStatus: "PAID",
+      totalPrice: 890,
+      shippingPrice: 0,
+      deliveredAt: new Date("2026-03-18"),
+      items: {
+        create: {
+          partId: part3.id,
+          supplierId: supplier2.id,
+          quantity: 1,
+          unitPrice: 890,
+          totalPrice: 890,
+          status: "SHIPPED",
+        },
+      },
+    },
+  });
+
+  const order2 = await prisma.order.create({
+    data: {
+      orderNumber: "OBJ-260320-X9Y8Z",
+      buyerId: buyer1.id,
+      status: "CONFIRMED",
+      deliveryName: "Jan Kupující",
+      deliveryPhone: "+420111222333",
+      deliveryEmail: "kupujici@email.cz",
+      deliveryAddress: "Vinohradská 42",
+      deliveryCity: "Praha 2",
+      deliveryZip: "12000",
+      paymentMethod: "COD",
+      paymentStatus: "PENDING",
+      totalPrice: 16549,
+      shippingPrice: 49,
+      items: {
+        create: [
+          {
+            partId: part2.id,
+            supplierId: supplier1.id,
+            quantity: 1,
+            unitPrice: 12000,
+            totalPrice: 12000,
+            status: "CONFIRMED",
+          },
+          {
+            partId: part1.id,
+            supplierId: supplier1.id,
+            quantity: 1,
+            unitPrice: 4500,
+            totalPrice: 4500,
+            status: "PENDING",
+          },
+        ],
+      },
+    },
+  });
+
+  const order3 = await prisma.order.create({
+    data: {
+      orderNumber: "OBJ-260321-P5Q6R",
+      status: "PENDING",
+      deliveryName: "Petr Host",
+      deliveryPhone: "+420999888777",
+      deliveryEmail: "host@email.cz",
+      deliveryAddress: "Náměstí Svobody 12",
+      deliveryCity: "Brno",
+      deliveryZip: "60200",
+      paymentMethod: "BANK_TRANSFER",
+      paymentStatus: "PENDING",
+      totalPrice: 2079,
+      shippingPrice: 0,
+      items: {
+        create: {
+          partId: part6.id,
+          supplierId: supplier2.id,
+          quantity: 2,
+          unitPrice: 189,
+          totalPrice: 378,
+          status: "PENDING",
+        },
+      },
+    },
+  });
+
   const regionCount = await prisma.region.count();
   const userCount = await prisma.user.count();
   const vehicleCount = await prisma.vehicle.count();
@@ -1447,6 +1753,10 @@ async function main() {
   const listingImageCount = await prisma.listingImage.count();
   const inquiryCount = await prisma.inquiry.count();
   const watchdogCount = await prisma.watchdog.count();
+
+  const partCount = await prisma.part.count();
+  const orderCount = await prisma.order.count();
+  const orderItemCount = await prisma.orderItem.count();
 
   console.log("\n--- Seed complete ---");
   console.log(`Regions:        ${regionCount}`);
@@ -1460,9 +1770,13 @@ async function main() {
   console.log(`Listing Images: ${listingImageCount}`);
   console.log(`Inquiries:      ${inquiryCount}`);
   console.log(`Watchdogs:      ${watchdogCount}`);
+  console.log(`Parts:          ${partCount}`);
+  console.log(`Orders:         ${orderCount}`);
+  console.log(`Order Items:    ${orderItemCount}`);
   console.log("\nDemo login: admin@carmakler.cz / heslo123");
   console.log("Advertiser login: prodejce@email.cz / heslo123");
   console.log("Buyer login: kupujici@email.cz / heslo123");
+  console.log("Supplier login: dodavatel@vrakoviste.cz / heslo123");
 }
 
 main()

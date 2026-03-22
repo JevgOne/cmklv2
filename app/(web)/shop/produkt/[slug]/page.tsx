@@ -1,80 +1,16 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { ProductCard } from "@/components/web/ProductCard";
-import type { ProductCardProps } from "@/components/web/ProductCard";
 import { ProductDetailTabs } from "./ProductDetailTabs";
 import { AddToCartButton } from "./AddToCartButton";
+import { prisma } from "@/lib/prisma";
+import { getCategoryLabel, getConditionLabel } from "@/lib/parts-categories";
+import type { PartCategory, PartCondition } from "@/types/parts";
 
 /* ------------------------------------------------------------------ */
-/*  Static params                                                      */
-/* ------------------------------------------------------------------ */
-
-export function generateStaticParams() {
-  return [{ slug: "dvere-predni-leve-octavia-iii" }];
-}
-
-/* ------------------------------------------------------------------ */
-/*  Data                                                               */
-/* ------------------------------------------------------------------ */
-
-const product = {
-  name: "Dveře přední levé",
-  compatibility: "Škoda Octavia III (5E) 2013-2020",
-  partNumber: "OE: 5E4 831 051",
-  condition: 4,
-  conditionLabel: "Velmi dobrý",
-  conditionNotes: [
-    "Bez koroze",
-    "Funkční mechanismus",
-    "Drobné oděrky na hraně",
-    "Originál sklo, lišty, madlo",
-  ],
-  color: "Bílá Candy (kód LS9R)",
-  origin: {
-    wreckedId: "V2847",
-    year: 2019,
-    mileage: "85 000 km",
-    damageReason: "Náraz zezadu (přední část OK)",
-  },
-  price: 4500,
-  inStock: true,
-  stockLocation: "Vrakoviště Praha",
-  shipping: [
-    { method: "Osobní odběr", price: "Zdarma" },
-    { method: "PPL", price: "299 Kč" },
-  ],
-};
-
-const similarProducts: ProductCardProps[] = [
-  {
-    name: "Dveře přední pravé",
-    compatibility: "Škoda Octavia III 2013-2020",
-    condition: 3,
-    price: 3800,
-    badge: "used",
-    slug: "dvere-predni-leve-octavia-iii",
-  },
-  {
-    name: "Dveře zadní levé",
-    compatibility: "Škoda Octavia III 2013-2020",
-    condition: 4,
-    price: 3500,
-    badge: "used",
-    slug: "dvere-predni-leve-octavia-iii",
-  },
-  {
-    name: "Blatník přední levý",
-    compatibility: "Škoda Octavia III 2013-2020",
-    condition: 5,
-    price: 2800,
-    badge: "used",
-    slug: "dvere-predni-leve-octavia-iii",
-  },
-];
-
-/* ------------------------------------------------------------------ */
-/*  Stars helper                                                       */
+/*  Helpers                                                             */
 /* ------------------------------------------------------------------ */
 
 function Stars({ count }: { count: number }) {
@@ -96,11 +32,86 @@ function formatCzk(price: number): string {
   return new Intl.NumberFormat("cs-CZ").format(price);
 }
 
+function conditionToStars(condition: string): number {
+  switch (condition) {
+    case "USED_GOOD":
+      return 4;
+    case "USED_FAIR":
+      return 3;
+    case "USED_POOR":
+      return 2;
+    case "REFURBISHED":
+      return 5;
+    case "NEW":
+    default:
+      return 5;
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /*  Page                                                               */
 /* ------------------------------------------------------------------ */
 
-export default function ProductDetailPage() {
+export default async function ProductDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+
+  const part = await prisma.part.findFirst({
+    where: { OR: [{ slug }, { id: slug }] },
+    include: {
+      images: { orderBy: { order: "asc" } },
+      supplier: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          companyName: true,
+          avatar: true,
+          cities: true,
+        },
+      },
+    },
+  });
+
+  if (!part) {
+    notFound();
+  }
+
+  // Inkrementovat view count
+  await prisma.part.update({
+    where: { id: part.id },
+    data: { viewCount: { increment: 1 } },
+  });
+
+  // Načíst podobné díly (stejná kategorie)
+  const similarParts = await prisma.part.findMany({
+    where: {
+      status: "ACTIVE",
+      category: part.category,
+      id: { not: part.id },
+    },
+    include: {
+      images: { where: { isPrimary: true }, take: 1 },
+    },
+    take: 3,
+  });
+
+  const compatibleBrands: string[] = part.compatibleBrands
+    ? JSON.parse(part.compatibleBrands)
+    : [];
+  const compatibleModels: string[] = part.compatibleModels
+    ? JSON.parse(part.compatibleModels)
+    : [];
+
+  const supplierName = part.supplier.companyName
+    ?? `${part.supplier.firstName} ${part.supplier.lastName}`;
+  const supplierCity = part.supplier.cities
+    ? JSON.parse(part.supplier.cities)[0] ?? ""
+    : "";
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Breadcrumbs */}
@@ -121,9 +132,7 @@ export default function ProductDetailPage() {
               Katalog
             </Link>
             <span>/</span>
-            <span className="text-gray-900 font-medium">
-              Dveře přední levé
-            </span>
+            <span className="text-gray-900 font-medium">{part.name}</span>
           </nav>
         </div>
       </div>
@@ -137,49 +146,76 @@ export default function ProductDetailPage() {
           <div>
             {/* Main image */}
             <div className="aspect-square bg-gray-100 rounded-2xl flex items-center justify-center mb-4 overflow-hidden">
-              <div className="text-center">
-                <span className="text-7xl block mb-3">🚗</span>
-                <span className="text-sm text-gray-400">Foto 1/4</span>
-              </div>
+              {part.images[0] ? (
+                <img
+                  src={part.images[0].url}
+                  alt={part.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="text-center">
+                  <span className="text-7xl block mb-3">🔧</span>
+                  <span className="text-sm text-gray-400">Bez fotky</span>
+                </div>
+              )}
             </div>
             {/* Thumbnails */}
-            <div className="grid grid-cols-4 gap-3">
-              {[1, 2, 3, 4].map((i) => (
-                <div
-                  key={i}
-                  className={`aspect-square bg-gray-100 rounded-xl flex items-center justify-center cursor-pointer transition-all ${
-                    i === 1
-                      ? "ring-2 ring-orange-500"
-                      : "hover:ring-2 hover:ring-gray-300"
-                  }`}
-                >
-                  <span className="text-2xl text-gray-300">📷</span>
-                </div>
-              ))}
-            </div>
+            {part.images.length > 1 && (
+              <div className="grid grid-cols-4 gap-3">
+                {part.images.slice(0, 4).map((img, i) => (
+                  <div
+                    key={img.id}
+                    className={`aspect-square bg-gray-100 rounded-xl overflow-hidden cursor-pointer transition-all ${
+                      i === 0
+                        ? "ring-2 ring-orange-500"
+                        : "hover:ring-2 hover:ring-gray-300"
+                    }`}
+                  >
+                    <img
+                      src={img.url}
+                      alt={`${part.name} - foto ${i + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Right — Product info */}
           <div>
             {/* Badge */}
             <div className="mb-3">
-              <Badge variant="default">Z vraku</Badge>
+              <Badge variant="default">
+                {part.condition === "NEW" ? "Nový" : "Z vraku"}
+              </Badge>
             </div>
 
             {/* Title */}
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900">
-              {product.name}
+              {part.name}
             </h1>
 
             {/* Compatibility */}
             <p className="text-gray-500 mt-2 text-lg">
-              {product.compatibility}
+              {compatibleBrands.length > 0
+                ? `${compatibleBrands.join(", ")} ${compatibleModels.join(", ")}`
+                : part.universalFit
+                  ? "Univerzální"
+                  : getCategoryLabel(part.category as PartCategory)}
+              {part.compatibleYearFrom && part.compatibleYearTo
+                ? ` ${part.compatibleYearFrom}-${part.compatibleYearTo}`
+                : ""}
             </p>
 
-            {/* Part number */}
-            <p className="text-sm text-gray-400 mt-1 font-mono">
-              {product.partNumber}
-            </p>
+            {/* OEM / Part number */}
+            {(part.oemNumber || part.partNumber) && (
+              <p className="text-sm text-gray-400 mt-1 font-mono">
+                {part.oemNumber ? `OE: ${part.oemNumber}` : ""}
+                {part.oemNumber && part.partNumber ? " | " : ""}
+                {part.partNumber ? `PN: ${part.partNumber}` : ""}
+              </p>
+            )}
 
             {/* Divider */}
             <hr className="my-6 border-gray-200" />
@@ -190,62 +226,44 @@ export default function ProductDetailPage() {
                 Stav dílu
               </h3>
               <div className="flex items-center gap-3 mb-3">
-                <Stars count={product.condition} />
+                <Stars count={conditionToStars(part.condition)} />
                 <span className="font-semibold text-gray-900">
-                  {product.conditionLabel}
+                  {getConditionLabel(part.condition as PartCondition)}
                 </span>
               </div>
-              <ul className="space-y-1.5">
-                {product.conditionNotes.map((note) => (
-                  <li
-                    key={note}
-                    className="flex items-center gap-2 text-sm text-gray-600"
-                  >
-                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full shrink-0" />
-                    {note}
-                  </li>
-                ))}
-              </ul>
             </div>
 
-            {/* Color */}
+            {/* Category */}
             <div className="mb-4">
               <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-1">
-                Barva
+                Kategorie
               </h3>
-              <p className="text-gray-600">{product.color}</p>
+              <p className="text-gray-600">
+                {getCategoryLabel(part.category as PartCategory)}
+              </p>
             </div>
 
-            {/* Origin */}
+            {/* Description */}
+            {part.description && (
+              <div className="mb-6 p-4 bg-gray-100 rounded-xl">
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  {part.description}
+                </p>
+              </div>
+            )}
+
+            {/* Supplier */}
             <div className="mb-6 p-4 bg-gray-100 rounded-xl">
               <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">
-                Původ
+                Dodavatel
               </h3>
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                <div>
-                  <span className="text-gray-500">Vrak:</span>{" "}
-                  <span className="font-medium text-gray-900">
-                    #{product.origin.wreckedId}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-gray-500">Rok:</span>{" "}
-                  <span className="font-medium text-gray-900">
-                    {product.origin.year}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-gray-500">Najeto:</span>{" "}
-                  <span className="font-medium text-gray-900">
-                    {product.origin.mileage}
-                  </span>
-                </div>
-                <div className="col-span-2">
-                  <span className="text-gray-500">Poškození:</span>{" "}
-                  <span className="font-medium text-gray-900">
-                    {product.origin.damageReason}
-                  </span>
-                </div>
+              <div className="text-sm">
+                <span className="font-medium text-gray-900">
+                  {supplierName}
+                </span>
+                {supplierCity && (
+                  <span className="text-gray-500 ml-2">{supplierCity}</span>
+                )}
               </div>
             </div>
 
@@ -255,33 +273,41 @@ export default function ProductDetailPage() {
             {/* Price */}
             <div className="mb-4">
               <div className="text-3xl sm:text-4xl font-extrabold text-gray-900">
-                {formatCzk(product.price)} Kč
+                {formatCzk(part.price)} Kč
               </div>
-              <p className="text-sm text-gray-400 mt-1">Cena včetně DPH</p>
+              <p className="text-sm text-gray-400 mt-1">
+                {part.vatIncluded ? "Cena včetně DPH" : "Cena bez DPH"}
+              </p>
             </div>
 
             {/* Stock */}
-            <div className="flex items-center gap-2 mb-2">
-              <span className="w-2.5 h-2.5 bg-green-500 rounded-full" />
-              <span className="text-green-600 font-semibold text-sm">
-                Skladem ({product.stockLocation})
-              </span>
-            </div>
-
-            {/* Shipping */}
-            <div className="mb-6">
-              <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                {product.shipping.map((s) => (
-                  <span key={s.method}>
-                    {s.method}:{" "}
-                    <span className="font-semibold">{s.price}</span>
+            <div className="flex items-center gap-2 mb-6">
+              {part.stock > 0 ? (
+                <>
+                  <span className="w-2.5 h-2.5 bg-green-500 rounded-full" />
+                  <span className="text-green-600 font-semibold text-sm">
+                    Skladem ({part.stock} ks)
                   </span>
-                ))}
-              </div>
+                </>
+              ) : (
+                <>
+                  <span className="w-2.5 h-2.5 bg-red-500 rounded-full" />
+                  <span className="text-red-600 font-semibold text-sm">
+                    Vyprodáno
+                  </span>
+                </>
+              )}
             </div>
 
             {/* CTA */}
-            <AddToCartButton />
+            <AddToCartButton
+              partId={part.id}
+              name={part.name}
+              price={part.price}
+              slug={part.slug}
+              image={part.images[0]?.url ?? null}
+              stock={part.stock}
+            />
 
             {/* Contact */}
             <div className="mt-4 text-center">
@@ -299,22 +325,58 @@ export default function ProductDetailPage() {
         {/* Tabs: Popis / Kompatibilita / Záruka                        */}
         {/* ============================================================ */}
         <div className="mt-12">
-          <ProductDetailTabs />
+          <ProductDetailTabs
+            description={part.description}
+            compatibleBrands={compatibleBrands}
+            compatibleModels={compatibleModels}
+            yearFrom={part.compatibleYearFrom}
+            yearTo={part.compatibleYearTo}
+            universalFit={part.universalFit}
+            weight={part.weight}
+            dimensions={part.dimensions}
+          />
         </div>
 
         {/* ============================================================ */}
         {/* Similar parts                                                */}
         {/* ============================================================ */}
-        <section className="mt-16">
-          <h2 className="text-2xl font-extrabold text-gray-900 mb-8">
-            Podobné díly
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {similarProducts.map((p) => (
-              <ProductCard key={p.name} {...p} />
-            ))}
-          </div>
-        </section>
+        {similarParts.length > 0 && (
+          <section className="mt-16">
+            <h2 className="text-2xl font-extrabold text-gray-900 mb-8">
+              Podobné díly
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {similarParts.map((p) => (
+                <ProductCard
+                  key={p.id}
+                  partId={p.id}
+                  name={p.name}
+                  compatibility={
+                    p.compatibleBrands
+                      ? JSON.parse(p.compatibleBrands).join(", ")
+                      : "Univerzální"
+                  }
+                  condition={
+                    p.condition === "NEW"
+                      ? undefined
+                      : p.condition === "USED_GOOD"
+                        ? 4
+                        : p.condition === "USED_FAIR"
+                          ? 3
+                          : p.condition === "USED_POOR"
+                            ? 2
+                            : 5
+                  }
+                  price={p.price}
+                  badge={p.condition === "NEW" ? "new" : "used"}
+                  slug={p.slug}
+                  image={p.images[0]?.url}
+                  stock={p.stock}
+                />
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );

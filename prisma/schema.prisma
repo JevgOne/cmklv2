@@ -57,6 +57,11 @@ model User {
   watchdogs Watchdog[]
   favorites Favorite[]
 
+  // Eshop autodíly relace
+  suppliedParts         Part[]
+  ordersAsBuyer         Order[]
+  orderItemsAsSupplier  OrderItem[]  @relation("SupplierOrderItems")
+
   // Auth
   emailVerified DateTime?
 
@@ -483,4 +488,138 @@ model Favorite {
 
   @@unique([userId, listingId])
   @@index([userId])
+}
+
+// ============================================
+// ESHOP AUTODÍLY
+// ============================================
+
+model Part {
+  id         String @id @default(cuid())
+  slug       String @unique
+  supplierId String
+  supplier   User   @relation(fields: [supplierId], references: [id])
+
+  // Základní info
+  category    String // ENGINE, TRANSMISSION, BRAKES, SUSPENSION, BODY, ELECTRICAL, INTERIOR, WHEELS, EXHAUST, COOLING, FUEL, OTHER
+  name        String
+  description String?
+  partNumber  String?
+  oemNumber   String?
+
+  // Stav
+  condition String // NEW, USED_GOOD, USED_FAIR, USED_POOR, REFURBISHED
+
+  // Cena
+  price       Int
+  currency    String  @default("CZK")
+  vatIncluded Boolean @default(true)
+
+  // Sklad
+  stock      Int     @default(1)
+  weight     Float?
+  dimensions String?
+
+  // Kompatibilita
+  compatibleBrands   String?  // JSON array: ["Škoda", "VW"]
+  compatibleModels   String?  // JSON array: ["Octavia", "Golf"]
+  compatibleYearFrom Int?
+  compatibleYearTo   Int?
+  universalFit       Boolean @default(false)
+
+  // Status
+  status    String @default("DRAFT") // DRAFT, ACTIVE, SOLD, INACTIVE
+  viewCount Int    @default(0)
+
+  // Relace
+  images     PartImage[]
+  orderItems OrderItem[]
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([supplierId])
+  @@index([category])
+  @@index([status])
+  @@index([price])
+}
+
+model PartImage {
+  id        String  @id @default(cuid())
+  partId    String
+  part      Part    @relation(fields: [partId], references: [id], onDelete: Cascade)
+  url       String
+  order     Int     @default(0)
+  isPrimary Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@index([partId])
+}
+
+model Order {
+  id          String  @id @default(cuid())
+  orderNumber String  @unique
+  buyerId     String?
+  buyer       User?   @relation(fields: [buyerId], references: [id])
+
+  // Status
+  status String @default("PENDING") // PENDING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED
+
+  // Doručení
+  deliveryName    String
+  deliveryPhone   String
+  deliveryEmail   String
+  deliveryAddress String
+  deliveryCity    String
+  deliveryZip     String
+
+  // Platba
+  paymentMethod String @default("BANK_TRANSFER") // BANK_TRANSFER, COD
+  paymentStatus String @default("PENDING")        // PENDING, PAID
+
+  // Ceny
+  totalPrice    Int
+  shippingPrice Int @default(0)
+
+  // Poznámka
+  note String?
+
+  // Tracking
+  trackingNumber String?
+  shippedAt      DateTime?
+  deliveredAt    DateTime?
+
+  // Relace
+  items OrderItem[]
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([buyerId])
+  @@index([status])
+}
+
+model OrderItem {
+  id         String @id @default(cuid())
+  orderId    String
+  order      Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  partId     String
+  part       Part   @relation(fields: [partId], references: [id])
+  supplierId String
+  supplier   User   @relation("SupplierOrderItems", fields: [supplierId], references: [id])
+
+  quantity   Int
+  unitPrice  Int
+  totalPrice Int
+
+  status String @default("PENDING") // PENDING, CONFIRMED, SHIPPED
+
+  createdAt DateTime @default(now())
+
+  @@index([orderId])
+  @@index([partId])
+  @@index([supplierId])
 }

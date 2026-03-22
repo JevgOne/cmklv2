@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { MobileMenu } from "./MobileMenu";
+import { CartIcon } from "./CartIcon";
 
 const dropdownItems = {
   sluzby: [
@@ -210,6 +211,7 @@ export function Navbar() {
 
         {/* CTA Buttons - desktop */}
         <div className="hidden lg:flex items-center gap-3 shrink-0">
+          <CartIcon />
           <Link
             href="/chci-prodat"
             className="inline-flex items-center justify-center gap-2 font-semibold rounded-full border-none cursor-pointer transition-all duration-200 whitespace-nowrap py-2 px-4 text-[13px] bg-white text-gray-800 shadow-[inset_0_0_0_2px_var(--gray-200)] hover:bg-gray-50 hover:shadow-[inset_0_0_0_2px_var(--gray-300)] no-underline"

@@ -11,6 +11,7 @@ const MAKLER_ROLES = [
 ];
 const INZERENT_ROLES = ["ADVERTISER", "ADMIN", "BACKOFFICE"];
 const BUYER_ROLES = ["BUYER", "ADVERTISER", "ADMIN", "BACKOFFICE"];
+const PARTS_SUPPLIER_ROLES = ["PARTS_SUPPLIER", "ADMIN", "BACKOFFICE"];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -59,6 +60,27 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Chráněné routy dodavatelů dílů
+  const protectedPartsPaths = [
+    "/parts",
+  ];
+  if (protectedPartsPaths.some((p) => pathname.startsWith(p))) {
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+
+    if (!token) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    if (!PARTS_SUPPLIER_ROLES.includes(token.role as string)) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+  }
+
   // Chráněné routy inzertní platformy (moje-inzeraty, muj-ucet)
   // Přístup má každý přihlášený uživatel
   if (
@@ -99,5 +121,7 @@ export const config = {
     "/moje-inzeraty/:path*",
     "/muj-ucet",
     "/muj-ucet/:path*",
+    "/parts",
+    "/parts/:path*",
   ],
 };

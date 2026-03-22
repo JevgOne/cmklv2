@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { Select } from "@/components/ui/Select";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -11,91 +12,91 @@ import { Card } from "@/components/ui/Card";
 /* ------------------------------------------------------------------ */
 
 const brands = [
-  { value: "skoda", label: "Škoda" },
-  { value: "vw", label: "Volkswagen" },
-  { value: "bmw", label: "BMW" },
-  { value: "audi", label: "Audi" },
-  { value: "mercedes", label: "Mercedes-Benz" },
-  { value: "hyundai", label: "Hyundai" },
-  { value: "toyota", label: "Toyota" },
-  { value: "ford", label: "Ford" },
-  { value: "kia", label: "Kia" },
-  { value: "peugeot", label: "Peugeot" },
-  { value: "renault", label: "Renault" },
-  { value: "opel", label: "Opel" },
+  { value: "Škoda", label: "Škoda" },
+  { value: "Volkswagen", label: "Volkswagen" },
+  { value: "BMW", label: "BMW" },
+  { value: "Audi", label: "Audi" },
+  { value: "Mercedes-Benz", label: "Mercedes-Benz" },
+  { value: "Hyundai", label: "Hyundai" },
+  { value: "Toyota", label: "Toyota" },
+  { value: "Ford", label: "Ford" },
+  { value: "Kia", label: "Kia" },
+  { value: "Peugeot", label: "Peugeot" },
+  { value: "Renault", label: "Renault" },
+  { value: "Opel", label: "Opel" },
 ];
 
 const modelsByBrand: Record<string, { value: string; label: string }[]> = {
-  skoda: [
-    { value: "octavia", label: "Octavia" },
-    { value: "superb", label: "Superb" },
-    { value: "fabia", label: "Fabia" },
-    { value: "kodiaq", label: "Kodiaq" },
-    { value: "karoq", label: "Karoq" },
-    { value: "scala", label: "Scala" },
+  "Škoda": [
+    { value: "Octavia", label: "Octavia" },
+    { value: "Superb", label: "Superb" },
+    { value: "Fabia", label: "Fabia" },
+    { value: "Kodiaq", label: "Kodiaq" },
+    { value: "Karoq", label: "Karoq" },
+    { value: "Scala", label: "Scala" },
   ],
-  vw: [
-    { value: "golf", label: "Golf" },
-    { value: "passat", label: "Passat" },
-    { value: "tiguan", label: "Tiguan" },
-    { value: "touran", label: "Touran" },
-    { value: "polo", label: "Polo" },
-    { value: "t-roc", label: "T-Roc" },
+  "Volkswagen": [
+    { value: "Golf", label: "Golf" },
+    { value: "Passat", label: "Passat" },
+    { value: "Tiguan", label: "Tiguan" },
+    { value: "Touran", label: "Touran" },
+    { value: "Polo", label: "Polo" },
+    { value: "T-Roc", label: "T-Roc" },
   ],
-  bmw: [
-    { value: "3-series", label: "Řada 3" },
-    { value: "5-series", label: "Řada 5" },
-    { value: "x3", label: "X3" },
-    { value: "x5", label: "X5" },
-    { value: "1-series", label: "Řada 1" },
+  "BMW": [
+    { value: "Řada 3", label: "Řada 3" },
+    { value: "Řada 5", label: "Řada 5" },
+    { value: "X3", label: "X3" },
+    { value: "X5", label: "X5" },
+    { value: "Řada 1", label: "Řada 1" },
   ],
-  audi: [
-    { value: "a3", label: "A3" },
-    { value: "a4", label: "A4" },
-    { value: "a6", label: "A6" },
-    { value: "q5", label: "Q5" },
-    { value: "q7", label: "Q7" },
+  "Audi": [
+    { value: "A3", label: "A3" },
+    { value: "A4", label: "A4" },
+    { value: "A6", label: "A6" },
+    { value: "Q5", label: "Q5" },
+    { value: "Q7", label: "Q7" },
   ],
-  mercedes: [
-    { value: "c-class", label: "C-Třída" },
-    { value: "e-class", label: "E-Třída" },
-    { value: "glc", label: "GLC" },
-    { value: "a-class", label: "A-Třída" },
+  "Mercedes-Benz": [
+    { value: "C-Třída", label: "C-Třída" },
+    { value: "E-Třída", label: "E-Třída" },
+    { value: "GLC", label: "GLC" },
+    { value: "A-Třída", label: "A-Třída" },
   ],
-  hyundai: [
+  "Hyundai": [
     { value: "i30", label: "i30" },
-    { value: "tucson", label: "Tucson" },
-    { value: "kona", label: "Kona" },
+    { value: "Tucson", label: "Tucson" },
+    { value: "Kona", label: "Kona" },
   ],
-  toyota: [
-    { value: "corolla", label: "Corolla" },
-    { value: "rav4", label: "RAV4" },
-    { value: "yaris", label: "Yaris" },
+  "Toyota": [
+    { value: "Corolla", label: "Corolla" },
+    { value: "RAV4", label: "RAV4" },
+    { value: "Yaris", label: "Yaris" },
   ],
-  ford: [
-    { value: "focus", label: "Focus" },
-    { value: "mondeo", label: "Mondeo" },
-    { value: "kuga", label: "Kuga" },
+  "Ford": [
+    { value: "Focus", label: "Focus" },
+    { value: "Mondeo", label: "Mondeo" },
+    { value: "Kuga", label: "Kuga" },
   ],
-  kia: [
-    { value: "ceed", label: "Ceed" },
-    { value: "sportage", label: "Sportage" },
-    { value: "niro", label: "Niro" },
+  "Kia": [
+    { value: "Ceed", label: "Ceed" },
+    { value: "Sportage", label: "Sportage" },
+    { value: "Niro", label: "Niro" },
   ],
-  peugeot: [
+  "Peugeot": [
     { value: "308", label: "308" },
     { value: "3008", label: "3008" },
     { value: "208", label: "208" },
   ],
-  renault: [
-    { value: "megane", label: "Mégane" },
-    { value: "clio", label: "Clio" },
-    { value: "captur", label: "Captur" },
+  "Renault": [
+    { value: "Mégane", label: "Mégane" },
+    { value: "Clio", label: "Clio" },
+    { value: "Captur", label: "Captur" },
   ],
-  opel: [
-    { value: "astra", label: "Astra" },
-    { value: "corsa", label: "Corsa" },
-    { value: "mokka", label: "Mokka" },
+  "Opel": [
+    { value: "Astra", label: "Astra" },
+    { value: "Corsa", label: "Corsa" },
+    { value: "Mokka", label: "Mokka" },
   ],
 };
 
@@ -109,48 +110,70 @@ function generateYears() {
 
 const years = generateYears();
 
-const engines = [
-  { value: "1.0-tsi", label: "1.0 TSI" },
-  { value: "1.4-tsi", label: "1.4 TSI" },
-  { value: "1.5-tsi", label: "1.5 TSI" },
-  { value: "2.0-tsi", label: "2.0 TSI" },
-  { value: "1.6-tdi", label: "1.6 TDI" },
-  { value: "2.0-tdi", label: "2.0 TDI" },
-  { value: "2.0-tfsi", label: "2.0 TFSI" },
-  { value: "3.0-tdi", label: "3.0 TDI" },
-];
-
 /* ------------------------------------------------------------------ */
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
 
 export function PartsSearch() {
+  const router = useRouter();
   const [brand, setBrand] = useState("");
   const [model, setModel] = useState("");
   const [year, setYear] = useState("");
-  const [engine, setEngine] = useState("");
   const [vin, setVin] = useState("");
-  const [searched, setSearched] = useState(false);
   const [mode, setMode] = useState<"selects" | "vin">("selects");
+  const [loading, setLoading] = useState(false);
+  const [resultCount, setResultCount] = useState<number | null>(null);
 
   const models = brand ? modelsByBrand[brand] ?? [] : [];
-
-  const brandLabel = brands.find((b) => b.value === brand)?.label ?? "";
-  const modelLabel = models.find((m) => m.value === model)?.label ?? "";
 
   const handleBrandChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       setBrand(e.target.value);
       setModel("");
-      setEngine("");
-      setSearched(false);
+      setResultCount(null);
     },
     [],
   );
 
-  const handleSearch = useCallback(() => {
-    setSearched(true);
-  }, []);
+  const handleSearch = useCallback(async () => {
+    setLoading(true);
+    setResultCount(null);
+
+    const params = new URLSearchParams();
+    if (mode === "vin") {
+      params.set("vin", vin);
+    } else {
+      if (brand) params.set("brand", brand);
+      if (model) params.set("model", model);
+      if (year) params.set("year", year);
+    }
+
+    try {
+      const endpoint = mode === "vin"
+        ? `/api/parts/compatible?${params.toString()}`
+        : `/api/parts/compatible?${params.toString()}`;
+
+      const res = await fetch(endpoint);
+      const data = await res.json();
+      setResultCount(data.total ?? 0);
+
+      // Po krátkém zpoždění přesměrovat na katalog s filtry
+      setTimeout(() => {
+        if (mode === "vin") {
+          router.push(`/shop/katalog`);
+        } else {
+          const katalogParams = new URLSearchParams();
+          if (brand) katalogParams.set("brand", brand);
+          if (model) katalogParams.set("model", model);
+          router.push(`/shop/katalog?${katalogParams.toString()}`);
+        }
+      }, 1500);
+    } catch {
+      setResultCount(0);
+    } finally {
+      setLoading(false);
+    }
+  }, [mode, brand, model, year, vin, router]);
 
   const canSearch =
     mode === "vin" ? vin.length >= 10 : brand !== "" && model !== "";
@@ -167,7 +190,7 @@ export function PartsSearch() {
           type="button"
           onClick={() => {
             setMode("selects");
-            setSearched(false);
+            setResultCount(null);
           }}
           className={`px-4 py-2 rounded-full text-sm font-semibold cursor-pointer transition-colors border-none ${
             mode === "selects"
@@ -181,7 +204,7 @@ export function PartsSearch() {
           type="button"
           onClick={() => {
             setMode("vin");
-            setSearched(false);
+            setResultCount(null);
           }}
           className={`px-4 py-2 rounded-full text-sm font-semibold cursor-pointer transition-colors border-none ${
             mode === "vin"
@@ -194,7 +217,7 @@ export function PartsSearch() {
       </div>
 
       {mode === "selects" ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <Select
             label="Značka"
             placeholder="Vyberte značku"
@@ -209,28 +232,18 @@ export function PartsSearch() {
             value={model}
             onChange={(e) => {
               setModel(e.target.value);
-              setSearched(false);
+              setResultCount(null);
             }}
             disabled={!brand}
           />
           <Select
-            label="Rok"
+            label="Rok (nepovinné)"
             placeholder="Rok výroby"
             options={years}
             value={year}
             onChange={(e) => {
               setYear(e.target.value);
-              setSearched(false);
-            }}
-          />
-          <Select
-            label="Motor (nepovinné)"
-            placeholder="Vyberte motor"
-            options={engines}
-            value={engine}
-            onChange={(e) => {
-              setEngine(e.target.value);
-              setSearched(false);
+              setResultCount(null);
             }}
           />
         </div>
@@ -242,7 +255,7 @@ export function PartsSearch() {
             value={vin}
             onChange={(e) => {
               setVin(e.target.value);
-              setSearched(false);
+              setResultCount(null);
             }}
             maxLength={17}
           />
@@ -257,28 +270,21 @@ export function PartsSearch() {
           variant="primary"
           size="lg"
           onClick={handleSearch}
-          disabled={!canSearch}
+          disabled={!canSearch || loading}
         >
-          Hledat díly
+          {loading ? "Hledám..." : "Hledat díly"}
         </Button>
       </div>
 
       {/* Search result message */}
-      {searched && (
+      {resultCount !== null && (
         <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-xl">
           <p className="text-green-700 font-semibold">
-            {mode === "vin" ? (
-              <>
-                Nalezeno <span className="font-extrabold">47</span> dílů pro
-                VIN {vin.toUpperCase().slice(0, 17)}
-              </>
-            ) : (
-              <>
-                Nalezeno <span className="font-extrabold">47</span> dílů pro{" "}
-                {brandLabel} {modelLabel}
-                {year ? ` (${year})` : ""}
-              </>
-            )}
+            Nalezeno <span className="font-extrabold">{resultCount}</span>{" "}
+            {resultCount === 1 ? "díl" : resultCount < 5 ? "díly" : "dílů"}
+            {mode === "vin"
+              ? ` pro VIN ${vin.toUpperCase().slice(0, 17)}`
+              : ` pro ${brand} ${model}${year ? ` (${year})` : ""}`}
           </p>
         </div>
       )}
