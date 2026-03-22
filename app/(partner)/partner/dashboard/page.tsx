@@ -63,7 +63,7 @@ export default function PartnerDashboardPage() {
             </Button>
           </Link>
         ) : (
-          <Link href="/partner/parts">
+          <Link href="/partner/parts/new">
             <Button variant="primary" size="sm">
               Pridat dil
             </Button>

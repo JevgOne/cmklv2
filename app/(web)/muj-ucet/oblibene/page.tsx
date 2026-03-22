@@ -103,7 +103,7 @@ export default function OblibenePage() {
 
           return (
             <Card key={fav.id} hover className="group">
-              <Link href={`/inzerce/katalog/${listing.slug}`} className="no-underline block">
+              <Link href={`/nabidka/${listing.slug}`} className="no-underline block">
                 <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden">
                   {primaryImage ? (
                     <img

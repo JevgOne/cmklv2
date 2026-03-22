@@ -62,7 +62,9 @@ export function ProductCard({
 }: ProductCardProps) {
   const [added, setAdded] = useState(false);
   const cfg = badgeConfig[badge];
-  const href = slug ? `${basePath}/produkt/${slug}` : `${basePath}/katalog`;
+  const href = slug
+    ? basePath === "/dily" ? `${basePath}/${slug}` : `${basePath}/produkt/${slug}`
+    : `${basePath}/katalog`;
 
   return (
     <Card hover className="group flex flex-col">

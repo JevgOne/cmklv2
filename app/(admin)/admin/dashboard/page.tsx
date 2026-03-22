@@ -6,58 +6,48 @@ import { ApprovalActions } from "@/components/admin/ApprovalActions";
 import { ExportButton } from "./ExportButton";
 import { prisma } from "@/lib/prisma";
 
-const activityItems = [
-  {
-    text: (
-      <>
-        <strong className="text-gray-900">Jan Novák</strong> přidal nové vozidlo
-        Škoda Octavia RS
-      </>
-    ),
-    time: "před 5 min",
-  },
-  {
-    text: (
-      <>
-        <strong className="text-gray-900">Petra Malá</strong> dokončila prodej
-        BMW 330i xDrive
-      </>
-    ),
-    time: "před 15 min",
-  },
-  {
-    text: (
-      <>
-        <strong className="text-gray-900">Karel Dvořák</strong> aktualizoval
-        profil
-      </>
-    ),
-    time: "před 1 hod",
-  },
-  {
-    text: (
-      <>
-        Nový makléř <strong className="text-gray-900">Eva Svobodová</strong>{" "}
-        čeká na schválení
-      </>
-    ),
-    time: "před 2 hod",
-  },
-  {
-    text: (
-      <>
-        <strong className="text-gray-900">Tomáš Horák</strong> přidal 3 nová
-        vozidla
-      </>
-    ),
-    time: "před 3 hod",
-  },
-];
+function formatRelativeTime(date: Date): string {
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMin = Math.floor(diffMs / 60000);
+  const diffHour = Math.floor(diffMs / 3600000);
+  const diffDay = Math.floor(diffMs / 86400000);
+
+  if (diffMin < 1) return "právě teď";
+  if (diffMin < 60) return `před ${diffMin} min`;
+  if (diffHour < 24) return `před ${diffHour} hod`;
+  return `před ${diffDay} dny`;
+}
 
 export default async function AdminDashboardPage() {
-  const totalVehicles = await prisma.vehicle.count({ where: { status: "ACTIVE" } });
-  const totalBrokers = await prisma.user.count({ where: { role: "BROKER", status: "ACTIVE" } });
-  const pendingApprovals = await prisma.vehicle.count({ where: { status: "PENDING" } });
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const [totalVehicles, totalBrokers, pendingApprovals, monthlyCommissions] =
+    await Promise.all([
+      prisma.vehicle.count({ where: { status: "ACTIVE" } }),
+      prisma.user.count({ where: { role: "BROKER", status: "ACTIVE" } }),
+      prisma.vehicle.count({ where: { status: "PENDING" } }),
+      prisma.commission.aggregate({
+        where: { soldAt: { gte: startOfMonth } },
+        _sum: { commission: true },
+      }),
+    ]);
+
+  const totalCommission = monthlyCommissions._sum.commission ?? 0;
+  const commissionLabel =
+    totalCommission > 0
+      ? `${(totalCommission / 1000).toFixed(0)}k Kč`
+      : "0 Kč";
+
+  // Real activity feed from recent vehicles
+  const recentActivity = await prisma.vehicle.findMany({
+    include: {
+      broker: { select: { firstName: true, lastName: true } },
+    },
+    take: 5,
+    orderBy: { createdAt: "desc" },
+  });
 
   const recentVehicles = await prisma.vehicle.findMany({
     where: { status: "PENDING" },
@@ -103,7 +93,7 @@ export default async function AdminDashboardPage() {
         <StatCard
           icon="💰"
           iconColor="green"
-          value="—"
+          value={commissionLabel}
           label="Provize tento měsíc"
         />
         <StatCard
@@ -157,22 +147,47 @@ export default async function AdminDashboardPage() {
             Poslední aktivita
           </h2>
           <div>
-            {activityItems.map((item, index) => (
-              <div
-                key={index}
-                className={`flex gap-3 py-4 ${
-                  index !== activityItems.length - 1
-                    ? "border-b border-gray-100"
-                    : ""
-                }`}
-              >
-                <div className="w-2.5 h-2.5 rounded-full bg-orange-500 mt-1.5 flex-shrink-0" />
-                <div className="flex-1">
-                  <p className="text-sm text-gray-700">{item.text}</p>
-                  <p className="text-xs text-gray-400 mt-1">{item.time}</p>
-                </div>
-              </div>
-            ))}
+            {recentActivity.length === 0 ? (
+              <p className="text-sm text-gray-400 py-8 text-center">
+                Zatím žádná aktivita.
+              </p>
+            ) : (
+              recentActivity.map((vehicle, index) => {
+                const brokerLabel = vehicle.broker
+                  ? `${vehicle.broker.firstName} ${vehicle.broker.lastName}`
+                  : "Neznámý";
+                const statusText =
+                  vehicle.status === "PENDING"
+                    ? "přidal ke schválení"
+                    : vehicle.status === "ACTIVE"
+                      ? "přidal"
+                      : vehicle.status === "SOLD"
+                        ? "prodal"
+                        : "aktualizoval";
+
+                return (
+                  <div
+                    key={vehicle.id}
+                    className={`flex gap-3 py-4 ${
+                      index !== recentActivity.length - 1
+                        ? "border-b border-gray-100"
+                        : ""
+                    }`}
+                  >
+                    <div className="w-2.5 h-2.5 rounded-full bg-orange-500 mt-1.5 flex-shrink-0" />
+                    <div className="flex-1">
+                      <p className="text-sm text-gray-700">
+                        <strong className="text-gray-900">{brokerLabel}</strong>{" "}
+                        {statusText} {vehicle.brand} {vehicle.model}
+                      </p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        {formatRelativeTime(vehicle.createdAt)}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </Card>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -60,9 +61,11 @@ export default function PartnerPartsPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-extrabold text-gray-900">Moje dily</h1>
-        <Button variant="primary" size="sm">
-          Pridat dil
-        </Button>
+        <Link href="/partner/parts/new">
+          <Button variant="primary" size="sm">
+            Pridat dil
+          </Button>
+        </Link>
       </div>
 
       {loading ? (
@@ -77,6 +80,7 @@ export default function PartnerPartsPage() {
           title="Zadne dily"
           description="Zatim nemáte zadne dily v systemu."
           actionLabel="Pridat dil"
+          onAction={() => (window.location.href = "/partner/parts/new")}
         />
       ) : (
         <>

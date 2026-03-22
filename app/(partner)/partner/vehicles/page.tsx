@@ -99,6 +99,7 @@ export default function PartnerVehiclesPage() {
           title="Zadna vozidla"
           description="Zatim nemáte zadna vozidla v systemu."
           actionLabel="Pridat vozidlo"
+          onAction={() => (window.location.href = "/partner/vehicles/new")}
         />
       ) : (
         <>

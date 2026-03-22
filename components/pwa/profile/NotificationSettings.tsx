@@ -41,9 +41,20 @@ export function NotificationSettings() {
     systemUpdates: false,
   });
 
-  const handleChange = (key: string, value: boolean) => {
-    setSettings((prev) => ({ ...prev, [key]: value }));
-    // TODO: Persist to API
+  const handleChange = async (key: string, value: boolean) => {
+    const updated = { ...settings, [key]: value };
+    setSettings(updated);
+
+    try {
+      await fetch("/api/broker/notifications", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ [key]: value }),
+      });
+    } catch {
+      // Revert on failure
+      setSettings(settings);
+    }
   };
 
   return (

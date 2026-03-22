@@ -1,16 +1,59 @@
 "use client";
 
-export function FavoriteButton() {
+import { useState } from "react";
+
+interface FavoriteButtonProps {
+  listingId?: string;
+}
+
+export function FavoriteButton({ listingId }: FavoriteButtonProps) {
+  const [favorited, setFavorited] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!listingId) return;
+    if (loading) return;
+
+    setLoading(true);
+    try {
+      const res = await fetch("/api/favorites", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ listingId }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setFavorited(data.favorited);
+      } else if (res.status === 401) {
+        // Nepřihlášený uživatel — přesměrovat na login
+        window.location.href = "/login";
+        return;
+      }
+    } catch {
+      // silently fail
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <button
       type="button"
-      className="absolute top-3 right-3 w-9 h-9 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer hover:bg-white border-none"
-      aria-label="Přidat do oblíbených"
-      onClick={(e) => e.preventDefault()}
+      className={`absolute top-3 right-3 w-9 h-9 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer hover:bg-white border-none ${
+        favorited
+          ? "bg-red-500 opacity-100"
+          : "bg-white/80 opacity-0 group-hover:opacity-100"
+      }`}
+      aria-label={favorited ? "Odebrat z oblíbených" : "Přidat do oblíbených"}
+      onClick={handleClick}
     >
       <svg
-        className="w-5 h-5 text-gray-600"
-        fill="none"
+        className={`w-5 h-5 ${favorited ? "text-white" : "text-gray-600"}`}
+        fill={favorited ? "currentColor" : "none"}
         stroke="currentColor"
         strokeWidth={2}
         viewBox="0 0 24 24"

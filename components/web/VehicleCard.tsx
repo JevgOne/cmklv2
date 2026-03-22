@@ -97,8 +97,8 @@ export function VehicleCard({ car, className }: VehicleCardProps) {
             }}
           />
 
-          {/* Favorite button (visual only) */}
-          <FavoriteButton />
+          {/* Favorite button */}
+          <FavoriteButton listingId={car.source === "listing" ? car.id : undefined} />
 
           {/* Trust Score — only for broker vehicle listings */}
           {(!car.sellerType || car.sellerType === "broker") && !car.listingType && (

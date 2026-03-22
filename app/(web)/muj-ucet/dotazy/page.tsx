@@ -98,7 +98,7 @@ export default function DotazyPage() {
               <div className="flex flex-col sm:flex-row">
                 {/* Listing thumbnail */}
                 <div className="sm:w-40 shrink-0">
-                  <Link href={`/inzerce/katalog/${listing.slug}`} className="block no-underline">
+                  <Link href={`/nabidka/${listing.slug}`} className="block no-underline">
                     <div className="aspect-[4/3] sm:h-full bg-gray-100">
                       {primaryImage ? (
                         <img
@@ -121,7 +121,7 @@ export default function DotazyPage() {
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <Link
-                        href={`/inzerce/katalog/${listing.slug}`}
+                        href={`/nabidka/${listing.slug}`}
                         className="font-bold text-gray-900 text-sm no-underline hover:text-orange-500 transition-colors"
                       >
                         {listing.brand} {listing.model} {listing.variant || ""}

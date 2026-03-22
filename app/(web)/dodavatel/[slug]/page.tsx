@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/Badge";
@@ -111,21 +112,27 @@ export default async function DodavatelProfilePage({ params }: Props) {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {parts.map((p) => (
-              <Card key={p.id} hover className="p-4">
-                <h3 className="font-bold text-gray-900 text-sm mb-1">
-                  {p.name}
-                </h3>
-                <div className="text-xs text-gray-500 mb-2">
-                  {p.compatibleBrands ? JSON.parse(p.compatibleBrands).join(", ") : ""} {p.compatibleModels ? JSON.parse(p.compatibleModels).join(", ") : ""} | {p.condition}
-                </div>
-                <span className="text-lg font-extrabold text-orange-500">
-                  {new Intl.NumberFormat("cs-CZ", {
-                    style: "currency",
-                    currency: "CZK",
-                    maximumFractionDigits: 0,
-                  }).format(p.price)}
-                </span>
-              </Card>
+              <Link
+                key={p.id}
+                href={`/dily/${p.slug}`}
+                className="block no-underline"
+              >
+                <Card hover className="p-4">
+                  <h3 className="font-bold text-gray-900 text-sm mb-1">
+                    {p.name}
+                  </h3>
+                  <div className="text-xs text-gray-500 mb-2">
+                    {p.compatibleBrands ? JSON.parse(p.compatibleBrands).join(", ") : ""} {p.compatibleModels ? JSON.parse(p.compatibleModels).join(", ") : ""} | {p.condition}
+                  </div>
+                  <span className="text-lg font-extrabold text-orange-500">
+                    {new Intl.NumberFormat("cs-CZ", {
+                      style: "currency",
+                      currency: "CZK",
+                      maximumFractionDigits: 0,
+                    }).format(p.price)}
+                  </span>
+                </Card>
+              </Link>
             ))}
           </div>
         )}

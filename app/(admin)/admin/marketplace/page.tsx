@@ -1,124 +1,78 @@
+import { prisma } from "@/lib/prisma";
 import { StatCard } from "@/components/ui/StatCard";
 import { Badge } from "@/components/ui/Badge";
 import { FlipManagement } from "@/components/admin/marketplace/FlipManagement";
 import { PaymentConfirmation } from "@/components/admin/marketplace/PaymentConfirmation";
 
-// Dummy data
-const stats = {
-  totalFlips: 45,
-  activeFlips: 12,
-  pendingApprovals: 3,
-  totalVolume: 8450000,
-  pendingPayments: 5,
-};
+export default async function AdminMarketplacePage() {
+  // Real stats from DB
+  const [totalFlips, activeFlips, pendingApprovalCount, pendingInvestments, allFlipsRaw] =
+    await Promise.all([
+      prisma.flipOpportunity.count(),
+      prisma.flipOpportunity.count({
+        where: {
+          status: {
+            in: ["APPROVED", "FUNDING", "FUNDED", "IN_REPAIR", "FOR_SALE"],
+          },
+        },
+      }),
+      prisma.flipOpportunity.count({
+        where: { status: "PENDING_APPROVAL" },
+      }),
+      prisma.investment.findMany({
+        where: { paymentStatus: "PENDING" },
+        include: {
+          investor: { select: { firstName: true, lastName: true } },
+          opportunity: { select: { brand: true, model: true } },
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.flipOpportunity.findMany({
+        include: {
+          dealer: { select: { firstName: true, lastName: true } },
+        },
+        orderBy: { createdAt: "desc" },
+        take: 30,
+      }),
+    ]);
 
-const pendingFlips = [
-  {
-    id: "10",
-    brand: "Skoda",
-    model: "Superb III 2.0 TDI",
-    year: 2018,
-    status: "PENDING_APPROVAL",
-    purchasePrice: 320000,
-    repairCost: 55000,
-    estimatedSalePrice: 489000,
-    dealerName: "Jan Novak",
-    createdAt: "2026-03-20",
-  },
-  {
-    id: "11",
-    brand: "Hyundai",
-    model: "i30 1.4 T-GDI",
-    year: 2019,
-    status: "PENDING_APPROVAL",
-    purchasePrice: 195000,
-    repairCost: 25000,
-    estimatedSalePrice: 289000,
-    dealerName: "Petra Mala",
-    createdAt: "2026-03-19",
-  },
-  {
-    id: "12",
-    brand: "Peugeot",
-    model: "308 SW 1.5 BlueHDi",
-    year: 2020,
-    status: "PENDING_APPROVAL",
-    purchasePrice: 225000,
-    repairCost: 20000,
-    estimatedSalePrice: 319000,
-    dealerName: "Karel Dvorak",
-    createdAt: "2026-03-18",
-  },
-];
+  // Compute total volume
+  const volumeAgg = await prisma.flipOpportunity.aggregate({
+    _sum: { purchasePrice: true, repairCost: true },
+  });
+  const totalVolume =
+    (volumeAgg._sum.purchasePrice ?? 0) + (volumeAgg._sum.repairCost ?? 0);
 
-const allFlips = [
-  ...pendingFlips,
-  {
-    id: "1",
-    brand: "Skoda",
-    model: "Octavia III 1.6 TDI",
-    year: 2016,
-    status: "IN_REPAIR",
-    purchasePrice: 180000,
-    repairCost: 45000,
-    estimatedSalePrice: 299000,
-    dealerName: "Jan Novak",
-    createdAt: "2026-02-15",
-  },
-  {
-    id: "2",
-    brand: "VW",
-    model: "Golf VII 1.4 TSI",
-    year: 2017,
-    status: "FOR_SALE",
-    purchasePrice: 165000,
-    repairCost: 30000,
-    estimatedSalePrice: 259000,
-    dealerName: "Jan Novak",
-    createdAt: "2026-01-20",
-  },
-  {
-    id: "3",
-    brand: "BMW",
-    model: "320d F30",
-    year: 2015,
-    status: "FUNDING",
-    purchasePrice: 220000,
-    repairCost: 65000,
-    estimatedSalePrice: 389000,
-    dealerName: "Tomas Horak",
-    createdAt: "2026-03-10",
-  },
-];
+  // Map pending payments for PaymentConfirmation
+  const pendingPayments = pendingInvestments.map((inv) => ({
+    id: inv.id,
+    investorName: `${inv.investor.firstName} ${inv.investor.lastName}`,
+    amount: inv.amount,
+    opportunityLabel: `${inv.opportunity.brand} ${inv.opportunity.model}`,
+    variableSymbol: inv.paymentReference || `MP${inv.id.slice(0, 8).toUpperCase()}`,
+    createdAt: inv.createdAt.toISOString().split("T")[0],
+  }));
 
-const pendingPayments = [
-  {
-    id: "p1",
-    investorName: "Investor A",
-    amount: 100000,
-    opportunityLabel: "Skoda Octavia III",
-    variableSymbol: "MP1A2B3C4D",
-    createdAt: "2026-03-21",
-  },
-  {
-    id: "p2",
-    investorName: "Investor B",
-    amount: 75000,
-    opportunityLabel: "Skoda Octavia III",
-    variableSymbol: "MP1A2B3C4E",
-    createdAt: "2026-03-20",
-  },
-  {
-    id: "p3",
-    investorName: "Investor C",
-    amount: 50000,
-    opportunityLabel: "BMW 320d F30",
-    variableSymbol: "MP3D4E5F6G",
-    createdAt: "2026-03-19",
-  },
-];
+  // Map flips
+  const mapFlip = (f: typeof allFlipsRaw[number]) => ({
+    id: f.id,
+    brand: f.brand,
+    model: f.model,
+    year: f.year,
+    status: f.status,
+    purchasePrice: f.purchasePrice,
+    repairCost: f.repairCost,
+    estimatedSalePrice: f.estimatedSalePrice,
+    dealerName: `${f.dealer.firstName} ${f.dealer.lastName}`,
+    createdAt: f.createdAt.toISOString().split("T")[0],
+  });
 
-export default function AdminMarketplacePage() {
+  const pendingFlips = allFlipsRaw
+    .filter((f) => f.status === "PENDING_APPROVAL")
+    .map(mapFlip);
+
+  const allFlips = allFlipsRaw.map(mapFlip);
+
   return (
     <div>
       {/* Page Header */}
@@ -138,25 +92,25 @@ export default function AdminMarketplacePage() {
         <StatCard
           icon="🔄"
           iconColor="orange"
-          value={stats.totalFlips.toString()}
+          value={totalFlips.toString()}
           label="Celkem flipu"
         />
         <StatCard
           icon="⚡"
           iconColor="blue"
-          value={stats.activeFlips.toString()}
+          value={activeFlips.toString()}
           label="Aktivnich"
         />
         <StatCard
           icon="⏳"
           iconColor="red"
-          value={stats.pendingApprovals.toString()}
+          value={pendingApprovalCount.toString()}
           label="Ke schvaleni"
         />
         <StatCard
           icon="💰"
           iconColor="green"
-          value={`${(stats.totalVolume / 1000000).toFixed(1)}M`}
+          value={totalVolume > 0 ? `${(totalVolume / 1000000).toFixed(1)}M` : "0"}
           label="Celkovy objem"
         />
       </div>
@@ -173,22 +127,30 @@ export default function AdminMarketplacePage() {
       </div>
 
       {/* Pending Approvals */}
-      <div className="mt-8">
-        <div className="flex items-center gap-3 mb-4">
-          <h2 className="text-xl font-bold text-gray-900">
-            Ke schvaleni
-          </h2>
-          <Badge variant="pending">{pendingFlips.length}</Badge>
+      {pendingFlips.length > 0 && (
+        <div className="mt-8">
+          <div className="flex items-center gap-3 mb-4">
+            <h2 className="text-xl font-bold text-gray-900">
+              Ke schvaleni
+            </h2>
+            <Badge variant="pending">{pendingFlips.length}</Badge>
+          </div>
+          <FlipManagement flips={pendingFlips} />
         </div>
-        <FlipManagement flips={pendingFlips} />
-      </div>
+      )}
 
       {/* All Flips */}
       <div className="mt-8">
         <h2 className="text-xl font-bold text-gray-900 mb-4">
           Vsechny flipy
         </h2>
-        <FlipManagement flips={allFlips} />
+        {allFlips.length === 0 ? (
+          <div className="bg-white rounded-2xl shadow-sm p-12 text-center text-gray-400">
+            Zatim zadne flipy v systemu.
+          </div>
+        ) : (
+          <FlipManagement flips={allFlips} />
+        )}
       </div>
     </div>
   );

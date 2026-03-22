@@ -24,11 +24,17 @@ export default function PartnerProfilePage() {
   useEffect(() => {
     async function load() {
       try {
-        // We'll use the dashboard endpoint to get partner info
-        const res = await fetch("/api/partner/dashboard");
+        const res = await fetch("/api/partner/profile");
         if (res.ok) {
           const data = await res.json();
           setPartner(data);
+          setForm({
+            description: data.description || "",
+            phone: data.phone || "",
+            email: data.email || "",
+            web: data.web || "",
+            address: data.address || "",
+          });
         }
       } catch (err) {
         console.error("Failed to load profile:", err);
@@ -49,6 +55,24 @@ export default function PartnerProfilePage() {
   }
 
   const isBazar = session?.user?.role === "PARTNER_BAZAR";
+
+  async function handleSave() {
+    setSaving(true);
+    try {
+      const res = await fetch("/api/partner/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) {
+        console.error("Failed to save profile");
+      }
+    } catch (err) {
+      console.error("Failed to save profile:", err);
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <div>
@@ -90,7 +114,7 @@ export default function PartnerProfilePage() {
             value={form.address}
             onChange={(e) => setForm((p) => ({ ...p, address: e.target.value }))}
           />
-          <Button variant="primary" size="sm" disabled={saving}>
+          <Button variant="primary" size="sm" disabled={saving} onClick={handleSave}>
             {saving ? "Ukladam..." : "Ulozit profil"}
           </Button>
         </div>

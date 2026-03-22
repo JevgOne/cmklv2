@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -12,47 +13,118 @@ import { PaymentConfirmation } from "@/components/admin/marketplace/PaymentConfi
 import type { FlipStep } from "@/components/web/marketplace/FlipTimeline";
 import { formatPrice } from "@/lib/utils";
 
-// Dummy data
-const flipDetail = {
-  id: "10",
-  brand: "Skoda",
-  model: "Superb III 2.0 TDI",
-  year: 2018,
-  mileage: 98000,
-  vin: "TMBAG7NE3J0456789",
-  status: "PENDING_APPROVAL" as string,
-  purchasePrice: 320000,
-  repairCost: 55000,
-  estimatedSalePrice: 489000,
-  fundedAmount: 0,
-  neededAmount: 375000,
-  dealerName: "Jan Novak",
-  dealerEmail: "jan.novak@example.com",
-  dealerPhone: "+420 777 123 456",
-  repairDescription: "Kompletni servis, vymena brzd, detailing, oprava drobnych vad laku.",
-  marketAnalysis: "Superb III 2.0 TDI se prodava v rozmezi 440-520 tis. Nase cena 489 tis je realisticky stred.",
-  photos: ["https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=600&q=80"],
-  investors: [] as Array<{ name: string; amount: number }>,
-  payments: [] as Array<{
+interface FlipDetail {
+  id: string;
+  brand: string;
+  model: string;
+  year: number;
+  mileage: number;
+  vin: string | null;
+  status: string;
+  purchasePrice: number;
+  repairCost: number;
+  estimatedSalePrice: number;
+  fundedAmount: number;
+  repairDescription: string | null;
+  photos: string[];
+  dealerName: string;
+  dealerEmail: string;
+  createdAt: string;
+  investors: Array<{ name: string; amount: number }>;
+  payments: Array<{
     id: string;
     investorName: string;
     amount: number;
     opportunityLabel: string;
     variableSymbol: string;
     createdAt: string;
-  }>,
-  createdAt: "2026-03-20",
-};
+  }>;
+}
 
 export default function AdminFlipDetailPage() {
+  const params = useParams();
+  const id = params.id as string;
+
+  const [flip, setFlip] = useState<FlipDetail | null>(null);
+  const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [actionDone, setActionDone] = useState<string | null>(null);
 
+  useEffect(() => {
+    async function loadFlip() {
+      try {
+        const res = await fetch(`/api/marketplace/opportunities/${id}`);
+        if (res.ok) {
+          const data = await res.json();
+          const opp = data.opportunity || data;
+
+          // Load investments
+          let investors: FlipDetail["investors"] = [];
+          let payments: FlipDetail["payments"] = [];
+          try {
+            const invRes = await fetch(`/api/marketplace/investments?opportunityId=${id}`);
+            if (invRes.ok) {
+              const invData = await invRes.json();
+              const allInv = invData.investments || [];
+              investors = allInv
+                .filter((i: { paymentStatus: string }) => i.paymentStatus === "CONFIRMED")
+                .map((i: { investor: { firstName: string; lastName: string }; amount: number }) => ({
+                  name: `${i.investor.firstName} ${i.investor.lastName}`,
+                  amount: i.amount,
+                }));
+              payments = allInv
+                .filter((i: { paymentStatus: string }) => i.paymentStatus === "PENDING")
+                .map((i: { id: string; investor: { firstName: string; lastName: string }; amount: number; paymentReference: string | null; createdAt: string }) => ({
+                  id: i.id,
+                  investorName: `${i.investor.firstName} ${i.investor.lastName}`,
+                  amount: i.amount,
+                  opportunityLabel: `${opp.brand} ${opp.model}`,
+                  variableSymbol: i.paymentReference || `MP${i.id.slice(0, 8).toUpperCase()}`,
+                  createdAt: i.createdAt?.split("T")[0] || "",
+                }));
+            }
+          } catch {
+            // Investments endpoint may not support this filter
+          }
+
+          setFlip({
+            id: opp.id,
+            brand: opp.brand,
+            model: opp.model,
+            year: opp.year,
+            mileage: opp.mileage,
+            vin: opp.vin,
+            status: opp.status,
+            purchasePrice: opp.purchasePrice,
+            repairCost: opp.repairCost,
+            estimatedSalePrice: opp.estimatedSalePrice,
+            fundedAmount: opp.fundedAmount ?? 0,
+            repairDescription: opp.repairDescription,
+            photos: opp.photos ? JSON.parse(opp.photos) : [],
+            dealerName: opp.dealer
+              ? `${opp.dealer.firstName} ${opp.dealer.lastName}`
+              : "Neznamy",
+            dealerEmail: opp.dealer?.email || "",
+            createdAt: opp.createdAt?.split("T")[0] || "",
+            investors,
+            payments,
+          });
+        }
+      } catch {
+        // handled by loading state
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadFlip();
+  }, [id]);
+
   const handleAction = async (action: "approve" | "reject" | "payout") => {
+    if (!flip) return;
     setProcessing(true);
     try {
       if (action === "approve" || action === "reject") {
-        await fetch(`/api/marketplace/opportunities/${flipDetail.id}/approve`, {
+        await fetch(`/api/marketplace/opportunities/${flip.id}/approve`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -66,7 +138,7 @@ export default function AdminFlipDetailPage() {
           setProcessing(false);
           return;
         }
-        await fetch(`/api/marketplace/opportunities/${flipDetail.id}/payout`, {
+        await fetch(`/api/marketplace/opportunities/${flip.id}/payout`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ actualSalePrice: Number(salePrice) }),
@@ -78,7 +150,27 @@ export default function AdminFlipDetailPage() {
     }
   };
 
-  const statusStep = (["PENDING_APPROVAL", "CANCELLED"].includes(flipDetail.status) ? "APPROVED" : flipDetail.status) as FlipStep;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="w-10 h-10 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!flip) {
+    return (
+      <div className="text-center py-20">
+        <h2 className="text-xl font-bold text-gray-900">Flip nenalezen</h2>
+        <Link href="/admin/marketplace" className="text-orange-500 mt-4 inline-block no-underline">
+          Zpet na marketplace
+        </Link>
+      </div>
+    );
+  }
+
+  const neededAmount = flip.purchasePrice + flip.repairCost - flip.fundedAmount;
+  const statusStep = (["PENDING_APPROVAL", "CANCELLED"].includes(flip.status) ? "APPROVED" : flip.status) as FlipStep;
 
   return (
     <div>
@@ -90,21 +182,22 @@ export default function AdminFlipDetailPage() {
           Marketplace
         </Link>
         <span>/</span>
-        <span className="text-gray-900">{flipDetail.brand} {flipDetail.model}</span>
+        <span className="text-gray-900">{flip.brand} {flip.model}</span>
       </div>
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-[28px] font-extrabold text-gray-900">
-            {flipDetail.brand} {flipDetail.model}
+            {flip.brand} {flip.model}
           </h1>
           <p className="text-gray-500 mt-1">
-            {flipDetail.year} · {flipDetail.mileage.toLocaleString("cs-CZ")} km · VIN: {flipDetail.vin}
+            {flip.year} · {flip.mileage.toLocaleString("cs-CZ")} km
+            {flip.vin && <> · VIN: {flip.vin}</>}
           </p>
         </div>
-        <Badge variant={flipDetail.status === "PENDING_APPROVAL" ? "pending" : "default"}>
-          {flipDetail.status === "PENDING_APPROVAL" ? "Ke schvaleni" : flipDetail.status}
+        <Badge variant={flip.status === "PENDING_APPROVAL" ? "pending" : "default"}>
+          {flip.status === "PENDING_APPROVAL" ? "Ke schvaleni" : flip.status}
         </Badge>
       </div>
 
@@ -129,11 +222,11 @@ export default function AdminFlipDetailPage() {
         {/* Main */}
         <div className="lg:col-span-2 space-y-6">
           {/* Photo */}
-          {flipDetail.photos[0] && (
+          {flip.photos[0] && (
             <Card className="overflow-hidden">
               <img
-                src={flipDetail.photos[0]}
-                alt={`${flipDetail.brand} ${flipDetail.model}`}
+                src={flip.photos[0]}
+                alt={`${flip.brand} ${flip.model}`}
                 className="w-full aspect-video object-cover"
               />
             </Card>
@@ -145,59 +238,57 @@ export default function AdminFlipDetailPage() {
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
               <div>
                 <span className="text-gray-500">Znacka</span>
-                <p className="font-medium text-gray-900">{flipDetail.brand}</p>
+                <p className="font-medium text-gray-900">{flip.brand}</p>
               </div>
               <div>
                 <span className="text-gray-500">Model</span>
-                <p className="font-medium text-gray-900">{flipDetail.model}</p>
+                <p className="font-medium text-gray-900">{flip.model}</p>
               </div>
               <div>
                 <span className="text-gray-500">Rok</span>
-                <p className="font-medium text-gray-900">{flipDetail.year}</p>
+                <p className="font-medium text-gray-900">{flip.year}</p>
               </div>
               <div>
                 <span className="text-gray-500">Najeto</span>
-                <p className="font-medium text-gray-900">{flipDetail.mileage.toLocaleString("cs-CZ")} km</p>
+                <p className="font-medium text-gray-900">{flip.mileage.toLocaleString("cs-CZ")} km</p>
               </div>
-              <div>
-                <span className="text-gray-500">VIN</span>
-                <p className="font-medium text-gray-900 font-mono">{flipDetail.vin}</p>
-              </div>
+              {flip.vin && (
+                <div>
+                  <span className="text-gray-500">VIN</span>
+                  <p className="font-medium text-gray-900 font-mono">{flip.vin}</p>
+                </div>
+              )}
               <div>
                 <span className="text-gray-500">Vytvoreno</span>
-                <p className="font-medium text-gray-900">{flipDetail.createdAt}</p>
+                <p className="font-medium text-gray-900">{flip.createdAt}</p>
               </div>
             </div>
           </Card>
 
           {/* Repair */}
-          <Card className="p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Plan opravy</h2>
-            <p className="text-sm text-gray-600 leading-relaxed">{flipDetail.repairDescription}</p>
-          </Card>
-
-          {/* Market analysis */}
-          <Card className="p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Analyza trhu</h2>
-            <p className="text-sm text-gray-600 leading-relaxed">{flipDetail.marketAnalysis}</p>
-          </Card>
+          {flip.repairDescription && (
+            <Card className="p-6">
+              <h2 className="text-lg font-bold text-gray-900 mb-4">Plan opravy</h2>
+              <p className="text-sm text-gray-600 leading-relaxed">{flip.repairDescription}</p>
+            </Card>
+          )}
 
           {/* Pending payments */}
-          {flipDetail.payments.length > 0 && (
+          {flip.payments.length > 0 && (
             <div>
               <h2 className="text-lg font-bold text-gray-900 mb-4">Cekajici platby</h2>
-              <PaymentConfirmation payments={flipDetail.payments} />
+              <PaymentConfirmation payments={flip.payments} />
             </div>
           )}
 
           {/* Investors */}
-          {flipDetail.investors.length > 0 && (
+          {flip.investors.length > 0 && (
             <Card className="p-6">
               <h2 className="text-lg font-bold text-gray-900 mb-4">
-                Investori ({flipDetail.investors.length})
+                Investori ({flip.investors.length})
               </h2>
               <div className="space-y-3">
-                {flipDetail.investors.map((inv, i) => (
+                {flip.investors.map((inv, i) => (
                   <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <span className="text-sm font-medium text-gray-900">{inv.name}</span>
                     <span className="text-sm font-bold text-gray-900">{formatPrice(inv.amount)}</span>
@@ -212,9 +303,9 @@ export default function AdminFlipDetailPage() {
         <div className="space-y-6">
           {/* Calculator */}
           <ProfitCalculator
-            initialPurchasePrice={flipDetail.purchasePrice}
-            initialRepairCost={flipDetail.repairCost}
-            initialSalePrice={flipDetail.estimatedSalePrice}
+            initialPurchasePrice={flip.purchasePrice}
+            initialRepairCost={flip.repairCost}
+            initialSalePrice={flip.estimatedSalePrice}
             readOnly
           />
 
@@ -224,16 +315,14 @@ export default function AdminFlipDetailPage() {
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-500">Jmeno</span>
-                <span className="font-medium">{flipDetail.dealerName}</span>
+                <span className="font-medium">{flip.dealerName}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Email</span>
-                <span className="font-medium">{flipDetail.dealerEmail}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Telefon</span>
-                <span className="font-medium">{flipDetail.dealerPhone}</span>
-              </div>
+              {flip.dealerEmail && (
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Email</span>
+                  <span className="font-medium">{flip.dealerEmail}</span>
+                </div>
+              )}
             </div>
           </Card>
 
@@ -241,7 +330,7 @@ export default function AdminFlipDetailPage() {
           <Card className="p-6">
             <h3 className="text-lg font-bold text-gray-900 mb-4">Akce</h3>
             <div className="space-y-3">
-              {flipDetail.status === "PENDING_APPROVAL" && (
+              {flip.status === "PENDING_APPROVAL" && (
                 <>
                   <Button
                     variant="success"
@@ -261,7 +350,7 @@ export default function AdminFlipDetailPage() {
                   </Button>
                 </>
               )}
-              {flipDetail.status === "SOLD" && (
+              {flip.status === "SOLD" && (
                 <Button
                   variant="primary"
                   className="w-full"
@@ -271,13 +360,15 @@ export default function AdminFlipDetailPage() {
                   Spustit vyplatu
                 </Button>
               )}
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => window.location.href = `mailto:${flipDetail.dealerEmail}`}
-              >
-                Kontaktovat dealera
-              </Button>
+              {flip.dealerEmail && (
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => window.location.href = `mailto:${flip.dealerEmail}`}
+                >
+                  Kontaktovat dealera
+                </Button>
+              )}
             </div>
           </Card>
         </div>

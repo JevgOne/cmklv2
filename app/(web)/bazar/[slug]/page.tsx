@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/Badge";
@@ -146,38 +147,44 @@ export default async function BazarProfilePage({ params }: Props) {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {vehicles.map((v) => (
-              <Card key={v.id} hover className="overflow-hidden">
-                <div className="aspect-[16/10] bg-gray-100">
-                  {v.images[0] ? (
-                    <img
-                      src={v.images[0].url}
-                      alt={`${v.brand} ${v.model}`}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-4xl text-gray-300">
-                      🚗
-                    </div>
-                  )}
-                </div>
-                <div className="p-4">
-                  <h3 className="font-bold text-gray-900 mb-1">
-                    {v.brand} {v.model} ({v.year})
-                  </h3>
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-extrabold text-orange-500">
-                      {new Intl.NumberFormat("cs-CZ", {
-                        style: "currency",
-                        currency: "CZK",
-                        maximumFractionDigits: 0,
-                      }).format(v.price)}
-                    </span>
-                    <span className="text-xs text-gray-400">
-                      {new Intl.NumberFormat("cs-CZ").format(v.mileage)} km
-                    </span>
+              <Link
+                key={v.id}
+                href={v.slug ? `/nabidka/${v.slug}` : `/nabidka/${v.id}`}
+                className="block no-underline"
+              >
+                <Card hover className="overflow-hidden">
+                  <div className="aspect-[16/10] bg-gray-100">
+                    {v.images[0] ? (
+                      <img
+                        src={v.images[0].url}
+                        alt={`${v.brand} ${v.model}`}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-4xl text-gray-300">
+                        🚗
+                      </div>
+                    )}
                   </div>
-                </div>
-              </Card>
+                  <div className="p-4">
+                    <h3 className="font-bold text-gray-900 mb-1">
+                      {v.brand} {v.model} ({v.year})
+                    </h3>
+                    <div className="flex items-center justify-between">
+                      <span className="text-lg font-extrabold text-orange-500">
+                        {new Intl.NumberFormat("cs-CZ", {
+                          style: "currency",
+                          currency: "CZK",
+                          maximumFractionDigits: 0,
+                        }).format(v.price)}
+                      </span>
+                      <span className="text-xs text-gray-400">
+                        {new Intl.NumberFormat("cs-CZ").format(v.mileage)} km
+                      </span>
+                    </div>
+                  </div>
+                </Card>
+              </Link>
             ))}
           </div>
         )}
