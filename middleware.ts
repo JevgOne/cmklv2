@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
-const ADMIN_ROLES = ["ADMIN", "BACKOFFICE"];
+const ADMIN_ROLES = ["ADMIN", "BACKOFFICE", "MANAGER"];
 const MAKLER_ROLES = [
   "BROKER",
   "MANAGER",

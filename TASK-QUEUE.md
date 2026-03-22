@@ -2727,7 +2727,7 @@ enum InvitationStatus {
 
 ## TASK-023: Manažerský dashboard — správa makléřů, schvalování, statistiky
 Priorita: 1
-Stav: zpracovává se
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:

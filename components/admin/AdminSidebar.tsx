@@ -2,38 +2,67 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
 
-const navSections = [
+interface NavItem {
+  id: string;
+  href: string;
+  icon: string;
+  label: string;
+  badge?: string;
+}
+
+interface NavSection {
+  title: string;
+  items: NavItem[];
+  roles?: string[];
+}
+
+const navSections: NavSection[] = [
   {
-    title: "HLAVNÍ",
+    title: "HLAVNI",
     items: [
       { id: "dashboard", href: "/admin/dashboard", icon: "📊", label: "Dashboard" },
       { id: "vehicles", href: "/admin/vehicles", icon: "🚗", label: "Vozidla", badge: "23" },
-      { id: "brokers", href: "/admin/brokers", icon: "👥", label: "Makléři" },
-      { id: "approvals", href: "/admin/approvals", icon: "✅", label: "Schvalování", badge: "5" },
+      { id: "brokers", href: "/admin/brokers", icon: "👥", label: "Makleri" },
+      { id: "approvals", href: "/admin/approvals", icon: "✅", label: "Schvalovani", badge: "5" },
     ],
+    roles: ["ADMIN", "BACKOFFICE"],
+  },
+  {
+    title: "MANAZER",
+    items: [
+      { id: "manager-dashboard", href: "/admin/manager", icon: "📊", label: "Dashboard" },
+      { id: "manager-brokers", href: "/admin/manager/brokers", icon: "👥", label: "Moji makleri" },
+      { id: "manager-approvals", href: "/admin/manager/approvals", icon: "✅", label: "Schvalovani" },
+      { id: "manager-bonuses", href: "/admin/manager/bonuses", icon: "🎯", label: "Bonusy" },
+    ],
+    roles: ["MANAGER"],
   },
   {
     title: "MARKETPLACE",
     items: [
       { id: "marketplace", href: "/admin/marketplace", icon: "📈", label: "Marketplace" },
     ],
+    roles: ["ADMIN", "BACKOFFICE"],
   },
   {
-    title: "SPRÁVA",
+    title: "SPRAVA",
     items: [
       { id: "regions", href: "/admin/regions", icon: "📍", label: "Regiony" },
       { id: "commissions", href: "/admin/commissions", icon: "💰", label: "Provize" },
-      { id: "users", href: "/admin/users", icon: "🔧", label: "Uživatelé" },
+      { id: "users", href: "/admin/users", icon: "🔧", label: "Uzivatele" },
     ],
+    roles: ["ADMIN", "BACKOFFICE"],
   },
   {
-    title: "SYSTÉM",
+    title: "SYSTEM",
     items: [
-      { id: "settings", href: "/admin/settings", icon: "⚙️", label: "Nastavení" },
+      { id: "settings", href: "/admin/settings", icon: "⚙️", label: "Nastaveni" },
       { id: "logs", href: "/admin/logs", icon: "📋", label: "Logy" },
     ],
+    roles: ["ADMIN", "BACKOFFICE"],
   },
 ];
 
@@ -44,6 +73,20 @@ interface AdminSidebarProps {
 
 export function AdminSidebar({ open, onClose }: AdminSidebarProps) {
   const pathname = usePathname();
+  const { data: session } = useSession();
+  const userRole = session?.user?.role;
+
+  const visibleSections = navSections.filter(
+    (section) => !section.roles || (userRole && section.roles.includes(userRole))
+  );
+
+  const initials = session?.user
+    ? `${(session.user.firstName || "")[0] || ""}${(session.user.lastName || "")[0] || ""}`
+    : "AD";
+  const displayName = session?.user
+    ? `${session.user.firstName || ""} ${session.user.lastName || ""}`.trim()
+    : "Admin";
+  const roleLabel = userRole === "MANAGER" ? "Manazer" : "Administrator";
 
   return (
     <>
@@ -66,20 +109,22 @@ export function AdminSidebar({ open, onClose }: AdminSidebarProps) {
         {/* Header */}
         <div className="p-6 border-b border-white/[0.08]">
           <div className="flex items-center gap-3">
-            <img src="/brand/logo-color.png" alt="CarMakléř" className="h-10 brightness-0 invert" />
-            <span className="text-[10px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full ml-2">ADMIN</span>
+            <img src="/brand/logo-color.png" alt="CarMakler" className="h-10 brightness-0 invert" />
+            <span className="text-[10px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full ml-2">
+              {userRole === "MANAGER" ? "MANAZER" : "ADMIN"}
+            </span>
           </div>
         </div>
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto px-3 py-4">
-          {navSections.map((section) => (
+          {visibleSections.map((section) => (
             <div key={section.title} className="mb-2">
               <div className="text-[11px] font-bold text-gray-500 uppercase tracking-widest px-3 py-2">
                 {section.title}
               </div>
               {section.items.map((item) => {
-                const isActive = pathname === item.href;
+                const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
                 return (
                   <Link
                     key={item.id}
@@ -112,11 +157,11 @@ export function AdminSidebar({ open, onClose }: AdminSidebarProps) {
               className="w-[40px] h-[40px] rounded-lg flex items-center justify-center"
               style={{ background: "var(--gradient-orange)" }}
             >
-              <span className="font-bold text-white text-sm">AD</span>
+              <span className="font-bold text-white text-sm">{initials}</span>
             </div>
             <div>
-              <div className="font-semibold text-sm text-white">Admin</div>
-              <div className="text-xs text-gray-500">Administrátor</div>
+              <div className="font-semibold text-sm text-white">{displayName}</div>
+              <div className="text-xs text-gray-500">{roleLabel}</div>
             </div>
           </div>
         </div>
