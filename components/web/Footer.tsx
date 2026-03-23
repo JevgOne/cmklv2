@@ -24,7 +24,7 @@ const footerSections = [
   {
     title: "O nás",
     links: [
-      { href: "/o-nas", label: "O CarMakléř" },
+      { href: "/o-nas", label: "O CarMakléři" },
       { href: "/o-nas", label: "Náš tým" },
       { href: "/kariera", label: "Kariéra" },
       { href: "/recenze", label: "Recenze" },

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { OpportunityWizard } from "@/components/web/marketplace/OpportunityWizard";
 
 export const metadata: Metadata = {
-  title: "Nova prilezitost | Dealer | Marketplace | CarMakler",
+  title: "Nová příležitost | Dealer | Marketplace | CarMakléř",
 };
 
 export default function NewOpportunityPage() {
@@ -20,13 +20,13 @@ export default function NewOpportunityPage() {
             Dealer
           </Link>
           <span>/</span>
-          <span className="text-gray-900">Nova prilezitost</span>
+          <span className="text-gray-900">Nová příležitost</span>
         </div>
         <h1 className="text-[28px] font-extrabold text-gray-900">
-          Pridat novou prilezitost
+          Přidat novou příležitost
         </h1>
         <p className="text-gray-500 mt-1">
-          Popiste auto, plan opravy a prodejni odhad. Prilezitost bude schvalena nasim teamem.
+          Popište auto, plán opravy a prodejní odhad. Příležitost bude schválena naším týmem.
         </p>
       </div>
 

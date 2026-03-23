@@ -5,9 +5,9 @@ import { Card } from "@/components/ui/Card";
 import { ApplyForm } from "@/components/web/marketplace/ApplyForm";
 
 export const metadata: Metadata = {
-  title: "Marketplace | Investicni platforma pro flipping aut | CarMakler",
+  title: "Marketplace | Investiční platforma pro flipping aut | CarMakléř",
   description:
-    "Investujte do aut a vydelejte 15-25% rocne. Overeni dealeri nabizi prilezitosti, overeni investori financuji. Bezpecne pres Carmakler.",
+    "Investujte do aut a vydělejte 15-25 % ročně. Ověření dealeři nabízí příležitosti, ověření investoři financují. Bezpečně přes CarMakléř.",
 };
 
 const howItWorks = [
@@ -15,25 +15,25 @@ const howItWorks = [
     step: 1,
     icon: "🔍",
     title: "Dealer najde auto",
-    desc: "Overeny dealer najde auto s potencialem — podcenene, po leasingu, nebo na opravu.",
+    desc: "Ověřený dealer najde auto s potenciálem — podceněné, po leasingu, nebo na opravu.",
   },
   {
     step: 2,
     icon: "💰",
     title: "Investor financuje",
-    desc: "Investori financuji nakup a opravu. Minimalni investice 10 000 Kc.",
+    desc: "Investoři financují nákup a opravu. Minimální investice 10 000 Kč.",
   },
   {
     step: 3,
     icon: "🔧",
-    title: "Oprava a priprava",
-    desc: "Dealer auto opravi, pripraví a naforti pro prodej. Vse pod dohledem Carmakler.",
+    title: "Oprava a příprava",
+    desc: "Dealer auto opraví, připraví a nafotí pro prodej. Vše pod dohledem CarMakléř.",
   },
   {
     step: 4,
     icon: "🎉",
-    title: "Prodej a deleni zisku",
-    desc: "Auto se proda za trzni cenu. Zisk se deli: 40% investor, 40% dealer, 20% Carmakler.",
+    title: "Prodej a dělení zisku",
+    desc: "Auto se prodá za tržní cenu. Zisk se dělí: 40 % investor, 40 % dealer, 20 % CarMakléř.",
   },
 ];
 
@@ -63,36 +63,36 @@ const roiExamples = [
 
 const faqs = [
   {
-    q: "Je to bezpecne?",
-    a: "Ano. Kazde auto se kupuje na firmu Carmakler, ktera rucí za celou transakci. Investori nezodpovidaji za technicke vady ani pravni problemy.",
+    q: "Je to bezpečné?",
+    a: "Ano. Každé auto se kupuje na firmu CarMakléř, která ručí za celou transakci. Investoři nezodpovídají za technické vady ani právní problémy.",
   },
   {
-    q: "Jaka je minimalni investice?",
-    a: "Minimalni investice do jednoho flipu je 10 000 Kc. Muzete investovat do vice aut soucasne.",
+    q: "Jaká je minimální investice?",
+    a: "Minimální investice do jednoho flipu je 10 000 Kč. Můžete investovat do více aut současně.",
   },
   {
-    q: "Jak dlouho trva flip?",
-    a: "Typicky 30-90 dni od financovani po prodej. Zalezi na rozsahu opravy a poptavce na trhu.",
+    q: "Jak dlouho trvá flip?",
+    a: "Typicky 30-90 dní od financování po prodej. Záleží na rozsahu opravy a poptávce na trhu.",
   },
   {
-    q: "Jak se deli zisk?",
-    a: "Zisk se deli v pomeru 40% investor, 40% dealer, 20% Carmakler. Pomer je fixni pro vsechny flipy.",
+    q: "Jak se dělí zisk?",
+    a: "Zisk se dělí v poměru 40 % investor, 40 % dealer, 20 % CarMakléř. Poměr je fixní pro všechny flipy.",
   },
   {
-    q: "Co kdyz se auto neproda?",
-    a: "Carmakler garantuje odkup za minimalní cenu po 120 dnech. Investor nikdy neprijde o vice nez 10% investice.",
+    q: "Co když se auto neprodá?",
+    a: "CarMakléř garantuje odkup za minimální cenu po 120 dnech. Investor nikdy nepřijde o více než 10 % investice.",
   },
   {
     q: "Jak se stanu dealerem nebo investorem?",
-    a: "Vyplnte formular zadosti nize. Vas profil proverime a ozveme se do 48 hodin.",
+    a: "Vyplňte formulář žádosti níže. Váš profil prověříme a ozveme se do 48 hodin.",
   },
 ];
 
 const guarantees = [
-  { icon: "🏢", title: "Auto na firmu Carmakler", desc: "Kazde auto se kupuje na nasi firmu. Minimalizace rizika." },
-  { icon: "🔒", title: "Smlouva s kazdym investorem", desc: "Jasne podminky, prava a povinnosti. Zadne prekvapení." },
-  { icon: "✅", title: "Overeni dealeri", desc: "Kazdy dealer prochazi overovacim procesem a ma historii flipu." },
-  { icon: "📊", title: "Transparentni kalkulace", desc: "Vsechny naklady a zisky jsou viditelne. Zadne skryte poplatky." },
+  { icon: "🏢", title: "Auto na firmu CarMakléř", desc: "Každé auto se kupuje na naši firmu. Minimalizace rizika." },
+  { icon: "🔒", title: "Smlouva s každým investorem", desc: "Jasné podmínky, práva a povinnosti. Žádné překvapení." },
+  { icon: "✅", title: "Ověření dealeři", desc: "Každý dealer prochází ověřovacím procesem a má historii flipů." },
+  { icon: "📊", title: "Transparentní kalkulace", desc: "Všechny náklady a zisky jsou viditelné. Žádné skryté poplatky." },
 ];
 
 export default function MarketplacePage() {
@@ -104,14 +104,14 @@ export default function MarketplacePage() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <span className="inline-block bg-orange-500/20 text-orange-400 text-sm font-semibold px-4 py-1.5 rounded-full mb-6">
-                Investicni platforma
+                Investiční platforma
               </span>
               <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
                 Investujte do aut,{" "}
-                <span className="text-orange-500">vydelejte 15-25%</span> rocne
+                <span className="text-orange-500">vydělejte 15-25 %</span> ročně
               </h1>
               <p className="text-lg text-white/60 mt-5 leading-relaxed max-w-lg">
-                Overeni dealeri nachazeji prilezitosti. Vy investujete. Auto se opravi, proda a zisk se deli ferove.
+                Ověření dealeři nacházejí příležitosti. Vy investujete. Auto se opraví, prodá a zisk se dělí férově.
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <Link href="#apply" className="no-underline">
@@ -134,15 +134,15 @@ export default function MarketplacePage() {
               <div className="grid grid-cols-3 gap-6 mt-12 pt-8 border-t border-white/10">
                 <div>
                   <div className="text-2xl font-extrabold text-orange-500">127</div>
-                  <div className="text-sm text-white/50">Dokoncených flipu</div>
+                  <div className="text-sm text-white/50">Dokončených flipů</div>
                 </div>
                 <div>
                   <div className="text-2xl font-extrabold text-orange-500">21%</div>
-                  <div className="text-sm text-white/50">Prumerny ROI</div>
+                  <div className="text-sm text-white/50">Průměrný ROI</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-extrabold text-orange-500">48 dni</div>
-                  <div className="text-sm text-white/50">Prumerna doba</div>
+                  <div className="text-2xl font-extrabold text-orange-500">48 dní</div>
+                  <div className="text-sm text-white/50">Průměrná doba</div>
                 </div>
               </div>
             </div>
@@ -153,7 +153,7 @@ export default function MarketplacePage() {
                   <div className="text-center p-8">
                     <div className="text-6xl mb-4">📈</div>
                     <div className="text-3xl font-extrabold text-white mb-2">+21%</div>
-                    <div className="text-white/60">Prumerny rocni vynos</div>
+                    <div className="text-white/60">Průměrný roční výnos</div>
                   </div>
                 </div>
               </div>
@@ -169,7 +169,7 @@ export default function MarketplacePage() {
             <h2 className="text-2xl sm:text-[28px] font-extrabold text-gray-900">
               Jak to funguje
             </h2>
-            <p className="text-gray-500 mt-2">4 jednoduche kroky od nalezeni auta po vyplatu zisku</p>
+            <p className="text-gray-500 mt-2">4 jednoduché kroky od nalezení auta po výplatu zisku</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -194,9 +194,9 @@ export default function MarketplacePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-[28px] font-extrabold text-gray-900">
-              Priklady zhodnoceni
+              Příklady zhodnocení
             </h2>
-            <p className="text-gray-500 mt-2">Realne priklady flipu a jejich vynosnost</p>
+            <p className="text-gray-500 mt-2">Reálné příklady flipů a jejich výnosnost</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -213,16 +213,16 @@ export default function MarketplacePage() {
 
                   <div className="mt-4 space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Nakupni cena</span>
-                      <span className="font-semibold">{ex.purchase.toLocaleString("cs-CZ")} Kc</span>
+                      <span className="text-gray-500">Nákupní cena</span>
+                      <span className="font-semibold">{ex.purchase.toLocaleString("cs-CZ")} Kč</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Naklady na opravu</span>
-                      <span className="font-semibold">{ex.repair.toLocaleString("cs-CZ")} Kc</span>
+                      <span className="text-gray-500">Náklady na opravu</span>
+                      <span className="font-semibold">{ex.repair.toLocaleString("cs-CZ")} Kč</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Prodejni cena</span>
-                      <span className="font-semibold text-success-500">{ex.sale.toLocaleString("cs-CZ")} Kc</span>
+                      <span className="text-gray-500">Prodejní cena</span>
+                      <span className="font-semibold text-success-500">{ex.sale.toLocaleString("cs-CZ")} Kč</span>
                     </div>
                   </div>
 
@@ -230,7 +230,7 @@ export default function MarketplacePage() {
                     <div className="flex justify-between items-center">
                       <div>
                         <div className="text-xs text-gray-400 uppercase font-semibold">Zisk investora</div>
-                        <div className="text-xl font-extrabold text-success-500">{investorProfit.toLocaleString("cs-CZ")} Kc</div>
+                        <div className="text-xl font-extrabold text-success-500">{investorProfit.toLocaleString("cs-CZ")} Kč</div>
                       </div>
                       <div className="bg-orange-100 text-orange-600 font-extrabold text-lg px-4 py-2 rounded-xl">
                         +{roi}%
@@ -249,9 +249,9 @@ export default function MarketplacePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-[28px] font-extrabold text-gray-900">
-              Bezpecnost na prvnim miste
+              Bezpečnost na prvním místě
             </h2>
-            <p className="text-gray-500 mt-2">Kazdy flip je zabezpecen pres firmu Carmakler</p>
+            <p className="text-gray-500 mt-2">Každý flip je zabezpečen přes firmu CarMakléř</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -273,7 +273,7 @@ export default function MarketplacePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-[28px] font-extrabold text-gray-900">
-              Casto kladene otazky
+              Často kladené otázky
             </h2>
           </div>
 
@@ -293,9 +293,9 @@ export default function MarketplacePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-[28px] font-extrabold text-gray-900">
-              Pripojte se k platforme
+              Připojte se k platformě
             </h2>
-            <p className="text-gray-500 mt-2">Vyplnte formular a zacnete vydelavat</p>
+            <p className="text-gray-500 mt-2">Vyplňte formulář a začněte vydělávat</p>
           </div>
 
           <ApplyForm />

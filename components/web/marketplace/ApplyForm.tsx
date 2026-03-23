@@ -44,11 +44,11 @@ export function ApplyForm() {
       });
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Chyba pri odesilani");
+        throw new Error(data.error || "Chyba při odesílání");
       }
       setSubmitted(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Neocekavana chyba");
+      setError(err instanceof Error ? err.message : "Neočekávaná chyba");
     } finally {
       setSubmitting(false);
     }
@@ -60,9 +60,9 @@ export function ApplyForm() {
         <div className="w-16 h-16 bg-success-50 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
           ✓
         </div>
-        <h3 className="text-xl font-bold text-gray-900 mb-2">Zadost odeslana!</h3>
+        <h3 className="text-xl font-bold text-gray-900 mb-2">Žádost odeslána!</h3>
         <p className="text-gray-500">
-          Dekujeme za zajem. Vas profil proverime a ozveme se vam do 48 hodin.
+          Děkujeme za zájem. Váš profil prověříme a ozveme se vám do 48 hodin.
         </p>
       </Card>
     );
@@ -70,7 +70,7 @@ export function ApplyForm() {
 
   return (
     <Card className="p-6 sm:p-8 max-w-lg mx-auto">
-      <h3 className="text-xl font-bold text-gray-900 mb-6">Zadost o pristup</h3>
+      <h3 className="text-xl font-bold text-gray-900 mb-6">Žádost o přístup</h3>
 
       {/* Role selection */}
       {!role && (
@@ -84,7 +84,7 @@ export function ApplyForm() {
           >
             <span className="text-3xl block mb-3">🚗</span>
             <span className="font-bold text-gray-900 block">Jsem dealer</span>
-            <span className="text-sm text-gray-500 mt-1 block">Chci nabizet auta k flipovani</span>
+            <span className="text-sm text-gray-500 mt-1 block">Chci nabízet auta k flipování</span>
           </button>
           <button
             type="button"
@@ -108,25 +108,25 @@ export function ApplyForm() {
             onClick={() => setRole(null)}
             className="text-sm text-orange-500 font-semibold cursor-pointer bg-transparent border-none hover:text-orange-600"
           >
-            &larr; Zmenit roli
+            &larr; Změnit roli
           </button>
 
-          <Input label="Jmeno a prijmeni" value={name} onChange={(e) => setName(e.target.value)} />
+          <Input label="Jméno a příjmení" value={name} onChange={(e) => setName(e.target.value)} />
           <Input label="E-mail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
           <Input label="Telefon" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
 
           {role === "VERIFIED_DEALER" && (
             <>
-              <Input label="Nazev firmy" value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
-              <Input label="ICO" value={ico} onChange={(e) => setIco(e.target.value)} />
+              <Input label="Název firmy" value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
+              <Input label="IČO" value={ico} onChange={(e) => setIco(e.target.value)} />
             </>
           )}
 
           <Textarea
-            label="Zprava"
+            label="Zpráva"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Popiste sve zkusenosti, motivaci a proc chcete pristup k marketplace..."
+            placeholder="Popište své zkušenosti, motivaci a proč chcete přístup k marketplace..."
             rows={4}
           />
 
@@ -142,7 +142,7 @@ export function ApplyForm() {
             disabled={submitting || !name || !email || message.length < 10}
             onClick={handleSubmit}
           >
-            {submitting ? "Odesilam..." : "Odeslat zadost"}
+            {submitting ? "Odesílám..." : "Odeslat žádost"}
           </Button>
         </div>
       )}

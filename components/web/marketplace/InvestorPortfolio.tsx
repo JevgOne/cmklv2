@@ -15,25 +15,25 @@ export function InvestorPortfolio({ totalInvested, activeInvestments, totalRetur
         icon="💰"
         iconColor="orange"
         value={formatPrice(totalInvested)}
-        label="Celkem investovano"
+        label="Celkem investováno"
       />
       <StatCard
         icon="⚡"
         iconColor="blue"
         value={activeInvestments.toString()}
-        label="Aktivnich investic"
+        label="Aktivních investic"
       />
       <StatCard
         icon="📈"
         iconColor="green"
         value={formatPrice(totalReturns)}
-        label="Celkove vynosy"
+        label="Celkové výnosy"
       />
       <StatCard
         icon="🎯"
         iconColor="orange"
         value={`${averageRoi}%`}
-        label="Prumerny ROI"
+        label="Průměrný ROI"
       />
     </div>
   );

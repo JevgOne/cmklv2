@@ -16,20 +16,20 @@ const TYPE_OPTIONS = [
   { value: "CALL", label: "Hovor" },
   { value: "SMS", label: "SMS" },
   { value: "EMAIL", label: "Email" },
-  { value: "MEETING", label: "Schuzka" },
-  { value: "NOTE", label: "Poznamka" },
+  { value: "MEETING", label: "Schůzka" },
+  { value: "NOTE", label: "Poznámka" },
 ];
 
 const DIRECTION_OPTIONS = [
-  { value: "OUTGOING", label: "Odchozi" },
-  { value: "INCOMING", label: "Prichozi" },
+  { value: "OUTGOING", label: "Odchozí" },
+  { value: "INCOMING", label: "Příchozí" },
 ];
 
 const RESULT_OPTIONS = [
-  { value: "", label: "— Bez vysledku —" },
-  { value: "INTERESTED", label: "Zajem" },
-  { value: "NOT_NOW", label: "Ted ne" },
-  { value: "REJECTED", label: "Odmitnuti" },
+  { value: "", label: "— Bez výsledku —" },
+  { value: "INTERESTED", label: "Zájem" },
+  { value: "NOT_NOW", label: "Teď ne" },
+  { value: "REJECTED", label: "Odmítnutí" },
   { value: "FOLLOW_UP", label: "Follow-up" },
 ];
 
@@ -55,7 +55,7 @@ export function CommunicationForm({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!summary.trim()) {
-      setError("Popis je povinny");
+      setError("Popis je povinný");
       return;
     }
 
@@ -84,12 +84,12 @@ export function CommunicationForm({
 
       if (!res.ok) {
         const data = await res.json().catch(() => null);
-        throw new Error(data?.error || "Chyba pri ukladani");
+        throw new Error(data?.error || "Chyba při ukládání");
       }
 
       onSuccess?.();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Neznama chyba");
+      setError(err instanceof Error ? err.message : "Neznámá chyba");
     } finally {
       setLoading(false);
     }
@@ -106,7 +106,7 @@ export function CommunicationForm({
 
       {showDirection && (
         <Select
-          label="Smer"
+          label="Směr"
           options={DIRECTION_OPTIONS}
           value={direction}
           onChange={(e) => setDirection(e.target.value)}
@@ -115,7 +115,7 @@ export function CommunicationForm({
 
       <Textarea
         label="Popis"
-        placeholder="Strucny popis komunikace..."
+        placeholder="Stručný popis komunikace..."
         value={summary}
         onChange={(e) => setSummary(e.target.value)}
         rows={3}
@@ -124,7 +124,7 @@ export function CommunicationForm({
 
       {showDuration && (
         <Input
-          label="Delka hovoru (sekundy)"
+          label="Délka hovoru (sekundy)"
           type="number"
           placeholder="120"
           value={duration}
@@ -133,7 +133,7 @@ export function CommunicationForm({
       )}
 
       <Select
-        label="Vysledek"
+        label="Výsledek"
         options={RESULT_OPTIONS}
         value={result}
         onChange={(e) => setResult(e.target.value)}
@@ -142,14 +142,14 @@ export function CommunicationForm({
       {showFollowUp && (
         <>
           <Input
-            label="Datum dalsiho kontaktu"
+            label="Datum dalšího kontaktu"
             type="datetime-local"
             value={nextFollowUp}
             onChange={(e) => setNextFollowUp(e.target.value)}
           />
           <Input
-            label="Poznamka k follow-upu"
-            placeholder="Co pripravit..."
+            label="Poznámka k follow-upu"
+            placeholder="Co připravit..."
             value={followUpNote}
             onChange={(e) => setFollowUpNote(e.target.value)}
           />
@@ -160,11 +160,11 @@ export function CommunicationForm({
 
       <div className="flex gap-3">
         <Button type="submit" variant="primary" disabled={loading}>
-          {loading ? "Ukladam..." : "Ulozit"}
+          {loading ? "Ukládám..." : "Uložit"}
         </Button>
         {onCancel && (
           <Button type="button" variant="ghost" onClick={onCancel}>
-            Zrusit
+            Zrušit
           </Button>
         )}
       </div>

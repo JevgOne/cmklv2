@@ -39,11 +39,11 @@ export function VehiclesList({ vehicles }: VehiclesListProps) {
       {filtered.length === 0 ? (
         <EmptyState
           icon="🚗"
-          title="Zadne vozidla"
+          title="Žádné vozidla"
           description={
             filter === "all"
-              ? "Zatim jste nepridali zadne vozidlo."
-              : "V teto kategorii nemáte zadne vozidlo."
+              ? "Zatím jste nepřidali žádné vozidlo."
+              : "V této kategorii nemáte žádné vozidlo."
           }
         />
       ) : (

@@ -43,7 +43,7 @@ export default function NewVehiclePage() {
           const model = data.contact?.prelimModel || data.details?.model || "";
           return {
             id: d.id,
-            title: brand ? `${brand} ${model}`.trim() : "Bez nazvu",
+            title: brand ? `${brand} ${model}`.trim() : "Bez názvu",
             status: (data.status as string) || "draft",
             currentStep: data.currentStep || 1,
             updatedAt: d.updatedAt,
@@ -84,7 +84,7 @@ export default function NewVehiclePage() {
           <button
             onClick={handleClose}
             className="p-2 -mr-2 text-gray-400 hover:text-gray-600 transition-colors"
-            aria-label="Zavrit"
+            aria-label="Zavřít"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -127,9 +127,9 @@ export default function NewVehiclePage() {
               </svg>
             </div>
             <div>
-              <div className="text-xl font-bold">Nabrat nove auto</div>
+              <div className="text-xl font-bold">Nabrat nové auto</div>
               <div className="text-sm text-white/80 mt-0.5">
-                Vytvorit novy draft a zacit od kontaktu
+                Vytvořit nový draft a začít od kontaktu
               </div>
             </div>
           </div>
@@ -149,7 +149,7 @@ export default function NewVehiclePage() {
         ) : drafts.length > 0 ? (
           <div className="space-y-3">
             <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wide">
-              Rozpracovane drafty ({drafts.length})
+              Rozpracované drafty ({drafts.length})
             </h2>
             {drafts.map((draft) => (
               <button
@@ -204,11 +204,11 @@ export default function NewVehiclePage() {
 function DraftStatusPill({ status }: { status: string }) {
   switch (status) {
     case "rejected_by_broker":
-      return <StatusPill variant="rejected">Odmitnut</StatusPill>;
+      return <StatusPill variant="rejected">Odmítnut</StatusPill>;
     case "pending_sync":
-      return <StatusPill variant="pending">Ceka na sync</StatusPill>;
+      return <StatusPill variant="pending">Čeká na sync</StatusPill>;
     case "submitted":
-      return <StatusPill variant="active">Odeslan</StatusPill>;
+      return <StatusPill variant="active">Odeslán</StatusPill>;
     default:
       return <StatusPill variant="draft">Draft</StatusPill>;
   }
@@ -219,14 +219,14 @@ function formatRelativeTime(timestamp: number): string {
   const diffMs = now - timestamp;
   const diffMins = Math.floor(diffMs / 60000);
 
-  if (diffMins < 1) return "Prave ted";
-  if (diffMins < 60) return `Pred ${diffMins} min`;
+  if (diffMins < 1) return "Právě teď";
+  if (diffMins < 60) return `Před ${diffMins} min`;
 
   const diffHours = Math.floor(diffMins / 60);
-  if (diffHours < 24) return `Pred ${diffHours} hod`;
+  if (diffHours < 24) return `Před ${diffHours} hod`;
 
   const diffDays = Math.floor(diffHours / 24);
-  if (diffDays < 7) return `Pred ${diffDays} dny`;
+  if (diffDays < 7) return `Před ${diffDays} dny`;
 
   return new Date(timestamp).toLocaleDateString("cs-CZ");
 }

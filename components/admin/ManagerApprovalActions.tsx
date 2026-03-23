@@ -59,7 +59,7 @@ export function ManagerApprovalActions({ vehicleId }: ManagerApprovalActionsProp
           onClick={() => handleAction("approve")}
           disabled={loading !== null}
         >
-          {loading === "approve" ? "..." : "Schvalit"}
+          {loading === "approve" ? "..." : "Schválit"}
         </Button>
         <Button
           variant="outline"
@@ -68,7 +68,7 @@ export function ManagerApprovalActions({ vehicleId }: ManagerApprovalActionsProp
           disabled={loading !== null}
           className="!text-warning-500 !shadow-[inset_0_0_0_2px_var(--warning-500)]"
         >
-          Vratit k dopracovani
+          Vrátit k dopracování
         </Button>
         <Button
           variant="danger"
@@ -76,7 +76,7 @@ export function ManagerApprovalActions({ vehicleId }: ManagerApprovalActionsProp
           onClick={() => setModalAction("reject")}
           disabled={loading !== null}
         >
-          Zamitnout
+          Zamítnout
         </Button>
       </div>
 
@@ -87,18 +87,18 @@ export function ManagerApprovalActions({ vehicleId }: ManagerApprovalActionsProp
             <h3 className="text-lg font-bold text-gray-900 mb-2">
               {modalAction === "return"
                 ? "Vratit k dopracovani"
-                : "Zamitnout vozidlo"}
+                : "Zamítnout vozidlo"}
             </h3>
             <p className="text-sm text-gray-500 mb-4">
               {modalAction === "return"
-                ? "Napiste duvod, proc je potreba vozidlo dopracovat."
-                : "Napiste duvod zamitnutí."}
+                ? "Napište důvod, proč je potřeba vozidlo dopracovat."
+                : "Napište důvod zamítnutí."}
             </p>
             <textarea
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               className="w-full border border-gray-300 rounded-lg p-3 text-sm min-h-[100px] focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-              placeholder="Duvod..."
+              placeholder="Důvod..."
               autoFocus
             />
             <div className="flex justify-end gap-2 mt-4">
@@ -111,7 +111,7 @@ export function ManagerApprovalActions({ vehicleId }: ManagerApprovalActionsProp
                 }}
                 disabled={loading !== null}
               >
-                Zrusit
+                Zrušit
               </Button>
               <Button
                 variant={modalAction === "return" ? "primary" : "danger"}
@@ -123,7 +123,7 @@ export function ManagerApprovalActions({ vehicleId }: ManagerApprovalActionsProp
                   ? "..."
                   : modalAction === "return"
                     ? "Vratit"
-                    : "Zamitnout"}
+                    : "Zamítnout"}
               </Button>
             </div>
           </div>

@@ -26,7 +26,7 @@ export function ReportViolationModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!description.trim()) {
-      setError("Popis poruseni je povinny");
+      setError("Popis porušení je povinný");
       return;
     }
     setSubmitting(true);
@@ -47,14 +47,14 @@ export function ReportViolationModal({
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Nepodarilo se nahlasit poruseni");
+        throw new Error(data.error || "Nepodařilo se nahlásit porušení");
       }
 
       onClose();
       router.refresh();
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Nepodarilo se nahlasit poruseni"
+        err instanceof Error ? err.message : "Nepodařilo se nahlásit porušení"
       );
     } finally {
       setSubmitting(false);
@@ -62,7 +62,7 @@ export function ReportViolationModal({
   };
 
   return (
-    <Modal open={open} onClose={onClose} title="Nahlasit poruseni exkluzivity">
+    <Modal open={open} onClose={onClose} title="Nahlásit porušení exkluzivity">
       {error && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
           {error}
@@ -72,12 +72,12 @@ export function ReportViolationModal({
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Popis poruseni
+            Popis porušení
           </label>
           <textarea
             className="w-full p-3 border border-gray-200 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
             rows={4}
-            placeholder="Prodejce inzeruje auto na jinych portalech..."
+            placeholder="Prodejce inzeruje auto na jiných portálech..."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
@@ -85,7 +85,7 @@ export function ReportViolationModal({
         </div>
 
         <Input
-          label="URL kde je auto inzerovano"
+          label="URL kde je auto inzerováno"
           type="url"
           placeholder="https://bazos.cz/..."
           value={evidenceUrl}
@@ -93,7 +93,7 @@ export function ReportViolationModal({
         />
 
         <p className="text-xs text-gray-500">
-          Informace bude odeslana vasemu manazerovi a BackOffice k provereni.
+          Informace bude odeslána vašemu manažerovi a BackOffice k prověření.
         </p>
 
         <div className="flex gap-3 mt-2">
@@ -103,7 +103,7 @@ export function ReportViolationModal({
             onClick={onClose}
             className="flex-1"
           >
-            Zrusit
+            Zrušit
           </Button>
           <Button
             variant="danger"
@@ -111,7 +111,7 @@ export function ReportViolationModal({
             disabled={submitting || !description.trim()}
             className="flex-1"
           >
-            {submitting ? "Odesilam..." : "Nahlasit poruseni"}
+            {submitting ? "Odesílám..." : "Nahlásit porušení"}
           </Button>
         </div>
       </form>

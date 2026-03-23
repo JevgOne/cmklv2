@@ -16,7 +16,7 @@ export interface WatchdogMatchData {
 
 export function watchdogMatchSubject(data: WatchdogMatchData): string {
   const count = data.matches.length;
-  return `Nasli jsme ${count} ${count === 1 ? "auto" : count < 5 ? "auta" : "aut"} podle vasich kriterii`;
+  return `Našli jsme ${count} ${count === 1 ? "auto" : count < 5 ? "auta" : "aut"} podle Vašich kritérií`;
 }
 
 export function watchdogMatchHtml(data: WatchdogMatchData): string {
@@ -42,17 +42,17 @@ export function watchdogMatchHtml(data: WatchdogMatchData): string {
 
   const content = `
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      Dobry den, ${data.userName},
+      Dobrý den, ${data.userName},
     </p>
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      nasli jsme nova auta odpovidajici vasim kriterium: <strong>${data.criteria}</strong>
+      našli jsme nová auta odpovídající Vašim kritériím: <strong>${data.criteria}</strong>
     </p>
     <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 16px 0;">
       ${matchItems}
     </table>
     <p style="margin: 24px 0 0; text-align: center;">
       <a href="${data.manageUrl}" style="font-size: 13px; color: #9ca3af; text-decoration: none;">
-        Spravovat hlidacího psa
+        Spravovat hlídacího psa
       </a>
     </p>
   `;
@@ -65,12 +65,12 @@ export function watchdogMatchText(data: WatchdogMatchData): string {
     .join("\n");
 
   return [
-    `Dobry den, ${data.userName},`,
+    `Dobrý den, ${data.userName},`,
     "",
-    `nasli jsme nova auta odpovidajici vasim kriterium: ${data.criteria}`,
+    `našli jsme nová auta odpovídající Vašim kritériím: ${data.criteria}`,
     "",
     matchLines,
     "",
-    `Spravovat hlidaciho psa: ${data.manageUrl}`,
+    `Spravovat hlídacího psa: ${data.manageUrl}`,
   ].join("\n");
 }

@@ -32,27 +32,27 @@ interface PartnersTableProps {
 }
 
 const typeTabs = [
-  { value: "ALL", label: "Vsichni" },
+  { value: "ALL", label: "Všichni" },
   { value: "AUTOBAZAR", label: "Autobazary" },
-  { value: "VRAKOVISTE", label: "Vrakoviste" },
+  { value: "VRAKOVISTE", label: "Vrakoviště" },
 ];
 
 const statusOptions = [
-  { value: "", label: "Vsechny stavy" },
-  { value: "NEOSLOVENY", label: "Neosloveny" },
-  { value: "PRIRAZENY", label: "Prirazeny" },
-  { value: "OSLOVEN", label: "Osloven" },
-  { value: "JEDNAME", label: "Jedname" },
-  { value: "AKTIVNI_PARTNER", label: "Aktivni partner" },
-  { value: "ODMITNUTO", label: "Odmitnuto" },
+  { value: "", label: "Všechny stavy" },
+  { value: "NEOSLOVENY", label: "Neoslovený" },
+  { value: "PRIRAZENY", label: "Přiřazený" },
+  { value: "OSLOVEN", label: "Oslovený" },
+  { value: "JEDNAME", label: "Jednáme" },
+  { value: "AKTIVNI_PARTNER", label: "Aktivní partner" },
+  { value: "ODMITNUTO", label: "Odmítnuto" },
   { value: "POZASTAVENO", label: "Pozastaveno" },
 ];
 
 const sizeOptions = [
-  { value: "", label: "Vsechny velikosti" },
-  { value: "SMALL", label: "Maly (< 20 aut)" },
-  { value: "MEDIUM", label: "Stredni (20-100 aut)" },
-  { value: "LARGE", label: "Velky (100+ aut)" },
+  { value: "", label: "Všechny velikosti" },
+  { value: "SMALL", label: "Malý (< 20 aut)" },
+  { value: "MEDIUM", label: "Střední (20-100 aut)" },
+  { value: "LARGE", label: "Velký (100+ aut)" },
 ];
 
 export function PartnersTable({ initialType }: PartnersTableProps) {
@@ -130,7 +130,7 @@ export function PartnersTable({ initialType }: PartnersTableProps) {
             placeholder="Velikost"
           />
           <div className="flex items-center text-sm text-gray-500 px-4">
-            Celkem: {total} partneru
+            Celkem: {total} partnerů
           </div>
         </div>
       </Card>
@@ -138,22 +138,22 @@ export function PartnersTable({ initialType }: PartnersTableProps) {
       {/* Table */}
       <Card>
         {loading ? (
-          <div className="p-8 text-center text-gray-400">Nacitam...</div>
+          <div className="p-8 text-center text-gray-400">Načítám...</div>
         ) : partners.length === 0 ? (
           <EmptyState
             icon="🏢"
-            title="Zadni partneri"
-            description="Zatim nemame zadne partnery v systemu."
+            title="Žádní partneři"
+            description="Zatím nemáme žádné partnery v systému."
           />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-100">
-                  <th className="text-left py-3 px-4 font-semibold text-gray-600">Nazev</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-600">Název</th>
                   <th className="text-left py-3 px-4 font-semibold text-gray-600">Typ</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-600">Mesto</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-600">Manazer</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-600">Město</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-600">Manažer</th>
                   <th className="text-left py-3 px-4 font-semibold text-gray-600">Stav</th>
                   <th className="text-left py-3 px-4 font-semibold text-gray-600">Score</th>
                 </tr>
@@ -172,7 +172,7 @@ export function PartnersTable({ initialType }: PartnersTableProps) {
                       )}
                     </td>
                     <td className="py-3 px-4 text-gray-600">
-                      {partner.type === "AUTOBAZAR" ? "Autobazar" : "Vrakoviste"}
+                      {partner.type === "AUTOBAZAR" ? "Autobazar" : "Vrakoviště"}
                     </td>
                     <td className="py-3 px-4 text-gray-600">{partner.city || "—"}</td>
                     <td className="py-3 px-4 text-gray-600">

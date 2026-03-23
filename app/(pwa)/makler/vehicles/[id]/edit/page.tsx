@@ -23,10 +23,10 @@ function EditPageContent() {
         }
         const vehicle = (await response.json()) as Record<string, unknown>;
 
-        // Vytvorit draft a naplnit daty z API
+        // Vytvořit draft a naplnit daty z API
         const draftId = await createDraft();
 
-        // Namapovat data z API do draft formatu
+        // Namapovat data z API do draft formátu
         const contactData: Partial<VehicleDraft["contact"]> = {
           sellerName: vehicle.sellerName as string | undefined,
           sellerPhone: vehicle.sellerPhone as string | undefined,
@@ -87,7 +87,7 @@ function EditPageContent() {
         // Redirect do flow s prefilled daty
         router.replace(`/makler/vehicles/new/contact?draft=${draftId}&edit=${vehicleId}`);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Chyba pri nacitani");
+        setError(err instanceof Error ? err.message : "Chyba při načítání");
       } finally {
         setLoading(false);
       }
@@ -119,7 +119,7 @@ function EditPageContent() {
           onClick={() => router.push("/makler/vehicles")}
           className="text-orange-500 font-semibold mt-4"
         >
-          Zpet na seznam vozu
+          Zpět na seznam vozů
         </button>
       </div>
     );
@@ -130,7 +130,7 @@ function EditPageContent() {
       <div className="flex items-center justify-center min-h-[100dvh]">
         <div className="text-center">
           <div className="w-8 h-8 border-3 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-sm text-gray-500">Nacitam data vozidla...</p>
+          <p className="text-sm text-gray-500">Načítám data vozidla...</p>
         </div>
       </div>
     );

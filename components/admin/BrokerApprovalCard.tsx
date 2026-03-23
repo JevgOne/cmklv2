@@ -34,9 +34,9 @@ interface BrokerApprovalCardProps {
 const stepLabels: Record<string, string> = {
   PROFILE: "Profil",
   DOCUMENTS: "Dokumenty",
-  TRAINING: "Skoleni",
+  TRAINING: "Školení",
   CONTRACT: "Smlouva",
-  PENDING: "Ceka na schvaleni",
+  PENDING: "Čeká na schválení",
 };
 
 export function BrokerApprovalCard({ broker, onActivate, onReject }: BrokerApprovalCardProps) {
@@ -50,31 +50,31 @@ export function BrokerApprovalCard({ broker, onActivate, onReject }: BrokerAppro
       const res = await fetch(`/api/admin/brokers/${broker.id}/activate`, { method: "PUT" });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError(data.error || "Aktivace se nezdarila.");
+        setError(data.error || "Aktivace se nezdařila.");
         setLoading(null);
         return;
       }
       onActivate?.(broker.id);
     } catch {
-      setError("Doslo k chybe.");
+      setError("Došlo k chybě.");
       setLoading(null);
     }
   };
 
   const handleReject = async () => {
-    if (!confirm("Opravdu chcete zamítnout tohoto maklere?")) return;
+    if (!confirm("Opravdu chcete zamítnout tohoto makléře?")) return;
     setLoading("reject");
     setError("");
     try {
       const res = await fetch(`/api/admin/brokers/${broker.id}/reject`, { method: "POST" });
       if (!res.ok) {
-        setError("Zamitnuti se nezdarilo.");
+        setError("Zamítnutí se nezdařilo.");
         setLoading(null);
         return;
       }
       onReject?.(broker.id);
     } catch {
-      setError("Doslo k chybe.");
+      setError("Došlo k chybě.");
       setLoading(null);
     }
   };
@@ -117,7 +117,7 @@ export function BrokerApprovalCard({ broker, onActivate, onReject }: BrokerAppro
       <div className="grid grid-cols-2 gap-3 mt-4 text-sm">
         {broker.ico && (
           <div>
-            <span className="text-gray-400 text-xs uppercase font-semibold">ICO</span>
+            <span className="text-gray-400 text-xs uppercase font-semibold">IČO</span>
             <p className="text-gray-700">{broker.ico}</p>
           </div>
         )}
@@ -129,19 +129,19 @@ export function BrokerApprovalCard({ broker, onActivate, onReject }: BrokerAppro
         )}
         {broker.cities.length > 0 && (
           <div>
-            <span className="text-gray-400 text-xs uppercase font-semibold">Mesta</span>
+            <span className="text-gray-400 text-xs uppercase font-semibold">Města</span>
             <p className="text-gray-700">{broker.cities.join(", ")}</p>
           </div>
         )}
         {broker.quizScore !== undefined && (
           <div>
-            <span className="text-gray-400 text-xs uppercase font-semibold">Kviz</span>
+            <span className="text-gray-400 text-xs uppercase font-semibold">Kvíz</span>
             <p className="text-gray-700">
               {broker.quizScore}/{broker.quizTotal}
               {broker.quizScore >= (broker.quizTotal ?? 10) * 0.8 ? (
-                <span className="text-success-500 ml-1">Splneno</span>
+                <span className="text-success-500 ml-1">Splněno</span>
               ) : (
-                <span className="text-error-500 ml-1">Nesplneno</span>
+                <span className="text-error-500 ml-1">Nesplněno</span>
               )}
             </p>
           </div>
@@ -182,7 +182,7 @@ export function BrokerApprovalCard({ broker, onActivate, onReject }: BrokerAppro
             disabled={loading !== null}
             className="flex-1"
           >
-            {loading === "reject" ? "Zamitam..." : "Zamitnout"}
+            {loading === "reject" ? "Zamítám..." : "Zamítnout"}
           </Button>
           <Button
             variant="success"

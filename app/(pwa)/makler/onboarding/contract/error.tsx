@@ -16,7 +16,7 @@ export default function OnboardingContractError({
         </svg>
       </div>
       <h2 className="text-xl font-bold text-gray-900">Chyba</h2>
-      <p className="mt-2 text-sm text-gray-500">Nepodarilo se nacist smlouvu.</p>
+      <p className="mt-2 text-sm text-gray-500">Nepodařilo se načíst smlouvu.</p>
       <div className="mt-4">
         <Button variant="primary" onClick={reset}>Zkusit znovu</Button>
       </div>

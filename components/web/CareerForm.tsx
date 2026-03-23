@@ -101,7 +101,7 @@ export function CareerForm() {
         />
         <Textarea
           label="Zpráva"
-          placeholder="Napište nám proč chcete spolupracovat s CarMakléř..."
+          placeholder="Napište nám, proč chcete spolupracovat s CarMakléřem..."
           rows={4}
           value={message}
           onChange={(e) => setMessage(e.target.value)}

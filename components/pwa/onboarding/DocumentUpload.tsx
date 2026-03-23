@@ -19,9 +19,9 @@ interface DocumentSlot {
 }
 
 const DOCUMENT_SLOTS: DocumentSlot[] = [
-  { key: "trade_license", label: "Zivnostensky list", description: "PDF nebo foto", accept: "application/pdf,image/jpeg,image/png" },
-  { key: "id_front", label: "Obcansky prukaz — predni strana", description: "Foto predni strany OP", accept: "image/jpeg,image/png" },
-  { key: "id_back", label: "Obcansky prukaz — zadni strana", description: "Foto zadni strany OP", accept: "image/jpeg,image/png" },
+  { key: "trade_license", label: "Živnostenský list", description: "PDF nebo foto", accept: "application/pdf,image/jpeg,image/png" },
+  { key: "id_front", label: "Občanský průkaz — přední strana", description: "Foto přední strany OP", accept: "image/jpeg,image/png" },
+  { key: "id_back", label: "Občanský průkaz — zadní strana", description: "Foto zadní strany OP", accept: "image/jpeg,image/png" },
 ];
 
 export function DocumentUpload() {
@@ -60,7 +60,7 @@ export function DocumentUpload() {
     // Validate all documents uploaded
     const missing = DOCUMENT_SLOTS.filter((slot) => !documents[slot.key]);
     if (missing.length > 0) {
-      setError(`Nahrajte vsechny dokumenty: ${missing.map((m) => m.label).join(", ")}`);
+      setError(`Nahrajte všechny dokumenty: ${missing.map((m) => m.label).join(", ")}`);
       return;
     }
 
@@ -79,14 +79,14 @@ export function DocumentUpload() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError(data.error || "Nahrani dokumentu se nezdarilo.");
+        setError(data.error || "Nahrání dokumentů se nezdařilo.");
         setLoading(false);
         return;
       }
 
       router.push("/makler/onboarding/training");
     } catch {
-      setError("Doslo k neocekavane chybe. Zkuste to znovu.");
+      setError("Došlo k neočekávané chybě. Zkuste to znovu.");
       setLoading(false);
     }
   };
@@ -155,7 +155,7 @@ export function DocumentUpload() {
                 <svg className="w-10 h-10 text-gray-400 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                 </svg>
-                <p className="text-sm font-medium text-gray-700">Pretahni soubor sem</p>
+                <p className="text-sm font-medium text-gray-700">Přetáhněte soubor sem</p>
                 <p className="text-xs text-gray-400 mt-1">{slot.description}</p>
               </div>
             )}
@@ -175,7 +175,7 @@ export function DocumentUpload() {
       })}
 
       <Button type="submit" variant="primary" size="lg" disabled={loading} className="w-full">
-        {loading ? "Nahravani..." : "Pokracovat"}
+        {loading ? "Nahrávání..." : "Pokračovat"}
       </Button>
     </form>
   );

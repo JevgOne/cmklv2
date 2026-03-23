@@ -18,7 +18,7 @@ export default function NewContractError({
           Chyba
         </h2>
         <p className="text-gray-500 mb-6">
-          Nepodarilo se nacist formular. Zkuste to prosim znovu.
+          Nepodařilo se načíst formulář. Zkuste to prosím znovu.
         </p>
         <Button variant="primary" onClick={reset}>
           Zkusit znovu

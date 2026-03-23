@@ -65,22 +65,22 @@ export function LeaderboardTable({
       <Card className="p-4 bg-orange-50 border border-orange-200">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs text-orange-600 font-medium">Vase pozice</p>
+            <p className="text-xs text-orange-600 font-medium">Vaše pozice</p>
             <p className="text-2xl font-extrabold text-orange-600">
               {myPosition ? `${myPosition}.` : "-"}{" "}
               <span className="text-sm font-normal text-orange-500">
-                z {totalBrokers} makleru
+                z {totalBrokers} makléřů
               </span>
             </p>
           </div>
           <div className="text-right">
-            <p className="text-sm font-bold text-gray-900">{mySalesCount} prodeju</p>
+            <p className="text-sm font-bold text-gray-900">{mySalesCount} prodejů</p>
             <p className="text-xs text-gray-500">{formatPrice(myCommission)}</p>
           </div>
         </div>
       </Card>
 
-      {/* Zebricek */}
+      {/* Žebříček */}
       <div className="space-y-2">
         {leaderboard.map((entry) => (
           <Card
@@ -116,7 +116,7 @@ export function LeaderboardTable({
               </div>
               <div className="text-right flex-shrink-0">
                 <p className="text-sm font-bold text-gray-900">
-                  {entry.salesCount} prodeju
+                  {entry.salesCount} prodejů
                 </p>
                 <p className="text-xs text-gray-500">
                   {formatPrice(entry.totalCommission)}
@@ -129,7 +129,7 @@ export function LeaderboardTable({
         {leaderboard.length === 0 && (
           <Card className="p-8 text-center">
             <p className="text-gray-500 text-sm">
-              Tento mesic zatim zadne prodeje
+              Tento měsíc zatím žádné prodeje
             </p>
           </Card>
         )}

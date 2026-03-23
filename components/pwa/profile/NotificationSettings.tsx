@@ -13,23 +13,23 @@ interface NotificationSetting {
 const SETTINGS: NotificationSetting[] = [
   {
     key: "vehicleApproved",
-    label: "Schvaleni vozidla",
-    description: "Notifikace kdyz je vas inzerat schvalen",
+    label: "Schválení vozidla",
+    description: "Notifikace když je váš inzerát schválen",
   },
   {
     key: "newInquiry",
-    label: "Nove dotazy",
-    description: "Notifikace o novych dotazech na vase vozy",
+    label: "Nové dotazy",
+    description: "Notifikace o nových dotazech na vaše vozy",
   },
   {
     key: "commissionPaid",
-    label: "Vyplata provize",
-    description: "Notifikace o vyplaceni provize",
+    label: "Výplata provize",
+    description: "Notifikace o vyplacení provize",
   },
   {
     key: "systemUpdates",
-    label: "Systemove zpravy",
-    description: "Dulezite aktualizace a novinky",
+    label: "Systémové zprávy",
+    description: "Důležité aktualizace a novinky",
   },
 ];
 
@@ -60,7 +60,7 @@ export function NotificationSettings() {
   return (
     <Card className="p-4">
       <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-4">
-        Nastaveni notifikaci
+        Nastavení notifikací
       </h3>
       <div className="space-y-4">
         {SETTINGS.map((setting) => (

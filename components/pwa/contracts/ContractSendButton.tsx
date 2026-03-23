@@ -24,12 +24,12 @@ export function ContractSendButton({ contractId }: ContractSendButtonProps) {
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Chyba pri odesilani emailu");
+        throw new Error(data.error || "Chyba při odesílání emailu");
       }
 
       setSent(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Neocekavana chyba");
+      setError(err instanceof Error ? err.message : "Neočekávaná chyba");
     } finally {
       setIsSending(false);
     }
@@ -41,7 +41,7 @@ export function ContractSendButton({ contractId }: ContractSendButtonProps) {
         <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
         </svg>
-        <span>Email s smlouvou byl odeslan prodejci.</span>
+        <span>Email se smlouvou byl odeslán prodejci.</span>
       </Alert>
     );
   }
@@ -57,7 +57,7 @@ export function ContractSendButton({ contractId }: ContractSendButtonProps) {
         {isSending ? (
           <span className="flex items-center gap-2">
             <span className="w-4 h-4 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
-            Odesilam...
+            Odesílám...
           </span>
         ) : (
           <>

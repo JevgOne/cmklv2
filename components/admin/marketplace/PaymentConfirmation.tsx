@@ -55,7 +55,7 @@ export function PaymentConfirmation({ payments }: PaymentConfirmationProps) {
   if (payments.length === 0) {
     return (
       <Card className="p-6 text-center">
-        <p className="text-gray-500">Zadne platby necekaji na overeni.</p>
+        <p className="text-gray-500">Žádné platby nečekají na ověření.</p>
       </Card>
     );
   }
@@ -70,10 +70,10 @@ export function PaymentConfirmation({ payments }: PaymentConfirmationProps) {
                 Investor
               </th>
               <th className="text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wide px-6 py-4">
-                Prilezitost
+                Příležitost
               </th>
               <th className="text-right text-[11px] font-semibold text-gray-500 uppercase tracking-wide px-6 py-4">
-                Castka
+                Částka
               </th>
               <th className="text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wide px-6 py-4">
                 VS
@@ -110,7 +110,7 @@ export function PaymentConfirmation({ payments }: PaymentConfirmationProps) {
                       onClick={() => handleReject(payment.id)}
                       disabled={rejecting === payment.id}
                     >
-                      {rejecting === payment.id ? "..." : "Zamitnout"}
+                      {rejecting === payment.id ? "..." : "Zamítnout"}
                     </Button>
                   </div>
                 </td>

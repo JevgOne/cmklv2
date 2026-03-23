@@ -57,7 +57,7 @@ const NAV_ITEMS = [
     isCenter: true,
   },
   {
-    label: "Zpravy",
+    label: "Zprávy",
     href: "/makler/messages",
     icon: (active: boolean) => (
       <svg

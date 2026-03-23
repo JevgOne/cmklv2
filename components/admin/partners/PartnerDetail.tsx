@@ -66,12 +66,12 @@ const activityIcons: Record<string, string> = {
 };
 
 const statusOptions = [
-  { value: "NEOSLOVENY", label: "Neosloveny" },
-  { value: "PRIRAZENY", label: "Prirazeny" },
-  { value: "OSLOVEN", label: "Osloven" },
-  { value: "JEDNAME", label: "Jedname" },
-  { value: "AKTIVNI_PARTNER", label: "Aktivni partner" },
-  { value: "ODMITNUTO", label: "Odmitnuto" },
+  { value: "NEOSLOVENY", label: "Neoslovený" },
+  { value: "PRIRAZENY", label: "Přiřazený" },
+  { value: "OSLOVEN", label: "Oslovený" },
+  { value: "JEDNAME", label: "Jednáme" },
+  { value: "AKTIVNI_PARTNER", label: "Aktivní partner" },
+  { value: "ODMITNUTO", label: "Odmítnuto" },
   { value: "POZASTAVENO", label: "Pozastaveno" },
 ];
 
@@ -227,7 +227,7 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
         if (actRes.ok) setActivities(await actRes.json());
       } else {
         const err = await res.json();
-        alert(err.error || "Chyba pri aktivaci");
+        alert(err.error || "Chyba při aktivaci");
       }
     } catch (err) {
       console.error("Failed to activate:", err);
@@ -302,7 +302,7 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
               onClick={() => router.push("/admin/partners")}
               className="hover:text-gray-900 cursor-pointer bg-transparent border-none text-[13px] text-gray-500"
             >
-              Partneri
+              Partneři
             </button>
             <span>/</span>
             <span className="text-gray-900 font-medium">{partner.name}</span>
@@ -313,7 +313,7 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
             </h1>
             <PartnerStatusBadge status={partner.status} />
             <Badge variant="default">
-              {partner.type === "AUTOBAZAR" ? "Autobazar" : "Vrakoviste"}
+              {partner.type === "AUTOBAZAR" ? "Autobazar" : "Vrakoviště"}
             </Badge>
           </div>
         </div>
@@ -324,7 +324,7 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
               size="sm"
               onClick={() => setShowActivateModal(true)}
             >
-              Aktivovat partnerstvi
+              Aktivovat partnerství
             </Button>
           )}
         </div>
@@ -336,18 +336,18 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
           {/* Edit form */}
           <Card className="p-6">
             <h3 className="text-lg font-bold text-gray-900 mb-4">
-              Udaje partnera
+              Údaje partnera
             </h3>
             <div className="space-y-4">
               <Input
-                label="Nazev"
+                label="Název"
                 value={formData.name}
                 onChange={(e) =>
                   setFormData((p) => ({ ...p, name: e.target.value }))
                 }
               />
               <Input
-                label="Kontaktni osoba"
+                label="Kontaktní osoba"
                 value={formData.contactPerson}
                 onChange={(e) =>
                   setFormData((p) => ({ ...p, contactPerson: e.target.value }))
@@ -385,7 +385,7 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
               />
               <div className="grid grid-cols-2 gap-3">
                 <Input
-                  label="Mesto"
+                  label="Město"
                   value={formData.city}
                   onChange={(e) =>
                     setFormData((p) => ({ ...p, city: e.target.value }))
@@ -400,7 +400,7 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
                 />
               </div>
               <Textarea
-                label="Poznamky"
+                label="Poznámky"
                 value={formData.notes}
                 onChange={(e) =>
                   setFormData((p) => ({ ...p, notes: e.target.value }))
@@ -413,7 +413,7 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
                 onClick={savePartner}
                 disabled={saving}
               >
-                {saving ? "Ukladam..." : "Ulozit zmeny"}
+                {saving ? "Ukládám..." : "Uložit změny"}
               </Button>
             </div>
           </Card>
@@ -421,7 +421,7 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
           {/* Status + Manager */}
           <Card className="p-6">
             <h3 className="text-lg font-bold text-gray-900 mb-4">
-              Stav a prirazeni
+              Stav a přiřazení
             </h3>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
@@ -442,18 +442,18 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
 
               <div>
                 <label className="text-[13px] font-semibold text-gray-700 uppercase tracking-wide block mb-2">
-                  Prirazen manazerovi
+                  Přiřazen manažerovi
                 </label>
                 <div className="text-sm text-gray-600">
                   {partner.manager
                     ? `${partner.manager.firstName} ${partner.manager.lastName} (${partner.manager.email})`
-                    : "Neprirazeno"}
+                    : "Nepřiřazeno"}
                 </div>
               </div>
 
               {partner.userId && (
                 <div className="p-3 bg-green-50 rounded-lg text-sm">
-                  <span className="font-bold text-green-700">Aktivni ucet: </span>
+                  <span className="font-bold text-green-700">Aktivní účet: </span>
                   <span className="text-green-600">
                     {partner.user?.email}
                   </span>
@@ -477,21 +477,21 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
                   setActivityForm((p) => ({ ...p, type: e.target.value }))
                 }
                 options={[
-                  { value: "POZNAMKA", label: "Poznamka" },
-                  { value: "NAVSTEVA", label: "Navsteva" },
-                  { value: "TELEFONAT", label: "Telefonat" },
+                  { value: "POZNAMKA", label: "Poznámka" },
+                  { value: "NAVSTEVA", label: "Návštěva" },
+                  { value: "TELEFONAT", label: "Telefonát" },
                   { value: "EMAIL", label: "Email" },
                 ]}
               />
               <Input
-                placeholder="Nazev aktivity"
+                placeholder="Název aktivity"
                 value={activityForm.title}
                 onChange={(e) =>
                   setActivityForm((p) => ({ ...p, title: e.target.value }))
                 }
               />
               <Textarea
-                placeholder="Popis (volitelne)"
+                placeholder="Popis (volitelné)"
                 value={activityForm.description}
                 onChange={(e) =>
                   setActivityForm((p) => ({ ...p, description: e.target.value }))
@@ -499,7 +499,7 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
                 rows={2}
               />
               <Button variant="primary" size="sm" onClick={addActivity}>
-                Ulozit
+                Uložit
               </Button>
             </div>
           </Card>
@@ -511,7 +511,7 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
             </h3>
             {activities.length === 0 ? (
               <p className="text-sm text-gray-400">
-                Zadne zaznamy aktivity.
+                Žádné záznamy aktivity.
               </p>
             ) : (
               <div className="space-y-4">
@@ -555,7 +555,7 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
       <Modal
         open={showRejectModal}
         onClose={() => setShowRejectModal(false)}
-        title="Odmitnutí partnera"
+        title="Odmítnutí partnera"
         footer={
           <>
             <Button
@@ -563,7 +563,7 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
               size="sm"
               onClick={() => setShowRejectModal(false)}
             >
-              Zrusit
+              Zrušit
             </Button>
             <Button
               variant="danger"
@@ -571,16 +571,16 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
               onClick={submitRejection}
               disabled={!rejectionReason.trim()}
             >
-              Odmitnout
+              Odmítnout
             </Button>
           </>
         }
       >
         <Textarea
-          label="Duvod odmitnuti"
+          label="Důvod odmítnutí"
           value={rejectionReason}
           onChange={(e) => setRejectionReason(e.target.value)}
-          placeholder="Proc partnerstvi odmitnout?"
+          placeholder="Proč partnerství odmítnout?"
           rows={3}
         />
       </Modal>
@@ -592,7 +592,7 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
           setShowActivateModal(false);
           setActivateResult(null);
         }}
-        title="Aktivovat partnerstvi"
+        title="Aktivovat partnerství"
         footer={
           activateResult ? (
             <Button
@@ -612,7 +612,7 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
                 size="sm"
                 onClick={() => setShowActivateModal(false)}
               >
-                Zrusit
+                Zrušit
               </Button>
               <Button
                 variant="success"
@@ -628,7 +628,7 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
         {activateResult ? (
           <div className="space-y-3">
             <p className="text-sm text-green-700 font-semibold">
-              Ucet uspesne vytvoren!
+              Účet úspěšně vytvořen!
             </p>
             <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-sm">
               <div>
@@ -636,26 +636,26 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
                 {activateResult.email}
               </div>
               <div>
-                <span className="font-semibold">Docasne heslo: </span>
+                <span className="font-semibold">Dočasné heslo: </span>
                 <code className="bg-gray-200 px-2 py-0.5 rounded">
                   {activateResult.temporaryPassword}
                 </code>
               </div>
             </div>
             <p className="text-xs text-gray-400">
-              Odselete partnerovi tyto udaje emailem.
+              Odešlete partnerovi tyto údaje emailem.
             </p>
           </div>
         ) : (
           <div className="space-y-3">
             <p className="text-sm text-gray-600">
-              Aktivaci se vytvori uzivatelsky ucet pro partnera{" "}
+              Aktivací se vytvoří uživatelský účet pro partnera{" "}
               <strong>{partner.name}</strong> s emailem{" "}
-              <strong>{partner.email || "chybi email!"}</strong>.
+              <strong>{partner.email || "chybí email!"}</strong>.
             </p>
             {!partner.email && (
               <p className="text-sm text-error-500 font-semibold">
-                Partner nema vyplneny email. Nejdriv doplnte email.
+                Partner nemá vyplněný email. Nejdřív doplňte email.
               </p>
             )}
           </div>

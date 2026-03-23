@@ -54,19 +54,19 @@ interface ManagerBrokerDetailContentProps {
 
 const vehicleStatusMap: Record<string, { label: string; variant: "active" | "pending" | "rejected" }> = {
   DRAFT: { label: "Koncept", variant: "pending" },
-  PENDING: { label: "Cekajici", variant: "pending" },
-  ACTIVE: { label: "Aktivni", variant: "active" },
-  RESERVED: { label: "Rezervovano", variant: "pending" },
-  SOLD: { label: "Prodano", variant: "active" },
-  REJECTED: { label: "Zamitnuto", variant: "rejected" },
-  ARCHIVED: { label: "Archivovano", variant: "rejected" },
+  PENDING: { label: "Čekající", variant: "pending" },
+  ACTIVE: { label: "Aktivní", variant: "active" },
+  RESERVED: { label: "Rezervováno", variant: "pending" },
+  SOLD: { label: "Prodáno", variant: "active" },
+  REJECTED: { label: "Zamítnuto", variant: "rejected" },
+  ARCHIVED: { label: "Archivováno", variant: "rejected" },
 };
 
 const commissionStatusMap: Record<string, { label: string; variant: "active" | "pending" | "rejected" }> = {
-  PENDING: { label: "Cekajici", variant: "pending" },
-  APPROVED: { label: "Schvaleno", variant: "active" },
+  PENDING: { label: "Čekající", variant: "pending" },
+  APPROVED: { label: "Schváleno", variant: "active" },
   PAID: { label: "Vyplaceno", variant: "active" },
-  CANCELLED: { label: "Zruseno", variant: "rejected" },
+  CANCELLED: { label: "Zrušeno", variant: "rejected" },
 };
 
 export function ManagerBrokerDetailContent({
@@ -86,11 +86,11 @@ export function ManagerBrokerDetailContent({
   ];
 
   const statusInfo: Record<string, { label: string; variant: "verified" | "pending" | "rejected" }> = {
-    ACTIVE: { label: "Aktivni", variant: "verified" },
-    PENDING: { label: "Cekajici", variant: "pending" },
+    ACTIVE: { label: "Aktivní", variant: "verified" },
+    PENDING: { label: "Čekající", variant: "pending" },
     ONBOARDING: { label: "Onboarding", variant: "pending" },
     SUSPENDED: { label: "Pozastaven", variant: "rejected" },
-    INACTIVE: { label: "Neaktivni", variant: "rejected" },
+    INACTIVE: { label: "Neaktivní", variant: "rejected" },
   };
 
   const brokerStatus = statusInfo[broker.status] || {
@@ -101,7 +101,7 @@ export function ManagerBrokerDetailContent({
   const handleDeactivate = async () => {
     if (
       !confirm(
-        `Opravdu chcete deaktivovat maklere ${broker.firstName} ${broker.lastName}? Jeho aktivni vozidla budou archivovana.`
+        `Opravdu chcete deaktivovat makléře ${broker.firstName} ${broker.lastName}? Jeho aktivní vozidla budou archivována.`
       )
     ) {
       return;
@@ -117,10 +117,10 @@ export function ManagerBrokerDetailContent({
         router.refresh();
       } else {
         const data = await res.json().catch(() => ({}));
-        alert(data.error || "Deaktivace se nezdarila.");
+        alert(data.error || "Deaktivace se nezdařila.");
       }
     } catch {
-      alert("Doslo k chybe.");
+      alert("Došlo k chybě.");
     } finally {
       setDeactivating(false);
     }
@@ -166,7 +166,7 @@ export function ManagerBrokerDetailContent({
       header: "Cena",
       render: (item: VehicleItem) => (
         <span className="font-semibold text-gray-900">
-          {item.price.toLocaleString("cs-CZ")} Kc
+          {item.price.toLocaleString("cs-CZ")} Kč
         </span>
       ),
     },
@@ -193,7 +193,7 @@ export function ManagerBrokerDetailContent({
     },
     {
       key: "salePrice",
-      header: "Prodejni cena",
+      header: "Prodejní cena",
       render: (item: CommissionItem) => (
         <span className="text-sm text-gray-700">
           {item.salePrice.toLocaleString("cs-CZ")} Kc
@@ -205,7 +205,7 @@ export function ManagerBrokerDetailContent({
       header: "Provize",
       render: (item: CommissionItem) => (
         <span className="font-semibold text-gray-900">
-          {item.commission.toLocaleString("cs-CZ")} Kc ({(item.rate * 100).toFixed(0)}%)
+          {item.commission.toLocaleString("cs-CZ")} Kč ({(item.rate * 100).toFixed(0)}%)
         </span>
       ),
     },
@@ -250,7 +250,7 @@ export function ManagerBrokerDetailContent({
             <div className="flex flex-wrap gap-4 text-sm text-gray-500 mt-2">
               <span>{broker.email}</span>
               {broker.phone && <span>{broker.phone}</span>}
-              {broker.ico && <span>IC: {broker.ico}</span>}
+              {broker.ico && <span>IČ: {broker.ico}</span>}
             </div>
             <div className="flex flex-wrap gap-2 mt-3">
               {broker.cities.map((city: string) => (
@@ -302,7 +302,7 @@ export function ManagerBrokerDetailContent({
       {activeTab === "profile" && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card className="p-6">
-            <h3 className="font-bold text-gray-900 mb-4">Kontaktni udaje</h3>
+            <h3 className="font-bold text-gray-900 mb-4">Kontaktní údaje</h3>
             <dl className="space-y-3">
               <div>
                 <dt className="text-xs text-gray-500">Email</dt>
@@ -317,13 +317,13 @@ export function ManagerBrokerDetailContent({
                 </dd>
               </div>
               <div>
-                <dt className="text-xs text-gray-500">ICO</dt>
+                <dt className="text-xs text-gray-500">IČO</dt>
                 <dd className="text-sm font-medium text-gray-900">
                   {broker.ico || "—"}
                 </dd>
               </div>
               <div>
-                <dt className="text-xs text-gray-500">Bankovni ucet</dt>
+                <dt className="text-xs text-gray-500">Bankovní účet</dt>
                 <dd className="text-sm font-medium text-gray-900">
                   {broker.bankAccount || "—"}
                 </dd>
@@ -331,9 +331,9 @@ export function ManagerBrokerDetailContent({
             </dl>
           </Card>
           <Card className="p-6">
-            <h3 className="font-bold text-gray-900 mb-4">O maklerovi</h3>
+            <h3 className="font-bold text-gray-900 mb-4">O makléřovi</h3>
             <p className="text-sm text-gray-700 mb-4">
-              {broker.bio || "Zadne bio."}
+              {broker.bio || "Žádné bio."}
             </p>
             <div className="text-xs text-gray-500">
               Registrovan:{" "}
@@ -347,7 +347,7 @@ export function ManagerBrokerDetailContent({
         <Card className="!p-0 overflow-hidden">
           {vehicles.length === 0 ? (
             <div className="p-12 text-center text-gray-400">
-              Makler nema zadna vozidla.
+              Makléř nemá žádná vozidla.
             </div>
           ) : (
             <DataTable columns={vehicleColumns} data={vehicles} />
@@ -359,7 +359,7 @@ export function ManagerBrokerDetailContent({
         <Card className="!p-0 overflow-hidden">
           {commissions.length === 0 ? (
             <div className="p-12 text-center text-gray-400">
-              Zatim zadne provize.
+              Zatím žádné provize.
             </div>
           ) : (
             <DataTable columns={commissionColumns} data={commissions} />
@@ -379,17 +379,17 @@ export function ManagerBrokerDetailContent({
             <div className="text-3xl font-extrabold text-gray-900 mb-1">
               {broker.totalCommissions}
             </div>
-            <div className="text-sm text-gray-500">Celkem prodeju</div>
+            <div className="text-sm text-gray-500">Celkem prodejů</div>
           </Card>
           <Card className="p-6 text-center">
             <div className="text-3xl font-extrabold text-gray-900 mb-1">
-              {totalCommissionAmount.toLocaleString("cs-CZ")} Kc
+              {totalCommissionAmount.toLocaleString("cs-CZ")} Kč
             </div>
             <div className="text-sm text-gray-500">Celkem provize</div>
           </Card>
           <Card className="p-6 text-center">
             <div className="text-3xl font-extrabold text-gray-900 mb-1">
-              {paidTotal.toLocaleString("cs-CZ")} Kc
+              {paidTotal.toLocaleString("cs-CZ")} Kč
             </div>
             <div className="text-sm text-gray-500">Vyplaceno</div>
           </Card>

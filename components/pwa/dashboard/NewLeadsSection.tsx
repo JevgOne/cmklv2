@@ -31,7 +31,7 @@ export function NewLeadsSection() {
         setLeads(data.leads ?? data ?? []);
       }
     } catch {
-      // API jeste nemusi existovat
+      // API ještě nemusí existovat
     } finally {
       setLoading(false);
     }
@@ -105,7 +105,7 @@ export function NewLeadsSection() {
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide">
-          Nove leady
+          Nové leady
         </h3>
         <Badge variant="rejected">{leads.length}</Badge>
       </div>
@@ -148,7 +148,7 @@ export function NewLeadsSection() {
                 disabled={actionLoading === lead.id}
                 onClick={() => handleAccept(lead.id)}
               >
-                Prijmout
+                Přijmout
               </Button>
               <Button
                 variant="ghost"
@@ -156,7 +156,7 @@ export function NewLeadsSection() {
                 disabled={actionLoading === lead.id}
                 onClick={() => handleRejectOpen(lead.id)}
               >
-                Odmit
+                Odmítnout
               </Button>
             </div>
           </div>
@@ -168,7 +168,7 @@ export function NewLeadsSection() {
           href="/makler/leads"
           className="block text-center text-sm text-orange-500 font-semibold py-2 no-underline"
         >
-          Zobrazit vse ({leads.length})
+          Zobrazit vše ({leads.length})
         </Link>
       )}
 
@@ -179,11 +179,11 @@ export function NewLeadsSection() {
             className="w-full max-w-lg bg-white rounded-t-2xl p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))]"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-base font-bold text-gray-900 mb-3">Duvod odmitnuti</h3>
+            <h3 className="text-base font-bold text-gray-900 mb-3">Důvod odmítnutí</h3>
             <textarea
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
-              placeholder="Proc lead odmitnete?"
+              placeholder="Proč lead odmítáte?"
               className="w-full border border-gray-200 rounded-xl p-3 text-sm text-gray-900 placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-orange-500"
               rows={3}
               autoFocus
@@ -195,7 +195,7 @@ export function NewLeadsSection() {
                 className="flex-1"
                 onClick={() => setRejectingLeadId(null)}
               >
-                Zrusit
+                Zrušit
               </Button>
               <Button
                 variant="danger"

@@ -9,7 +9,7 @@ interface PendingItemProps {
 }
 
 const statusConfig: Record<PendingStatus, { icon: string; label: string; color: string }> = {
-  pending: { icon: "⏳", label: "Ceka na sync", color: "text-warning-500" },
+  pending: { icon: "⏳", label: "Čeká na sync", color: "text-warning-500" },
   syncing: { icon: "🔄", label: "Synchronizuji", color: "text-info-500" },
   done: { icon: "✅", label: "Hotovo", color: "text-success-500" },
   error: { icon: "❌", label: "Chyba", color: "text-error-500" },

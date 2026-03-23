@@ -26,7 +26,7 @@ export function FollowUpSection() {
           setContacts(data.contacts ?? []);
         }
       } catch {
-        // API nemusi byt dostupne
+        // API nemusí být dostupné
       } finally {
         setLoading(false);
       }
@@ -101,7 +101,7 @@ export function FollowUpSection() {
         href="/makler/contacts?filter=follow_up"
         className="block text-center text-sm text-orange-500 font-semibold py-2 no-underline"
       >
-        Vsechny kontakty k follow-upu
+        Všechny kontakty k follow-upu
       </Link>
     </div>
   );

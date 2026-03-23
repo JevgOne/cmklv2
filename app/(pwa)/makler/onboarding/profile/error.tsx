@@ -16,7 +16,7 @@ export default function OnboardingProfileError({
         </svg>
       </div>
       <h2 className="text-xl font-bold text-gray-900">Chyba</h2>
-      <p className="mt-2 text-sm text-gray-500">Nepodarilo se nacist profil.</p>
+      <p className="mt-2 text-sm text-gray-500">Nepodařilo se načíst profil.</p>
       <div className="mt-4">
         <Button variant="primary" onClick={reset}>Zkusit znovu</Button>
       </div>

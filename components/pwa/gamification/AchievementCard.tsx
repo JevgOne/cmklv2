@@ -40,7 +40,7 @@ export function AchievementCard({
     >
       {newlyUnlocked && (
         <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-          NOVE!
+          NOVÉ!
         </span>
       )}
       <div className="flex items-center gap-3">
@@ -57,7 +57,7 @@ export function AchievementCard({
           <p className="text-xs text-gray-500 mt-0.5">{description}</p>
           {unlocked && unlockedAt && (
             <p className="text-[10px] text-orange-500 font-medium mt-1">
-              Ziskano{" "}
+              Získáno{" "}
               {new Date(unlockedAt).toLocaleDateString("cs-CZ", {
                 day: "numeric",
                 month: "long",

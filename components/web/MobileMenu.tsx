@@ -12,7 +12,7 @@ const serviceItems = [
 ];
 
 const aboutItems = [
-  { href: "/o-nas", title: "O CarMakléř" },
+  { href: "/o-nas", title: "O CarMakléři" },
   { href: "/o-nas", title: "Náš tým" },
   { href: "/kariera", title: "Kariéra" },
   { href: "/recenze", title: "Recenze" },

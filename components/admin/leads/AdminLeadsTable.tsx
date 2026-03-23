@@ -36,22 +36,22 @@ interface AdminLeadsTableProps {
 const PAGE_SIZE = 20;
 
 const STATUS_OPTIONS = [
-  { value: "", label: "Vsechny stavy" },
-  { value: "NEW", label: "Nove" },
-  { value: "ASSIGNED", label: "Prijate" },
-  { value: "CONTACTED", label: "Kontaktovano" },
-  { value: "MEETING_SCHEDULED", label: "Schuzka" },
-  { value: "VEHICLE_ADDED", label: "Nabrano" },
-  { value: "REJECTED", label: "Odmitnute" },
-  { value: "EXPIRED", label: "Expirovane" },
+  { value: "", label: "Všechny stavy" },
+  { value: "NEW", label: "Nové" },
+  { value: "ASSIGNED", label: "Přijaté" },
+  { value: "CONTACTED", label: "Kontaktováno" },
+  { value: "MEETING_SCHEDULED", label: "Schůzka" },
+  { value: "VEHICLE_ADDED", label: "Nabráno" },
+  { value: "REJECTED", label: "Odmítnuté" },
+  { value: "EXPIRED", label: "Expirované" },
 ];
 
 const SOURCE_OPTIONS = [
-  { value: "", label: "Vsechny zdroje" },
-  { value: "WEB_FORM", label: "Webovy formular" },
-  { value: "EXTERNAL_APP", label: "Externi app" },
-  { value: "MANUAL", label: "Rucne" },
-  { value: "REFERRAL", label: "Doporuceni" },
+  { value: "", label: "Všechny zdroje" },
+  { value: "WEB_FORM", label: "Webový formulář" },
+  { value: "EXTERNAL_APP", label: "Externí app" },
+  { value: "MANUAL", label: "Ručně" },
+  { value: "REFERRAL", label: "Doporučení" },
 ];
 
 export function AdminLeadsTable({ leads, statusLabels }: AdminLeadsTableProps) {
@@ -89,7 +89,7 @@ export function AdminLeadsTable({ leads, statusLabels }: AdminLeadsTableProps) {
       <Card className="p-4">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <Input
-            placeholder="Hledat (jmeno, telefon, auto, mesto...)"
+            placeholder="Hledat (jméno, telefon, auto, město...)"
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -122,13 +122,13 @@ export function AdminLeadsTable({ leads, statusLabels }: AdminLeadsTableProps) {
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
                 <th className="text-left px-4 py-3 text-[13px] font-bold text-gray-500 uppercase tracking-wide">
-                  Jmeno
+                  Jméno
                 </th>
                 <th className="text-left px-4 py-3 text-[13px] font-bold text-gray-500 uppercase tracking-wide hidden md:table-cell">
                   Auto
                 </th>
                 <th className="text-left px-4 py-3 text-[13px] font-bold text-gray-500 uppercase tracking-wide hidden lg:table-cell">
-                  Mesto
+                  Město
                 </th>
                 <th className="text-left px-4 py-3 text-[13px] font-bold text-gray-500 uppercase tracking-wide">
                   Stav
@@ -137,7 +137,7 @@ export function AdminLeadsTable({ leads, statusLabels }: AdminLeadsTableProps) {
                   Zdroj
                 </th>
                 <th className="text-left px-4 py-3 text-[13px] font-bold text-gray-500 uppercase tracking-wide hidden md:table-cell">
-                  Makler
+                  Makléř
                 </th>
                 <th className="text-left px-4 py-3 text-[13px] font-bold text-gray-500 uppercase tracking-wide hidden sm:table-cell">
                   Datum
@@ -148,7 +148,7 @@ export function AdminLeadsTable({ leads, statusLabels }: AdminLeadsTableProps) {
               {paginated.length === 0 && (
                 <tr>
                   <td colSpan={7} className="px-4 py-12 text-center text-gray-400 text-sm">
-                    Zadne leady odpovidajici filtrum
+                    Žádné leady odpovídající filtrům
                   </td>
                 </tr>
               )}
@@ -180,13 +180,13 @@ export function AdminLeadsTable({ leads, statusLabels }: AdminLeadsTableProps) {
                       <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-500 hidden lg:table-cell">
-                      {lead.source === "WEB_FORM" ? "Web" : lead.source === "EXTERNAL_APP" ? "Externi" : lead.source === "MANUAL" ? "Rucne" : "Doporuceni"}
+                      {lead.source === "WEB_FORM" ? "Web" : lead.source === "EXTERNAL_APP" ? "Externí" : lead.source === "MANUAL" ? "Ručně" : "Doporučení"}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-600 hidden md:table-cell">
                       {lead.assignedTo ? (
                         <span className="font-medium">{lead.assignedTo.name}</span>
                       ) : (
-                        <span className="text-gray-400">Neprirazeno</span>
+                        <span className="text-gray-400">Nepřiřazeno</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-400 hidden sm:table-cell">
@@ -200,7 +200,7 @@ export function AdminLeadsTable({ leads, statusLabels }: AdminLeadsTableProps) {
         </div>
       </Card>
 
-      {/* Strankovani */}
+      {/* Stránkování */}
       {totalPages > 1 && (
         <Pagination
           currentPage={page}
@@ -210,7 +210,7 @@ export function AdminLeadsTable({ leads, statusLabels }: AdminLeadsTableProps) {
       )}
 
       <div className="text-center text-xs text-gray-400">
-        Zobrazeno {paginated.length} z {filtered.length} leadu
+        Zobrazeno {paginated.length} z {filtered.length} leadů
       </div>
     </div>
   );

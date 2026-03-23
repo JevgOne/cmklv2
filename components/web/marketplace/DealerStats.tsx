@@ -14,25 +14,25 @@ export function DealerStats({ totalFlips, activeFlips, soldFlips, averageRoi }: 
         icon="🔄"
         iconColor="orange"
         value={totalFlips.toString()}
-        label="Celkem flipu"
+        label="Celkem flipů"
       />
       <StatCard
         icon="⚡"
         iconColor="blue"
         value={activeFlips.toString()}
-        label="Aktivnich"
+        label="Aktivních"
       />
       <StatCard
         icon="✅"
         iconColor="green"
         value={soldFlips.toString()}
-        label="Prodanych"
+        label="Prodaných"
       />
       <StatCard
         icon="📈"
         iconColor="orange"
         value={`${averageRoi}%`}
-        label="Prumerny ROI"
+        label="Průměrný ROI"
       />
     </div>
   );

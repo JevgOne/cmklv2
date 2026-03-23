@@ -15,10 +15,10 @@ export default function StatsError({
           !
         </div>
         <h2 className="text-2xl font-extrabold text-gray-900 mb-2">
-          Neco se pokazilo
+          Něco se pokazilo
         </h2>
         <p className="text-gray-500 mb-6">
-          Statistiky se nepodarilo nacist. Zkuste to prosim znovu.
+          Statistiky se nepodařilo načíst. Zkuste to prosím znovu.
         </p>
         <Button variant="primary" onClick={reset}>
           Zkusit znovu

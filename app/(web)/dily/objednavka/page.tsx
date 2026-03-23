@@ -11,11 +11,11 @@ import { cn } from "@/lib/utils";
 
 type Step = 1 | 2 | 3;
 
-const STEP_LABELS = ["Doruceni", "Platba", "Potvrzeni"];
+const STEP_LABELS = ["Doručení", "Platba", "Potvrzení"];
 
 const paymentMethods = [
-  { value: "BANK_TRANSFER", label: "Bankovni prevod", desc: "Platba predem na ucet" },
-  { value: "COD", label: "Dobirka", desc: "Platba pri prevzeti (+39 Kc)" },
+  { value: "BANK_TRANSFER", label: "Bankovní převod", desc: "Platba předem na účet" },
+  { value: "COD", label: "Dobírka", desc: "Platba při převzetí (+39 Kč)" },
 ];
 
 const deliveryPrices: Record<string, number> = {
@@ -62,14 +62,14 @@ export default function DilyObjednavkaPage() {
 
   const validateStep1 = (): boolean => {
     const newErrors: Partial<Record<keyof DeliveryFormData, string>> = {};
-    if (!delivery.firstName.trim()) newErrors.firstName = "Vyplnte jmeno";
-    if (!delivery.lastName.trim()) newErrors.lastName = "Vyplnte prijmeni";
-    if (!delivery.email.trim() || !delivery.email.includes("@")) newErrors.email = "Vyplnte platny email";
-    if (!delivery.phone.trim()) newErrors.phone = "Vyplnte telefon";
-    if (!delivery.street.trim()) newErrors.street = "Vyplnte ulici";
-    if (!delivery.city.trim()) newErrors.city = "Vyplnte mesto";
-    if (!delivery.zip.trim()) newErrors.zip = "Vyplnte PSC";
-    if (!delivery.deliveryMethod) newErrors.deliveryMethod = "Vyberte zpusob doruceni";
+    if (!delivery.firstName.trim()) newErrors.firstName = "Vyplňte jméno";
+    if (!delivery.lastName.trim()) newErrors.lastName = "Vyplňte příjmení";
+    if (!delivery.email.trim() || !delivery.email.includes("@")) newErrors.email = "Vyplňte platný email";
+    if (!delivery.phone.trim()) newErrors.phone = "Vyplňte telefon";
+    if (!delivery.street.trim()) newErrors.street = "Vyplňte ulici";
+    if (!delivery.city.trim()) newErrors.city = "Vyplňte město";
+    if (!delivery.zip.trim()) newErrors.zip = "Vyplňte PSČ";
+    if (!delivery.deliveryMethod) newErrors.deliveryMethod = "Vyberte způsob doručení";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -123,10 +123,10 @@ export default function DilyObjednavkaPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
         <div className="text-center">
           <div className="text-5xl mb-4">🛒</div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Kosik je prazdny</h2>
-          <p className="text-gray-500 mb-6">Nejdrive pridejte dily do kosiku</p>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Košík je prázdný</h2>
+          <p className="text-gray-500 mb-6">Nejdříve přidejte díly do košíku</p>
           <Button variant="primary" onClick={() => router.push("/dily/katalog")}>
-            Prohlizet katalog
+            Procházet katalog
           </Button>
         </div>
       </div>
@@ -137,7 +137,7 @@ export default function DilyObjednavkaPage() {
     <div className="min-h-screen bg-gray-50">
       <section className="bg-white border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 className="text-3xl font-extrabold text-gray-900">Objednavka</h1>
+          <h1 className="text-3xl font-extrabold text-gray-900">Objednávka</h1>
           <div className="flex items-center gap-3 mt-6">
             {STEP_LABELS.map((label, i) => (
               <div key={label} className="flex items-center gap-3 flex-1">
@@ -175,7 +175,7 @@ export default function DilyObjednavkaPage() {
 
               {step === 2 && (
                 <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-gray-900">Zpusob platby</h3>
+                  <h3 className="text-lg font-bold text-gray-900">Způsob platby</h3>
                   {paymentMethods.map((method) => (
                     <label
                       key={method.value}
@@ -196,9 +196,9 @@ export default function DilyObjednavkaPage() {
 
               {step === 3 && (
                 <div className="space-y-6">
-                  <h3 className="text-lg font-bold text-gray-900">Shrnuti objednavky</h3>
+                  <h3 className="text-lg font-bold text-gray-900">Shrnutí objednávky</h3>
                   <div className="bg-gray-50 rounded-xl p-4 space-y-2 text-sm">
-                    <div className="font-semibold text-gray-900 mb-2">Doruceni</div>
+                    <div className="font-semibold text-gray-900 mb-2">Doručení</div>
                     <p className="text-gray-600">{delivery.firstName} {delivery.lastName}</p>
                     <p className="text-gray-600">{delivery.street}</p>
                     <p className="text-gray-600">{delivery.zip} {delivery.city}</p>
@@ -209,7 +209,7 @@ export default function DilyObjednavkaPage() {
                     <p className="text-gray-600">{paymentMethods.find((m) => m.value === paymentMethod)?.label}</p>
                   </div>
                   <div className="space-y-3">
-                    <div className="font-semibold text-gray-900">Polozky</div>
+                    <div className="font-semibold text-gray-900">Položky</div>
                     {items.map((item) => (
                       <div key={item.id} className="flex justify-between text-sm">
                         <span className="text-gray-600">{item.name} x {item.quantity}</span>
@@ -221,12 +221,12 @@ export default function DilyObjednavkaPage() {
               )}
 
               <div className="flex justify-between mt-8">
-                {step > 1 ? <Button variant="outline" onClick={handleBack}>Zpet</Button> : <div />}
+                {step > 1 ? <Button variant="outline" onClick={handleBack}>Zpět</Button> : <div />}
                 {step < 3 ? (
-                  <Button variant="primary" onClick={handleNext}>Pokracovat</Button>
+                  <Button variant="primary" onClick={handleNext}>Pokračovat</Button>
                 ) : (
                   <Button variant="primary" onClick={handleSubmit} disabled={submitting}>
-                    {submitting ? "Odesilam..." : "Odeslat objednavku"}
+                    {submitting ? "Odesílám..." : "Odeslat objednávku"}
                   </Button>
                 )}
               </div>
@@ -235,7 +235,7 @@ export default function DilyObjednavkaPage() {
 
           <div>
             <Card className="p-6 sticky top-24">
-              <h3 className="font-bold text-gray-900 mb-4">Vase objednavka</h3>
+              <h3 className="font-bold text-gray-900 mb-4">Vaše objednávka</h3>
               <div className="space-y-2 text-sm">
                 {items.map((item) => (
                   <div key={item.id} className="flex justify-between">
@@ -247,7 +247,7 @@ export default function DilyObjednavkaPage() {
               <hr className="my-3 border-gray-200" />
               <div className="space-y-1 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Mezisoucet</span>
+                  <span className="text-gray-500">Mezisoučet</span>
                   <span className="font-medium">{formatPrice(total)}</span>
                 </div>
                 <div className="flex justify-between">
@@ -256,7 +256,7 @@ export default function DilyObjednavkaPage() {
                 </div>
                 {codFee > 0 && (
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Dobirka</span>
+                    <span className="text-gray-500">Dobírka</span>
                     <span className="font-medium">{formatPrice(codFee)}</span>
                   </div>
                 )}

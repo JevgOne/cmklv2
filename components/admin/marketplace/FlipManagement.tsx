@@ -25,15 +25,15 @@ export interface FlipManagementProps {
 }
 
 const statusMap: Record<string, { label: string; variant: "verified" | "top" | "live" | "new" | "pending" | "rejected" | "default" }> = {
-  PENDING_APPROVAL: { label: "Ke schvaleni", variant: "pending" },
-  APPROVED: { label: "Schvaleno", variant: "new" },
-  FUNDING: { label: "Financovani", variant: "live" },
-  FUNDED: { label: "Financovano", variant: "verified" },
-  IN_REPAIR: { label: "V oprave", variant: "top" },
+  PENDING_APPROVAL: { label: "Ke schválení", variant: "pending" },
+  APPROVED: { label: "Schváleno", variant: "new" },
+  FUNDING: { label: "Financování", variant: "live" },
+  FUNDED: { label: "Financováno", variant: "verified" },
+  IN_REPAIR: { label: "V opravě", variant: "top" },
   FOR_SALE: { label: "Na prodej", variant: "live" },
-  SOLD: { label: "Prodano", variant: "verified" },
-  COMPLETED: { label: "Dokonceno", variant: "verified" },
-  CANCELLED: { label: "Zamitnuto", variant: "rejected" },
+  SOLD: { label: "Prodáno", variant: "verified" },
+  COMPLETED: { label: "Dokončeno", variant: "verified" },
+  CANCELLED: { label: "Zamítnuto", variant: "rejected" },
 };
 
 export function FlipManagement({ flips }: FlipManagementProps) {
@@ -55,7 +55,7 @@ export function FlipManagement({ flips }: FlipManagementProps) {
                 Status
               </th>
               <th className="text-right text-[11px] font-semibold text-gray-500 uppercase tracking-wide px-6 py-4">
-                Nakup
+                Nákup
               </th>
               <th className="text-right text-[11px] font-semibold text-gray-500 uppercase tracking-wide px-6 py-4">
                 Oprava

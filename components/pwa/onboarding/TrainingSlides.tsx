@@ -15,43 +15,43 @@ const SLIDES: Slide[] = [
     title: "Jak funguje Carmakler",
     icon: "1",
     points: [
-      "Carmakler propojuje prodejce vozidel s overenymi makleri",
-      "Makler nabere auto v terenu a zada ho do systemu",
-      "BackOffice schvali vozidlo a publikuje inzerat",
-      "Po uspesnem prodeji makler ziska provizi 5% z prodejni ceny (min. 25 000 Kc)",
+      "Carmakler propojuje prodejce vozidel s ověřenými makléři",
+      "Makléř nabere auto v terénu a zadá ho do systému",
+      "BackOffice schválí vozidlo a publikuje inzerát",
+      "Po úspěšném prodeji makléř získá provizi 5 % z prodejní ceny (min. 25 000 Kč)",
     ],
   },
   {
     title: "Jak nabrat auto",
     icon: "2",
     points: [
-      "Pouzijte VIN dekoder pro automaticke nacteni udaju",
-      "Poridite kvalitni fotky podle fotopruvodce (min. 15 fotek)",
-      "Provedete inspekci a zaznamenejte stav vozu",
-      "Nastavte realnou cenu na zaklade trzni analyzy",
-      "Vse zadejte do PWA aplikace — funguje i offline",
+      "Použijte VIN dekodér pro automatické načtení údajů",
+      "Pořiďte kvalitní fotky podle fotoprůvodce (min. 15 fotek)",
+      "Proveďte inspekci a zaznamenejte stav vozu",
+      "Nastavte reálnou cenu na základě tržní analýzy",
+      "Vše zadejte do PWA aplikace — funguje i offline",
     ],
   },
   {
-    title: "Jednani s prodejcem",
+    title: "Jednání s prodejcem",
     icon: "3",
     points: [
-      "Vzdy jednejte profesionalne a transparentne",
-      "Vysvetlete prodejci cely proces a vyhody spoluprace",
-      "Podepiste maklerskou smlouvu pred zahajenim inzerce",
-      "Pravidelne informujte prodejce o stavu prodeje",
-      "Pri prohlidce budte dukladni — vyhnete se reklamacim",
+      "Vždy jednejte profesionálně a transparentně",
+      "Vysvětlete prodejci celý proces a výhody spolupráce",
+      "Podepište makléřskou smlouvu před zahájením inzerce",
+      "Pravidelně informujte prodejce o stavu prodeje",
+      "Při prohlídce buďte důkladní — vyhnete se reklamacím",
     ],
   },
   {
-    title: "Pravni minimum",
+    title: "Právní minimum",
     icon: "4",
     points: [
-      "Maklerska smlouva je povinny prvni krok pred inzerci",
-      "Nikdy neslibujte garantovany prodej ani konkretni cas",
-      "Overujte vlastnictvi vozu v registru vozidel",
-      "Provize se vyplaci az po uspesnem prodeji a uhrade",
-      "Dodrzujte GDPR — osobni udaje klientu nedejtedal",
+      "Makléřská smlouva je povinný první krok před inzercí",
+      "Nikdy neslibujte garantovaný prodej ani konkrétní čas",
+      "Ověřujte vlastnictví vozu v registru vozidel",
+      "Provize se vyplácí až po úspěšném prodeji a úhradě",
+      "Dodržujte GDPR — osobní údaje klientů nedávejte dál",
     ],
   },
 ];
@@ -114,7 +114,7 @@ export function TrainingSlides({ onComplete }: TrainingSlidesProps) {
             onClick={() => setCurrentSlide((p) => p - 1)}
             className="flex-1"
           >
-            Zpet
+            Zpět
           </Button>
         )}
         {currentSlide < SLIDES.length - 1 ? (
@@ -124,7 +124,7 @@ export function TrainingSlides({ onComplete }: TrainingSlidesProps) {
             onClick={() => setCurrentSlide((p) => p + 1)}
             className="flex-1"
           >
-            Dalsi
+            Další
           </Button>
         ) : (
           <Button
@@ -133,7 +133,7 @@ export function TrainingSlides({ onComplete }: TrainingSlidesProps) {
             onClick={onComplete}
             className="flex-1"
           >
-            Prejit na kviz
+            Přejít na kvíz
           </Button>
         )}
       </div>

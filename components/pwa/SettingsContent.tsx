@@ -234,13 +234,13 @@ export function SettingsContent({
         </div>
       </Card>
 
-      {/* Nastaveni notifikaci */}
+      {/* Nastavení notifikací */}
       <Link href="/makler/settings/notifications">
         <Card className="p-5 hover:bg-gray-50 transition-colors cursor-pointer">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-lg font-bold text-gray-900">
-                Nastaveni notifikaci
+                Nastavení notifikací
               </h2>
               <p className="text-sm text-gray-500">
                 Push, email a SMS notifikace

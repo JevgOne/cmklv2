@@ -62,34 +62,34 @@ export function InvestModal({
 
   if (submitted) {
     return (
-      <Modal open={open} onClose={onClose} title="Investice odeslana" className="max-w-[480px]">
+      <Modal open={open} onClose={onClose} title="Investice odeslána" className="max-w-[480px]">
         <div className="text-center py-4">
           <div className="w-16 h-16 bg-success-50 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
             ✓
           </div>
           <h3 className="text-xl font-bold text-gray-900 mb-2">
-            Dekujeme za vasi investici!
+            Děkujeme za vaši investici!
           </h3>
           <p className="text-gray-500 mb-6">
-            Prosim proved&#39;te platbu na ucet nize. Po overeni platby bude vase investice aktivovana.
+            Prosím proveďte platbu na účet níže. Po ověření platby bude vaše investice aktivována.
           </p>
           <div className="bg-gray-50 rounded-xl p-4 text-left space-y-2">
             <div className="flex justify-between">
-              <span className="text-sm text-gray-500">Castka</span>
+              <span className="text-sm text-gray-500">Částka</span>
               <span className="font-bold">{formatPrice(clampedAmount)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sm text-gray-500">Cislo uctu</span>
+              <span className="text-sm text-gray-500">Číslo účtu</span>
               <span className="font-bold">2701234567/0800</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sm text-gray-500">Variabilni symbol</span>
+              <span className="text-sm text-gray-500">Variabilní symbol</span>
               <span className="font-bold">{variableSymbol}</span>
             </div>
           </div>
           <div className="mt-6">
             <Button variant="primary" onClick={onClose} className="w-full">
-              Rozumim
+              Rozumím
             </Button>
           </div>
         </div>
@@ -102,47 +102,47 @@ export function InvestModal({
       <div className="space-y-5">
         {/* Amount input */}
         <Input
-          label="Castka investice (Kc)"
+          label="Částka investice (Kč)"
           type="number"
           value={amount || ""}
           onChange={(e) => setAmount(Number(e.target.value))}
           min={10000}
           max={maxAmount}
-          error={amount < 10000 ? "Minimalni castka je 10 000 Kc" : undefined}
+          error={amount < 10000 ? "Minimální částka je 10 000 Kč" : undefined}
         />
 
         <Alert variant="info">
-          <span className="text-sm">Zbyvajici castka k financovani: <strong>{formatPrice(remainingAmount)}</strong></span>
+          <span className="text-sm">Zbývající částka k financování: <strong>{formatPrice(remainingAmount)}</strong></span>
         </Alert>
 
         {/* Calculation */}
         <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-          <h4 className="text-sm font-bold text-gray-900">Predpokladany vynos</h4>
+          <h4 className="text-sm font-bold text-gray-900">Předpokládaný výnos</h4>
           <div className="flex justify-between">
-            <span className="text-sm text-gray-500">Vase investice</span>
+            <span className="text-sm text-gray-500">Vaše investice</span>
             <span className="font-semibold">{formatPrice(clampedAmount)}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-sm text-gray-500">Odhadovany ROI</span>
+            <span className="text-sm text-gray-500">Odhadovaný ROI</span>
             <span className="font-semibold text-orange-500">{estimatedRoi}%</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-sm text-gray-500">Predpokladany vynos</span>
+            <span className="text-sm text-gray-500">Předpokládaný výnos</span>
             <span className="font-bold text-success-500">{formatPrice(expectedProfit)}</span>
           </div>
           <div className="flex justify-between border-t border-gray-200 pt-2">
-            <span className="text-sm text-gray-500">Celkem vraceno</span>
+            <span className="text-sm text-gray-500">Celkem vráceno</span>
             <span className="font-extrabold text-gray-900">{formatPrice(expectedReturn)}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-sm text-gray-500">Vas podil</span>
+            <span className="text-sm text-gray-500">Váš podíl</span>
             <span className="font-semibold">{investorShare}%</span>
           </div>
         </div>
 
         {/* Agreement */}
         <Checkbox
-          label="Souhlasim s podminkami investovani a jsem si vedom/a rizik"
+          label="Souhlasím s podmínkami investování a jsem si vědom/a rizik"
           checked={agreed}
           onChange={() => setAgreed(!agreed)}
         />
@@ -154,7 +154,7 @@ export function InvestModal({
           disabled={clampedAmount < 10000 || !agreed || submitting}
           onClick={handleSubmit}
         >
-          {submitting ? "Odesilam..." : `Investovat ${formatPrice(clampedAmount)}`}
+          {submitting ? "Odesílám..." : `Investovat ${formatPrice(clampedAmount)}`}
         </Button>
       </div>
     </Modal>

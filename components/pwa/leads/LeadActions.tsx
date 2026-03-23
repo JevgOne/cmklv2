@@ -77,7 +77,7 @@ export function LeadActions({ leadId, status, brand, model }: LeadActionsProps) 
             disabled={loading}
             onClick={() => updateStatus("ASSIGNED")}
           >
-            Prijmout lead
+            Přijmout lead
           </Button>
         )}
 
@@ -88,7 +88,7 @@ export function LeadActions({ leadId, status, brand, model }: LeadActionsProps) 
             disabled={loading}
             onClick={() => updateStatus("CONTACTED")}
           >
-            Kontaktovano
+            Kontaktováno
           </Button>
         )}
 
@@ -99,7 +99,7 @@ export function LeadActions({ leadId, status, brand, model }: LeadActionsProps) 
             disabled={loading}
             onClick={() => setShowMeetingModal(true)}
           >
-            Schuzka domluvena
+            Schůzka domluvena
           </Button>
         )}
 
@@ -136,30 +136,30 @@ export function LeadActions({ leadId, status, brand, model }: LeadActionsProps) 
         footer={
           <>
             <Button variant="ghost" onClick={() => setShowRejectModal(false)}>
-              Zrusit
+              Zrušit
             </Button>
             <Button
               variant="danger"
               disabled={!rejectReason || (rejectReason === "other" && !rejectNote) || loading}
               onClick={handleReject}
             >
-              Odmitnout
+              Odmítnout
             </Button>
           </>
         }
       >
         <div className="space-y-4">
           <Select
-            label="Duvod"
-            placeholder="Vyberte duvod..."
+            label="Důvod"
+            placeholder="Vyberte důvod..."
             options={REJECTION_REASONS}
             value={rejectReason}
             onChange={(e) => setRejectReason(e.target.value)}
           />
           {rejectReason === "other" && (
             <Input
-              label="Poznamka"
-              placeholder="Popiste duvod..."
+              label="Poznámka"
+              placeholder="Popište důvod..."
               value={rejectNote}
               onChange={(e) => setRejectNote(e.target.value)}
             />
@@ -171,11 +171,11 @@ export function LeadActions({ leadId, status, brand, model }: LeadActionsProps) 
       <Modal
         open={showMeetingModal}
         onClose={() => setShowMeetingModal(false)}
-        title="Schuzka domluvena"
+        title="Schůzka domluvena"
         footer={
           <>
             <Button variant="ghost" onClick={() => setShowMeetingModal(false)}>
-              Zrusit
+              Zrušit
             </Button>
             <Button
               variant="primary"
@@ -188,7 +188,7 @@ export function LeadActions({ leadId, status, brand, model }: LeadActionsProps) 
         }
       >
         <Input
-          label="Datum a cas schuzky"
+          label="Datum a čas schůzky"
           type="datetime-local"
           value={meetingDate}
           onChange={(e) => setMeetingDate(e.target.value)}

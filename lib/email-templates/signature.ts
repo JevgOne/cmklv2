@@ -24,7 +24,7 @@ export function generateSignatureHtml(broker: BrokerSignatureData): string {
         <td style="vertical-align: top;">
           <p style="margin: 0; font-size: 14px; color: #374151;">S pozdravem,</p>
           <p style="margin: 4px 0 0; font-size: 15px; font-weight: 600; color: #111827;">${fullName}</p>
-          <p style="margin: 2px 0 0; font-size: 13px; color: #6b7280;">Makler Carmakler</p>
+          <p style="margin: 2px 0 0; font-size: 13px; color: #6b7280;">Makléř Carmakler</p>
           ${broker.phone ? `<p style="margin: 4px 0 0; font-size: 13px; color: #6b7280;">Tel: ${broker.phone}</p>` : ""}
           <p style="margin: 2px 0 0; font-size: 13px; color: #6b7280;">Email: ${broker.email}</p>
           <p style="margin: 2px 0 0;"><a href="${profileUrl}" style="font-size: 13px; color: #f97316; text-decoration: none;">${profileUrl}</a></p>
@@ -44,7 +44,7 @@ export function generateSignatureText(broker: BrokerSignatureData): string {
     "",
     "S pozdravem,",
     fullName,
-    "Makler Carmakler",
+    "Makléř Carmakler",
   ];
   if (broker.phone) lines.push(`Tel: ${broker.phone}`);
   lines.push(`Email: ${broker.email}`);

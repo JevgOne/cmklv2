@@ -12,10 +12,10 @@ interface ExtendExclusiveModalProps {
 }
 
 const durationOptions = [
-  { value: "1", label: "1 mesic" },
-  { value: "2", label: "2 mesice" },
-  { value: "3", label: "3 mesice" },
-  { value: "6", label: "6 mesicu" },
+  { value: "1", label: "1 měsíc" },
+  { value: "2", label: "2 měsíce" },
+  { value: "3", label: "3 měsíce" },
+  { value: "6", label: "6 měsíců" },
 ];
 
 export function ExtendExclusiveModal({
@@ -48,14 +48,14 @@ export function ExtendExclusiveModal({
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Nepodarilo se prodlouzit exkluzivitu");
+        throw new Error(data.error || "Nepodařilo se prodloužit exkluzivitu");
       }
 
       onClose();
       router.refresh();
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Nepodarilo se prodlouzit"
+        err instanceof Error ? err.message : "Nepodařilo se prodloužit"
       );
     } finally {
       setSubmitting(false);
@@ -63,7 +63,7 @@ export function ExtendExclusiveModal({
   };
 
   return (
-    <Modal open={open} onClose={onClose} title="Prodlouzit exkluzivitu">
+    <Modal open={open} onClose={onClose} title="Prodloužit exkluzivitu">
       {error && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
           {error}
@@ -73,7 +73,7 @@ export function ExtendExclusiveModal({
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Doba prodlouzeni
+            Doba prodloužení
           </label>
           <div className="grid grid-cols-2 gap-2">
             {durationOptions.map((opt) => (
@@ -94,8 +94,8 @@ export function ExtendExclusiveModal({
         </div>
 
         <p className="text-xs text-gray-500">
-          Po potvrzeni bude prodejci odeslan odkaz k digitalnimu podpisu
-          dodatku ke smlouve.
+          Po potvrzení bude prodejci odeslán odkaz k digitálnímu podpisu
+          dodatku ke smlouvě.
         </p>
 
         <div className="flex gap-3 mt-2">
@@ -105,7 +105,7 @@ export function ExtendExclusiveModal({
             onClick={onClose}
             className="flex-1"
           >
-            Zrusit
+            Zrušit
           </Button>
           <Button
             variant="primary"
@@ -113,7 +113,7 @@ export function ExtendExclusiveModal({
             disabled={submitting}
             className="flex-1"
           >
-            {submitting ? "Prodluzuji..." : "Prodlouzit"}
+            {submitting ? "Prodlužuji..." : "Prodloužit"}
           </Button>
         </div>
       </form>

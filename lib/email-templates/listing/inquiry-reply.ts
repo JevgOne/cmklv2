@@ -9,16 +9,16 @@ export interface InquiryReplyData {
 }
 
 export function inquiryReplySubject(data: InquiryReplyData): string {
-  return `Odpoved na vas dotaz — ${data.vehicleName}`;
+  return `Odpověď na Váš dotaz — ${data.vehicleName}`;
 }
 
 export function inquiryReplyHtml(data: InquiryReplyData): string {
   const content = `
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      Dobry den, ${data.buyerName},
+      Dobrý den, ${data.buyerName},
     </p>
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      prodejce <strong>${data.sellerName}</strong> odpovedel na vas dotaz k inzeratu <strong>${data.vehicleName}</strong>:
+      prodejce <strong>${data.sellerName}</strong> odpověděl na Váš dotaz k inzerátu <strong>${data.vehicleName}</strong>:
     </p>
     <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 20px 0; background-color: #f9fafb; border-radius: 8px;">
       <tr>
@@ -29,7 +29,7 @@ export function inquiryReplyHtml(data: InquiryReplyData): string {
     </table>
     <p style="margin: 24px 0 0; text-align: center;">
       <a href="${data.listingUrl}" style="display: inline-block; padding: 12px 32px; background-color: #f97316; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px;">
-        Zobrazit inzerat
+        Zobrazit inzerát
       </a>
     </p>
   `;
@@ -38,12 +38,12 @@ export function inquiryReplyHtml(data: InquiryReplyData): string {
 
 export function inquiryReplyText(data: InquiryReplyData): string {
   return [
-    `Dobry den, ${data.buyerName},`,
+    `Dobrý den, ${data.buyerName},`,
     "",
-    `prodejce ${data.sellerName} odpovedel na vas dotaz k inzeratu "${data.vehicleName}":`,
+    `prodejce ${data.sellerName} odpověděl na Váš dotaz k inzerátu "${data.vehicleName}":`,
     "",
     data.replyMessage,
     "",
-    `Zobrazit inzerat: ${data.listingUrl}`,
+    `Zobrazit inzerát: ${data.listingUrl}`,
   ].join("\n");
 }

@@ -44,7 +44,7 @@ export default function OfflinePage() {
         const items: PendingAction[] = [
           ...drafts.map((d) => ({
             id: `draft-${d.id}`,
-            title: (d.data.brand ? `${d.data.brand} ${d.data.model ?? ""}` : null) as string || "Novy inzerat",
+            title: (d.data.brand ? `${d.data.brand} ${d.data.model ?? ""}` : null) as string || "Nový inzerát",
             type: "draft",
             status: "pending" as const,
           })),
@@ -67,8 +67,8 @@ export default function OfflinePage() {
   }, []);
 
   const handleSync = async () => {
-    // Sync bude implementovan pres background sync / manualni sync
-    // Prozatim oznacime vse jako hotove
+    // Sync bude implementován přes background sync / manuální sync
+    // Prozatím označíme vše jako hotové
     setPendingActions((prev) =>
       prev.map((item) => ({ ...item, status: "done" as const }))
     );
@@ -91,7 +91,7 @@ export default function OfflinePage() {
       <div>
         <h1 className="text-2xl font-extrabold text-gray-900">Offline data</h1>
         <p className="text-sm text-gray-500 mt-1">
-          {isOnline ? "Jste online" : "Jste offline"} · {pendingActions.length} cekajicich
+          {isOnline ? "Jste online" : "Jste offline"} · {pendingActions.length} čekajících
         </p>
       </div>
 
@@ -104,13 +104,13 @@ export default function OfflinePage() {
       {pendingActions.length === 0 ? (
         <EmptyState
           icon="✅"
-          title="Vse synchronizovano"
-          description="Nemáte zadna data cekajici na synchronizaci."
+          title="Vše synchronizováno"
+          description="Nemáte žádná data čekající na synchronizaci."
         />
       ) : (
         <div className="space-y-3">
           <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide">
-            Cekajici polozky
+            Čekající položky
           </h3>
           {pendingActions.map((action) => (
             <PendingItem

@@ -39,21 +39,21 @@ export function ProfitCalculator({
         {!readOnly ? (
           <div className="space-y-4 mb-6">
             <Input
-              label="Nakupni cena (Kc)"
+              label="Nákupní cena (Kč)"
               type="number"
               value={purchasePrice || ""}
               onChange={(e) => setPurchasePrice(Number(e.target.value))}
               min={0}
             />
             <Input
-              label="Naklady na opravu (Kc)"
+              label="Náklady na opravu (Kč)"
               type="number"
               value={repairCost || ""}
               onChange={(e) => setRepairCost(Number(e.target.value))}
               min={0}
             />
             <Input
-              label="Odhadovana prodejni cena (Kc)"
+              label="Odhadovaná prodejní cena (Kč)"
               type="number"
               value={salePrice || ""}
               onChange={(e) => setSalePrice(Number(e.target.value))}
@@ -63,7 +63,7 @@ export function ProfitCalculator({
         ) : (
           <div className="grid grid-cols-3 gap-4 mb-6">
             <div className="bg-gray-50 rounded-lg p-3 text-center">
-              <div className="text-[11px] font-semibold text-gray-400 uppercase">Nakup</div>
+              <div className="text-[11px] font-semibold text-gray-400 uppercase">Nákup</div>
               <div className="text-sm font-bold text-gray-900 mt-1">{formatPrice(purchasePrice)}</div>
             </div>
             <div className="bg-gray-50 rounded-lg p-3 text-center">
@@ -80,11 +80,11 @@ export function ProfitCalculator({
         {/* Results */}
         <div className="border-t border-gray-100 pt-4 space-y-3">
           <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-500">Celkove naklady</span>
+            <span className="text-sm text-gray-500">Celkové náklady</span>
             <span className="font-bold text-gray-900">{formatPrice(totalCost)}</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-500">Celkovy zisk</span>
+            <span className="text-sm text-gray-500">Celkový zisk</span>
             <span className={`font-extrabold text-lg ${totalProfit >= 0 ? "text-success-500" : "text-error-500"}`}>
               {formatPrice(totalProfit)}
             </span>
@@ -98,7 +98,7 @@ export function ProfitCalculator({
         {/* Profit split */}
         {totalProfit > 0 && (
           <div className="mt-6 bg-gray-50 rounded-xl p-4">
-            <h4 className="text-sm font-bold text-gray-900 mb-3">Rozdeleni zisku</h4>
+            <h4 className="text-sm font-bold text-gray-900 mb-3">Rozdělení zisku</h4>
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">

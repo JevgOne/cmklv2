@@ -15,10 +15,10 @@ export default function MessagesError({
           !
         </div>
         <h2 className="text-2xl font-extrabold text-gray-900 mb-2">
-          Neco se pokazilo
+          Něco se pokazilo
         </h2>
         <p className="text-gray-500 mb-6">
-          Nepodarilo se nacist zpravy. Zkuste to prosim znovu.
+          Nepodařilo se načíst zprávy. Zkuste to prosím znovu.
         </p>
         <Button variant="primary" onClick={reset}>
           Zkusit znovu

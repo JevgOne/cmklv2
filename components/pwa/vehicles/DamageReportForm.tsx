@@ -12,9 +12,9 @@ interface DamageReportFormProps {
 }
 
 const SEVERITY_OPTIONS = [
-  { value: "COSMETIC", label: "Kosmeticke", description: "Skrabance, drobne oderky", color: "bg-yellow-100 text-yellow-700 border-yellow-300" },
-  { value: "FUNCTIONAL", label: "Funkcni", description: "Ovlivnuje funkci, ale jede", color: "bg-orange-100 text-orange-700 border-orange-300" },
-  { value: "SEVERE", label: "Vazne", description: "Bezpecnostni riziko, nejde pouzit", color: "bg-red-100 text-red-700 border-red-300" },
+  { value: "COSMETIC", label: "Kosmetické", description: "Škrábance, drobné oděrky", color: "bg-yellow-100 text-yellow-700 border-yellow-300" },
+  { value: "FUNCTIONAL", label: "Funkční", description: "Ovlivňuje funkci, ale jede", color: "bg-orange-100 text-orange-700 border-orange-300" },
+  { value: "SEVERE", label: "Vážné", description: "Bezpečnostní riziko, nejde použít", color: "bg-red-100 text-red-700 border-red-300" },
 ];
 
 export function DamageReportForm({ vehicleId, onSuccess, onCancel }: DamageReportFormProps) {
@@ -80,13 +80,13 @@ export function DamageReportForm({ vehicleId, onSuccess, onCancel }: DamageRepor
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Nepodarilo se odeslat hlaseni");
+        throw new Error(data.error || "Nepodařilo se odeslat hlášení");
       }
 
       router.refresh();
       onSuccess();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Nepodarilo se odeslat");
+      setError(err instanceof Error ? err.message : "Nepodařilo se odeslat");
     } finally {
       setSubmitting(false);
     }
@@ -101,8 +101,8 @@ export function DamageReportForm({ vehicleId, onSuccess, onCancel }: DamageRepor
       )}
 
       <Textarea
-        label="Popis poskozeni"
-        placeholder="Popiste co je poskozeno..."
+        label="Popis poškození"
+        placeholder="Popište co je poškozeno..."
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         required
@@ -111,7 +111,7 @@ export function DamageReportForm({ vehicleId, onSuccess, onCancel }: DamageRepor
       {/* Severity */}
       <div className="flex flex-col gap-2">
         <label className="text-[13px] font-semibold text-gray-700 uppercase tracking-wide">
-          Zavaznost
+          Závažnost
         </label>
         <div className="grid grid-cols-3 gap-2">
           {SEVERITY_OPTIONS.map((opt) => (
@@ -160,7 +160,7 @@ export function DamageReportForm({ vehicleId, onSuccess, onCancel }: DamageRepor
               <path d="M1 8a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 018.07 3h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0016.07 6H17a2 2 0 012 2v7a2 2 0 01-2 2H3a2 2 0 01-2-2V8z" />
               <path d="M12.5 11a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
             </svg>
-            <span className="text-[10px] mt-1">Pridat</span>
+            <span className="text-[10px] mt-1">Přidat</span>
           </button>
         </div>
         <input
@@ -176,10 +176,10 @@ export function DamageReportForm({ vehicleId, onSuccess, onCancel }: DamageRepor
 
       <div className="flex gap-3 mt-2">
         <Button variant="ghost" type="button" onClick={onCancel} className="flex-1">
-          Zrusit
+          Zrušit
         </Button>
         <Button variant="danger" type="submit" disabled={submitting || !description.trim()} className="flex-1">
-          {submitting ? "Odesilam..." : "Odeslat hlaseni"}
+          {submitting ? "Odesílám..." : "Odeslat hlášení"}
         </Button>
       </div>
     </form>

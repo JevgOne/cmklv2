@@ -15,10 +15,10 @@ interface DefectCaptureProps {
 }
 
 const SEVERITY_OPTIONS: { value: DefectSeverity; label: string }[] = [
-  { value: "MINOR", label: "Drobna" },
-  { value: "MODERATE", label: "Stredni" },
-  { value: "MAJOR", label: "Vazna" },
-  { value: "CRITICAL", label: "Kriticka" },
+  { value: "MINOR", label: "Drobná" },
+  { value: "MODERATE", label: "Střední" },
+  { value: "MAJOR", label: "Vážná" },
+  { value: "CRITICAL", label: "Kritická" },
 ];
 
 const SEVERITY_COLORS: Record<DefectSeverity, string> = {
@@ -86,10 +86,10 @@ export function DefectCapture({ draftId, defects, onChange }: DefectCaptureProps
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h4 className="text-sm font-bold text-gray-700 uppercase tracking-wide">
-          Zjistene zavady ({defects.length})
+          Zjištěné závady ({defects.length})
         </h4>
         <Button variant="outline" size="sm" onClick={handleCapture}>
-          + Pridat zavadu
+          + Přidat závadu
         </Button>
       </div>
 
@@ -142,7 +142,7 @@ export function DefectCapture({ draftId, defects, onChange }: DefectCaptureProps
               <button
                 onClick={() => handleDeleteDefect(defect)}
                 className="p-1 text-gray-400 hover:text-red-500 transition-colors flex-shrink-0"
-                aria-label="Smazat zavadu"
+                aria-label="Smazat závadu"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -168,14 +168,14 @@ export function DefectCapture({ draftId, defects, onChange }: DefectCaptureProps
       <Modal
         open={modalOpen}
         onClose={resetModal}
-        title="Popis zavady"
+        title="Popis závady"
         footer={
           <>
             <Button variant="outline" onClick={resetModal}>
-              Zrusit
+              Zrušit
             </Button>
             <Button variant="primary" onClick={handleSaveDefect}>
-              Ulozit
+              Uložit
             </Button>
           </>
         }
@@ -186,22 +186,22 @@ export function DefectCapture({ draftId, defects, onChange }: DefectCaptureProps
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={URL.createObjectURL(capturedImage)}
-                alt="Fotka zavady"
+                alt="Fotka závady"
                 className="w-full h-full object-cover"
               />
             </div>
           )}
 
           <Input
-            label="Popis zavady"
-            placeholder="Napr.: Promackly levy blatnik"
+            label="Popis závady"
+            placeholder="Např.: Promáčklý levý blatník"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             autoFocus
           />
 
           <Select
-            label="Zavaznost"
+            label="Závažnost"
             options={SEVERITY_OPTIONS}
             value={severity}
             onChange={(e) => setSeverity(e.target.value as DefectSeverity)}

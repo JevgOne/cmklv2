@@ -256,7 +256,7 @@ export function QuickStep1() {
       totalSteps={3}
       onNext={handleNext}
       nextDisabled={!canProceed}
-      nextLabel="Pokracovat"
+      nextLabel="Pokračovat"
       showSave
     >
       <div className="space-y-6">
@@ -422,7 +422,7 @@ export function QuickStep1() {
             className="w-full"
           >
             {geoLoading
-              ? "Zjištuji polohu..."
+              ? "Zjišťuji polohu..."
               : geoCoords
                 ? "Poloha zaznamenána"
                 : "Použít aktuální polohu"}

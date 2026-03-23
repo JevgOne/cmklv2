@@ -25,10 +25,10 @@ export function ContractSign() {
           const data = await res.json();
           setContractHtml(data.html);
         } else {
-          setError("Nepodarilo se nacist smlouvu.");
+          setError("Nepodařilo se načíst smlouvu.");
         }
       } catch {
-        setError("Nepodarilo se nacist smlouvu.");
+        setError("Nepodařilo se načíst smlouvu.");
       } finally {
         setLoadingContract(false);
       }
@@ -40,11 +40,11 @@ export function ContractSign() {
     setError("");
 
     if (!signature) {
-      setError("Podepiste smlouvu.");
+      setError("Podepište smlouvu.");
       return;
     }
     if (!agreed) {
-      setError("Musite souhlasit s podminkami spoluprace.");
+      setError("Musíte souhlasit s podmínkami spolupráce.");
       return;
     }
 
@@ -59,14 +59,14 @@ export function ContractSign() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError(data.error || "Odeslani smlouvy se nezdarilo.");
+        setError(data.error || "Odeslání smlouvy se nezdařilo.");
         setLoading(false);
         return;
       }
 
       router.push("/makler/onboarding/approval");
     } catch {
-      setError("Doslo k neocekavane chybe. Zkuste to znovu.");
+      setError("Došlo k neočekávané chybě. Zkuste to znovu.");
       setLoading(false);
     }
   };
@@ -113,7 +113,7 @@ export function ContractSign() {
                 <svg className="w-6 h-6 text-success-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-sm font-medium text-success-700">Podpis prilozen</span>
+                <span className="text-sm font-medium text-success-700">Podpis přiložen</span>
               </div>
               <button
                 type="button"
@@ -131,7 +131,7 @@ export function ContractSign() {
 
       {/* Agreement checkbox */}
       <Checkbox
-        label="Souhlasim s podminkami spoluprace"
+        label="Souhlasím s podmínkami spolupráce"
         checked={agreed}
         onChange={(e) => setAgreed(e.target.checked)}
       />
@@ -143,7 +143,7 @@ export function ContractSign() {
         disabled={loading || !signature || !agreed}
         className="w-full"
       >
-        {loading ? "Odesilam..." : "Podepsat a odeslat"}
+        {loading ? "Odesílám..." : "Podepsat a odeslat"}
       </Button>
     </div>
   );

@@ -56,7 +56,7 @@ const sortOptions = [
 
 const bodyTypeOptions = [
   { value: "SEDAN", label: "Sedan" },
-  { value: "COMBI", label: "Combi" },
+  { value: "COMBI", label: "Kombi" },
   { value: "HATCHBACK", label: "Hatchback" },
   { value: "SUV", label: "SUV" },
   { value: "COUPE", label: "Coupé" },

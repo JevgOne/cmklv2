@@ -7,7 +7,7 @@ import { DealerStats } from "@/components/web/marketplace/DealerStats";
 import { OpportunityCard } from "@/components/web/marketplace/OpportunityCard";
 
 export const metadata: Metadata = {
-  title: "Dealer Dashboard | Marketplace | CarMakler",
+  title: "Dealer Dashboard | Marketplace | CarMakléř",
 };
 
 // Dummy data — bude nahrazeno daty z API
@@ -77,12 +77,12 @@ export default function DealerDashboardPage() {
             <span className="text-gray-900">Dealer</span>
           </div>
           <h1 className="text-[28px] font-extrabold text-gray-900">
-            Moje prilezitosti
+            Moje příležitosti
           </h1>
         </div>
         <Link href="/marketplace/dealer/nova" className="no-underline">
           <Button variant="primary">
-            + Nova prilezitost
+            + Nová příležitost
           </Button>
         </Link>
       </div>
@@ -92,7 +92,7 @@ export default function DealerDashboardPage() {
 
       {/* Opportunities Grid */}
       <div className="mt-8">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Aktivni flipy</h2>
+        <h2 className="text-xl font-bold text-gray-900 mb-4">Aktivní flipy</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {opportunities.map((opp) => (
             <OpportunityCard

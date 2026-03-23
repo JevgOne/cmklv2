@@ -15,16 +15,16 @@ interface NavItem {
 const bazarNav: NavItem[] = [
   { href: "/partner/dashboard", icon: "📊", label: "Dashboard" },
   { href: "/partner/vehicles", icon: "🚗", label: "Vozidla" },
-  { href: "/partner/leads", icon: "👥", label: "Zajemci" },
+  { href: "/partner/leads", icon: "👥", label: "Zájemci" },
   { href: "/partner/stats", icon: "📈", label: "Statistiky" },
   { href: "/partner/profile", icon: "🏢", label: "Profil" },
 ];
 
 const vrakovisteNav: NavItem[] = [
   { href: "/partner/dashboard", icon: "📊", label: "Dashboard" },
-  { href: "/partner/parts", icon: "🔧", label: "Dily" },
-  { href: "/partner/orders", icon: "📦", label: "Objednavky" },
-  { href: "/partner/billing", icon: "💰", label: "Vyuctovani" },
+  { href: "/partner/parts", icon: "🔧", label: "Díly" },
+  { href: "/partner/orders", icon: "📦", label: "Objednávky" },
+  { href: "/partner/billing", icon: "💰", label: "Vyúčtování" },
   { href: "/partner/profile", icon: "🏢", label: "Profil" },
 ];
 
@@ -101,13 +101,13 @@ export function PartnerLayout({ children }: { children: React.ReactNode }) {
             {companyName}
           </div>
           <div className="text-xs text-gray-500 mb-3">
-            {isVrakoviste ? "Vrakoviste" : "Autobazar"}
+            {isVrakoviste ? "Vrakoviště" : "Autobazar"}
           </div>
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
             className="text-xs text-gray-400 hover:text-gray-600 cursor-pointer bg-transparent border-none"
           >
-            Odhlasit se
+            Odhlásit se
           </button>
         </div>
       </aside>

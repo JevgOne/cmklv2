@@ -35,7 +35,7 @@ export function InquiryActions({ inquiry, vehicleId }: InquiryActionsProps) {
 
       if (!res.ok) {
         const result = await res.json();
-        throw new Error(result.error || "Nepodarilo se aktualizovat");
+        throw new Error(result.error || "Nepodařilo se aktualizovat");
       }
 
       router.refresh();
@@ -77,11 +77,11 @@ export function InquiryActions({ inquiry, vehicleId }: InquiryActionsProps) {
           inquiry.status === "VIEWING_SCHEDULED" ? "top" :
           inquiry.status === "NO_INTEREST" ? "default" : "pending"
         }>
-          {inquiry.status === "NEW" ? "Novy" :
-           inquiry.status === "REPLIED" ? "Zodpovezeno" :
-           inquiry.status === "VIEWING_SCHEDULED" ? "Prohlidka" :
-           inquiry.status === "NEGOTIATING" ? "Vyjednavani" :
-           inquiry.status === "NO_INTEREST" ? "Bez zajmu" :
+          {inquiry.status === "NEW" ? "Nový" :
+           inquiry.status === "REPLIED" ? "Zodpovězeno" :
+           inquiry.status === "VIEWING_SCHEDULED" ? "Prohlídka" :
+           inquiry.status === "NEGOTIATING" ? "Vyjednávání" :
+           inquiry.status === "NO_INTEREST" ? "Bez zájmu" :
            inquiry.status}
         </Badge>
       </div>
@@ -100,7 +100,7 @@ export function InquiryActions({ inquiry, vehicleId }: InquiryActionsProps) {
 
       {inquiry.reply && !activeAction && (
         <div className="bg-orange-50 rounded-lg p-3 mb-3">
-          <p className="text-xs font-semibold text-orange-600 mb-1">Vase odpoved:</p>
+          <p className="text-xs font-semibold text-orange-600 mb-1">Vaše odpověď:</p>
           <p className="text-sm text-gray-700">{inquiry.reply}</p>
         </div>
       )}
@@ -117,41 +117,41 @@ export function InquiryActions({ inquiry, vehicleId }: InquiryActionsProps) {
           {activeAction === "reply" ? (
             <div className="space-y-3">
               <Textarea
-                label="Odpoved"
-                placeholder="Napiste odpoved kupujicimu..."
+                label="Odpověď"
+                placeholder="Napište odpověď kupujícímu..."
                 value={reply}
                 onChange={(e) => setReply(e.target.value)}
               />
               <div className="flex gap-2">
                 <Button variant="ghost" size="sm" onClick={() => setActiveAction(null)} className="flex-1">
-                  Zrusit
+                  Zrušit
                 </Button>
                 <Button variant="primary" size="sm" onClick={handleReply} disabled={submitting || !reply.trim()} className="flex-1">
-                  {submitting ? "Odesilam..." : "Odeslat"}
+                  {submitting ? "Odesílám..." : "Odeslat"}
                 </Button>
               </div>
             </div>
           ) : activeAction === "viewing" ? (
             <div className="space-y-3">
               <Input
-                label="Datum a cas prohlidky"
+                label="Datum a čas prohlídky"
                 type="datetime-local"
                 value={viewingDate}
                 onChange={(e) => setViewingDate(e.target.value)}
               />
               <div className="flex gap-2">
                 <Button variant="ghost" size="sm" onClick={() => setActiveAction(null)} className="flex-1">
-                  Zrusit
+                  Zrušit
                 </Button>
                 <Button variant="primary" size="sm" onClick={handleScheduleViewing} disabled={submitting || !viewingDate} className="flex-1">
-                  {submitting ? "Planuji..." : "Naplanovat"}
+                  {submitting ? "Plánuji..." : "Naplánovat"}
                 </Button>
               </div>
             </div>
           ) : (
             <div className="flex flex-wrap gap-2">
               <Button variant="primary" size="sm" onClick={() => setActiveAction("reply")}>
-                Odpovedět
+                Odpovědět
               </Button>
               <a href={`tel:${inquiry.buyerPhone}`} className="no-underline">
                 <Button variant="success" size="sm">
@@ -159,10 +159,10 @@ export function InquiryActions({ inquiry, vehicleId }: InquiryActionsProps) {
                 </Button>
               </a>
               <Button variant="outline" size="sm" onClick={() => setActiveAction("viewing")}>
-                Naplanovat prohlidku
+                Naplánovat prohlídku
               </Button>
               <Button variant="ghost" size="sm" onClick={handleNoInterest} disabled={submitting}>
-                Bez zajmu
+                Bez zájmu
               </Button>
             </div>
           )}

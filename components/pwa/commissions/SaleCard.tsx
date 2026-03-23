@@ -12,8 +12,8 @@ interface SaleCardProps {
 
 const statusConfig: Record<string, { variant: "verified" | "pending" | "default"; label: string }> = {
   PAID: { variant: "verified", label: "Vyplaceno" },
-  PENDING: { variant: "pending", label: "Ceka" },
-  CANCELLED: { variant: "default", label: "Zruseno" },
+  PENDING: { variant: "pending", label: "Čeká" },
+  CANCELLED: { variant: "default", label: "Zrušeno" },
 };
 
 export function SaleCard({ vehicleName, salePrice, commission, status, date }: SaleCardProps) {
@@ -27,7 +27,7 @@ export function SaleCard({ vehicleName, salePrice, commission, status, date }: S
             {vehicleName}
           </div>
           <div className="text-xs text-gray-500 mt-1">
-            Prodejni cena: {formatPrice(salePrice)}
+            Prodejní cena: {formatPrice(salePrice)}
           </div>
           <div className="text-xs text-gray-400 mt-0.5">
             {new Date(date).toLocaleDateString("cs-CZ")}

@@ -14,9 +14,9 @@ interface TerminateExclusiveModalProps {
 
 const reasonOptions = [
   { value: "SELLER_CHANGED_MIND", label: "Prodejce si to rozmyslel" },
-  { value: "SELLER_SOLD_PRIVATELY", label: "Prodejce prodal sam" },
-  { value: "VEHICLE_UNDRIVABLE", label: "Auto nepojizdne" },
-  { value: "OTHER", label: "Jiny duvod" },
+  { value: "SELLER_SOLD_PRIVATELY", label: "Prodejce prodal sám" },
+  { value: "VEHICLE_UNDRIVABLE", label: "Auto nepojízdné" },
+  { value: "OTHER", label: "Jiný důvod" },
 ];
 
 export function TerminateExclusiveModal({
@@ -34,7 +34,7 @@ export function TerminateExclusiveModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!reason) {
-      setError("Vyberte duvod ukonceni");
+      setError("Vyberte důvod ukončení");
       return;
     }
     setSubmitting(true);
@@ -55,14 +55,14 @@ export function TerminateExclusiveModal({
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Nepodarilo se ukoncit smlouvu");
+        throw new Error(data.error || "Nepodařilo se ukončit smlouvu");
       }
 
       onClose();
       router.refresh();
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Nepodarilo se ukoncit smlouvu"
+        err instanceof Error ? err.message : "Nepodařilo se ukončit smlouvu"
       );
     } finally {
       setSubmitting(false);
@@ -70,7 +70,7 @@ export function TerminateExclusiveModal({
   };
 
   return (
-    <Modal open={open} onClose={onClose} title="Ukoncit exkluzivni smlouvu">
+    <Modal open={open} onClose={onClose} title="Ukončit exkluzivní smlouvu">
       {error && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
           {error}
@@ -79,15 +79,15 @@ export function TerminateExclusiveModal({
 
       {penaltyAmount && reason === "SELLER_SOLD_PRIVATELY" && (
         <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-700">
-          Pozor: smluvni pokuta{" "}
-          {new Intl.NumberFormat("cs-CZ").format(penaltyAmount)} Kc dle smlouvy
+          Pozor: smluvní pokuta{" "}
+          {new Intl.NumberFormat("cs-CZ").format(penaltyAmount)} Kč dle smlouvy
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Duvod ukonceni
+            Důvod ukončení
           </label>
           <div className="flex flex-col gap-2">
             {reasonOptions.map((opt) => (
@@ -109,12 +109,12 @@ export function TerminateExclusiveModal({
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Poznamka
+            Poznámka
           </label>
           <textarea
             className="w-full p-3 border border-gray-200 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
             rows={3}
-            placeholder="Volitelna poznamka..."
+            placeholder="Volitelná poznámka..."
             value={note}
             onChange={(e) => setNote(e.target.value)}
           />
@@ -127,7 +127,7 @@ export function TerminateExclusiveModal({
             onClick={onClose}
             className="flex-1"
           >
-            Zrusit
+            Zrušit
           </Button>
           <Button
             variant="danger"
@@ -135,7 +135,7 @@ export function TerminateExclusiveModal({
             disabled={submitting || !reason}
             className="flex-1"
           >
-            {submitting ? "Ukoncuji..." : "Ukoncit smlouvu"}
+            {submitting ? "Ukončuji..." : "Ukončit smlouvu"}
           </Button>
         </div>
       </form>

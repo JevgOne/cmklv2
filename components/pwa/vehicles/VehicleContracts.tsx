@@ -21,15 +21,15 @@ interface VehicleContractsProps {
 }
 
 const typeLabels: Record<string, string> = {
-  BROKERAGE: "Zprostredkovatelska",
-  HANDOVER: "Predavaci protokol",
+  BROKERAGE: "Zprostředkovatelská",
+  HANDOVER: "Předávací protokol",
 };
 
 const statusConfig: Record<string, { variant: "verified" | "pending" | "default" | "rejected"; label: string }> = {
   DRAFT: { variant: "default", label: "Koncept" },
-  SIGNED: { variant: "verified", label: "Podepsana" },
-  SENT: { variant: "pending", label: "Odeslana" },
-  ARCHIVED: { variant: "default", label: "Archivovana" },
+  SIGNED: { variant: "verified", label: "Podepsána" },
+  SENT: { variant: "pending", label: "Odeslána" },
+  ARCHIVED: { variant: "default", label: "Archivována" },
 };
 
 export function VehicleContracts({ contracts, vehicleId }: VehicleContractsProps) {
@@ -40,7 +40,7 @@ export function VehicleContracts({ contracts, vehicleId }: VehicleContractsProps
           <h3 className="font-semibold text-gray-900">Smlouvy</h3>
           <Link href={`/makler/contracts/new?vehicleId=${vehicleId}`} className="no-underline">
             <Button variant="primary" size="sm">
-              Nova smlouva
+              Nová smlouva
             </Button>
           </Link>
         </div>
@@ -49,7 +49,7 @@ export function VehicleContracts({ contracts, vehicleId }: VehicleContractsProps
             <path fillRule="evenodd" d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0016.5 9h-1.875a1.875 1.875 0 01-1.875-1.875V5.25A3.75 3.75 0 009 1.5H5.625zM7.5 15a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5A.75.75 0 017.5 15zm.75 2.25a.75.75 0 000 1.5H12a.75.75 0 000-1.5H8.25z" clipRule="evenodd" />
             <path d="M12.971 1.816A5.23 5.23 0 0114.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 013.434 1.279 9.768 9.768 0 00-6.963-6.963z" />
           </svg>
-          <p className="text-sm text-gray-400">Zadne smlouvy</p>
+          <p className="text-sm text-gray-400">Žádné smlouvy</p>
         </Card>
       </div>
     );
@@ -63,7 +63,7 @@ export function VehicleContracts({ contracts, vehicleId }: VehicleContractsProps
         </h3>
         <Link href={`/makler/contracts/new?vehicleId=${vehicleId}`} className="no-underline">
           <Button variant="primary" size="sm">
-            Nova smlouva
+            Nová smlouva
           </Button>
         </Link>
       </div>

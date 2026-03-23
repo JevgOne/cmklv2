@@ -20,48 +20,48 @@ interface EventConfig {
 const EVENTS: EventConfig[] = [
   {
     key: "NEW_LEAD",
-    label: "Novy lead",
-    description: "Kdyz vam je prirazen novy lead",
+    label: "Nový lead",
+    description: "Když Vám je přiřazen nový lead",
   },
   {
     key: "NEW_INQUIRY",
-    label: "Novy dotaz",
-    description: "Kdyz se nekdo zepta na vase vozidlo",
+    label: "Nový dotaz",
+    description: "Když se někdo zeptá na Vaše vozidlo",
   },
   {
     key: "VEHICLE_APPROVED",
-    label: "Inzerat schvalen",
-    description: "Kdyz je vas inzerat schvalen a zverejnen",
+    label: "Inzerát schválen",
+    description: "Když je Váš inzerát schválen a zveřejněn",
   },
   {
     key: "VEHICLE_REJECTED",
-    label: "Inzerat zamitnut",
-    description: "Kdyz je vas inzerat vracen k dopracovani",
+    label: "Inzerát zamítnut",
+    description: "Když je Váš inzerát vrácen k dopracování",
   },
   {
     key: "VEHICLE_SOLD",
-    label: "Auto prodano",
-    description: "Kdyz se vase vozidlo proda",
+    label: "Auto prodáno",
+    description: "Když se Vaše vozidlo prodá",
   },
   {
     key: "DAILY_SUMMARY",
-    label: "Denni shrnuti",
-    description: "Ranní prehled vasich statistik",
+    label: "Denní shrnutí",
+    description: "Ranní přehled Vašich statistik",
   },
   {
     key: "VEHICLE_30_DAYS",
-    label: "Auto 30 dnu",
-    description: "Upozorneni kdyz je auto v nabidce vice nez 30 dni",
+    label: "Auto 30 dnů",
+    description: "Upozornění když je auto v nabídce více než 30 dní",
   },
   {
     key: "ACHIEVEMENT",
     label: "Achievementy",
-    description: "Odemknuti noveho achievementu",
+    description: "Odemknutí nového achievementu",
   },
   {
     key: "LEADERBOARD",
-    label: "Zebricek",
-    description: "Zmeny ve vasem umisteni v zebricku",
+    label: "Žebříček",
+    description: "Změny ve Vašem umístění v žebříčku",
   },
 ];
 
@@ -90,7 +90,7 @@ export function NotificationPreferences() {
           body: JSON.stringify({ preferences: updated }),
         });
       } catch (error) {
-        console.error("Chyba pri ukladani:", error);
+        console.error("Chyba při ukládání:", error);
       } finally {
         setSaving(false);
       }
@@ -126,11 +126,11 @@ export function NotificationPreferences() {
 
   return (
     <div className="space-y-4">
-      {/* Hlavicka */}
+      {/* Hlavička */}
       <Card className="p-4">
         <div className="flex items-center justify-between mb-1">
           <span className="text-xs font-bold text-gray-400 uppercase tracking-wide">
-            Udalost
+            Událost
           </span>
           <div className="flex gap-6">
             <span className="text-xs font-bold text-gray-400 uppercase tracking-wide w-12 text-center">
@@ -143,7 +143,7 @@ export function NotificationPreferences() {
         </div>
       </Card>
 
-      {/* Jednotlive udalosti */}
+      {/* Jednotlivé události */}
       {EVENTS.map((event) => {
         const pref = prefMap.get(event.key) ?? {
           eventType: event.key,
@@ -189,7 +189,7 @@ export function NotificationPreferences() {
       })}
 
       {saving && (
-        <p className="text-xs text-gray-400 text-center">Ukladam...</p>
+        <p className="text-xs text-gray-400 text-center">Ukládám...</p>
       )}
     </div>
   );

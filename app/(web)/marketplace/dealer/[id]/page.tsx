@@ -9,7 +9,7 @@ import type { FlipStep } from "@/components/web/marketplace/FlipTimeline";
 import { formatPrice } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Detail flipu | Dealer | Marketplace | CarMakler",
+  title: "Detail flipu | Dealer | Marketplace | CarMakléř",
 };
 
 // Dummy data — bude nahrazeno daty z API
@@ -26,8 +26,8 @@ const flipDetail = {
   estimatedSalePrice: 299000,
   fundedAmount: 225000,
   neededAmount: 225000,
-  repairDescription: "Vymena rozvodoveho remene, novy olejovy filtr, oprava laku na prednim narazniku, detailing interieru.",
-  marketAnalysis: "Srovnatelne vozy na trhu se prodavaji za 280-320 000 Kc. Nase auto bude v nadprumernem stavu po oprave.",
+  repairDescription: "Výměna rozvodového řemene, nový olejový filtr, oprava laku na předním nárazníku, detailing interiéru.",
+  marketAnalysis: "Srovnatelné vozy na trhu se prodávají za 280–320 000 Kč. Naše auto bude v nadprůměrném stavu po opravě.",
   investors: [
     { name: "Investor A", amount: 100000 },
     { name: "Investor B", amount: 75000 },
@@ -68,12 +68,12 @@ export default function DealerFlipDetailPage() {
             {flipDetail.year} · {flipDetail.mileage.toLocaleString("cs-CZ")} km · VIN: {flipDetail.vin}
           </p>
         </div>
-        <Badge variant="top">V oprave</Badge>
+        <Badge variant="top">V opravě</Badge>
       </div>
 
       {/* Timeline */}
       <Card className="p-6 mb-8">
-        <h2 className="text-lg font-bold text-gray-900 mb-6">Prubeh flipu</h2>
+        <h2 className="text-lg font-bold text-gray-900 mb-6">Průběh flipu</h2>
         <FlipTimeline currentStep={flipDetail.status} />
       </Card>
 
@@ -93,7 +93,7 @@ export default function DealerFlipDetailPage() {
 
           {/* Repair info */}
           <Card className="p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Plan opravy</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-4">Plán opravy</h2>
             <p className="text-sm text-gray-600 leading-relaxed">{flipDetail.repairDescription}</p>
 
             {/* Repair photos upload area */}
@@ -102,9 +102,9 @@ export default function DealerFlipDetailPage() {
               {flipDetail.repairPhotos.length === 0 ? (
                 <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 text-center">
                   <span className="text-3xl block mb-2">📸</span>
-                  <p className="text-sm text-gray-500">Nahrajte fotky prubehu opravy</p>
+                  <p className="text-sm text-gray-500">Nahrajte fotky průběhu opravy</p>
                   <Button variant="outline" size="sm" className="mt-3">
-                    Nahrat fotky
+                    Nahrát fotky
                   </Button>
                 </div>
               ) : (
@@ -119,14 +119,14 @@ export default function DealerFlipDetailPage() {
 
           {/* Market analysis */}
           <Card className="p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Analyza trhu</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-4">Analýza trhu</h2>
             <p className="text-sm text-gray-600 leading-relaxed">{flipDetail.marketAnalysis}</p>
           </Card>
 
           {/* Investors */}
           <Card className="p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">
-              Investori ({flipDetail.investors.length})
+              Investoři ({flipDetail.investors.length})
             </h2>
             <div className="space-y-3">
               {flipDetail.investors.map((inv, i) => (
@@ -158,7 +158,7 @@ export default function DealerFlipDetailPage() {
             <h3 className="text-lg font-bold text-gray-900 mb-4">Aktualizovat stav</h3>
             <div className="space-y-3">
               <Button variant="primary" className="w-full">
-                Oznacit jako dokoncene
+                Označit jako dokončené
               </Button>
               <Button variant="outline" className="w-full">
                 Aktualizovat fotky

@@ -15,7 +15,7 @@ const wizardSteps = [
   { number: 1, label: "Auto" },
   { number: 2, label: "Oprava" },
   { number: 3, label: "Prodej" },
-  { number: 4, label: "Shrnuti" },
+  { number: 4, label: "Shrnutí" },
 ];
 
 interface FormData {
@@ -89,12 +89,12 @@ export function OpportunityWizard() {
       });
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Chyba pri odesilani");
+        throw new Error(data.error || "Chyba při odesílání");
       }
       router.push("/marketplace/dealer");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Neocekavana chyba");
+      setError(err instanceof Error ? err.message : "Neočekávaná chyba");
     } finally {
       setSubmitting(false);
     }
@@ -133,19 +133,19 @@ export function OpportunityWizard() {
             <h3 className="text-xl font-bold text-gray-900">Informace o vozidle</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
-                label="Znacka"
+                label="Značka"
                 value={form.brand}
                 onChange={(e) => updateForm({ brand: e.target.value })}
-                placeholder="napr. Skoda"
+                placeholder="např. Škoda"
               />
               <Input
                 label="Model"
                 value={form.model}
                 onChange={(e) => updateForm({ model: e.target.value })}
-                placeholder="napr. Octavia"
+                placeholder="např. Octavia"
               />
               <Input
-                label="Rok vyroby"
+                label="Rok výroby"
                 type="number"
                 value={form.year || ""}
                 onChange={(e) => updateForm({ year: Number(e.target.value) })}
@@ -164,7 +164,7 @@ export function OpportunityWizard() {
               label="VIN"
               value={form.vin}
               onChange={(e) => updateForm({ vin: e.target.value })}
-              placeholder="17 znaku"
+              placeholder="17 znaků"
               maxLength={17}
             />
             <Select
@@ -172,14 +172,14 @@ export function OpportunityWizard() {
               value={form.condition}
               onChange={(e) => updateForm({ condition: e.target.value })}
               options={[
-                { value: "EXCELLENT", label: "Vyborny" },
-                { value: "GOOD", label: "Dobry" },
-                { value: "FAIR", label: "Prumerny" },
-                { value: "DAMAGED", label: "Poskozeny (na opravu)" },
+                { value: "EXCELLENT", label: "Výborný" },
+                { value: "GOOD", label: "Dobrý" },
+                { value: "FAIR", label: "Průměrný" },
+                { value: "DAMAGED", label: "Poškozený (na opravu)" },
               ]}
             />
             <Input
-              label="Nakupni cena (Kc)"
+              label="Nákupní cena (Kč)"
               type="number"
               value={form.purchasePrice || ""}
               onChange={(e) => updateForm({ purchasePrice: Number(e.target.value) })}
@@ -191,7 +191,7 @@ export function OpportunityWizard() {
               </label>
               <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 text-center">
                 <span className="text-3xl block mb-2">📸</span>
-                <p className="text-sm text-gray-500">Pretahnete fotky sem nebo kliknete pro vyber</p>
+                <p className="text-sm text-gray-500">Přetáhněte fotky sem nebo klikněte pro výběr</p>
                 <p className="text-xs text-gray-400 mt-1">JPG, PNG, max 10 MB na fotku</p>
               </div>
             </div>
@@ -201,16 +201,16 @@ export function OpportunityWizard() {
         {/* Step 2: Oprava */}
         {step === 2 && (
           <div className="space-y-5">
-            <h3 className="text-xl font-bold text-gray-900">Plan opravy</h3>
+            <h3 className="text-xl font-bold text-gray-900">Plán opravy</h3>
             <Textarea
-              label="Popis planovanych praci"
+              label="Popis plánovaných prací"
               value={form.repairDescription}
               onChange={(e) => updateForm({ repairDescription: e.target.value })}
-              placeholder="Popiste co je potreba opravit, vymenit, upravit..."
+              placeholder="Popište, co je potřeba opravit, vyměnit, upravit..."
               rows={5}
             />
             <Input
-              label="Odhadovane naklady na opravu (Kc)"
+              label="Odhadované náklady na opravu (Kč)"
               type="number"
               value={form.repairCost || ""}
               onChange={(e) => updateForm({ repairCost: Number(e.target.value) })}
@@ -218,11 +218,11 @@ export function OpportunityWizard() {
             />
             <div>
               <label className="text-[13px] font-semibold text-gray-700 uppercase tracking-wide block mb-2">
-                Fotky soucasneho stavu
+                Fotky současného stavu
               </label>
               <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 text-center">
                 <span className="text-3xl block mb-2">📸</span>
-                <p className="text-sm text-gray-500">Fotky problematickych mist, vad, poskozeni</p>
+                <p className="text-sm text-gray-500">Fotky problematických míst, vad, poškození</p>
               </div>
             </div>
           </div>
@@ -231,24 +231,24 @@ export function OpportunityWizard() {
         {/* Step 3: Prodejni odhad */}
         {step === 3 && (
           <div className="space-y-5">
-            <h3 className="text-xl font-bold text-gray-900">Prodejni odhad</h3>
+            <h3 className="text-xl font-bold text-gray-900">Prodejní odhad</h3>
             <Input
-              label="Odhadovana prodejni cena (Kc)"
+              label="Odhadovaná prodejní cena (Kč)"
               type="number"
               value={form.estimatedSalePrice || ""}
               onChange={(e) => updateForm({ estimatedSalePrice: Number(e.target.value) })}
               min={0}
             />
             <Textarea
-              label="Analyza trhu"
+              label="Analýza trhu"
               value={form.marketAnalysis}
               onChange={(e) => updateForm({ marketAnalysis: e.target.value })}
-              placeholder="Proc si myslite, ze auto pujde prodat za tuto cenu? Jake jsou srovnatelne nabidky na trhu?"
+              placeholder="Proč si myslíte, že auto půjde prodat za tuto cenu? Jaké jsou srovnatelné nabídky na trhu?"
               rows={4}
             />
             <Alert variant="info">
               <span className="text-sm">
-                Tip: Zkontrolujte aktualni ceny podobnych vozidel na Sauto.cz, Bazosu a TipCars.cz pro realisticky odhad.
+                Tip: Zkontrolujte aktuální ceny podobných vozidel na Sauto.cz, Bazošu a TipCars.cz pro realistický odhad.
               </span>
             </Alert>
           </div>
@@ -257,12 +257,12 @@ export function OpportunityWizard() {
         {/* Step 4: Shrnuti */}
         {step === 4 && (
           <div className="space-y-5">
-            <h3 className="text-xl font-bold text-gray-900">Shrnuti prilezitosti</h3>
+            <h3 className="text-xl font-bold text-gray-900">Shrnutí příležitosti</h3>
 
             <div className="bg-gray-50 rounded-xl p-5 space-y-3">
               <h4 className="font-bold text-gray-900">Vozidlo</h4>
               <div className="grid grid-cols-2 gap-2 text-sm">
-                <span className="text-gray-500">Znacka a model</span>
+                <span className="text-gray-500">Značka a model</span>
                 <span className="font-medium">{form.brand} {form.model}</span>
                 <span className="text-gray-500">Rok</span>
                 <span className="font-medium">{form.year}</span>
@@ -277,7 +277,7 @@ export function OpportunityWizard() {
               <h4 className="font-bold text-gray-900">Oprava</h4>
               <p className="text-sm text-gray-600">{form.repairDescription || "—"}</p>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Naklady</span>
+                <span className="text-gray-500">Náklady</span>
                 <span className="font-bold">{formatPrice(form.repairCost)}</span>
               </div>
             </div>
@@ -286,19 +286,19 @@ export function OpportunityWizard() {
               <h4 className="font-bold text-gray-900">Kalkulace</h4>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Nakupni cena</span>
+                  <span className="text-gray-600">Nákupní cena</span>
                   <span className="font-bold">{formatPrice(form.purchasePrice)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Naklady na opravu</span>
+                  <span className="text-gray-600">Náklady na opravu</span>
                   <span className="font-bold">{formatPrice(form.repairCost)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Odhadovany prodej</span>
+                  <span className="text-gray-600">Odhadovaný prodej</span>
                   <span className="font-bold">{formatPrice(form.estimatedSalePrice)}</span>
                 </div>
                 <div className="flex justify-between border-t border-orange-200 pt-2">
-                  <span className="text-gray-600">Odhadovany zisk</span>
+                  <span className="text-gray-600">Odhadovaný zisk</span>
                   <span className={`font-extrabold ${profit >= 0 ? "text-success-500" : "text-error-500"}`}>
                     {formatPrice(profit)}
                   </span>
@@ -322,14 +322,14 @@ export function OpportunityWizard() {
         <div className="flex justify-between mt-8 pt-6 border-t border-gray-100">
           {step > 1 ? (
             <Button variant="outline" onClick={() => setStep(step - 1)}>
-              Zpet
+              Zpět
             </Button>
           ) : (
             <div />
           )}
           {step < 4 ? (
             <Button variant="primary" onClick={() => setStep(step + 1)}>
-              Pokracovat
+              Pokračovat
             </Button>
           ) : (
             <Button
@@ -337,7 +337,7 @@ export function OpportunityWizard() {
               onClick={handleSubmit}
               disabled={submitting || !form.brand || !form.model || !form.purchasePrice || !form.estimatedSalePrice}
             >
-              {submitting ? "Odesilam..." : "Odeslat prilezitost"}
+              {submitting ? "Odesílám..." : "Odeslat příležitost"}
             </Button>
           )}
         </div>

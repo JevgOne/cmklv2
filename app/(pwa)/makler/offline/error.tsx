@@ -15,10 +15,10 @@ export default function OfflineError({
           !
         </div>
         <h2 className="text-2xl font-extrabold text-gray-900 mb-2">
-          Neco se pokazilo
+          Něco se pokazilo
         </h2>
         <p className="text-gray-500 mb-6">
-          Nepodarilo se nacist offline data. Zkuste to prosim znovu.
+          Nepodařilo se načíst offline data. Zkuste to prosím znovu.
         </p>
         <Button variant="primary" onClick={reset}>
           Zkusit znovu

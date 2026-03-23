@@ -31,17 +31,17 @@ interface RecommendedPartsProps {
 /* ------------------------------------------------------------------ */
 
 const partTypeBadge: Record<string, { label: string; variant: "new" | "default" | "verified" }> = {
-  NEW: { label: "Novy", variant: "new" },
-  USED: { label: "Pouzity", variant: "default" },
+  NEW: { label: "Nový", variant: "new" },
+  USED: { label: "Použitý", variant: "default" },
   AFTERMARKET: { label: "Aftermarket", variant: "verified" },
 };
 
 const conditionLabels: Record<string, string> = {
-  NEW: "Novy",
-  USED_GOOD: "Dobry stav",
-  USED_FAIR: "Uspokojivo",
-  USED_POOR: "Horsi stav",
-  REFURBISHED: "Repasovany",
+  NEW: "Nový",
+  USED_GOOD: "Dobrý stav",
+  USED_FAIR: "Uspokojivé",
+  USED_POOR: "Horší stav",
+  REFURBISHED: "Repasovaný",
 };
 
 function formatCzk(price: number): string {
@@ -86,7 +86,7 @@ export function RecommendedParts({ brand, model, year }: RecommendedPartsProps) 
     return (
       <div>
         <h2 className="text-[22px] font-extrabold text-gray-900 mb-6">
-          Dily pro tento vuz skladem
+          Díly pro tento vůz skladem
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {Array.from({ length: 4 }).map((_, i) => (
@@ -109,7 +109,7 @@ export function RecommendedParts({ brand, model, year }: RecommendedPartsProps) 
   return (
     <div>
       <h2 className="text-[22px] font-extrabold text-gray-900 mb-6">
-        Dily pro tento vuz skladem
+        Díly pro tento vůz skladem
       </h2>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -150,7 +150,7 @@ export function RecommendedParts({ brand, model, year }: RecommendedPartsProps) 
                   {/* Cena */}
                   <div className="mt-auto">
                     <span className="text-lg font-extrabold text-gray-900">
-                      {formatCzk(part.price)} Kc
+                      {formatCzk(part.price)} Kč
                     </span>
                   </div>
 
@@ -162,7 +162,7 @@ export function RecommendedParts({ brand, model, year }: RecommendedPartsProps) 
                       }`}
                     />
                     <span className="text-xs text-gray-500">
-                      {part.stock > 0 ? "Skladem" : "Nedostupne"}
+                      {part.stock > 0 ? "Skladem" : "Nedostupné"}
                     </span>
                   </div>
                 </div>
@@ -179,7 +179,7 @@ export function RecommendedParts({ brand, model, year }: RecommendedPartsProps) 
             href={catalogUrl}
             className="inline-flex items-center gap-2 text-orange-500 font-semibold hover:text-orange-600 transition-colors"
           >
-            Zobrazit vsech {totalCount} dilu pro tento vuz
+            Zobrazit všech {totalCount} dílů pro tento vůz
             <svg
               width="20"
               height="20"

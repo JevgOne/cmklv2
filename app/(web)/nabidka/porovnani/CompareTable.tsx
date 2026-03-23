@@ -37,21 +37,21 @@ const fuelLabels: Record<string, string> = {
 };
 
 const transmissionLabels: Record<string, string> = {
-  MANUAL: "Manual", AUTOMATIC: "Automat", DSG: "DSG", CVT: "CVT",
+  MANUAL: "Manuál", AUTOMATIC: "Automat", DSG: "DSG", CVT: "CVT",
 };
 
 const conditionLabels: Record<string, string> = {
-  NEW: "Nove", LIKE_NEW: "Jako nove", EXCELLENT: "Vyborny",
-  GOOD: "Dobry", FAIR: "Uspokojivy", DAMAGED: "Poskozene",
+  NEW: "Nové", LIKE_NEW: "Jako nové", EXCELLENT: "Výborný",
+  GOOD: "Dobrý", FAIR: "Uspokojivý", DAMAGED: "Poškozené",
 };
 
 const bodyTypeLabels: Record<string, string> = {
-  SEDAN: "Sedan", HATCHBACK: "Hatchback", COMBI: "Combi", SUV: "SUV",
-  COUPE: "Coupe", CABRIO: "Kabriolet", VAN: "MPV/Van", PICKUP: "Pickup",
+  SEDAN: "Sedan", HATCHBACK: "Hatchback", COMBI: "Kombi", SUV: "SUV",
+  COUPE: "Coupé", CABRIO: "Kabriolet", VAN: "MPV/Van", PICKUP: "Pickup",
 };
 
 const drivetrainLabels: Record<string, string> = {
-  FWD: "Predni", RWD: "Zadni", AWD: "AWD", "4WD": "4x4",
+  FWD: "Přední", RWD: "Zadní", AWD: "AWD", "4WD": "4x4",
 };
 
 function formatPrice(price: number): string {
@@ -145,15 +145,15 @@ export function CompareTable() {
     return (
       <div className="text-center py-20">
         <div className="text-5xl mb-4">&#x2696;&#xFE0F;</div>
-        <h2 className="text-xl font-bold text-gray-900 mb-2">Zatim nemate vozy k porovnani</h2>
+        <h2 className="text-xl font-bold text-gray-900 mb-2">Zatím nemáte vozy k porovnání</h2>
         <p className="text-gray-500 mb-6">
-          V katalogu kliknete na ikonu vah u vozu, ktery chcete porovnat.
+          V katalogu klikněte na ikonu vah u vozu, který chcete porovnat.
         </p>
         <Link
           href="/nabidka"
           className="inline-flex items-center justify-center gap-2 font-semibold rounded-full border-none cursor-pointer transition-all duration-200 py-2.5 px-6 text-sm bg-gradient-to-br from-orange-500 to-orange-600 text-white no-underline"
         >
-          Prohlednout nabidku
+          Prohlédnout nabídku
         </Link>
       </div>
     );
@@ -194,7 +194,7 @@ export function CompareTable() {
                       type="button"
                       className="absolute top-2 right-2 w-7 h-7 bg-white/80 rounded-full flex items-center justify-center cursor-pointer border-none hover:bg-red-50 transition-colors"
                       onClick={() => removeVehicle(v.id)}
-                      aria-label="Odebrat z porovnani"
+                      aria-label="Odebrat z porovnání"
                     >
                       <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -220,18 +220,18 @@ export function CompareTable() {
           <CompareRow
             label="Cena"
             values={details.map((d, i) => ({
-              text: `${formatPrice(d.price)} Kc`,
+              text: `${formatPrice(d.price)} Kč`,
               highlight: bestPrice[i],
             }))}
           />
           <CompareRow
-            label="Cena k jednani"
+            label="Cena k jednání"
             values={details.map((d) => ({
               text: d.priceNegotiable ? "Ano" : "Ne",
             }))}
           />
 
-          <SectionHeader label="Zakladni parametry" cols={details.length} />
+          <SectionHeader label="Základní parametry" cols={details.length} />
           <CompareRow
             label="Rok"
             values={details.map((d, i) => ({
@@ -240,7 +240,7 @@ export function CompareTable() {
             }))}
           />
           <CompareRow
-            label="Najezd"
+            label="Nájezd"
             values={details.map((d, i) => ({
               text: `${formatKm(d.mileage)} km`,
               highlight: bestMileage[i],
@@ -253,7 +253,7 @@ export function CompareTable() {
             }))}
           />
           <CompareRow
-            label="Prevodovka"
+            label="Převodovka"
             values={details.map((d) => ({
               text: transmissionLabels[d.transmission] || d.transmission,
             }))}
@@ -279,7 +279,7 @@ export function CompareTable() {
 
           <SectionHeader label="Motor" cols={details.length} />
           <CompareRow
-            label="Vykon"
+            label="Výkon"
             values={details.map((d, i) => ({
               text: d.enginePower ? `${d.enginePower} HP` : "\u2014",
               highlight: bestPower[i],
@@ -316,13 +316,13 @@ export function CompareTable() {
             })}
           />
           <CompareRow
-            label="Servisni knizka"
+            label="Servisní knížka"
             values={details.map((d) => ({
               text: d.serviceBook ? "Ano" : "Ne",
             }))}
           />
           <CompareRow
-            label="Pocet majitelu"
+            label="Počet majitelů"
             values={details.map((d) => ({
               text: d.ownerCount ? String(d.ownerCount) : "\u2014",
             }))}
@@ -337,7 +337,7 @@ export function CompareTable() {
 
           {allEquipment.length > 0 && (
             <>
-              <SectionHeader label="Vybava" cols={details.length} />
+              <SectionHeader label="Výbava" cols={details.length} />
               {allEquipment.map((item) => (
                 <CompareRow
                   key={item}

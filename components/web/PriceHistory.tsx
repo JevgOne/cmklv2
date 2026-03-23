@@ -51,7 +51,7 @@ export function PriceHistory({ vehicleId }: { vehicleId: string }) {
   return (
     <div className="bg-white rounded-2xl shadow-card p-6">
       <h3 className="text-lg font-bold text-gray-900 mb-4">
-        Cenova historie
+        Cenová historie
       </h3>
 
       {/* Price change summary bar */}
@@ -65,10 +65,10 @@ export function PriceHistory({ vehicleId }: { vehicleId: string }) {
             return (
               <>
                 <span className={`text-lg font-bold ${isDown ? "text-green-600" : "text-red-500"}`}>
-                  {isDown ? "\u2193" : "\u2191"} {formatPrice(Math.abs(diff))} Kc
+                  {isDown ? "\u2193" : "\u2191"} {formatPrice(Math.abs(diff))} Kč
                 </span>
                 <span className="text-sm text-gray-500">
-                  od prvniho uvedeni
+                  od prvního uvedení
                 </span>
               </>
             );
@@ -112,11 +112,11 @@ export function PriceHistory({ vehicleId }: { vehicleId: string }) {
                         : "text-gray-900"
                   }`}
                 >
-                  {formatPrice(entry.price)} Kc
+                  {formatPrice(entry.price)} Kč
                 </div>
                 {entry.previousPrice !== null && (
                   <div className="text-xs text-gray-400 line-through">
-                    {formatPrice(entry.previousPrice)} Kc
+                    {formatPrice(entry.previousPrice)} Kč
                   </div>
                 )}
               </div>

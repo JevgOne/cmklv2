@@ -97,12 +97,12 @@ export function EmailSendModal({
 
       const res = await fetch(`/api/emails/preview?${params}`);
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Chyba pri nahrani preview");
+      if (!res.ok) throw new Error(data.error || "Chyba při nahrání preview");
       setPreviewHtml(data.html);
       setPreviewSubject(data.subject);
       setStep("preview");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Chyba pri nahrani preview");
+      setError(err instanceof Error ? err.message : "Chyba při nahrání preview");
     } finally {
       setLoading(false);
     }
@@ -131,10 +131,10 @@ export function EmailSendModal({
         body: JSON.stringify(body),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Chyba pri odesilani");
+      if (!res.ok) throw new Error(data.error || "Chyba při odesílání");
       setStep("sent");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Chyba pri odesilani");
+      setError(err instanceof Error ? err.message : "Chyba při odesílání");
     } finally {
       setLoading(false);
     }
@@ -153,8 +153,8 @@ export function EmailSendModal({
           : step === "compose"
           ? selectedInfo?.name || "Napsat email"
           : step === "preview"
-          ? "Nahled emailu"
-          : "Odeslano"
+          ? "Náhled emailu"
+          : "Odesláno"
       }
       className="max-w-[600px]"
     >
@@ -187,13 +187,13 @@ export function EmailSendModal({
       {step === "compose" && (
         <div className="space-y-4">
           <Input
-            label="Jmeno prijemce"
+            label="Jméno příjemce"
             value={recipientName}
             onChange={(e) => setRecipientName(e.target.value)}
             placeholder="Jan Novak"
           />
           <Input
-            label="Email prijemce"
+            label="Email příjemce"
             type="email"
             value={recipientEmail}
             onChange={(e) => setRecipientEmail(e.target.value)}
@@ -208,25 +208,25 @@ export function EmailSendModal({
           {needsNewPrice && (
             <>
               <Input
-                label="Nova doporucena cena (Kc)"
+                label="Nová doporučená cena (Kč)"
                 type="number"
                 value={newPrice}
                 onChange={(e) => setNewPrice(e.target.value)}
                 placeholder="399000"
               />
               <Input
-                label="Duvod snizeni"
+                label="Důvod snížení"
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
-                placeholder="Nizsi poptavka v danem segmentu"
+                placeholder="Nižší poptávka v daném segmentu"
               />
             </>
           )}
           <Textarea
-            label="Vlastni text (volitelne)"
+            label="Vlastní text (volitelně)"
             value={customText}
             onChange={(e) => setCustomText(e.target.value)}
-            placeholder="Pridejte osobni zpravu..."
+            placeholder="Přidejte osobní zprávu..."
             rows={3}
           />
           <div className="flex gap-3">
@@ -235,7 +235,7 @@ export function EmailSendModal({
               onClick={() => setStep("select")}
               className="flex-1"
             >
-              Zpet
+              Zpět
             </Button>
             <Button
               variant="primary"
@@ -243,7 +243,7 @@ export function EmailSendModal({
               disabled={loading || !recipientName || !recipientEmail}
               className="flex-1"
             >
-              {loading ? "Nacitam..." : "Nahled"}
+              {loading ? "Načítám..." : "Náhled"}
             </Button>
           </div>
         </div>
@@ -253,11 +253,11 @@ export function EmailSendModal({
       {step === "preview" && (
         <div className="space-y-4">
           <div className="p-3 bg-gray-50 rounded-lg">
-            <p className="text-xs text-gray-500">Predmet</p>
+            <p className="text-xs text-gray-500">Předmět</p>
             <p className="font-semibold text-gray-900 text-sm">{previewSubject}</p>
           </div>
           <div className="p-3 bg-gray-50 rounded-lg">
-            <p className="text-xs text-gray-500 mb-2">Prijemce</p>
+            <p className="text-xs text-gray-500 mb-2">Příjemce</p>
             <p className="text-sm text-gray-900">
               {recipientName} &lt;{recipientEmail}&gt;
             </p>
@@ -280,7 +280,7 @@ export function EmailSendModal({
               disabled={loading}
               className="flex-1"
             >
-              {loading ? "Odesilam..." : "Odeslat"}
+              {loading ? "Odesílám..." : "Odeslat"}
             </Button>
           </div>
         </div>
@@ -303,12 +303,12 @@ export function EmailSendModal({
               />
             </svg>
           </div>
-          <h3 className="text-lg font-bold text-gray-900 mb-2">Email odeslan</h3>
+          <h3 className="text-lg font-bold text-gray-900 mb-2">Email odeslán</h3>
           <p className="text-sm text-gray-500">
-            Email byl odeslan na {recipientEmail}
+            Email byl odeslán na {recipientEmail}
           </p>
           <Button variant="primary" onClick={onClose} className="mt-6">
-            Zavrit
+            Zavřít
           </Button>
         </div>
       )}

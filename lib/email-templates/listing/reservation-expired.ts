@@ -8,20 +8,20 @@ export interface ReservationExpiredData {
 }
 
 export function reservationExpiredSubject(data: ReservationExpiredData): string {
-  return `Rezervace vyprsela — ${data.vehicleName}`;
+  return `Rezervace vypršela — ${data.vehicleName}`;
 }
 
 export function reservationExpiredHtml(data: ReservationExpiredData): string {
   const content = `
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      Dobry den, ${data.buyerName},
+      Dobrý den, ${data.buyerName},
     </p>
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      vase rezervace vozidla <strong>${data.vehicleName}</strong> vyprsela.
-      Vozidlo je nyni opet k dispozici pro ostatni zajemce.
+      Vaše rezervace vozidla <strong>${data.vehicleName}</strong> vypršela.
+      Vozidlo je nyní opět k dispozici pro ostatní zájemce.
     </p>
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      Pokud mate stale zajem, muzete vozidlo znovu rezervovat — pokud je stale dostupne.
+      Pokud máte stále zájem, můžete vozidlo znovu rezervovat — pokud je stále dostupné.
     </p>
     <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 24px 0;">
       <tr>
@@ -32,7 +32,7 @@ export function reservationExpiredHtml(data: ReservationExpiredData): string {
         </td>
         <td style="text-align: center; padding-left: 8px;" width="50%">
           <a href="${data.searchUrl}" style="display: inline-block; padding: 12px 24px; background-color: #374151; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px;">
-            Hledat dalsi auta
+            Hledat další auta
           </a>
         </td>
       </tr>
@@ -43,12 +43,12 @@ export function reservationExpiredHtml(data: ReservationExpiredData): string {
 
 export function reservationExpiredText(data: ReservationExpiredData): string {
   return [
-    `Dobry den, ${data.buyerName},`,
+    `Dobrý den, ${data.buyerName},`,
     "",
-    `vase rezervace vozidla "${data.vehicleName}" vyprsela.`,
-    `Vozidlo je nyni opet k dispozici pro ostatni zajemce.`,
+    `Vaše rezervace vozidla "${data.vehicleName}" vypršela.`,
+    `Vozidlo je nyní opět k dispozici pro ostatní zájemce.`,
     "",
     `Zobrazit vozidlo: ${data.listingUrl}`,
-    `Hledat dalsi auta: ${data.searchUrl}`,
+    `Hledat další auta: ${data.searchUrl}`,
   ].join("\n");
 }

@@ -52,25 +52,25 @@ const statusConfig: Record<
 > = {
   ACTIVE: {
     badge: "verified",
-    label: "Aktivni",
+    label: "Aktivní",
     bgClass: "bg-green-50",
     borderClass: "border-green-200",
   },
   EXPIRING_SOON: {
     badge: "pending",
-    label: "Brzy vyprsi",
+    label: "Brzy vyprší",
     bgClass: "bg-yellow-50",
     borderClass: "border-yellow-200",
   },
   EXPIRED: {
     badge: "rejected",
-    label: "Vyprsela",
+    label: "Vypršela",
     bgClass: "bg-red-50",
     borderClass: "border-red-200",
   },
   TERMINATED: {
     badge: "default",
-    label: "Ukoncena",
+    label: "Ukončena",
     bgClass: "bg-gray-50",
     borderClass: "border-gray-200",
   },
@@ -108,13 +108,13 @@ export function ExclusiveSection({
     <>
       <div>
         <h3 className="font-semibold text-gray-900 mb-2">
-          Exkluzivni smlouva
+          Exkluzivní smlouva
         </h3>
         <Card className={`p-4 ${config.bgClass} border ${config.borderClass}`}>
           <div className="flex items-center justify-between mb-3">
             <Badge variant={config.badge}>{config.label}</Badge>
             {contract?.violationReported && (
-              <Badge variant="rejected">Poruseni nahlaseno</Badge>
+              <Badge variant="rejected">Porušení nahlášeno</Badge>
             )}
           </div>
 
@@ -123,32 +123,32 @@ export function ExclusiveSection({
               Exkluzivita do{" "}
               <span className="font-semibold">{formattedDate}</span>{" "}
               <span className="text-gray-500">
-                (zbyva {daysRemaining}{" "}
+                (zbývá {daysRemaining}{" "}
                 {daysRemaining === 1
                   ? "den"
                   : daysRemaining < 5
                   ? "dny"
-                  : "dni"})
+                  : "dní"})
               </span>
             </p>
           )}
 
           {status === "EXPIRED" && (
             <p className="text-sm text-red-600">
-              Exkluzivita vyprsela {formattedDate}
+              Exkluzivita vypršela {formattedDate}
             </p>
           )}
 
           {status === "TERMINATED" && contract?.terminationReason && (
             <p className="text-sm text-gray-600">
-              Duvod: {contract.terminationReason}
+              Důvod: {contract.terminationReason}
             </p>
           )}
 
           {contract?.penaltyAmount && (
             <p className="text-xs text-gray-500 mt-1">
-              Smluvni pokuta:{" "}
-              {new Intl.NumberFormat("cs-CZ").format(contract.penaltyAmount)} Kc
+              Smluvní pokuta:{" "}
+              {new Intl.NumberFormat("cs-CZ").format(contract.penaltyAmount)} Kč
             </p>
           )}
 
@@ -162,7 +162,7 @@ export function ExclusiveSection({
                   className="flex-1"
                   onClick={() => setExtendOpen(true)}
                 >
-                  Prodlouzit
+                  Prodloužit
                 </Button>
                 <Button
                   variant="outline"
@@ -170,7 +170,7 @@ export function ExclusiveSection({
                   className="flex-1"
                   onClick={() => setTerminateOpen(true)}
                 >
-                  Ukoncit
+                  Ukončit
                 </Button>
               </div>
               <div className="flex gap-2">
@@ -180,7 +180,7 @@ export function ExclusiveSection({
                   className="flex-1"
                   onClick={() => setViolationOpen(true)}
                 >
-                  Nahlasit poruseni
+                  Nahlásit porušení
                 </Button>
                 {contract?.pdfUrl && (
                   <a

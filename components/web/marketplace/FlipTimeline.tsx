@@ -9,12 +9,12 @@ interface TimelineStep {
 }
 
 const steps: TimelineStep[] = [
-  { key: "APPROVED", label: "Schvaleno", icon: "✓" },
-  { key: "FUNDING", label: "Financovani", icon: "💰" },
-  { key: "FUNDED", label: "Financovano", icon: "✓" },
+  { key: "APPROVED", label: "Schváleno", icon: "✓" },
+  { key: "FUNDING", label: "Financování", icon: "💰" },
+  { key: "FUNDED", label: "Financováno", icon: "✓" },
   { key: "IN_REPAIR", label: "Oprava", icon: "🔧" },
   { key: "FOR_SALE", label: "Prodej", icon: "🏷️" },
-  { key: "SOLD", label: "Prodano", icon: "🤝" },
+  { key: "SOLD", label: "Prodáno", icon: "🤝" },
   { key: "COMPLETED", label: "Vyplaceno", icon: "🎉" },
 ];
 

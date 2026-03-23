@@ -11,19 +11,19 @@ export interface FollowupData {
 export function followupHtml(data: FollowupData): string {
   const content = `
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      Dobry den, ${data.recipientName},
+      Dobrý den, ${data.recipientName},
     </p>
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      dekuji za schuzku a moznost prohlédnout Vase vozidlo <strong>${data.vehicleName}</strong>.
+      děkuji za schůzku a možnost prohlédnout Vaše vozidlo <strong>${data.vehicleName}</strong>.
     </p>
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      Vozidlo jsem zadal do systemu a bude inzerovano na prednich portalech.
-      Budu Vas pravidelne informovat o prubehu prodeje — poctu zobrazeni, dotazech od zajemcu
-      a pripadnych nabidkach.
+      Vozidlo jsem zadal do systému a bude inzerováno na předních portálech.
+      Budu Vás pravidelně informovat o průběhu prodeje — počtu zobrazení, dotazech od zájemců
+      a případných nabídkách.
     </p>
     ${data.customText ? `<p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">${data.customText}</p>` : ""}
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      V pripade jakychkoliv dotazu me nevanejte kontaktovat.
+      V případě jakýchkoliv dotazů mě neváhejte kontaktovat.
     </p>
   `;
   return emailLayout(content, generateSignatureHtml(data.broker));
@@ -31,17 +31,17 @@ export function followupHtml(data: FollowupData): string {
 
 export function followupText(data: FollowupData): string {
   return [
-    `Dobry den, ${data.recipientName},`,
+    `Dobrý den, ${data.recipientName},`,
     "",
-    `dekuji za schuzku a moznost prohlédnout Vase vozidlo ${data.vehicleName}.`,
+    `děkuji za schůzku a možnost prohlédnout Vaše vozidlo ${data.vehicleName}.`,
     "",
-    "Vozidlo jsem zadal do systemu a bude inzerovano na prednich portalech.",
-    "Budu Vas pravidelne informovat o prubehu prodeje — poctu zobrazeni, dotazech od zajemcu",
-    "a pripadnych nabidkach.",
+    "Vozidlo jsem zadal do systému a bude inzerováno na předních portálech.",
+    "Budu Vás pravidelně informovat o průběhu prodeje — počtu zobrazení, dotazech od zájemců",
+    "a případných nabídkách.",
     "",
     data.customText || "",
     "",
-    "V pripade jakychkoliv dotazu me nevanejte kontaktovat.",
+    "V případě jakýchkoliv dotazů mě neváhejte kontaktovat.",
     generateSignatureText(data.broker),
   ]
     .filter(Boolean)
@@ -49,5 +49,5 @@ export function followupText(data: FollowupData): string {
 }
 
 export function followupSubject(data: FollowupData): string {
-  return `${data.vehicleName} — auto jsem zadal do systemu | Carmakler`;
+  return `${data.vehicleName} — auto jsem zadal do systému | Carmakler`;
 }

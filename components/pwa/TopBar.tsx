@@ -13,7 +13,7 @@ export function TopBar() {
     <>
       <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 pt-[env(safe-area-inset-top)]">
         <div className="flex items-center justify-between h-14 px-4 max-w-lg mx-auto">
-          {/* Menu — navigace do nastaveni */}
+          {/* Menu — navigace do nastavení */}
           <Link href="/makler/settings" className="p-2 -ml-2 text-gray-600" aria-label="Menu">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -54,7 +54,7 @@ export function TopBar() {
             {/* Search */}
             <button
               className="p-1 text-gray-600"
-              aria-label="Vyhledavani"
+              aria-label="Vyhledávání"
               onClick={() => setSearchOpen(true)}
             >
               <svg

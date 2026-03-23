@@ -16,14 +16,14 @@ const TYPE_CONFIG: Record<string, { icon: string; label: string; color: string }
   CALL: { icon: "tel", label: "Hovor", color: "bg-success-50 text-success-500" },
   SMS: { icon: "sms", label: "SMS", color: "bg-info-50 text-info-500" },
   EMAIL: { icon: "email", label: "Email", color: "bg-purple-50 text-purple-500" },
-  MEETING: { icon: "meeting", label: "Schuzka", color: "bg-orange-50 text-orange-500" },
-  NOTE: { icon: "note", label: "Poznamka", color: "bg-gray-100 text-gray-500" },
+  MEETING: { icon: "meeting", label: "Schůzka", color: "bg-orange-50 text-orange-500" },
+  NOTE: { icon: "note", label: "Poznámka", color: "bg-gray-100 text-gray-500" },
 };
 
 const RESULT_LABELS: Record<string, { label: string; variant: string }> = {
-  INTERESTED: { label: "Zajem", variant: "text-success-500" },
-  NOT_NOW: { label: "Ted ne", variant: "text-warning-500" },
-  REJECTED: { label: "Odmitnuti", variant: "text-error-500" },
+  INTERESTED: { label: "Zájem", variant: "text-success-500" },
+  NOT_NOW: { label: "Teď ne", variant: "text-warning-500" },
+  REJECTED: { label: "Odmítnutí", variant: "text-error-500" },
   FOLLOW_UP: { label: "Follow-up", variant: "text-info-500" },
 };
 
@@ -69,7 +69,7 @@ export function CommunicationTimeline({ communications }: CommunicationTimelineP
   if (communications.length === 0) {
     return (
       <div className="text-center py-8 text-gray-400 text-sm">
-        Zatim zadna komunikace
+        Zatím žádná komunikace
       </div>
     );
   }
@@ -94,7 +94,7 @@ export function CommunicationTimeline({ communications }: CommunicationTimelineP
                 </span>
                 {comm.direction && (
                   <span className="text-xs text-gray-400">
-                    {comm.direction === "OUTGOING" ? "Odchozi" : "Prichozi"}
+                    {comm.direction === "OUTGOING" ? "Odchozí" : "Příchozí"}
                   </span>
                 )}
                 {resultInfo && (

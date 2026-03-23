@@ -59,7 +59,7 @@ export default async function CommissionsPage() {
       }
     }
   } catch {
-    // Commission model jeste nemusi existovat
+    // Commission model ještě nemusí existovat
   }
 
   const serialized = rawCommissions.map((c) => ({

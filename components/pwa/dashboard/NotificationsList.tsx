@@ -64,14 +64,14 @@ function formatRelativeTime(dateStr: string): string {
   const diffMs = now.getTime() - date.getTime();
   const diffMins = Math.floor(diffMs / 60000);
 
-  if (diffMins < 1) return "Prave ted";
-  if (diffMins < 60) return `Pred ${diffMins} min`;
+  if (diffMins < 1) return "Právě teď";
+  if (diffMins < 60) return `Před ${diffMins} min`;
 
   const diffHours = Math.floor(diffMins / 60);
-  if (diffHours < 24) return `Pred ${diffHours} hod`;
+  if (diffHours < 24) return `Před ${diffHours} hod`;
 
   const diffDays = Math.floor(diffHours / 24);
-  if (diffDays < 7) return `Pred ${diffDays} dny`;
+  if (diffDays < 7) return `Před ${diffDays} dny`;
 
   return date.toLocaleDateString("cs-CZ");
 }

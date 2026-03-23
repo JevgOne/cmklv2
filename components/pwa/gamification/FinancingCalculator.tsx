@@ -64,7 +64,7 @@ export function FinancingCalculator() {
               step={10000}
             />
             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-400">
-              Kc
+              Kč
             </span>
           </div>
         </div>
@@ -92,10 +92,10 @@ export function FinancingCalculator() {
           </div>
         </div>
 
-        {/* Pocet splatek */}
+        {/* Počet splátek */}
         <div>
           <label className="block text-sm font-bold text-gray-900 mb-2">
-            Pocet splatek
+            Počet splátek
           </label>
           <div className="grid grid-cols-3 gap-2">
             {INSTALLMENT_OPTIONS.map((m) => (
@@ -108,16 +108,16 @@ export function FinancingCalculator() {
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
               >
-                {m} mes.
+                {m} měs.
               </button>
             ))}
           </div>
         </div>
 
-        {/* Urokova sazba */}
+        {/* Úroková sazba */}
         <div>
           <label className="block text-sm font-bold text-gray-900 mb-2">
-            Urokova sazba (% p.a.)
+            Úroková sazba (% p.a.)
           </label>
           <input
             type="number"
@@ -131,13 +131,13 @@ export function FinancingCalculator() {
         </div>
       </Card>
 
-      {/* Vysledky */}
+      {/* Výsledky */}
       <Card className="p-4 space-y-4">
-        <h3 className="font-extrabold text-gray-900">Vypocet</h3>
+        <h3 className="font-extrabold text-gray-900">Výpočet</h3>
 
         <div className="bg-orange-50 rounded-xl p-4 text-center">
           <p className="text-xs text-orange-600 font-medium mb-1">
-            Mesicni splatka
+            Měsíční splátka
           </p>
           <p className="text-3xl font-extrabold text-orange-600">
             {formatPrice(result.monthlyPayment)}
@@ -152,7 +152,7 @@ export function FinancingCalculator() {
             </span>
           </div>
           <div className="flex justify-between items-center py-2 border-b border-gray-100">
-            <span className="text-sm text-gray-500">Vyse uveru</span>
+            <span className="text-sm text-gray-500">Výše úvěru</span>
             <span className="text-sm font-bold text-gray-900">
               {formatPrice(result.loanAmount)}
             </span>
@@ -164,7 +164,7 @@ export function FinancingCalculator() {
             </span>
           </div>
           <div className="flex justify-between items-center py-2">
-            <span className="text-sm text-gray-500">Preplatek</span>
+            <span className="text-sm text-gray-500">Přeplatek</span>
             <span className="text-sm font-bold text-red-500">
               +{formatPrice(result.overpayment)}
             </span>
@@ -174,10 +174,10 @@ export function FinancingCalculator() {
 
       {/* CTA */}
       <Button variant="primary" className="w-full" disabled>
-        Poslat nabidku kupujicimu
+        Poslat nabídku kupujícímu
       </Button>
       <p className="text-xs text-gray-400 text-center">
-        Integrace s emailovym systemem pripravujeme
+        Integrace s emailovým systémem připravujeme
       </p>
     </div>
   );

@@ -10,28 +10,28 @@ export interface PresentationData {
 export function presentationHtml(data: PresentationData): string {
   const content = `
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      Dobry den, ${data.recipientName},
+      Dobrý den, ${data.recipientName},
     </p>
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      jmenuji se ${data.broker.firstName} ${data.broker.lastName} a jsem certifikovany makler Carmakler.
-      Rad bych Vam predstavil, jak Vam muzeme pomoci s prodejem Vaseho vozidla.
+      jmenuji se ${data.broker.firstName} ${data.broker.lastName} a jsem certifikovaný makléř Carmakler.
+      Rád bych Vám představil, jak Vám můžeme pomoci s prodejem Vašeho vozidla.
     </p>
     ${data.customText ? `<p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">${data.customText}</p>` : ""}
     <h3 style="margin: 24px 0 12px; font-size: 16px; color: #111827;">Jak Carmakler funguje:</h3>
     <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom: 20px;">
-      <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#10003; Bezplatne nafotíme a zadame Vase auto na predni portaly</td></tr>
-      <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#10003; Inzerujeme na predních portalech (Sauto, Bazos, TipCars...)</td></tr>
-      <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#10003; Auto zustava u Vas, muzete ho pouzivat</td></tr>
-      <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#10003; Platite pouze provizi z uspesneho prodeje</td></tr>
+      <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#10003; Bezplatně nafotíme a zadáme Vaše auto na přední portály</td></tr>
+      <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#10003; Inzerujeme na předních portálech (Sauto, Bazoš, TipCars...)</td></tr>
+      <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#10003; Auto zůstává u Vás, můžete ho používat</td></tr>
+      <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#10003; Platíte pouze provizi z úspěšného prodeje</td></tr>
     </table>
-    <h3 style="margin: 24px 0 12px; font-size: 16px; color: #111827;">Proc Carmakler:</h3>
+    <h3 style="margin: 24px 0 12px; font-size: 16px; color: #111827;">Proč Carmakler:</h3>
     <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom: 20px;">
-      <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#8226; Sit certifikovanych makleru po cele CR</td></tr>
-      <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#8226; Profesionalni fotografie a popis vozidla</td></tr>
-      <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#8226; Kompletni servis od naceneni po predani</td></tr>
+      <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#8226; Síť certifikovaných makléřů po celé ČR</td></tr>
+      <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#8226; Profesionální fotografie a popis vozidla</td></tr>
+      <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#8226; Kompletní servis od nacenění po předání</td></tr>
     </table>
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      Budu rad, kdyz mi zavolate nebo odpovidejte na tento email.
+      Budu rád, když mi zavoláte nebo odpovídejte na tento email.
     </p>
   `;
   return emailLayout(content, generateSignatureHtml(data.broker));
@@ -39,25 +39,25 @@ export function presentationHtml(data: PresentationData): string {
 
 export function presentationText(data: PresentationData): string {
   return [
-    `Dobry den, ${data.recipientName},`,
+    `Dobrý den, ${data.recipientName},`,
     "",
-    `jmenuji se ${data.broker.firstName} ${data.broker.lastName} a jsem certifikovany makler Carmakler.`,
-    "Rad bych Vam predstavil, jak Vam muzeme pomoci s prodejem Vaseho vozidla.",
+    `jmenuji se ${data.broker.firstName} ${data.broker.lastName} a jsem certifikovaný makléř Carmakler.`,
+    "Rád bych Vám představil, jak Vám můžeme pomoci s prodejem Vašeho vozidla.",
     "",
     data.customText || "",
     "",
     "Jak Carmakler funguje:",
-    "- Bezplatne nafotíme a zadame Vase auto na predni portaly",
-    "- Inzerujeme na predních portalech (Sauto, Bazos, TipCars...)",
-    "- Auto zustava u Vas, muzete ho pouzivat",
-    "- Platite pouze provizi z uspesneho prodeje",
+    "- Bezplatně nafotíme a zadáme Vaše auto na přední portály",
+    "- Inzerujeme na předních portálech (Sauto, Bazoš, TipCars...)",
+    "- Auto zůstává u Vás, můžete ho používat",
+    "- Platíte pouze provizi z úspěšného prodeje",
     "",
-    "Proc Carmakler:",
-    "- Sit certifikovanych makleru po cele CR",
-    "- Profesionalni fotografie a popis vozidla",
-    "- Kompletni servis od naceneni po predani",
+    "Proč Carmakler:",
+    "- Síť certifikovaných makléřů po celé ČR",
+    "- Profesionální fotografie a popis vozidla",
+    "- Kompletní servis od nacenění po předání",
     "",
-    "Budu rad, kdyz mi zavolate nebo odpovidejte na tento email.",
+    "Budu rád, když mi zavoláte nebo odpovídejte na tento email.",
     generateSignatureText(data.broker),
   ]
     .filter(Boolean)
@@ -65,5 +65,5 @@ export function presentationText(data: PresentationData): string {
 }
 
 export function presentationSubject(data: PresentationData): string {
-  return `Predstaveni Carmakler — ${data.broker.firstName} ${data.broker.lastName}`;
+  return `Představení Carmakler — ${data.broker.firstName} ${data.broker.lastName}`;
 }

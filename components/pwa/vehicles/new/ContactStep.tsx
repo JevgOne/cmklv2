@@ -15,9 +15,9 @@ const LEAD_SOURCES: { value: LeadSource; label: string }[] = [
   { value: "BAZOS", label: "Bazos.cz" },
   { value: "SAUTO", label: "Sauto.cz" },
   { value: "FACEBOOK", label: "Facebook Marketplace" },
-  { value: "REFERRAL", label: "Doporuceni" },
-  { value: "COLD_CALL", label: "Studeny kontakt" },
-  { value: "OTHER", label: "Jiny zdroj" },
+  { value: "REFERRAL", label: "Doporučení" },
+  { value: "COLD_CALL", label: "Studený kontakt" },
+  { value: "OTHER", label: "Jiný zdroj" },
 ];
 
 export function ContactStep() {
@@ -85,7 +85,7 @@ export function ContactStep() {
         contact.leadSource === "SAUTO" ||
         contact.leadSource === "FACEBOOK" ? (
           <Input
-            label="URL inzeratu"
+            label="URL inzerátu"
             type="url"
             placeholder="https://..."
             value={contact.leadUrl || ""}
@@ -109,8 +109,8 @@ export function ContactStep() {
           </div>
 
           <Input
-            label="Jmeno prodejce *"
-            placeholder="Jan Novak"
+            label="Jméno prodejce *"
+            placeholder="Jan Novák"
             value={contact.sellerName || ""}
             onChange={(e) => update({ sellerName: e.target.value })}
           />
@@ -161,13 +161,13 @@ export function ContactStep() {
         {/* Předběžné info o autě */}
         <div className="space-y-4">
           <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wide">
-            Predběžne info o aute (volitelne)
+            Předběžné info o autě (volitelné)
           </h3>
 
           <div className="grid grid-cols-2 gap-3">
             <Input
-              label="Znacka"
-              placeholder="Skoda"
+              label="Značka"
+              placeholder="Škoda"
               value={contact.prelimBrand || ""}
               onChange={(e) => update({ prelimBrand: e.target.value })}
             />
@@ -201,7 +201,7 @@ export function ContactStep() {
               }
             />
             <Input
-              label="Cena (Kc)"
+              label="Cena (Kč)"
               type="number"
               placeholder="350000"
               value={contact.prelimPrice || ""}
@@ -217,12 +217,12 @@ export function ContactStep() {
         {/* Adresa */}
         <div className="space-y-3">
           <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wide">
-            Adresa / misto prohlidky
+            Adresa / místo prohlídky
           </h3>
 
           <Input
             label="Adresa"
-            placeholder="Ulice, mesto..."
+            placeholder="Ulice, město..."
             value={contact.address || ""}
             onChange={(e) => update({ address: e.target.value })}
           />
@@ -234,7 +234,7 @@ export function ContactStep() {
             disabled={geoLoading}
             className="w-full"
           >
-            {geoLoading ? "Zjistuji polohu..." : "Pouzit aktualni polohu"}
+            {geoLoading ? "Zjišťuji polohu..." : "Použít aktuální polohu"}
           </Button>
 
           {contact.latitude && contact.longitude && (
@@ -268,7 +268,7 @@ export function ContactStep() {
         {/* Termín schůzky */}
         <div className="space-y-3">
           <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wide">
-            Termin schuzky
+            Termín schůzky
           </h3>
           <div className="grid grid-cols-2 gap-3">
             <Input
@@ -278,7 +278,7 @@ export function ContactStep() {
               onChange={(e) => update({ appointmentDate: e.target.value })}
             />
             <Input
-              label="Cas"
+              label="Čas"
               type="time"
               value={contact.appointmentTime || ""}
               onChange={(e) => update({ appointmentTime: e.target.value })}
@@ -288,8 +288,8 @@ export function ContactStep() {
 
         {/* Poznámky */}
         <Textarea
-          label="Poznamky"
-          placeholder="Dalsi informace o vozidle, prodejci..."
+          label="Poznámky"
+          placeholder="Další informace o vozidle, prodejci..."
           value={contact.notes || ""}
           onChange={(e) => update({ notes: e.target.value })}
         />

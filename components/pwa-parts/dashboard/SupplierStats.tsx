@@ -47,25 +47,25 @@ export function SupplierStats() {
         icon={<span>📦</span>}
         iconColor="green"
         value={String(stats?.activeParts ?? 0)}
-        label="Aktivni dily"
+        label="Aktivní díly"
       />
       <StatCard
         icon={<span>🛒</span>}
         iconColor="orange"
         value={String(stats?.pendingOrders ?? 0)}
-        label="K vyrizeni"
+        label="K vyřízení"
       />
       <StatCard
         icon={<span>💰</span>}
         iconColor="blue"
-        value={`${(stats?.revenue ?? 0).toLocaleString("cs-CZ")} Kc`}
-        label="Trzby (mesic)"
+        value={`${(stats?.revenue ?? 0).toLocaleString("cs-CZ")} Kč`}
+        label="Tržby (měsíc)"
       />
       <StatCard
         icon={<span>⭐</span>}
         iconColor="orange"
         value={stats?.rating ? stats.rating.toFixed(1) : "—"}
-        label="Hodnoceni"
+        label="Hodnocení"
       />
     </div>
   );

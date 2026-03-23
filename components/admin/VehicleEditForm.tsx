@@ -16,12 +16,12 @@ interface VehicleEditFormProps {
 }
 
 const conditionLabels: Record<string, string> = {
-  NEW: "Nove",
-  LIKE_NEW: "Jako nove",
-  EXCELLENT: "Vyborne",
-  GOOD: "Dobre",
-  FAIR: "Uspokojive",
-  DAMAGED: "Poskozene",
+  NEW: "Nové",
+  LIKE_NEW: "Jako nové",
+  EXCELLENT: "Výborné",
+  GOOD: "Dobré",
+  FAIR: "Uspokojivé",
+  DAMAGED: "Poškozené",
 };
 
 export function VehicleEditForm({ vehicleId, initialData }: VehicleEditFormProps) {
@@ -39,7 +39,7 @@ export function VehicleEditForm({ vehicleId, initialData }: VehicleEditFormProps
     e.preventDefault();
 
     if (priceChanged && !priceReason.trim()) {
-      alert("Pri zmene ceny je povinny duvod.");
+      alert("Při změně ceny je povinný důvod.");
       return;
     }
 
@@ -59,14 +59,14 @@ export function VehicleEditForm({ vehicleId, initialData }: VehicleEditFormProps
 
       if (!res.ok) {
         const data = await res.json();
-        alert(data.error || "Chyba pri ukladani");
+        alert(data.error || "Chyba při ukládání");
         return;
       }
 
       router.push("/admin/manager/approvals");
       router.refresh();
     } catch {
-      alert("Nepodarilo se ulozit zmeny");
+      alert("Nepodařilo se uložit změny");
     } finally {
       setSaving(false);
     }
@@ -78,7 +78,7 @@ export function VehicleEditForm({ vehicleId, initialData }: VehicleEditFormProps
         {/* Cena */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-            Cena (Kc)
+            Cena (Kč)
           </label>
           <input
             type="number"
@@ -91,14 +91,14 @@ export function VehicleEditForm({ vehicleId, initialData }: VehicleEditFormProps
           {priceChanged && (
             <div className="mt-3">
               <label className="block text-sm font-semibold text-warning-500 mb-1.5">
-                Duvod zmeny ceny (povinne)
+                Důvod změny ceny (povinné)
               </label>
               <input
                 type="text"
                 value={priceReason}
                 onChange={(e) => setPriceReason(e.target.value)}
                 className="w-full border border-warning-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-warning-500 focus:border-transparent"
-                placeholder="Napr.: Snizeni po dohode s majitelem"
+                placeholder="Např.: Snížení po dohodě s majitelem"
                 required
               />
             </div>
@@ -121,13 +121,13 @@ export function VehicleEditForm({ vehicleId, initialData }: VehicleEditFormProps
         {/* Výbava */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-            Vybava (JSON)
+            Výbava (JSON)
           </label>
           <textarea
             value={equipment}
             onChange={(e) => setEquipment(e.target.value)}
             className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm min-h-[80px] focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent font-mono text-xs"
-            placeholder='["Klimatizace", "Navigace", "Parkovaci kamera"]'
+            placeholder='["Klimatizace", "Navigace", "Parkovací kamera"]'
           />
         </div>
 
@@ -152,7 +152,7 @@ export function VehicleEditForm({ vehicleId, initialData }: VehicleEditFormProps
         {/* Actions */}
         <div className="flex gap-3 pt-4 border-t border-gray-100">
           <Button type="submit" variant="primary" disabled={saving}>
-            {saving ? "Ukladam..." : "Ulozit zmeny"}
+            {saving ? "Ukládám..." : "Uložit změny"}
           </Button>
           <Button
             type="button"
@@ -160,7 +160,7 @@ export function VehicleEditForm({ vehicleId, initialData }: VehicleEditFormProps
             onClick={() => router.back()}
             disabled={saving}
           >
-            Zrusit
+            Zrušit
           </Button>
         </div>
       </form>

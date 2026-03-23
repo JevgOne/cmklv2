@@ -73,49 +73,49 @@ export const TEMPLATE_LIST: TemplateInfo[] = [
   {
     type: "PRESENTATION",
     name: "Prezentace Carmakler",
-    description: "Predstaveni sluzeb Carmakler prodejci pred schuzkou",
+    description: "Představení služeb Carmakler prodejci před schůzkou",
     requiredContext: "seller",
     requiresVehicle: false,
   },
   {
     type: "CONTRACT_OFFER",
-    name: "Navrh smlouvy",
-    description: "Zaslani navrhu zprostredkovatelske smlouvy prodejci",
+    name: "Návrh smlouvy",
+    description: "Zaslání návrhu zprostředkovatelské smlouvy prodejci",
     requiredContext: "seller",
     requiresVehicle: true,
   },
   {
     type: "FOLLOWUP",
-    name: "Follow-up po schuzce",
-    description: "Potvrzeni zadani auta do systemu po schuzce s prodejcem",
+    name: "Follow-up po schůzce",
+    description: "Potvrzení zadání auta do systému po schůzce s prodejcem",
     requiredContext: "seller",
     requiresVehicle: true,
   },
   {
     type: "INSURANCE",
-    name: "Nabidka pojisteni",
-    description: "Nabidka zvyhodneneho pojisteni kupujicimu po prodeji",
+    name: "Nabídka pojištění",
+    description: "Nabídka zvýhodněného pojištění kupujícímu po prodeji",
     requiredContext: "buyer",
     requiresVehicle: true,
   },
   {
     type: "FINANCING",
-    name: "Nabidka financovani",
-    description: "Nabidka financovani vozidla kupujicimu",
+    name: "Nabídka financování",
+    description: "Nabídka financování vozidla kupujícímu",
     requiredContext: "buyer",
     requiresVehicle: true,
   },
   {
     type: "PRICE_CHANGE",
-    name: "Doporuceni snizeni ceny",
-    description: "Doporuceni zmeny ceny prodejci, kdyz se auto neprodava",
+    name: "Doporučení snížení ceny",
+    description: "Doporučení změny ceny prodejci, když se auto neprodává",
     requiredContext: "seller",
     requiresVehicle: true,
   },
   {
     type: "VEHICLE_SOLD",
-    name: "Auto prodano",
-    description: "Informace o uspesnem prodeji prodejci",
+    name: "Auto prodáno",
+    description: "Informace o úspěšném prodeji prodejci",
     requiredContext: "seller",
     requiresVehicle: true,
   },
@@ -214,6 +214,6 @@ export function generateEmail(
       return { subject: _vsSub(data), html: _vsHtml(data), text: _vsText(data) };
     }
     default:
-      throw new Error(`Neznamy typ sablony: ${templateType}`);
+      throw new Error(`Neznámý typ šablony: ${templateType}`);
   }
 }

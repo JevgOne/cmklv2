@@ -49,7 +49,7 @@ const fuelLabels: Record<string, string> = {
 };
 
 const transmissionLabels: Record<string, string> = {
-  MANUAL: "Manual",
+  MANUAL: "Manuál",
   AUTOMATIC: "Automat",
   DSG: "DSG",
   CVT: "CVT",
@@ -67,33 +67,33 @@ const bodyTypeLabels: Record<string, string> = {
 };
 
 const conditionLabels: Record<string, string> = {
-  NEW: "Nove",
-  LIKE_NEW: "Jako nove",
-  EXCELLENT: "Vyborny",
-  GOOD: "Dobry",
-  FAIR: "Uspokojivi",
-  DAMAGED: "Poskozene",
+  NEW: "Nové",
+  LIKE_NEW: "Jako nové",
+  EXCELLENT: "Výborný",
+  GOOD: "Dobrý",
+  FAIR: "Uspokojivý",
+  DAMAGED: "Poškozené",
 };
 
 const drivetrainLabels: Record<string, string> = {
-  FWD: "Predni",
-  RWD: "Zadni",
+  FWD: "Přední",
+  RWD: "Zadní",
   AWD: "4x4 (AWD)",
   "4WD": "4x4",
 };
 
 const serviceBookLabels: Record<string, string> = {
-  COMPLETE: "Kompletni",
-  PARTIAL: "Castecna",
-  NONE: "Chybi",
-  ELECTRONIC: "Elektronicka",
+  COMPLETE: "Kompletní",
+  PARTIAL: "Částečná",
+  NONE: "Chybí",
+  ELECTRONIC: "Elektronická",
 };
 
 const TABS = [
-  { value: "basic", label: "Zakladni" },
+  { value: "basic", label: "Základní" },
   { value: "condition", label: "Stav" },
-  { value: "equipment", label: "Vybava" },
-  { value: "inspection", label: "Prohlidka" },
+  { value: "equipment", label: "Výbava" },
+  { value: "inspection", label: "Prohlídka" },
   { value: "description", label: "Popis" },
 ];
 
@@ -173,19 +173,19 @@ export function VehicleSpecs({ vehicle }: VehicleSpecsProps) {
                 </span>
               }
             />
-            <SpecRow label="Znacka" value={vehicle.brand} />
+            <SpecRow label="Značka" value={vehicle.brand} />
             <SpecRow label="Model" value={vehicle.model} />
             {vehicle.variant && <SpecRow label="Varianta" value={vehicle.variant} />}
-            <SpecRow label="Rok vyroby" value={vehicle.year} />
-            <SpecRow label="Najezd" value={formatMileage(vehicle.mileage)} />
+            <SpecRow label="Rok výroby" value={vehicle.year} />
+            <SpecRow label="Nájezd" value={formatMileage(vehicle.mileage)} />
             <SpecRow label="Palivo" value={fuelLabels[vehicle.fuelType] || vehicle.fuelType} />
-            <SpecRow label="Prevodovka" value={transmissionLabels[vehicle.transmission] || vehicle.transmission} />
-            {vehicle.enginePower && <SpecRow label="Vykon" value={`${vehicle.enginePower} kW`} />}
+            <SpecRow label="Převodovka" value={transmissionLabels[vehicle.transmission] || vehicle.transmission} />
+            {vehicle.enginePower && <SpecRow label="Výkon" value={`${vehicle.enginePower} kW`} />}
             {vehicle.engineCapacity && <SpecRow label="Objem" value={`${vehicle.engineCapacity} ccm`} />}
             {vehicle.bodyType && <SpecRow label="Karoserie" value={bodyTypeLabels[vehicle.bodyType] || vehicle.bodyType} />}
             {vehicle.color && <SpecRow label="Barva" value={vehicle.color} />}
-            {vehicle.doorsCount && <SpecRow label="Dvere" value={vehicle.doorsCount} />}
-            {vehicle.seatsCount && <SpecRow label="Mista" value={vehicle.seatsCount} />}
+            {vehicle.doorsCount && <SpecRow label="Dveře" value={vehicle.doorsCount} />}
+            {vehicle.seatsCount && <SpecRow label="Místa" value={vehicle.seatsCount} />}
             {vehicle.drivetrain && <SpecRow label="Pohon" value={drivetrainLabels[vehicle.drivetrain] || vehicle.drivetrain} />}
           </div>
         )}
@@ -209,7 +209,7 @@ export function VehicleSpecs({ vehicle }: VehicleSpecsProps) {
               }
             />
             <SpecRow
-              label="Servisni knizka"
+              label="Servisní knížka"
               value={
                 vehicle.serviceBookStatus
                   ? serviceBookLabels[vehicle.serviceBookStatus] || vehicle.serviceBookStatus
@@ -217,10 +217,10 @@ export function VehicleSpecs({ vehicle }: VehicleSpecsProps) {
               }
             />
             {vehicle.ownerCount != null && (
-              <SpecRow label="Pocet majitelu" value={vehicle.ownerCount} />
+              <SpecRow label="Počet majitelů" value={vehicle.ownerCount} />
             )}
             {vehicle.originCountry && (
-              <SpecRow label="Zeme puvodu" value={vehicle.originCountry} />
+              <SpecRow label="Země původu" value={vehicle.originCountry} />
             )}
             {vehicle.odometerStatus && (
               <SpecRow
@@ -236,10 +236,10 @@ export function VehicleSpecs({ vehicle }: VehicleSpecsProps) {
                     }
                   >
                     {vehicle.odometerStatus === "VERIFIED"
-                      ? "Overeno"
+                      ? "Ověřeno"
                       : vehicle.odometerStatus === "TAMPERED"
-                      ? "Manipulovano"
-                      : "Neovereno"}
+                      ? "Manipulováno"
+                      : "Neověřeno"}
                   </Badge>
                 }
               />
@@ -265,7 +265,7 @@ export function VehicleSpecs({ vehicle }: VehicleSpecsProps) {
               </div>
             ) : (
               <p className="text-sm text-gray-400 text-center py-4">
-                Zadna vybava nezadana
+                Žádná výbava nezadána
               </p>
             )}
           </div>
@@ -275,7 +275,7 @@ export function VehicleSpecs({ vehicle }: VehicleSpecsProps) {
           <div>
             {vehicle.overallRating != null && (
               <div className="flex items-center justify-between py-2.5 border-b border-gray-100">
-                <span className="text-sm text-gray-500">Celkove hodnoceni</span>
+                <span className="text-sm text-gray-500">Celkové hodnocení</span>
                 <StarDisplay rating={vehicle.overallRating} />
               </div>
             )}
@@ -287,7 +287,7 @@ export function VehicleSpecs({ vehicle }: VehicleSpecsProps) {
               </div>
             ) : (
               <p className="text-sm text-gray-400 text-center py-4">
-                Zadne udaje z prohlidky
+                Žádné údaje z prohlídky
               </p>
             )}
           </div>
@@ -301,7 +301,7 @@ export function VehicleSpecs({ vehicle }: VehicleSpecsProps) {
               </p>
             ) : (
               <p className="text-sm text-gray-400 text-center py-4">
-                Zadny popis
+                Žádný popis
               </p>
             )}
           </div>

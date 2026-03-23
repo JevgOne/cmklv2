@@ -30,8 +30,8 @@ const opportunity = {
   dealerName: "Jan Novak",
   dealerFlips: 12,
   dealerAvgRoi: 22,
-  repairDescription: "Vymena rozvodoveho remene, novy olejovy filtr, oprava laku na prednim narazniku, detailing interieru.",
-  marketAnalysis: "Srovnatelne vozy na trhu se prodavaji za 280-320 000 Kc. Nase auto bude v nadprumernem stavu po oprave.",
+  repairDescription: "Výměna rozvodového řemene, nový olejový filtr, oprava laku na předním nárazníku, detailing interiéru.",
+  marketAnalysis: "Srovnatelné vozy na trhu se prodávají za 280–320 000 Kč. Naše auto bude v nadprůměrném stavu po opravě.",
   photos: [
     "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=600&q=80",
   ],
@@ -87,7 +87,7 @@ export default function InvestorOpportunityDetailPage() {
 
       {/* Timeline */}
       <Card className="p-6 mb-8">
-        <h2 className="text-lg font-bold text-gray-900 mb-6">Prubeh flipu</h2>
+        <h2 className="text-lg font-bold text-gray-900 mb-6">Průběh flipu</h2>
         <FlipTimeline currentStep={opportunity.status} />
       </Card>
 
@@ -108,16 +108,16 @@ export default function InvestorOpportunityDetailPage() {
           {/* Funding progress */}
           {opportunity.status === "FUNDING" && (
             <Card className="p-6">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Stav financovani</h2>
+              <h2 className="text-lg font-bold text-gray-900 mb-4">Stav financování</h2>
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-gray-500">Financovano</span>
+                <span className="text-gray-500">Financováno</span>
                 <span className="font-bold text-gray-900">
                   {formatPrice(opportunity.fundedAmount)} / {formatPrice(opportunity.neededAmount)}
                 </span>
               </div>
               <ProgressBar value={fundingProgress} variant="green" className="h-3" />
               <p className="text-sm text-gray-500 mt-3">
-                Zbyva financovat: <strong className="text-gray-900">{formatPrice(opportunity.neededAmount - opportunity.fundedAmount)}</strong>
+                Zbývá financovat: <strong className="text-gray-900">{formatPrice(opportunity.neededAmount - opportunity.fundedAmount)}</strong>
               </p>
             </Card>
           )}
@@ -127,7 +127,7 @@ export default function InvestorOpportunityDetailPage() {
             <h2 className="text-lg font-bold text-gray-900 mb-4">Informace o vozidle</h2>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-gray-500">Znacka</span>
+                <span className="text-gray-500">Značka</span>
                 <p className="font-medium text-gray-900">{opportunity.brand}</p>
               </div>
               <div>
@@ -155,13 +155,13 @@ export default function InvestorOpportunityDetailPage() {
 
           {/* Repair plan */}
           <Card className="p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Plan opravy</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-4">Plán opravy</h2>
             <p className="text-sm text-gray-600 leading-relaxed">{opportunity.repairDescription}</p>
           </Card>
 
           {/* Market analysis */}
           <Card className="p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Analyza trhu</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-4">Analýza trhu</h2>
             <p className="text-sm text-gray-600 leading-relaxed">{opportunity.marketAnalysis}</p>
           </Card>
         </div>
@@ -185,17 +185,17 @@ export default function InvestorOpportunityDetailPage() {
               </div>
               <div>
                 <p className="font-bold text-gray-900">{opportunity.dealerName}</p>
-                <p className="text-xs text-gray-500">Overeny dealer</p>
+                <p className="text-xs text-gray-500">Ověřený dealer</p>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-gray-50 rounded-lg p-3 text-center">
                 <div className="text-lg font-extrabold text-gray-900">{opportunity.dealerFlips}</div>
-                <div className="text-[11px] font-semibold text-gray-400 uppercase">Flipu</div>
+                <div className="text-[11px] font-semibold text-gray-400 uppercase">Flipů</div>
               </div>
               <div className="bg-gray-50 rounded-lg p-3 text-center">
                 <div className="text-lg font-extrabold text-orange-500">{opportunity.dealerAvgRoi}%</div>
-                <div className="text-[11px] font-semibold text-gray-400 uppercase">Prum. ROI</div>
+                <div className="text-[11px] font-semibold text-gray-400 uppercase">Prům. ROI</div>
               </div>
             </div>
           </Card>

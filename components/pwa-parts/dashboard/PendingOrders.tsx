@@ -20,7 +20,7 @@ interface PendingOrder {
 }
 
 const statusConfig: Record<string, { label: string; variant: "new" | "pending" }> = {
-  PENDING: { label: "Nova", variant: "new" },
+  PENDING: { label: "Nová", variant: "new" },
   CONFIRMED: { label: "Potvrzena", variant: "pending" },
 };
 
@@ -41,7 +41,7 @@ export function PendingOrders() {
           setOrders(pending.slice(0, 5));
         }
       } catch {
-        // Zustane prazdne
+        // Zůstane prázdné
       } finally {
         setLoading(false);
       }
@@ -52,7 +52,7 @@ export function PendingOrders() {
   if (loading) {
     return (
       <div>
-        <h3 className="font-bold text-gray-900 mb-3">Objednavky k vyrizeni</h3>
+        <h3 className="font-bold text-gray-900 mb-3">Objednávky k vyřízení</h3>
         <div className="space-y-3">
           {[1, 2].map((i) => (
             <div key={i} className="bg-white rounded-2xl h-20 animate-pulse" />
@@ -65,19 +65,19 @@ export function PendingOrders() {
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
-        <h3 className="font-bold text-gray-900">Objednavky k vyrizeni</h3>
+        <h3 className="font-bold text-gray-900">Objednávky k vyřízení</h3>
         <Link
           href="/parts/orders"
           className="text-sm text-green-600 font-semibold no-underline"
         >
-          Vse
+          Vše
         </Link>
       </div>
 
       {orders.length === 0 ? (
         <Card className="p-4">
           <p className="text-sm text-gray-400 text-center">
-            Zadne objednavky k vyrizeni
+            Žádné objednávky k vyřízení
           </p>
         </Card>
       ) : (
@@ -107,7 +107,7 @@ export function PendingOrders() {
                         <Badge variant={cfg.variant}>{cfg.label}</Badge>
                       </div>
                       <p className="text-sm text-gray-600 truncate">
-                        {firstItem?.part.name ?? "Dil"} x{firstItem?.quantity ?? 1}
+                        {firstItem?.part.name ?? "Díl"} x{firstItem?.quantity ?? 1}
                       </p>
                       <p className="text-xs text-gray-400 mt-1">{dateStr}</p>
                     </div>

@@ -25,14 +25,14 @@ interface ContractCardProps {
 
 const statusMap: Record<string, { variant: "active" | "pending" | "draft" | "sold"; label: string }> = {
   DRAFT: { variant: "draft", label: "Koncept" },
-  SIGNED: { variant: "active", label: "Podepsano" },
-  SENT: { variant: "sold", label: "Odeslano" },
-  CANCELLED: { variant: "pending", label: "Zruseno" },
+  SIGNED: { variant: "active", label: "Podepsáno" },
+  SENT: { variant: "sold", label: "Odesláno" },
+  CANCELLED: { variant: "pending", label: "Zrušeno" },
 };
 
 const typeLabels: Record<string, { label: string; icon: string }> = {
-  BROKERAGE: { label: "Zprostredkovatelska", icon: "handshake" },
-  HANDOVER: { label: "Predavaci protokol", icon: "clipboard" },
+  BROKERAGE: { label: "Zprostředkovatelská", icon: "handshake" },
+  HANDOVER: { label: "Předávací protokol", icon: "clipboard" },
 };
 
 function ContractTypeIcon({ type }: { type: string }) {

@@ -54,12 +54,12 @@ export default async function HandoverPage({
         </Link>
         <div>
           <h1 className="text-xl font-extrabold text-gray-900">
-            Predani vozidla
+            Předání vozidla
           </h1>
           <p className="text-sm text-gray-500">{vehicleName}</p>
           {vehicle.reservedFor && (
             <p className="text-sm text-orange-500 font-medium">
-              Kupujici: {vehicle.reservedFor}
+              Kupující: {vehicle.reservedFor}
             </p>
           )}
         </div>

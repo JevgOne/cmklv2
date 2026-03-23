@@ -60,7 +60,7 @@ export function ContactSearch({ open, onClose, onSelect }: ContactSearchProps) {
     <Modal open={open} onClose={onClose} title="Hledat kontakt">
       <div className="space-y-4">
         <Input
-          placeholder="Jmeno nebo telefon..."
+          placeholder="Jméno nebo telefon..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           autoFocus
@@ -78,8 +78,8 @@ export function ContactSearch({ open, onClose, onSelect }: ContactSearchProps) {
         ) : filtered.length === 0 ? (
           <p className="text-sm text-gray-400 text-center py-6">
             {query.trim()
-              ? "Zadny kontakt nenalezen"
-              : "Zatim zadne ulozene kontakty"}
+              ? "Žádný kontakt nenalezen"
+              : "Zatím žádné uložené kontakty"}
           </p>
         ) : (
           <div className="space-y-1 max-h-[50vh] overflow-y-auto">

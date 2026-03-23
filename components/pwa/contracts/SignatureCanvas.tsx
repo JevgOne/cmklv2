@@ -145,7 +145,7 @@ export function SignatureCanvas({
         />
       </div>
       <p className="text-xs text-gray-400 text-center">
-        Podepiste se prstem nebo mysi
+        Podepište se prstem nebo myší
       </p>
       <div className="flex gap-3">
         <Button variant="outline" size="sm" onClick={clear} className="flex-1">

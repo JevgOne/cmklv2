@@ -4,7 +4,7 @@ import { InvestorPortfolio } from "@/components/web/marketplace/InvestorPortfoli
 import { OpportunityCard } from "@/components/web/marketplace/OpportunityCard";
 
 export const metadata: Metadata = {
-  title: "Investor Dashboard | Marketplace | CarMakler",
+  title: "Investor Dashboard | Marketplace | CarMakléř",
 };
 
 // Dummy data
@@ -101,7 +101,7 @@ export default function InvestorDashboardPage() {
           <span className="text-gray-900">Investor</span>
         </div>
         <h1 className="text-[28px] font-extrabold text-gray-900">
-          Investicni prehled
+          Investiční přehled
         </h1>
       </div>
 
@@ -110,7 +110,7 @@ export default function InvestorDashboardPage() {
 
       {/* Available opportunities */}
       <div className="mt-10">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Dostupne prilezitosti</h2>
+        <h2 className="text-xl font-bold text-gray-900 mb-4">Dostupné příležitosti</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {opportunities
             .filter((o) => o.status === "FUNDING" || o.status === "APPROVED")
@@ -122,7 +122,7 @@ export default function InvestorDashboardPage() {
 
       {/* Active investments */}
       <div className="mt-10">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Moje aktivni investice</h2>
+        <h2 className="text-xl font-bold text-gray-900 mb-4">Moje aktivní investice</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {opportunities
             .filter((o) => o.status !== "FUNDING" && o.status !== "APPROVED")

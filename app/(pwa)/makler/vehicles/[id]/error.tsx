@@ -15,7 +15,7 @@ export default function VehicleDetailError({
           !
         </div>
         <h2 className="text-2xl font-extrabold text-gray-900 mb-2">
-          Neco se pokazilo
+          Něco se pokazilo
         </h2>
         <p className="text-gray-500 mb-6">
           Nepodařilo se načíst detail vozidla. Zkuste to prosím znovu.

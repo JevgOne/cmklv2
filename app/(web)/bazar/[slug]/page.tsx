@@ -19,8 +19,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!partner) return { title: "Partner nenalezen" };
 
   return {
-    title: `${partner.name} | Overeny partner Carmakler`,
-    description: partner.description || `Autobazar ${partner.name} v ${partner.city || "CR"} — overeny partner Carmakler.`,
+    title: `${partner.name} | Ověřený partner CarMakléř`,
+    description: partner.description || `Autobazar ${partner.name} v ${partner.city || "ČR"} — ověřený partner CarMakléř.`,
   };
 }
 
@@ -89,7 +89,7 @@ export default async function BazarProfilePage({ params }: Props) {
             <h1 className="text-3xl font-extrabold text-gray-900">
               {partner.name}
             </h1>
-            <Badge variant="verified">Overeny partner</Badge>
+            <Badge variant="verified">Ověřený partner</Badge>
           </div>
           {partner.city && (
             <p className="text-gray-500 mb-1">📍 {partner.address || partner.city}</p>
@@ -103,13 +103,13 @@ export default async function BazarProfilePage({ params }: Props) {
               <span className="font-bold">{partner.googleRating.toFixed(1)}</span>
               {partner.googleReviewCount && (
                 <span className="text-gray-400 text-sm">
-                  ({partner.googleReviewCount} hodnoceni)
+                  ({partner.googleReviewCount} hodnocení)
                 </span>
               )}
             </div>
           )}
           <div className="text-xs text-gray-400 mt-2">
-            Na Carmakler od {new Date(partner.createdAt).toLocaleDateString("cs-CZ")}
+            Na CarMakléři od {new Date(partner.createdAt).toLocaleDateString("cs-CZ")}
           </div>
         </div>
       </div>
@@ -117,7 +117,7 @@ export default async function BazarProfilePage({ params }: Props) {
       {/* Description */}
       {partner.description && (
         <Card className="p-6 mb-8">
-          <h2 className="text-lg font-bold text-gray-900 mb-3">O nas</h2>
+          <h2 className="text-lg font-bold text-gray-900 mb-3">O nás</h2>
           <p className="text-gray-600 whitespace-pre-line">{partner.description}</p>
         </Card>
       )}
@@ -125,7 +125,7 @@ export default async function BazarProfilePage({ params }: Props) {
       {/* Opening hours */}
       {openingHours && (
         <Card className="p-6 mb-8">
-          <h2 className="text-lg font-bold text-gray-900 mb-3">Oteviraci doba</h2>
+          <h2 className="text-lg font-bold text-gray-900 mb-3">Otevírací doba</h2>
           <div className="grid grid-cols-2 gap-2 text-sm">
             {Object.entries(openingHours as Record<string, string>).map(([day, hours]) => (
               <div key={day} className="flex justify-between">
@@ -143,7 +143,7 @@ export default async function BazarProfilePage({ params }: Props) {
           Vozidla ({vehicles.length})
         </h2>
         {vehicles.length === 0 ? (
-          <p className="text-gray-400">Zadna vozidla k dispozici.</p>
+          <p className="text-gray-400">Žádná vozidla k dispozici.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {vehicles.map((v) => (

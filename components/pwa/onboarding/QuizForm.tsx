@@ -14,53 +14,53 @@ interface QuizQuestion {
 
 const QUIZ_QUESTIONS: QuizQuestion[] = [
   {
-    question: "Jaka je minimalni provize maklere z prodeje vozidla?",
-    options: ["10 000 Kc", "15 000 Kc", "25 000 Kc", "50 000 Kc"],
+    question: "Jaká je minimální provize makléře z prodeje vozidla?",
+    options: ["10 000 Kč", "15 000 Kč", "25 000 Kč", "50 000 Kč"],
     correctIndex: 2,
   },
   {
-    question: "Co je prvni krok pred zahajenim inzerce vozidla?",
-    options: ["Nafoceni vozidla", "Podpis maklerske smlouvy", "Zverejneni inzeratu", "Dohoda o cene"],
+    question: "Co je první krok před zahájením inzerce vozidla?",
+    options: ["Nafocení vozidla", "Podpis makléřské smlouvy", "Zveřejnění inzerátu", "Dohoda o ceně"],
     correctIndex: 1,
   },
   {
-    question: "Kolik procent z prodejni ceny tvori provize maklere?",
+    question: "Kolik procent z prodejní ceny tvoří provize makléře?",
     options: ["3%", "5%", "8%", "10%"],
     correctIndex: 1,
   },
   {
-    question: "Jaky nastroj pouzivame pro automaticke nacteni udaju o vozidle?",
-    options: ["GPS tracker", "VIN dekoder", "OBD scanner", "Databaze STK"],
+    question: "Jaký nástroj používáme pro automatické načtení údajů o vozidle?",
+    options: ["GPS tracker", "VIN dekodér", "OBD scanner", "Databáze STK"],
     correctIndex: 1,
   },
   {
-    question: "Jaky je minimalni pocet fotek pro inzerat?",
+    question: "Jaký je minimální počet fotek pro inzerát?",
     options: ["5", "10", "15", "20"],
     correctIndex: 2,
   },
   {
-    question: "Kdy se maklerovi vyplaci provize?",
-    options: ["Pri podpisu smlouvy", "Pri zverejneni inzeratu", "Po uspesnem prodeji a uhrade", "Kazdy mesic"],
+    question: "Kdy se makléřovi vyplácí provize?",
+    options: ["Při podpisu smlouvy", "Při zveřejnění inzerátu", "Po úspěšném prodeji a úhradě", "Každý měsíc"],
     correctIndex: 2,
   },
   {
-    question: "Muzete klientovi slíbit garantovany prodej?",
-    options: ["Ano, vzdy", "Ano, pokud je cena realna", "Ne, nikdy", "Ano, do 30 dnu"],
+    question: "Můžete klientovi slíbit garantovaný prodej?",
+    options: ["Ano, vždy", "Ano, pokud je cena reálná", "Ne, nikdy", "Ano, do 30 dnů"],
     correctIndex: 2,
   },
   {
-    question: "Co se stane s vozidlem po zadani do systemu?",
-    options: ["Automaticky se publikuje", "BackOffice ho schvali", "Makler ho publikuje sam", "Nic, ceka na prodejce"],
+    question: "Co se stane s vozidlem po zadání do systému?",
+    options: ["Automaticky se publikuje", "BackOffice ho schválí", "Makléř ho publikuje sám", "Nic, čeká na prodejce"],
     correctIndex: 1,
   },
   {
-    question: "Jak casto byste meli informovat prodejce o stavu prodeje?",
-    options: ["Nikdy", "Jednou za mesic", "Pravidelne", "Az pri prodeji"],
+    question: "Jak často byste měli informovat prodejce o stavu prodeje?",
+    options: ["Nikdy", "Jednou za měsíc", "Pravidelně", "Až při prodeji"],
     correctIndex: 2,
   },
   {
     question: "Funguje PWA aplikace offline?",
-    options: ["Ne", "Ano, plne", "Jen cteni", "Jen s Wi-Fi"],
+    options: ["Ne", "Ano, plně", "Jen čtení", "Jen s Wi-Fi"],
     correctIndex: 1,
   },
 ];
@@ -85,7 +85,7 @@ export function QuizForm() {
 
     // Check all questions answered
     if (Object.keys(answers).length < QUIZ_QUESTIONS.length) {
-      setError("Odpovedete na vsechny otazky.");
+      setError("Odpovězte na všechny otázky.");
       return;
     }
 
@@ -114,14 +114,14 @@ export function QuizForm() {
         });
 
         if (!res.ok) {
-          setError("Ulozeni vysledku se nezdarilo.");
+          setError("Uložení výsledku se nezdařilo.");
           setLoading(false);
           return;
         }
 
         router.push("/makler/onboarding/contract");
       } catch {
-        setError("Doslo k chybe. Zkuste to znovu.");
+        setError("Došlo k chybě. Zkuste to znovu.");
         setLoading(false);
       }
     }
@@ -146,10 +146,10 @@ export function QuizForm() {
         <Alert variant="warning">
           <div>
             <p className="text-sm font-semibold">
-              Vas vysledek: {score}/{QUIZ_QUESTIONS.length}
+              Váš výsledek: {score}/{QUIZ_QUESTIONS.length}
             </p>
             <p className="text-sm mt-1">
-              Potrebujete alespon {PASS_THRESHOLD}/{QUIZ_QUESTIONS.length}. Zkuste to znovu.
+              Potřebujete alespoň {PASS_THRESHOLD}/{QUIZ_QUESTIONS.length}. Zkuste to znovu.
             </p>
           </div>
         </Alert>
@@ -158,7 +158,7 @@ export function QuizForm() {
       {submitted && score >= PASS_THRESHOLD && (
         <Alert variant="success">
           <p className="text-sm font-semibold">
-            Vyborne! Vas vysledek: {score}/{QUIZ_QUESTIONS.length}
+            Výborně! Váš výsledek: {score}/{QUIZ_QUESTIONS.length}
           </p>
         </Alert>
       )}
@@ -200,7 +200,7 @@ export function QuizForm() {
 
       {!submitted ? (
         <Button variant="primary" size="lg" onClick={handleSubmit} className="w-full">
-          Odeslat odpovedi
+          Odeslat odpovědi
         </Button>
       ) : score < PASS_THRESHOLD ? (
         <Button variant="primary" size="lg" onClick={handleRetry} className="w-full">
@@ -208,7 +208,7 @@ export function QuizForm() {
         </Button>
       ) : (
         <Button variant="primary" size="lg" onClick={() => router.push("/makler/onboarding/contract")} disabled={loading} className="w-full">
-          {loading ? "Ukladam..." : "Pokracovat"}
+          {loading ? "Ukládám..." : "Pokračovat"}
         </Button>
       )}
     </div>

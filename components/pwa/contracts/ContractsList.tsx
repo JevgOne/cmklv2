@@ -53,13 +53,13 @@ export function ContractsList({ contracts }: ContractsListProps) {
       {filtered.length === 0 ? (
         <EmptyState
           icon="📄"
-          title="Zadne smlouvy"
+          title="Žádné smlouvy"
           description={
             filter === "all"
-              ? "Zatim jste nevytvorili zadnou smlouvu."
-              : "V teto kategorii nemate zadnou smlouvu."
+              ? "Zatím jste nevytvořili žádnou smlouvu."
+              : "V této kategorii nemáte žádnou smlouvu."
           }
-          actionLabel={filter === "all" ? "+ Nova smlouva" : undefined}
+          actionLabel={filter === "all" ? "+ Nová smlouva" : undefined}
           onAction={filter === "all" ? () => router.push("/makler/contracts/new") : undefined}
         />
       ) : (
@@ -81,7 +81,7 @@ export function ContractsList({ contracts }: ContractsListProps) {
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
             <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
           </svg>
-          Nova smlouva
+          Nová smlouva
         </Button>
       </div>
     </div>

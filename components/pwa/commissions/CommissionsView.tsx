@@ -30,8 +30,8 @@ function generateMonthOptions(): { value: string; label: string }[] {
   const options: { value: string; label: string }[] = [];
   const now = new Date();
   const months = [
-    "Leden", "Unor", "Brezen", "Duben", "Kveten", "Cerven",
-    "Cervenec", "Srpen", "Zari", "Rijen", "Listopad", "Prosinec",
+    "Leden", "Únor", "Březen", "Duben", "Květen", "Červen",
+    "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec",
   ];
 
   for (let i = 0; i < 12; i++) {
@@ -97,15 +97,15 @@ export function CommissionsView({
       ) : commissions.length === 0 ? (
         <EmptyState
           icon="💰"
-          title="Zadne provize"
-          description="V tomto mesici jeste nemáte zadne provize."
+          title="Žádné provize"
+          description="V tomto měsíci ještě nemáte žádné provize."
         />
       ) : (
         <div className="space-y-3">
           {commissions.map((c) => {
             const vehicleName = c.vehicle
               ? `${c.vehicle.brand} ${c.vehicle.model}${c.vehicle.variant ? ` ${c.vehicle.variant}` : ""}`
-              : "Neznamy vuz";
+              : "Neznámý vůz";
 
             return (
               <SaleCard

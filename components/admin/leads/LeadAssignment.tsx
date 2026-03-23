@@ -44,7 +44,7 @@ export function LeadAssignment({ leadId, currentBrokerId, brokerOptions }: LeadA
   return (
     <div className="space-y-3">
       <Select
-        placeholder="Vyberte maklere..."
+        placeholder="Vyberte makléře..."
         options={brokerOptions}
         value={selectedBroker}
         onChange={(e) => setSelectedBroker(e.target.value)}
@@ -56,7 +56,7 @@ export function LeadAssignment({ leadId, currentBrokerId, brokerOptions }: LeadA
         onClick={handleAssign}
         className="w-full"
       >
-        {loading ? "Prirazuji..." : success ? "Prirazeno!" : "Priradit makleri"}
+        {loading ? "Přiřazuji..." : success ? "Přiřazeno!" : "Přiřadit makléři"}
       </Button>
     </div>
   );

@@ -88,13 +88,13 @@ export function SignatureFlow({
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Chyba pri podpisu smlouvy");
+        throw new Error(data.error || "Chyba při podpisu smlouvy");
       }
 
       router.push(`/makler/contracts/${contractId}`);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Neocekavana chyba");
+      setError(err instanceof Error ? err.message : "Neočekávaná chyba");
       setIsSubmitting(false);
     }
   }, [contractId, sellerSignature, brokerSignature, sellerName, brokerName, router]);
@@ -114,7 +114,7 @@ export function SignatureFlow({
                 }
               }}
               className="p-2 -ml-2 text-gray-600 hover:text-gray-900 transition-colors"
-              aria-label="Zpet"
+              aria-label="Zpět"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -124,7 +124,7 @@ export function SignatureFlow({
             <button
               onClick={() => router.push(`/makler/contracts/${contractId}`)}
               className="p-2 -mr-2 text-gray-400 hover:text-gray-600 transition-colors"
-              aria-label="Zavrit"
+              aria-label="Zavřít"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -188,10 +188,10 @@ export function SignatureFlow({
               Podpis prodejce
             </h3>
             <p className="text-sm text-gray-500">
-              Predejte telefon prodejci k podpisu
+              Předejte telefon prodejci k podpisu
             </p>
             <Input
-              label="Jmeno a prijmeni"
+              label="Jméno a příjmení"
               value={sellerName}
               onChange={(e) => setSellerName(e.target.value)}
               placeholder="Jan Novak"
@@ -209,11 +209,11 @@ export function SignatureFlow({
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
-                Podpis ulozen
+                Podpis uložen
               </div>
             )}
             <Checkbox
-              label="Souhlasim s podmínkami smlouvy"
+              label="Souhlasím s podmínkami smlouvy"
               checked={sellerAgreed}
               onChange={(e) => setSellerAgreed(e.target.checked)}
             />
@@ -223,13 +223,13 @@ export function SignatureFlow({
         {step === "broker" && (
           <div className="space-y-4">
             <h3 className="text-lg font-bold text-gray-900">
-              Podpis maklere
+              Podpis makléře
             </h3>
             <p className="text-sm text-gray-500">
-              Nyní podepiste vy jako makler
+              Nyní podepište Vy jako makléř
             </p>
             <Input
-              label="Jmeno a prijmeni"
+              label="Jméno a příjmení"
               value={brokerName}
               onChange={(e) => setBrokerName(e.target.value)}
               placeholder="Jan Novak"
@@ -247,11 +247,11 @@ export function SignatureFlow({
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
-                Podpis ulozen
+                Podpis uložen
               </div>
             )}
             <Checkbox
-              label="Souhlasim s podmínkami smlouvy"
+              label="Souhlasím s podmínkami smlouvy"
               checked={brokerAgreed}
               onChange={(e) => setBrokerAgreed(e.target.checked)}
             />
@@ -268,7 +268,7 @@ export function SignatureFlow({
             disabled={!isSellerValid}
             className="w-full"
           >
-            Pokracovat k podpisu maklere
+            Pokračovat k podpisu makléře
           </Button>
         )}
 
@@ -282,7 +282,7 @@ export function SignatureFlow({
             {isSubmitting ? (
               <span className="flex items-center gap-2">
                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Podepisovani...
+                Podepisování...
               </span>
             ) : (
               "Podepsat smlouvu"

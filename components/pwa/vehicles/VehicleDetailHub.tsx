@@ -156,13 +156,13 @@ interface VehicleDetailHubProps {
 // ---- Labels ----
 
 const statusMap: Record<string, { variant: "verified" | "top" | "pending" | "rejected" | "default"; label: string }> = {
-  ACTIVE: { variant: "verified", label: "Aktivni" },
-  PENDING: { variant: "pending", label: "Ke schvaleni" },
-  REJECTED: { variant: "rejected", label: "Zamitnuto" },
+  ACTIVE: { variant: "verified", label: "Aktivní" },
+  PENDING: { variant: "pending", label: "Ke schválení" },
+  REJECTED: { variant: "rejected", label: "Zamítnuto" },
   DRAFT: { variant: "default", label: "Draft" },
-  SOLD: { variant: "top", label: "Prodano" },
-  RESERVED: { variant: "pending", label: "Rezervovano" },
-  ARCHIVED: { variant: "default", label: "Archivovano" },
+  SOLD: { variant: "top", label: "Prodáno" },
+  RESERVED: { variant: "pending", label: "Rezervováno" },
+  ARCHIVED: { variant: "default", label: "Archivováno" },
 };
 
 const fuelLabels: Record<string, string> = {
@@ -176,32 +176,32 @@ const fuelLabels: Record<string, string> = {
 };
 
 const transmissionLabels: Record<string, string> = {
-  MANUAL: "Manual",
+  MANUAL: "Manuál",
   AUTOMATIC: "Automat",
   DSG: "DSG",
   CVT: "CVT",
 };
 
 const inquiryStatusLabels: Record<string, string> = {
-  NEW: "Novy",
-  REPLIED: "Odpovezeno",
-  VIEWING_SCHEDULED: "Prohlidka",
-  NEGOTIATING: "Vyjednavani",
-  RESERVED: "Rezervovano",
-  SOLD: "Prodano",
-  NO_INTEREST: "Bez zajmu",
+  NEW: "Nový",
+  REPLIED: "Odpovězeno",
+  VIEWING_SCHEDULED: "Prohlídka",
+  NEGOTIATING: "Vyjednávání",
+  RESERVED: "Rezervováno",
+  SOLD: "Prodáno",
+  NO_INTEREST: "Bez zájmu",
 };
 
 const severityLabels: Record<string, string> = {
-  COSMETIC: "Kosmeticke",
-  FUNCTIONAL: "Funkcni",
-  SEVERE: "Vazne",
+  COSMETIC: "Kosmetické",
+  FUNCTIONAL: "Funkční",
+  SEVERE: "Vážné",
 };
 
 const changeLogFieldLabels: Record<string, string> = {
   price: "Cena",
   mileage: "Najezd",
-  year: "Rok vyroby",
+  year: "Rok výroby",
   status: "Stav",
 };
 
@@ -244,7 +244,7 @@ export function VehicleDetailHub({ vehicle, stats, exclusiveContract }: VehicleD
               {formatPrice(vehicle.price)}
             </p>
             {vehicle.priceNegotiable && (
-              <Badge variant="default">K jednani</Badge>
+              <Badge variant="default">K jednání</Badge>
             )}
           </div>
         </div>
@@ -307,12 +307,12 @@ export function VehicleDetailHub({ vehicle, stats, exclusiveContract }: VehicleD
                 <p className="font-semibold text-gray-900">
                   {newInquiries.length}{" "}
                   {newInquiries.length === 1
-                    ? "novy dotaz"
+                    ? "nový dotaz"
                     : newInquiries.length < 5
-                    ? "nove dotazy"
-                    : "novych dotazu"}
+                    ? "nové dotazy"
+                    : "nových dotazů"}
                 </p>
-                <p className="text-sm text-gray-500">Kliknutim zobrazite</p>
+                <p className="text-sm text-gray-500">Kliknutím zobrazíte</p>
               </div>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-orange-500">
                 <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
@@ -327,7 +327,7 @@ export function VehicleDetailHub({ vehicle, stats, exclusiveContract }: VehicleD
           <div className="grid grid-cols-3 gap-3">
             <Card className="p-3 text-center">
               <p className="text-lg font-bold text-gray-900">{stats.viewCount}</p>
-              <p className="text-xs text-gray-500">Zobrazeni</p>
+              <p className="text-xs text-gray-500">Zobrazení</p>
             </Card>
             <Card className="p-3 text-center">
               <p className="text-lg font-bold text-gray-900">{stats.totalInquiries}</p>
@@ -335,7 +335,7 @@ export function VehicleDetailHub({ vehicle, stats, exclusiveContract }: VehicleD
             </Card>
             <Card className="p-3 text-center">
               <p className="text-lg font-bold text-gray-900">{stats.daysOnPlatform}</p>
-              <p className="text-xs text-gray-500">Dni na platforme</p>
+              <p className="text-xs text-gray-500">Dní na platformě</p>
             </Card>
           </div>
           {vehicle.status === "ACTIVE" && vehicle.publishedAt && (
@@ -344,14 +344,14 @@ export function VehicleDetailHub({ vehicle, stats, exclusiveContract }: VehicleD
               target="_blank"
               className="block mt-2 text-center text-sm text-orange-600 font-medium no-underline hover:underline"
             >
-              Zobrazit verejny inzerat
+              Zobrazit veřejný inzerát
             </Link>
           )}
         </div>
 
         {/* Vehicle Specs */}
         <div>
-          <h3 className="font-semibold text-gray-900 mb-3">Udaje vozu</h3>
+          <h3 className="font-semibold text-gray-900 mb-3">Údaje vozu</h3>
           <VehicleSpecs vehicle={vehicle} />
         </div>
 
@@ -393,7 +393,7 @@ export function VehicleDetailHub({ vehicle, stats, exclusiveContract }: VehicleD
         <div>
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-semibold text-gray-900">
-              Poskozeni{" "}
+              Poškození{" "}
               {vehicle.damageReports.length > 0 && (
                 <span className="text-gray-400 font-normal">({vehicle.damageReports.length})</span>
               )}
@@ -430,7 +430,7 @@ export function VehicleDetailHub({ vehicle, stats, exclusiveContract }: VehicleD
             </div>
           ) : (
             <Card className="p-4 text-center">
-              <p className="text-sm text-gray-400">Zadna poskozeni</p>
+              <p className="text-sm text-gray-400">Žádná poškození</p>
             </Card>
           )}
         </div>
@@ -440,11 +440,11 @@ export function VehicleDetailHub({ vehicle, stats, exclusiveContract }: VehicleD
           <div>
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold text-gray-900">
-                Dotazy kupujicich{" "}
+                Dotazy kupujících{" "}
                 <span className="text-gray-400 font-normal">({vehicle.inquiries.length})</span>
               </h3>
               <Link href={`/makler/messages/${vehicle.id}`} className="no-underline">
-                <Button variant="ghost" size="sm">Zobrazit vse</Button>
+                <Button variant="ghost" size="sm">Zobrazit vše</Button>
               </Link>
             </div>
             <div className="space-y-2">
@@ -505,7 +505,7 @@ export function VehicleDetailHub({ vehicle, stats, exclusiveContract }: VehicleD
         {/* Change Log / Timeline */}
         {vehicle.changeLog.length > 0 && (
           <div>
-            <h3 className="font-semibold text-gray-900 mb-3">Historie zmen</h3>
+            <h3 className="font-semibold text-gray-900 mb-3">Historie změn</h3>
             <div className="relative pl-4 border-l-2 border-gray-200 space-y-4">
               {vehicle.changeLog.slice(0, 10).map((entry) => (
                 <div key={entry.id} className="relative">
@@ -529,7 +529,7 @@ export function VehicleDetailHub({ vehicle, stats, exclusiveContract }: VehicleD
                       )}
                     </p>
                     {entry.reason && (
-                      <p className="text-xs text-gray-500 mt-0.5">Duvod: {entry.reason}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">Důvod: {entry.reason}</p>
                     )}
                     <p className="text-xs text-gray-400 mt-0.5">
                       {new Date(entry.createdAt).toLocaleDateString("cs-CZ", {

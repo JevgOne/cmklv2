@@ -80,8 +80,8 @@ export function ContractPreview({ contract }: ContractPreviewProps) {
         <h2 className="text-lg font-bold mt-2">
           {content?.title ||
             (contract.type === "BROKERAGE"
-              ? "Zprostredkovatelska smlouva"
-              : "Predavaci protokol")}
+              ? "Zprostředkovatelská smlouva"
+              : "Předávací protokol")}
         </h2>
         {content?.date && (
           <p className="text-sm opacity-80 mt-1">{content.date}</p>
@@ -106,7 +106,7 @@ export function ContractPreview({ contract }: ContractPreviewProps) {
               )}
             </div>
             <div className="space-y-2">
-              <h3 className="text-sm font-bold text-gray-900">Makler</h3>
+              <h3 className="text-sm font-bold text-gray-900">Makléř</h3>
               <p className="text-sm text-gray-700">
                 {contract.broker.firstName} {contract.broker.lastName}
               </p>
@@ -162,13 +162,13 @@ export function ContractPreview({ contract }: ContractPreviewProps) {
               {contract.brokerSignature && (
                 <div className="space-y-2">
                   <p className="text-xs font-semibold text-gray-500 uppercase">
-                    Makler
+                    Makléř
                   </p>
                   <div className="border border-gray-200 rounded-lg p-2 bg-gray-50">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={contract.brokerSignature}
-                      alt="Podpis maklere"
+                      alt="Podpis makléře"
                       className="w-full h-auto"
                     />
                   </div>
@@ -180,7 +180,7 @@ export function ContractPreview({ contract }: ContractPreviewProps) {
             </div>
             {contract.signedAt && (
               <p className="text-xs text-gray-400">
-                Podepsano: {new Date(contract.signedAt).toLocaleString("cs-CZ")}
+                Podepsáno: {new Date(contract.signedAt).toLocaleString("cs-CZ")}
                 {contract.signedLocation && ` | GPS: ${contract.signedLocation}`}
               </p>
             )}

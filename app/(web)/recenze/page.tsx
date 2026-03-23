@@ -48,7 +48,7 @@ const reviews: Review[] = [
   },
   {
     stars: 4,
-    quote: "Spokojený s celým procesem. Jediné co bych vytknul je delší čekání na odpověď přes víkend, ale jinak bezproblémové.",
+    quote: "Spokojený s celým procesem. Jediné, co bych vytknul, je delší čekání na odpověď přes víkend, ale jinak bezproblémové.",
     name: "Eva S.",
     city: "Plzeň",
     date: "25. 1. 2026",
@@ -80,7 +80,7 @@ const reviews: Review[] = [
   },
   {
     stars: 5,
-    quote: "Doporučuji každému kdo chce prodat auto bez stresu. Makléř zvládl vše perfektně — od inzerce přes prohlídky až po předání.",
+    quote: "Doporučuji každému, kdo chce prodat auto bez stresu. Makléř zvládl vše perfektně — od inzerce přes prohlídky až po předání.",
     name: "Lucie V.",
     city: "České Budějovice",
     date: "5. 1. 2026",

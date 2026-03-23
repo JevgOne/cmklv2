@@ -10,8 +10,8 @@ import { Button } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Alert";
 
 const profileSchema = z.object({
-  firstName: z.string().min(1, "Jmeno je povinne").max(50),
-  lastName: z.string().min(1, "Prijmeni je povinne").max(50),
+  firstName: z.string().min(1, "Jméno je povinné").max(50),
+  lastName: z.string().min(1, "Příjmení je povinné").max(50),
   phone: z.string().max(20).optional(),
   bio: z.string().max(500).optional(),
 });
@@ -57,13 +57,13 @@ export function ProfileForm({ defaultValues }: ProfileFormProps) {
       });
 
       if (res.ok) {
-        setMessage({ type: "success", text: "Profil byl ulozen." });
+        setMessage({ type: "success", text: "Profil byl uložen." });
       } else {
         const err = await res.json();
-        setMessage({ type: "error", text: err.error || "Nepodarilo se ulozit profil." });
+        setMessage({ type: "error", text: err.error || "Nepodařilo se uložit profil." });
       }
     } catch {
-      setMessage({ type: "error", text: "Chyba pripojeni. Zkuste to znovu." });
+      setMessage({ type: "error", text: "Chyba připojení. Zkuste to znovu." });
     } finally {
       setSaving(false);
     }
@@ -79,12 +79,12 @@ export function ProfileForm({ defaultValues }: ProfileFormProps) {
 
       <div className="grid grid-cols-2 gap-3">
         <Input
-          label="Jmeno"
+          label="Jméno"
           error={errors.firstName?.message}
           {...register("firstName")}
         />
         <Input
-          label="Prijmeni"
+          label="Příjmení"
           error={errors.lastName?.message}
           {...register("lastName")}
         />
@@ -99,7 +99,7 @@ export function ProfileForm({ defaultValues }: ProfileFormProps) {
 
       <Textarea
         label="O mne"
-        placeholder="Kratky popis vasi specializace..."
+        placeholder="Krátký popis vaší specializace..."
         error={errors.bio?.message}
         {...register("bio")}
       />
@@ -110,7 +110,7 @@ export function ProfileForm({ defaultValues }: ProfileFormProps) {
         disabled={saving || !isDirty}
         className="w-full"
       >
-        {saving ? "Ukladam..." : "Ulozit zmeny"}
+        {saving ? "Ukládám..." : "Uložit změny"}
       </Button>
     </form>
   );

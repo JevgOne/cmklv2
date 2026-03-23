@@ -13,27 +13,27 @@ interface SmsTemplatesProps {
 const TEMPLATES = [
   {
     id: "intro",
-    label: "Uvodni zprava",
+    label: "Úvodní zpráva",
     template:
-      "Dobry den, {jmeno}. Jsem {makler} z Carmakler. Zavolam vam ohledne prodeje vaseho vozu.",
+      "Dobrý den, {jmeno}. Jsem {makler} z Carmakler. Zavolám vám ohledně prodeje vašeho vozu.",
   },
   {
     id: "buyer",
-    label: "Mam zajemce",
+    label: "Mám zájemce",
     template:
-      "Mam pro vase auto zajemce, zavolam vam zitra s detaily.",
+      "Mám pro vaše auto zájemce, zavolám vám zítra s detaily.",
   },
   {
     id: "followup",
     label: "Follow-up",
     template:
-      "Jak jste spokojeni? Jsme stale v kontaktu, kdybyste potrebovali cokoliv.",
+      "Jak jste spokojeni? Jsme stále v kontaktu, kdybyste potřebovali cokoliv.",
   },
   {
     id: "price",
-    label: "Snizeni ceny",
+    label: "Snížení ceny",
     template:
-      "Doporucujeme snizit cenu vaseho vozu pro rychlejsi prodej.",
+      "Doporučujeme snížit cenu vašeho vozu pro rychlejší prodej.",
   },
 ];
 
@@ -65,7 +65,7 @@ export function SmsTemplates({
   return (
     <div className="space-y-3">
       <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wide">
-        SMS sablony
+        SMS šablony
       </h4>
 
       <div className="grid grid-cols-2 gap-2">

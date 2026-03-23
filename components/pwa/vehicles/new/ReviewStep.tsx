@@ -29,35 +29,35 @@ function buildChecklist(draft: VehicleDraft): ChecklistItem[] {
   return [
     {
       id: "vin",
-      label: "VIN zadano",
+      label: "VIN zadáno",
       passed: !!vin.vin && vin.vin.length === 17,
       step: 3,
       route: "vin",
     },
     {
       id: "brand_model",
-      label: "Znacka a model",
+      label: "Značka a model",
       passed: !!details.brand && !!details.model,
       step: 5,
       route: "details",
     },
     {
       id: "year_mileage",
-      label: "Rok a najezd",
+      label: "Rok a nájezd",
       passed: !!details.year && !!details.mileage,
       step: 5,
       route: "details",
     },
     {
       id: "fuel_trans",
-      label: "Palivo a prevodovka",
+      label: "Palivo a převodovka",
       passed: !!details.fuelType && !!details.transmission,
       step: 5,
       route: "details",
     },
     {
       id: "equipment",
-      label: "Vybava (alespon 1 polozka)",
+      label: "Výbava (alespoň 1 položka)",
       passed: !!details.equipment && details.equipment.length > 0,
       step: 5,
       route: "details",
@@ -78,7 +78,7 @@ function buildChecklist(draft: VehicleDraft): ChecklistItem[] {
     },
     {
       id: "city",
-      label: "Lokace / mesto",
+      label: "Lokace / město",
       passed: !!pricing.city,
       step: 6,
       route: "pricing",
@@ -200,7 +200,7 @@ export function ReviewStep() {
       }
     } catch (err) {
       setSubmitError(
-        err instanceof Error ? err.message : "Neznama chyba pri odesílání"
+        err instanceof Error ? err.message : "Neznámá chyba při odesílání"
       );
     } finally {
       setSubmitting(false);
@@ -235,12 +235,12 @@ export function ReviewStep() {
                 </span>
               </div>
             ) : (
-              <span className="text-sm text-gray-400">Zadne fotky</span>
+              <span className="text-sm text-gray-400">Žádné fotky</span>
             )}
           </div>
           <div className="p-4 space-y-2">
             <h2 className="text-lg font-bold text-gray-900">
-              {vehicleTitle || "Bez nazvu"}
+              {vehicleTitle || "Bez názvu"}
             </h2>
             <div className="flex flex-wrap gap-2 text-xs text-gray-500">
               {details.year && <span>{details.year}</span>}
@@ -381,17 +381,17 @@ export function ReviewStep() {
             disabled={!allPassed || submitting}
           >
             {submitting
-              ? "Odesilam..."
+              ? "Odesílám..."
               : navigator.onLine
-                ? "Odeslat ke schvaleni"
-                : "Ulozit k odeslani (offline)"}
+                ? "Odeslat ke schválení"
+                : "Uložit k odeslání (offline)"}
           </Button>
           <Button
             variant="outline"
             className="w-full"
             onClick={handleSaveDraft}
           >
-            Ulozit jako draft
+            Uložit jako draft
           </Button>
         </div>
       </div>

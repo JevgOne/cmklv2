@@ -66,7 +66,7 @@ export function VehicleTimeline({ vehicleId }: { vehicleId: string }) {
   return (
     <div className="bg-white rounded-2xl shadow-card p-6">
       <h3 className="text-lg font-bold text-gray-900 mb-6">
-        Historie na Carmakler
+        Historie na CarMakléři
       </h3>
 
       <div className="relative pl-8">

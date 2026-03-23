@@ -22,13 +22,13 @@ interface VehicleCardProps {
 }
 
 const statusMap: Record<string, { variant: "active" | "pending" | "rejected" | "draft" | "sold"; label: string }> = {
-  ACTIVE: { variant: "active", label: "Aktivni" },
-  PENDING: { variant: "pending", label: "Ke schvaleni" },
-  REJECTED: { variant: "rejected", label: "Zamitnuto" },
+  ACTIVE: { variant: "active", label: "Aktivní" },
+  PENDING: { variant: "pending", label: "Ke schválení" },
+  REJECTED: { variant: "rejected", label: "Zamítnuto" },
   DRAFT: { variant: "draft", label: "Draft" },
-  SOLD: { variant: "sold", label: "Prodano" },
-  RESERVED: { variant: "pending", label: "Rezervovano" },
-  ARCHIVED: { variant: "draft", label: "Archivovano" },
+  SOLD: { variant: "sold", label: "Prodáno" },
+  RESERVED: { variant: "pending", label: "Rezervováno" },
+  ARCHIVED: { variant: "draft", label: "Archivováno" },
 };
 
 const fuelLabels: Record<string, string> = {
@@ -94,7 +94,7 @@ export function VehicleCard({ vehicle }: VehicleCardProps) {
             </span>
             {vehicle.status === "ACTIVE" && (
               <span className="text-xs text-gray-400">
-                {vehicle.viewCount} zobrazeni
+                {vehicle.viewCount} zobrazení
               </span>
             )}
           </div>

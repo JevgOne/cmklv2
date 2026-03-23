@@ -17,10 +17,10 @@ import type {
 } from "@/types/vehicle-draft";
 
 const BODY_CONDITIONS: { value: BodyCondition; label: string; emoji: string }[] = [
-  { value: "EXCELLENT", label: "Vyborny", emoji: "\u2728" },
-  { value: "GOOD", label: "Dobry", emoji: "\uD83D\uDC4D" },
-  { value: "FAIR", label: "Uchazeji", emoji: "\uD83D\uDE10" },
-  { value: "POOR", label: "Spatny", emoji: "\uD83D\uDC4E" },
+  { value: "EXCELLENT", label: "Výborný", emoji: "\u2728" },
+  { value: "GOOD", label: "Dobrý", emoji: "\uD83D\uDC4D" },
+  { value: "FAIR", label: "Ucházejí", emoji: "\uD83D\uDE10" },
+  { value: "POOR", label: "Špatný", emoji: "\uD83D\uDC4E" },
 ];
 
 const DEFAULT_DOCUMENTS: InspectionData["documents"] = {
@@ -107,7 +107,7 @@ export function InspectionStep() {
 
   const handleReject = async () => {
     updateStatus("rejected_by_broker");
-    update({ notes: `Odmitnut: ${rejectReason}` });
+    update({ notes: `Odmítnut: ${rejectReason}` });
     await saveDraft();
     router.push("/makler/vehicles/new");
   };
@@ -115,7 +115,7 @@ export function InspectionStep() {
   return (
     <StepLayout
       step={2}
-      title="Prohlidka"
+      title="Prohlídka"
       onNext={handleNext}
       onBack={handleBack}
     >
@@ -124,7 +124,7 @@ export function InspectionStep() {
         <Section title="Dokumenty">
           <div className="space-y-3">
             <Checkbox
-              label="Technicky prukaz (maly TP)"
+              label="Technický průkaz (malý TP)"
               checked={documents.technickyPrukaz}
               onChange={(e) =>
                 update({
@@ -133,7 +133,7 @@ export function InspectionStep() {
               }
             />
             <Checkbox
-              label="Osvedceni / velky TP"
+              label="Osvědčení / velký TP"
               checked={documents.osiVelkyTP}
               onChange={(e) =>
                 update({
@@ -142,7 +142,7 @@ export function InspectionStep() {
               }
             />
             <Checkbox
-              label="Servisni knizka"
+              label="Servisní knížka"
               checked={documents.servisniKnizka}
               onChange={(e) =>
                 update({
@@ -160,7 +160,7 @@ export function InspectionStep() {
               }
             />
             <Checkbox
-              label="Doklad o emisich"
+              label="Doklad o emisích"
               checked={documents.dokladEmise}
               onChange={(e) =>
                 update({
@@ -169,7 +169,7 @@ export function InspectionStep() {
               }
             />
             <Checkbox
-              label="Nabijeci kabel (EV/PHEV)"
+              label="Nabíjecí kabel (EV/PHEV)"
               checked={documents.nabijeciKabel}
               onChange={(e) =>
                 update({
@@ -178,7 +178,7 @@ export function InspectionStep() {
               }
             />
             <Checkbox
-              label="Druhe klice"
+              label="Druhé klíče"
               checked={documents.druhaKlice}
               onChange={(e) =>
                 update({
@@ -190,11 +190,11 @@ export function InspectionStep() {
         </Section>
 
         {/* Exteriér */}
-        <Section title="Exterior">
+        <Section title="Exteriér">
           <div className="space-y-4">
             <div>
               <label className="text-[13px] font-semibold text-gray-700 uppercase tracking-wide block mb-2">
-                Celkovy stav
+                Celkový stav
               </label>
               <div className="flex gap-2">
                 {BODY_CONDITIONS.map((bc) => (
@@ -231,7 +231,7 @@ export function InspectionStep() {
                 }
               />
               <Checkbox
-                label="Rezive skvrny"
+                label="Rezivé skvrny"
                 checked={exterior.rustSpots}
                 onChange={(e) =>
                   update({
@@ -240,7 +240,7 @@ export function InspectionStep() {
                 }
               />
               <Checkbox
-                label="Promackline / skrabance"
+                label="Promáčkliny / škrábance"
                 checked={exterior.dentsScratches}
                 onChange={(e) =>
                   update({
@@ -252,7 +252,7 @@ export function InspectionStep() {
                 }
               />
               <Checkbox
-                label="Poskozene celni sklo"
+                label="Poškozené čelní sklo"
                 checked={exterior.windshieldDamage}
                 onChange={(e) =>
                   update({
@@ -264,7 +264,7 @@ export function InspectionStep() {
                 }
               />
               <Checkbox
-                label="Poskozena svetla"
+                label="Poškozená světla"
                 checked={exterior.lightsDamage}
                 onChange={(e) =>
                   update({
@@ -273,7 +273,7 @@ export function InspectionStep() {
                 }
               />
               <Checkbox
-                label="Spatny stav pneumatik"
+                label="Špatný stav pneumatik"
                 checked={exterior.tiresCondition}
                 onChange={(e) =>
                   update({
@@ -289,11 +289,11 @@ export function InspectionStep() {
         </Section>
 
         {/* Interiér */}
-        <Section title="Interior">
+        <Section title="Interiér">
           <div className="space-y-4">
             <div>
               <label className="text-[13px] font-semibold text-gray-700 uppercase tracking-wide block mb-2">
-                Celkovy stav
+                Celkový stav
               </label>
               <div className="flex gap-2">
                 {BODY_CONDITIONS.map((bc) => (
@@ -321,7 +321,7 @@ export function InspectionStep() {
             </div>
             <div className="space-y-3">
               <Checkbox
-                label="Opotrebena sedadla"
+                label="Opotřebená sedadla"
                 checked={interior.seatsWorn}
                 onChange={(e) =>
                   update({
@@ -330,7 +330,7 @@ export function InspectionStep() {
                 }
               />
               <Checkbox
-                label="Poskozeny palubni panel"
+                label="Poškozený palubní panel"
                 checked={interior.dashboardDamage}
                 onChange={(e) =>
                   update({
@@ -342,7 +342,7 @@ export function InspectionStep() {
                 }
               />
               <Checkbox
-                label="Opotrebeny volant"
+                label="Opotřebený volant"
                 checked={interior.steeringWheelWorn}
                 onChange={(e) =>
                   update({
@@ -354,7 +354,7 @@ export function InspectionStep() {
                 }
               />
               <Checkbox
-                label="Klimatizace funkcni"
+                label="Klimatizace funkční"
                 checked={interior.acWorking}
                 onChange={(e) =>
                   update({
@@ -363,7 +363,7 @@ export function InspectionStep() {
                 }
               />
               <Checkbox
-                label="Elektronika funkcni"
+                label="Elektronika funkční"
                 checked={interior.electronicsWorking}
                 onChange={(e) =>
                   update({
@@ -375,7 +375,7 @@ export function InspectionStep() {
                 }
               />
               <Checkbox
-                label="Zapach v interieru"
+                label="Zápach v interiéru"
                 checked={interior.smellIssues}
                 onChange={(e) =>
                   update({
@@ -391,7 +391,7 @@ export function InspectionStep() {
         <Section title="Motor">
           <div className="space-y-3">
             <Checkbox
-              label="Dobre startuje"
+              label="Dobře startuje"
               checked={engine.startsWell}
               onChange={(e) =>
                 update({
@@ -400,7 +400,7 @@ export function InspectionStep() {
               }
             />
             <Checkbox
-              label="Bez uniku kapalin"
+              label="Bez úniků kapalin"
               checked={engine.noLeaks}
               onChange={(e) =>
                 update({
@@ -409,7 +409,7 @@ export function InspectionStep() {
               }
             />
             <Checkbox
-              label="Bez podezrelych zvuku"
+              label="Bez podezřelých zvuků"
               checked={engine.noStrangeNoises}
               onChange={(e) =>
                 update({
@@ -418,7 +418,7 @@ export function InspectionStep() {
               }
             />
             <Checkbox
-              label="Vyfuk v poradku"
+              label="Výfuk v pořádku"
               checked={engine.exhaustOk}
               onChange={(e) =>
                 update({
@@ -427,7 +427,7 @@ export function InspectionStep() {
               }
             />
             <Checkbox
-              label="Turbo v poradku"
+              label="Turbo v pořádku"
               checked={engine.turboOk}
               onChange={(e) =>
                 update({
@@ -436,7 +436,7 @@ export function InspectionStep() {
               }
             />
             <Checkbox
-              label="Rozvodovy remen vymenen"
+              label="Rozvodový řemen vyměněn"
               checked={engine.timingBeltReplaced}
               onChange={(e) =>
                 update({
@@ -448,10 +448,10 @@ export function InspectionStep() {
         </Section>
 
         {/* Testovací jízda */}
-        <Section title="Testovaci jizda">
+        <Section title="Testovací jízda">
           <div className="space-y-3">
             <Checkbox
-              label="Testovaci jizda provedena"
+              label="Testovací jízda provedena"
               checked={testDrive.completed}
               onChange={(e) =>
                 update({
@@ -462,7 +462,7 @@ export function InspectionStep() {
             {testDrive.completed && (
               <>
                 <Checkbox
-                  label="Prevodovka plynula"
+                  label="Převodovka plynulá"
                   checked={testDrive.gearboxSmooth}
                   onChange={(e) =>
                     update({
@@ -474,7 +474,7 @@ export function InspectionStep() {
                   }
                 />
                 <Checkbox
-                  label="Brzdy v poradku"
+                  label="Brzdy v pořádku"
                   checked={testDrive.brakesOk}
                   onChange={(e) =>
                     update({
@@ -483,7 +483,7 @@ export function InspectionStep() {
                   }
                 />
                 <Checkbox
-                  label="Podvozek v poradku"
+                  label="Podvozek v pořádku"
                   checked={testDrive.suspensionOk}
                   onChange={(e) =>
                     update({
@@ -495,7 +495,7 @@ export function InspectionStep() {
                   }
                 />
                 <Checkbox
-                  label="Rizeni v poradku"
+                  label="Řízení v pořádku"
                   checked={testDrive.steeringOk}
                   onChange={(e) =>
                     update({
@@ -507,7 +507,7 @@ export function InspectionStep() {
                   }
                 />
                 <Checkbox
-                  label="Spojka v poradku"
+                  label="Spojka v pořádku"
                   checked={testDrive.clutchOk}
                   onChange={(e) =>
                     update({
@@ -516,7 +516,7 @@ export function InspectionStep() {
                   }
                 />
                 <Checkbox
-                  label="Bez vibraci"
+                  label="Bez vibrací"
                   checked={testDrive.noVibrations}
                   onChange={(e) =>
                     update({
@@ -540,7 +540,7 @@ export function InspectionStep() {
         />
 
         {/* Celkový dojem */}
-        <Section title="Celkovy dojem">
+        <Section title="Celkový dojem">
           <div className="flex items-center gap-4">
             <StarRating
               value={inspection.overallRating || 0}
@@ -550,15 +550,15 @@ export function InspectionStep() {
             <span className="text-sm text-gray-500">
               {inspection.overallRating
                 ? `${inspection.overallRating} / 5`
-                : "Ohodnotte"}
+                : "Ohodnoťte"}
             </span>
           </div>
         </Section>
 
         {/* Poznámky */}
         <Textarea
-          label="Poznamky z prohlidky"
-          placeholder="Dalsi postrehy, detaily..."
+          label="Poznámky z prohlídky"
+          placeholder="Další postřehy, detaily..."
           value={inspection.notes || ""}
           onChange={(e) => update({ notes: e.target.value })}
         />
@@ -570,7 +570,7 @@ export function InspectionStep() {
             className="w-full"
             onClick={() => setRejectOpen(true)}
           >
-            Odmitnout vozidlo
+            Odmítnout vozidlo
           </Button>
         </div>
       </div>
@@ -579,30 +579,30 @@ export function InspectionStep() {
       <Modal
         open={rejectOpen}
         onClose={() => setRejectOpen(false)}
-        title="Odmitnout vozidlo"
+        title="Odmítnout vozidlo"
         footer={
           <>
             <Button variant="outline" onClick={() => setRejectOpen(false)}>
-              Zrusit
+              Zrušit
             </Button>
             <Button
               variant="danger"
               onClick={handleReject}
               disabled={!rejectReason.trim()}
             >
-              Odmitnout
+              Odmítnout
             </Button>
           </>
         }
       >
         <div className="space-y-4">
           <p className="text-sm text-gray-600">
-            Uvedte duvod odmitnutí. Draft bude ulozen se statusem
-            &quot;Odmitnut maklerem&quot;.
+            Uveďte důvod odmítnutí. Draft bude uložen se statusem
+            &quot;Odmítnut makléřem&quot;.
           </p>
           <Textarea
-            label="Duvod odmitnuti"
-            placeholder="Napr.: Vuz ma stocenou tachometr, prodejce nespolupracuje..."
+            label="Důvod odmítnutí"
+            placeholder="Např.: Vůz má stočenou tachometr, prodejce nespolupracuje..."
             value={rejectReason}
             onChange={(e) => setRejectReason(e.target.value)}
             autoFocus

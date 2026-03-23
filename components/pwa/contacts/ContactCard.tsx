@@ -46,7 +46,7 @@ export function ContactCard({ contact }: ContactCardProps) {
               {contact.city && <span>{contact.city}</span>}
               <span>
                 {contact.totalVehicles} aut
-                {contact.totalSold > 0 && ` / ${contact.totalSold} prodano`}
+                {contact.totalSold > 0 && ` / ${contact.totalSold} prodáno`}
               </span>
               {contact.lastContactAt && (
                 <span>Kontakt: {formatDate(contact.lastContactAt)}</span>
@@ -54,7 +54,7 @@ export function ContactCard({ contact }: ContactCardProps) {
             </div>
           </div>
 
-          {/* Kontaktni tlacitka */}
+          {/* Kontaktní tlačítka */}
           <div className="flex gap-1.5 flex-shrink-0">
             <a
               href={`tel:${contact.phone}`}
@@ -108,7 +108,7 @@ function formatDate(dateStr: string): string {
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
   if (diffDays === 0) return "dnes";
-  if (diffDays === 1) return "vcera";
-  if (diffDays < 7) return `pred ${diffDays} dny`;
+  if (diffDays === 1) return "včera";
+  if (diffDays < 7) return `před ${diffDays} dny`;
   return date.toLocaleDateString("cs-CZ");
 }

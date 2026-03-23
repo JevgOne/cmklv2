@@ -17,20 +17,20 @@ interface EmailLogEntry {
 
 const templateLabels: Record<string, string> = {
   PRESENTATION: "Prezentace",
-  CONTRACT_OFFER: "Navrh smlouvy",
+  CONTRACT_OFFER: "Návrh smlouvy",
   FOLLOWUP: "Follow-up",
-  INSURANCE: "Pojisteni",
-  FINANCING: "Financovani",
-  PRICE_CHANGE: "Zmena ceny",
-  VEHICLE_SOLD: "Prodano",
+  INSURANCE: "Pojištění",
+  FINANCING: "Financování",
+  PRICE_CHANGE: "Změna ceny",
+  VEHICLE_SOLD: "Prodáno",
 };
 
 const statusConfig: Record<string, { variant: "verified" | "pending" | "rejected" | "default"; label: string }> = {
-  SENT: { variant: "verified", label: "Odeslano" },
-  DELIVERED: { variant: "verified", label: "Doruceno" },
-  OPENED: { variant: "verified", label: "Precteno" },
+  SENT: { variant: "verified", label: "Odesláno" },
+  DELIVERED: { variant: "verified", label: "Doručeno" },
+  OPENED: { variant: "verified", label: "Přečteno" },
   FAILED: { variant: "rejected", label: "Chyba" },
-  BOUNCED: { variant: "rejected", label: "Nedoruceno" },
+  BOUNCED: { variant: "rejected", label: "Nedoručeno" },
 };
 
 interface EmailHistoryProps {
@@ -64,7 +64,7 @@ export function EmailHistory({ vehicleId }: EmailHistoryProps) {
   if (emails.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-sm text-gray-500">Zadne odeslane emaily</p>
+        <p className="text-sm text-gray-500">Žádné odeslané emaily</p>
       </div>
     );
   }

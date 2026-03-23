@@ -19,8 +19,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!partner) return { title: "Dodavatel nenalezen" };
 
   return {
-    title: `${partner.name} | Overeny dodavatel Carmakler`,
-    description: partner.description || `Dodavatel autodilu ${partner.name} — overeny partner Carmakler.`,
+    title: `${partner.name} | Ověřený dodavatel CarMakléř`,
+    description: partner.description || `Dodavatel autodílů ${partner.name} — ověřený partner CarMakléř.`,
   };
 }
 
@@ -83,7 +83,7 @@ export default async function DodavatelProfilePage({ params }: Props) {
             <h1 className="text-3xl font-extrabold text-gray-900">
               {partner.name}
             </h1>
-            <Badge variant="verified">Overeny dodavatel</Badge>
+            <Badge variant="verified">Ověřený dodavatel</Badge>
           </div>
           {partner.city && (
             <p className="text-gray-500 mb-1">📍 {partner.address || partner.city}</p>
@@ -97,7 +97,7 @@ export default async function DodavatelProfilePage({ params }: Props) {
       {/* Description */}
       {partner.description && (
         <Card className="p-6 mb-8">
-          <h2 className="text-lg font-bold text-gray-900 mb-3">O nas</h2>
+          <h2 className="text-lg font-bold text-gray-900 mb-3">O nás</h2>
           <p className="text-gray-600 whitespace-pre-line">{partner.description}</p>
         </Card>
       )}
@@ -105,10 +105,10 @@ export default async function DodavatelProfilePage({ params }: Props) {
       {/* Parts */}
       <div className="mb-8">
         <h2 className="text-xl font-bold text-gray-900 mb-4">
-          Nabizene dily ({parts.length})
+          Nabízené díly ({parts.length})
         </h2>
         {parts.length === 0 ? (
-          <p className="text-gray-400">Zadne dily k dispozici.</p>
+          <p className="text-gray-400">Žádné díly k dispozici.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {parts.map((p) => (

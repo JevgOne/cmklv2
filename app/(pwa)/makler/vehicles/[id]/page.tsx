@@ -53,7 +53,7 @@ export default async function VehicleDetailPage({
 
   if (!vehicle) notFound();
 
-  // Autorizace: vlastnik, manazer vlastnika, nebo admin/backoffice
+  // Autorizace: vlastník, manažer vlastníka, nebo admin/backoffice
   const isAdmin = userRole === "ADMIN" || userRole === "BACKOFFICE";
   const isOwner = vehicle.brokerId === userId;
   const isManager =

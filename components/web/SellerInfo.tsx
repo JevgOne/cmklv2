@@ -171,7 +171,7 @@ function PrivateContactForm({
     <div>
       <div className="bg-orange-50 rounded-xl p-4 mb-4">
         <p className="text-sm text-orange-800 font-medium">
-          Kontaktovat přes Carmakler
+          Kontaktovat přes CarMakléř
         </p>
         <p className="text-xs text-orange-600 mt-1">
           Vaše kontaktní údaje budou předány prodejci.

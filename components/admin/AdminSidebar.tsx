@@ -21,33 +21,33 @@ interface NavSection {
 
 const navSections: NavSection[] = [
   {
-    title: "HLAVNI",
+    title: "HLAVNÍ",
     items: [
       { id: "dashboard", href: "/admin/dashboard", icon: "📊", label: "Dashboard" },
       { id: "vehicles", href: "/admin/vehicles", icon: "🚗", label: "Vozidla" },
       { id: "inzerce", href: "/admin/inzerce", icon: "📋", label: "Inzerce" },
-      { id: "brokers", href: "/admin/brokers", icon: "👥", label: "Makleri" },
+      { id: "brokers", href: "/admin/brokers", icon: "👥", label: "Makléři" },
       { id: "leads", href: "/admin/leads", icon: "📨", label: "Leady" },
     ],
     roles: ["ADMIN", "BACKOFFICE"],
   },
   {
-    title: "MANAZER",
+    title: "MANAŽER",
     items: [
       { id: "manager-dashboard", href: "/admin/manager", icon: "📊", label: "Dashboard" },
-      { id: "manager-brokers", href: "/admin/manager/brokers", icon: "👥", label: "Moji makleri" },
-      { id: "manager-approvals", href: "/admin/manager/approvals", icon: "✅", label: "Schvalovani" },
+      { id: "manager-brokers", href: "/admin/manager/brokers", icon: "👥", label: "Moji makléři" },
+      { id: "manager-approvals", href: "/admin/manager/approvals", icon: "✅", label: "Schvalování" },
       { id: "manager-leads", href: "/admin/leads", icon: "📨", label: "Leady" },
       { id: "manager-bonuses", href: "/admin/manager/bonuses", icon: "🎯", label: "Bonusy" },
     ],
     roles: ["MANAGER"],
   },
   {
-    title: "PARTNERI",
+    title: "PARTNEŘI",
     items: [
-      { id: "partners", href: "/admin/partners", icon: "🏢", label: "Vsichni partneri" },
+      { id: "partners", href: "/admin/partners", icon: "🏢", label: "Všichni partneři" },
       { id: "partners-bazar", href: "/admin/partners?type=AUTOBAZAR", icon: "🚗", label: "Autobazary" },
-      { id: "partners-vrakov", href: "/admin/partners?type=VRAKOVISTE", icon: "🔧", label: "Vrakoviste" },
+      { id: "partners-vrakov", href: "/admin/partners?type=VRAKOVISTE", icon: "🔧", label: "Vrakoviště" },
     ],
     roles: ["ADMIN", "BACKOFFICE", "MANAGER"],
   },
@@ -62,7 +62,7 @@ const navSections: NavSection[] = [
     title: "FINANCE",
     items: [
       { id: "payments", href: "/admin/payments", icon: "💳", label: "Platby" },
-      { id: "payouts", href: "/admin/payouts", icon: "💰", label: "Vyplaty" },
+      { id: "payouts", href: "/admin/payouts", icon: "💰", label: "Výplaty" },
     ],
     roles: ["ADMIN", "BACKOFFICE"],
   },
@@ -95,7 +95,7 @@ export function AdminSidebar({ open, onClose }: AdminSidebarProps) {
   const displayName = session?.user
     ? `${session.user.firstName || ""} ${session.user.lastName || ""}`.trim()
     : "Admin";
-  const roleLabel = userRole === "MANAGER" ? "Manazer" : "Administrator";
+  const roleLabel = userRole === "MANAGER" ? "Manažer" : "Administrátor";
 
   return (
     <>
@@ -120,7 +120,7 @@ export function AdminSidebar({ open, onClose }: AdminSidebarProps) {
           <div className="flex items-center gap-3">
             <img src="/brand/logo-color.png" alt="CarMakler" className="h-10 brightness-0 invert" />
             <span className="text-[10px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full ml-2">
-              {userRole === "MANAGER" ? "MANAZER" : "ADMIN"}
+              {userRole === "MANAGER" ? "MANAŽER" : "ADMIN"}
             </span>
           </div>
         </div>

@@ -77,7 +77,7 @@ export default function InzerceRegistracePage() {
 
   const handleAresLookup = async () => {
     if (!validateIco(form.ico)) {
-      setAresError("ICO musí mít přesně 8 číslic");
+      setAresError("IČO musí mít přesně 8 číslic");
       return;
     }
 
@@ -90,7 +90,7 @@ export default function InzerceRegistracePage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setAresError(data.error || "Nepodařilo se ověřit IČO");
+        setAresError(data.error || "Nepodařilo se ověřit IČO v ARES");
         return;
       }
 

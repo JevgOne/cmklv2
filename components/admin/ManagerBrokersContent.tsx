@@ -26,11 +26,11 @@ interface ManagerBrokersContentProps {
 }
 
 const statusMap: Record<string, { label: string; variant: "active" | "pending" | "rejected" }> = {
-  ACTIVE: { label: "Aktivni", variant: "active" },
-  PENDING: { label: "Cekajici", variant: "pending" },
+  ACTIVE: { label: "Aktivní", variant: "active" },
+  PENDING: { label: "Čekající", variant: "pending" },
   ONBOARDING: { label: "Onboarding", variant: "pending" },
   SUSPENDED: { label: "Pozastaven", variant: "rejected" },
-  INACTIVE: { label: "Neaktivni", variant: "rejected" },
+  INACTIVE: { label: "Neaktivní", variant: "rejected" },
 };
 
 export function ManagerBrokersContent({ brokers }: ManagerBrokersContentProps) {
@@ -46,10 +46,10 @@ export function ManagerBrokersContent({ brokers }: ManagerBrokersContentProps) {
   );
 
   const tabs = [
-    { value: "all", label: `Vsichni (${brokers.length})` },
-    { value: "active", label: `Aktivni (${activeBrokers.length})` },
+    { value: "all", label: `Všichni (${brokers.length})` },
+    { value: "active", label: `Aktivní (${activeBrokers.length})` },
     { value: "onboarding", label: `Onboarding (${onboardingBrokers.length})` },
-    { value: "inactive", label: `Neaktivni (${inactiveBrokers.length})` },
+    { value: "inactive", label: `Neaktivní (${inactiveBrokers.length})` },
   ];
 
   const filteredBrokers =
@@ -64,7 +64,7 @@ export function ManagerBrokersContent({ brokers }: ManagerBrokersContentProps) {
   const columns = [
     {
       key: "broker",
-      header: "Makler",
+      header: "Makléř",
       render: (item: BrokerData) => (
         <Link
           href={`/admin/manager/brokers/${item.id}`}
@@ -89,7 +89,7 @@ export function ManagerBrokersContent({ brokers }: ManagerBrokersContentProps) {
     },
     {
       key: "vehicles",
-      header: "Aktivni auta",
+      header: "Aktivní auta",
       render: (item: BrokerData) => (
         <span className="text-sm font-semibold text-gray-900">
           {item.activeVehicles}
@@ -108,7 +108,7 @@ export function ManagerBrokersContent({ brokers }: ManagerBrokersContentProps) {
       header: "Provize",
       render: (item: BrokerData) => (
         <span className="text-sm font-semibold text-gray-900">
-          {item.totalCommission.toLocaleString("cs-CZ")} Kc
+          {item.totalCommission.toLocaleString("cs-CZ")} Kč
         </span>
       ),
     },
@@ -148,7 +148,7 @@ export function ManagerBrokersContent({ brokers }: ManagerBrokersContentProps) {
           size="sm"
           onClick={() => setInviteModalOpen(true)}
         >
-          Pozvat maklere
+          Pozvat makléře
         </Button>
       </div>
 
@@ -156,7 +156,7 @@ export function ManagerBrokersContent({ brokers }: ManagerBrokersContentProps) {
       <Card className="!p-0 overflow-hidden">
         {filteredBrokers.length === 0 ? (
           <div className="p-12 text-center text-gray-400">
-            Zadni makleri k zobrazeni.
+            Žádní makléři k zobrazení.
           </div>
         ) : (
           <DataTable columns={columns} data={filteredBrokers} />

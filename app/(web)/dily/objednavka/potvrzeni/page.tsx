@@ -19,27 +19,27 @@ export default function DilyPotvrzeniPage() {
             </svg>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">
-            Objednavka prijata!
+            Objednávka přijata!
           </h1>
           <p className="text-gray-500 mb-6">
-            Dekujeme za vasi objednavku. Potvrzeni jsme odeslali na vas email.
+            Děkujeme za vaši objednávku. Potvrzení jsme odeslali na váš email.
           </p>
           <div className="bg-gray-50 rounded-xl p-4 mb-6 inline-block">
-            <span className="text-sm text-gray-500">Cislo objednavky</span>
+            <span className="text-sm text-gray-500">Číslo objednávky</span>
             <div className="text-lg font-bold text-gray-900 font-mono mt-1">
               #{orderId.slice(0, 12).toUpperCase()}
             </div>
           </div>
           <div className="space-y-3 text-sm text-gray-500 mb-8">
-            <p>Stav vasi objednavky muzete sledovat v sekci Moje objednavky.</p>
-            <p>V pripade platby prevodem obdrzite platebni udaje emailem.</p>
+            <p>Stav vaší objednávky můžete sledovat v sekci Moje objednávky.</p>
+            <p>V případě platby převodem obdržíte platební údaje emailem.</p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link href="/dily/moje-objednavky" className="no-underline">
-              <Button variant="primary">Moje objednavky</Button>
+              <Button variant="primary">Moje objednávky</Button>
             </Link>
             <Link href="/dily" className="no-underline">
-              <Button variant="outline">Zpet do shopu</Button>
+              <Button variant="outline">Zpět do shopu</Button>
             </Link>
           </div>
         </Card>

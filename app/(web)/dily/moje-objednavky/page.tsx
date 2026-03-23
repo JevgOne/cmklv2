@@ -40,11 +40,11 @@ interface Order {
 }
 
 const statusBadge: Record<string, { label: string; variant: "verified" | "pending" | "new" | "default" | "rejected" }> = {
-  PENDING: { label: "Nova", variant: "new" },
+  PENDING: { label: "Nová", variant: "new" },
   CONFIRMED: { label: "Potvrzena", variant: "pending" },
-  SHIPPED: { label: "Odeslano", variant: "verified" },
-  DELIVERED: { label: "Doruceno", variant: "verified" },
-  CANCELLED: { label: "Zrusena", variant: "rejected" },
+  SHIPPED: { label: "Odesláno", variant: "verified" },
+  DELIVERED: { label: "Doručeno", variant: "verified" },
+  CANCELLED: { label: "Zrušena", variant: "rejected" },
 };
 
 export default function DilyMojeObjednavkyPage() {
@@ -60,7 +60,7 @@ export default function DilyMojeObjednavkyPage() {
           setOrders(data.orders ?? []);
         }
       } catch {
-        // Zustanou prazdne
+        // Zůstanou prázdné
       } finally {
         setLoading(false);
       }
@@ -72,8 +72,8 @@ export default function DilyMojeObjednavkyPage() {
     <div className="min-h-screen bg-gray-50">
       <section className="bg-white border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 className="text-3xl font-extrabold text-gray-900">Moje objednavky</h1>
-          <p className="text-gray-500 mt-1">Prehled vasich objednavek</p>
+          <h1 className="text-3xl font-extrabold text-gray-900">Moje objednávky</h1>
+          <p className="text-gray-500 mt-1">Přehled vašich objednávek</p>
         </div>
       </section>
 
@@ -87,10 +87,10 @@ export default function DilyMojeObjednavkyPage() {
         ) : orders.length === 0 ? (
           <div className="text-center py-16">
             <span className="text-5xl block mb-4">📦</span>
-            <h3 className="text-xl font-bold text-gray-900">Zatim zadne objednavky</h3>
-            <p className="text-gray-500 mt-2">Prozkoumejte nas katalog a objednejte si dily</p>
+            <h3 className="text-xl font-bold text-gray-900">Zatím žádné objednávky</h3>
+            <p className="text-gray-500 mt-2">Prozkoumejte náš katalog a objednejte si díly</p>
             <Link href="/dily/katalog" className="inline-block mt-6 text-orange-500 font-semibold hover:text-orange-600 no-underline">
-              Prohlizet katalog
+              Procházet katalog
             </Link>
           </div>
         ) : (
@@ -120,7 +120,7 @@ export default function DilyMojeObjednavkyPage() {
                 <hr className="my-3 border-gray-200" />
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="text-sm text-gray-500">
-                    {order.paymentMethod === "BANK_TRANSFER" ? "Prevod" : "Dobirka"}
+                    {order.paymentMethod === "BANK_TRANSFER" ? "Převod" : "Dobírka"}
                     {order.trackingNumber && (
                       <span className="ml-2 text-orange-500 font-medium">Tracking: {order.trackingNumber}</span>
                     )}
@@ -134,7 +134,7 @@ export default function DilyMojeObjednavkyPage() {
 
         <div className="text-center pt-4">
           <Link href="/dily" className="text-orange-500 font-semibold hover:text-orange-600 no-underline">
-            Zpet do shopu
+            Zpět do shopu
           </Link>
         </div>
       </div>

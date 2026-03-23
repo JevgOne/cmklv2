@@ -20,7 +20,7 @@ export function SyncButton({ isOnline, pendingCount, onSync }: SyncButtonProps) 
     setSyncing(true);
     setProgress(0);
 
-    // Simulace progressu behem syncu
+    // Simulace progressu během syncu
     const interval = setInterval(() => {
       setProgress((prev) => Math.min(prev + 15, 90));
     }, 300);
@@ -50,7 +50,7 @@ export function SyncButton({ isOnline, pendingCount, onSync }: SyncButtonProps) 
           : !isOnline
             ? "Jste offline"
             : pendingCount === 0
-              ? "Vse synchronizovano"
+              ? "Vše synchronizováno"
               : `Synchronizovat (${pendingCount})`}
       </Button>
       {syncing && <ProgressBar value={progress} />}

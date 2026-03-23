@@ -13,9 +13,9 @@ interface StepConfig {
 const STEPS: StepConfig[] = [
   { key: "profile", label: "Profil", icon: "1" },
   { key: "documents", label: "Dokumenty", icon: "2" },
-  { key: "training", label: "Skoleni", icon: "3" },
+  { key: "training", label: "Školení", icon: "3" },
   { key: "contract", label: "Smlouva", icon: "4" },
-  { key: "approval", label: "Schvaleni", icon: "5" },
+  { key: "approval", label: "Schválení", icon: "5" },
 ];
 
 interface OnboardingProgressProps {

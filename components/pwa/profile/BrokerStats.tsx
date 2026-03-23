@@ -13,21 +13,21 @@ export function BrokerStats({ totalVehicles, soldVehicles, avgDays }: BrokerStat
         icon="📋"
         iconColor="blue"
         value={String(totalVehicles)}
-        label="Nabrano"
+        label="Nabráno"
         className="p-4 [&>div:nth-child(2)]:text-xl [&>div:nth-child(2)]:mb-0"
       />
       <StatCard
         icon="✅"
         iconColor="green"
         value={String(soldVehicles)}
-        label="Prodano"
+        label="Prodáno"
         className="p-4 [&>div:nth-child(2)]:text-xl [&>div:nth-child(2)]:mb-0"
       />
       <StatCard
         icon="⏱️"
         iconColor="orange"
         value={`${avgDays}d`}
-        label="Prum. doba"
+        label="Prům. doba"
         className="p-4 [&>div:nth-child(2)]:text-xl [&>div:nth-child(2)]:mb-0"
       />
     </div>

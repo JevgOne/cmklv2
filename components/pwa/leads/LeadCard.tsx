@@ -15,12 +15,12 @@ export interface LeadCardData {
 }
 
 const statusLabels: Record<string, { label: string; variant: "new" | "verified" | "pending" | "top" | "rejected" | "default" }> = {
-  NEW: { label: "Novy", variant: "new" },
-  ASSIGNED: { label: "Prijaty", variant: "verified" },
-  CONTACTED: { label: "Kontaktovano", variant: "pending" },
-  MEETING_SCHEDULED: { label: "Schuzka", variant: "top" },
-  VEHICLE_ADDED: { label: "Nabrano", variant: "verified" },
-  REJECTED: { label: "Odmitnuty", variant: "rejected" },
+  NEW: { label: "Nový", variant: "new" },
+  ASSIGNED: { label: "Přijatý", variant: "verified" },
+  CONTACTED: { label: "Kontaktováno", variant: "pending" },
+  MEETING_SCHEDULED: { label: "Schůzka", variant: "top" },
+  VEHICLE_ADDED: { label: "Nabráno", variant: "verified" },
+  REJECTED: { label: "Odmítnutý", variant: "rejected" },
   EXPIRED: { label: "Expiroval", variant: "default" },
 };
 
@@ -55,7 +55,7 @@ export function LeadCard({ lead }: LeadCardProps) {
             </div>
           </div>
 
-          {/* Kontaktni tlacitka */}
+          {/* Kontaktní tlačítka */}
           <div className="flex gap-1.5 flex-shrink-0">
             <a
               href={`tel:${lead.phone}`}
@@ -102,14 +102,14 @@ function formatDate(dateStr: string): string {
   const diffMs = now.getTime() - date.getTime();
   const diffMins = Math.floor(diffMs / 60000);
 
-  if (diffMins < 1) return "Prave ted";
-  if (diffMins < 60) return `pred ${diffMins} min`;
+  if (diffMins < 1) return "Právě teď";
+  if (diffMins < 60) return `před ${diffMins} min`;
 
   const diffHours = Math.floor(diffMins / 60);
-  if (diffHours < 24) return `pred ${diffHours} hod`;
+  if (diffHours < 24) return `před ${diffHours} hod`;
 
   const diffDays = Math.floor(diffHours / 24);
-  if (diffDays < 7) return `pred ${diffDays} dny`;
+  if (diffDays < 7) return `před ${diffDays} dny`;
 
   return date.toLocaleDateString("cs-CZ");
 }

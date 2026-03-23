@@ -34,8 +34,8 @@ export function AddVehicleCTA({ quickModeEnabled = false }: AddVehicleCTAProps) 
               &#128203;
             </div>
             <div>
-              <div className="text-sm font-bold">Kompletne</div>
-              <div className="text-xs text-white/70 mt-0.5">7 kroku</div>
+              <div className="text-sm font-bold">Kompletně</div>
+              <div className="text-xs text-white/70 mt-0.5">7 kroků</div>
             </div>
           </div>
         </Link>
@@ -54,8 +54,8 @@ export function AddVehicleCTA({ quickModeEnabled = false }: AddVehicleCTAProps) 
           🚗
         </div>
         <div>
-          <div className="text-lg font-bold">Pridat vozidlo</div>
-          <div className="text-sm text-white/80">Vytvorit novy inzerat</div>
+          <div className="text-lg font-bold">Přidat vozidlo</div>
+          <div className="text-sm text-white/80">Vytvořit nový inzerát</div>
         </div>
       </div>
     </Link>

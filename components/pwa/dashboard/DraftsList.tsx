@@ -19,17 +19,17 @@ export function DraftsList() {
   useEffect(() => {
     async function loadDrafts() {
       try {
-        // Dynamicky import - modul muze jeste neexistovat (vytvari infra tym)
+        // Dynamický import - modul může ještě neexistovat (vytváří infra tým)
         const { offlineStorage } = await import("@/lib/offline/storage");
         const stored = await offlineStorage.getDrafts();
         setDrafts(stored.map((d) => ({
           id: d.id,
-          title: d.data.brand ? `${d.data.brand} ${d.data.model ?? ""}` : "Bez nazvu",
+          title: d.data.brand ? `${d.data.brand} ${d.data.model ?? ""}` : "Bez názvu",
           status: "draft",
           updatedAt: new Date(d.updatedAt).toISOString(),
         })));
       } catch {
-        // Offline storage jeste neni k dispozici
+        // Offline storage ještě není k dispozici
         setDrafts([]);
       } finally {
         setLoading(false);
@@ -55,7 +55,7 @@ export function DraftsList() {
   return (
     <div className="space-y-3">
       <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide">
-        Rozpracovane drafty
+        Rozpracované drafty
       </h3>
       {drafts.map((draft) => (
         <Link
@@ -67,7 +67,7 @@ export function DraftsList() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="font-semibold text-gray-900 text-sm">
-                  {draft.title || "Bez nazvu"}
+                  {draft.title || "Bez názvu"}
                 </div>
                 <div className="text-xs text-gray-400 mt-0.5">
                   {formatRelativeTime(draft.updatedAt)}
@@ -91,14 +91,14 @@ function formatRelativeTime(dateStr: string): string {
   const diffMs = now.getTime() - date.getTime();
   const diffMins = Math.floor(diffMs / 60000);
 
-  if (diffMins < 1) return "Prave ted";
-  if (diffMins < 60) return `Pred ${diffMins} min`;
+  if (diffMins < 1) return "Právě teď";
+  if (diffMins < 60) return `Před ${diffMins} min`;
 
   const diffHours = Math.floor(diffMins / 60);
-  if (diffHours < 24) return `Pred ${diffHours} hod`;
+  if (diffHours < 24) return `Před ${diffHours} hod`;
 
   const diffDays = Math.floor(diffHours / 24);
-  if (diffDays < 7) return `Pred ${diffDays} dny`;
+  if (diffDays < 7) return `Před ${diffDays} dny`;
 
   return date.toLocaleDateString("cs-CZ");
 }

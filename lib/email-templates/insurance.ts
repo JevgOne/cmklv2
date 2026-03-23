@@ -12,24 +12,24 @@ export interface InsuranceData {
 export function insuranceHtml(data: InsuranceData): string {
   const content = `
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      Dobry den, ${data.recipientName},
+      Dobrý den, ${data.recipientName},
     </p>
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      gratuluji k zakoupeni vozidla <strong>${data.vehicleName} (${data.vehicleYear})</strong>!
+      gratuluji k zakoupení vozidla <strong>${data.vehicleName} (${data.vehicleYear})</strong>!
     </p>
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      Rad bych Vam nabidl zvyhodnene pojisteni pro Vase nove auto.
-      Spolupracujeme s prednich pojistovnami a muzeme Vam zajistit:
+      Rád bych Vám nabídl zvýhodněné pojištění pro Vaše nové auto.
+      Spolupracujeme s předními pojišťovnami a můžeme Vám zajistit:
     </p>
     <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom: 20px;">
-      <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#10003; Povinne ruceni od 1 200 Kc/rok</td></tr>
-      <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#10003; Havarijni pojisteni se slevou az 30 %</td></tr>
-      <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#10003; Asistenční sluzby v cene</td></tr>
-      <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#10003; Rychle sjednani online nebo telefonicky</td></tr>
+      <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#10003; Povinné ručení od 1 200 Kč/rok</td></tr>
+      <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#10003; Havarijní pojištění se slevou až 30 %</td></tr>
+      <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#10003; Asistenční služby v ceně</td></tr>
+      <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#10003; Rychlé sjednání online nebo telefonicky</td></tr>
     </table>
     ${data.customText ? `<p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">${data.customText}</p>` : ""}
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      Dejte mi vedet a pripravim nabidku na miru.
+      Dejte mi vědět a připravím nabídku na míru.
     </p>
   `;
   return emailLayout(content, generateSignatureHtml(data.broker));
@@ -37,19 +37,19 @@ export function insuranceHtml(data: InsuranceData): string {
 
 export function insuranceText(data: InsuranceData): string {
   return [
-    `Dobry den, ${data.recipientName},`,
+    `Dobrý den, ${data.recipientName},`,
     "",
-    `gratuluji k zakoupeni vozidla ${data.vehicleName} (${data.vehicleYear})!`,
+    `gratuluji k zakoupení vozidla ${data.vehicleName} (${data.vehicleYear})!`,
     "",
-    "Rad bych Vam nabidl zvyhodnene pojisteni pro Vase nove auto:",
-    "- Povinne ruceni od 1 200 Kc/rok",
-    "- Havarijni pojisteni se slevou az 30 %",
-    "- Asistenční sluzby v cene",
-    "- Rychle sjednani online nebo telefonicky",
+    "Rád bych Vám nabídl zvýhodněné pojištění pro Vaše nové auto:",
+    "- Povinné ručení od 1 200 Kč/rok",
+    "- Havarijní pojištění se slevou až 30 %",
+    "- Asistenční služby v ceně",
+    "- Rychlé sjednání online nebo telefonicky",
     "",
     data.customText || "",
     "",
-    "Dejte mi vedet a pripravim nabidku na miru.",
+    "Dejte mi vědět a připravím nabídku na míru.",
     generateSignatureText(data.broker),
   ]
     .filter(Boolean)
@@ -57,5 +57,5 @@ export function insuranceText(data: InsuranceData): string {
 }
 
 export function insuranceSubject(data: InsuranceData): string {
-  return `Pojisteni pro ${data.vehicleName} | Carmakler`;
+  return `Pojištění pro ${data.vehicleName} | Carmakler`;
 }

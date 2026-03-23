@@ -40,7 +40,7 @@ export interface WizardData {
   commission: number;
 }
 
-const STEPS = ["Typ smlouvy", "Vozidlo", "Udaje", "Nahled"];
+const STEPS = ["Typ smlouvy", "Vozidlo", "Údaje", "Náhled"];
 
 interface ContractWizardProps {
   brokerId?: string;
@@ -146,7 +146,7 @@ export function ContractWizard({ brokerId = "", brokerName = "" }: ContractWizar
             <button
               onClick={handleBack}
               className="p-2 -ml-2 text-gray-600 hover:text-gray-900 transition-colors border-none bg-transparent cursor-pointer"
-              aria-label="Zpet"
+              aria-label="Zpět"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -158,7 +158,7 @@ export function ContractWizard({ brokerId = "", brokerName = "" }: ContractWizar
             <button
               onClick={handleClose}
               className="p-2 -mr-2 text-gray-400 hover:text-gray-600 transition-colors border-none bg-transparent cursor-pointer"
-              aria-label="Zavrit"
+              aria-label="Zavřít"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -185,7 +185,7 @@ export function ContractWizard({ brokerId = "", brokerName = "" }: ContractWizar
           <div className="flex-1">
             <p className="text-sm text-red-700">{submitError}</p>
           </div>
-          <button onClick={() => setSubmitError(null)} className="text-red-400 hover:text-red-600 p-0.5" aria-label="Zavrit chybu">
+          <button onClick={() => setSubmitError(null)} className="text-red-400 hover:text-red-600 p-0.5" aria-label="Zavřít chybu">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
               <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
             </svg>

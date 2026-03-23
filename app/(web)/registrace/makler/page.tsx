@@ -42,7 +42,7 @@ export default function BrokerRegistrationPage() {
   // Verify token on mount
   useEffect(() => {
     if (!token) {
-      setInvalidMessage("Chybi pozvankovy token. Pouzijte odkaz z pozvankoveho emailu.");
+      setInvalidMessage("Chybí pozvázkový token. Použijte odkaz z pozvánkového emailu.");
       setPageState("invalid");
       return;
     }
@@ -52,7 +52,7 @@ export default function BrokerRegistrationPage() {
         const res = await fetch(`/api/invitations/${token}`);
         if (!res.ok) {
           const data = await res.json().catch(() => ({}));
-          setInvalidMessage(data.error || "Neplatny nebo expirovaný pozvankovy odkaz.");
+          setInvalidMessage(data.error || "Neplatný nebo expirovaný pozvánkový odkaz.");
           setPageState("invalid");
           return;
         }
@@ -71,7 +71,7 @@ export default function BrokerRegistrationPage() {
         }
         setPageState("form");
       } catch {
-        setInvalidMessage("Nelze overit pozvanku. Zkuste to znovu.");
+        setInvalidMessage("Nelze ověřit pozvánku. Zkuste to znovu.");
         setPageState("invalid");
       }
     }
@@ -108,14 +108,14 @@ export default function BrokerRegistrationPage() {
   const validate = (): boolean => {
     const errors: Record<string, string> = {};
 
-    if (!firstName.trim()) errors.firstName = "Jmeno je povinne";
-    if (!lastName.trim()) errors.lastName = "Prijmeni je povinne";
-    if (!phone.trim()) errors.phone = "Telefon je povinny";
-    if (password.length < 8) errors.password = "Heslo musi mit alespon 8 znaku";
-    if (password !== passwordConfirm) errors.passwordConfirm = "Hesla se neshoduji";
-    if (!ico.trim()) errors.ico = "ICO je povinne";
-    else if (icoStatus === "invalid") errors.ico = "Neplatne ICO";
-    if (!consent) errors.consent = "Musite souhlasit s podminkami";
+    if (!firstName.trim()) errors.firstName = "Jméno je povinné";
+    if (!lastName.trim()) errors.lastName = "Příjmení je povinné";
+    if (!phone.trim()) errors.phone = "Telefon je povinný";
+    if (password.length < 8) errors.password = "Heslo musí mít alespoň 8 znaků";
+    if (password !== passwordConfirm) errors.passwordConfirm = "Hesla se neshodují";
+    if (!ico.trim()) errors.ico = "IČO je povinné";
+    else if (icoStatus === "invalid") errors.ico = "Neplatné IČO";
+    if (!consent) errors.consent = "Musíte souhlasit s podmínkami";
 
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
@@ -145,7 +145,7 @@ export default function BrokerRegistrationPage() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError(data.error || "Registrace se nezdarila. Zkuste to znovu.");
+        setError(data.error || "Registrace se nezdařila. Zkuste to znovu.");
         setPageState("form");
         return;
       }
@@ -164,7 +164,7 @@ export default function BrokerRegistrationPage() {
 
       router.push("/makler/onboarding/profile");
     } catch {
-      setError("Doslo k neocekavane chybe. Zkuste to znovu.");
+      setError("Došlo k neočekávané chybě. Zkuste to znovu.");
       setPageState("form");
     }
   };
@@ -176,7 +176,7 @@ export default function BrokerRegistrationPage() {
         <div className="w-full max-w-md text-center">
           <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-card">
             <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-orange-500" />
-            <p className="text-sm text-gray-500">Overuji pozvanku...</p>
+            <p className="text-sm text-gray-500">Ověřuji pozvánku...</p>
           </div>
         </div>
       </div>
@@ -194,13 +194,13 @@ export default function BrokerRegistrationPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold text-gray-900">Neplatna pozvanka</h2>
+            <h2 className="text-xl font-bold text-gray-900">Neplatná pozvánka</h2>
             <p className="mt-3 text-sm text-gray-500">{invalidMessage}</p>
             <Link
               href="/"
               className="mt-6 inline-block rounded-lg bg-orange-500 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-600"
             >
-              Zpet na uvod
+              Zpět na úvod
             </Link>
           </div>
         </div>
@@ -219,15 +219,15 @@ export default function BrokerRegistrationPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold text-gray-900">Registrace uspesna!</h2>
+            <h2 className="text-xl font-bold text-gray-900">Registrace úspěšná!</h2>
             <p className="mt-3 text-sm text-gray-500">
-              Vas ucet byl vytvoren. Prihlaste se a dokoncete onboarding.
+              Váš účet byl vytvořen. Přihlaste se a dokončete onboarding.
             </p>
             <Link
               href="/login"
               className="mt-6 inline-block rounded-lg bg-orange-500 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-600"
             >
-              Prihlasit se
+              Přihlásit se
             </Link>
           </div>
         </div>
@@ -241,9 +241,9 @@ export default function BrokerRegistrationPage() {
       <div className="w-full max-w-md">
         <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-card">
           <div className="mb-8 text-center">
-            <h1 className="text-2xl font-bold text-gray-900">Registrace maklere</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Registrace makléře</h1>
             <p className="mt-2 text-sm text-gray-500">
-              Dokoncete registraci a zacnete s onboardingem
+              Dokončete registraci a začněte s onboardingem
             </p>
           </div>
 
@@ -265,7 +265,7 @@ export default function BrokerRegistrationPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
-                label="Jmeno"
+                label="Jméno"
                 value={firstName}
                 onChange={(e) => {
                   setFirstName(e.target.value);
@@ -275,13 +275,13 @@ export default function BrokerRegistrationPage() {
                 error={fieldErrors.firstName}
               />
               <Input
-                label="Prijmeni"
+                label="Příjmení"
                 value={lastName}
                 onChange={(e) => {
                   setLastName(e.target.value);
                   if (fieldErrors.lastName) setFieldErrors((p) => { const n = { ...p }; delete n.lastName; return n; });
                 }}
-                placeholder="Novak"
+                placeholder="Novák"
                 error={fieldErrors.lastName}
               />
             </div>
@@ -301,7 +301,7 @@ export default function BrokerRegistrationPage() {
             {/* IČO with ARES validation */}
             <div>
               <Input
-                label="ICO"
+                label="IČO"
                 value={ico}
                 onChange={(e) => {
                   setIco(e.target.value);
@@ -317,13 +317,13 @@ export default function BrokerRegistrationPage() {
                 error={fieldErrors.ico}
               />
               {icoStatus === "loading" && (
-                <p className="mt-1 text-xs text-gray-400">Overuji v ARES...</p>
+                <p className="mt-1 text-xs text-gray-400">Ověřuji v ARES...</p>
               )}
               {icoStatus === "valid" && icoCompany && (
                 <p className="mt-1 text-xs text-success-600">{icoCompany}</p>
               )}
               {icoStatus === "invalid" && (
-                <p className="mt-1 text-xs text-error-500">ICO nebylo nalezeno v ARES</p>
+                <p className="mt-1 text-xs text-error-500">IČO nebylo nalezeno v ARES</p>
               )}
             </div>
 
@@ -335,12 +335,12 @@ export default function BrokerRegistrationPage() {
                 setPassword(e.target.value);
                 if (fieldErrors.password) setFieldErrors((p) => { const n = { ...p }; delete n.password; return n; });
               }}
-              placeholder="Minimalne 8 znaku"
+              placeholder="Minimálně 8 znaků"
               error={fieldErrors.password}
             />
 
             <Input
-              label="Potvrzeni hesla"
+              label="Potvrzení hesla"
               type="password"
               value={passwordConfirm}
               onChange={(e) => {
@@ -353,7 +353,7 @@ export default function BrokerRegistrationPage() {
 
             <div>
               <Checkbox
-                label="Souhlasim s podminkami spoluprace a zpracovanim osobnich udaju"
+                label="Souhlasím s podmínkami spolupráce a zpracováním osobních údajů"
                 checked={consent}
                 onChange={(e) => {
                   setConsent(e.target.checked);
@@ -372,7 +372,7 @@ export default function BrokerRegistrationPage() {
               disabled={pageState === "submitting"}
               className="w-full"
             >
-              {pageState === "submitting" ? "Registruji..." : "Dokoncit registraci"}
+              {pageState === "submitting" ? "Registruji..." : "Dokončit registraci"}
             </Button>
           </form>
         </div>

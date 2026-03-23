@@ -9,10 +9,10 @@ import { Checkbox } from "@/components/ui/Checkbox";
 import { Alert } from "@/components/ui/Alert";
 
 const SPECIALIZATIONS = [
-  { value: "personal", label: "Osobni" },
+  { value: "personal", label: "Osobní" },
   { value: "suv", label: "SUV" },
-  { value: "van", label: "Dodavky" },
-  { value: "luxury", label: "Luxusni" },
+  { value: "van", label: "Dodávky" },
+  { value: "luxury", label: "Luxusní" },
   { value: "electric", label: "Elektromobily" },
 ];
 
@@ -64,14 +64,14 @@ export function ProfileForm() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError(data.error || "Ulozeni profilu se nezdarilo.");
+        setError(data.error || "Uložení profilu se nezdařilo.");
         setLoading(false);
         return;
       }
 
       router.push("/makler/onboarding/documents");
     } catch {
-      setError("Doslo k neocekavane chybe. Zkuste to znovu.");
+      setError("Došlo k neočekávané chybě. Zkuste to znovu.");
       setLoading(false);
     }
   };
@@ -87,7 +87,7 @@ export function ProfileForm() {
       {/* Profile photo */}
       <div>
         <label className="text-[13px] font-semibold text-gray-700 uppercase tracking-wide mb-2 block">
-          Profilova fotka
+          Profilová fotka
         </label>
         <div className="flex items-center gap-4">
           <div
@@ -105,7 +105,7 @@ export function ProfileForm() {
           </div>
           <div>
             <Button type="button" variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
-              Nahrat fotku
+              Nahrát fotku
             </Button>
             <p className="text-xs text-gray-400 mt-1">JPG nebo PNG, max 5 MB</p>
           </div>
@@ -124,7 +124,7 @@ export function ProfileForm() {
         label="O mne"
         value={bio}
         onChange={(e) => setBio(e.target.value)}
-        placeholder="Kratce se predstavte potencialnim klientum..."
+        placeholder="Krátce se představte potenciálním klientům..."
         rows={4}
       />
 
@@ -147,23 +147,23 @@ export function ProfileForm() {
 
       {/* Cities */}
       <Input
-        label="Mesta pusobnosti"
+        label="Města působnosti"
         value={cities}
         onChange={(e) => setCities(e.target.value)}
         placeholder="Praha, Brno, Ostrava"
       />
-      <p className="text-xs text-gray-400 -mt-4">Oddelujte carkou</p>
+      <p className="text-xs text-gray-400 -mt-4">Oddělujte čárkou</p>
 
       {/* IBAN */}
       <Input
-        label="Bankovni ucet (IBAN)"
+        label="Bankovní účet (IBAN)"
         value={iban}
         onChange={(e) => setIban(e.target.value)}
         placeholder="CZ65 0800 0000 1920 0014 5399"
       />
 
       <Button type="submit" variant="primary" size="lg" disabled={loading} className="w-full">
-        {loading ? "Ukladam..." : "Pokracovat"}
+        {loading ? "Ukládám..." : "Pokračovat"}
       </Button>
     </form>
   );

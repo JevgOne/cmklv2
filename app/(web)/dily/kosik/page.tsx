@@ -35,9 +35,9 @@ export default function DilyKosikPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <EmptyState
             icon="🛒"
-            title="Kosik je prazdny"
-            description="Prozkoumejte nas katalog a pridejte dily do kosiku"
-            actionLabel="Prohlizet katalog"
+            title="Košík je prázdný"
+            description="Prozkoumejte náš katalog a přidejte díly do košíku"
+            actionLabel="Procházet katalog"
             onAction={() => (window.location.href = "/dily/katalog")}
           />
         </div>
@@ -49,9 +49,9 @@ export default function DilyKosikPage() {
     <div className="min-h-screen bg-gray-50">
       <section className="bg-white border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 className="text-3xl font-extrabold text-gray-900">Kosik</h1>
+          <h1 className="text-3xl font-extrabold text-gray-900">Košík</h1>
           <p className="text-gray-500 mt-1">
-            {items.length} {items.length === 1 ? "polozka" : items.length < 5 ? "polozky" : "polozek"}
+            {items.length} {items.length === 1 ? "položka" : items.length < 5 ? "položky" : "položek"}
           </p>
         </div>
       </section>
@@ -116,21 +116,21 @@ export default function DilyKosikPage() {
               onClick={clearCart}
               className="text-sm text-red-500 font-medium hover:text-red-600 transition-colors cursor-pointer bg-transparent border-none"
             >
-              Vysypat kosik
+              Vysypat košík
             </button>
           </div>
 
           <div>
             <Card className="p-6 sticky top-24">
-              <h3 className="font-bold text-gray-900 mb-4">Souhrn objednavky</h3>
+              <h3 className="font-bold text-gray-900 mb-4">Souhrn objednávky</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Mezisoucet</span>
+                  <span className="text-gray-500">Mezisoučet</span>
                   <span className="font-medium">{formatPrice(total)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-500">Doprava</span>
-                  <span className="font-medium text-gray-400">dle vyberu</span>
+                  <span className="font-medium text-gray-400">dle výběru</span>
                 </div>
               </div>
               <hr className="my-4 border-gray-200" />
@@ -140,14 +140,14 @@ export default function DilyKosikPage() {
               </div>
               <Link href="/dily/objednavka" className="block no-underline">
                 <Button variant="primary" size="lg" className="w-full">
-                  Pokracovat k objednavce
+                  Pokračovat k objednávce
                 </Button>
               </Link>
               <Link
                 href="/dily/katalog"
                 className="block text-center text-sm text-orange-500 font-semibold mt-3 hover:text-orange-600 no-underline"
               >
-                Pokracovat v nakupu
+                Pokračovat v nákupu
               </Link>
             </Card>
           </div>

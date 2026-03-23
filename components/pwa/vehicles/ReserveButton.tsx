@@ -44,13 +44,13 @@ export function ReserveButton({ vehicleId, vehicleName }: ReserveButtonProps) {
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Nepodarilo se rezervovat vozidlo");
+        throw new Error(data.error || "Nepodařilo se rezervovat vozidlo");
       }
 
       setOpen(false);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Nepodarilo se rezervovat");
+      setError(err instanceof Error ? err.message : "Nepodařilo se rezervovat");
     } finally {
       setSubmitting(false);
     }
@@ -87,8 +87,8 @@ export function ReserveButton({ vehicleId, vehicleName }: ReserveButtonProps) {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <Input
-            label="Jmeno kupujiciho"
-            placeholder="Jan Novak"
+            label="Jméno kupujícího"
+            placeholder="Jan Novák"
             value={buyerName}
             onChange={(e) => setBuyerName(e.target.value)}
             required
@@ -112,7 +112,7 @@ export function ReserveButton({ vehicleId, vehicleName }: ReserveButtonProps) {
           />
 
           <Input
-            label="Dohodnuta cena (Kc)"
+            label="Dohodnutá cena (Kč)"
             type="number"
             placeholder="350000"
             value={agreedPrice}
@@ -125,7 +125,7 @@ export function ReserveButton({ vehicleId, vehicleName }: ReserveButtonProps) {
           )}
 
           <Input
-            label="Planovane datum predani"
+            label="Plánované datum předání"
             type="date"
             value={handoverDate}
             onChange={(e) => setHandoverDate(e.target.value)}
@@ -138,7 +138,7 @@ export function ReserveButton({ vehicleId, vehicleName }: ReserveButtonProps) {
               onClick={() => setOpen(false)}
               className="flex-1"
             >
-              Zrusit
+              Zrušit
             </Button>
             <Button
               variant="primary"

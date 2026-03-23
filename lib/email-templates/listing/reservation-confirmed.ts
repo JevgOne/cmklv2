@@ -17,10 +17,10 @@ export function reservationConfirmedSubject(data: ReservationConfirmedData): str
 export function reservationConfirmedHtml(data: ReservationConfirmedData): string {
   const content = `
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      Dobry den, ${data.buyerName},
+      Dobrý den, ${data.buyerName},
     </p>
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      vase rezervace vozidla <strong>${data.vehicleName}</strong> byla potvrzena.
+      Vaše rezervace vozidla <strong>${data.vehicleName}</strong> byla potvrzena.
     </p>
     <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 20px 0; background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px;">
       <tr>
@@ -30,12 +30,12 @@ export function reservationConfirmedHtml(data: ReservationConfirmedData): string
           <p style="margin: 0 0 4px; font-size: 15px; color: #374151;"><strong>Cena:</strong> ${data.price}</p>
           <p style="margin: 0 0 4px; font-size: 15px; color: #374151;"><strong>Prodejce:</strong> ${data.sellerName}</p>
           ${data.sellerPhone ? `<p style="margin: 0 0 4px; font-size: 15px; color: #374151;"><strong>Telefon:</strong> ${data.sellerPhone}</p>` : ""}
-          <p style="margin: 8px 0 0; font-size: 14px; color: #166534;"><strong>Rezervace platna do:</strong> ${data.reservationExpiry}</p>
+          <p style="margin: 8px 0 0; font-size: 14px; color: #166534;"><strong>Rezervace platná do:</strong> ${data.reservationExpiry}</p>
         </td>
       </tr>
     </table>
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      Kontaktujte prodejce a domluvte si predani vozidla. Pokud rezervaci nevyuzijete do uvedeneho data, automaticky vyprsi.
+      Kontaktujte prodejce a domluvte si předání vozidla. Pokud rezervaci nevyužijete do uvedeného data, automaticky vyprší.
     </p>
     <p style="margin: 24px 0 0; text-align: center;">
       <a href="${data.listingUrl}" style="display: inline-block; padding: 12px 32px; background-color: #16a34a; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px;">
@@ -48,17 +48,17 @@ export function reservationConfirmedHtml(data: ReservationConfirmedData): string
 
 export function reservationConfirmedText(data: ReservationConfirmedData): string {
   return [
-    `Dobry den, ${data.buyerName},`,
+    `Dobrý den, ${data.buyerName},`,
     "",
-    `vase rezervace vozidla "${data.vehicleName}" byla potvrzena.`,
+    `Vaše rezervace vozidla "${data.vehicleName}" byla potvrzena.`,
     "",
     `Vozidlo: ${data.vehicleName}`,
     `Cena: ${data.price}`,
     `Prodejce: ${data.sellerName}`,
     data.sellerPhone ? `Telefon: ${data.sellerPhone}` : "",
-    `Rezervace platna do: ${data.reservationExpiry}`,
+    `Rezervace platná do: ${data.reservationExpiry}`,
     "",
-    `Kontaktujte prodejce a domluvte si predani vozidla.`,
+    `Kontaktujte prodejce a domluvte si předání vozidla.`,
     "",
     `Detail: ${data.listingUrl}`,
   ]

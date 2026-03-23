@@ -22,20 +22,20 @@ interface ChecklistItem {
 }
 
 const INITIAL_CHECKLIST: ChecklistItem[] = [
-  { key: "sellerPresent", label: "Prodavajici je pritomen", checked: false },
-  { key: "buyerPresent", label: "Kupujici je pritomen", checked: false },
-  { key: "largeTp", label: "Velky techicky prukaz predan", checked: false },
-  { key: "smallTp", label: "Maly technicky prukaz predan", checked: false },
-  { key: "keys", label: "Klice predany", checked: false },
-  { key: "serviceBook", label: "Servisni knizka predana", checked: false },
-  { key: "conditionOk", label: "Stav vozidla odpovida popisu", checked: false },
+  { key: "sellerPresent", label: "Prodávající je přítomen", checked: false },
+  { key: "buyerPresent", label: "Kupující je přítomen", checked: false },
+  { key: "largeTp", label: "Velký technický průkaz předán", checked: false },
+  { key: "smallTp", label: "Malý technický průkaz předán", checked: false },
+  { key: "keys", label: "Klíče předány", checked: false },
+  { key: "serviceBook", label: "Servisní knížka předána", checked: false },
+  { key: "conditionOk", label: "Stav vozidla odpovídá popisu", checked: false },
   { key: "paymentDone", label: "Platba provedena", checked: false },
 ];
 
 const PAYMENT_METHODS = [
   { value: "CASH", label: "Hotovost" },
-  { value: "BANK_TRANSFER", label: "Bankovni prevod" },
-  { value: "FINANCING", label: "Financovani / uver" },
+  { value: "BANK_TRANSFER", label: "Bankovní převod" },
+  { value: "FINANCING", label: "Financování / úvěr" },
 ];
 
 export function HandoverChecklist({ vehicleId, vehicleName, reservedPrice, originalPrice }: HandoverChecklistProps) {
@@ -84,14 +84,14 @@ export function HandoverChecklist({ vehicleId, vehicleName, reservedPrice, origi
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Nepodarilo se potvrdit predani");
+        throw new Error(data.error || "Nepodařilo se potvrdit předání");
       }
 
       const data = await res.json();
       setCommissionAmount(data.commission || null);
       setSuccess(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Nepodarilo se potvrdit");
+      setError(err instanceof Error ? err.message : "Nepodařilo se potvrdit");
     } finally {
       setSubmitting(false);
     }
@@ -107,15 +107,15 @@ export function HandoverChecklist({ vehicleId, vehicleName, reservedPrice, origi
         </div>
 
         <h2 className="text-2xl font-extrabold text-gray-900 mb-2">
-          Predani dokonceno!
+          Předání dokončeno!
         </h2>
         <p className="text-gray-500 mb-2">
-          Vozidlo {vehicleName} bylo uspesne predano.
+          Vozidlo {vehicleName} bylo úspěšně předáno.
         </p>
 
         {commissionAmount && (
           <Card className="p-4 mt-4 w-full max-w-sm bg-orange-50 border border-orange-200">
-            <p className="text-sm text-gray-600">Vase provize</p>
+            <p className="text-sm text-gray-600">Vaše provize</p>
             <p className="text-3xl font-extrabold text-orange-600 mt-1">
               {formatPrice(commissionAmount)}
             </p>
@@ -127,7 +127,7 @@ export function HandoverChecklist({ vehicleId, vehicleName, reservedPrice, origi
             variant="primary"
             onClick={() => router.push("/makler/dashboard")}
           >
-            Zpet na dashboard
+            Zpět na dashboard
           </Button>
           <Button
             variant="ghost"
@@ -198,9 +198,9 @@ export function HandoverChecklist({ vehicleId, vehicleName, reservedPrice, origi
         ))}
       </div>
 
-      {/* Pocet klicu */}
+      {/* Počet klíčů */}
       <Input
-        label="Pocet klicu"
+        label="Počet klíčů"
         type="number"
         min="1"
         max="5"
@@ -208,10 +208,10 @@ export function HandoverChecklist({ vehicleId, vehicleName, reservedPrice, origi
         onChange={(e) => setKeysCount(e.target.value)}
       />
 
-      {/* Skutecna prodejni cena */}
+      {/* Skutečná prodejní cena */}
       <div>
         <Input
-          label="Skutecna prodejni cena (Kc)"
+          label="Skutečná prodejní cena (Kč)"
           type="number"
           value={actualPrice}
           onChange={(e) => setActualPrice(e.target.value)}
@@ -229,18 +229,18 @@ export function HandoverChecklist({ vehicleId, vehicleName, reservedPrice, origi
         )}
       </div>
 
-      {/* Zpusob platby */}
+      {/* Způsob platby */}
       <Select
-        label="Zpusob platby"
+        label="Způsob platby"
         value={paymentMethod}
         onChange={(e) => setPaymentMethod(e.target.value)}
         options={PAYMENT_METHODS}
       />
 
-      {/* Link na predavaci protokol */}
+      {/* Link na předávací protokol */}
       <Card className="p-4 bg-gray-50">
         <p className="text-sm text-gray-600">
-          Predavaci protokol bude vygenerovan automaticky po potvrzeni predani.
+          Předávací protokol bude vygenerován automaticky po potvrzení předání.
         </p>
       </Card>
 
@@ -252,12 +252,12 @@ export function HandoverChecklist({ vehicleId, vehicleName, reservedPrice, origi
         onClick={handleSubmit}
         disabled={!allChecked || submitting || !actualPrice}
       >
-        {submitting ? "Potvrzuji..." : "Potvrdit predani vozidla"}
+        {submitting ? "Potvrzuji..." : "Potvrdit předání vozidla"}
       </Button>
 
       {!allChecked && (
         <p className="text-xs text-center text-gray-400">
-          Pro potvrzeni predani je nutne odskrtnout vsechny body
+          Pro potvrzení předání je nutné odškrtnout všechny body
         </p>
       )}
     </div>

@@ -30,14 +30,14 @@ export function SuccessView({ offline = false }: SuccessViewProps) {
 
       {/* Titulek */}
       <h1 className="text-2xl font-bold text-gray-900 mb-2">
-        {offline ? "Ulozeno k odeslani!" : "Odeslano ke schvaleni!"}
+        {offline ? "Uloženo k odeslání!" : "Odesláno ke schválení!"}
       </h1>
 
       {/* Popis */}
       <p className="text-gray-500 mb-8 max-w-xs">
         {offline
-          ? "Vozidlo bude automaticky odeslano ke schvaleni, az budete online. BackOffice ho pak zkontroluje a schvali."
-          : "BackOffice zkontroluje zadane udaje a fotky. O vysledku budete informovani notifikaci."}
+          ? "Vozidlo bude automaticky odesláno ke schválení, až budete online. BackOffice ho pak zkontroluje a schválí."
+          : "BackOffice zkontroluje zadané údaje a fotky. O výsledku budete informováni notifikací."}
       </p>
 
       {/* Tlačítka */}
@@ -48,14 +48,14 @@ export function SuccessView({ offline = false }: SuccessViewProps) {
           size="lg"
           onClick={() => router.push("/makler/dashboard")}
         >
-          Zpet na Dashboard
+          Zpět na Dashboard
         </Button>
         <Button
           variant="outline"
           className="w-full"
           onClick={() => router.push("/makler/vehicles/new")}
         >
-          Nabrat dalsi auto
+          Nabrat další auto
         </Button>
       </div>
     </div>

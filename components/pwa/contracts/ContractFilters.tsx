@@ -3,10 +3,10 @@
 import { cn } from "@/lib/utils";
 
 const FILTERS = [
-  { value: "all", label: "Vsechny" },
+  { value: "all", label: "Všechny" },
   { value: "DRAFT", label: "Koncepty" },
-  { value: "SIGNED", label: "Podepsane" },
-  { value: "SENT", label: "Odeslane" },
+  { value: "SIGNED", label: "Podepsané" },
+  { value: "SENT", label: "Odeslané" },
 ] as const;
 
 interface ContractFiltersProps {

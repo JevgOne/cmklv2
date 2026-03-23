@@ -38,7 +38,7 @@ export function VehicleStatusActions({ vehicle }: VehicleStatusActionsProps) {
   const title = `${vehicle.brand} ${vehicle.model}${vehicle.variant ? ` ${vehicle.variant}` : ""}`;
 
   const handleWithdraw = async () => {
-    if (!confirm("Opravdu chcete stahnout vozidlo z nabidky?")) return;
+    if (!confirm("Opravdu chcete stáhnout vozidlo z nabídky?")) return;
     setWithdrawing(true);
     try {
       const res = await fetch(`/api/vehicles/${vehicle.id}/status`, {
@@ -80,7 +80,7 @@ export function VehicleStatusActions({ vehicle }: VehicleStatusActionsProps) {
       {vehicle.commission && ["ACTIVE", "RESERVED", "SOLD"].includes(vehicle.status) && (
         <Card className="p-4 bg-orange-50 border border-orange-200">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600">Vase provize</span>
+            <span className="text-sm text-gray-600">Vaše provize</span>
             <span className="text-lg font-extrabold text-orange-600">
               {formatPrice(vehicle.commission)}
             </span>
@@ -96,7 +96,7 @@ export function VehicleStatusActions({ vehicle }: VehicleStatusActionsProps) {
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
                 <path d="M2.695 14.763l-1.262 3.154a.5.5 0 00.65.65l3.155-1.262a4 4 0 001.343-.885L17.5 5.5a2.121 2.121 0 00-3-3L3.58 13.42a4 4 0 00-.885 1.343z" />
               </svg>
-              Pokracovat v editaci
+              Pokračovat v editaci
             </Button>
           </Link>
           <Button
@@ -106,7 +106,7 @@ export function VehicleStatusActions({ vehicle }: VehicleStatusActionsProps) {
             onClick={handleDelete}
             disabled={deleting}
           >
-            {deleting ? "Mazani..." : "Smazat draft"}
+            {deleting ? "Mazání..." : "Smazat draft"}
           </Button>
         </>
       )}
@@ -118,8 +118,8 @@ export function VehicleStatusActions({ vehicle }: VehicleStatusActionsProps) {
             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clipRule="evenodd" />
           </svg>
           <div>
-            <p className="font-semibold text-sm">Ceka na schvaleni</p>
-            <p className="text-xs mt-1">Vozidlo bylo odeslano ke schvaleni. Budete informovani o vysledku.</p>
+            <p className="font-semibold text-sm">Čeká na schválení</p>
+            <p className="text-xs mt-1">Vozidlo bylo odesláno ke schválení. Budete informováni o výsledku.</p>
           </div>
         </Alert>
       )}
@@ -132,9 +132,9 @@ export function VehicleStatusActions({ vehicle }: VehicleStatusActionsProps) {
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
             </svg>
             <div>
-              <p className="font-semibold text-sm">Zamitnuto</p>
+              <p className="font-semibold text-sm">Zamítnuto</p>
               {vehicle.rejectionReason && (
-                <p className="text-xs mt-1">Duvod: {vehicle.rejectionReason}</p>
+                <p className="text-xs mt-1">Důvod: {vehicle.rejectionReason}</p>
               )}
             </div>
           </Alert>
@@ -174,7 +174,7 @@ export function VehicleStatusActions({ vehicle }: VehicleStatusActionsProps) {
             onClick={handleWithdraw}
             disabled={withdrawing}
           >
-            {withdrawing ? "Stahuji..." : "Stahnout z nabidky"}
+            {withdrawing ? "Stahuji..." : "Stáhnout z nabídky"}
           </Button>
         </>
       )}
@@ -186,7 +186,7 @@ export function VehicleStatusActions({ vehicle }: VehicleStatusActionsProps) {
             <Card className="p-4 bg-yellow-50 border border-yellow-200">
               <h3 className="font-semibold text-gray-900 mb-2">Rezervace</h3>
               <p className="text-sm text-gray-600">
-                Kupujici: <span className="font-medium">{vehicle.reservedFor}</span>
+                Kupující: <span className="font-medium">{vehicle.reservedFor}</span>
               </p>
               {vehicle.reservedPrice != null && (
                 <p className="text-sm text-gray-600">
@@ -205,7 +205,7 @@ export function VehicleStatusActions({ vehicle }: VehicleStatusActionsProps) {
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
                 <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
               </svg>
-              Predavaci checklist
+              Předávací checklist
             </Button>
           </Link>
           <DamageReportButton vehicleId={vehicle.id} />
@@ -217,11 +217,11 @@ export function VehicleStatusActions({ vehicle }: VehicleStatusActionsProps) {
         <>
           <Card className="p-4 bg-green-50 border border-green-200">
             <div className="flex items-center gap-2 mb-2">
-              <Badge variant="verified">Prodano</Badge>
+              <Badge variant="verified">Prodáno</Badge>
             </div>
             {vehicle.soldPrice != null && (
               <p className="text-sm text-gray-600">
-                Prodejni cena: <span className="font-bold">{formatPrice(vehicle.soldPrice)}</span>
+                Prodejní cena: <span className="font-bold">{formatPrice(vehicle.soldPrice)}</span>
               </p>
             )}
             {vehicle.soldAt && (
@@ -237,8 +237,8 @@ export function VehicleStatusActions({ vehicle }: VehicleStatusActionsProps) {
       {vehicle.status === "ARCHIVED" && (
         <Alert variant="warning">
           <div>
-            <p className="font-semibold text-sm">Archivovano</p>
-            <p className="text-xs mt-1">Vozidlo bylo stazeno z nabidky.</p>
+            <p className="font-semibold text-sm">Archivováno</p>
+            <p className="text-xs mt-1">Vozidlo bylo staženo z nabídky.</p>
           </div>
         </Alert>
       )}
