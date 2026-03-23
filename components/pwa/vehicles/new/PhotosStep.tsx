@@ -93,7 +93,7 @@ interface StoredPhoto {
 
 export function PhotosStep() {
   const router = useRouter();
-  const { draft, updateSection } = useDraftContext();
+  const { draft, updateSection, updateStep } = useDraftContext();
   const draftId = draft?.id;
   const [photos, setPhotos] = useState<StoredPhoto[]>([]);
   const [defectPhotos, setDefectPhotos] = useState<StoredPhoto[]>([]);
@@ -290,8 +290,9 @@ export function PhotosStep() {
   }, [defectPhotos.length]);
 
   const handleContinue = useCallback(() => {
+    updateStep(5);
     router.push(`/makler/vehicles/new/details?draft=${draftId}`);
-  }, [router, draftId]);
+  }, [router, draftId, updateStep]);
 
   if (loading) {
     return (

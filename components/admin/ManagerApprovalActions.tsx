@@ -16,9 +16,11 @@ export function ManagerApprovalActions({ vehicleId }: ManagerApprovalActionsProp
   const [modalAction, setModalAction] = useState<"return" | "reject" | null>(null);
   const [reason, setReason] = useState("");
   const [done, setDone] = useState(false);
+  const [error, setError] = useState("");
 
   const handleAction = async (action: ActionType, actionReason?: string) => {
     setLoading(action);
+    setError("");
     try {
       const res = await fetch(`/api/manager/vehicles/${vehicleId}/approve`, {
         method: "POST",
@@ -28,7 +30,7 @@ export function ManagerApprovalActions({ vehicleId }: ManagerApprovalActionsProp
 
       if (!res.ok) {
         const data = await res.json();
-        alert(data.error || "Chyba při zpracování");
+        setError(data.error || "Chyba při zpracování");
         return;
       }
 
@@ -36,7 +38,7 @@ export function ManagerApprovalActions({ vehicleId }: ManagerApprovalActionsProp
       setModalAction(null);
       router.refresh();
     } catch {
-      alert("Nepodařilo se provést akci");
+      setError("Nepodařilo se provést akci");
     } finally {
       setLoading(null);
     }
@@ -52,6 +54,7 @@ export function ManagerApprovalActions({ vehicleId }: ManagerApprovalActionsProp
 
   return (
     <>
+      {error && <div className="text-xs text-red-500 font-medium mb-2">{error}</div>}
       <div className="flex flex-wrap gap-2">
         <Button
           variant="success"

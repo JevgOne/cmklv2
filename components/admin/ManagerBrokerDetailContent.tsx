@@ -98,6 +98,8 @@ export function ManagerBrokerDetailContent({
     variant: "pending" as const,
   };
 
+  const [actionError, setActionError] = useState("");
+
   const handleDeactivate = async () => {
     if (
       !confirm(
@@ -108,6 +110,7 @@ export function ManagerBrokerDetailContent({
     }
 
     setDeactivating(true);
+    setActionError("");
     try {
       const res = await fetch(
         `/api/manager/brokers/${broker.id}/deactivate`,
@@ -117,10 +120,10 @@ export function ManagerBrokerDetailContent({
         router.refresh();
       } else {
         const data = await res.json().catch(() => ({}));
-        alert(data.error || "Deaktivace se nezdařila.");
+        setActionError(data.error || "Deaktivace se nezdařila.");
       }
     } catch {
-      alert("Došlo k chybě.");
+      setActionError("Došlo k chybě.");
     } finally {
       setDeactivating(false);
     }
@@ -292,6 +295,9 @@ export function ManagerBrokerDetailContent({
               </Button>
             )}
           </div>
+          {actionError && (
+            <div className="mt-2 text-sm text-red-500 font-medium">{actionError}</div>
+          )}
         </div>
       </Card>
 

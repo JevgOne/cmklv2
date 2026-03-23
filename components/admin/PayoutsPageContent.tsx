@@ -134,11 +134,14 @@ function SellerPayoutActions({ payout }: { payout: SellerPayout }) {
     );
   }
 
+  const [error, setError] = useState("");
+
   async function handleProcess() {
     const ref = prompt("Zadejte referenci bankovního převodu:");
     if (!ref) return;
 
     setLoading(true);
+    setError("");
     try {
       const res = await fetch(`/api/payouts/seller/${payout.id}/process`, {
         method: "POST",
@@ -149,19 +152,22 @@ function SellerPayoutActions({ payout }: { payout: SellerPayout }) {
         window.location.reload();
       } else {
         const data = await res.json();
-        alert(data.error || "Chyba");
+        setError(data.error || "Chyba");
       }
     } catch {
-      alert("Nastala chyba");
+      setError("Nastala chyba");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <Button size="sm" variant="success" onClick={handleProcess} disabled={loading}>
-      {loading ? "..." : "Vyplatit"}
-    </Button>
+    <div>
+      <Button size="sm" variant="success" onClick={handleProcess} disabled={loading}>
+        {loading ? "..." : "Vyplatit"}
+      </Button>
+      {error && <div className="text-xs text-red-500 mt-1">{error}</div>}
+    </div>
   );
 }
 
@@ -257,9 +263,12 @@ function BrokerPayoutActions({ payout }: { payout: BrokerPayout }) {
     return <span className="text-xs text-gray-400">Čeká na fakturu</span>;
   }
 
+  const [error, setError] = useState("");
+
   async function handleApprove() {
     if (!confirm("Opravdu chcete schválit tuto fakturu?")) return;
     setLoading(true);
+    setError("");
     try {
       const res = await fetch(`/api/payouts/broker/${payout.id}/approve`, {
         method: "PUT",
@@ -268,19 +277,22 @@ function BrokerPayoutActions({ payout }: { payout: BrokerPayout }) {
         window.location.reload();
       } else {
         const data = await res.json();
-        alert(data.error || "Chyba");
+        setError(data.error || "Chyba");
       }
     } catch {
-      alert("Nastala chyba");
+      setError("Nastala chyba");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <Button size="sm" variant="success" onClick={handleApprove} disabled={loading}>
-      {loading ? "..." : "Schválit"}
-    </Button>
+    <div>
+      <Button size="sm" variant="success" onClick={handleApprove} disabled={loading}>
+        {loading ? "..." : "Schválit"}
+      </Button>
+      {error && <div className="text-xs text-red-500 mt-1">{error}</div>}
+    </div>
   );
 }
 
@@ -294,6 +306,7 @@ export function PayoutsPageContent() {
   const [brokerPayouts, setBrokerPayouts] = useState<BrokerPayout[]>([]);
   const [loading, setLoading] = useState(true);
   const [generatingPeriod, setGeneratingPeriod] = useState(false);
+  const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -321,6 +334,7 @@ export function PayoutsPageContent() {
       return;
 
     setGeneratingPeriod(true);
+    setStatusMessage(null);
     try {
       const res = await fetch("/api/payouts/broker/generate", {
         method: "POST",
@@ -330,13 +344,13 @@ export function PayoutsPageContent() {
 
       const data = await res.json();
       if (res.ok) {
-        alert(`Vytvořeno ${data.created} výplat za období ${period}`);
+        setStatusMessage({ type: "success", text: `Vytvořeno ${data.created} výplat za období ${period}` });
         window.location.reload();
       } else {
-        alert(data.error || "Chyba");
+        setStatusMessage({ type: "error", text: data.error || "Chyba" });
       }
     } catch {
-      alert("Nastala chyba");
+      setStatusMessage({ type: "error", text: "Nastala chyba" });
     } finally {
       setGeneratingPeriod(false);
     }
@@ -349,6 +363,12 @@ export function PayoutsPageContent() {
 
   return (
     <div className="space-y-6">
+      {statusMessage && (
+        <div className={`px-4 py-3 rounded-xl text-sm font-medium ${statusMessage.type === "success" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>
+          {statusMessage.text}
+          <button onClick={() => setStatusMessage(null)} className="ml-3 text-current opacity-50 hover:opacity-100 border-none bg-transparent cursor-pointer">x</button>
+        </div>
+      )}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Výplaty</h1>

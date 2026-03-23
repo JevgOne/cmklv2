@@ -5,10 +5,6 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { CareerForm } from "@/components/web/CareerForm";
 
-/* ------------------------------------------------------------------ */
-/*  Dummy data                                                         */
-/* ------------------------------------------------------------------ */
-
 const benefits = [
   {
     icon: "🕐",

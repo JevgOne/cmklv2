@@ -144,19 +144,42 @@ export function ReviewStep() {
 
     try {
       if (navigator.onLine) {
-        // Online: POST to API
+        // Online: POST to API — transform draft sections to flat schema
+        const d = draft.details ?? {};
+        const p = draft.pricing ?? {};
+        const v = draft.vin ?? {};
+        const flatPayload = {
+          vin: v.vin ?? "",
+          brand: d.brand ?? "",
+          model: d.model ?? "",
+          variant: d.variant,
+          year: d.year ?? 0,
+          mileage: d.mileage ?? 0,
+          fuelType: d.fuelType ?? "",
+          transmission: d.transmission ?? "",
+          enginePower: d.enginePower,
+          engineCapacity: d.engineCapacity,
+          bodyType: d.bodyType,
+          color: d.color,
+          doorsCount: d.doorsCount,
+          seatsCount: d.seatsCount,
+          condition: d.condition ?? "",
+          stkValidUntil: d.stkValidUntil,
+          serviceBook: d.serviceBook,
+          price: p.price ?? 0,
+          priceNegotiable: p.priceNegotiable,
+          equipment: d.equipment,
+          description: d.description,
+          city: p.city ?? "",
+          district: p.district,
+          latitude: p.latitude,
+          longitude: p.longitude,
+        };
+
         const response = await fetch("/api/vehicles", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            draftId: draft.id,
-            contact: draft.contact,
-            inspection: draft.inspection,
-            vin: draft.vin,
-            details: draft.details,
-            pricing: draft.pricing,
-            photos: draft.photos,
-          }),
+          body: JSON.stringify(flatPayload),
         });
 
         if (!response.ok) {
@@ -182,17 +205,38 @@ export function ReviewStep() {
         // Offline: uložit jako pending sync
         updateStatus("pending_sync");
         await saveDraft();
+        const od = draft.details ?? {};
+        const op = draft.pricing ?? {};
+        const ov = draft.vin ?? {};
         await offlineStorage.addPendingAction(
           `submit_${draft.id}`,
           "SUBMIT_VEHICLE",
           {
-            draftId: draft.id,
-            contact: draft.contact,
-            inspection: draft.inspection,
-            vin: draft.vin,
-            details: draft.details,
-            pricing: draft.pricing,
-            photos: draft.photos,
+            vin: ov.vin ?? "",
+            brand: od.brand ?? "",
+            model: od.model ?? "",
+            variant: od.variant,
+            year: od.year ?? 0,
+            mileage: od.mileage ?? 0,
+            fuelType: od.fuelType ?? "",
+            transmission: od.transmission ?? "",
+            enginePower: od.enginePower,
+            engineCapacity: od.engineCapacity,
+            bodyType: od.bodyType,
+            color: od.color,
+            doorsCount: od.doorsCount,
+            seatsCount: od.seatsCount,
+            condition: od.condition ?? "",
+            stkValidUntil: od.stkValidUntil,
+            serviceBook: od.serviceBook,
+            price: op.price ?? 0,
+            priceNegotiable: op.priceNegotiable,
+            equipment: od.equipment,
+            description: od.description,
+            city: op.city ?? "",
+            district: op.district,
+            latitude: op.latitude,
+            longitude: op.longitude,
           }
         );
 

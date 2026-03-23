@@ -23,6 +23,10 @@ export async function GET(request: NextRequest) {
 
     const where: Record<string, unknown> = { status: "ACTIVE" };
 
+    // Normalize diacritics for search
+    const removeDiacritics = (str: string) =>
+      str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
     if (vin) {
       // VIN-based: hledej díly kde je VIN zdrojového vozu nebo universal fit
       // V reálné aplikaci bychom VIN dekódovali na brand/model/year
@@ -33,8 +37,20 @@ export async function GET(request: NextRequest) {
       const conditions: Record<string, unknown>[] = [{ universalFit: true }];
 
       const brandModelCondition: Record<string, unknown> = {};
-      if (brand) brandModelCondition.compatibleBrands = { contains: brand };
-      if (model) brandModelCondition.compatibleModels = { contains: model };
+      if (brand) {
+        const normalizedBrand = removeDiacritics(brand);
+        brandModelCondition.compatibleBrands = {
+          contains: normalizedBrand,
+          mode: "insensitive",
+        };
+      }
+      if (model) {
+        const normalizedModel = removeDiacritics(model);
+        brandModelCondition.compatibleModels = {
+          contains: normalizedModel,
+          mode: "insensitive",
+        };
+      }
       conditions.push(brandModelCondition);
 
       where.OR = conditions;

@@ -6,10 +6,6 @@ import { Badge } from "@/components/ui/Badge";
 import { Tabs } from "@/components/ui/Tabs";
 import { Button } from "@/components/ui/Button";
 
-/* ------------------------------------------------------------------ */
-/*  Dummy data                                                         */
-/* ------------------------------------------------------------------ */
-
 type ReviewType = "prodejce" | "kupujici";
 
 interface Review {
@@ -134,7 +130,7 @@ export default function RecenzePage() {
             Co o nás říkají klienti
           </h1>
           <p className="text-gray-500 mt-4 text-lg">
-            4.8 z 5 ★ · 247 recenzí
+            {(reviews.reduce((sum, r) => sum + r.stars, 0) / reviews.length).toFixed(1)} z 5 ★ · {reviews.length} recenzí
           </p>
         </div>
       </section>

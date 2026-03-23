@@ -27,6 +27,7 @@ const conditionLabels: Record<string, string> = {
 export function VehicleEditForm({ vehicleId, initialData }: VehicleEditFormProps) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
   const [price, setPrice] = useState(initialData.price);
   const [priceReason, setPriceReason] = useState("");
   const [description, setDescription] = useState(initialData.description);
@@ -37,9 +38,10 @@ export function VehicleEditForm({ vehicleId, initialData }: VehicleEditFormProps
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
 
     if (priceChanged && !priceReason.trim()) {
-      alert("Při změně ceny je povinný důvod.");
+      setError("Při změně ceny je povinný důvod.");
       return;
     }
 
@@ -59,14 +61,14 @@ export function VehicleEditForm({ vehicleId, initialData }: VehicleEditFormProps
 
       if (!res.ok) {
         const data = await res.json();
-        alert(data.error || "Chyba při ukládání");
+        setError(data.error || "Chyba při ukládání");
         return;
       }
 
       router.push("/admin/manager/approvals");
       router.refresh();
     } catch {
-      alert("Nepodařilo se uložit změny");
+      setError("Nepodařilo se uložit změny");
     } finally {
       setSaving(false);
     }
@@ -75,6 +77,11 @@ export function VehicleEditForm({ vehicleId, initialData }: VehicleEditFormProps
   return (
     <Card className="p-6">
       <form onSubmit={handleSubmit} className="space-y-6">
+        {error && (
+          <div className="bg-red-50 text-red-700 px-4 py-3 rounded-xl text-sm font-medium">
+            {error}
+          </div>
+        )}
         {/* Cena */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1.5">

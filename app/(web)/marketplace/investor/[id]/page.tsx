@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -12,40 +13,81 @@ import { InvestModal } from "@/components/web/marketplace/InvestModal";
 import type { FlipStep } from "@/components/web/marketplace/FlipTimeline";
 import { formatPrice } from "@/lib/utils";
 
-// Dummy data
-const opportunity = {
-  id: "1",
-  brand: "Skoda",
-  model: "Octavia III 1.6 TDI",
-  year: 2016,
-  mileage: 145000,
-  vin: "TMBAG7NE3G0123456",
-  condition: "GOOD",
-  status: "FUNDING" as FlipStep,
-  purchasePrice: 180000,
-  repairCost: 45000,
-  estimatedSalePrice: 299000,
-  fundedAmount: 150000,
-  neededAmount: 225000,
-  dealerName: "Jan Novak",
-  dealerFlips: 12,
-  dealerAvgRoi: 22,
-  repairDescription: "Výměna rozvodového řemene, nový olejový filtr, oprava laku na předním nárazníku, detailing interiéru.",
-  marketAnalysis: "Srovnatelné vozy na trhu se prodávají za 280–320 000 Kč. Naše auto bude v nadprůměrném stavu po opravě.",
-  photos: [
-    "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=600&q=80",
-  ],
-  createdAt: "2026-02-15",
-};
+interface OpportunityData {
+  id: string;
+  brand: string;
+  model: string;
+  year: number;
+  mileage: number;
+  vin: string | null;
+  condition: string;
+  status: FlipStep;
+  purchasePrice: number;
+  repairCost: number;
+  estimatedSalePrice: number;
+  fundedAmount: number;
+  totalNeeded: number;
+  repairDescription: string | null;
+  photos: string | null;
+  dealer: { id: string; firstName: string; lastName: string };
+  investments: { investor: { firstName: string; lastName: string }; amount: number }[];
+  createdAt: string;
+}
 
 export default function InvestorOpportunityDetailPage() {
+  const params = useParams();
   const [investModalOpen, setInvestModalOpen] = useState(false);
+  const [opportunity, setOpportunity] = useState<OpportunityData | null>(null);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    async function fetchOpportunity() {
+      try {
+        const res = await fetch(`/api/marketplace/opportunities/${params.id}`);
+        if (res.ok) {
+          const data = await res.json();
+          setOpportunity(data.opportunity);
+        }
+      } catch {
+        // handled below
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchOpportunity();
+  }, [params.id]);
+
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        <div className="animate-pulse space-y-6">
+          <div className="h-8 w-64 bg-gray-200 rounded" />
+          <div className="h-48 bg-gray-200 rounded-2xl" />
+          <div className="h-64 bg-gray-200 rounded-2xl" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!opportunity) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+        <h2 className="text-xl font-bold text-gray-900">Příležitost nenalezena</h2>
+        <Link href="/marketplace/investor" className="text-orange-500 mt-4 inline-block no-underline">
+          Zpět na přehled
+        </Link>
+      </div>
+    );
+  }
+
+  const photos = opportunity.photos ? JSON.parse(opportunity.photos) as string[] : [];
+  const dealerName = `${opportunity.dealer.firstName} ${opportunity.dealer.lastName}`;
+  const neededAmount = opportunity.totalNeeded;
   const totalCost = opportunity.purchasePrice + opportunity.repairCost;
   const profit = opportunity.estimatedSalePrice - totalCost;
   const roi = totalCost > 0 ? ((profit / totalCost) * 100).toFixed(0) : "0";
-  const fundingProgress = opportunity.neededAmount > 0
-    ? Math.round((opportunity.fundedAmount / opportunity.neededAmount) * 100)
+  const fundingProgress = neededAmount > 0
+    ? Math.round((opportunity.fundedAmount / neededAmount) * 100)
     : 100;
 
   return (
@@ -96,9 +138,9 @@ export default function InvestorOpportunityDetailPage() {
         <div className="lg:col-span-2 space-y-6">
           {/* Photo */}
           <Card className="overflow-hidden">
-            {opportunity.photos[0] && (
+            {photos[0] && (
               <img
-                src={opportunity.photos[0]}
+                src={photos[0]}
                 alt={`${opportunity.brand} ${opportunity.model}`}
                 className="w-full aspect-video object-cover"
               />
@@ -112,12 +154,12 @@ export default function InvestorOpportunityDetailPage() {
               <div className="flex justify-between text-sm mb-2">
                 <span className="text-gray-500">Financováno</span>
                 <span className="font-bold text-gray-900">
-                  {formatPrice(opportunity.fundedAmount)} / {formatPrice(opportunity.neededAmount)}
+                  {formatPrice(opportunity.fundedAmount)} / {formatPrice(neededAmount)}
                 </span>
               </div>
               <ProgressBar value={fundingProgress} variant="green" className="h-3" />
               <p className="text-sm text-gray-500 mt-3">
-                Zbývá financovat: <strong className="text-gray-900">{formatPrice(opportunity.neededAmount - opportunity.fundedAmount)}</strong>
+                Zbývá financovat: <strong className="text-gray-900">{formatPrice(neededAmount - opportunity.fundedAmount)}</strong>
               </p>
             </Card>
           )}
@@ -142,10 +184,12 @@ export default function InvestorOpportunityDetailPage() {
                 <span className="text-gray-500">Najeto</span>
                 <p className="font-medium text-gray-900">{opportunity.mileage.toLocaleString("cs-CZ")} km</p>
               </div>
-              <div>
-                <span className="text-gray-500">VIN</span>
-                <p className="font-medium text-gray-900 font-mono">{opportunity.vin}</p>
-              </div>
+              {opportunity.vin && (
+                <div>
+                  <span className="text-gray-500">VIN</span>
+                  <p className="font-medium text-gray-900 font-mono">{opportunity.vin}</p>
+                </div>
+              )}
               <div>
                 <span className="text-gray-500">Stav</span>
                 <p className="font-medium text-gray-900">{opportunity.condition}</p>
@@ -154,16 +198,12 @@ export default function InvestorOpportunityDetailPage() {
           </Card>
 
           {/* Repair plan */}
-          <Card className="p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Plán opravy</h2>
-            <p className="text-sm text-gray-600 leading-relaxed">{opportunity.repairDescription}</p>
-          </Card>
-
-          {/* Market analysis */}
-          <Card className="p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Analýza trhu</h2>
-            <p className="text-sm text-gray-600 leading-relaxed">{opportunity.marketAnalysis}</p>
-          </Card>
+          {opportunity.repairDescription && (
+            <Card className="p-6">
+              <h2 className="text-lg font-bold text-gray-900 mb-4">Plán opravy</h2>
+              <p className="text-sm text-gray-600 leading-relaxed">{opportunity.repairDescription}</p>
+            </Card>
+          )}
         </div>
 
         {/* Sidebar */}
@@ -181,21 +221,11 @@ export default function InvestorOpportunityDetailPage() {
             <h3 className="text-lg font-bold text-gray-900 mb-4">Dealer</h3>
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center">
-                <span className="font-bold text-white">{opportunity.dealerName.split(" ").map(n => n[0]).join("")}</span>
+                <span className="font-bold text-white">{dealerName.split(" ").map(n => n[0]).join("")}</span>
               </div>
               <div>
-                <p className="font-bold text-gray-900">{opportunity.dealerName}</p>
-                <p className="text-xs text-gray-500">Ověřený dealer</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-gray-50 rounded-lg p-3 text-center">
-                <div className="text-lg font-extrabold text-gray-900">{opportunity.dealerFlips}</div>
-                <div className="text-[11px] font-semibold text-gray-400 uppercase">Flipů</div>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-3 text-center">
-                <div className="text-lg font-extrabold text-orange-500">{opportunity.dealerAvgRoi}%</div>
-                <div className="text-[11px] font-semibold text-gray-400 uppercase">Prům. ROI</div>
+                <p className="font-bold text-gray-900">{dealerName}</p>
+                <p className="text-xs text-gray-500">Dealer</p>
               </div>
             </div>
           </Card>
@@ -221,7 +251,7 @@ export default function InvestorOpportunityDetailPage() {
         opportunityId={opportunity.id}
         brand={opportunity.brand}
         model={opportunity.model}
-        neededAmount={opportunity.neededAmount}
+        neededAmount={neededAmount}
         fundedAmount={opportunity.fundedAmount}
         estimatedRoi={Number(roi)}
       />

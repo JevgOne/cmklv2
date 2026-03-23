@@ -116,9 +116,12 @@ function PaymentActions({ payment }: { payment: Payment }) {
     );
   }
 
+  const [error, setError] = useState("");
+
   async function handleConfirm() {
     if (!confirm("Opravdu chcete potvrdit přijetí platby?")) return;
     setLoading(true);
+    setError("");
     try {
       const res = await fetch(`/api/payments/${payment.id}/confirm`, {
         method: "PUT",
@@ -127,19 +130,22 @@ function PaymentActions({ payment }: { payment: Payment }) {
         window.location.reload();
       } else {
         const data = await res.json();
-        alert(data.error || "Chyba při potvrzování");
+        setError(data.error || "Chyba při potvrzování");
       }
     } catch {
-      alert("Nastala chyba");
+      setError("Nastala chyba");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <Button size="sm" variant="success" onClick={handleConfirm} disabled={loading}>
-      {loading ? "..." : "Potvrdit platbu"}
-    </Button>
+    <div>
+      <Button size="sm" variant="success" onClick={handleConfirm} disabled={loading}>
+        {loading ? "..." : "Potvrdit platbu"}
+      </Button>
+      {error && <div className="text-xs text-red-500 mt-1">{error}</div>}
+    </div>
   );
 }
 

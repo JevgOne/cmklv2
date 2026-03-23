@@ -129,7 +129,7 @@ export async function GET(request: NextRequest) {
 /* ------------------------------------------------------------------ */
 
 const createVehicleSchema = z.object({
-  vin: z.string().regex(/^[A-HJ-NPR-Z0-9]{17}$/i, "VIN musí mít 17 znaků a platný formát"),
+  vin: z.string().regex(/^[A-HJ-NPR-Z0-9]{17}$/i, "VIN musí mít 17 znaků a platný formát").transform((v) => v.toUpperCase()),
   brand: z.string().min(1, "Značka je povinná"),
   model: z.string().min(1, "Model je povinný"),
   variant: z.string().optional(),

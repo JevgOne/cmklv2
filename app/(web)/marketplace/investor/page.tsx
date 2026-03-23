@@ -2,93 +2,56 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { InvestorPortfolio } from "@/components/web/marketplace/InvestorPortfolio";
 import { OpportunityCard } from "@/components/web/marketplace/OpportunityCard";
+import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Investor Dashboard | Marketplace | CarMakléř",
 };
 
-// Dummy data
-const portfolio = {
-  totalInvested: 425000,
-  activeInvestments: 3,
-  totalReturns: 87500,
-  averageRoi: 21,
-};
+async function getOpportunities() {
+  try {
+    const dbOpps = await prisma.flipOpportunity.findMany({
+      where: { status: { not: "CANCELLED" } },
+      include: {
+        dealer: { select: { firstName: true, lastName: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    return dbOpps.map((opp) => {
+      const photos = opp.photos ? JSON.parse(opp.photos) as string[] : [];
+      const neededAmount = opp.purchasePrice + opp.repairCost;
+      return {
+        id: opp.id,
+        brand: opp.brand,
+        model: opp.model,
+        year: opp.year,
+        photoUrl: photos[0] || "",
+        purchasePrice: opp.purchasePrice,
+        repairCost: opp.repairCost,
+        estimatedSalePrice: opp.estimatedSalePrice,
+        fundedAmount: opp.fundedAmount,
+        neededAmount,
+        status: opp.status as "FUNDING" | "APPROVED" | "IN_REPAIR" | "FOR_SALE" | "SOLD",
+        dealerName: `${opp.dealer.firstName} ${opp.dealer.lastName}`,
+      };
+    });
+  } catch {
+    return [];
+  }
+}
 
-const opportunities = [
-  {
-    id: "1",
-    brand: "Skoda",
-    model: "Octavia III 1.6 TDI",
-    year: 2016,
-    photoUrl: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=600&q=80",
-    purchasePrice: 180000,
-    repairCost: 45000,
-    estimatedSalePrice: 299000,
-    fundedAmount: 150000,
-    neededAmount: 225000,
-    status: "FUNDING" as const,
-    dealerName: "Jan Novak",
-  },
-  {
-    id: "4",
-    brand: "Audi",
-    model: "A4 2.0 TDI",
-    year: 2017,
-    photoUrl: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=600&q=80",
-    purchasePrice: 250000,
-    repairCost: 35000,
-    estimatedSalePrice: 380000,
-    fundedAmount: 100000,
-    neededAmount: 285000,
-    status: "FUNDING" as const,
-    dealerName: "Petra Mala",
-  },
-  {
-    id: "5",
-    brand: "Mercedes-Benz",
-    model: "C220d",
-    year: 2016,
-    photoUrl: "https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=600&q=80",
-    purchasePrice: 280000,
-    repairCost: 55000,
-    estimatedSalePrice: 449000,
-    fundedAmount: 0,
-    neededAmount: 335000,
-    status: "APPROVED" as const,
-    dealerName: "Karel Dvorak",
-  },
-  {
-    id: "2",
-    brand: "VW",
-    model: "Golf VII 1.4 TSI",
-    year: 2017,
-    photoUrl: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=600&q=80",
-    purchasePrice: 165000,
-    repairCost: 30000,
-    estimatedSalePrice: 259000,
-    fundedAmount: 195000,
-    neededAmount: 195000,
-    status: "IN_REPAIR" as const,
-    dealerName: "Jan Novak",
-  },
-  {
-    id: "6",
-    brand: "Ford",
-    model: "Focus ST",
-    year: 2018,
-    photoUrl: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=600&q=80",
-    purchasePrice: 195000,
-    repairCost: 25000,
-    estimatedSalePrice: 289000,
-    fundedAmount: 220000,
-    neededAmount: 220000,
-    status: "FOR_SALE" as const,
-    dealerName: "Tomas Horak",
-  },
-];
+export default async function InvestorDashboardPage() {
+  const opportunities = await getOpportunities();
 
-export default function InvestorDashboardPage() {
+  const portfolio = {
+    totalInvested: opportunities.reduce((sum, o) => sum + o.fundedAmount, 0),
+    activeInvestments: opportunities.filter(
+      (o) => !["SOLD", "COMPLETED", "PENDING_APPROVAL", "CANCELLED"].includes(o.status)
+    ).length,
+    totalReturns: 0,
+    averageRoi: 0,
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
       {/* Header */}
@@ -111,25 +74,33 @@ export default function InvestorDashboardPage() {
       {/* Available opportunities */}
       <div className="mt-10">
         <h2 className="text-xl font-bold text-gray-900 mb-4">Dostupné příležitosti</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {opportunities
-            .filter((o) => o.status === "FUNDING" || o.status === "APPROVED")
-            .map((opp) => (
-              <OpportunityCard key={opp.id} {...opp} />
-            ))}
-        </div>
+        {opportunities.filter((o) => o.status === "FUNDING" || o.status === "APPROVED").length === 0 ? (
+          <p className="text-gray-400 text-center py-12">Žádné dostupné příležitosti.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {opportunities
+              .filter((o) => o.status === "FUNDING" || o.status === "APPROVED")
+              .map((opp) => (
+                <OpportunityCard key={opp.id} {...opp} />
+              ))}
+          </div>
+        )}
       </div>
 
       {/* Active investments */}
       <div className="mt-10">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Moje aktivní investice</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {opportunities
-            .filter((o) => o.status !== "FUNDING" && o.status !== "APPROVED")
-            .map((opp) => (
-              <OpportunityCard key={opp.id} {...opp} />
-            ))}
-        </div>
+        <h2 className="text-xl font-bold text-gray-900 mb-4">Aktivní investice</h2>
+        {opportunities.filter((o) => o.status !== "FUNDING" && o.status !== "APPROVED").length === 0 ? (
+          <p className="text-gray-400 text-center py-12">Žádné aktivní investice.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {opportunities
+              .filter((o) => o.status !== "FUNDING" && o.status !== "APPROVED")
+              .map((opp) => (
+                <OpportunityCard key={opp.id} {...opp} />
+              ))}
+          </div>
+        )}
       </div>
     </div>
   );

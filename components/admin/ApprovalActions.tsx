@@ -11,6 +11,7 @@ interface ApprovalActionsProps {
 export function ApprovalActions({ vehicleId, onAction }: ApprovalActionsProps) {
   const [loading, setLoading] = useState<"approve" | "reject" | null>(null);
   const [done, setDone] = useState(false);
+  const [error, setError] = useState("");
 
   const handleAction = async (action: "approve" | "reject") => {
     let reason: string | undefined;
@@ -21,6 +22,7 @@ export function ApprovalActions({ vehicleId, onAction }: ApprovalActionsProps) {
     }
 
     setLoading(action);
+    setError("");
     try {
       const res = await fetch(`/api/admin/vehicles/${vehicleId}/approve`, {
         method: "POST",
@@ -30,14 +32,14 @@ export function ApprovalActions({ vehicleId, onAction }: ApprovalActionsProps) {
 
       if (!res.ok) {
         const data = await res.json();
-        alert(data.error || "Chyba při zpracování");
+        setError(data.error || "Chyba při zpracování");
         return;
       }
 
       setDone(true);
       onAction?.();
     } catch {
-      alert("Nepodařilo se provést akci");
+      setError("Nepodařilo se provést akci");
     } finally {
       setLoading(null);
     }
@@ -51,6 +53,7 @@ export function ApprovalActions({ vehicleId, onAction }: ApprovalActionsProps) {
 
   return (
     <div className="flex flex-col gap-2 flex-shrink-0">
+      {error && <div className="text-xs text-red-500 font-medium">{error}</div>}
       <Button
         variant="success"
         size="sm"

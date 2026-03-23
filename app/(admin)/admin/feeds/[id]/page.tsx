@@ -105,6 +105,7 @@ export default function FeedDetailPage() {
   const [importing, setImporting] = useState(false);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   // Edit form state
   const [editName, setEditName] = useState("");
@@ -160,6 +161,7 @@ export default function FeedDetailPage() {
 
   const handleSave = async () => {
     setSaving(true);
+    setStatusMessage(null);
     try {
       const res = await fetch(`/api/admin/feeds/${feedId}`, {
         method: "PATCH",
@@ -180,10 +182,10 @@ export default function FeedDetailPage() {
         fetchFeed();
       } else {
         const data = await res.json();
-        alert(`Chyba: ${data.error}`);
+        setStatusMessage({ type: "error", text: `Chyba: ${data.error}` });
       }
     } catch {
-      alert("Uložení selhalo");
+      setStatusMessage({ type: "error", text: "Uložení selhalo" });
     } finally {
       setSaving(false);
     }
@@ -191,22 +193,24 @@ export default function FeedDetailPage() {
 
   const handleImport = async () => {
     setImporting(true);
+    setStatusMessage(null);
     try {
       const res = await fetch(`/api/admin/feeds/${feedId}/import`, {
         method: "POST",
       });
       const data = await res.json();
       if (res.ok) {
-        alert(
-          `Import dokončen: ${data.result.created} nových, ${data.result.updated} aktualizovaných, ${data.result.errors} chyb`
-        );
+        setStatusMessage({
+          type: "success",
+          text: `Import dokončen: ${data.result.created} nových, ${data.result.updated} aktualizovaných, ${data.result.errors} chyb`,
+        });
         fetchFeed();
         fetchLogs();
       } else {
-        alert(`Chyba: ${data.error}`);
+        setStatusMessage({ type: "error", text: `Chyba: ${data.error}` });
       }
     } catch {
-      alert("Import selhal");
+      setStatusMessage({ type: "error", text: "Import selhal" });
     } finally {
       setImporting(false);
     }
@@ -219,10 +223,10 @@ export default function FeedDetailPage() {
       if (res.ok) {
         router.push("/admin/feeds");
       } else {
-        alert("Smazání selhalo");
+        setStatusMessage({ type: "error", text: "Smazání selhalo" });
       }
     } catch {
-      alert("Smazání selhalo");
+      setStatusMessage({ type: "error", text: "Smazání selhalo" });
     }
   };
 
@@ -253,6 +257,14 @@ export default function FeedDetailPage() {
 
   return (
     <div>
+      {/* Status message */}
+      {statusMessage && (
+        <div className={`mb-4 px-4 py-3 rounded-xl text-sm font-medium ${statusMessage.type === "success" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>
+          {statusMessage.text}
+          <button onClick={() => setStatusMessage(null)} className="ml-3 text-current opacity-50 hover:opacity-100 border-none bg-transparent cursor-pointer">x</button>
+        </div>
+      )}
+
       {/* Breadcrumbs */}
       <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
         <Link

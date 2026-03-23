@@ -84,6 +84,7 @@ async function getFeaturedBrokers() {
         avatar: true,
         cities: true,
         bio: true,
+        totalSales: true,
         _count: { select: { vehicles: { where: { status: "ACTIVE" } } } },
       },
       take: 3,
@@ -104,9 +105,9 @@ async function getFeaturedBrokers() {
           bio: b.bio || `Certifikovaný makléř CarMakléř`,
           badges: ["verified"] as const,
           badgeLabels: ["✓ Ověřený"],
-          rating: "4.8",
-          sales: "0",
-          avgDays: "20",
+          rating: "—",
+          sales: String(b.totalSales),
+          avgDays: "—",
           activeVehicles: b._count.vehicles,
         };
       });
@@ -175,7 +176,7 @@ const benefits = [
   {
     icon: "🤝",
     title: "Síť makléřů",
-    desc: "186 certifikovaných makléřů po celé ČR, vždy blízko vás",
+    desc: "Síť certifikovaných makléřů po celé ČR, vždy blízko vás",
   },
 ];
 

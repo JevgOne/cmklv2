@@ -42,31 +42,27 @@ const statusLabels: Record<Broker["status"], string> = {
   rejected: "Zamítnutý",
 };
 
-function TableActions() {
+function TableActions({ brokerId }: { brokerId: string }) {
   return (
     <div className="flex items-center gap-1.5">
-      <button
-        className="w-9 h-9 flex items-center justify-center bg-gray-100 rounded-[10px] text-sm cursor-pointer transition-colors hover:bg-gray-200 border-none"
+      <a
+        href={`/admin/brokers/${brokerId}`}
+        className="w-9 h-9 flex items-center justify-center bg-gray-100 rounded-[10px] text-sm cursor-pointer transition-colors hover:bg-gray-200 border-none no-underline"
         title="Zobrazit"
-        onClick={() => alert("Detail makléře bude brzy dostupný.")}
       >
         👁
-      </button>
-      <button
-        className="w-9 h-9 flex items-center justify-center bg-gray-100 rounded-[10px] text-sm cursor-pointer transition-colors hover:bg-gray-200 border-none"
+      </a>
+      <a
+        href={`/admin/brokers/${brokerId}/edit`}
+        className="w-9 h-9 flex items-center justify-center bg-gray-100 rounded-[10px] text-sm cursor-pointer transition-colors hover:bg-gray-200 border-none no-underline"
         title="Upravit"
-        onClick={() => alert("Úprava makléře bude brzy dostupná.")}
       >
         ✏️
-      </button>
+      </a>
       <button
         className="w-9 h-9 flex items-center justify-center bg-gray-100 rounded-[10px] text-sm cursor-pointer transition-colors hover:bg-error-50 hover:text-error-500 border-none"
         title="Smazat"
-        onClick={() => {
-          if (confirm("Opravdu chcete smazat tohoto makléře?")) {
-            alert("Smazání makléře bude brzy dostupné.");
-          }
-        }}
+        disabled
       >
         🗑
       </button>
@@ -110,7 +106,7 @@ const columns = [
   {
     key: "actions",
     header: "Akce",
-    render: () => <TableActions />,
+    render: (item: Broker) => <TableActions brokerId={item.id} />,
   },
 ];
 
@@ -186,7 +182,7 @@ export function BrokersPageContent() {
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-900">Makléři</h1>
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" onClick={() => alert("Export makléřů bude brzy dostupný.")}>
+            <Button variant="outline" size="sm" disabled>
               Exportovat
             </Button>
             <Button variant="primary" size="sm" onClick={() => setInviteModalOpen(true)}>

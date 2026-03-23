@@ -25,23 +25,26 @@ const deliveryOptions = [
 ];
 
 const categoryLabels: Record<string, string> = {
-  MOTOR: "Motor",
+  ENGINE: "Motor",
   TRANSMISSION: "Převodovka",
-  BODYWORK: "Karoserie",
+  BODY: "Karoserie",
   INTERIOR: "Interiér",
-  ELECTRO: "Elektro",
+  ELECTRICAL: "Elektro",
   SUSPENSION: "Podvozek",
   BRAKES: "Brzdy",
   EXHAUST: "Výfuk",
-  AC: "Klimatizace",
-  LIGHTS: "Osvětlení",
+  COOLING: "Klimatizace",
+  WHEELS: "Kola",
+  FUEL: "Palivo",
   OTHER: "Ostatní",
 };
 
 const conditionLabels: Record<string, string> = {
-  FUNCTIONAL: "Plně funkční",
-  FUNCTIONAL_WITH_DEFECT: "Funkční s vadou",
-  FOR_PARTS: "Na díly",
+  NEW: "Nový",
+  USED_GOOD: "Plně funkční",
+  USED_FAIR: "Funkční s vadou",
+  USED_POOR: "Na díly",
+  REFURBISHED: "Repasovaný",
 };
 
 export function PricingStep({

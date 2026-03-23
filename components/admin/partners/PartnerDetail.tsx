@@ -227,7 +227,7 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
         if (actRes.ok) setActivities(await actRes.json());
       } else {
         const err = await res.json();
-        alert(err.error || "Chyba při aktivaci");
+        console.error("Chyba při aktivaci:", err.error || "Neznámá chyba");
       }
     } catch (err) {
       console.error("Failed to activate:", err);

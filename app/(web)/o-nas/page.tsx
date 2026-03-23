@@ -1,27 +1,38 @@
 import type { Metadata } from "next";
 import { Card } from "@/components/ui/Card";
+import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "O nás",
   description:
-    "CarMakléř — nová éra prodeje aut v Česku. 186 certifikovaných makléřů, 1 247 vozidel, 920+ spokojených klientů.",
+    "CarMakléř — nová éra prodeje aut v Česku. Certifikovaní makléři, prověřená vozidla, spokojení klienti.",
   openGraph: {
     title: "O nás | CarMakléř",
     description:
-      "186 certifikovaných makléřů, 1 247 vozidel, 920+ spokojených klientů. Poznejte náš příběh.",
+      "Certifikovaní makléři, prověřená vozidla, spokojení klienti. Poznejte náš příběh.",
   },
 };
 
-/* ------------------------------------------------------------------ */
-/*  Dummy data                                                         */
-/* ------------------------------------------------------------------ */
-
-const stats = [
-  { value: "186", label: "makléřů" },
-  { value: "1 247", label: "vozidel" },
-  { value: "920+", label: "spokojených klientů" },
-  { value: "14 dní", label: "průměrná doba prodeje" },
-];
+async function getStats() {
+  try {
+    const [brokerCount, vehicleCount, soldCount] = await Promise.all([
+      prisma.user.count({ where: { role: "BROKER", status: "ACTIVE" } }),
+      prisma.vehicle.count({ where: { status: "ACTIVE" } }),
+      prisma.vehicle.count({ where: { status: "SOLD" } }),
+    ]);
+    return [
+      { value: brokerCount.toLocaleString("cs-CZ"), label: "makléřů" },
+      { value: vehicleCount.toLocaleString("cs-CZ"), label: "vozidel" },
+      { value: soldCount.toLocaleString("cs-CZ"), label: "prodaných vozidel" },
+    ];
+  } catch {
+    return [
+      { value: "—", label: "makléřů" },
+      { value: "—", label: "vozidel" },
+      { value: "—", label: "prodaných vozidel" },
+    ];
+  }
+}
 
 const team = [
   {
@@ -46,7 +57,7 @@ const team = [
     initials: "MP",
     name: "Martin Prodej",
     position: "Head of Sales",
-    bio: "Vede obchodní tým a stará se o spokojenost klientů. Jeho tým dosahuje průměrného hodnocení 4.8 z 5.",
+    bio: "Vede obchodní tým a stará se o spokojenost klientů. Jeho tým dosahuje vynikajících výsledků.",
   },
 ];
 
@@ -77,7 +88,9 @@ const values = [
 /*  Page                                                               */
 /* ------------------------------------------------------------------ */
 
-export default function ONasPage() {
+export default async function ONasPage() {
+  const stats = await getStats();
+
   return (
     <main>
       {/* Hero */}
@@ -104,7 +117,7 @@ export default function ONasPage() {
             platformu, která spojuje ty nejlepší makléře s klienty, kteří si zaslouží prémiový servis.
           </p>
           <p className="text-gray-600 leading-relaxed">
-            Dnes máme síť 186 certifikovaných makléřů po celé ČR, kteří každý den pomáhají lidem prodávat a kupovat
+            Dnes máme síť certifikovaných makléřů po celé ČR, kteří každý den pomáhají lidem prodávat a kupovat
             auta bez stresu. Naše technologie — od prověrky vozidel po mobilní aplikaci pro makléře — zajišťují,
             že celý proces je transparentní, rychlý a bezpečný.
           </p>

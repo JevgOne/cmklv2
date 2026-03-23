@@ -25,31 +25,27 @@ const statusLabels: Record<Vehicle["status"], string> = {
   draft: "Koncept",
 };
 
-function TableActions() {
+function TableActions({ vehicleId }: { vehicleId: string }) {
   return (
     <div className="flex items-center gap-1.5">
-      <button
-        className="w-9 h-9 flex items-center justify-center bg-gray-100 rounded-[10px] text-sm cursor-pointer transition-colors hover:bg-gray-200 border-none"
+      <a
+        href={`/admin/vehicles/${vehicleId}`}
+        className="w-9 h-9 flex items-center justify-center bg-gray-100 rounded-[10px] text-sm cursor-pointer transition-colors hover:bg-gray-200 border-none no-underline"
         title="Zobrazit"
-        onClick={() => alert("Detail vozidla bude brzy dostupný.")}
       >
         👁
-      </button>
-      <button
-        className="w-9 h-9 flex items-center justify-center bg-gray-100 rounded-[10px] text-sm cursor-pointer transition-colors hover:bg-gray-200 border-none"
+      </a>
+      <a
+        href={`/admin/vehicles/${vehicleId}/edit`}
+        className="w-9 h-9 flex items-center justify-center bg-gray-100 rounded-[10px] text-sm cursor-pointer transition-colors hover:bg-gray-200 border-none no-underline"
         title="Upravit"
-        onClick={() => alert("Úprava vozidla bude brzy dostupná.")}
       >
         ✏️
-      </button>
+      </a>
       <button
         className="w-9 h-9 flex items-center justify-center bg-gray-100 rounded-[10px] text-sm cursor-pointer transition-colors hover:bg-error-50 hover:text-error-500 border-none"
         title="Smazat"
-        onClick={() => {
-          if (confirm("Opravdu chcete smazat toto vozidlo?")) {
-            alert("Smazání vozidla bude brzy dostupné.");
-          }
-        }}
+        disabled
       >
         🗑
       </button>
@@ -129,7 +125,7 @@ const columns = [
   {
     key: "actions",
     header: "Akce",
-    render: () => <TableActions />,
+    render: (item: Vehicle) => <TableActions vehicleId={item.id} />,
   },
 ];
 
@@ -190,10 +186,10 @@ export function VehiclesPageContent() {
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-900">Vozidla</h1>
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" onClick={() => alert("Filtrování vozidel bude brzy dostupné.")}>
+            <Button variant="outline" size="sm" disabled>
               Filtrovat
             </Button>
-            <Button variant="primary" size="sm" onClick={() => alert("Přidání vozidla bude brzy dostupné.")}>
+            <Button variant="primary" size="sm" disabled>
               Přidat vozidlo
             </Button>
           </div>

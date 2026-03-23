@@ -72,10 +72,12 @@ const fuelLabels: Record<string, string> = {
 export default async function InzercePage() {
   // Fetch real stats and recent listings from DB
   let listingCount = 0;
+  let totalViews = 0;
+  let soldCount = 0;
   let recentListings: { id: string; title: string; year: number; km: string; fuel: string; price: string; city: string; photo: string; slug: string }[] = [];
 
   try {
-    const [count, dbListings] = await Promise.all([
+    const [count, dbListings, viewsResult, sold] = await Promise.all([
       prisma.listing.count({ where: { status: "ACTIVE" } }),
       prisma.listing.findMany({
         where: { status: "ACTIVE" },
@@ -83,9 +85,13 @@ export default async function InzercePage() {
         orderBy: { createdAt: "desc" },
         take: 3,
       }),
+      prisma.listing.aggregate({ where: { status: "ACTIVE" }, _sum: { viewCount: true } }),
+      prisma.listing.count({ where: { status: "SOLD" } }),
     ]);
 
     listingCount = count;
+    totalViews = viewsResult._sum.viewCount || 0;
+    soldCount = sold;
     recentListings = dbListings.map((l) => ({
       id: l.id,
       title: `${l.brand} ${l.model}${l.variant ? " " + l.variant : ""}`,
@@ -142,13 +148,13 @@ export default async function InzercePage() {
             </div>
             <div className="hidden md:block w-px h-8 bg-gray-200" />
             <div>
-              <span className="text-2xl font-extrabold text-gray-900">12 500+</span>
-              <span className="text-sm text-gray-500 ml-2">zobrazení denně</span>
+              <span className="text-2xl font-extrabold text-gray-900">{totalViews.toLocaleString("cs-CZ")}</span>
+              <span className="text-sm text-gray-500 ml-2">zobrazení celkem</span>
             </div>
             <div className="hidden md:block w-px h-8 bg-gray-200" />
             <div>
-              <span className="text-2xl font-extrabold text-gray-900">14 dní</span>
-              <span className="text-sm text-gray-500 ml-2">průměrný prodej</span>
+              <span className="text-2xl font-extrabold text-gray-900">{soldCount}</span>
+              <span className="text-sm text-gray-500 ml-2">prodaných vozidel</span>
             </div>
           </div>
         </div>

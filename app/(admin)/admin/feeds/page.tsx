@@ -52,6 +52,7 @@ export default function AdminFeedsPage() {
   const [feeds, setFeeds] = useState<FeedConfig[]>([]);
   const [loading, setLoading] = useState(true);
   const [importing, setImporting] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const fetchFeeds = async () => {
     try {
@@ -71,21 +72,23 @@ export default function AdminFeedsPage() {
 
   const handleImport = async (feedId: string) => {
     setImporting(feedId);
+    setStatusMessage(null);
     try {
       const res = await fetch(`/api/admin/feeds/${feedId}/import`, {
         method: "POST",
       });
       const data = await res.json();
       if (res.ok) {
-        alert(
-          `Import dokončen: ${data.result.created} nových, ${data.result.updated} aktualizovaných, ${data.result.errors} chyb`
-        );
+        setStatusMessage({
+          type: "success",
+          text: `Import dokončen: ${data.result.created} nových, ${data.result.updated} aktualizovaných, ${data.result.errors} chyb`,
+        });
         fetchFeeds();
       } else {
-        alert(`Chyba: ${data.error}`);
+        setStatusMessage({ type: "error", text: `Chyba: ${data.error}` });
       }
     } catch {
-      alert("Import selhal");
+      setStatusMessage({ type: "error", text: "Import selhal" });
     } finally {
       setImporting(null);
     }
@@ -114,6 +117,14 @@ export default function AdminFeedsPage() {
           <Button variant="primary">+ Nový feed</Button>
         </Link>
       </div>
+
+      {/* Status message */}
+      {statusMessage && (
+        <div className={`mb-4 px-4 py-3 rounded-xl text-sm font-medium ${statusMessage.type === "success" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>
+          {statusMessage.text}
+          <button onClick={() => setStatusMessage(null)} className="ml-3 text-current opacity-50 hover:opacity-100 border-none bg-transparent cursor-pointer">x</button>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">

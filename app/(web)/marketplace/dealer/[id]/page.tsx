@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -7,41 +8,59 @@ import { FlipTimeline } from "@/components/web/marketplace/FlipTimeline";
 import { ProfitCalculator } from "@/components/web/marketplace/ProfitCalculator";
 import type { FlipStep } from "@/components/web/marketplace/FlipTimeline";
 import { formatPrice } from "@/lib/utils";
+import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Detail flipu | Dealer | Marketplace | CarMakléř",
 };
 
-// Dummy data — bude nahrazeno daty z API
-const flipDetail = {
-  id: "1",
-  brand: "Skoda",
-  model: "Octavia III 1.6 TDI",
-  year: 2016,
-  mileage: 145000,
-  vin: "TMBAG7NE3G0123456",
-  status: "IN_REPAIR" as FlipStep,
-  purchasePrice: 180000,
-  repairCost: 45000,
-  estimatedSalePrice: 299000,
-  fundedAmount: 225000,
-  neededAmount: 225000,
-  repairDescription: "Výměna rozvodového řemene, nový olejový filtr, oprava laku na předním nárazníku, detailing interiéru.",
-  marketAnalysis: "Srovnatelné vozy na trhu se prodávají za 280–320 000 Kč. Naše auto bude v nadprůměrném stavu po opravě.",
-  investors: [
-    { name: "Investor A", amount: 100000 },
-    { name: "Investor B", amount: 75000 },
-    { name: "Investor C", amount: 50000 },
-  ],
-  photos: [
-    "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=600&q=80",
-  ],
-  repairPhotos: [] as string[],
-  createdAt: "2026-02-15",
-};
+export default async function DealerFlipDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
 
-export default function DealerFlipDetailPage() {
-  const totalInvested = flipDetail.investors.reduce((sum, inv) => sum + inv.amount, 0);
+  const opp = await prisma.flipOpportunity.findUnique({
+    where: { id },
+    include: {
+      investments: {
+        include: {
+          investor: { select: { firstName: true, lastName: true } },
+        },
+      },
+    },
+  });
+
+  if (!opp) {
+    notFound();
+  }
+
+  const photos = opp.photos ? JSON.parse(opp.photos) as string[] : [];
+  const repairPhotos = opp.repairPhotos ? JSON.parse(opp.repairPhotos) as string[] : [];
+
+  const flipDetail = {
+    id: opp.id,
+    brand: opp.brand,
+    model: opp.model,
+    year: opp.year,
+    mileage: opp.mileage,
+    vin: opp.vin,
+    status: opp.status as FlipStep,
+    purchasePrice: opp.purchasePrice,
+    repairCost: opp.repairCost,
+    estimatedSalePrice: opp.estimatedSalePrice,
+    fundedAmount: opp.fundedAmount,
+    neededAmount: opp.purchasePrice + opp.repairCost,
+    repairDescription: opp.repairDescription,
+    investors: opp.investments.map((inv) => ({
+      name: `${inv.investor.firstName} ${inv.investor.lastName}`,
+      amount: inv.amount,
+    })),
+    photos,
+    repairPhotos,
+    createdAt: opp.createdAt.toISOString(),
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
@@ -115,12 +134,6 @@ export default function DealerFlipDetailPage() {
                 </div>
               )}
             </div>
-          </Card>
-
-          {/* Market analysis */}
-          <Card className="p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Analýza trhu</h2>
-            <p className="text-sm text-gray-600 leading-relaxed">{flipDetail.marketAnalysis}</p>
           </Card>
 
           {/* Investors */}

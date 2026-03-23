@@ -35,20 +35,24 @@ export default function NewPartPage() {
   const handlePublish = async () => {
     setSubmitting(true);
     try {
+      const validCompat = details.compatibility.filter((c) => c.brand);
       const body = {
         name: details.name,
         category: details.category,
         condition: details.condition,
-        conditionNote: details.conditionNote || undefined,
         description: details.description || undefined,
         oemNumber: details.oemNumber || undefined,
-        sourceVin: details.sourceVin || undefined,
-        compatibility: details.compatibility.filter((c) => c.brand),
         price: parseInt(pricing.price),
         vatIncluded: pricing.vatIncluded,
-        quantity: parseInt(pricing.quantity) || 1,
-        deliveryOptions: pricing.deliveryOptions,
-        partType: "USED",
+        stock: parseInt(pricing.quantity) || 1,
+        compatibleBrands: validCompat.map((c) => c.brand),
+        compatibleModels: validCompat.map((c) => c.model).filter(Boolean),
+        compatibleYearFrom: validCompat[0]?.yearFrom
+          ? parseInt(validCompat[0].yearFrom)
+          : undefined,
+        compatibleYearTo: validCompat[0]?.yearTo
+          ? parseInt(validCompat[0].yearTo)
+          : undefined,
         // Photos would be uploaded via separate endpoint
       };
 

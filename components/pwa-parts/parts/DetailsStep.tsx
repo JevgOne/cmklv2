@@ -18,23 +18,26 @@ export interface PartDetails {
 }
 
 const categoryOptions = [
-  { value: "MOTOR", label: "Motor" },
+  { value: "ENGINE", label: "Motor" },
   { value: "TRANSMISSION", label: "Převodovka" },
-  { value: "BODYWORK", label: "Karoserie" },
+  { value: "BODY", label: "Karoserie" },
   { value: "INTERIOR", label: "Interiér" },
-  { value: "ELECTRO", label: "Elektro" },
+  { value: "ELECTRICAL", label: "Elektro" },
   { value: "SUSPENSION", label: "Podvozek" },
   { value: "BRAKES", label: "Brzdy" },
   { value: "EXHAUST", label: "Výfuk" },
-  { value: "AC", label: "Klimatizace" },
-  { value: "LIGHTS", label: "Osvětlení" },
+  { value: "COOLING", label: "Klimatizace" },
+  { value: "WHEELS", label: "Kola" },
+  { value: "FUEL", label: "Palivo" },
   { value: "OTHER", label: "Ostatní" },
 ];
 
 const conditionOptions = [
-  { value: "FUNCTIONAL", label: "Plně funkční" },
-  { value: "FUNCTIONAL_WITH_DEFECT", label: "Funkční s vadou" },
-  { value: "FOR_PARTS", label: "Na díly (nefunkční)" },
+  { value: "NEW", label: "Nový" },
+  { value: "USED_GOOD", label: "Plně funkční" },
+  { value: "USED_FAIR", label: "Funkční s vadou" },
+  { value: "USED_POOR", label: "Na díly (nefunkční)" },
+  { value: "REFURBISHED", label: "Repasovaný" },
 ];
 
 const commonParts = [
@@ -124,7 +127,7 @@ export function DetailsStep({
         placeholder="Vyberte stav dílu"
       />
 
-      {details.condition === "FUNCTIONAL_WITH_DEFECT" && (
+      {details.condition === "USED_FAIR" && (
         <Textarea
           label="Popis vady *"
           value={details.conditionNote}
