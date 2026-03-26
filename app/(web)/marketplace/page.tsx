@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { ApplyForm } from "@/components/web/marketplace/ApplyForm";
 
 export const metadata: Metadata = {
-  title: "Marketplace | Investiční platforma pro flipping aut | CarMakléř",
+  title: "Marketplace | Investiční platforma pro flipping aut",
   description:
     "Investujte do aut a vydělejte 15-25 % ročně. Ověření dealeři nabízí příležitosti, ověření investoři financují. Bezpečně přes CarMakléř.",
 };

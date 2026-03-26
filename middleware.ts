@@ -67,6 +67,10 @@ export async function middleware(request: NextRequest) {
     "/makler/leads",
     "/makler/messages",
     "/makler/contacts",
+    "/makler/stats",
+    "/makler/leaderboard",
+    "/makler/financing-calculator",
+    "/makler/settings",
   ];
   if (protectedMaklerPaths.some((p) => pathname.startsWith(p))) {
     const token = await getToken({
@@ -165,11 +169,13 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Chráněné routy inzertní platformy (moje-inzeraty, muj-ucet)
+  // Chráněné routy inzertní platformy (moje-inzeraty, muj-ucet, moje-objednavky)
   // Přístup má každý přihlášený uživatel
   if (
     pathname.startsWith("/moje-inzeraty") ||
-    pathname.startsWith("/muj-ucet")
+    pathname.startsWith("/muj-ucet") ||
+    pathname.startsWith("/shop/moje-objednavky") ||
+    pathname.startsWith("/dily/moje-objednavky")
   ) {
     const token = await getToken({
       req: request,
@@ -211,10 +217,22 @@ export const config = {
     "/makler/messages/:path*",
     "/makler/contacts",
     "/makler/contacts/:path*",
+    "/makler/stats",
+    "/makler/stats/:path*",
+    "/makler/leaderboard",
+    "/makler/leaderboard/:path*",
+    "/makler/financing-calculator",
+    "/makler/financing-calculator/:path*",
+    "/makler/settings",
+    "/makler/settings/:path*",
     "/moje-inzeraty",
     "/moje-inzeraty/:path*",
     "/muj-ucet",
     "/muj-ucet/:path*",
+    "/shop/moje-objednavky",
+    "/shop/moje-objednavky/:path*",
+    "/dily/moje-objednavky",
+    "/dily/moje-objednavky/:path*",
     "/parts",
     "/parts/:path*",
     "/marketplace/dealer",

@@ -3804,7 +3804,7 @@ Krok 3: Cena + odeslání
 
 ## TASK-031: Partnerský modul — CRM akvizice, portál pro bazary a vrakoviště, veřejné profily
 Priorita: 2
-Stav: čeká
+Stav: zpracovává se
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:

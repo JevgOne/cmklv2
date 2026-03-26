@@ -69,7 +69,7 @@ export async function generateMetadata({
     };
   }
 
-  return { title: "Vozidlo nenalezeno" };
+  notFound();
 }
 
 /* ------------------------------------------------------------------ */
