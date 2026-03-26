@@ -77,7 +77,7 @@ export default function PartnerOrdersPage() {
           <EmptyState
             icon="📦"
             title="Zadne objednavky"
-            description="Zatim nemáte zadne objednavky v systemu."
+            description="Zatim nemate zadne objednavky v systemu."
           />
         </Card>
       ) : (

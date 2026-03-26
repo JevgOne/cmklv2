@@ -78,7 +78,7 @@ export default function PartnerPartsPage() {
         <EmptyState
           icon="🔧"
           title="Zadne dily"
-          description="Zatim nemáte zadne dily v systemu."
+          description="Zatim nemate zadne dily v systemu."
           actionLabel="Pridat dil"
           onAction={() => (window.location.href = "/partner/parts/new")}
         />

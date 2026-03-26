@@ -17,6 +17,8 @@ const bazarNav: NavItem[] = [
   { href: "/partner/vehicles", icon: "🚗", label: "Vozidla" },
   { href: "/partner/leads", icon: "👥", label: "Zájemci" },
   { href: "/partner/stats", icon: "📈", label: "Statistiky" },
+  { href: "/partner/messages", icon: "💬", label: "Zprávy" },
+  { href: "/partner/documents", icon: "📄", label: "Dokumenty" },
   { href: "/partner/profile", icon: "🏢", label: "Profil" },
 ];
 
@@ -25,6 +27,8 @@ const vrakovisteNav: NavItem[] = [
   { href: "/partner/parts", icon: "🔧", label: "Díly" },
   { href: "/partner/orders", icon: "📦", label: "Objednávky" },
   { href: "/partner/billing", icon: "💰", label: "Vyúčtování" },
+  { href: "/partner/messages", icon: "💬", label: "Zprávy" },
+  { href: "/partner/documents", icon: "📄", label: "Dokumenty" },
   { href: "/partner/profile", icon: "🏢", label: "Profil" },
 ];
 

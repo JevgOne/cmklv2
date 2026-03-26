@@ -3804,7 +3804,7 @@ Krok 3: Cena + odeslání
 
 ## TASK-031: Partnerský modul — CRM akvizice, portál pro bazary a vrakoviště, veřejné profily
 Priorita: 2
-Stav: zpracovává se
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:
@@ -4984,7 +4984,7 @@ Když makléř onemocní, odejde, nebo se změní region:
 
 ## TASK-037: Deployment — GitHub push + nasazení na produkční server
 Priorita: 1
-Stav: čeká
+Stav: ke kontrole
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:
@@ -5059,6 +5059,675 @@ Kroky:
 - Web dostupný na https://www.carmakler.cz
 - Existující služby na serveru (n8n, gmail-dashboard) fungují beze změn
 - (Volitelně) Push na `main` spustí automatický deploy přes GitHub Actions
+
+---
+
+## TASK-037b: QA audit + opravy bugů z auditu
+Priorita: 1
+Stav: ke kontrole
+Projekt: /Users/lunagroup/carmakler
+
+### Kompletní zadání:
+Provést QA audit všech stránek na produkčním serveru a opravit nalezené bugy.
+
+### Co bylo uděláno:
+1. **DB oprava** — .env na serveru ukazoval na PostgreSQL, ale appka používá SQLite. Opraven DATABASE_URL na `file:./dev.db`. DB má 22 migrací, všechny tabulky existují.
+2. **4 PWA stránky unikaly UI bez auth** — /makler/stats, /makler/leaderboard, /makler/financing-calculator, /makler/settings přidány do middleware.ts (protectedMaklerPaths + config.matcher). Nyní vrací 307 redirect.
+3. **/shop/moje-objednavky přístupné bez auth** — přidáno do middleware auth guardu.
+4. **/prihlaseni vrací 404** — vytvořen app/(web)/prihlaseni/page.tsx s redirect na /login.
+5. **Detail vozu vrací 200 pro neexistující slug** — přidán notFound() do generateMetadata v /nabidka/[slug]/page.tsx.
+6. **Marketplace duplicitní title** — odstraněn duplicitní "CarMakler" z metadata.
+7. **Nová migrace** — `add_seller_notifications` aplikována na serveru.
+8. **Build type error** — opraven chybějící userId v vehicle flag route.
+
+### Stav serveru po opravách:
+- Appka běží na https://www.carmakler.cz (PM2, nginx, SSL)
+- Basic auth: admin / Admin2026
+- DB: SQLite v /var/www/carmakler/dev.db (všechny tabulky, ale prázdná data)
+- Deploy: `cd /var/www/carmakler && git pull && npx prisma generate && npx prisma migrate deploy && npm run build && pm2 restart carmakler`
+
+---
+
+## TASK-038: Hluboké funkční testování — každá funkce, každý formulář, každá role
+Priorita: 1
+Stav: čeká
+Projekt: /Users/lunagroup/carmakler
+
+### Kompletní zadání:
+
+Projít KAŽDOU funkci celé platformy Carmakler. Reálně otestovat na produkčním serveru (https://www.carmakler.cz, basic auth: admin / Admin2026). Co nefunguje — OKAMŽITĚ opravit. Co padá — fixnout. Co chybí — doimplementovat.
+
+**Server:** `ssh root@91.98.203.239`, appka v `/var/www/carmakler`
+**DB:** SQLite v `/var/www/carmakler/dev.db`
+**Deploy po opravě:** `cd /var/www/carmakler && git pull && npx prisma generate && npx prisma migrate deploy && npm run build && pm2 restart carmakler`
+
+**Systém má 12 rolí:** ADMIN, BACKOFFICE, REGIONAL_DIRECTOR, MANAGER, BROKER, ADVERTISER, BUYER, PARTS_SUPPLIER, VERIFIED_DEALER, INVESTOR, PARTNER_BAZAR, PARTNER_VRAKOVISTE
+
+---
+
+### FÁZE 1 — Založení všech testovacích účtů
+
+**1.1 ADMIN účet (přímý INSERT do DB):**
+- Vytvořit uživatele přímo v SQLite (heslo zahashovat přes bcrypt):
+  - Email: admin@carmakler.cz, heslo: Admin2026, role: ADMIN, status: ACTIVE
+  - Jméno: Admin Carmakler
+- Přihlásit se na /login — zadat email + heslo
+- Ověřit redirect na /admin/dashboard
+- Ověřit, že admin sidebar zobrazuje: Dashboard, Makléři, Vozidla, Leady, Inzerce, Marketplace, Partneři, Platby, Feedy
+
+**1.2 Registrace MAKLÉŘE (/registrace/makler):**
+- Nejdřív vytvořit pozvánku (přes admin nebo přímý INSERT do tabulky Invitation)
+- Jít na /registrace/makler?token=XXX
+- Vyplnit formulář:
+  - Jméno: Jan Novák
+  - Příjmení: Novák
+  - Email: makler@test.cz
+  - Telefon: +420 777 123 456
+  - Heslo: Makler2026
+  - IČO (pokud je pole) — zadat 12345678, ověřit ARES validaci
+- Odeslat — ověřit:
+  - Zápis do DB (tabulka User, role BROKER, status ONBOARDING)
+  - Redirect na /makler/onboarding
+- Pokud registrace bez pozvánky nefunguje — ověřit, zda je to záměr
+
+**1.3 Registrace AUTOBAZARU / DEALERA (/registrace):**
+- Jít na /registrace
+- Vyplnit formulář:
+  - Jméno: Petr Bazar
+  - Email: bazar@test.cz
+  - Telefon: +420 777 234 567
+  - Heslo: Bazar2026
+  - Typ: Autobazar / Dealer (pokud je volba)
+- Odeslat — ověřit:
+  - Zápis do DB (role ADVERTISER, status ACTIVE)
+  - Redirect na příslušný dashboard nebo /moje-inzeraty
+- Přihlásit se zpět — ověřit, že login funguje
+
+**1.4 Registrace KUPUJÍCÍHO (/registrace):**
+- Jít na /registrace
+- Vyplnit:
+  - Jméno: Karel Kupec
+  - Email: kupec@test.cz
+  - Heslo: Kupec2026
+- Ověřit roli BUYER, redirect na web
+
+**1.5 Registrace DODAVATELE DÍLŮ / VRAKOVIŠTĚ (/registrace/dodavatel):**
+- Jít na /registrace/dodavatel
+- Vyplnit formulář:
+  - Název firmy: Vrakoviště Praha s.r.o.
+  - Kontaktní osoba: Josef Vraky
+  - Email: dily@test.cz
+  - Telefon: +420 777 345 678
+  - Heslo: Dily2026
+  - IČO: 87654321
+  - Adresa vrakoviště
+- Odeslat — ověřit:
+  - Zápis do DB (role PARTS_SUPPLIER)
+  - Redirect na /parts/my nebo dashboard dodavatele
+- Pokud registrace vyžaduje schválení — poznamenat
+
+**1.6 Založení účtů přímo v DB (pro role co nemají registrační formulář):**
+- MANAGER: manager@carmakler.cz / Manager2026
+- REGIONAL_DIRECTOR: reditel@carmakler.cz / Reditel2026
+- VERIFIED_DEALER: dealer@test.cz / Dealer2026
+- INVESTOR: investor@test.cz / Investor2026
+- PARTNER_BAZAR: partnerbazar@test.cz / Partner2026
+- PARTNER_VRAKOVISTE: partnervrak@test.cz / Partner2026
+- BACKOFFICE: backoffice@carmakler.cz / Backoffice2026
+
+**1.7 Test přihlášení za KAŽDOU roli:**
+Pro každý vytvořený účet:
+- Přihlásit se na /login
+- Ověřit, že redirect jde na správný dashboard:
+  - ADMIN → /admin/dashboard
+  - MANAGER → /admin/dashboard (nebo /admin/manager)
+  - BROKER → /makler/dashboard (nebo /makler/onboarding pokud status ONBOARDING)
+  - ADVERTISER → /moje-inzeraty nebo /inzerce
+  - BUYER → / (homepage)
+  - PARTS_SUPPLIER → /parts/my
+  - VERIFIED_DEALER → /marketplace/dealer
+  - INVESTOR → /marketplace/investor
+  - PARTNER_BAZAR → /partner/dashboard
+  - PARTNER_VRAKOVISTE → /partner/dashboard
+- Ověřit, že po přihlášení vidí správné menu/navigaci pro svou roli
+- Ověřit, že nemá přístup na stránky jiných rolí (např. makléř nemůže na /admin)
+
+---
+
+### FÁZE 2 — Onboarding makléře (role: BROKER)
+
+**2.1 Přihlásit se jako makléř (makler@test.cz)**
+- Ověřit redirect na /makler/onboarding
+
+**2.2 Krok 1 — Profil:**
+- Vyplnit: jméno, příjmení, telefon, město, bankovní účet
+- Nahrát profilovou fotku
+- Kliknout Další — ověřit uložení a přechod na krok 2
+
+**2.3 Krok 2 — Dokumenty:**
+- Nahrát živnostenský list (PDF nebo foto)
+- Nahrát občanský průkaz (přední + zadní strana)
+- Kliknout Další
+
+**2.4 Krok 3 — Znalostní kvíz:**
+- Projít kvíz (otázky o procesu prodeje, provizích atd.)
+- Ověřit, že po úspěšném dokončení jde na krok 4
+- Ověřit, co se stane při neúspěchu (opakování?)
+
+**2.5 Krok 4 — Podpis smlouvy:**
+- Zobrazení smlouvy
+- Digitální podpis (canvas/pad)
+- Odeslání
+
+**2.6 Krok 5 — Verifikace:**
+- Čekání na schválení adminem
+- Ověřit stav: status se změní na PENDING nebo ACTIVE
+- V admin panelu: schválit makléře → ověřit, že makléř se dostane na /makler/dashboard
+
+---
+
+### FÁZE 3 — Makléřská PWA — kompletní flow (role: BROKER)
+
+**3.1 Dashboard (/makler/dashboard):**
+- Ověřit zobrazení: statistiky (vozy, provize, úkoly), rychlé akce
+- Kliknout na každé tlačítko/odkaz — ověřit, že vede správně
+
+**3.2 Nabrat auto — standardní mode (/makler/vehicles/new):**
+- Krok 1 — Základní info:
+  - Zadat VIN: WVWZZZ3CZWE123456 — ověřit VIN dekódování (značka, model, rok se předvyplní)
+  - Pokud VIN dekodér nefunguje (chybí API klíč) — ověřit graceful error, možnost vyplnit ručně
+  - Zadat: značka VW, model Passat, rok 2020
+- Krok 2 — Technické parametry:
+  - Palivo: nafta, převodovka: automat, najeto: 85000 km, výkon: 110 kW
+  - Objem motoru: 2.0, barva: šedá, karosérie: sedan
+  - STK: platná do 12/2026
+- Krok 3 — Stav vozu:
+  - Celkový stav: dobrý
+  - Poškození: žádné (nebo přidat jedno)
+  - Počet majitelů: 2, servisní kniha: ano
+- Krok 4 — Fotografie:
+  - Nahrát fotky (minimálně 5) — přední, zadní, interiér, detail, motor
+  - Ověřit upload — pokud Cloudinary nenastaveno, ověřit fallback nebo error handling
+  - Ověřit náhled, pořadí, mazání fotek
+- Krok 5 — Cena:
+  - Požadovaná cena prodejce: 450000 Kč
+  - Odhadovaná tržní cena: 480000 Kč
+  - Provize makléře se spočítá automaticky (5%, min 25000)
+- Krok 6 — Kontakt na prodejce:
+  - Jméno: Marie Prodejcová
+  - Telefon: +420 777 456 789
+  - Email: prodejce@test.cz
+  - Adresa: Praha 4
+- Krok 7 — Shrnutí:
+  - Zkontrolovat všechny údaje
+  - Odeslat — ověřit zápis do DB (tabulka Vehicle, status DRAFT)
+  - Ověřit redirect na detail vozu nebo seznam vozů
+
+**3.3 Nabrat auto — quick mode (/makler/vehicles/new?mode=quick):**
+- Pokud existuje rychlý režim — otestovat
+- Minimální pole: VIN, značka, model, cena, telefon prodejce, 1 fotka
+- Odeslat, ověřit
+
+**3.4 Moje vozy (/makler/vehicles):**
+- Ověřit seznam vozidel (právě vytvořené auto)
+- Filtry: stav (draft, pending, approved, sold), značka
+- Kliknout na detail — ověřit všechny info
+- Editovat auto — změnit cenu, přidat fotku, změnit popis
+- Ověřit uložení editace
+
+**3.5 Smlouvy (/makler/contracts):**
+- Vytvořit novou zprostředkovatelskou smlouvu (BROKERAGE):
+  - Vybrat vozidlo
+  - Předvyplněné údaje z vozu a kontaktu
+  - Podpis prodejce (digitální canvas)
+  - Podpis makléře
+- Ověřit generování smlouvy (PDF náhled)
+- Stáhnout smlouvu
+- Vytvořit předávací protokol (HANDOVER) — pokud je dostupný
+- Seznam smluv — ověřit filtrování podle stavu
+
+**3.6 Kontakty / CRM (/makler/contacts):**
+- Přidat nový kontakt:
+  - Jméno: Pavel Zájemce
+  - Telefon: +420 777 567 890
+  - Email: zajemce@test.cz
+  - Poznámka: Má zájem o VW Passat
+- Ověřit zápis do DB (SellerContact)
+- Zaznamenat komunikaci:
+  - Typ: CALL (telefonát)
+  - Směr: OUTGOING
+  - Shrnutí: "Domluvena prohlídka na pátek"
+  - Výsledek: FOLLOW_UP
+- Nastavit follow-up datum
+- Ověřit seznam kontaktů, filtrování, vyhledávání
+
+**3.7 Leady (/makler/leads):**
+- Ověřit seznam přiřazených leadů (pokud existují)
+- Kliknout na lead — ověřit detail, možnost změny stavu
+
+**3.8 AI asistent (/makler/messages):**
+- Otevřít chat
+- Odeslat zprávu: "Kolik je provize za auto za 500 000 Kč?"
+- Ověřit odpověď (pokud Claude API klíč nastaven) nebo graceful error
+- Vyzkoušet kontextovou nápovědu
+
+**3.9 Statistiky (/makler/stats):**
+- Ověřit zobrazení: počet aut, provize, konverzní poměr
+- Grafy — ověřit renderování (i s prázdnými daty)
+
+**3.10 Leaderboard (/makler/leaderboard):**
+- Ověřit žebříček makléřů
+- Zobrazení bodů, achievementů
+
+**3.11 Kalkulačka financování (/makler/financing-calculator):**
+- Zadat cenu auta: 500000
+- Akontace: 100000
+- Doba splácení: 60 měsíců
+- Ověřit výpočet měsíční splátky
+
+**3.12 Nastavení (/makler/settings):**
+- Změna hesla
+- Notifikační preference — zapnout/vypnout
+- Bankovní účet
+- Profil — editace
+
+**3.13 Offline režim (/makler/offline):**
+- Ověřit stránku offline dat
+- Service Worker registrovaný (/sw.js)
+
+**3.14 Provize (/makler/commissions):**
+- Ověřit seznam provizí (prázdný nebo s daty)
+- Detail provize — částka, stav, datum
+
+---
+
+### FÁZE 4 — Inzertní platforma (role: ADVERTISER — autobazar)
+
+**4.1 Přihlásit se jako bazar (bazar@test.cz)**
+
+**4.2 Přidání inzerátu — 6-krokový wizard (/inzerce/pridat):**
+- Krok 1 — VIN a základy:
+  - Zadat VIN (nebo přeskočit)
+  - Značka: Škoda, Model: Octavia, Rok: 2019
+- Krok 2 — Detailní parametry:
+  - Palivo: benzín, Převodovka: manuální
+  - Najeto: 65000 km, Výkon: 110 kW
+  - Objem: 1.5 TSI, Barva: bílá
+  - Karosérie: kombi, Pohon: přední
+  - STK: platná, Počet majitelů: 1
+  - Stav: velmi dobrý
+- Krok 3 — Výbava:
+  - Zaškrtnout: klimatizace, navigace, parkovací senzory, LED světla, vyhřívaná sedadla
+- Krok 4 — Fotografie:
+  - Nahrát min. 5 fotek
+  - Ověřit upload, náhled, řazení, mazání
+  - Ověřit limity (max počet, max velikost)
+- Krok 5 — Cena a kontakt:
+  - Cena: 385000 Kč
+  - Kontaktní telefon, email
+  - Lokace: Praha
+  - Popis: "Škoda Octavia Combi 1.5 TSI, první majitel, servisní kniha, nehavarovaná..."
+- Krok 6 — Náhled a odeslání:
+  - Zkontrolovat náhled inzerátu
+  - Odeslat — ověřit zápis do DB (tabulka Listing)
+  - Ověřit stav: ACTIVE nebo PENDING_APPROVAL
+
+**4.3 Správa inzerátů (/moje-inzeraty):**
+- Ověřit seznam inzerátů
+- Editovat inzerát — změnit cenu na 375000
+- Deaktivovat inzerát — ověřit změnu stavu
+- Znovu aktivovat — ověřit
+- Smazat inzerát — ověřit
+
+**4.4 Veřejný katalog inzerátů (/inzerce/katalog):**
+- Ověřit, že aktivní inzerát je viditelný
+- Filtry: značka, model, cena od-do, palivo, převodovka, rok od-do, najeto
+- Řazení: cena vzestupně/sestupně, nejnovější, nejstarší
+- Stránkování — ověřit s více inzeráty
+
+**4.5 Detail inzerátu (/bazar/[slug]):**
+- Ověřit všechny sekce: galerie, parametry, popis, výbava, kontakt
+- Kontaktní formulář — odeslat dotaz (vytvoří Inquiry v DB)
+- Tlačítko "Zavolat" — ověřit tel: link
+- Přidat do oblíbených — ověřit (vyžaduje přihlášení)
+
+**4.6 Promování inzerátu:**
+- Pokud existuje funkce "Topovat" nebo "Promovat" — vyzkoušet
+- Ověřit Stripe checkout (nebo graceful error bez API klíče)
+
+**4.7 Prodloužení inzerátu:**
+- Pokud inzerát expiruje — ověřit funkci prodloužení
+
+---
+
+### FÁZE 5 — Eshop autodíly (role: PARTS_SUPPLIER — vrakoviště)
+
+**5.1 Přihlásit se jako vrakoviště (dily@test.cz)**
+
+**5.2 PWA dodavatele — přidání dílu (/parts/new):**
+- Vyplnit:
+  - Název: "Motor 2.0 TDI DFGA"
+  - Kategorie: Motor
+  - Podkategorie: Kompletní motor
+  - Cena: 45000 Kč
+  - Stav: použitý, funkční
+  - Popis: "Motor z VW Passat B8, najeto 120000 km, plně funkční, záruka 3 měsíce"
+  - Kompatibilita: VW Passat 2015-2020, Škoda Superb 2015-2020
+  - Skladem: 1 ks
+- Nahrát fotky dílu (min. 2)
+- Odeslat — ověřit zápis do DB (tabulka Part)
+
+**5.3 Přidat další díly (pro testování katalogu):**
+- Díl 2: "Přední nárazník Škoda Octavia III" — kategorie: Karosérie, cena: 3500 Kč
+- Díl 3: "Sada kol 16' VW" — kategorie: Kola a pneumatiky, cena: 8000 Kč
+- Díl 4: "Klimatizační kompresor Denso" — kategorie: Klimatizace, cena: 5500 Kč
+
+**5.4 Moje díly (/parts/my):**
+- Ověřit seznam přidaných dílů
+- Editovat díl — změnit cenu, přidat fotku
+- Deaktivovat díl — ověřit
+- Smazat díl — ověřit
+
+**5.5 Objednávky dodavatele (/parts/orders):**
+- Ověřit seznam objednávek (prázdný zatím)
+- Po vytvoření objednávky v dalších krocích — zkontrolovat, že se zde zobrazí
+
+**5.6 Veřejný eshop — katalog (/shop/katalog nebo /dily/katalog):**
+- Ověřit, že díly jsou viditelné
+- Vyhledávání: zadat "motor" — ověřit výsledky
+- Filtry: kategorie, cena od-do, stav, kompatibilita
+- Řazení: cena, nejnovější
+- Kliknout na detail dílu — ověřit fotky, popis, parametry, tlačítko "Přidat do košíku"
+
+**5.7 Košík (/shop/kosik):**
+- Přidat díl do košíku z detailu
+- Ověřit: díl je v košíku, správná cena
+- Změnit množství na 2 — ověřit přepočet
+- Přidat další díl — ověřit celkovou částku
+- Odebrat jeden díl — ověřit
+- Vyprázdnit košík — ověřit
+
+**5.8 Checkout (/shop/objednavka):**
+- Znovu přidat díly do košíku
+- Jít na objednávku
+- Vyplnit dodací údaje:
+  - Jméno: Karel Kupec
+  - Adresa: Hlavní 123, Praha 1, 110 00
+  - Telefon: +420 777 678 901
+  - Email: kupec@test.cz
+  - Způsob doručení: (ověřit možnosti)
+  - Způsob platby: bankovní převod / dobírka
+- Odeslat objednávku — ověřit:
+  - Zápis do DB (tabulky Order + OrderItem)
+  - Redirect na potvrzení (/shop/objednavka/potvrzeni)
+  - Zobrazení čísla objednávky, rekapitulace
+
+**5.9 Moje objednávky (/shop/moje-objednavky):**
+- Ověřit, že objednávka je viditelná
+- Detail objednávky — stav, položky, celková cena
+- Ověřit stavy objednávky (PENDING, CONFIRMED, SHIPPED, DELIVERED)
+
+---
+
+### FÁZE 6 — Veřejný web (bez přihlášení)
+
+**6.1 Homepage (/):**
+- Ověřit všechny sekce: hero, jak to funguje, výhody, statistiky, CTA
+- Kliknout na KAŽDÉ tlačítko/odkaz:
+  - "Chci prodat auto" → /chci-prodat
+  - "Prohlédnout nabídku" → /nabidka
+  - "Stát se makléřem" → /kariera nebo /registrace/makler
+  - Navbar odkazy: Nabídka, Služby, O nás, Kontakt
+  - Footer odkazy: všechny
+- Ověřit responzivitu — zmenšit okno, ověřit mobilní menu
+
+**6.2 Katalog vozidel (/nabidka):**
+- Ověřit zobrazení vozidel (karty s fotkou, cenou, parametry)
+- Filtry — vyzkoušet KAŽDÝ:
+  - Značka (dropdown)
+  - Model (závislý na značce)
+  - Cena od — do
+  - Rok od — do
+  - Palivo (benzín, nafta, elektro, hybrid)
+  - Převodovka (manuální, automat)
+  - Najeto od — do
+  - Karosérie (sedan, kombi, SUV...)
+- Řazení: nejnovější, nejlevnější, nejdražší
+- Stránkování — ověřit
+- Reset filtrů — ověřit
+
+**6.3 Detail vozu (/nabidka/[slug]):**
+- Galerie fotek — šipky, zvětšení, náhledy
+- Parametry — všechny zobrazené
+- Popis — text
+- Výbava — seznam
+- Cenová historie — graf/timeline (pokud implementováno)
+- Kontaktní formulář — vyplnit a odeslat:
+  - Jméno: Testovací Zájemce
+  - Telefon: +420 777 111 222
+  - Email: test@test.cz
+  - Zpráva: "Mám zájem o prohlídku"
+- Ověřit zápis do DB (Inquiry nebo Lead)
+- Podobné vozy — ověřit sekci
+- Sdílení — tlačítka pro sociální sítě
+
+**6.4 Porovnání vozů (/nabidka/porovnani):**
+- Přidat 2-3 vozy do porovnání (z katalogu)
+- Ověřit srovnávací tabulku — parametry vedle sebe
+- Odebrat vůz z porovnání
+
+**6.5 Chci prodat auto (/chci-prodat):**
+- Vyplnit formulář:
+  - Jméno: Testovací Prodejce
+  - Telefon: +420 777 222 333
+  - Email: prodejce@test.cz
+  - Značka: Škoda, Model: Fabia, Rok: 2018
+  - Najeto: 95000, Cena: 220000
+  - Poznámka: "Prodám, nehavarované, servisní kniha"
+- Odeslat — ověřit:
+  - Zápis do DB (Lead nebo SellRequest)
+  - Potvrzovací stránka / zpráva
+  - (Email notifikace — pokud Resend nastaven)
+
+**6.6 Služby:**
+- /sluzby/proverka — obsah, CTA tlačítko, formulář/odkaz na Cebia check
+- /sluzby/financovani — obsah, kalkulačka (pokud je)
+- /sluzby/pojisteni — obsah, odkaz na partnery
+- /sluzby/vykup — obsah, formulář
+
+**6.7 Kontakt (/kontakt):**
+- Vyplnit formulář:
+  - Jméno: Test Kontakt
+  - Email: kontakt@test.cz
+  - Předmět: Dotaz na služby
+  - Zpráva: "Chtěl bych se zeptat na podmínky spolupráce"
+- Odeslat — ověřit potvrzení, zápis
+
+**6.8 Makléři (/makleri):**
+- Seznam makléřů — ověřit zobrazení (foto, jméno, region, hodnocení)
+- Kliknout na profil makléře — ověřit detail (statistiky, recenze, kontakt)
+
+**6.9 Informační stránky:**
+- /o-nas — ověřit obsah, tým, mise
+- /recenze — ověřit zobrazení recenzí
+- /kariera — ověřit pozice, CTA pro přihlášení
+- /prezentace — ověřit obsah
+
+**6.10 Watchdog (hlídací pes):**
+- Pokud existuje formulář pro nastavení hlídacího psu — vyplnit:
+  - Značka: BMW, Model: 3, Cena do: 400000
+  - Email pro notifikace
+- Ověřit zápis (tabulka Watchdog)
+
+**6.11 Oblíbené:**
+- Přihlásit se jako kupující
+- Přidat vozidlo do oblíbených — ověřit
+- Jít na stránku oblíbených — ověřit seznam
+- Odebrat z oblíbených — ověřit
+
+---
+
+### FÁZE 7 — Admin panel (role: ADMIN)
+
+**7.1 Dashboard (/admin/dashboard):**
+- Ověřit statistiky: celkem vozidel, makléřů, leadů, inzerátů
+- Grafy: nová vozidla za měsíc, provize, aktivita
+- Rychlé akce
+
+**7.2 Správa makléřů (/admin/brokers):**
+- Seznam makléřů — tabulka s filtry
+- Detail makléře — všechny info, vozidla, provize, smlouvy
+- Schválit makléře (status ONBOARDING → ACTIVE)
+- Zamítnout makléře
+- Deaktivovat makléře
+- Pozvat nového makléře — vytvořit pozvánku (Invitation)
+
+**7.3 Správa vozidel (/admin/vehicles):**
+- Seznam všech vozidel — filtry podle stavu, makléře, značky
+- Schválit vozidlo (PENDING → APPROVED)
+- Zamítnout vozidlo
+- Detail vozu — changelog, historie změn
+- Nahlášená vozidla (flags) — zpracovat
+
+**7.4 Správa leadů (/admin/leads):**
+- Seznam leadů — všechny příchozí poptávky
+- Přiřadit lead makléři
+- Změnit stav leadu (NEW → CONTACTED → CONVERTED / LOST)
+- Detail leadu — historie, poznámky
+
+**7.5 Správa inzerátů (/admin/inzerce):**
+- Seznam všech inzerátů
+- Schválit / zamítnout inzerát
+- Editovat inzerát
+- Statistiky inzerátů
+
+**7.6 Marketplace admin (/admin/marketplace):**
+- Seznam flip projektů
+- Schválit / zamítnout
+- Detail — investice, stav
+
+**7.7 Partneři (/admin/partners):**
+- Seznam partnerů (bazary, vrakoviště)
+- Schválit / zamítnout
+- Detail partnera — aktivita, fakturace
+
+**7.8 Platby (/admin/payments):**
+- Přehled plateb
+- Výplaty makléřům — schválení
+- Výplaty prodejcům
+
+**7.9 Feedy (/admin/feeds):**
+- Import konfigurace (Sauto, TipCars atd.)
+- Stav importu — poslední run, počet importovaných
+- Spustit import ručně
+
+**7.10 Manažerský dashboard (/admin/manager):**
+- Pokud přihlášen jako MANAGER — ověřit specifické funkce
+- Schvalování vozidel svého týmu
+- Statistiky svého regionu
+- Notifikace
+
+---
+
+### FÁZE 8 — Marketplace (role: VERIFIED_DEALER + INVESTOR)
+
+**8.1 Dealer dashboard (/marketplace/dealer):**
+- Přihlásit se jako dealer (dealer@test.cz)
+- Vytvořit flip příležitost:
+  - Auto: BMW 320d, rok 2017
+  - Nákupní cena: 280000 Kč
+  - Odhadované opravy: 45000 Kč
+  - Odhadovaná prodejní cena: 420000 Kč
+  - Popis oprav: výměna rozvodů, nové brzdy, detailing
+  - Fotky
+- Ověřit zápis do DB (FlipOpportunity)
+- Seznam mých projektů — stavy
+
+**8.2 Investor dashboard (/marketplace/investor):**
+- Přihlásit se jako investor (investor@test.cz)
+- Ověřit seznam dostupných příležitostí
+- Detail příležitosti — kalkulace zisku, fotky, info
+- Investovat do příležitosti — ověřit flow
+- Portfolio — moje investice
+
+**8.3 Marketplace landing (/marketplace):**
+- Ověřit veřejnou stránku — obsah, CTA, registrace
+
+---
+
+### FÁZE 9 — Partner modul (role: PARTNER_BAZAR, PARTNER_VRAKOVISTE)
+
+**9.1 Partner dashboard (/partner/dashboard):**
+- Přihlásit se jako partner bazar (partnerbazar@test.cz)
+- Ověřit dashboard — statistiky, aktivita
+
+**9.2 Partner vozidla (/partner/vehicles):**
+- Přidat vozidlo jako partner
+- Seznam partnerských vozidel
+
+**9.3 Partner díly (/partner/parts):**
+- Přihlásit se jako partner vrakoviště (partnervrak@test.cz)
+- Přidat díly
+- Seznam dílů
+
+**9.4 Partner leady (/partner/leads):**
+- Ověřit příchozí leady pro partnera
+
+**9.5 Partner fakturace (/partner/billing):**
+- Ověřit přehled fakturace
+
+---
+
+### FÁZE 10 — Průřezové funkce
+
+**10.1 Cebia prověrka (/cebia):**
+- Zadat VIN — ověřit prověrku
+- Stripe platba za prověrku (nebo graceful error)
+
+**10.2 VIN dekodér:**
+- Na každém formuláři kde je VIN — zadat VIN a ověřit dekódování
+- Ověřit fallback (vindecoder.eu → NHTSA)
+
+**10.3 Notifikace:**
+- Ověřit, že notifikace se vytvářejí v DB (tabulka Notification)
+- Push notifikace — ověřit v PWA
+- Email notifikace — ověřit (pokud Resend nastaven)
+
+**10.4 Vyhledávání:**
+- Globální search v PWA — zadat "Passat", ověřit výsledky
+- Search v admin panelu
+
+**10.5 Sitemap a SEO:**
+- /sitemap.xml — ověřit generování
+- /robots.txt — ověřit obsah
+- Meta tagy na každé stránce — title, description
+
+**10.6 PWA funkce:**
+- Service Worker (/sw.js) — ověřit registraci
+- manifest.json — ověřit
+- Offline mód — ověřit basic funkčnost
+
+**10.7 Feed import (/api/feeds/sauto.xml):**
+- Ověřit XML feed — struktura, data
+
+---
+
+### Kontext:
+- Server: `ssh root@91.98.203.239`, appka v `/var/www/carmakler`
+- DB: SQLite v `/var/www/carmakler/dev.db` (na serveru: `/var/www/carmakler/dev.db`)
+- Deploy po opravě: `cd /var/www/carmakler && git pull && npx prisma generate && npx prisma migrate deploy && npm run build && pm2 restart carmakler`
+- API klíče NEJSOU nastavené: Cloudinary, Pusher, Resend, Claude, Stripe, VIN decoder, Cebia, Mapy.cz
+- Funkce vyžadující API klíč: zalogovat jako "vyžaduje API klíč", NEopravovat
+- Funkce padající na chybu v kódu: OKAMŽITĚ OPRAVIT
+- Platforma má 143 stránek, 175+ API endpointů, 50+ DB modelů, 12 rolí
+- TASK-001 až TASK-028 jsou označené jako hotové — tento task ověří skutečný stav
+
+### Očekávaný výsledek:
+- KAŽDÝ flow otestovaný end-to-end jako reálný uživatel
+- Každý bug okamžitě opravený
+- V DB existují kompletní testovací data pro všechny role
+- Výstupní report: tabulka VŠECH funkcí se stavem (funguje / nefunguje / vyžaduje API klíč / částečně)
+- Platforma připravená na demo — kdokoliv si může vytvořit účet, projít celý flow
 
 ---
 
