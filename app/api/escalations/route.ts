@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createEscalationSchema } from "@/lib/validators/escalation";
+import { createNotification } from "@/lib/notifications";
 
 export async function POST(request: NextRequest) {
   try {
@@ -45,14 +46,12 @@ export async function POST(request: NextRequest) {
 
     // Notifikace manažerovi
     if (broker?.managerId) {
-      await prisma.notification.create({
-        data: {
-          userId: broker.managerId,
-          type: "SYSTEM",
-          title: urgency === "URGENT" ? "Urgentní eskalace" : "Nová eskalace",
-          body: `Makléř nahlásil problém: ${type}`,
-          link: `/admin/escalations/${escalation.id}`,
-        },
+      await createNotification({
+        userId: broker.managerId,
+        type: "SYSTEM",
+        title: urgency === "URGENT" ? "Urgentní eskalace" : "Nová eskalace",
+        body: `Makléř nahlásil problém: ${type}`,
+        link: `/admin/escalations/${escalation.id}`,
       });
     }
 

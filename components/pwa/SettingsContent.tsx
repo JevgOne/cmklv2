@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
@@ -13,6 +14,10 @@ interface SettingsContentProps {
   bankAccount: string;
   quickModeEnabled: boolean;
   userLevel?: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  avatar: string;
 }
 
 export function SettingsContent({
@@ -21,6 +26,10 @@ export function SettingsContent({
   bankAccount,
   quickModeEnabled: initialQuickMode,
   userLevel,
+  firstName,
+  lastName,
+  phone,
+  avatar,
 }: SettingsContentProps) {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -36,6 +45,59 @@ export function SettingsContent({
     type: "success" | "error";
     text: string;
   } | null>(null);
+  const [exporting, setExporting] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
+  const [deleteMessage, setDeleteMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
+
+  async function handleExportData() {
+    setExporting(true);
+    try {
+      const res = await fetch("/api/settings/export");
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `carmakler-data-export-${new Date().toISOString().slice(0, 10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+    } catch {
+      // silent
+    } finally {
+      setExporting(false);
+    }
+  }
+
+  async function handleDeleteAccount() {
+    if (!confirm("Opravdu chcete požádat o smazání účtu? Tato akce je nevratná.")) return;
+    setDeletingAccount(true);
+    setDeleteMessage(null);
+    try {
+      const res = await fetch("/api/settings/delete-account", { method: "POST" });
+      if (res.ok) {
+        setDeleteMessage({
+          type: "success",
+          text: "Žádost o smazání účtu byla odeslána. Budeme vás kontaktovat.",
+        });
+      } else {
+        const data = await res.json();
+        setDeleteMessage({
+          type: "error",
+          text: data.error || "Nepodařilo se odeslat žádost",
+        });
+      }
+    } catch {
+      setDeleteMessage({ type: "error", text: "Chyba serveru" });
+    } finally {
+      setDeletingAccount(false);
+    }
+  }
 
   async function handlePasswordChange(e: React.FormEvent) {
     e.preventDefault();
@@ -277,6 +339,85 @@ export function SettingsContent({
           </div>
         </Card>
       </Link>
+
+      {/* Podpis pro emaily */}
+      <Card className="p-5">
+        <h2 className="text-lg font-bold text-gray-900 mb-4">Podpis pro emaily</h2>
+        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="flex items-center gap-3">
+            {avatar ? (
+              <Image
+                src={avatar}
+                alt="Avatar"
+                width={40}
+                height={40}
+                className="rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold text-sm">
+                {firstName.charAt(0)}{lastName.charAt(0)}
+              </div>
+            )}
+            <div>
+              <p className="text-sm font-semibold text-gray-900">
+                {firstName} {lastName}
+              </p>
+              {phone && (
+                <p className="text-xs text-gray-500">{phone}</p>
+              )}
+              <p className="text-xs text-gray-500">{email}</p>
+            </div>
+          </div>
+        </div>
+        <p className="text-xs text-gray-400 mt-3">
+          Podpis se generuje automaticky z vašeho profilu
+        </p>
+      </Card>
+
+      {/* Data a soukromí */}
+      <Card className="p-5">
+        <h2 className="text-lg font-bold text-gray-900 mb-4">Data a soukromí</h2>
+        <div className="space-y-3">
+          <div>
+            <p className="text-sm text-gray-500 mb-2">
+              Stáhněte si kopii všech vašich dat uložených v systému Carmakler.
+            </p>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleExportData}
+              disabled={exporting}
+            >
+              {exporting ? "Exportuji..." : "Exportovat moje data"}
+            </Button>
+          </div>
+          <div className="border-t border-gray-100 pt-3">
+            <p className="text-sm text-gray-500 mb-2">
+              Požádejte o trvalé smazání vašeho účtu a všech souvisejících dat.
+            </p>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+              onClick={handleDeleteAccount}
+              disabled={deletingAccount}
+            >
+              {deletingAccount ? "Odesílám..." : "Požádat o smazání účtu"}
+            </Button>
+            {deleteMessage && (
+              <div
+                className={`text-sm px-3 py-2 rounded-lg mt-2 ${
+                  deleteMessage.type === "success"
+                    ? "bg-green-50 text-green-700"
+                    : "bg-red-50 text-red-700"
+                }`}
+              >
+                {deleteMessage.text}
+              </div>
+            )}
+          </div>
+        </div>
+      </Card>
 
       {/* O aplikaci */}
       <Card className="p-5">

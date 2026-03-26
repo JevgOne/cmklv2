@@ -16,6 +16,9 @@ export default async function SettingsPage() {
     select: {
       id: true,
       email: true,
+      phone: true,
+      avatar: true,
+      slug: true,
       ico: true,
       bankAccount: true,
       firstName: true,
@@ -38,6 +41,10 @@ export default async function SettingsPage() {
         bankAccount={user.bankAccount || ""}
         quickModeEnabled={user.quickModeEnabled}
         userLevel={user.level}
+        firstName={user.firstName}
+        lastName={user.lastName}
+        phone={user.phone || ""}
+        avatar={user.avatar || ""}
       />
     </div>
   );

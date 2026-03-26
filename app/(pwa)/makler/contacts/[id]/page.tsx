@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { CommunicationTimeline } from "@/components/pwa/contacts/CommunicationTimeline";
 import { CommunicationForm } from "@/components/pwa/contacts/CommunicationForm";
 import { SmsTemplates } from "@/components/pwa/contacts/SmsTemplates";
+import { EscalationForm } from "@/components/pwa/EscalationForm";
 import Link from "next/link";
 
 interface ContactDetail {
@@ -62,6 +63,7 @@ export default function ContactDetailPage() {
   const [loading, setLoading] = useState(true);
   const [showCommForm, setShowCommForm] = useState(false);
   const [showSmsTemplates, setShowSmsTemplates] = useState(false);
+  const [showEscalation, setShowEscalation] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
   const fetchContact = useCallback(async () => {
@@ -345,6 +347,21 @@ export default function ContactDetailPage() {
 
         <CommunicationTimeline communications={contact.communications} />
       </div>
+
+      {/* Eskalace */}
+      <Button
+        variant="outline"
+        size="sm"
+        className="w-full text-red-600 border-red-200 hover:bg-red-50"
+        onClick={() => setShowEscalation(true)}
+      >
+        Eskalovat
+      </Button>
+      <EscalationForm
+        open={showEscalation}
+        onClose={() => setShowEscalation(false)}
+        contactId={contact.id}
+      />
     </div>
   );
 }

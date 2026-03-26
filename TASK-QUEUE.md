@@ -4854,7 +4854,7 @@ Specifikace obrazovky detailu vozu v PWA (`/app/vehicles/[id]`) — centrální 
 
 ## TASK-036: Nastavení makléře, vyhledávání v PWA, eskalace, přenos vozů
 Priorita: 2
-Stav: čeká
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:

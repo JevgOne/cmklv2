@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/Badge";
@@ -14,6 +15,7 @@ import { EmailButton } from "@/components/pwa/emails/EmailButton";
 import { EmailHistory } from "@/components/pwa/emails/EmailHistory";
 import { VehiclePriceHistory } from "./VehiclePriceHistory";
 import { VehicleTimeline } from "./VehicleTimeline";
+import { EscalationForm } from "@/components/pwa/EscalationForm";
 import { formatPrice, formatMileage } from "@/lib/utils";
 
 // ---- Types ----
@@ -219,6 +221,7 @@ const paymentMethodLabels: Record<string, string> = {
 };
 
 export function VehicleDetailHub({ vehicle, stats, exclusiveContract, payment }: VehicleDetailHubProps) {
+  const [showEscalation, setShowEscalation] = useState(false);
   const statusInfo = statusMap[vehicle.status] || { variant: "default" as const, label: vehicle.status };
   const title = `${vehicle.brand} ${vehicle.model}${vehicle.variant ? ` ${vehicle.variant}` : ""}`;
   const newInquiries = vehicle.inquiries.filter((i) => i.status === "NEW");
@@ -671,7 +674,27 @@ export function VehicleDetailHub({ vehicle, stats, exclusiveContract, payment }:
         <div>
           <h3 className="font-semibold text-gray-900 mb-3">Akce</h3>
           <VehicleStatusActions vehicle={vehicle} />
+          <div className="mt-3">
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full text-red-600 border-red-200 hover:bg-red-50"
+              onClick={() => setShowEscalation(true)}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+              </svg>
+              Eskalovat
+            </Button>
+          </div>
         </div>
+
+        {/* Escalation modal */}
+        <EscalationForm
+          open={showEscalation}
+          onClose={() => setShowEscalation(false)}
+          vehicleId={vehicle.id}
+        />
       </div>
     </div>
   );
