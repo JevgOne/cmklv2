@@ -3623,7 +3623,7 @@ model PriceReduction {
 
 ## TASK-028: UX vylepšení — srovnání vozů, cenová historie, podobné vozy, transparentní timeline
 Priorita: 2
-Stav: čeká
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:
@@ -4979,6 +4979,86 @@ Když makléř onemocní, odejde, nebo se změní region:
 - Globální vyhledávání (vozy, kontakty, smlouvy)
 - Eskalace problémů na manažera s tracking stavů
 - Přenos vozů mezi makléři (jednotlivě nebo hromadně)
+
+---
+
+## TASK-037: Deployment — GitHub push + nasazení na produkční server
+Priorita: 1
+Stav: čeká
+Projekt: /Users/lunagroup/carmakler
+
+### Kompletní zadání:
+
+Celý projekt Carmakler nahrát na GitHub a nasadit na produkční server tak, aby byl dostupný na https://www.carmakler.cz. Web musí být zaheslovaný (nginx basic auth), aby nebyl veřejně přístupný.
+
+**Část 1 — GitHub push:**
+- Remote je nastavený: `git@github.com:JevgOne/cmklv2.git`
+- Pushnout branch `main` na GitHub
+- Ověřit, že `.env` NENÍ v repu (je v `.gitignore`)
+
+**Část 2 — Server setup:**
+Server `root@91.98.203.239` (Ubuntu 24.04 LTS, 30 GB RAM, 226 GB disk):
+- **Už nainstalované:** Node.js v24.11.1, npm 11.6.2, nginx (běží na 80/443), Docker, certbot, psql 16 klient
+- **Chybí / neaktivní:** PostgreSQL služba (klient je, server neběží — `inactive`), PM2 (není)
+- **Existující nginx sites:** `default` (vrací 444), `gmail-dashboard`, `n8n` — NEŠAHAT
+- **Existující SSL:** certifikát pro `n8n.wikiporadce.cz` — NEŠAHAT
+- **Docker:** běží, ale žádné kontejnery
+
+Kroky:
+1. Nainstalovat PM2 globálně (`npm install -g pm2`)
+2. Spustit a nakonfigurovat PostgreSQL (`systemctl enable --now postgresql`, vytvořit databázi `carmakler` a uživatele s heslem)
+3. Naklonovat repo z GitHubu na server do `/var/www/carmakler`
+4. Vytvořit `.env` soubor s produkčními proměnnými (DATABASE_URL, NEXTAUTH_SECRET, NEXTAUTH_URL=https://www.carmakler.cz, Cloudinary, Pusher, Resend, Claude API klíče — uživatel dodá hodnoty)
+5. `npm install` + `npx prisma migrate deploy` + `npm run build`
+6. Spustit přes PM2: `pm2 start npm --name carmakler -- start`
+7. `pm2 startup` + `pm2 save` (aby app přežila restart serveru)
+
+**Část 3 — Nginx + SSL + heslo:**
+1. Nainstalovat `apache2-utils` (pro htpasswd)
+2. Vytvořit htpasswd soubor: `htpasswd -c /etc/nginx/.htpasswd carmakler` — uživatel zvolí heslo
+3. Vytvořit nginx site config `/etc/nginx/sites-available/carmakler`:
+   - `server_name carmakler.cz www.carmakler.cz;`
+   - `auth_basic "Carmakler - pristup omezen";`
+   - `auth_basic_user_file /etc/nginx/.htpasswd;`
+   - `proxy_pass http://localhost:3000;`
+   - Standardní proxy headers (Host, X-Real-IP, X-Forwarded-For, X-Forwarded-Proto)
+   - WebSocket support (pro Pusher/real-time)
+4. Symlink do `sites-enabled`, `nginx -t` + `systemctl reload nginx`
+5. `certbot --nginx -d carmakler.cz -d www.carmakler.cz` pro SSL certifikát
+6. Ověřit: web na https://www.carmakler.cz vyžaduje heslo, po zadání se zobrazí aplikace
+
+**Část 4 — DNS (NUTNÉ! Aktuálně blokuje deploy):**
+- `carmakler.cz` → aktuálně směřuje na `99.83.190.102` / `75.2.70.75` (Webflow)
+- `www.carmakler.cz` → aktuálně směřuje na `proxy-ssl.webflow.com` (Webflow)
+- **Je potřeba změnit DNS záznamy** u registrátora domény:
+  - A záznam `carmakler.cz` → `91.98.203.239`
+  - A záznam `www.carmakler.cz` → `91.98.203.239` (nebo CNAME na carmakler.cz)
+- Bez této změny SSL certifikát nepůjde vystavit a web nebude dostupný
+- Uživatel musí tuto změnu provést sám u registrátora domény
+
+**Část 5 — CI/CD (volitelné, doporučené):**
+- GitHub Actions workflow (`.github/workflows/deploy.yml`):
+  - Trigger: push na `main`
+  - SSH na server → `cd /var/www/carmakler` → `git pull` → `npm install` → `npx prisma migrate deploy` → `npm run build` → `pm2 restart carmakler`
+  - Secret v GitHub repo: `SSH_PRIVATE_KEY`, `SERVER_IP`
+
+### Kontext:
+- Server hostuje jiné projekty (n8n na n8n.wikiporadce.cz, gmail-dashboard) — jejich nginx konfigurace a služby se NESMÍ měnit
+- PostgreSQL klient v16 je nainstalován, ale služba neběží — je potřeba ji aktivovat, případně doinstalovat server balíček (`postgresql-16`)
+- DNS záznamy aktuálně míří na Webflow — uživatel musí přesměrovat u svého registrátora domény PŘED nasazením SSL
+- Produkční env proměnné (API klíče) musí dodat uživatel
+- Heslo pro basic auth (nginx) zvolí uživatel — login `carmakler`, heslo dle volby
+- SSH klíč na serveru: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE8lTX+4XjE6MVSkmD1RINa8jqA8x0nysueU8Bkrn9Dj lunagroup@carmakler`
+
+### Očekávaný výsledek:
+- Kód je na GitHubu: https://github.com/JevgOne/cmklv2
+- PostgreSQL běží na serveru s migrovanou databází
+- Next.js app běží přes PM2, přežije restart serveru
+- Nginx reverse proxy s SSL certifikátem
+- **Web zaheslovaný** — přístup jen po zadání loginu a hesla (nginx basic auth)
+- Web dostupný na https://www.carmakler.cz
+- Existující služby na serveru (n8n, gmail-dashboard) fungují beze změn
+- (Volitelně) Push na `main` spustí automatický deploy přes GitHub Actions
 
 ---
 

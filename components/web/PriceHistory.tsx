@@ -1,6 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 interface PriceEntry {
   date: string;
@@ -53,6 +62,44 @@ export function PriceHistory({ vehicleId }: { vehicleId: string }) {
       <h3 className="text-lg font-bold text-gray-900 mb-4">
         Cenová historie
       </h3>
+
+      {/* Price chart */}
+      {data.history.length >= 2 && (
+        <div className="mb-4">
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart
+              data={data.history.map((entry) => {
+                const d = new Date(entry.date);
+                return {
+                  date: `${d.getDate()}.${d.getMonth() + 1}.`,
+                  price: entry.price,
+                };
+              })}
+              margin={{ top: 5, right: 10, left: 10, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+              <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+              <YAxis
+                tickFormatter={(v: number) => `${formatPrice(v)} Kč`}
+                tick={{ fontSize: 11 }}
+                width={100}
+              />
+              <Tooltip
+                formatter={(value) => [`${formatPrice(Number(value ?? 0))} Kč`, "Cena"]}
+                labelFormatter={(label) => `Datum: ${String(label ?? "")}`}
+              />
+              <Line
+                type="monotone"
+                dataKey="price"
+                stroke="#F97316"
+                strokeWidth={2}
+                dot={{ fill: "#F97316", r: 4 }}
+                activeDot={{ r: 6 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
 
       {/* Price change summary bar */}
       {data.history.length >= 2 && (

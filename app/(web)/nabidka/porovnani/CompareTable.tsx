@@ -84,7 +84,7 @@ export function CompareTable() {
     const ids = compareVehicles.map((v) => v.id);
     Promise.all(
       ids.map((id) =>
-        fetch(`/api/vehicles/${id}/full`).then((r) => {
+        fetch(`/api/vehicles/${id}`).then((r) => {
           if (!r.ok) return null;
           return r.json();
         }),
@@ -355,13 +355,20 @@ export function CompareTable() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
         {details.map((v) => (
-          <Link
-            key={v.id}
-            href={`/nabidka/${v.slug || v.id}`}
-            className="inline-flex items-center justify-center gap-2 font-semibold rounded-full border-none cursor-pointer transition-all duration-200 py-3 px-6 text-sm bg-gradient-to-br from-orange-500 to-orange-600 text-white no-underline hover:-translate-y-0.5"
-          >
-            Detail — {v.brand} {v.model}
-          </Link>
+          <div key={v.id} className="flex flex-col gap-2">
+            <Link
+              href={`/nabidka/${v.slug || v.id}`}
+              className="inline-flex items-center justify-center gap-2 font-semibold rounded-full border-none cursor-pointer transition-all duration-200 py-3 px-6 text-sm bg-gradient-to-br from-orange-500 to-orange-600 text-white no-underline hover:-translate-y-0.5"
+            >
+              Detail — {v.brand} {v.model}
+            </Link>
+            <Link
+              href={`/nabidka/${v.slug || v.id}#kontakt`}
+              className="inline-flex items-center justify-center gap-2 font-semibold rounded-full border-2 border-orange-500 cursor-pointer transition-all duration-200 py-3 px-6 text-sm text-orange-600 bg-white no-underline hover:bg-orange-50 hover:-translate-y-0.5"
+            >
+              Kontaktovat makléře
+            </Link>
+          </div>
         ))}
       </div>
     </div>
