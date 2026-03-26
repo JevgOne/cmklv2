@@ -9,8 +9,9 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { ContactCard, ContactCardData } from "@/components/pwa/contacts/ContactCard";
 
 const CONTACT_TABS = [
-  { value: "all", label: "Vsechny" },
+  { value: "all", label: "Všechny" },
   { value: "with_vehicle", label: "S vozem" },
+  { value: "without_vehicle", label: "Bez vozu" },
   { value: "follow_up", label: "Follow-up" },
 ];
 
@@ -55,18 +56,18 @@ export default function ContactsPage() {
         <div>
           <h1 className="text-2xl font-extrabold text-gray-900">Kontakty</h1>
           <p className="text-sm text-gray-500 mt-1">
-            CRM prodejcu
+            CRM prodejců
           </p>
         </div>
         <Link href="/makler/contacts/new">
           <Button variant="primary" size="sm">
-            + Pridat
+            + Přidat
           </Button>
         </Link>
       </div>
 
       <Input
-        placeholder="Hledat jmeno, telefon..."
+        placeholder="Hledat jméno, telefon..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
@@ -90,11 +91,11 @@ export default function ContactsPage() {
       ) : contacts.length === 0 ? (
         <EmptyState
           icon="👥"
-          title="Zadne kontakty"
+          title="Žádné kontakty"
           description={
             activeTab === "follow_up"
-              ? "Nemáte zadne kontakty k follow-upu."
-              : "Zatim nemáte zadne kontakty prodejcu."
+              ? "Nemáte žádné kontakty k follow-upu."
+              : "Zatím nemáte žádné kontakty prodejců."
           }
         />
       ) : (

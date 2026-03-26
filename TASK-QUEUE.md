@@ -4576,7 +4576,7 @@ Exkluzivní zprostředkovatelská smlouva je jádro businessu — prodejce se za
 
 ## TASK-034: CRM prodejců — kontakty, historie komunikace, synchronizace
 Priorita: 1
-Stav: čeká
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:

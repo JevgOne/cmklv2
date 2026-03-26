@@ -30,3 +30,7 @@ export async function requestImageSync(): Promise<boolean> {
 export async function requestContractSync(): Promise<boolean> {
   return registerBackgroundSync("sync-contracts");
 }
+
+export async function requestContactSync(): Promise<boolean> {
+  return registerBackgroundSync("sync-contacts");
+}

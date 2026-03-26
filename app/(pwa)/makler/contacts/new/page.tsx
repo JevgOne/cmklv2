@@ -23,7 +23,7 @@ export default function NewContactPage() {
     e.preventDefault();
 
     if (!name.trim() || !phone.trim()) {
-      setError("Jmeno a telefon jsou povinne");
+      setError("Jméno a telefon jsou povinné");
       return;
     }
 
@@ -54,7 +54,7 @@ export default function NewContactPage() {
       const contact = await res.json();
       router.push(`/makler/contacts/${contact.id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Neznama chyba");
+      setError(err instanceof Error ? err.message : "Neznámá chyba");
     } finally {
       setLoading(false);
     }
@@ -64,18 +64,18 @@ export default function NewContactPage() {
     <div className="p-4 space-y-4">
       <div>
         <h1 className="text-2xl font-extrabold text-gray-900">
-          Novy kontakt
+          Nový kontakt
         </h1>
         <p className="text-sm text-gray-500 mt-1">
-          Pridejte noveho prodejce
+          Přidejte nového prodejce
         </p>
       </div>
 
       <Card className="p-4">
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            label="Jmeno *"
-            placeholder="Jan Novak"
+            label="Jméno *"
+            placeholder="Jan Novák"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
@@ -104,15 +104,15 @@ export default function NewContactPage() {
           />
 
           <Input
-            label="Mesto"
+            label="Město"
             placeholder="Praha"
             value={city}
             onChange={(e) => setCity(e.target.value)}
           />
 
           <Textarea
-            label="Poznamka"
-            placeholder="Volitelna poznamka k prodejci..."
+            label="Poznámka"
+            placeholder="Volitelná poznámka k prodejci..."
             value={note}
             onChange={(e) => setNote(e.target.value)}
             rows={3}
@@ -123,14 +123,14 @@ export default function NewContactPage() {
 
           <div className="flex gap-3">
             <Button type="submit" variant="primary" disabled={loading}>
-              {loading ? "Ukladam..." : "Ulozit kontakt"}
+              {loading ? "Ukládám..." : "Uložit kontakt"}
             </Button>
             <Button
               type="button"
               variant="ghost"
               onClick={() => router.back()}
             >
-              Zrusit
+              Zrušit
             </Button>
           </div>
         </form>

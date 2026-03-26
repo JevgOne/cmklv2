@@ -154,6 +154,9 @@ const createVehicleSchema = z.object({
   district: z.string().optional(),
   latitude: z.number().optional(),
   longitude: z.number().optional(),
+  sellerName: z.string().optional(),
+  sellerPhone: z.string().optional(),
+  sellerEmail: z.string().email().optional().or(z.literal("")),
 });
 
 function generateSlug(brand: string, model: string, year: number): string {
@@ -231,6 +234,54 @@ export async function POST(request: NextRequest) {
         broker: { select: { id: true, firstName: true, lastName: true } },
       },
     });
+
+    // Auto-create/update SellerContact if seller info provided
+    if (data.sellerName && data.sellerPhone) {
+      try {
+        const existingContact = await prisma.sellerContact.findFirst({
+          where: {
+            brokerId: session.user.id,
+            phone: data.sellerPhone,
+          },
+        });
+
+        let sellerContactId: string;
+
+        if (existingContact) {
+          await prisma.sellerContact.update({
+            where: { id: existingContact.id },
+            data: {
+              name: data.sellerName,
+              email: data.sellerEmail || existingContact.email,
+              totalVehicles: { increment: 1 },
+              lastContactAt: new Date(),
+            },
+          });
+          sellerContactId = existingContact.id;
+        } else {
+          const newContact = await prisma.sellerContact.create({
+            data: {
+              brokerId: session.user.id,
+              name: data.sellerName,
+              phone: data.sellerPhone,
+              email: data.sellerEmail || null,
+              totalVehicles: 1,
+              lastContactAt: new Date(),
+            },
+          });
+          sellerContactId = newContact.id;
+        }
+
+        // Link vehicle to seller contact
+        await prisma.vehicle.update({
+          where: { id: vehicle.id },
+          data: { sellerContactId },
+        });
+      } catch (contactError) {
+        // Don't fail vehicle creation if contact linking fails
+        console.error("SellerContact upsert error:", contactError);
+      }
+    }
 
     return NextResponse.json({ vehicle }, { status: 201 });
   } catch (error) {

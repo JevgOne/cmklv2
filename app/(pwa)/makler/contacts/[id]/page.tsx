@@ -46,11 +46,11 @@ interface ContactDetail {
 
 const STATUS_LABELS: Record<string, { label: string; variant: "verified" | "pending" | "rejected" | "default" }> = {
   DRAFT: { label: "Koncept", variant: "default" },
-  PENDING: { label: "Ceka", variant: "pending" },
-  ACTIVE: { label: "Aktivni", variant: "verified" },
-  RESERVED: { label: "Rezervovano", variant: "pending" },
-  SOLD: { label: "Prodano", variant: "verified" },
-  ARCHIVED: { label: "Archivovano", variant: "default" },
+  PENDING: { label: "Čeká", variant: "pending" },
+  ACTIVE: { label: "Aktivní", variant: "verified" },
+  RESERVED: { label: "Rezervováno", variant: "pending" },
+  SOLD: { label: "Prodáno", variant: "verified" },
+  ARCHIVED: { label: "Archivováno", variant: "default" },
 };
 
 export default function ContactDetailPage() {
@@ -204,7 +204,7 @@ export default function ContactDetailPage() {
 
         {contact.note && (
           <div>
-            <div className="text-sm text-gray-500">Poznamka</div>
+            <div className="text-sm text-gray-500">Poznámka</div>
             <div className="text-sm text-gray-700">{contact.note}</div>
           </div>
         )}
@@ -216,19 +216,19 @@ export default function ContactDetailPage() {
           <div className="text-2xl font-extrabold text-gray-900">
             {contact.totalVehicles}
           </div>
-          <div className="text-xs text-gray-500">Nabrano aut</div>
+          <div className="text-xs text-gray-500">Nabráno aut</div>
         </Card>
         <Card className="p-3 text-center">
           <div className="text-2xl font-extrabold text-gray-900">
             {contact.totalSold}
           </div>
-          <div className="text-xs text-gray-500">Prodano</div>
+          <div className="text-xs text-gray-500">Prodáno</div>
         </Card>
         <Card className="p-3 text-center">
           <div className="text-2xl font-extrabold text-gray-900">
             {successRate}%
           </div>
-          <div className="text-xs text-gray-500">Uspesnost</div>
+          <div className="text-xs text-gray-500">Úspěšnost</div>
         </Card>
       </div>
 
@@ -285,7 +285,7 @@ export default function ContactDetailPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-bold text-gray-900">
-                        {v.price.toLocaleString("cs-CZ")} Kc
+                        {v.price.toLocaleString("cs-CZ")} Kč
                       </span>
                       <Badge variant={statusInfo.variant}>
                         {statusInfo.label}
@@ -305,7 +305,7 @@ export default function ContactDetailPage() {
           onClick={() => setShowSmsTemplates(!showSmsTemplates)}
           className="text-sm font-semibold text-orange-500 cursor-pointer bg-transparent border-none p-0"
         >
-          {showSmsTemplates ? "Skryt SMS sablony" : "Zobrazit SMS sablony"}
+          {showSmsTemplates ? "Skrýt SMS šablony" : "Zobrazit SMS šablony"}
         </button>
         {showSmsTemplates && (
           <div className="mt-3">
@@ -329,7 +329,7 @@ export default function ContactDetailPage() {
             size="sm"
             onClick={() => setShowCommForm(!showCommForm)}
           >
-            {showCommForm ? "Zrusit" : "+ Pridat"}
+            {showCommForm ? "Zrušit" : "+ Přidat"}
           </Button>
         </div>
 

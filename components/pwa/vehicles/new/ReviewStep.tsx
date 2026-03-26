@@ -148,6 +148,7 @@ export function ReviewStep() {
         const d = draft.details ?? {};
         const p = draft.pricing ?? {};
         const v = draft.vin ?? {};
+        const c = draft.contact ?? {};
         const flatPayload = {
           vin: v.vin ?? "",
           brand: d.brand ?? "",
@@ -174,6 +175,9 @@ export function ReviewStep() {
           district: p.district,
           latitude: p.latitude,
           longitude: p.longitude,
+          sellerName: c.sellerName,
+          sellerPhone: c.sellerPhone,
+          sellerEmail: c.sellerEmail,
         };
 
         const response = await fetch("/api/vehicles", {
@@ -208,6 +212,7 @@ export function ReviewStep() {
         const od = draft.details ?? {};
         const op = draft.pricing ?? {};
         const ov = draft.vin ?? {};
+        const oc = draft.contact ?? {};
         await offlineStorage.addPendingAction(
           `submit_${draft.id}`,
           "SUBMIT_VEHICLE",
@@ -237,6 +242,9 @@ export function ReviewStep() {
             district: op.district,
             latitude: op.latitude,
             longitude: op.longitude,
+            sellerName: oc.sellerName,
+            sellerPhone: oc.sellerPhone,
+            sellerEmail: oc.sellerEmail,
           }
         );
 

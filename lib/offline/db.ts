@@ -47,9 +47,18 @@ export interface CarmaklerDB extends DBSchema {
       name: string;
       phone: string;
       email?: string;
+      address?: string;
+      city?: string;
+      note?: string;
+      totalVehicles: number;
+      totalSold: number;
+      lastContactAt?: number;
+      nextFollowUp?: number;
+      followUpNote?: string;
+      updatedAt: number;
       syncedAt: number;
     };
-    indexes: { "by-name": string };
+    indexes: { "by-name": string; "by-phone": string; "by-nextFollowUp": number };
   };
   vinCache: {
     key: string;
@@ -86,8 +95,8 @@ let dbPromise: Promise<IDBPDatabase<CarmaklerDB>> | null = null;
 
 export function getDB(): Promise<IDBPDatabase<CarmaklerDB>> {
   if (!dbPromise) {
-    dbPromise = openDB<CarmaklerDB>("carmakler-offline", 2, {
-      upgrade(db) {
+    dbPromise = openDB<CarmaklerDB>("carmakler-offline", 3, {
+      upgrade(db, oldVersion, _newVersion, transaction) {
         // Drafts store
         if (!db.objectStoreNames.contains("drafts")) {
           const drafts = db.createObjectStore("drafts", { keyPath: "id" });
@@ -119,6 +128,17 @@ export function getDB(): Promise<IDBPDatabase<CarmaklerDB>> {
         if (!db.objectStoreNames.contains("contacts")) {
           const contacts = db.createObjectStore("contacts", { keyPath: "id" });
           contacts.createIndex("by-name", "name");
+          contacts.createIndex("by-phone", "phone");
+          contacts.createIndex("by-nextFollowUp", "nextFollowUp");
+        } else if (oldVersion < 3 && transaction) {
+          // Upgrade existing contacts store with new indexes
+          const contactsStore = transaction.objectStore("contacts");
+          if (!contactsStore.indexNames.contains("by-phone")) {
+            contactsStore.createIndex("by-phone", "phone");
+          }
+          if (!contactsStore.indexNames.contains("by-nextFollowUp")) {
+            contactsStore.createIndex("by-nextFollowUp", "nextFollowUp");
+          }
         }
 
         // VIN cache store

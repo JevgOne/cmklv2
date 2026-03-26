@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Modal } from "@/components/ui/Modal";
 import { Input } from "@/components/ui/Input";
 import { getDB } from "@/lib/offline/db";
@@ -20,12 +20,14 @@ interface ContactSearchProps {
 
 export function ContactSearch({ open, onClose, onSelect }: ContactSearchProps) {
   const [query, setQuery] = useState("");
-  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [localContacts, setLocalContacts] = useState<Contact[]>([]);
+  const [apiContacts, setApiContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!open) return;
     loadContacts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   async function loadContacts() {
@@ -33,7 +35,7 @@ export function ContactSearch({ open, onClose, onSelect }: ContactSearchProps) {
     try {
       const db = await getDB();
       const allContacts = await db.getAll("contacts");
-      setContacts(
+      setLocalContacts(
         allContacts.map((c) => ({
           id: c.id,
           name: c.name,
@@ -42,19 +44,64 @@ export function ContactSearch({ open, onClose, onSelect }: ContactSearchProps) {
         }))
       );
     } catch {
-      setContacts([]);
+      setLocalContacts([]);
     } finally {
       setLoading(false);
     }
   }
 
-  const filtered = query.trim()
-    ? contacts.filter(
-        (c) =>
-          c.name.toLowerCase().includes(query.toLowerCase()) ||
-          c.phone.includes(query)
-      )
-    : contacts;
+  const searchAPI = useCallback(async (q: string) => {
+    if (!navigator.onLine || q.length < 2) {
+      setApiContacts([]);
+      return;
+    }
+    try {
+      const res = await fetch(`/api/contacts/search?q=${encodeURIComponent(q)}`);
+      if (res.ok) {
+        const data = await res.json();
+        setApiContacts(
+          (data.contacts ?? []).map((c: Contact) => ({
+            id: c.id,
+            name: c.name,
+            phone: c.phone,
+            email: c.email,
+          }))
+        );
+      }
+    } catch {
+      // API unavailable — local results only
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!query.trim()) {
+      setApiContacts([]);
+      return;
+    }
+    const timer = setTimeout(() => searchAPI(query.trim()), 300);
+    return () => clearTimeout(timer);
+  }, [query, searchAPI]);
+
+  // Merge local + API results, deduplicate by id
+  const mergedContacts = (() => {
+    const localFiltered = query.trim()
+      ? localContacts.filter(
+          (c) =>
+            c.name.toLowerCase().includes(query.toLowerCase()) ||
+            c.phone.includes(query)
+        )
+      : localContacts;
+
+    const seen = new Set(localFiltered.map((c) => c.id));
+    const merged = [...localFiltered];
+    for (const c of apiContacts) {
+      if (!seen.has(c.id)) {
+        merged.push(c);
+        seen.add(c.id);
+      }
+    }
+    return merged;
+  })();
 
   return (
     <Modal open={open} onClose={onClose} title="Hledat kontakt">
@@ -75,7 +122,7 @@ export function ContactSearch({ open, onClose, onSelect }: ContactSearchProps) {
               />
             ))}
           </div>
-        ) : filtered.length === 0 ? (
+        ) : mergedContacts.length === 0 ? (
           <p className="text-sm text-gray-400 text-center py-6">
             {query.trim()
               ? "Žádný kontakt nenalezen"
@@ -83,7 +130,7 @@ export function ContactSearch({ open, onClose, onSelect }: ContactSearchProps) {
           </p>
         ) : (
           <div className="space-y-1 max-h-[50vh] overflow-y-auto">
-            {filtered.map((contact) => (
+            {mergedContacts.map((contact) => (
               <button
                 key={contact.id}
                 onClick={() => {

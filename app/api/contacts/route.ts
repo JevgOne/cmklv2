@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
 
     const brokerId = session.user.id;
     const { searchParams } = new URL(request.url);
-    const filter = searchParams.get("filter"); // all, with_vehicle, follow_up
+    const filter = searchParams.get("filter"); // all, with_vehicle, without_vehicle, follow_up
     const q = searchParams.get("q");
     const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
     const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "20", 10)));
@@ -22,6 +22,8 @@ export async function GET(request: NextRequest) {
 
     if (filter === "with_vehicle") {
       where.totalVehicles = { gt: 0 };
+    } else if (filter === "without_vehicle") {
+      where.totalVehicles = 0;
     } else if (filter === "follow_up") {
       where.nextFollowUp = { lte: new Date() };
     }

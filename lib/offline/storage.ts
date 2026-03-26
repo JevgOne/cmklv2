@@ -198,7 +198,17 @@ export class OfflineStorage {
     id: string,
     name: string,
     phone: string,
-    email?: string
+    email?: string,
+    extra?: {
+      address?: string;
+      city?: string;
+      note?: string;
+      totalVehicles?: number;
+      totalSold?: number;
+      lastContactAt?: number;
+      nextFollowUp?: number;
+      followUpNote?: string;
+    }
   ): Promise<void> {
     const db = await getDB();
     await db.put("contacts", {
@@ -206,6 +216,15 @@ export class OfflineStorage {
       name,
       phone,
       email,
+      address: extra?.address,
+      city: extra?.city,
+      note: extra?.note,
+      totalVehicles: extra?.totalVehicles ?? 0,
+      totalSold: extra?.totalSold ?? 0,
+      lastContactAt: extra?.lastContactAt,
+      nextFollowUp: extra?.nextFollowUp,
+      followUpNote: extra?.followUpNote,
+      updatedAt: Date.now(),
       syncedAt: Date.now(),
     });
   }
@@ -270,6 +289,15 @@ export class OfflineStorage {
       name: string;
       phone: string;
       email?: string;
+      address?: string;
+      city?: string;
+      note?: string;
+      totalVehicles?: number;
+      totalSold?: number;
+      lastContactAt?: string | null;
+      nextFollowUp?: string | null;
+      followUpNote?: string | null;
+      updatedAt?: string;
     }>
   ): Promise<void> {
     const db = await getDB();
@@ -279,7 +307,19 @@ export class OfflineStorage {
     // Insert fresh server data
     for (const c of contacts) {
       await tx.store.put({
-        ...c,
+        id: c.id,
+        name: c.name,
+        phone: c.phone,
+        email: c.email,
+        address: c.address,
+        city: c.city,
+        note: c.note,
+        totalVehicles: c.totalVehicles ?? 0,
+        totalSold: c.totalSold ?? 0,
+        lastContactAt: c.lastContactAt ? new Date(c.lastContactAt).getTime() : undefined,
+        nextFollowUp: c.nextFollowUp ? new Date(c.nextFollowUp).getTime() : undefined,
+        followUpNote: c.followUpNote ?? undefined,
+        updatedAt: c.updatedAt ? new Date(c.updatedAt).getTime() : Date.now(),
         syncedAt: Date.now(),
       });
     }

@@ -12,7 +12,7 @@ export default function ContactsLoading() {
       <div className="h-12 bg-gray-200 rounded-lg" />
 
       <div className="flex gap-1 bg-gray-100 p-1 rounded-lg">
-        {Array.from({ length: 3 }).map((_, i) => (
+        {Array.from({ length: 4 }).map((_, i) => (
           <div key={i} className="h-10 w-24 bg-gray-200 rounded-[10px]" />
         ))}
       </div>
