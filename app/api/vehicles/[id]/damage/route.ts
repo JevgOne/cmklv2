@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createDamageSchema } from "@/lib/validators/sales";
+import { createNotification } from "@/lib/notifications";
 
 /* ------------------------------------------------------------------ */
 /*  POST /api/vehicles/[id]/damage — Nahlášení poškození               */
@@ -24,9 +25,14 @@ export async function POST(
 
     const { id } = await params;
 
-    // Načtení vozidla
+    // Načtení vozidla s makléřem
     const vehicle = await prisma.vehicle.findFirst({
       where: { OR: [{ id }, { slug: id }] },
+      include: {
+        broker: {
+          select: { id: true, firstName: true, lastName: true, managerId: true },
+        },
+      },
     });
 
     if (!vehicle) {
@@ -60,6 +66,72 @@ export async function POST(
         images: data.images ? JSON.stringify(data.images) : null,
       },
     });
+
+    // VehicleChangeLog pro každý damage report
+    await prisma.vehicleChangeLog.create({
+      data: {
+        vehicleId: vehicle.id,
+        userId: session.user.id,
+        field: "DAMAGE_REPORT",
+        oldValue: null,
+        newValue: `${data.severity}: ${data.description}`,
+        reason: "Nahlášení poškození",
+        flagged: false,
+        flagReason: null,
+      },
+    });
+
+    // Deaktivace vozidla při FUNCTIONAL nebo SEVERE poškození
+    if (data.severity === "FUNCTIONAL" || data.severity === "SEVERE") {
+      await prisma.vehicle.update({
+        where: { id: vehicle.id },
+        data: { status: "ARCHIVED" },
+      });
+
+      await prisma.vehicleChangeLog.create({
+        data: {
+          vehicleId: vehicle.id,
+          userId: session.user.id,
+          field: "status",
+          oldValue: vehicle.status,
+          newValue: "ARCHIVED",
+          reason: `Deaktivováno kvůli poškození: ${data.severity}`,
+          flagged: false,
+          flagReason: null,
+        },
+      });
+
+      // Notifikace manažerovi
+      if (vehicle.broker?.managerId) {
+        await createNotification({
+          userId: vehicle.broker.managerId,
+          type: "VEHICLE",
+          title: `Vozidlo deaktivováno — ${data.severity} poškození`,
+          body: `${vehicle.brand} ${vehicle.model}: ${data.description}`,
+          link: `/makler/vehicles/${vehicle.id}`,
+        });
+      }
+
+      // SEVERE: notifikace i BackOffice
+      if (data.severity === "SEVERE") {
+        const backofficeUsers = await prisma.user.findMany({
+          where: { role: { in: ["ADMIN", "BACKOFFICE"] } },
+          select: { id: true },
+        });
+
+        await Promise.all(
+          backofficeUsers.map((user) =>
+            createNotification({
+              userId: user.id,
+              type: "VEHICLE",
+              title: `Vážné poškození: ${vehicle.brand} ${vehicle.model}`,
+              body: data.description,
+              link: `/admin/vehicles/${vehicle.id}`,
+            })
+          )
+        );
+      }
+    }
 
     return NextResponse.json({ damageReport }, { status: 201 });
   } catch (error) {

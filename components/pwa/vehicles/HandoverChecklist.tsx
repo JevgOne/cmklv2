@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { Select } from "@/components/ui/Select";
 import { Card } from "@/components/ui/Card";
 import { formatPrice } from "@/lib/utils";
 
@@ -22,31 +21,20 @@ interface ChecklistItem {
 }
 
 const INITIAL_CHECKLIST: ChecklistItem[] = [
-  { key: "sellerPresent", label: "Prodávající je přítomen", checked: false },
-  { key: "buyerPresent", label: "Kupující je přítomen", checked: false },
-  { key: "largeTp", label: "Velký technický průkaz předán", checked: false },
-  { key: "smallTp", label: "Malý technický průkaz předán", checked: false },
-  { key: "keys", label: "Klíče předány", checked: false },
-  { key: "serviceBook", label: "Servisní knížka předána", checked: false },
-  { key: "conditionOk", label: "Stav vozidla odpovídá popisu", checked: false },
-  { key: "paymentDone", label: "Platba provedena", checked: false },
-];
-
-const PAYMENT_METHODS = [
-  { value: "CASH", label: "Hotovost" },
-  { value: "BANK_TRANSFER", label: "Bankovní převod" },
-  { value: "FINANCING", label: "Financování / úvěr" },
+  { key: "documentsHandedOver", label: "Dokumenty předány (TP, servisní knížka)", checked: false },
+  { key: "keysHandedOver", label: "Klíče předány", checked: false },
+  { key: "vehicleInspected", label: "Stav vozidla zkontrolován", checked: false },
+  { key: "buyerSatisfied", label: "Kupující je spokojený", checked: false },
+  { key: "paymentReceived", label: "Platba přijata", checked: false },
 ];
 
 export function HandoverChecklist({ vehicleId, vehicleName, reservedPrice, originalPrice }: HandoverChecklistProps) {
   const router = useRouter();
 
   const [checklist, setChecklist] = useState<ChecklistItem[]>(INITIAL_CHECKLIST);
-  const [keysCount, setKeysCount] = useState("2");
   const [actualPrice, setActualPrice] = useState(
     String(reservedPrice || originalPrice)
   );
-  const [paymentMethod, setPaymentMethod] = useState("CASH");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -73,12 +61,10 @@ export function HandoverChecklist({ vehicleId, vehicleName, reservedPrice, origi
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          soldPrice: parseInt(actualPrice),
           checklist: Object.fromEntries(
             checklist.map((item) => [item.key, item.checked])
           ),
-          keysCount: parseInt(keysCount),
-          actualSalePrice: parseInt(actualPrice),
-          paymentMethod,
         }),
       });
 
@@ -198,16 +184,6 @@ export function HandoverChecklist({ vehicleId, vehicleName, reservedPrice, origi
         ))}
       </div>
 
-      {/* Počet klíčů */}
-      <Input
-        label="Počet klíčů"
-        type="number"
-        min="1"
-        max="5"
-        value={keysCount}
-        onChange={(e) => setKeysCount(e.target.value)}
-      />
-
       {/* Skutečná prodejní cena */}
       <div>
         <Input
@@ -228,14 +204,6 @@ export function HandoverChecklist({ vehicleId, vehicleName, reservedPrice, origi
           </p>
         )}
       </div>
-
-      {/* Způsob platby */}
-      <Select
-        label="Způsob platby"
-        value={paymentMethod}
-        onChange={(e) => setPaymentMethod(e.target.value)}
-        options={PAYMENT_METHODS}
-      />
 
       {/* Link na předávací protokol */}
       <Card className="p-4 bg-gray-50">

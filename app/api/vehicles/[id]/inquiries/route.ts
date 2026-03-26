@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createInquirySchema } from "@/lib/validators/sales";
+import { createNotification } from "@/lib/notifications";
 
 /* ------------------------------------------------------------------ */
 /*  GET /api/vehicles/[id]/inquiries — Seznam dotazů k vozidlu         */
@@ -115,6 +116,15 @@ export async function POST(
         message: data.message,
         status: "NEW",
       },
+    });
+
+    // Notifikace makléři o novém dotazu
+    await createNotification({
+      userId: vehicle.brokerId,
+      type: "MESSAGE",
+      title: `Nový dotaz na ${vehicle.brand} ${vehicle.model}`,
+      body: `${data.buyerName}: ${data.message}`,
+      link: `/makler/vehicles/${vehicle.id}/inquiries`,
     });
 
     return NextResponse.json({ inquiry }, { status: 201 });

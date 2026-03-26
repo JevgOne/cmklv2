@@ -28,7 +28,7 @@ export function InquiryActions({ inquiry, vehicleId }: InquiryActionsProps) {
 
     try {
       const res = await fetch(`/api/vehicles/${vehicleId}/inquiries/${inquiry.id}`, {
-        method: "PATCH",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });

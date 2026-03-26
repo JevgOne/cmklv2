@@ -79,6 +79,36 @@ export async function PUT(
       },
     });
 
+    // Zkontroluj zda existují další neopravené FUNCTIONAL/SEVERE damage reports
+    const unrepairedSevere = await prisma.damageReport.count({
+      where: {
+        vehicleId: vehicle.id,
+        repaired: false,
+        severity: { in: ["FUNCTIONAL", "SEVERE"] },
+      },
+    });
+
+    // Reaktivace vozidla pokud je ARCHIVED a žádné neopravené závažné poškození
+    if (unrepairedSevere === 0 && vehicle.status === "ARCHIVED") {
+      await prisma.vehicle.update({
+        where: { id: vehicle.id },
+        data: { status: "ACTIVE" },
+      });
+
+      await prisma.vehicleChangeLog.create({
+        data: {
+          vehicleId: vehicle.id,
+          userId: session.user.id,
+          field: "status",
+          oldValue: "ARCHIVED",
+          newValue: "ACTIVE",
+          reason: "Všechna závažná poškození opravena — vozidlo reaktivováno",
+          flagged: false,
+          flagReason: null,
+        },
+      });
+    }
+
     return NextResponse.json({ damageReport });
   } catch (error) {
     if (error instanceof z.ZodError) {

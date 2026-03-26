@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { reserveVehicleSchema } from "@/lib/validators/sales";
+import { createNotification } from "@/lib/notifications";
 
 /* ------------------------------------------------------------------ */
 /*  POST /api/vehicles/[id]/reserve — Rezervace vozidla                */
@@ -24,9 +25,14 @@ export async function POST(
 
     const { id } = await params;
 
-    // Načtení vozidla
+    // Načtení vozidla s makléřem
     const vehicle = await prisma.vehicle.findFirst({
       where: { OR: [{ id }, { slug: id }] },
+      include: {
+        broker: {
+          select: { id: true, firstName: true, lastName: true, managerId: true },
+        },
+      },
     });
 
     if (!vehicle) {
@@ -91,6 +97,17 @@ export async function POST(
         },
       });
     });
+
+    // Notifikace manažerovi makléře
+    if (vehicle.broker?.managerId) {
+      await createNotification({
+        userId: vehicle.broker.managerId,
+        type: "VEHICLE",
+        title: "Vozidlo rezervováno",
+        body: `${vehicle.brand} ${vehicle.model} — kupující: ${data.buyerName}, cena: ${data.agreedPrice} Kč`,
+        link: `/makler/vehicles/${vehicle.id}`,
+      });
+    }
 
     return NextResponse.json({ vehicle: updated });
   } catch (error) {

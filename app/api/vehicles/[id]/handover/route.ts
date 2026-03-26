@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { handoverVehicleSchema } from "@/lib/validators/sales";
 import { calculateCommission } from "@/lib/commission-calculator";
+import { createNotification } from "@/lib/notifications";
 
 /* ------------------------------------------------------------------ */
 /*  POST /api/vehicles/[id]/handover — Předání vozidla kupujícímu      */
@@ -124,6 +125,9 @@ export async function POST(
             vehicleId: vehicle.id,
             salePrice: data.soldPrice,
             commission: commissionBreakdown.total,
+            brokerShare: commissionBreakdown.brokerShare,
+            companyShare: commissionBreakdown.companyShare,
+            managerBonus: commissionBreakdown.managerBonus,
             rate: 0.05,
             status: "PENDING",
             soldAt: new Date(),
@@ -133,6 +137,61 @@ export async function POST(
 
       return { vehicle: updatedVehicle, commission, commissionBreakdown };
     });
+
+    // --- Notifikace po prodeji ---
+
+    // 1. Notifikace makléři o provizi
+    if (vehicle.brokerId) {
+      await createNotification({
+        userId: vehicle.brokerId,
+        type: "COMMISSION",
+        title: `Provize: ${result.commissionBreakdown.brokerShare} Kč`,
+        body: `Prodáno: ${vehicle.brand} ${vehicle.model}`,
+        link: `/makler/commissions`,
+      });
+    }
+
+    // 2. Notifikace manažerovi
+    if (vehicle.broker?.managerId) {
+      const brokerName = `${vehicle.broker.firstName} ${vehicle.broker.lastName}`;
+      await createNotification({
+        userId: vehicle.broker.managerId,
+        type: "VEHICLE",
+        title: `Makléř ${brokerName} prodal ${vehicle.brand} ${vehicle.model}`,
+        body: `Cena: ${data.soldPrice} Kč, provize: ${result.commissionBreakdown.total} Kč`,
+        link: `/makler/vehicles/${vehicle.id}`,
+      });
+    }
+
+    // 3. Notifikace BackOffice (všichni ADMIN/BACKOFFICE uživatelé)
+    const backofficeUsers = await prisma.user.findMany({
+      where: { role: { in: ["ADMIN", "BACKOFFICE"] } },
+      select: { id: true },
+    });
+
+    await Promise.all(
+      backofficeUsers.map((user) =>
+        createNotification({
+          userId: user.id,
+          type: "VEHICLE",
+          title: `Prodej: ${vehicle.brand} ${vehicle.model}`,
+          body: `Cena: ${data.soldPrice} Kč`,
+          link: `/admin/vehicles/${vehicle.id}`,
+        })
+      )
+    );
+
+    // --- Follow-up (FÁZE 4) ---
+    // TODO: TASK-026 — automatický email kupujícímu po 7 dnech (follow-up systém)
+    if (vehicle.brokerId) {
+      await createNotification({
+        userId: vehicle.brokerId,
+        type: "SYSTEM",
+        title: "Zavolej kupujícímu za 7 dní",
+        body: `Follow-up po prodeji ${vehicle.brand} ${vehicle.model}`,
+        link: `/makler/vehicles/${vehicle.id}`,
+      });
+    }
 
     return NextResponse.json(result);
   } catch (error) {

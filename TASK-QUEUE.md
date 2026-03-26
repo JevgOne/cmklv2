@@ -3161,8 +3161,7 @@ enum LeadStatus {
 
 ## TASK-025: Prodejní flow — od dotazu po předání vozu
 Priorita: 1
-Stav: zpracovává se
-Stav: čeká
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:

@@ -24,7 +24,7 @@ export const updateInquirySchema = z.object({
     ])
     .optional(),
   reply: z.string().optional(),
-  viewingDate: z.string().datetime().optional(),
+  viewingDate: z.string().min(1).optional(),
   viewingResult: z.enum(["INTERESTED", "THINKING", "NO_INTEREST"]).optional(),
   offeredPrice: z.number().int().min(0).optional(),
   agreedPrice: z.number().int().min(0).optional(),
@@ -39,7 +39,7 @@ export const reserveVehicleSchema = z.object({
   buyerPhone: z.string().min(9, "Telefon kupujícího je povinný"),
   buyerEmail: z.string().email().optional().or(z.literal("")),
   agreedPrice: z.number().int().min(0, "Dohodnutá cena je povinná"),
-  handoverDate: z.string().datetime().optional(),
+  handoverDate: z.string().min(1).optional(),
 });
 
 // ============================================
