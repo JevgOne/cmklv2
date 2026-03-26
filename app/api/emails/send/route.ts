@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { templateType, recipientEmail, recipientName, vehicleId, customText, variables } =
+    const { templateType, recipientEmail, recipientName, vehicleId, customText, attachmentUrl, variables } =
       parsed.data;
 
     // Rate limiting: max 50 emails per day per sender
@@ -123,6 +123,9 @@ export async function POST(request: NextRequest) {
         subject: email.subject,
         html: email.html,
         text: email.text,
+        attachments: attachmentUrl
+          ? [{ path: attachmentUrl, filename: "smlouva.pdf" }]
+          : undefined,
       });
       resendId = result.data?.id ?? undefined;
     } catch (sendError) {

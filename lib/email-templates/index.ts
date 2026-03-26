@@ -1,65 +1,15 @@
 import type { EmailTemplateType } from "@/lib/validators/email";
 import type { BrokerSignatureData } from "./signature";
 
-export { generateSignatureHtml, generateSignatureText } from "./signature";
 export type { BrokerSignatureData } from "./signature";
 
-import { presentationHtml as _presHtml, presentationText as _presText, presentationSubject as _presSub } from "./presentation";
-import { contractOfferHtml as _coHtml, contractOfferText as _coText, contractOfferSubject as _coSub } from "./contract-offer";
-import { followupHtml as _fuHtml, followupText as _fuText, followupSubject as _fuSub } from "./followup";
-import { insuranceHtml as _insHtml, insuranceText as _insText, insuranceSubject as _insSub } from "./insurance";
-import { financingHtml as _finHtml, financingText as _finText, financingSubject as _finSub } from "./financing";
-import { priceChangeHtml as _pcHtml, priceChangeText as _pcText, priceChangeSubject as _pcSub } from "./price-change";
-import { vehicleSoldHtml as _vsHtml, vehicleSoldText as _vsText, vehicleSoldSubject as _vsSub } from "./vehicle-sold";
-
-export {
-  presentationHtml,
-  presentationText,
-  presentationSubject,
-} from "./presentation";
-export type { PresentationData } from "./presentation";
-
-export {
-  contractOfferHtml,
-  contractOfferText,
-  contractOfferSubject,
-} from "./contract-offer";
-export type { ContractOfferData } from "./contract-offer";
-
-export {
-  followupHtml,
-  followupText,
-  followupSubject,
-} from "./followup";
-export type { FollowupData } from "./followup";
-
-export {
-  insuranceHtml,
-  insuranceText,
-  insuranceSubject,
-} from "./insurance";
-export type { InsuranceData } from "./insurance";
-
-export {
-  financingHtml,
-  financingText,
-  financingSubject,
-} from "./financing";
-export type { FinancingData } from "./financing";
-
-export {
-  priceChangeHtml,
-  priceChangeText,
-  priceChangeSubject,
-} from "./price-change";
-export type { PriceChangeData } from "./price-change";
-
-export {
-  vehicleSoldHtml,
-  vehicleSoldText,
-  vehicleSoldSubject,
-} from "./vehicle-sold";
-export type { VehicleSoldData } from "./vehicle-sold";
+import { presentationHtml, presentationText, presentationSubject } from "./presentation";
+import { contractOfferHtml, contractOfferText, contractOfferSubject } from "./contract-offer";
+import { followupHtml, followupText, followupSubject } from "./followup";
+import { insuranceHtml, insuranceText, insuranceSubject } from "./insurance";
+import { financingHtml, financingText, financingSubject } from "./financing";
+import { priceChangeHtml, priceChangeText, priceChangeSubject } from "./price-change";
+import { vehicleSoldHtml, vehicleSoldText, vehicleSoldSubject } from "./vehicle-sold";
 
 export interface TemplateInfo {
   type: EmailTemplateType;
@@ -148,7 +98,7 @@ export function generateEmail(
   switch (templateType) {
     case "PRESENTATION": {
       const data = { recipientName, broker, customText };
-      return { subject: _presSub(data), html: _presHtml(data), text: _presText(data) };
+      return { subject: presentationSubject(data), html: presentationHtml(data), text: presentationText(data) };
     }
     case "CONTRACT_OFFER": {
       const data = {
@@ -159,7 +109,7 @@ export function generateEmail(
         broker,
         customText,
       };
-      return { subject: _coSub(data), html: _coHtml(data), text: _coText(data) };
+      return { subject: contractOfferSubject(data), html: contractOfferHtml(data), text: contractOfferText(data) };
     }
     case "FOLLOWUP": {
       const data = {
@@ -168,7 +118,7 @@ export function generateEmail(
         broker,
         customText,
       };
-      return { subject: _fuSub(data), html: _fuHtml(data), text: _fuText(data) };
+      return { subject: followupSubject(data), html: followupHtml(data), text: followupText(data) };
     }
     case "INSURANCE": {
       const data = {
@@ -178,7 +128,7 @@ export function generateEmail(
         broker,
         customText,
       };
-      return { subject: _insSub(data), html: _insHtml(data), text: _insText(data) };
+      return { subject: insuranceSubject(data), html: insuranceHtml(data), text: insuranceText(data) };
     }
     case "FINANCING": {
       const data = {
@@ -189,7 +139,7 @@ export function generateEmail(
         broker,
         customText,
       };
-      return { subject: _finSub(data), html: _finHtml(data), text: _finText(data) };
+      return { subject: financingSubject(data), html: financingHtml(data), text: financingText(data) };
     }
     case "PRICE_CHANGE": {
       const data = {
@@ -201,7 +151,7 @@ export function generateEmail(
         broker,
         customText,
       };
-      return { subject: _pcSub(data), html: _pcHtml(data), text: _pcText(data) };
+      return { subject: priceChangeSubject(data), html: priceChangeHtml(data), text: priceChangeText(data) };
     }
     case "VEHICLE_SOLD": {
       const data = {
@@ -211,7 +161,7 @@ export function generateEmail(
         broker,
         customText,
       };
-      return { subject: _vsSub(data), html: _vsHtml(data), text: _vsText(data) };
+      return { subject: vehicleSoldSubject(data), html: vehicleSoldHtml(data), text: vehicleSoldText(data) };
     }
     default:
       throw new Error(`Neznámý typ šablony: ${templateType}`);

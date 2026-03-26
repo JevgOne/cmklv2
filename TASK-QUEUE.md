@@ -3368,7 +3368,7 @@ enum DamageSeverity {
 
 ## TASK-026: Email systém — šablony, personalizace, odesílání z PWA
 Priorita: 2
-Stav: čeká
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:

@@ -1,4 +1,4 @@
-import { emailLayout } from "./layout";
+import { emailLayout, escapeHtml, formatCzk } from "./layout";
 import { generateSignatureHtml, generateSignatureText, BrokerSignatureData } from "./signature";
 
 export interface VehicleSoldData {
@@ -9,17 +9,13 @@ export interface VehicleSoldData {
   customText?: string;
 }
 
-function formatCzk(amount: number): string {
-  return new Intl.NumberFormat("cs-CZ").format(amount) + " Kč";
-}
-
 export function vehicleSoldHtml(data: VehicleSoldData): string {
   const content = `
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      Dobrý den, ${data.recipientName},
+      Dobrý den, ${escapeHtml(data.recipientName)},
     </p>
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      s radostí Vám oznamuji, že Vaše vozidlo <strong>${data.vehicleName}</strong> bylo úspěšně prodáno!
+      s radostí Vám oznamuji, že Vaše vozidlo <strong>${escapeHtml(data.vehicleName)}</strong> bylo úspěšně prodáno!
     </p>
     <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 20px 0; background-color: #ecfdf5; border-radius: 8px; border: 1px solid #a7f3d0;">
       <tr>
@@ -29,7 +25,7 @@ export function vehicleSoldHtml(data: VehicleSoldData): string {
         </td>
       </tr>
     </table>
-    ${data.customText ? `<p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">${data.customText}</p>` : ""}
+    ${data.customText ? `<p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">${escapeHtml(data.customText)}</p>` : ""}
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
       V následujících dnech Vás budu kontaktovat ohledně předání vozidla a vyřízení platby.
     </p>

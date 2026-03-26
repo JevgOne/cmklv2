@@ -1,4 +1,4 @@
-import { emailLayout } from "./layout";
+import { emailLayout, escapeHtml, formatCzk } from "./layout";
 import { generateSignatureHtml, generateSignatureText, BrokerSignatureData } from "./signature";
 
 export interface PriceChangeData {
@@ -11,20 +11,16 @@ export interface PriceChangeData {
   customText?: string;
 }
 
-function formatCzk(amount: number): string {
-  return new Intl.NumberFormat("cs-CZ").format(amount) + " Kč";
-}
-
 export function priceChangeHtml(data: PriceChangeData): string {
   const discount = data.currentPrice - data.newPrice;
   const discountPercent = Math.round((discount / data.currentPrice) * 100);
 
   const content = `
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      Dobrý den, ${data.recipientName},
+      Dobrý den, ${escapeHtml(data.recipientName)},
     </p>
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      rád bych Vám doporučil úpravu ceny Vašeho vozidla <strong>${data.vehicleName}</strong>
+      rád bych Vám doporučil úpravu ceny Vašeho vozidla <strong>${escapeHtml(data.vehicleName)}</strong>
       pro zvýšení šance na rychlý prodej.
     </p>
     <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 20px 0; background-color: #f9fafb; border-radius: 8px;">
@@ -44,10 +40,10 @@ export function priceChangeHtml(data: PriceChangeData): string {
     </table>
     ${
       data.reason
-        ? `<p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;"><strong>Důvod doporučení:</strong> ${data.reason}</p>`
+        ? `<p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;"><strong>Důvod doporučení:</strong> ${escapeHtml(data.reason)}</p>`
         : ""
     }
-    ${data.customText ? `<p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">${data.customText}</p>` : ""}
+    ${data.customText ? `<p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">${escapeHtml(data.customText)}</p>` : ""}
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
       Samozřejmě je to pouze doporučení a konečné rozhodnutí je na Vás.
       Budu rád za Vaši odpověď.

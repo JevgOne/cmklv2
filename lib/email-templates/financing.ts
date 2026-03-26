@@ -1,4 +1,4 @@
-import { emailLayout } from "./layout";
+import { emailLayout, escapeHtml, formatCzk } from "./layout";
 import { generateSignatureHtml, generateSignatureText, BrokerSignatureData } from "./signature";
 
 export interface FinancingData {
@@ -8,10 +8,6 @@ export interface FinancingData {
   monthlyPayment?: number;
   broker: BrokerSignatureData;
   customText?: string;
-}
-
-function formatCzk(amount: number): string {
-  return new Intl.NumberFormat("cs-CZ").format(amount) + " Kč";
 }
 
 export function financingHtml(data: FinancingData): string {
@@ -26,10 +22,10 @@ export function financingHtml(data: FinancingData): string {
 
   const content = `
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      Dobrý den, ${data.recipientName},
+      Dobrý den, ${escapeHtml(data.recipientName)},
     </p>
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      máte zájem o financování vozidla <strong>${data.vehicleName}</strong>?
+      máte zájem o financování vozidla <strong>${escapeHtml(data.vehicleName)}</strong>?
       Připravili jsme pro Vás orientační nabídku.
     </p>
     <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 20px 0; background-color: #f9fafb; border-radius: 8px;">
@@ -50,7 +46,7 @@ export function financingHtml(data: FinancingData): string {
       <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#10003; Schválení do 24 hodin</td></tr>
       <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#10003; Splatnost 12–84 měsíců</td></tr>
     </table>
-    ${data.customText ? `<p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">${data.customText}</p>` : ""}
+    ${data.customText ? `<p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">${escapeHtml(data.customText)}</p>` : ""}
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
       Pro detailní kalkulaci mě prosím kontaktujte.
     </p>

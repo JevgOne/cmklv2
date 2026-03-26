@@ -1,4 +1,4 @@
-import { emailLayout } from "./layout";
+import { emailLayout, escapeHtml } from "./layout";
 import { generateSignatureHtml, generateSignatureText, BrokerSignatureData } from "./signature";
 
 export interface PresentationData {
@@ -10,13 +10,13 @@ export interface PresentationData {
 export function presentationHtml(data: PresentationData): string {
   const content = `
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      Dobrý den, ${data.recipientName},
+      Dobrý den, ${escapeHtml(data.recipientName)},
     </p>
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      jmenuji se ${data.broker.firstName} ${data.broker.lastName} a jsem certifikovaný makléř Carmakler.
+      jmenuji se ${escapeHtml(data.broker.firstName)} ${escapeHtml(data.broker.lastName)} a jsem certifikovaný makléř Carmakler.
       Rád bych Vám představil, jak Vám můžeme pomoci s prodejem Vašeho vozidla.
     </p>
-    ${data.customText ? `<p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">${data.customText}</p>` : ""}
+    ${data.customText ? `<p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">${escapeHtml(data.customText)}</p>` : ""}
     <h3 style="margin: 24px 0 12px; font-size: 16px; color: #111827;">Jak Carmakler funguje:</h3>
     <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom: 20px;">
       <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#10003; Bezplatně nafotíme a zadáme Vaše auto na přední portály</td></tr>

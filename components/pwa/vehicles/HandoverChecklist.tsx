@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card } from "@/components/ui/Card";
+import { EmailButton } from "@/components/pwa/emails/EmailButton";
 import { formatPrice } from "@/lib/utils";
 
 interface HandoverChecklistProps {
@@ -107,6 +108,27 @@ export function HandoverChecklist({ vehicleId, vehicleName, reservedPrice, origi
             </p>
           </Card>
         )}
+
+        <div className="flex gap-3 w-full max-w-sm mt-6">
+          <EmailButton
+            vehicleId={vehicleId}
+            vehicleName={vehicleName}
+            defaultTemplate="INSURANCE"
+            label="Nabídnout pojištění"
+            variant="outline"
+            size="sm"
+            className="flex-1"
+          />
+          <EmailButton
+            vehicleId={vehicleId}
+            vehicleName={vehicleName}
+            defaultTemplate="FINANCING"
+            label="Nabídnout financování"
+            variant="outline"
+            size="sm"
+            className="flex-1"
+          />
+        </div>
 
         <div className="flex flex-col gap-3 w-full max-w-sm mt-8">
           <Button

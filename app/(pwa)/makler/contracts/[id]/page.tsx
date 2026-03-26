@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { ContractPreview } from "@/components/pwa/contracts/ContractPreview";
 import { ContractPdfButton } from "@/components/pwa/contracts/ContractPdfButton";
 import { ContractSendButton } from "@/components/pwa/contracts/ContractSendButton";
+import { EmailButton } from "@/components/pwa/emails/EmailButton";
 import { Button } from "@/components/ui/Button";
 import { StatusPill } from "@/components/ui/StatusPill";
 import Link from "next/link";
@@ -129,7 +130,19 @@ export default async function ContractDetailPage({
         )}
 
         {contract.status === "SIGNED" && contract.pdfUrl && contract.sellerEmail && (
-          <ContractSendButton contractId={contract.id} />
+          <div className="flex gap-3">
+            <ContractSendButton contractId={contract.id} />
+            <EmailButton
+              vehicleId={contract.vehicleId ?? undefined}
+              vehicleName={contract.vehicle ? `${contract.vehicle.brand} ${contract.vehicle.model}${contract.vehicle.variant ? ` ${contract.vehicle.variant}` : ""}` : undefined}
+              defaultTemplate="CONTRACT_OFFER"
+              defaultRecipientEmail={contract.sellerEmail || undefined}
+              defaultRecipientName={contract.sellerName || undefined}
+              label="Poslat emailem"
+              variant="outline"
+              size="sm"
+            />
+          </div>
         )}
 
         {contract.status === "SENT" && contract.pdfUrl && (

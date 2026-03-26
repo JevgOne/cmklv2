@@ -38,6 +38,9 @@ export function EmailSendModal({
   defaultRecipientEmail,
   defaultRecipientName,
 }: EmailSendModalProps) {
+  const [isOnline, setIsOnline] = useState(
+    typeof navigator !== "undefined" ? navigator.onLine : true
+  );
   const [step, setStep] = useState<Step>("select");
   const [templates, setTemplates] = useState<TemplateInfo[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<EmailTemplateType | "">(
@@ -80,6 +83,17 @@ export function EmailSendModal({
       setReason("");
     }
   }, [open, defaultTemplate, defaultRecipientEmail, defaultRecipientName]);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
 
   const loadPreview = useCallback(async () => {
     if (!selectedTemplate) return;
@@ -158,6 +172,12 @@ export function EmailSendModal({
       }
       className="max-w-[600px]"
     >
+      {!isOnline && (
+        <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-700">
+          Odesílání emailů vyžaduje internetové připojení
+        </div>
+      )}
+
       {error && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
           {error}
@@ -277,7 +297,7 @@ export function EmailSendModal({
             <Button
               variant="primary"
               onClick={sendEmail}
-              disabled={loading}
+              disabled={loading || !isOnline}
               className="flex-1"
             >
               {loading ? "Odesílám..." : "Odeslat"}

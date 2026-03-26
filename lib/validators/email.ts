@@ -18,6 +18,7 @@ export const sendEmailSchema = z.object({
   recipientName: z.string().min(1, "Jméno příjemce je povinné"),
   vehicleId: z.string().optional(),
   customText: z.string().max(2000, "Text může mít maximálně 2000 znaků").optional(),
+  attachmentUrl: z.string().url().optional(),
   // Extra variables for specific templates
   variables: z
     .object({

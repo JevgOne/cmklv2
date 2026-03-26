@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
+import { EmailButton } from "@/components/pwa/emails/EmailButton";
 
 interface SuccessViewProps {
   offline?: boolean;
@@ -42,8 +43,17 @@ export function SuccessView({ offline = false }: SuccessViewProps) {
 
       {/* Tlačítka */}
       <div className="w-full max-w-xs space-y-3">
+        {!offline && (
+          <EmailButton
+            defaultTemplate="PRESENTATION"
+            label="Poslat prezentaci"
+            variant="primary"
+            size="lg"
+            className="w-full"
+          />
+        )}
         <Button
-          variant="primary"
+          variant={offline ? "primary" : "outline"}
           className="w-full"
           size="lg"
           onClick={() => router.push("/makler/dashboard")}

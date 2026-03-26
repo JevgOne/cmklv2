@@ -1,4 +1,4 @@
-import { emailLayout } from "./layout";
+import { emailLayout, escapeHtml } from "./layout";
 import { generateSignatureHtml, generateSignatureText, BrokerSignatureData } from "./signature";
 
 export interface InsuranceData {
@@ -12,10 +12,10 @@ export interface InsuranceData {
 export function insuranceHtml(data: InsuranceData): string {
   const content = `
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      Dobrý den, ${data.recipientName},
+      Dobrý den, ${escapeHtml(data.recipientName)},
     </p>
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      gratuluji k zakoupení vozidla <strong>${data.vehicleName} (${data.vehicleYear})</strong>!
+      gratuluji k zakoupení vozidla <strong>${escapeHtml(data.vehicleName)} (${data.vehicleYear})</strong>!
     </p>
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
       Rád bych Vám nabídl zvýhodněné pojištění pro Vaše nové auto.
@@ -27,7 +27,7 @@ export function insuranceHtml(data: InsuranceData): string {
       <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#10003; Asistenční služby v ceně</td></tr>
       <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#10003; Rychlé sjednání online nebo telefonicky</td></tr>
     </table>
-    ${data.customText ? `<p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">${data.customText}</p>` : ""}
+    ${data.customText ? `<p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">${escapeHtml(data.customText)}</p>` : ""}
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
       Dejte mi vědět a připravím nabídku na míru.
     </p>
