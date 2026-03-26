@@ -34,6 +34,7 @@ export async function POST(
     await prisma.vehicleChangeLog.create({
       data: {
         vehicleId: id,
+        userId: "anonymous",
         field: "flag",
         oldValue: null,
         newValue: data.reason,
