@@ -110,9 +110,58 @@ export async function POST(request: Request) {
       },
     });
 
-    // TODO: Odeslat email přes Resend
-    // const registrationUrl = `${process.env.NEXTAUTH_URL}/registrace/makler?token=${token}`;
-    // await resend.emails.send({ ... });
+    // Odeslat pozvanku emailem
+    const registrationUrl = `${process.env.NEXTAUTH_URL || "https://carmakler.cz"}/registrace/makler?token=${token}`;
+    const managerName = invitation.manager
+      ? `${invitation.manager.firstName} ${invitation.manager.lastName}`.trim()
+      : "Carmakler";
+    const regionName = invitation.region?.name || "";
+
+    if (process.env.RESEND_API_KEY) {
+      try {
+        const { Resend } = await import("resend");
+        const resend = new Resend(process.env.RESEND_API_KEY);
+
+        await resend.emails.send({
+          from: process.env.RESEND_FROM_EMAIL || "info@carmakler.cz",
+          to: email,
+          subject: "Pozvanka do Carmakler",
+          html: `
+            <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+              <div style="background: linear-gradient(135deg, #f97316, #ea580c); padding: 24px 32px; text-align: center; border-radius: 12px 12px 0 0;">
+                <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #ffffff;">Carmakler</h1>
+              </div>
+              <div style="padding: 32px;">
+                <p>Dobry den${name ? ` ${name}` : ""},</p>
+                <p>manazer <strong>${managerName}</strong> vas zve do maklerskesiti Carmakler${regionName ? ` (region ${regionName})` : ""}.</p>
+                <p>Pro dokonceni registrace kliknete na tlacitko nize:</p>
+                <div style="text-align: center; margin: 32px 0;">
+                  <a href="${registrationUrl}"
+                     style="background-color: #f97316; color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; display: inline-block;">
+                    Registrovat se jako makler
+                  </a>
+                </div>
+                <p style="color: #6b7280; font-size: 14px;">Pozvanka je platna 7 dni. Pokud odkaz nefunguje, zkopirujte tuto adresu do prohlizece:</p>
+                <p style="color: #6b7280; font-size: 12px; word-break: break-all;">${registrationUrl}</p>
+              </div>
+              <div style="padding: 16px 32px; background-color: #f9fafb; border-top: 1px solid #e5e7eb; text-align: center; border-radius: 0 0 12px 12px;">
+                <p style="margin: 0; font-size: 12px; color: #9ca3af;">
+                  Tento email byl odeslan ze systemu Carmakler. |
+                  <a href="https://carmakler.cz" style="color: #f97316; text-decoration: none;">carmakler.cz</a>
+                </p>
+              </div>
+            </div>
+          `,
+        });
+        console.log(`[Invitation] Email odeslan na ${email}`);
+      } catch (emailError) {
+        // Email se nepodarilo odeslat, ale pozvanku uz mame v DB
+        console.error("[Invitation] Chyba pri odesilani emailu:", emailError);
+      }
+    } else {
+      // Dev mode — bez Resend API klice
+      console.log(`[Invitation:DEV] Registracni odkaz pro ${email}: ${registrationUrl}`);
+    }
 
     return NextResponse.json({ invitation }, { status: 201 });
   } catch (error) {

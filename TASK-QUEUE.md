@@ -5731,4 +5731,125 @@ Pro každý vytvořený účet:
 
 ---
 
+## TASK-039: Rozdělení webu na subdomény — 4 produkty pod jednou značkou
+Priorita: 2
+Stav: čeká
+Projekt: /Users/lunagroup/carmakler
+
+### Kompletní zadání:
+
+Rozdělit monolitickou Next.js appku na 4 subdomény. Každá subdoména = samostatný produkt pod značkou Carmakler, ale technicky jedna Next.js aplikace s routováním podle subdomény. Stejný vizuál (oranžová, Outfit font, design systém), ale každá subdoména má svůj navbar, footer, obsah a navigaci.
+
+**Subdomény:**
+
+1. **www.carmakler.cz** — Hlavní web + makléřská síť
+   - Veřejný web: homepage, /nabidka (katalog vozidel od makléřů), /chci-prodat, /sluzby/*, /o-nas, /kontakt, /recenze, /kariera, /makleri
+   - PWA makléře: /makler/* (dashboard, nabrat auto, smlouvy, CRM, AI asistent, statistiky)
+   - Admin panel: /admin/* (správa makléřů, vozidel, leadů)
+   - Auth: /login, /registrace/makler
+   - Koncept: jako autorro.sk — profesionální prodej aut přes síť certifikovaných makléřů
+
+2. **inzerce.carmakler.cz** — Inzertní platforma
+   - Veřejný katalog inzerátů (aktuálně /inzerce/katalog → bude /)
+   - Přidání inzerátu (aktuálně /inzerce/pridat → bude /pridat)
+   - Detail inzerátu (aktuálně /bazar/[slug] → bude /[slug])
+   - Moje inzeráty (aktuálně /moje-inzeraty → bude /moje-inzeraty)
+   - Registrace inzerenta (aktuálně /inzerce/registrace → bude /registrace)
+   - Auth: /login, /registrace
+   - Vlastní navbar: logo "Carmakler Inzerce", Katalog, Přidat inzerát, Moje inzeráty, Přihlásit
+   - Vlastní footer
+   - Vlastní homepage — hero "Inzerujte své auto", vyhledávací bar, nejnovější inzeráty
+
+3. **shop.carmakler.cz** — Eshop autodíly
+   - Katalog dílů (aktuálně /shop/katalog → bude /)
+   - Detail dílu (aktuálně /shop/produkt/[slug] → bude /produkt/[slug])
+   - Košík (aktuálně /shop/kosik → bude /kosik)
+   - Objednávka (aktuálně /shop/objednavka → bude /objednavka)
+   - Moje objednávky (aktuálně /shop/moje-objednavky → bude /moje-objednavky)
+   - PWA dodavatele dílů: /dodavatel/* (přidání dílů, moje díly, objednávky)
+   - Auth: /login, /registrace/dodavatel
+   - Vlastní navbar: logo "Carmakler Shop", Katalog, Košík (s počtem), Moje objednávky, Přihlásit
+   - Vlastní footer
+   - Vlastní homepage — hero "Autodíly z vrakovišť i nové", vyhledávání podle VIN/vozu, kategorie
+
+4. **marketplace.carmakler.cz** — VIP investiční flip platforma
+   - Landing page (aktuálně /marketplace → bude /)
+   - Dealer dashboard (aktuálně /marketplace/dealer → bude /dealer)
+   - Investor dashboard (aktuálně /marketplace/investor → bude /investor)
+   - Auth: /login, registrace jen na pozvánku
+   - Vlastní navbar: logo "Carmakler Marketplace", Pro dealery, Pro investory, Přihlásit
+   - Vlastní footer
+   - Vlastní homepage — exkluzivní feel, "Investujte do aut", statistiky výnosů
+
+**Technická implementace:**
+
+1. **Next.js middleware** — detekovat subdoménu z `request.headers.get('host')`:
+   - `www.carmakler.cz` / `carmakler.cz` → hlavní web routy
+   - `inzerce.carmakler.cz` → inzertní routy
+   - `shop.carmakler.cz` → eshop routy
+   - `marketplace.carmakler.cz` → marketplace routy
+
+2. **App Router struktura** — přeorganizovat:
+   ```
+   app/
+     (main)/          → www.carmakler.cz (veřejný web + makléři + admin)
+     (inzerce)/       → inzerce.carmakler.cz
+     (shop)/          → shop.carmakler.cz
+     (marketplace)/   → marketplace.carmakler.cz
+   ```
+   Každá skupina má vlastní layout.tsx s vlastním navbarem a footerem.
+
+3. **Sdílené komponenty** — zůstávají v components/ui/, každá subdoména má své specifické komponenty:
+   - components/main/ (hlavní web + makléři)
+   - components/inzerce/
+   - components/shop/
+   - components/marketplace/
+
+4. **Sdílená DB** — jedna SQLite/PostgreSQL databáze pro všechny subdomény. Prisma schéma zůstává jedno.
+
+5. **Sdílená auth** — NextAuth session platí across subdoménami (cookie domain: `.carmakler.cz`). Uživatel se přihlásí jednou a je přihlášen na všech subdoménách.
+
+6. **Nginx konfigurace** — na serveru přidat subdomény:
+   ```
+   server_name carmakler.cz www.carmakler.cz inzerce.carmakler.cz shop.carmakler.cz marketplace.carmakler.cz;
+   ```
+   Všechny směřují na stejný Next.js port 3000 — routing řeší middleware.
+
+7. **DNS záznamy** — přidat A záznamy:
+   - inzerce.carmakler.cz → 91.98.203.239
+   - shop.carmakler.cz → 91.98.203.239
+   - marketplace.carmakler.cz → 91.98.203.239
+
+8. **SSL** — rozšířit certbot:
+   ```
+   certbot --nginx -d carmakler.cz -d www.carmakler.cz -d inzerce.carmakler.cz -d shop.carmakler.cz -d marketplace.carmakler.cz
+   ```
+
+**Cross-linking mezi subdoménami:**
+- Na hlavním webu: "Inzerovat auto" → link na inzerce.carmakler.cz
+- Na hlavním webu: "Autodíly" → link na shop.carmakler.cz
+- V navbaru/footeru na každé subdoméně: odkazy na ostatní produkty
+- Na inzerci: "Prodat přes makléře" → link na www.carmakler.cz/chci-prodat
+- Na shopu: "Prodat díly" → link na registraci dodavatele
+
+### Kontext:
+- Závisí na: TASK-038 (nejdřív musí všechno fungovat, pak teprve rozdělit)
+- Aktuální struktura: všechno v jedné appce pod jednou doménou
+- Routy pro inzerci jsou pod app/(web)/inzerce/*, eshop pod app/(web)/shop/ a app/(web)/dily/, marketplace pod app/(web)/marketplace/
+- PWA makléře je pod app/(pwa)/, PWA dílů pod app/(pwa-parts)/
+- Admin panel je pod app/(admin)/
+- Server: root@91.98.203.239, nginx, PM2
+- Po přidání subdomén uživatel musí přidat DNS záznamy u registrátora
+
+### Očekávaný výsledek:
+- 4 subdomény, každá s vlastním navbarem, footerem, homepage
+- Stejný vizuál (oranžová, Outfit, design systém Carmakler)
+- Sdílená databáze, sdílená autentizace (single sign-on přes cookie na .carmakler.cz)
+- Každá subdoména funguje jako samostatný produkt — dá se prezentovat/marketovat nezávisle
+- Cross-linky mezi subdoménami
+- SSL certifikát pokrývá všechny subdomény
+- Nginx a DNS nakonfigurované
+
+---
+
 <!-- Další úkoly přidávej pod tuto čáru ve stejném formátu -->

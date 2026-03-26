@@ -2,8 +2,7 @@ import { prisma } from "@/lib/prisma";
 import type { SmsTemplateType } from "@/lib/validators/notifications";
 
 // ============================================
-// SMS WRAPPER — MVP placeholder (console.log)
-// Připraveno pro GoSMS.cz / Twilio integraci
+// SMS WRAPPER — GoSMS.cz / Twilio / dev mode
 // ============================================
 
 const MAX_SMS_PER_DAY = 5;
@@ -20,8 +19,96 @@ interface SendSmsResult {
   smsLogId?: string;
 }
 
+type SmsProvider = "gosms" | "twilio" | "dev";
+
 /**
- * Odesle SMS (MVP: console.log, produkce: GoSMS/Twilio)
+ * Detekuje dostupneho SMS providera podle env promennych
+ */
+function detectSmsProvider(): SmsProvider {
+  if (process.env.GOSMS_API_KEY) return "gosms";
+  if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER) return "twilio";
+  return "dev";
+}
+
+/**
+ * Odesle SMS pres GoSMS.cz API
+ * https://doc.gosms.cz/
+ */
+async function sendViaGoSms(phone: string, message: string): Promise<{ success: boolean; externalId?: string; error?: string }> {
+  const apiKey = process.env.GOSMS_API_KEY!;
+  const channel = process.env.GOSMS_CHANNEL_ID || "1";
+
+  try {
+    const response = await fetch("https://app.gosms.cz/api/v1/messages", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message,
+        recipients: phone,
+        channel: parseInt(channel, 10),
+      }),
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.error("[SMS:GoSMS] API error:", response.status, errorBody);
+      return { success: false, error: `GoSMS API error: ${response.status}` };
+    }
+
+    const data = await response.json();
+    return { success: true, externalId: data.id?.toString() };
+  } catch (error) {
+    console.error("[SMS:GoSMS] Request failed:", error);
+    return { success: false, error: "GoSMS request failed" };
+  }
+}
+
+/**
+ * Odesle SMS pres Twilio API
+ */
+async function sendViaTwilio(phone: string, message: string): Promise<{ success: boolean; externalId?: string; error?: string }> {
+  const accountSid = process.env.TWILIO_ACCOUNT_SID!;
+  const authToken = process.env.TWILIO_AUTH_TOKEN!;
+  const fromPhone = process.env.TWILIO_PHONE_NUMBER!;
+
+  try {
+    const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
+    const credentials = Buffer.from(`${accountSid}:${authToken}`).toString("base64");
+
+    const body = new URLSearchParams({
+      To: phone,
+      From: fromPhone,
+      Body: message,
+    });
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Authorization": `Basic ${credentials}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: body.toString(),
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.error("[SMS:Twilio] API error:", response.status, errorBody);
+      return { success: false, error: `Twilio API error: ${response.status}` };
+    }
+
+    const data = await response.json();
+    return { success: true, externalId: data.sid };
+  } catch (error) {
+    console.error("[SMS:Twilio] Request failed:", error);
+    return { success: false, error: "Twilio request failed" };
+  }
+}
+
+/**
+ * Odesle SMS (GoSMS.cz / Twilio / dev console.log)
  * Rate limiting: max 5 SMS/den na cislo
  */
 export async function sendSms({
@@ -29,7 +116,7 @@ export async function sendSms({
   message,
   vehicleId,
 }: SendSmsParams): Promise<SendSmsResult> {
-  // Rate limiting — max 5 SMS/den na číslo
+  // Rate limiting — max 5 SMS/den na cislo
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
 
@@ -48,10 +135,29 @@ export async function sendSms({
     };
   }
 
+  const provider = detectSmsProvider();
+
   try {
-    // MVP: Console log misto skutecneho odeslani
-    // TODO: Nahradit GoSMS.cz nebo Twilio integracni
-    console.log(`[SMS] To: ${phone} | Message: ${message}`);
+    let externalId: string | undefined;
+
+    if (provider === "gosms") {
+      const result = await sendViaGoSms(phone, message);
+      if (!result.success) {
+        throw new Error(result.error || "GoSMS send failed");
+      }
+      externalId = result.externalId;
+      console.log(`[SMS:GoSMS] Sent to ${phone}, id: ${externalId}`);
+    } else if (provider === "twilio") {
+      const result = await sendViaTwilio(phone, message);
+      if (!result.success) {
+        throw new Error(result.error || "Twilio send failed");
+      }
+      externalId = result.externalId;
+      console.log(`[SMS:Twilio] Sent to ${phone}, sid: ${externalId}`);
+    } else {
+      // Dev mode — console.log, bez realneho odeslani
+      console.log(`[SMS:DEV] To: ${phone} | Message: ${message}`);
+    }
 
     // Zalogovat do DB
     const smsLog = await prisma.smsLog.create({
@@ -60,13 +166,13 @@ export async function sendSms({
         message,
         vehicleId: vehicleId ?? null,
         status: "SENT",
-        cost: null, // Doplnit po napojeni na provider
+        cost: null,
       },
     });
 
     return { success: true, smsLogId: smsLog.id };
   } catch (error) {
-    console.error("[SMS] Chyba pri odesilani:", error);
+    console.error(`[SMS:${provider}] Chyba pri odesilani:`, error);
 
     // Zalogovat neuspech
     await prisma.smsLog.create({
