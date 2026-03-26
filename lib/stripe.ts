@@ -1,4 +1,5 @@
 import Stripe from "stripe";
+import { prisma } from "@/lib/prisma";
 
 let _stripe: Stripe | null = null;
 
@@ -68,4 +69,79 @@ export function generateVariableSymbol(vehicleId: string): string {
     hash |= 0;
   }
   return Math.abs(hash).toString().slice(0, 8).padStart(8, "0");
+}
+
+/**
+ * Vytvoří SellerPayout a Commission záznamy po potvrzení platby.
+ * Sdílená logika pro webhook i manuální potvrzení převodu.
+ */
+export async function createPayoutRecords(
+  paymentId: string,
+  vehicleId: string,
+  amount: number
+) {
+  const vehicle = await prisma.vehicle.findUnique({
+    where: { id: vehicleId },
+    include: {
+      broker: { select: { id: true, managerId: true } },
+      contracts: {
+        where: { type: "BROKERAGE" },
+        select: { sellerName: true, sellerBankAccount: true },
+        take: 1,
+      },
+    },
+  });
+
+  if (!vehicle) return;
+
+  const { commission, brokerShare, companyShare, managerBonus, sellerPayout } =
+    calculateCommission(amount);
+
+  // Aktualizovat / vytvořit Commission záznam
+  const existingCommission = await prisma.commission.findFirst({
+    where: { vehicleId, brokerId: vehicle.brokerId || "" },
+  });
+
+  if (existingCommission) {
+    await prisma.commission.update({
+      where: { id: existingCommission.id },
+      data: {
+        salePrice: amount,
+        commission,
+        brokerShare,
+        companyShare,
+        managerBonus,
+        status: "APPROVED",
+      },
+    });
+  } else if (vehicle.brokerId) {
+    await prisma.commission.create({
+      data: {
+        brokerId: vehicle.brokerId,
+        vehicleId,
+        salePrice: amount,
+        commission,
+        rate: commission / amount,
+        brokerShare,
+        companyShare,
+        managerBonus,
+        status: "APPROVED",
+        soldAt: new Date(),
+      },
+    });
+  }
+
+  // Vytvořit SellerPayout
+  const contract = vehicle.contracts[0];
+  await prisma.sellerPayout.create({
+    data: {
+      vehicleId,
+      paymentId,
+      sellerName: contract?.sellerName || vehicle.sellerName || "Neznámý",
+      sellerBankAccount: contract?.sellerBankAccount || "",
+      amount: sellerPayout,
+      commissionAmount: commission,
+      status: "PENDING",
+    },
+  });
 }

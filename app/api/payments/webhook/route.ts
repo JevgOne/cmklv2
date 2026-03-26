@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getStripe, STRIPE_WEBHOOK_SECRET, calculateCommission } from "@/lib/stripe";
+import { getStripe, STRIPE_WEBHOOK_SECRET, createPayoutRecords } from "@/lib/stripe";
 
 export async function POST(request: NextRequest) {
   try {
@@ -80,6 +80,24 @@ export async function POST(request: NextRequest) {
               },
             });
           }
+
+          // Email kupujícímu
+          const vehicleName = vehicle
+            ? `${vehicle.brand} ${vehicle.model}`
+            : "vozidlo";
+          try {
+            const { Resend } = await import("resend");
+            const resend = new Resend(process.env.RESEND_API_KEY);
+            await resend.emails.send({
+              from: process.env.RESEND_FROM_EMAIL || "info@carmakler.cz",
+              to: payment.buyerEmail,
+              subject: "Potvrzení platby | Carmakler",
+              html: `<p>Vaše platba ${payment.amount.toLocaleString("cs-CZ")} Kč za ${vehicleName} byla přijata.</p><p>Děkujeme za nákup přes Carmakler.</p>`,
+              text: `Vaše platba ${payment.amount.toLocaleString("cs-CZ")} Kč za ${vehicleName} byla přijata. Děkujeme za nákup přes Carmakler.`,
+            });
+          } catch (emailErr) {
+            console.error("Failed to send payment confirmation email:", emailErr);
+          }
         }
         break;
       }
@@ -110,73 +128,3 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function createPayoutRecords(
-  paymentId: string,
-  vehicleId: string,
-  amount: number
-) {
-  const vehicle = await prisma.vehicle.findUnique({
-    where: { id: vehicleId },
-    include: {
-      broker: { select: { id: true, managerId: true } },
-      contracts: {
-        where: { type: "BROKERAGE" },
-        select: { sellerName: true, sellerBankAccount: true },
-        take: 1,
-      },
-    },
-  });
-
-  if (!vehicle) return;
-
-  const { commission, brokerShare, companyShare, managerBonus, sellerPayout } =
-    calculateCommission(amount);
-
-  // Aktualizovat / vytvořit Commission záznam
-  const existingCommission = await prisma.commission.findFirst({
-    where: { vehicleId, brokerId: vehicle.brokerId || "" },
-  });
-
-  if (existingCommission) {
-    await prisma.commission.update({
-      where: { id: existingCommission.id },
-      data: {
-        salePrice: amount,
-        commission,
-        brokerShare,
-        companyShare,
-        managerBonus,
-        status: "APPROVED",
-      },
-    });
-  } else if (vehicle.brokerId) {
-    await prisma.commission.create({
-      data: {
-        brokerId: vehicle.brokerId,
-        vehicleId,
-        salePrice: amount,
-        commission,
-        rate: commission / amount,
-        brokerShare,
-        companyShare,
-        managerBonus,
-        status: "APPROVED",
-        soldAt: new Date(),
-      },
-    });
-  }
-
-  // Vytvořit SellerPayout
-  const contract = vehicle.contracts[0];
-  await prisma.sellerPayout.create({
-    data: {
-      vehicleId,
-      paymentId,
-      sellerName: contract?.sellerName || vehicle.sellerName || "Neznámý",
-      sellerBankAccount: contract?.sellerBankAccount || "",
-      amount: sellerPayout,
-      commissionAmount: commission,
-      status: "PENDING",
-    },
-  });
-}

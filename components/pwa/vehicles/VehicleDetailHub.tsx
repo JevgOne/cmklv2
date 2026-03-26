@@ -147,10 +147,18 @@ interface VehicleStats {
   contractsCount: number;
 }
 
+interface PaymentInfo {
+  status: string;
+  method: string;
+  amount: number;
+  confirmedAt: string | null;
+}
+
 interface VehicleDetailHubProps {
   vehicle: VehicleData;
   stats: VehicleStats;
   exclusiveContract: ExclusiveContractData | null;
+  payment?: PaymentInfo;
 }
 
 // ---- Labels ----
@@ -162,6 +170,7 @@ const statusMap: Record<string, { variant: "verified" | "top" | "pending" | "rej
   DRAFT: { variant: "default", label: "Draft" },
   DRAFT_QUICK: { variant: "pending", label: "Rychlý draft" },
   SOLD: { variant: "top", label: "Prodáno" },
+  PAID: { variant: "verified", label: "Zaplaceno" },
   RESERVED: { variant: "pending", label: "Rezervováno" },
   ARCHIVED: { variant: "default", label: "Archivováno" },
 };
@@ -208,7 +217,13 @@ const changeLogFieldLabels: Record<string, string> = {
 
 // ---- Component ----
 
-export function VehicleDetailHub({ vehicle, stats, exclusiveContract }: VehicleDetailHubProps) {
+const paymentMethodLabels: Record<string, string> = {
+  CARD: "kartou",
+  BANK_TRANSFER: "převodem",
+  FINANCING: "financováním",
+};
+
+export function VehicleDetailHub({ vehicle, stats, exclusiveContract, payment }: VehicleDetailHubProps) {
   const statusInfo = statusMap[vehicle.status] || { variant: "default" as const, label: vehicle.status };
   const title = `${vehicle.brand} ${vehicle.model}${vehicle.variant ? ` ${vehicle.variant}` : ""}`;
   const newInquiries = vehicle.inquiries.filter((i) => i.status === "NEW");
@@ -249,6 +264,55 @@ export function VehicleDetailHub({ vehicle, stats, exclusiveContract }: VehicleD
             )}
           </div>
         </div>
+
+        {/* Payment status */}
+        {payment && (
+          <Card className={`p-4 ${
+            payment.status === "PAID"
+              ? "bg-green-50 border border-green-200"
+              : payment.status === "PENDING" || payment.status === "PROCESSING"
+              ? "bg-yellow-50 border border-yellow-200"
+              : payment.status === "FAILED"
+              ? "bg-red-50 border border-red-200"
+              : ""
+          }`}>
+            <div className="flex items-center gap-2">
+              {payment.status === "PAID" && (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-green-600">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
+                  </svg>
+                  <div>
+                    <p className="text-sm font-semibold text-green-800">
+                      Zaplaceno {paymentMethodLabels[payment.method] || payment.method}
+                    </p>
+                    {payment.confirmedAt && (
+                      <p className="text-xs text-green-600">
+                        {new Date(payment.confirmedAt).toLocaleDateString("cs-CZ", { day: "numeric", month: "long", year: "numeric" })}
+                      </p>
+                    )}
+                  </div>
+                </>
+              )}
+              {(payment.status === "PENDING" || payment.status === "PROCESSING") && (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-yellow-600">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-sm font-semibold text-yellow-800">Čeká na platbu</p>
+                </>
+              )}
+              {payment.status === "FAILED" && (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-red-600">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-sm font-semibold text-red-800">Platba neúspěšná</p>
+                </>
+              )}
+            </div>
+          </Card>
+        )}
 
         {/* Exclusive contract */}
         <ExclusiveSection

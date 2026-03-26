@@ -31,6 +31,7 @@ const statusLabels: Record<string, string> = {
   PENDING: "Čekající",
   ACTIVE: "Aktivní",
   RESERVED: "Rezervováno",
+  PAID: "Zaplaceno",
 };
 
 export function TransferVehiclesContent({

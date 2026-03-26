@@ -58,6 +58,7 @@ const vehicleStatusMap: Record<string, { label: string; variant: "active" | "pen
   ACTIVE: { label: "Aktivní", variant: "active" },
   RESERVED: { label: "Rezervováno", variant: "pending" },
   SOLD: { label: "Prodáno", variant: "active" },
+  PAID: { label: "Zaplaceno", variant: "active" },
   REJECTED: { label: "Zamítnuto", variant: "rejected" },
   ARCHIVED: { label: "Archivováno", variant: "rejected" },
 };
@@ -199,7 +200,7 @@ export function ManagerBrokerDetailContent({
       header: "Prodejní cena",
       render: (item: CommissionItem) => (
         <span className="text-sm text-gray-700">
-          {item.salePrice.toLocaleString("cs-CZ")} Kc
+          {item.salePrice.toLocaleString("cs-CZ")} Kč
         </span>
       ),
     },
@@ -342,7 +343,7 @@ export function ManagerBrokerDetailContent({
               {broker.bio || "Žádné bio."}
             </p>
             <div className="text-xs text-gray-500">
-              Registrovan:{" "}
+              Registrován:{" "}
               {new Date(broker.createdAt).toLocaleDateString("cs-CZ")}
             </div>
           </Card>

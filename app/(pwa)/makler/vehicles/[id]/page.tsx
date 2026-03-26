@@ -38,6 +38,11 @@ export default async function VehicleDetailPage({
           },
         },
       },
+      payments: {
+        select: { status: true, method: true, amount: true, confirmedAt: true },
+        orderBy: { createdAt: "desc" },
+        take: 1,
+      },
       broker: {
         select: {
           id: true,
@@ -123,11 +128,21 @@ export default async function VehicleDetailPage({
   // Serializace dat pro client component (DateTime -> string)
   const serializedVehicle = JSON.parse(JSON.stringify(vehicle));
 
+  const latestPayment = vehicle.payments[0]
+    ? {
+        status: vehicle.payments[0].status,
+        method: vehicle.payments[0].method,
+        amount: vehicle.payments[0].amount,
+        confirmedAt: vehicle.payments[0].confirmedAt?.toISOString() ?? null,
+      }
+    : undefined;
+
   return (
     <VehicleDetailHub
       vehicle={serializedVehicle}
       stats={stats}
       exclusiveContract={exclusiveContract}
+      payment={latestPayment}
     />
   );
 }

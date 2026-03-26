@@ -219,7 +219,7 @@ model Vehicle {
   vehicleSource String? // OWNER, DEALER, AUCTION, IMPORT, LEASING_RETURN
 
   // Status
-  status             String    @default("DRAFT") // DRAFT, DRAFT_QUICK, PENDING, REJECTED, ACTIVE, RESERVED, SOLD, ARCHIVED
+  status             String    @default("DRAFT") // DRAFT, DRAFT_QUICK, PENDING, REJECTED, ACTIVE, RESERVED, PAID, SOLD, ARCHIVED
   rejectionReason    String?
   quickDraftDeadline DateTime? // 48h deadline pro doplnění rychlého draftu
 

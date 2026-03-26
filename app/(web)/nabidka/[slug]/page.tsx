@@ -571,6 +571,15 @@ export default async function VehicleDetailPage({
             </div>
 
             {/* CTA Buttons */}
+            {isBrokerListing && vehicle.status === "RESERVED" && (
+              <div className="flex flex-col gap-3">
+                <Link href={`/nabidka/${slug}/platba`} className="no-underline">
+                  <Button variant="primary" size="lg" className="w-full">
+                    Zaplatit {formattedPrice} Kč
+                  </Button>
+                </Link>
+              </div>
+            )}
             {isBrokerListing && (
               <div className="flex flex-col gap-3">
                 <ContactBrokerButton />

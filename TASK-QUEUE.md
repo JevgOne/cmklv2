@@ -4254,7 +4254,7 @@ Middleware — updatovat:
 
 ## TASK-032: Platební systém — Stripe, platba přes Carmakler, výplaty prodejcům a makléřům
 Priorita: 1
-Stav: čeká
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:

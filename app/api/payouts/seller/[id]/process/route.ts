@@ -60,6 +60,28 @@ export async function POST(
       },
     });
 
+    // Email prodejci
+    const vehicle = await prisma.vehicle.findUnique({
+      where: { id: payout.vehicleId },
+      select: { sellerEmail: true, brand: true, model: true },
+    });
+
+    if (vehicle?.sellerEmail) {
+      try {
+        const { Resend } = await import("resend");
+        const resend = new Resend(process.env.RESEND_API_KEY);
+        await resend.emails.send({
+          from: process.env.RESEND_FROM_EMAIL || "info@carmakler.cz",
+          to: vehicle.sellerEmail,
+          subject: "Výplata z prodeje vozidla | Carmakler",
+          html: `<p>Částka ${payout.amount.toLocaleString("cs-CZ")} Kč za prodej vozidla ${vehicle.brand} ${vehicle.model} byla odeslána na váš účet.</p><p>Děkujeme, že jste prodávali přes Carmakler.</p>`,
+          text: `Částka ${payout.amount.toLocaleString("cs-CZ")} Kč za prodej vozidla ${vehicle.brand} ${vehicle.model} byla odeslána na váš účet. Děkujeme, že jste prodávali přes Carmakler.`,
+        });
+      } catch (emailErr) {
+        console.error("Failed to send seller payout email:", emailErr);
+      }
+    }
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Process seller payout error:", error);
