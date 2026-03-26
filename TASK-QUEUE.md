@@ -4734,7 +4734,7 @@ Předpřipravené SMS šablony dostupné z detailu kontaktu:
 
 ## TASK-035: Detail vozu v PWA — kompletní specifikace obrazovky
 Priorita: 1
-Stav: čeká
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:

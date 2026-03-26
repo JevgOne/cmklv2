@@ -51,7 +51,7 @@ export async function GET(
       date: (vehicle.publishedAt || vehicle.createdAt).toISOString(),
       price: initialPrice,
       previousPrice: null,
-      label: "Publikovano",
+      label: "Publikováno",
     });
 
     // Add each price change
@@ -66,10 +66,10 @@ export async function GET(
         previousPrice: oldPrice,
         label:
           oldPrice && newPrice < oldPrice
-            ? "Snizeni ceny"
+            ? "Snížení ceny"
             : oldPrice && newPrice > oldPrice
-              ? "Zvyseni ceny"
-              : "Zmena ceny",
+              ? "Zvýšení ceny"
+              : "Změna ceny",
       });
     }
 
@@ -82,7 +82,7 @@ export async function GET(
   } catch (error) {
     console.error("Price history error:", error);
     return NextResponse.json(
-      { error: "Chyba pri nacitani cenove historie" },
+      { error: "Chyba při načítání cenové historie" },
       { status: 500 },
     );
   }

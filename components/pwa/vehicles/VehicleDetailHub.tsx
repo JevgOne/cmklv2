@@ -12,6 +12,8 @@ import { VehicleContracts } from "./VehicleContracts";
 import { ExclusiveSection } from "./ExclusiveSection";
 import { EmailButton } from "@/components/pwa/emails/EmailButton";
 import { EmailHistory } from "@/components/pwa/emails/EmailHistory";
+import { VehiclePriceHistory } from "./VehiclePriceHistory";
+import { VehicleTimeline } from "./VehicleTimeline";
 import { formatPrice, formatMileage } from "@/lib/utils";
 
 // ---- Types ----
@@ -208,13 +210,6 @@ const severityLabels: Record<string, string> = {
   SEVERE: "Vážné",
 };
 
-const changeLogFieldLabels: Record<string, string> = {
-  price: "Cena",
-  mileage: "Najezd",
-  year: "Rok výroby",
-  status: "Stav",
-};
-
 // ---- Component ----
 
 const paymentMethodLabels: Record<string, string> = {
@@ -263,6 +258,11 @@ export function VehicleDetailHub({ vehicle, stats, exclusiveContract, payment }:
               <Badge variant="default">K jednání</Badge>
             )}
           </div>
+          {vehicle.commission && ["ACTIVE", "RESERVED", "SOLD"].includes(vehicle.status) && (
+            <p className="text-sm text-orange-600 font-semibold mt-1">
+              Vaše provize: {formatPrice(vehicle.commission)}
+            </p>
+          )}
         </div>
 
         {/* Payment status */}
@@ -327,6 +327,9 @@ export function VehicleDetailHub({ vehicle, stats, exclusiveContract, payment }:
             <h3 className="font-semibold text-gray-900 mb-3">Prodejce</h3>
             <div className="space-y-2">
               <p className="text-sm text-gray-700 font-medium">{vehicle.sellerName}</p>
+              {vehicle.city && (
+                <p className="text-xs text-gray-500">{vehicle.city}</p>
+              )}
               {vehicle.sellerPhone && (
                 <div className="flex gap-2">
                   <a href={`tel:${vehicle.sellerPhone}`} className="no-underline flex-1">
@@ -360,8 +363,59 @@ export function VehicleDetailHub({ vehicle, stats, exclusiveContract, payment }:
                   </Button>
                 </a>
               )}
+              <Link
+                href={`/makler/contacts?search=${encodeURIComponent(vehicle.sellerName || "")}`}
+                className="no-underline block"
+              >
+                <Button variant="ghost" size="sm" className="w-full">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                    <path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 00-13.074.003z" />
+                  </svg>
+                  Otevřít v CRM
+                </Button>
+              </Link>
             </div>
           </Card>
+        )}
+
+        {/* Kontextové emaily */}
+        {vehicle.status === "ACTIVE" && (
+          <div className="flex gap-2">
+            <EmailButton
+              vehicleId={vehicle.id}
+              vehicleName={title}
+              defaultTemplate="FOLLOWUP"
+              defaultRecipientEmail={vehicle.sellerEmail || undefined}
+              defaultRecipientName={vehicle.sellerName || undefined}
+              label="Poslat follow-up"
+              variant="outline"
+              size="sm"
+              className="flex-1"
+            />
+            <EmailButton
+              vehicleId={vehicle.id}
+              vehicleName={title}
+              defaultTemplate="PRICE_CHANGE"
+              defaultRecipientEmail={vehicle.sellerEmail || undefined}
+              defaultRecipientName={vehicle.sellerName || undefined}
+              label="Navrhnout snížení ceny"
+              variant="outline"
+              size="sm"
+              className="flex-1"
+            />
+          </div>
+        )}
+        {vehicle.status === "SOLD" && (
+          <EmailButton
+            vehicleId={vehicle.id}
+            vehicleName={title}
+            defaultTemplate="VEHICLE_SOLD"
+            defaultRecipientEmail={vehicle.sellerEmail || undefined}
+            defaultRecipientName={vehicle.sellerName || undefined}
+            label="Oznámit prodej"
+            variant="outline"
+            size="sm"
+          />
         )}
 
         {/* Inquiries alert */}
@@ -453,6 +507,9 @@ export function VehicleDetailHub({ vehicle, stats, exclusiveContract, payment }:
             </div>
           </div>
         )}
+
+        {/* Price History */}
+        <VehiclePriceHistory vehicleId={vehicle.id} />
 
         {/* Damage Reports */}
         <div>
@@ -548,6 +605,46 @@ export function VehicleDetailHub({ vehicle, stats, exclusiveContract, payment }:
           </div>
         )}
 
+        {/* Prohlídky */}
+        {(() => {
+          const viewings = vehicle.inquiries.filter((i) => i.viewingDate);
+          if (viewings.length === 0) return null;
+          return (
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-3">
+                Prohlídky{" "}
+                <span className="text-gray-400 font-normal">({viewings.length})</span>
+              </h3>
+              <div className="space-y-2">
+                {viewings.map((viewing) => {
+                  const viewingStatusLabel = inquiryStatusLabels[viewing.status] || viewing.status;
+                  return (
+                    <Card key={viewing.id} className="p-3">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">{viewing.buyerName}</p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {new Date(viewing.viewingDate!).toLocaleDateString("cs-CZ", {
+                              day: "numeric",
+                              month: "long",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </p>
+                        </div>
+                        <Badge variant={viewing.status === "VIEWING_SCHEDULED" ? "pending" : "default"}>
+                          {viewingStatusLabel}
+                        </Badge>
+                      </div>
+                    </Card>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })()}
+
         {/* Contracts */}
         <VehicleContracts contracts={vehicle.contracts} vehicleId={vehicle.id} />
 
@@ -567,49 +664,8 @@ export function VehicleDetailHub({ vehicle, stats, exclusiveContract, payment }:
           <EmailHistory vehicleId={vehicle.id} />
         </div>
 
-        {/* Change Log / Timeline */}
-        {vehicle.changeLog.length > 0 && (
-          <div>
-            <h3 className="font-semibold text-gray-900 mb-3">Historie změn</h3>
-            <div className="relative pl-4 border-l-2 border-gray-200 space-y-4">
-              {vehicle.changeLog.slice(0, 10).map((entry) => (
-                <div key={entry.id} className="relative">
-                  <div
-                    className={`absolute -left-[21px] w-3 h-3 rounded-full border-2 border-white ${
-                      entry.flagged ? "bg-red-500" : "bg-gray-300"
-                    }`}
-                  />
-                  <div className="ml-2">
-                    <p className="text-sm text-gray-700">
-                      <span className="font-medium">
-                        {changeLogFieldLabels[entry.field] || entry.field}
-                      </span>
-                      {": "}
-                      {entry.oldValue && (
-                        <span className="text-gray-400 line-through">{entry.oldValue}</span>
-                      )}
-                      {entry.oldValue && entry.newValue && " -> "}
-                      {entry.newValue && (
-                        <span className="font-medium">{entry.newValue}</span>
-                      )}
-                    </p>
-                    {entry.reason && (
-                      <p className="text-xs text-gray-500 mt-0.5">Důvod: {entry.reason}</p>
-                    )}
-                    <p className="text-xs text-gray-400 mt-0.5">
-                      {new Date(entry.createdAt).toLocaleDateString("cs-CZ", {
-                        day: "numeric",
-                        month: "short",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Timeline */}
+        <VehicleTimeline vehicleId={vehicle.id} />
 
         {/* Status Actions - at the bottom */}
         <div>

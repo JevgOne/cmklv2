@@ -9,17 +9,21 @@ import { prisma } from "@/lib/prisma";
 /* ------------------------------------------------------------------ */
 
 const statusChangeSchema = z.object({
-  status: z.enum(["PENDING", "ACTIVE", "REJECTED", "RESERVED", "SOLD"]),
+  status: z.enum(["PENDING", "ACTIVE", "REJECTED", "RESERVED", "SOLD", "PAID", "ARCHIVED"]),
   reason: z.string().optional(),
 });
 
 // Povolené přechody stavů
 const ALLOWED_TRANSITIONS: Record<string, string[]> = {
-  DRAFT: ["PENDING"],              // Makléř odešle ke schválení
-  PENDING: ["ACTIVE", "REJECTED"], // Admin schválí nebo zamítne
-  REJECTED: ["PENDING"],           // Makléř opraví a znovu odešle
-  ACTIVE: ["RESERVED", "SOLD"],    // Makléř rezervuje nebo prodá
-  RESERVED: ["ACTIVE", "SOLD"],    // Zrušení rezervace nebo prodej
+  DRAFT: ["PENDING"],                      // Makléř odešle ke schválení
+  DRAFT_QUICK: ["PENDING"],                // Rychlý draft odeslán ke schválení
+  PENDING: ["ACTIVE", "REJECTED"],         // Admin schválí nebo zamítne
+  REJECTED: ["PENDING"],                   // Makléř opraví a znovu odešle
+  ACTIVE: ["RESERVED", "SOLD", "ARCHIVED"], // Makléř rezervuje, prodá nebo stáhne
+  RESERVED: ["ACTIVE", "SOLD", "PAID"],    // Zrušení rezervace, prodej nebo platba
+  PAID: ["SOLD"],                          // Zaplaceno → prodáno
+  SOLD: ["ARCHIVED"],                      // Prodáno → archiv
+  ARCHIVED: ["PENDING"],                   // Znovu aktivovat (přes schválení)
 };
 
 // Přechody vyžadující admin roli

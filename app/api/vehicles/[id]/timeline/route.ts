@@ -45,9 +45,9 @@ export async function GET(
     events.push({
       type: "created",
       date: vehicle.createdAt.toISOString(),
-      title: "Zadano maklerem",
+      title: "Zadáno makléřem",
       description: vehicle.broker
-        ? `Makler ${vehicle.broker.firstName} ${vehicle.broker.lastName}`
+        ? `Makléř ${vehicle.broker.firstName} ${vehicle.broker.lastName}`
         : null,
       icon: "circle",
       color: "green",
@@ -57,7 +57,7 @@ export async function GET(
     if (vehicle.inspectionData || vehicle.overallRating) {
       let inspectionDesc = "";
       if (vehicle.overallRating) {
-        inspectionDesc = `Celkove hodnoceni: ${vehicle.overallRating}/5`;
+        inspectionDesc = `Celkové hodnocení: ${vehicle.overallRating}/5`;
       }
       let inspData: { testDrive?: boolean } | null = null;
       if (vehicle.inspectionData) {
@@ -67,14 +67,14 @@ export async function GET(
       }
       if (inspData?.testDrive !== undefined) {
         inspectionDesc += inspectionDesc
-          ? `, Testovaci jizda: ${inspData.testDrive ? "Ano" : "Ne"}`
-          : `Testovaci jizda: ${inspData.testDrive ? "Ano" : "Ne"}`;
+          ? `, Testovací jízda: ${inspData.testDrive ? "Ano" : "Ne"}`
+          : `Testovací jízda: ${inspData.testDrive ? "Ano" : "Ne"}`;
       }
 
       events.push({
         type: "inspection",
         date: vehicle.createdAt.toISOString(),
-        title: "Prohlidka vozidla",
+        title: "Prohlídka vozidla",
         description: inspectionDesc || null,
         icon: "search",
         color: "blue",
@@ -86,7 +86,7 @@ export async function GET(
       events.push({
         type: "published",
         date: vehicle.publishedAt.toISOString(),
-        title: "Schvaleno a publikovano",
+        title: "Schváleno a publikováno",
         description: null,
         icon: "check",
         color: "green",
@@ -121,8 +121,8 @@ export async function GET(
         events.push({
           type: "price_change",
           date: log.createdAt.toISOString(),
-          title: "Zmena ceny",
-          description: `${oldPrice} Kc -> ${newPrice} Kc`,
+          title: "Změna ceny",
+          description: `${oldPrice} Kč -> ${newPrice} Kč`,
           icon: "price",
           color: "orange",
         });
@@ -132,7 +132,7 @@ export async function GET(
           events.push({
             type: "update",
             date: log.createdAt.toISOString(),
-            title: "Aktivovano",
+            title: "Aktivováno",
             description: null,
             icon: "refresh",
             color: "blue",
@@ -142,7 +142,7 @@ export async function GET(
         events.push({
           type: "update",
           date: log.createdAt.toISOString(),
-          title: "Aktualizace inzeratu",
+          title: "Aktualizace inzerátu",
           description: null,
           icon: "refresh",
           color: "gray",
@@ -159,8 +159,8 @@ export async function GET(
       events.push({
         type: "interest",
         date: new Date().toISOString(),
-        title: "Zajem",
-        description: `${vehicle.viewCount} zobrazeni, ${inquiryCount} dotazu`,
+        title: "Zájem",
+        description: `${vehicle.viewCount} zobrazení, ${inquiryCount} dotazů`,
         icon: "eye",
         color: "purple",
       });
@@ -175,7 +175,7 @@ export async function GET(
   } catch (error) {
     console.error("Timeline error:", error);
     return NextResponse.json(
-      { error: "Chyba pri nacitani timeline" },
+      { error: "Chyba při načítání timeline" },
       { status: 500 },
     );
   }
