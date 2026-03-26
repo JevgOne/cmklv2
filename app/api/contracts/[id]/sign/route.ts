@@ -82,6 +82,17 @@ export async function PUT(
       },
     });
 
+    // Po podpisu BROKERAGE smlouvy s exkluzivitou — nastavit exclusiveUntil na Vehicle
+    if (contract.type === "BROKERAGE" && contract.exclusiveDuration && contract.exclusiveEndDate && contract.vehicleId) {
+      await prisma.vehicle.update({
+        where: { id: contract.vehicleId },
+        data: {
+          exclusiveUntil: contract.exclusiveEndDate,
+          exclusiveContractId: contract.id,
+        },
+      });
+    }
+
     return NextResponse.json({ contract });
   } catch (error) {
     if (error instanceof z.ZodError) {

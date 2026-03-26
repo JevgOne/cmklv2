@@ -4466,7 +4466,7 @@ Rozšíření Commission modelu:
 
 ## TASK-033: Exkluzivní smlouva — flow, expirace, ukončení, porušení
 Priorita: 1
-Stav: čeká
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -22,6 +23,7 @@ interface FormValues {
   sellerBankAccount: string;
   price: number;
   commission: number;
+  exclusiveDuration: number | null;
 }
 
 export function DetailsStep({
@@ -45,11 +47,16 @@ export function DetailsStep({
       sellerBankAccount: data.sellerBankAccount,
       price: data.price,
       commission: data.commission,
+      exclusiveDuration: data.exclusiveDuration,
     },
   });
 
+  const [exclusiveDuration, setExclusiveDuration] = useState<number | null>(
+    data.exclusiveDuration
+  );
+
   const onSubmit = (values: FormValues) => {
-    onUpdate(values);
+    onUpdate({ ...values, exclusiveDuration });
     onNext();
   };
 
@@ -161,6 +168,39 @@ export function DetailsStep({
           placeholder="0"
         />
       </div>
+
+      {/* Exkluzivita (jen pro BROKERAGE) */}
+      {data.type === "BROKERAGE" && (
+        <div className="space-y-3">
+          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+            Exkluzivní smlouva
+          </h3>
+          <p className="text-sm text-gray-500">
+            Zajistěte si exkluzivitu na prodej tohoto vozidla. Volitelné.
+          </p>
+          <div className="grid grid-cols-4 gap-2">
+            {[
+              { value: null, label: "Bez" },
+              { value: 1, label: "1 měs." },
+              { value: 3, label: "3 měs." },
+              { value: 6, label: "6 měs." },
+            ].map((opt) => (
+              <button
+                key={opt.label}
+                type="button"
+                className={`p-3 rounded-xl text-sm font-semibold border-2 transition-all ${
+                  exclusiveDuration === opt.value
+                    ? "border-orange-500 bg-orange-50 text-orange-700"
+                    : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
+                }`}
+                onClick={() => setExclusiveDuration(opt.value)}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Submit */}
       <div className="sticky bottom-0 bg-white border-t border-gray-100 -mx-6 px-6 py-4 mt-6">

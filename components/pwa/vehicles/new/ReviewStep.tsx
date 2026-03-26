@@ -200,7 +200,7 @@ export function ReviewStep() {
           status: "submitted",
         } as unknown as Record<string, unknown>);
 
-        router.push(`/makler/vehicles/new/success?draft=${draftId}`);
+        router.push(`/makler/vehicles/new/success?draft=${draftId}&vehicleId=${result.id}`);
       } else {
         // Offline: uložit jako pending sync
         updateStatus("pending_sync");

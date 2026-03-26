@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
+import { SignatureCanvas } from "@/components/pwa/contracts/SignatureCanvas";
 
 interface ExtendExclusiveModalProps {
   open: boolean;
@@ -25,11 +26,16 @@ export function ExtendExclusiveModal({
 }: ExtendExclusiveModalProps) {
   const router = useRouter();
   const [duration, setDuration] = useState("3");
+  const [sellerSignature, setSellerSignature] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!sellerSignature) {
+      setError("Podpis prodejce je povinný");
+      return;
+    }
     setSubmitting(true);
     setError(null);
 
@@ -41,7 +47,7 @@ export function ExtendExclusiveModal({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             duration,
-            sellerSignature: "pending-digital-signature",
+            sellerSignature,
           }),
         }
       );
@@ -93,10 +99,32 @@ export function ExtendExclusiveModal({
           </div>
         </div>
 
-        <p className="text-xs text-gray-500">
-          Po potvrzení bude prodejci odeslán odkaz k digitálnímu podpisu
-          dodatku ke smlouvě.
-        </p>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Podpis prodejce
+          </label>
+          {sellerSignature ? (
+            <div className="flex flex-col items-center gap-2">
+              <div className="border-2 border-green-200 rounded-lg p-2 bg-green-50 w-full text-center">
+                <p className="text-sm text-green-700 font-medium">
+                  Podpis potvrzen
+                </p>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                type="button"
+                onClick={() => setSellerSignature(null)}
+              >
+                Podepsat znovu
+              </Button>
+            </div>
+          ) : (
+            <SignatureCanvas
+              onConfirm={(base64) => setSellerSignature(base64)}
+            />
+          )}
+        </div>
 
         <div className="flex gap-3 mt-2">
           <Button
@@ -110,7 +138,7 @@ export function ExtendExclusiveModal({
           <Button
             variant="primary"
             type="submit"
-            disabled={submitting}
+            disabled={submitting || !sellerSignature}
             className="flex-1"
           >
             {submitting ? "Prodlužuji..." : "Prodloužit"}

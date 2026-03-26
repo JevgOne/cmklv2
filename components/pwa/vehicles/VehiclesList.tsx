@@ -17,6 +17,7 @@ interface VehicleData {
   fuelType: string;
   transmission: string;
   viewCount: number;
+  exclusiveUntil: string | null;
   images: { url: string; isPrimary: boolean }[];
 }
 

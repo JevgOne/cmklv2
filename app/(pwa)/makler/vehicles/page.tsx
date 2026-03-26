@@ -34,6 +34,7 @@ export default async function VehiclesPage() {
     fuelType: v.fuelType,
     transmission: v.transmission,
     viewCount: v.viewCount,
+    exclusiveUntil: v.exclusiveUntil?.toISOString() ?? null,
     images: v.images.map((img) => ({
       url: img.url,
       isPrimary: img.isPrimary,

@@ -74,6 +74,7 @@ const createContractSchema = z.object({
   sellerBankAccount: z.string().optional(),
   price: z.number().int().min(0, "Cena musí být kladná"),
   commission: z.number().int().min(0).optional(),
+  exclusiveDuration: z.number().int().min(1).max(6).optional(),
   // Vehicle data for template generation
   vehicleBrand: z.string().optional(),
   vehicleModel: z.string().optional(),
@@ -138,6 +139,15 @@ export async function POST(request: NextRequest) {
       commission: data.commission || 0,
     });
 
+    // Exclusive dates
+    let exclusiveStartDate: Date | null = null;
+    let exclusiveEndDate: Date | null = null;
+    if (data.type === "BROKERAGE" && data.exclusiveDuration) {
+      exclusiveStartDate = new Date();
+      exclusiveEndDate = new Date();
+      exclusiveEndDate.setMonth(exclusiveEndDate.getMonth() + data.exclusiveDuration);
+    }
+
     const contract = await prisma.contract.create({
       data: {
         type: data.type,
@@ -153,6 +163,9 @@ export async function POST(request: NextRequest) {
         content: JSON.stringify(content),
         price: data.price,
         commission: data.commission || null,
+        exclusiveDuration: data.exclusiveDuration || null,
+        exclusiveStartDate,
+        exclusiveEndDate,
         status: "DRAFT",
       },
       include: {

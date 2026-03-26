@@ -38,6 +38,7 @@ export interface WizardData {
   sellerBankAccount: string;
   price: number;
   commission: number;
+  exclusiveDuration: number | null;
 }
 
 const STEPS = ["Typ smlouvy", "Vozidlo", "Údaje", "Náhled"];
@@ -65,6 +66,7 @@ export function ContractWizard({ brokerId = "", brokerName = "" }: ContractWizar
     sellerBankAccount: "",
     price: 0,
     commission: 0,
+    exclusiveDuration: null,
   });
 
   const progress = ((step + 1) / STEPS.length) * 100;
@@ -110,6 +112,7 @@ export function ContractWizard({ brokerId = "", brokerName = "" }: ContractWizar
           sellerBankAccount: data.sellerBankAccount || undefined,
           price: data.price,
           commission: data.commission || undefined,
+          exclusiveDuration: data.exclusiveDuration || undefined,
           vehicleBrand: data.vehicle?.brand,
           vehicleModel: data.vehicle?.model,
           vehicleVariant: data.vehicle?.variant,

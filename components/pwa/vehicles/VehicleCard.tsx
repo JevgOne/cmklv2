@@ -17,6 +17,7 @@ interface VehicleCardProps {
     fuelType: string;
     transmission: string;
     viewCount: number;
+    exclusiveUntil: string | null;
     images: { url: string; isPrimary: boolean }[];
   };
 }
@@ -41,10 +42,27 @@ const fuelLabels: Record<string, string> = {
   CNG: "CNG",
 };
 
+function getExclusiveBadge(exclusiveUntil: string | null): { label: string; warning: boolean } | null {
+  if (!exclusiveUntil) return null;
+  const until = new Date(exclusiveUntil);
+  const now = new Date();
+  if (until <= now) return null;
+
+  const diffDays = Math.ceil((until.getTime() - now.getTime()) / 86_400_000);
+  if (diffDays <= 14) {
+    return { label: `Exkl. vyprší za ${diffDays} ${diffDays === 1 ? "den" : diffDays < 5 ? "dny" : "dní"}`, warning: true };
+  }
+  return {
+    label: `Exkl. do ${until.toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric" })}`,
+    warning: false,
+  };
+}
+
 export function VehicleCard({ vehicle }: VehicleCardProps) {
   const primaryImage = vehicle.images.find((img) => img.isPrimary) || vehicle.images[0];
   const statusInfo = statusMap[vehicle.status] || { variant: "draft" as const, label: vehicle.status };
   const title = `${vehicle.brand} ${vehicle.model}${vehicle.variant ? ` ${vehicle.variant}` : ""}`;
+  const exclusiveBadge = getExclusiveBadge(vehicle.exclusiveUntil);
 
   return (
     <Link
@@ -87,6 +105,18 @@ export function VehicleCard({ vehicle }: VehicleCardProps) {
             <span>·</span>
             <span>{fuelLabels[vehicle.fuelType] || vehicle.fuelType}</span>
           </div>
+
+          {exclusiveBadge && (
+            <span
+              className={`inline-block mt-1 text-xs font-medium px-2 py-0.5 rounded-full ${
+                exclusiveBadge.warning
+                  ? "bg-yellow-100 text-yellow-800"
+                  : "bg-orange-100 text-orange-700"
+              }`}
+            >
+              {exclusiveBadge.label}
+            </span>
+          )}
 
           <div className="mt-2 flex items-center justify-between">
             <span className="text-sm font-extrabold text-gray-900">
