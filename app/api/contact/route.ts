@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { prisma } from "@/lib/prisma";
 
 const contactSchema = z.object({
   name: z.string().min(1, "Jméno je povinné"),
@@ -7,6 +8,7 @@ const contactSchema = z.object({
   email: z.string().email("Neplatný email"),
   message: z.string().optional(),
   vehicleId: z.string().optional(),
+  source: z.string().optional(),
 });
 
 export async function POST(request: Request) {
@@ -14,16 +16,19 @@ export async function POST(request: Request) {
     const body = await request.json();
     const data = contactSchema.parse(body);
 
-    // Log pro teď - odesílání emailů se přidá později
-    console.log("Nový kontaktní formulář:", {
-      name: data.name,
-      phone: data.phone,
-      email: data.email,
-      message: data.message,
-      vehicleId: data.vehicleId,
+    const lead = await prisma.lead.create({
+      data: {
+        name: data.name,
+        phone: data.phone,
+        email: data.email,
+        description: data.message || null,
+        vehicleId: data.vehicleId || null,
+        source: data.source || "WEB_FORM",
+        status: "NEW",
+      },
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, leadId: lead.id });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(

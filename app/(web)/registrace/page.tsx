@@ -11,7 +11,7 @@ export default function RegistracePage() {
     phone: "",
     password: "",
     passwordConfirm: "",
-    role: "ADVERTISER" as "BROKER" | "ADVERTISER" | "BUYER",
+    role: "ADVERTISER" as "ADVERTISER" | "BUYER",
     accountType: "PRIVATE" as "PRIVATE" | "DEALER" | "BAZAAR",
     companyName: "",
     ico: "",
@@ -131,9 +131,7 @@ export default function RegistracePage() {
               Registrace úspěšná!
             </h2>
             <p className="mt-3 text-sm text-gray-500">
-              {formData.role === "BROKER"
-                ? "Váš účet čeká na schválení. Po aktivaci vás budeme informovat emailem."
-                : "Váš účet je aktivní. Můžete se přihlásit."}
+              Váš účet je aktivní. Můžete se přihlásit.
             </p>
             <Link
               href="/login"
@@ -165,11 +163,10 @@ export default function RegistracePage() {
             <label className="mb-2 block text-sm font-medium text-gray-700">
               Typ účtu
             </label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {([
                 { value: "BUYER", label: "Kupující" },
                 { value: "ADVERTISER", label: "Prodávající" },
-                { value: "BROKER", label: "Makléř" },
               ] as const).map((option) => (
                 <button
                   key={option.value}
@@ -185,6 +182,9 @@ export default function RegistracePage() {
                 </button>
               ))}
             </div>
+            <p className="mt-2 text-xs text-gray-500">
+              Chcete se stát makléřem? Kontaktujte nás nebo požádejte svého manažera o pozvánku.
+            </p>
           </div>
 
           {/* Typ prodejce (pokud ADVERTISER) */}

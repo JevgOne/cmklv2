@@ -19,7 +19,7 @@ model User {
   firstName    String
   lastName     String
   avatar       String?
-  role         String  @default("BROKER") // ADMIN, BACKOFFICE, REGIONAL_DIRECTOR, MANAGER, BROKER, ADVERTISER, BUYER
+  role         String  @default("BROKER") // ADMIN, BACKOFFICE, REGIONAL_DIRECTOR, MANAGER, BROKER, ADVERTISER, BUYER, PARTS_SUPPLIER, INVESTOR, VERIFIED_DEALER, PARTNER_BAZAR, PARTNER_VRAKOVISTE
   status       String  @default("PENDING") // PENDING, ONBOARDING, ACTIVE, SUSPENDED, INACTIVE
 
   // Hierarchie

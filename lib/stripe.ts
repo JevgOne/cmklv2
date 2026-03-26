@@ -22,12 +22,12 @@ export function getStripe(): Stripe {
 
 export const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || "";
 
-// Carmakler bankovní údaje pro převody
+// Carmakler bankovní údaje pro převody — nastavte v .env
 export const CARMAKLER_BANK = {
-  accountNumber: "123456789/0100", // TODO: Nastavit reálný účet
-  iban: "CZ6508000000001234567890", // TODO: Nastavit reálný IBAN
-  bic: "KOMBCZPP",
-  bankName: "Komerční banka",
+  accountNumber: process.env.CARMAKLER_BANK_ACCOUNT || "",
+  iban: process.env.CARMAKLER_IBAN || "",
+  bic: process.env.CARMAKLER_BIC || "KOMBCZPP",
+  bankName: process.env.CARMAKLER_BANK_NAME || "Komerční banka",
   accountHolder: "Carmakler s.r.o.",
 };
 

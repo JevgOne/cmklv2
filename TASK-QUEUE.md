@@ -4984,7 +4984,7 @@ Když makléř onemocní, odejde, nebo se změní region:
 
 ## TASK-037: Deployment — GitHub push + nasazení na produkční server
 Priorita: 1
-Stav: ke kontrole
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:
@@ -5064,7 +5064,7 @@ Kroky:
 
 ## TASK-037b: QA audit + opravy bugů z auditu
 Priorita: 1
-Stav: ke kontrole
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:
@@ -5090,7 +5090,7 @@ Provést QA audit všech stránek na produkčním serveru a opravit nalezené bu
 
 ## TASK-038: Hluboké funkční testování — každá funkce, každý formulář, každá role
 Priorita: 1
-Stav: čeká
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:

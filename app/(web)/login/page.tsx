@@ -34,13 +34,37 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/session");
       const session = await res.json();
 
-      if (
-        session?.user?.role === "ADMIN" ||
-        session?.user?.role === "BACKOFFICE"
-      ) {
-        router.push("/admin/dashboard");
-      } else {
-        router.push("/makler/dashboard");
+      const role = session?.user?.role;
+      switch (role) {
+        case "ADMIN":
+        case "BACKOFFICE":
+        case "REGIONAL_DIRECTOR":
+        case "MANAGER":
+          router.push("/admin/dashboard");
+          break;
+        case "BROKER":
+          router.push("/makler/dashboard");
+          break;
+        case "ADVERTISER":
+          router.push("/moje-inzeraty");
+          break;
+        case "PARTS_SUPPLIER":
+          router.push("/parts/my");
+          break;
+        case "INVESTOR":
+          router.push("/marketplace/investor");
+          break;
+        case "VERIFIED_DEALER":
+          router.push("/marketplace/dealer");
+          break;
+        case "PARTNER_BAZAR":
+        case "PARTNER_VRAKOVISTE":
+          router.push("/partner/dashboard");
+          break;
+        case "BUYER":
+        default:
+          router.push("/");
+          break;
       }
     } catch {
       setError("Došlo k neočekávané chybě. Zkuste to prosím znovu.");

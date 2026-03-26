@@ -53,9 +53,7 @@ export default function DodavatelRegistracePage() {
     setAresResult(null);
 
     try {
-      const res = await fetch(`https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/${ico}`, {
-        headers: { Accept: "application/json" },
-      });
+      const res = await fetch(`/api/ares?ico=${ico}`);
 
       if (res.status === 404) {
         setAresResult("IČO nebylo nalezeno v ARES");
@@ -68,20 +66,16 @@ export default function DodavatelRegistracePage() {
       }
 
       const data = await res.json();
-      const name = data.obchodniJmeno || data.jmeno || "";
-      const address = data.sidlo;
 
       setForm({
         ...form,
-        companyName: name || form.companyName,
-        city: address?.nazevObce || form.city,
-        zip: address?.psc ? String(address.psc) : form.zip,
-        street: address?.nazevUlice
-          ? `${address.nazevUlice}${address.cisloDomovni ? ` ${address.cisloDomovni}` : ""}${address.cisloOrientacni ? `/${address.cisloOrientacni}` : ""}`
-          : form.street,
+        companyName: data.name || form.companyName,
+        city: data.city || form.city,
+        zip: data.zip || form.zip,
+        street: data.address || form.street,
       });
 
-      setAresResult(`Ověřeno: ${name}`);
+      setAresResult(`Ověřeno: ${data.name}`);
     } catch {
       setAresResult("Nepodařilo se ověřit IČO");
     } finally {
@@ -119,6 +113,7 @@ export default function DodavatelRegistracePage() {
           email: form.email,
           phone: form.phone,
           message: `[Registrace dodavatele] Firma: ${form.companyName}, IČO: ${form.ico}, Adresa: ${form.street}, ${form.city} ${form.zip}. ${form.description || ""}`,
+          source: "SUPPLIER_REGISTRATION",
         }),
       });
 

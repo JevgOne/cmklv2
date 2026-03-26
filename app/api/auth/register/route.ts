@@ -36,8 +36,8 @@ export async function POST(request: Request) {
     // Hash hesla
     const passwordHash = await bcrypt.hash(data.password, 12);
 
-    // Určení statusu — ADVERTISER a BUYER se aktivují rovnou
-    const role = data.role ?? "BROKER";
+    // ADVERTISER a BUYER se aktivují rovnou
+    const role = data.role;
     const autoActivate = role === "ADVERTISER" || role === "BUYER";
 
     // Vytvoření uživatele

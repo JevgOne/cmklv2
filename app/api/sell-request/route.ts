@@ -44,17 +44,7 @@ export async function POST(request: Request) {
       },
     });
 
-    console.log("Nový požadavek na prodej (lead ID: %s):", lead.id, {
-      brand: data.brand,
-      model: data.model,
-      year: data.year,
-      mileage: data.mileage,
-      fuelType: data.fuelType,
-      name: data.name,
-      phone: data.phone,
-      email: data.email,
-      note: data.note,
-    });
+    console.log("Nový požadavek na prodej (lead ID: %s):", lead.id);
 
     return NextResponse.json({ success: true, leadId: lead.id });
   } catch (error) {

@@ -17,6 +17,14 @@ export async function GET() {
       );
     }
 
+    const allowedRoles = ["BROKER", "MANAGER", "ADMIN"];
+    if (!allowedRoles.includes(session.user.role)) {
+      return NextResponse.json(
+        { error: "Nemáte oprávnění k tomuto zdroji" },
+        { status: 403 }
+      );
+    }
+
     const vehicles = await prisma.vehicle.findMany({
       where: { brokerId: session.user.id },
       select: {
