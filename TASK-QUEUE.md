@@ -3489,7 +3489,7 @@ model EmailLog {
 
 ## TASK-027: Gamifikace a statistiky makléřů
 Priorita: 2
-Stav: čeká
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:

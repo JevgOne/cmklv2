@@ -31,6 +31,11 @@ export default async function StatsPage() {
     allSoldVehicles,
     userAchievements,
     monthlyCommissions,
+    // Průměry všech brokerů
+    allBrokersVehiclesTotal,
+    allBrokersSoldTotal,
+    allBrokersCommissions,
+    allBrokersSoldVehicles,
   ] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
@@ -57,10 +62,39 @@ export default async function StatsPage() {
       _sum: { commission: true },
       _count: true,
     }),
+    // Celkový počet vozidel všech brokerů
+    prisma.vehicle.count({ where: { brokerId: { not: null } } }),
+    // Celkový počet prodaných vozidel všech brokerů
+    prisma.vehicle.count({ where: { brokerId: { not: null }, status: "SOLD" } }),
+    // Průměrná provize všech brokerů
+    prisma.commission.aggregate({
+      _avg: { commission: true },
+    }),
+    // Všechna prodaná vozidla všech brokerů (pro průměrnou dobu prodeje)
+    prisma.vehicle.findMany({
+      where: { brokerId: { not: null }, status: "SOLD", soldAt: { not: null } },
+      select: { createdAt: true, soldAt: true },
+    }),
   ]);
 
   const level = getLevelByKey(user?.level ?? "JUNIOR");
   const conversionRate = totalVehicles > 0 ? Math.round((soldVehicles / totalVehicles) * 100) : 0;
+
+  // Průměry všech brokerů
+  const avgConversionRate =
+    allBrokersVehiclesTotal > 0
+      ? Math.round((allBrokersSoldTotal / allBrokersVehiclesTotal) * 100)
+      : 0;
+
+  const allSaleDurations = allBrokersSoldVehicles
+    .filter((v) => v.soldAt)
+    .map((v) => (v.soldAt!.getTime() - v.createdAt.getTime()) / (1000 * 60 * 60 * 24));
+  const avgAllSaleDays =
+    allSaleDurations.length > 0
+      ? Math.round(allSaleDurations.reduce((a, b) => a + b, 0) / allSaleDurations.length)
+      : 0;
+
+  const avgAllCommission = Math.round(allBrokersCommissions._avg.commission ?? 0);
 
   const saleDurations = allSoldVehicles
     .filter((v) => v.soldAt)
@@ -90,21 +124,28 @@ export default async function StatsPage() {
   });
 
   // Mesicni prodeje (poslednich 6 mesicu) - placeholder data pro grafy
-  const monthlyStats = [];
-  for (let i = 5; i >= 0; i--) {
+  const monthRanges = Array.from({ length: 6 }, (_, idx) => {
+    const i = 5 - idx;
     const ms = new Date(now.getFullYear(), now.getMonth() - i, 1);
     const me = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
-    const sales = await prisma.commission.aggregate({
-      where: { brokerId: userId, soldAt: { gte: ms, lt: me } },
-      _sum: { commission: true },
-      _count: true,
-    });
-    monthlyStats.push({
-      label: ms.toLocaleDateString("cs-CZ", { month: "short" }),
-      sales: sales._count,
-      commission: sales._sum.commission ?? 0,
-    });
-  }
+    return { ms, me, label: ms.toLocaleDateString("cs-CZ", { month: "short" }) };
+  });
+
+  const monthlyAggregates = await Promise.all(
+    monthRanges.map(({ ms, me }) =>
+      prisma.commission.aggregate({
+        where: { brokerId: userId, soldAt: { gte: ms, lt: me } },
+        _sum: { commission: true },
+        _count: true,
+      })
+    )
+  );
+
+  const monthlyStats = monthRanges.map((range, idx) => ({
+    label: range.label,
+    sales: monthlyAggregates[idx]._count,
+    commission: monthlyAggregates[idx]._sum.commission ?? 0,
+  }));
 
   const maxSales = Math.max(...monthlyStats.map((m) => m.sales), 1);
   const maxCommission = Math.max(...monthlyStats.map((m) => m.commission), 1);
@@ -174,6 +215,109 @@ export default async function StatsPage() {
           </div>
         </div>
       </Card>
+
+      {/* Porovnání s průměrem */}
+      <div>
+        <h3 className="font-extrabold text-gray-900 mb-3">Porovnani s prumerem</h3>
+        <div className="grid grid-cols-1 gap-3">
+          {/* Průměrná doba prodeje */}
+          <Card className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-gray-500">Prumerna doba prodeje</p>
+                <p className="text-lg font-extrabold text-gray-900">{avgSaleDays} dni</p>
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-gray-500">Prumer</p>
+                <p className="text-lg font-bold text-gray-400">{avgAllSaleDays} dni</p>
+              </div>
+            </div>
+            <div className="mt-2">
+              {avgSaleDays > 0 && avgAllSaleDays > 0 ? (
+                <span
+                  className={`text-xs font-bold px-2 py-1 rounded-full ${
+                    avgSaleDays <= avgAllSaleDays
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {avgSaleDays <= avgAllSaleDays
+                    ? `O ${avgAllSaleDays - avgSaleDays} dni rychleji`
+                    : `O ${avgSaleDays - avgAllSaleDays} dni pomaleji`}
+                </span>
+              ) : (
+                <span className="text-xs text-gray-400">Nedostatek dat</span>
+              )}
+            </div>
+          </Card>
+
+          {/* Konverzní poměr */}
+          <Card className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-gray-500">Konverzni pomer</p>
+                <p className="text-lg font-extrabold text-orange-500">{conversionRate}%</p>
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-gray-500">Prumer</p>
+                <p className="text-lg font-bold text-gray-400">{avgConversionRate}%</p>
+              </div>
+            </div>
+            <div className="mt-2">
+              {totalVehicles > 0 && allBrokersVehiclesTotal > 0 ? (
+                <span
+                  className={`text-xs font-bold px-2 py-1 rounded-full ${
+                    conversionRate >= avgConversionRate
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {conversionRate >= avgConversionRate
+                    ? `O ${conversionRate - avgConversionRate}% lepsi`
+                    : `O ${avgConversionRate - conversionRate}% horsi`}
+                </span>
+              ) : (
+                <span className="text-xs text-gray-400">Nedostatek dat</span>
+              )}
+            </div>
+          </Card>
+
+          {/* Průměrná provize */}
+          <Card className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-gray-500">Prumerna provize</p>
+                <p className="text-lg font-extrabold text-gray-900">
+                  {formatPrice(Math.round(userCommissions._avg.commission ?? 0))}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-gray-500">Prumer</p>
+                <p className="text-lg font-bold text-gray-400">
+                  {formatPrice(avgAllCommission)}
+                </p>
+              </div>
+            </div>
+            <div className="mt-2">
+              {(userCommissions._avg.commission ?? 0) > 0 && avgAllCommission > 0 ? (
+                <span
+                  className={`text-xs font-bold px-2 py-1 rounded-full ${
+                    (userCommissions._avg.commission ?? 0) >= avgAllCommission
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {(userCommissions._avg.commission ?? 0) >= avgAllCommission
+                    ? "Nad prumerem"
+                    : "Pod prumerem"}
+                </span>
+              ) : (
+                <span className="text-xs text-gray-400">Nedostatek dat</span>
+              )}
+            </div>
+          </Card>
+        </div>
+      </div>
 
       {/* Prodeje po mesicich - bar chart placeholder */}
       <Card className="p-4">

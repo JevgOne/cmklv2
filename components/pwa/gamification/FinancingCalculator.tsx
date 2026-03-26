@@ -14,6 +14,14 @@ export function FinancingCalculator() {
   const [months, setMonths] = useState<number>(60);
   const [rate, setRate] = useState<number>(DEFAULT_RATE);
 
+  // Email form state
+  const [showEmailForm, setShowEmailForm] = useState(false);
+  const [recipientEmail, setRecipientEmail] = useState("");
+  const [recipientName, setRecipientName] = useState("");
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
+
   const result = useMemo(() => {
     const downPayment = Math.round(price * (downPaymentPct / 100));
     const loanAmount = price - downPayment;
@@ -44,6 +52,41 @@ export function FinancingCalculator() {
       overpayment: Math.round(overpayment),
     };
   }, [price, downPaymentPct, months, rate]);
+
+  async function handleSendEmail() {
+    if (!recipientEmail || !recipientName) return;
+
+    setSending(true);
+    setEmailError(null);
+
+    try {
+      const res = await fetch("/api/emails/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          templateType: "FINANCING",
+          recipientEmail,
+          recipientName,
+          variables: {
+            price,
+            monthlyPayment: result.monthlyPayment,
+          },
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Chyba pri odesilani");
+      }
+
+      setSent(true);
+      setShowEmailForm(false);
+    } catch (err) {
+      setEmailError(err instanceof Error ? err.message : "Chyba pri odesilani emailu");
+    } finally {
+      setSending(false);
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -172,13 +215,88 @@ export function FinancingCalculator() {
         </div>
       </Card>
 
-      {/* CTA */}
-      <Button variant="primary" className="w-full" disabled>
-        Poslat nabídku kupujícímu
-      </Button>
+      {/* Disclaimer */}
       <p className="text-xs text-gray-400 text-center">
-        Integrace s emailovým systémem připravujeme
+        Jedna se o orientacni kalkulaci. Skutecnou nabidku poskytne leasingova spolecnost.
       </p>
+
+      {/* CTA */}
+      {sent ? (
+        <Card className="p-4 bg-green-50 border border-green-200 text-center">
+          <p className="text-sm font-bold text-green-700">
+            Email odeslan na {recipientEmail}
+          </p>
+          <button
+            onClick={() => {
+              setSent(false);
+              setRecipientEmail("");
+              setRecipientName("");
+            }}
+            className="text-xs text-green-600 underline mt-2"
+          >
+            Odeslat dalsi
+          </button>
+        </Card>
+      ) : showEmailForm ? (
+        <Card className="p-4 space-y-3">
+          <h4 className="font-bold text-gray-900 text-sm">Odeslat nabidku</h4>
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">
+              Jmeno kupujiciho
+            </label>
+            <input
+              type="text"
+              value={recipientName}
+              onChange={(e) => setRecipientName(e.target.value)}
+              placeholder="Jan Novak"
+              className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">
+              Email kupujiciho
+            </label>
+            <input
+              type="email"
+              value={recipientEmail}
+              onChange={(e) => setRecipientEmail(e.target.value)}
+              placeholder="jan@email.cz"
+              className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            />
+          </div>
+          {emailError && (
+            <p className="text-xs text-red-500">{emailError}</p>
+          )}
+          <div className="flex gap-2">
+            <Button
+              variant="primary"
+              className="flex-1"
+              onClick={handleSendEmail}
+              disabled={sending || !recipientEmail || !recipientName}
+            >
+              {sending ? "Odesilam..." : "Odeslat"}
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setShowEmailForm(false);
+                setEmailError(null);
+              }}
+              disabled={sending}
+            >
+              Zrusit
+            </Button>
+          </div>
+        </Card>
+      ) : (
+        <Button
+          variant="primary"
+          className="w-full"
+          onClick={() => setShowEmailForm(true)}
+        >
+          Poslat nabidku kupujicimu
+        </Button>
+      )}
     </div>
   );
 }
