@@ -151,3 +151,30 @@ export async function isSmsEnabledForUser(
   // Pokud preference neexistuje, SMS je default vypnuta
   return pref?.smsEnabled ?? false;
 }
+
+/**
+ * Zkontroluje opt-out prodejce pred odeslanim SMS
+ * Vraci true pokud SMS muze byt odeslana
+ */
+export async function canSendSmsToSeller(
+  sellerContactId: string,
+  eventType: string
+): Promise<boolean> {
+  const seller = await prisma.sellerContact.findUnique({
+    where: { id: sellerContactId },
+    select: { smsOptOut: true },
+  });
+
+  // Globalni opt-out
+  if (seller?.smsOptOut) return false;
+
+  // Per-event preference
+  const pref = await prisma.sellerNotificationPreference.findUnique({
+    where: {
+      sellerContactId_eventType: { sellerContactId, eventType },
+    },
+  });
+
+  // Pokud preference neexistuje, SMS je default povolena
+  return pref?.smsEnabled ?? true;
+}

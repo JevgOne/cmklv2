@@ -1211,6 +1211,12 @@ model SellerContact {
   // Komunikace
   communications SellerCommunication[]
 
+  // Notifikace prodejce
+  notificationToken         String?                      @unique
+  smsOptOut                 Boolean                      @default(false)
+  emailOptOut               Boolean                      @default(false)
+  notificationPreferences   SellerNotificationPreference[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -1236,6 +1242,18 @@ model SellerCommunication {
 
   @@index([contactId])
   @@index([brokerId])
+}
+
+model SellerNotificationPreference {
+  id              String        @id @default(cuid())
+  sellerContactId String
+  sellerContact   SellerContact @relation(fields: [sellerContactId], references: [id], onDelete: Cascade)
+  eventType       String        // VEHICLE_APPROVED, NEW_INQUIRY, VIEWING_SCHEDULED, VEHICLE_SOLD, PRICE_REDUCTION
+  smsEnabled      Boolean       @default(true)
+  emailEnabled    Boolean       @default(true)
+
+  @@unique([sellerContactId, eventType])
+  @@index([sellerContactId])
 }
 
 // ============================================

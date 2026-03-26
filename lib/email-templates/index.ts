@@ -11,6 +11,20 @@ import { financingHtml, financingText, financingSubject } from "./financing";
 import { priceChangeHtml, priceChangeText, priceChangeSubject } from "./price-change";
 import { vehicleSoldHtml, vehicleSoldText, vehicleSoldSubject } from "./vehicle-sold";
 
+// Daily summary export
+export {
+  dailySummaryHtml,
+  dailySummaryText,
+  dailySummarySubject,
+} from "./daily-summary";
+export type {
+  DailySummaryData,
+  TopVehicle,
+  InquiryItem,
+  PendingLead,
+  StalingVehicle,
+} from "./daily-summary";
+
 export interface TemplateInfo {
   type: EmailTemplateType;
   name: string;

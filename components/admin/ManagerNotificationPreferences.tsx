@@ -17,55 +17,35 @@ interface EventConfig {
   description: string;
 }
 
-const EVENTS: EventConfig[] = [
+const MANAGER_EVENTS: EventConfig[] = [
   {
-    key: "NEW_LEAD",
-    label: "Nový lead",
-    description: "Když Vám je přiřazen nový lead",
+    key: "ONBOARDING_COMPLETED",
+    label: "Onboarding dokoncen",
+    description: "Kdyz novy makler dokonci onboarding",
   },
   {
-    key: "NEW_INQUIRY",
-    label: "Nový dotaz",
-    description: "Když se někdo zeptá na Vaše vozidlo",
+    key: "LISTING_PENDING",
+    label: "Novy inzerat ke schvaleni",
+    description: "Kdyz makler zada novy inzerat ke schvaleni",
   },
   {
-    key: "VEHICLE_APPROVED",
-    label: "Inzerát schválen",
-    description: "Když je Váš inzerát schválen a zveřejněn",
+    key: "BROKER_REJECTED_VEHICLE",
+    label: "Makler zamitnul vozidlo",
+    description: "Kdyz makler odmitne nabirane vozidlo",
   },
   {
-    key: "VEHICLE_REJECTED",
-    label: "Inzerát zamítnut",
-    description: "Když je Váš inzerát vrácen k dopracování",
+    key: "VEHICLE_60_DAYS",
+    label: "Vozidlo 60 dni",
+    description: "Kdyz je vozidlo v nabidce vice nez 60 dni",
   },
   {
-    key: "VEHICLE_SOLD",
-    label: "Auto prodáno",
-    description: "Když se Vaše vozidlo prodá",
-  },
-  {
-    key: "DAILY_SUMMARY",
-    label: "Denní shrnutí",
-    description: "Ranní přehled Vašich statistik",
-  },
-  {
-    key: "VEHICLE_30_DAYS",
-    label: "Auto 30 dnů",
-    description: "Upozornění když je auto v nabídce více než 30 dní",
-  },
-  {
-    key: "ACHIEVEMENT",
-    label: "Achievementy",
-    description: "Odemknutí nového achievementu",
-  },
-  {
-    key: "LEADERBOARD",
-    label: "Žebříček",
-    description: "Změny ve Vašem umístění v žebříčku",
+    key: "WEEKLY_REPORT",
+    label: "Tydenni report",
+    description: "Tydenni prehled vykonnosti tymu",
   },
 ];
 
-export function NotificationPreferences() {
+export function ManagerNotificationPreferences() {
   const [preferences, setPreferences] = useState<PreferenceItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -90,7 +70,7 @@ export function NotificationPreferences() {
           body: JSON.stringify({ preferences: updated }),
         });
       } catch (error) {
-        console.error("Chyba při ukládání:", error);
+        console.error("Chyba pri ukladani:", error);
       } finally {
         setSaving(false);
       }
@@ -98,22 +78,25 @@ export function NotificationPreferences() {
     []
   );
 
-  const SMS_ELIGIBLE_EVENTS = new Set([
-    "NEW_LEAD",
-    "NEW_INQUIRY",
-    "VEHICLE_APPROVED",
-    "VEHICLE_REJECTED",
-    "VEHICLE_SOLD",
-  ]);
-
   const handleToggle = (
     eventType: string,
-    channel: "pushEnabled" | "emailEnabled" | "smsEnabled",
+    channel: "pushEnabled" | "emailEnabled",
     value: boolean
   ) => {
     const updated = preferences.map((p) =>
       p.eventType === eventType ? { ...p, [channel]: value } : p
     );
+
+    // Pokud event jeste neexistuje v preferences, pridat ho
+    if (!preferences.find((p) => p.eventType === eventType)) {
+      updated.push({
+        eventType,
+        pushEnabled: channel === "pushEnabled" ? value : true,
+        emailEnabled: channel === "emailEnabled" ? value : true,
+        smsEnabled: false,
+      });
+    }
+
     setPreferences(updated);
     savePreferences(updated);
   };
@@ -134,11 +117,11 @@ export function NotificationPreferences() {
 
   return (
     <div className="space-y-4">
-      {/* Hlavička */}
+      {/* Hlavicka */}
       <Card className="p-4">
         <div className="flex items-center justify-between mb-1">
           <span className="text-xs font-bold text-gray-400 uppercase tracking-wide">
-            Událost
+            Udalost
           </span>
           <div className="flex gap-6">
             <span className="text-xs font-bold text-gray-400 uppercase tracking-wide w-12 text-center">
@@ -147,15 +130,12 @@ export function NotificationPreferences() {
             <span className="text-xs font-bold text-gray-400 uppercase tracking-wide w-12 text-center">
               Email
             </span>
-            <span className="text-xs font-bold text-gray-400 uppercase tracking-wide w-12 text-center">
-              SMS
-            </span>
           </div>
         </div>
       </Card>
 
-      {/* Jednotlivé události */}
-      {EVENTS.map((event) => {
+      {/* Jednotlive udalosti */}
+      {MANAGER_EVENTS.map((event) => {
         const pref = prefMap.get(event.key) ?? {
           eventType: event.key,
           pushEnabled: true,
@@ -193,19 +173,6 @@ export function NotificationPreferences() {
                     disabled={saving}
                   />
                 </div>
-                <div className="w-12 flex justify-center">
-                  {SMS_ELIGIBLE_EVENTS.has(event.key) ? (
-                    <Toggle
-                      checked={pref.smsEnabled}
-                      onChange={(v) =>
-                        handleToggle(event.key, "smsEnabled", v)
-                      }
-                      disabled={saving}
-                    />
-                  ) : (
-                    <span className="text-xs text-gray-300">—</span>
-                  )}
-                </div>
               </div>
             </div>
           </Card>
@@ -213,7 +180,7 @@ export function NotificationPreferences() {
       })}
 
       {saving && (
-        <p className="text-xs text-gray-400 text-center">Ukládám...</p>
+        <p className="text-xs text-gray-400 text-center">Ukladam...</p>
       )}
     </div>
   );

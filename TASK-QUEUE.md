@@ -3680,7 +3680,7 @@ Implementovat 4 funkce které zvyšují hodnotu platformy pro kupující — sro
 
 ## TASK-029: SMS notifikace + notifikační centrum + denní shrnutí
 Priorita: 2
-Stav: čeká
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:
