@@ -1,6 +1,7 @@
 {
   "crons": [
     { "path": "/api/cron/daily-summary", "schedule": "0 5 * * *" },
-    { "path": "/api/cron/stale-vehicles", "schedule": "0 6 * * *" }
+    { "path": "/api/cron/stale-vehicles", "schedule": "0 6 * * *" },
+    { "path": "/api/cron/quick-draft-expiry", "schedule": "0 7 * * *" }
   ]
 }

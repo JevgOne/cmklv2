@@ -32,6 +32,7 @@ export default async function ProfilePage() {
         bio: true,
         role: true,
         quickModeEnabled: true,
+        level: true,
         createdAt: true,
       },
     }),
@@ -124,7 +125,7 @@ export default async function ProfilePage() {
 
       {/* Rychlé nabírání — toggle (pro makléře) */}
       {user.role === "BROKER" || user.role === "MANAGER" || user.role === "REGIONAL_DIRECTOR" ? (
-        <QuickModeToggle initialEnabled={user.quickModeEnabled} />
+        <QuickModeToggle initialEnabled={user.quickModeEnabled} userLevel={user.level} />
       ) : null}
 
       {/* Nastaveni notifikaci */}

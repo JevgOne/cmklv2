@@ -160,6 +160,7 @@ const statusMap: Record<string, { variant: "verified" | "top" | "pending" | "rej
   PENDING: { variant: "pending", label: "Ke schválení" },
   REJECTED: { variant: "rejected", label: "Zamítnuto" },
   DRAFT: { variant: "default", label: "Draft" },
+  DRAFT_QUICK: { variant: "pending", label: "Rychlý draft" },
   SOLD: { variant: "top", label: "Prodáno" },
   RESERVED: { variant: "pending", label: "Rezervováno" },
   ARCHIVED: { variant: "default", label: "Archivováno" },
@@ -362,7 +363,7 @@ export function VehicleDetailHub({ vehicle, stats, exclusiveContract }: VehicleD
               <h3 className="font-semibold text-gray-900">
                 Fotky <span className="text-gray-400 font-normal">({vehicle.images.length})</span>
               </h3>
-              {["DRAFT", "ACTIVE"].includes(vehicle.status) && (
+              {["DRAFT", "DRAFT_QUICK", "ACTIVE"].includes(vehicle.status) && (
                 <Link href={`/makler/vehicles/${vehicle.id}/edit?step=photos`} className="no-underline">
                   <Button variant="outline" size="sm">Upravit fotky</Button>
                 </Link>

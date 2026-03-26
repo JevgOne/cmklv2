@@ -18,6 +18,19 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
+    // Kontrola levelu — JUNIOR nemůže aktivovat rychlé nabírání
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { level: true },
+    });
+
+    if (user?.level === "JUNIOR") {
+      return NextResponse.json(
+        { error: "Rychlé nabírání je dostupné od úrovně Makléř" },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json();
     const data = quickModeSchema.parse(body);
 

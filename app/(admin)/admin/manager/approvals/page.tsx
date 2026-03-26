@@ -26,10 +26,10 @@ export default async function ManagerApprovalsPage() {
 
   const brokerIds = teamBrokers.map((b) => b.id);
 
-  // Načti PENDING vozidla od makléřů tohoto manažera
+  // Načti PENDING + DRAFT_QUICK vozidla od makléřů tohoto manažera
   const pendingVehicles = await prisma.vehicle.findMany({
     where: {
-      status: "PENDING",
+      status: { in: ["PENDING", "DRAFT_QUICK"] },
       brokerId: { in: brokerIds },
     },
     include: {
@@ -125,7 +125,20 @@ export default async function ManagerApprovalsPage() {
                       <div className="text-lg font-extrabold text-gray-900">
                         {vehicle.price.toLocaleString("cs-CZ")} Kc
                       </div>
-                      <Badge variant="pending">Ceka na schvaleni</Badge>
+                      {vehicle.status === "DRAFT_QUICK" ? (
+                        <div className="space-y-1">
+                          <Badge variant="default">Rychly draft</Badge>
+                          {vehicle.quickDraftDeadline && (
+                            <p className="text-xs text-orange-600">
+                              {new Date(vehicle.quickDraftDeadline) > new Date()
+                                ? `Zbývá ${Math.ceil((new Date(vehicle.quickDraftDeadline).getTime() - Date.now()) / (1000 * 60 * 60))}h`
+                                : "Deadline vypršel"}
+                            </p>
+                          )}
+                        </div>
+                      ) : (
+                        <Badge variant="pending">Ceka na schvaleni</Badge>
+                      )}
                     </div>
                   </div>
 

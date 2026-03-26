@@ -7,9 +7,10 @@ import { Alert } from "@/components/ui/Alert";
 
 interface QuickModeToggleProps {
   initialEnabled: boolean;
+  userLevel?: string;
 }
 
-export function QuickModeToggle({ initialEnabled }: QuickModeToggleProps) {
+export function QuickModeToggle({ initialEnabled, userLevel }: QuickModeToggleProps) {
   const [enabled, setEnabled] = useState(initialEnabled);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,15 +53,21 @@ export function QuickModeToggle({ initialEnabled }: QuickModeToggleProps) {
           <p className="text-sm font-medium text-gray-900">
             Rychlý režim nabírání
           </p>
-          <p className="text-xs text-gray-500 mt-0.5">
-            Zkrácený 3-krokový flow pro rychlé nabírání aut v terénu.
-            Na doplnění údajů máte 48 hodin.
-          </p>
+          {userLevel === "JUNIOR" ? (
+            <p className="text-xs text-orange-600 mt-0.5">
+              Dostupné od úrovně Makléř (5+ prodejů)
+            </p>
+          ) : (
+            <p className="text-xs text-gray-500 mt-0.5">
+              Zkrácený 3-krokový flow pro rychlé nabírání aut v terénu.
+              Na doplnění údajů máte 48 hodin.
+            </p>
+          )}
         </div>
         <Toggle
           checked={enabled}
           onChange={handleToggle}
-          disabled={saving}
+          disabled={saving || userLevel === "JUNIOR"}
         />
       </div>
 

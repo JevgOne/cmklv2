@@ -3751,7 +3751,7 @@ model SmsLog {
 
 ## TASK-030: Rychlé nabírání — zkrácený 3-krokový flow
 Priorita: 2
-Stav: čeká
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:

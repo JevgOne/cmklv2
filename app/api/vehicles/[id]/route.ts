@@ -117,6 +117,7 @@ const updateVehicleSchema = z.object({
   longitude: z.number().optional(),
   vin: z.string().optional(),
   reason: z.string().optional(), // Důvod změny (povinný při změně ceny/km/roku)
+  status: z.enum(["PENDING"]).optional(), // Povolená změna: DRAFT_QUICK -> PENDING
 });
 
 // Pole vyžadující důvod při změně
@@ -241,6 +242,16 @@ export async function PATCH(
         flagged,
         flagReason,
       });
+    }
+
+    // Validace přechodu DRAFT_QUICK -> PENDING
+    if (data.status === "PENDING") {
+      if (existing.status !== "DRAFT_QUICK" && existing.status !== "DRAFT") {
+        return NextResponse.json(
+          { error: "Změna stavu na PENDING je povolena pouze z DRAFT nebo DRAFT_QUICK" },
+          { status: 400 }
+        );
+      }
     }
 
     // Build update data (bez reason)

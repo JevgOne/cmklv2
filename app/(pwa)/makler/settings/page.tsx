@@ -21,6 +21,7 @@ export default async function SettingsPage() {
       firstName: true,
       lastName: true,
       quickModeEnabled: true,
+      level: true,
     },
   });
 
@@ -36,6 +37,7 @@ export default async function SettingsPage() {
         ico={user.ico || ""}
         bankAccount={user.bankAccount || ""}
         quickModeEnabled={user.quickModeEnabled}
+        userLevel={user.level}
       />
     </div>
   );

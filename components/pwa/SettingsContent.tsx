@@ -12,6 +12,7 @@ interface SettingsContentProps {
   ico: string;
   bankAccount: string;
   quickModeEnabled: boolean;
+  userLevel?: string;
 }
 
 export function SettingsContent({
@@ -19,6 +20,7 @@ export function SettingsContent({
   ico,
   bankAccount,
   quickModeEnabled: initialQuickMode,
+  userLevel,
 }: SettingsContentProps) {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -111,11 +113,14 @@ export function SettingsContent({
   async function handleQuickModeToggle(value: boolean) {
     setQuickMode(value);
     try {
-      await fetch("/api/onboarding/profile", {
-        method: "PUT",
+      const res = await fetch("/api/profile/quick-mode", {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ quickModeEnabled: value }),
       });
+      if (!res.ok) {
+        setQuickMode(!value);
+      }
     } catch {
       setQuickMode(!value);
     }
@@ -226,11 +231,21 @@ export function SettingsContent({
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-bold text-gray-900">Rychlý režim</h2>
-            <p className="text-sm text-gray-500">
-              Zjednodušený 3-krokový flow pro rychlé zadání vozidla
-            </p>
+            {userLevel === "JUNIOR" ? (
+              <p className="text-sm text-orange-600">
+                Dostupné od úrovně Makléř (5+ prodejů)
+              </p>
+            ) : (
+              <p className="text-sm text-gray-500">
+                Zjednodušený 3-krokový flow pro rychlé zadání vozidla
+              </p>
+            )}
           </div>
-          <Toggle checked={quickMode} onChange={handleQuickModeToggle} />
+          <Toggle
+            checked={quickMode}
+            onChange={handleQuickModeToggle}
+            disabled={userLevel === "JUNIOR"}
+          />
         </div>
       </Card>
 
