@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { Button } from "@/components/ui";
+import { urls } from "@/lib/urls";
 
 const serviceItems = [
   { href: "/sluzby/proverka", title: "Prověrka vozidla" },
@@ -19,7 +20,7 @@ const aboutItems = [
   { href: "/recenze", title: "Recenze" },
 ];
 
-export function MobileMenu() {
+export function MainMobileMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [openSection, setOpenSection] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -75,21 +76,29 @@ export function MobileMenu() {
           Nabídka vozidel
         </Link>
 
-        <Link
-          href="/inzerce"
+        <a
+          href={urls.inzerce("/")}
           className="flex items-center text-lg font-semibold text-gray-900 hover:text-orange-500 transition-colors py-4 border-b border-gray-100 no-underline min-h-[44px]"
           onClick={closeMenu}
         >
           Inzerce
-        </Link>
+        </a>
 
-        <Link
-          href="/shop"
+        <a
+          href={urls.shop("/")}
           className="flex items-center text-lg font-semibold text-gray-900 hover:text-orange-500 transition-colors py-4 border-b border-gray-100 no-underline min-h-[44px]"
           onClick={closeMenu}
         >
           Shop
-        </Link>
+        </a>
+
+        <a
+          href={urls.marketplace("/")}
+          className="flex items-center text-lg font-semibold text-gray-900 hover:text-orange-500 transition-colors py-4 border-b border-gray-100 no-underline min-h-[44px]"
+          onClick={closeMenu}
+        >
+          Marketplace
+        </a>
 
         <Link
           href="/kontakt"

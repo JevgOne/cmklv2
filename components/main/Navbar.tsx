@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { MobileMenu } from "./MobileMenu";
-import { CartIcon } from "./CartIcon";
+import { MainMobileMenu } from "./MobileMenu";
+import { CartIcon } from "@/components/web/CartIcon";
+import { urls } from "@/lib/urls";
 
 const dropdownItems = {
   sluzby: [
@@ -89,14 +90,6 @@ const dropdownItems = {
   ],
 };
 
-function ExternalLinkIcon() {
-  return (
-    <svg className="w-3.5 h-3.5 ml-1 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-    </svg>
-  );
-}
-
 function ChevronDownIcon() {
   return (
     <svg className="w-4 h-4 ml-1 text-gray-400 transition-transform group-hover:rotate-180" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
@@ -105,18 +98,15 @@ function ChevronDownIcon() {
   );
 }
 
-export function Navbar() {
+export function MainNavbar() {
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/80">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between">
-        {/* Logo */}
         <Link href="/" className="flex items-center no-underline shrink-0">
           <img src="/brand/logo-color.png" alt="CarMakléř" className="h-10 sm:h-12 w-auto object-contain" />
         </Link>
 
-        {/* Nav Links - desktop */}
         <div className="hidden lg:flex items-center gap-1">
-          {/* Nabídka vozidel */}
           <Link
             href="/nabidka"
             className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors no-underline px-4 py-2 rounded-lg hover:bg-gray-50"
@@ -124,23 +114,20 @@ export function Navbar() {
             Nabídka vozidel
           </Link>
 
-          {/* Inzerce */}
-          <Link
-            href="/inzerce"
+          <a
+            href={urls.inzerce("/")}
             className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors no-underline px-4 py-2 rounded-lg hover:bg-gray-50"
           >
             Inzerce
-          </Link>
+          </a>
 
-          {/* Shop */}
-          <Link
-            href="/shop"
+          <a
+            href={urls.shop("/")}
             className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors no-underline px-4 py-2 rounded-lg hover:bg-gray-50"
           >
             Shop
-          </Link>
+          </a>
 
-          {/* Služby - dropdown */}
           <div className="relative group">
             <button
               type="button"
@@ -174,7 +161,6 @@ export function Navbar() {
             </div>
           </div>
 
-          {/* O nás - dropdown */}
           <div className="relative group">
             <button
               type="button"
@@ -209,7 +195,6 @@ export function Navbar() {
           </div>
         </div>
 
-        {/* CTA Buttons - desktop */}
         <div className="hidden lg:flex items-center gap-3 shrink-0">
           <CartIcon />
           <Link
@@ -226,8 +211,7 @@ export function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile menu button + overlay */}
-        <MobileMenu />
+        <MainMobileMenu />
       </nav>
     </header>
   );
