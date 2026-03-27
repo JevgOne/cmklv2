@@ -46,6 +46,24 @@ export async function POST(
       return NextResponse.json({ error: "Žádné fotky" }, { status: 400 });
     }
 
+    const allowedImageTypes = ["image/jpeg", "image/png", "image/webp"];
+    const maxFileSize = 10 * 1024 * 1024;
+
+    for (const photo of photos) {
+      if (!allowedImageTypes.includes(photo.type)) {
+        return NextResponse.json(
+          { error: `Nepodporovaný formát souboru: ${photo.type}. Povolené: JPG, PNG, WebP` },
+          { status: 400 }
+        );
+      }
+      if (photo.size > maxFileSize) {
+        return NextResponse.json(
+          { error: "Soubor je příliš velký (max 10 MB)" },
+          { status: 400 }
+        );
+      }
+    }
+
     // V MVP ukládáme jen placeholder URL (v produkci Cloudinary upload)
     const images = [];
     for (let i = 0; i < photos.length; i++) {

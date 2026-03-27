@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
+import { getSubdomain, type SubdomainType } from "@/lib/subdomain";
 
 const ADMIN_ROLES = ["ADMIN", "BACKOFFICE", "MANAGER"];
 const MAKLER_ROLES = [
@@ -16,8 +17,115 @@ const MARKETPLACE_DEALER_ROLES = ["VERIFIED_DEALER", "ADMIN", "BACKOFFICE"];
 const MARKETPLACE_INVESTOR_ROLES = ["INVESTOR", "ADMIN", "BACKOFFICE"];
 const PARTNER_ROLES = ["PARTNER_BAZAR", "PARTNER_VRAKOVISTE", "ADMIN", "BACKOFFICE"];
 
+// Cesty, které se nemají rewritovat (statické soubory, API, interní Next.js cesty)
+const SKIP_REWRITE_PREFIXES = [
+  "/api/",
+  "/_next/",
+  "/brand/",
+  "/icons/",
+  "/sw.js",
+  "/manifest",
+  "/favicon",
+  "/login",
+  "/registrace",
+  "/prihlaseni",
+  "/admin",
+  "/makler",
+  "/parts",
+  "/partner",
+  "/moje-inzeraty",
+  "/muj-ucet",
+  "/notifikace",
+];
+
+function shouldSkipRewrite(pathname: string): boolean {
+  return SKIP_REWRITE_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+}
+
+/**
+ * Rewrite URL na základě subdomény.
+ * Subdoménové routy jsou mapovány na existující app/(web)/inzerce, app/(web)/shop, app/(web)/marketplace.
+ */
+function getRewriteUrl(
+  subdomain: SubdomainType,
+  pathname: string,
+  request: NextRequest
+): URL | null {
+  if (subdomain === "main" || shouldSkipRewrite(pathname)) {
+    return null;
+  }
+
+  if (subdomain === "inzerce") {
+    // Na inzerce subdoméně: / → /inzerce, /katalog → /inzerce/katalog
+    // Cesty co už začínají /inzerce projdou
+    if (pathname.startsWith("/inzerce")) return null;
+    // /moje-inzeraty, /muj-ucet zůstanou (jsou v SKIP_REWRITE_PREFIXES)
+    const rewriteUrl = new URL(`/inzerce${pathname}`, request.url);
+    return rewriteUrl;
+  }
+
+  if (subdomain === "shop") {
+    // Na shop subdoméně: / → /shop, /katalog → /shop/katalog
+    // Cesty co už začínají /shop nebo /dily projdou
+    if (pathname.startsWith("/shop") || pathname.startsWith("/dily")) return null;
+    const rewriteUrl = new URL(`/shop${pathname}`, request.url);
+    return rewriteUrl;
+  }
+
+  if (subdomain === "marketplace") {
+    // Na marketplace subdoméně: / → /marketplace, /dealer → /marketplace/dealer
+    if (pathname.startsWith("/marketplace")) return null;
+    const rewriteUrl = new URL(`/marketplace${pathname}`, request.url);
+    return rewriteUrl;
+  }
+
+  return null;
+}
+
+// Heslo pro přístup na web (nahrazuje nginx basic auth)
+const SITE_PASSWORD = "Admin2026";
+const SITE_AUTH_COOKIE = "site_access";
+
+// Cesty, které nepotřebují site password
+const SKIP_SITE_AUTH = [
+  "/_next/",
+  "/api/",
+  "/brand/",
+  "/icons/",
+  "/sw.js",
+  "/manifest",
+  "/favicon",
+  "/gate",
+];
+
+function shouldSkipSiteAuth(pathname: string): boolean {
+  return SKIP_SITE_AUTH.some((prefix) => pathname.startsWith(prefix));
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Site-wide password ochrana (cookie-based, nahrazuje nginx basic auth)
+  if (!shouldSkipSiteAuth(pathname)) {
+    const siteAuth = request.cookies.get(SITE_AUTH_COOKIE);
+    if (!siteAuth || siteAuth.value !== SITE_PASSWORD) {
+      const gateUrl = new URL("/gate", request.url);
+      gateUrl.searchParams.set("next", pathname);
+      return NextResponse.redirect(gateUrl);
+    }
+  }
+
+  // Detekce subdomény
+  const host = request.headers.get("host") || "localhost:3000";
+  const subdomain = getSubdomain(host);
+
+  // Subdomain rewrite
+  const rewriteUrl = getRewriteUrl(subdomain, pathname, request);
+  if (rewriteUrl) {
+    const response = NextResponse.rewrite(rewriteUrl);
+    response.headers.set("x-subdomain", subdomain);
+    return response;
+  }
 
   // Chráněné admin routy
   if (pathname.startsWith("/admin")) {
@@ -71,6 +179,7 @@ export async function middleware(request: NextRequest) {
     "/makler/leaderboard",
     "/makler/financing-calculator",
     "/makler/settings",
+    "/makler/provize",
   ];
   if (protectedMaklerPaths.some((p) => pathname.startsWith(p))) {
     const token = await getToken({
@@ -189,57 +298,15 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  return NextResponse.next();
+  // Přidej x-subdomain header do response
+  const response = NextResponse.next();
+  response.headers.set("x-subdomain", subdomain);
+  return response;
 }
 
 export const config = {
   matcher: [
-    "/admin/:path*",
-    "/makler/onboarding",
-    "/makler/onboarding/:path*",
-    "/makler/dashboard",
-    "/makler/dashboard/:path*",
-    "/makler/vehicles",
-    "/makler/vehicles/:path*",
-    "/makler/commissions",
-    "/makler/commissions/:path*",
-    "/makler/profile",
-    "/makler/profile/:path*",
-    "/makler/offline",
-    "/makler/offline/:path*",
-    "/makler/assistant",
-    "/makler/assistant/:path*",
-    "/makler/contracts",
-    "/makler/contracts/:path*",
-    "/makler/leads",
-    "/makler/leads/:path*",
-    "/makler/messages",
-    "/makler/messages/:path*",
-    "/makler/contacts",
-    "/makler/contacts/:path*",
-    "/makler/stats",
-    "/makler/stats/:path*",
-    "/makler/leaderboard",
-    "/makler/leaderboard/:path*",
-    "/makler/financing-calculator",
-    "/makler/financing-calculator/:path*",
-    "/makler/settings",
-    "/makler/settings/:path*",
-    "/moje-inzeraty",
-    "/moje-inzeraty/:path*",
-    "/muj-ucet",
-    "/muj-ucet/:path*",
-    "/shop/moje-objednavky",
-    "/shop/moje-objednavky/:path*",
-    "/dily/moje-objednavky",
-    "/dily/moje-objednavky/:path*",
-    "/parts",
-    "/parts/:path*",
-    "/marketplace/dealer",
-    "/marketplace/dealer/:path*",
-    "/marketplace/investor",
-    "/marketplace/investor/:path*",
-    "/partner",
-    "/partner/:path*",
+    // Subdomain rewrite — matchuje všechny cesty kromě statických souborů
+    "/((?!_next/static|_next/image|favicon.ico).*)",
   ],
 };

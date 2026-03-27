@@ -14,11 +14,9 @@ export async function GET(request: NextRequest) {
   try {
     // Ověření cron secret
     const cronSecret = process.env.CRON_SECRET;
-    if (cronSecret) {
-      const authHeader = request.headers.get("authorization");
-      if (authHeader !== `Bearer ${cronSecret}`) {
-        return NextResponse.json({ error: "Neautorizováno" }, { status: 401 });
-      }
+    const authHeader = request.headers.get("authorization");
+    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+      return NextResponse.json({ error: "Neautorizováno" }, { status: 401 });
     }
 
     const frequency = request.nextUrl.searchParams.get("frequency") ?? undefined;

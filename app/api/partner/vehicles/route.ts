@@ -57,17 +57,30 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
+    // Validate required fields
+    if (!body.brand || !body.model || !body.price) {
+      return NextResponse.json(
+        { error: "Znacka, model a cena jsou povinne" },
+        { status: 400 }
+      );
+    }
+
+    // Generate a placeholder VIN if not provided (partner vehicles may not always have VIN upfront)
+    const vin = body.vin && body.vin.trim().length >= 17
+      ? body.vin.trim()
+      : `PARTNER-${session.user.id.slice(-6)}-${Date.now().toString(36)}`.toUpperCase();
+
     // Simplified vehicle creation for partners
     const vehicle = await prisma.vehicle.create({
       data: {
-        vin: body.vin,
+        vin,
         brand: body.brand,
         model: body.model,
         variant: body.variant || null,
-        year: body.year,
-        mileage: body.mileage,
-        fuelType: body.fuelType,
-        transmission: body.transmission,
+        year: body.year || new Date().getFullYear(),
+        mileage: body.mileage || 0,
+        fuelType: body.fuelType || "PETROL",
+        transmission: body.transmission || "MANUAL",
         enginePower: body.enginePower || null,
         engineCapacity: body.engineCapacity || null,
         bodyType: body.bodyType || null,

@@ -33,6 +33,7 @@ const conditionOptions = [
 export default function NewPartPage() {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
   const [form, setForm] = useState({
     name: "",
     category: "",
@@ -51,6 +52,7 @@ export default function NewPartPage() {
 
   async function handleSubmit() {
     setSubmitting(true);
+    setError("");
     try {
       const res = await fetch("/api/partner/parts", {
         method: "POST",
@@ -71,10 +73,11 @@ export default function NewPartPage() {
       if (res.ok) {
         router.push("/partner/parts");
       } else {
-        router.push("/partner/parts");
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || "Nepodařilo se přidat díl. Zkuste to znovu.");
       }
     } catch {
-      router.push("/partner/parts");
+      setError("Došlo k chybě. Zkuste to znovu.");
     } finally {
       setSubmitting(false);
     }
@@ -88,6 +91,11 @@ export default function NewPartPage() {
 
       <Card className="p-6">
         <div className="space-y-4">
+          {error && (
+            <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">
+              {error}
+            </div>
+          )}
           <Input
             label="Nazev dilu *"
             value={form.name}

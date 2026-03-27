@@ -24,10 +24,11 @@ const brandOptions = [
 ];
 
 const fuelOptions = [
-  { value: "BENZIN", label: "Benzin" },
+  { value: "PETROL", label: "Benzin" },
   { value: "DIESEL", label: "Diesel" },
   { value: "HYBRID", label: "Hybrid" },
-  { value: "ELEKTRO", label: "Elektro" },
+  { value: "ELECTRIC", label: "Elektro" },
+  { value: "PLUGIN_HYBRID", label: "Plug-in hybrid" },
   { value: "LPG", label: "LPG" },
   { value: "CNG", label: "CNG" },
 ];
@@ -40,6 +41,7 @@ const transmissionOptions = [
 export default function NewVehiclePage() {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
   const [form, setForm] = useState({
     brand: "",
     model: "",
@@ -51,6 +53,7 @@ export default function NewVehiclePage() {
     power: "",
     description: "",
     vin: "",
+    city: "",
   });
 
   const update = (field: string, value: string) => {
@@ -59,6 +62,7 @@ export default function NewVehiclePage() {
 
   async function handleSubmit() {
     setSubmitting(true);
+    setError("");
     try {
       const res = await fetch("/api/partner/vehicles", {
         method: "POST",
@@ -69,21 +73,23 @@ export default function NewVehiclePage() {
           year: parseInt(form.year) || new Date().getFullYear(),
           mileage: parseInt(form.mileage) || 0,
           price: parseInt(form.price) || 0,
-          fuelType: form.fuel || "BENZIN",
+          fuelType: form.fuel || "PETROL",
           transmission: form.transmission || "MANUAL",
           enginePower: parseInt(form.power) || undefined,
           description: form.description || undefined,
           vin: form.vin || undefined,
+          city: form.city || undefined,
         }),
       });
 
       if (res.ok) {
         router.push("/partner/vehicles");
       } else {
-        router.push("/partner/vehicles");
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || "Nepodařilo se přidat vozidlo. Zkuste to znovu.");
       }
     } catch {
-      router.push("/partner/vehicles");
+      setError("Došlo k chybě. Zkuste to znovu.");
     } finally {
       setSubmitting(false);
     }
@@ -97,6 +103,11 @@ export default function NewVehiclePage() {
 
       <Card className="p-6">
         <div className="space-y-4">
+          {error && (
+            <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">
+              {error}
+            </div>
+          )}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Select
               label="Znacka *"
@@ -159,12 +170,20 @@ export default function NewVehiclePage() {
             />
           </div>
 
-          <Input
-            label="VIN"
-            value={form.vin}
-            onChange={(e) => update("vin", e.target.value)}
-            placeholder="17-ti mistny VIN kod"
-          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input
+              label="VIN"
+              value={form.vin}
+              onChange={(e) => update("vin", e.target.value)}
+              placeholder="17-ti mistny VIN kod"
+            />
+            <Input
+              label="Mesto *"
+              value={form.city}
+              onChange={(e) => update("city", e.target.value)}
+              placeholder="napr. Praha"
+            />
+          </div>
 
           <Textarea
             label="Popis vozidla"

@@ -30,15 +30,52 @@ export async function POST(
       return NextResponse.json({ error: "Partner nenalezen" }, { status: 404 });
     }
 
-    if (partner.userId) {
-      return NextResponse.json({ error: "Partner jiz ma ucet" }, { status: 400 });
-    }
-
     if (!partner.email) {
       return NextResponse.json({ error: "Partner nema email" }, { status: 400 });
     }
 
-    // Check if user with this email already exists
+    const role = partner.type === "AUTOBAZAR" ? "PARTNER_BAZAR" : "PARTNER_VRAKOVISTE";
+
+    // Pokud partner uz ma propojeny ucet (self-registrace), jen aktivujeme
+    if (partner.userId) {
+      const existingUser = await prisma.user.findUnique({
+        where: { id: partner.userId },
+      });
+      if (!existingUser) {
+        return NextResponse.json({ error: "Propojeny uzivatel nenalezen" }, { status: 400 });
+      }
+
+      await prisma.$transaction([
+        prisma.user.update({
+          where: { id: partner.userId },
+          data: { status: "ACTIVE" },
+        }),
+        prisma.partner.update({
+          where: { id },
+          data: { status: "AKTIVNI_PARTNER" },
+        }),
+        prisma.partnerActivity.create({
+          data: {
+            partnerId: id,
+            userId: session.user.id,
+            type: "SYSTEM",
+            title: "Partnerství aktivováno",
+            description: `Aktivován existující účet: ${partner.email}, role: ${role}`,
+            oldStatus: partner.status,
+            newStatus: "AKTIVNI_PARTNER",
+          },
+        }),
+      ]);
+
+      return NextResponse.json({
+        success: true,
+        userId: partner.userId,
+        email: partner.email,
+        existingAccount: true,
+      });
+    }
+
+    // Check if user with this email already exists (without partner link)
     const existingUser = await prisma.user.findUnique({
       where: { email: partner.email },
     });
@@ -51,7 +88,6 @@ export async function POST(
 
     const password = generatePassword();
     const passwordHash = await bcrypt.hash(password, 10);
-    const role = partner.type === "AUTOBAZAR" ? "PARTNER_BAZAR" : "PARTNER_VRAKOVISTE";
 
     // Create user account and link to partner
     const [user] = await prisma.$transaction([

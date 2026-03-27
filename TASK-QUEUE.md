@@ -5733,7 +5733,7 @@ Pro každý vytvořený účet:
 
 ## TASK-039: Rozdělení webu na subdomény — 4 produkty pod jednou značkou
 Priorita: 2
-Stav: čeká
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:
@@ -5849,6 +5849,282 @@ Rozdělit monolitickou Next.js appku na 4 subdomény. Každá subdoména = samos
 - Cross-linky mezi subdoménami
 - SSL certifikát pokrývá všechny subdomény
 - Nginx a DNS nakonfigurované
+
+---
+
+## TASK-040: Brutální retest celé platformy — funkční + security + performance + responzivita + a11y
+Priorita: 1
+Stav: hotovo
+Projekt: /Users/lunagroup/carmakler
+
+### Kompletní zadání:
+
+Kompletní retest celé platformy Carmakler od nuly — jako by se testovalo poprvé. Projít KAŽDOU funkci, KAŽDÝ formulář, KAŽDOU roli. Navíc oproti TASK-038: security audit, performance testy, responzivita na mobilu/tabletu, přístupnost (a11y) a edge cases.
+
+Každý nalezený bug OKAMŽITĚ OPRAVIT a zároveň zdokumentovat do výstupního reportu (co bylo špatně, kde, jak se to projevovalo, jak se to opravilo).
+
+**Server:** `ssh root@91.98.203.239`, appka v `/var/www/carmakler`
+**Web:** https://www.carmakler.cz (basic auth: admin / Admin2026)
+**DB:** SQLite v `/var/www/carmakler/dev.db`
+**Deploy po opravě:** `cd /var/www/carmakler && git pull && npx prisma generate && npx prisma migrate deploy && npm run build && pm2 restart carmakler`
+
+**Systém má 12 rolí:** ADMIN, BACKOFFICE, REGIONAL_DIRECTOR, MANAGER, BROKER, ADVERTISER, BUYER, PARTS_SUPPLIER, VERIFIED_DEALER, INVESTOR, PARTNER_BAZAR, PARTNER_VRAKOVISTE
+
+---
+
+### FÁZE 1 — Příprava testovacího prostředí
+
+**1.1 Ověření stavu serveru:**
+- SSH na server, ověřit že appka běží (PM2 status)
+- Ověřit DB — kolik uživatelů, vozidel, inzerátů existuje
+- Ověřit, že build prochází bez errorů
+- Ověřit, že všechny migrace jsou aplikované
+
+**1.2 Založení/ověření VŠECH testovacích účtů:**
+- Ověřit existenci všech účtů z TASK-038 (admin, makléř, bazar, kupující, dodavatel dílů, manager, ředitel, dealer, investor, partneři, backoffice)
+- Pokud nějaký účet chybí nebo nefunguje — vytvořit znovu
+- Pro každý účet ověřit: login funguje, redirect na správný dashboard, správné menu/navigace
+- Účty viz TASK-038 fáze 1 (emaily, hesla, role)
+
+---
+
+### FÁZE 2 — Funkční E2E retest všech flows (jako TASK-038, ale důkladnější)
+
+Projít KOMPLETNĚ všech 10 fází z TASK-038:
+
+**2.1 Auth a onboarding:**
+- Login za KAŽDOU z 12 rolí — ověřit redirect, menu, oprávnění
+- Registrace makléře (s pozvánkou), inzerenta, kupujícího, dodavatele dílů
+- Onboarding makléře — všech 5 kroků
+- Logout a session expiry
+- Password reset flow (pokud existuje)
+- Pokus o přístup na cizí stránky (makléř na /admin, kupující na /makler atd.) — ověřit 403/redirect
+
+**2.2 Makléřská PWA — kompletní flow:**
+- Dashboard, nabrat auto (standardní 7-krokový + quick mode), moje vozy, editace
+- Smlouvy (BROKERAGE + HANDOVER), CRM kontakty, leady
+- AI asistent, statistiky, leaderboard, kalkulačka financování
+- Nastavení, offline režim, provize
+- Vyhledávání v PWA
+
+**2.3 Inzertní platforma:**
+- Přidání inzerátu (6-krokový wizard), správa inzerátů
+- Veřejný katalog s filtry a řazením
+- Detail inzerátu, kontaktní formulář
+- Promování, prodloužení
+
+**2.4 Eshop autodíly:**
+- PWA dodavatele — přidání dílů, správa, objednávky
+- Veřejný eshop — katalog, vyhledávání, filtry
+- Košík — přidání, změna množství, odebrání
+- Checkout — dodací údaje, platba, potvrzení
+- Moje objednávky
+
+**2.5 Veřejný web:**
+- Homepage — každé tlačítko, každý odkaz
+- Katalog vozidel — KAŽDÝ filtr, řazení, stránkování
+- Detail vozu — galerie, parametry, kontaktní formulář, podobné vozy
+- Porovnání vozů
+- Chci prodat auto — formulář
+- Služby (prověrka, financování, pojištění, výkup)
+- Kontakt, makléři, informační stránky
+- Watchdog, oblíbené
+
+**2.6 Admin panel:**
+- Dashboard, správa makléřů, vozidel, leadů, inzerátů
+- Marketplace admin, partneři, platby, feedy
+- Manažerský dashboard
+
+**2.7 Marketplace:**
+- Dealer — vytvoření flip příležitosti
+- Investor — seznam příležitostí, investice, portfolio
+- Landing page
+
+**2.8 Partner modul:**
+- Dashboard, vozidla, díly, leady, fakturace
+
+**2.9 Průřezové funkce:**
+- Cebia prověrka, VIN dekodér, notifikace, vyhledávání
+- Sitemap, robots.txt, meta tagy
+- PWA (SW, manifest, offline)
+- Feed import
+
+---
+
+### FÁZE 3 — Security audit
+
+**3.1 Autentizace a autorizace:**
+- Pokus o přístup ke VŠEM /api/* endpointům bez přihlášení — ověřit 401
+- Pokus o přístup ke VŠEM /api/* endpointům s rolí, která k nim nemá oprávnění — ověřit 403
+- Pokus o přístup na /admin/* jako BROKER — ověřit redirect/403
+- Pokus o přístup na /makler/* jako BUYER — ověřit redirect/403
+- Pokus o editaci cizího vozidla (ID jiného makléře) — ověřit 403
+- Pokus o smazání cizí smlouvy — ověřit 403
+- Pokus o přihlášení s neexistujícím emailem — ověřit error message (nesmí říkat "email neexistuje")
+- Pokus o přihlášení se špatným heslem — ověřit error, rate limiting
+
+**3.2 SQL Injection:**
+- Do KAŽDÉHO textového pole na webu zadat: `'; DROP TABLE User; --`
+- Do KAŽDÉHO search pole zadat: `" OR 1=1 --`
+- Do VIN pole zadat SQL injection string
+- Ověřit, že žádný query nepadá a data jsou v bezpečí (Prisma by měl chránit, ale ověřit)
+
+**3.3 XSS (Cross-Site Scripting):**
+- Do KAŽDÉHO textového pole zadat: `<script>alert('XSS')</script>`
+- Do jména, příjmení, popisu vozu, poznámky zadat: `<img src=x onerror=alert('XSS')>`
+- Ověřit, že se script NIKDY nespustí (ani při zobrazení v detailu, seznamu, admin panelu)
+- Ověřit, že HTML tagy jsou escapované
+
+**3.4 CSRF:**
+- Ověřit, že formuláře používají CSRF tokeny nebo jsou chráněné jinak
+- Pokus o POST request z externího originu — ověřit odmítnutí
+
+**3.5 Další security kontroly:**
+- Ověřit HTTP headers: X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security
+- Ověřit, že hesla v DB jsou hashovaná (bcrypt)
+- Ověřit, že API nevrací citlivá data (hesla, tokeny) v response
+- Ověřit, že upload souborů kontroluje typ a velikost (nelze nahrát .exe, .php)
+- Ověřit, že error stránky nevypisují stack trace nebo interní info
+
+---
+
+### FÁZE 4 — Performance testy
+
+**4.1 Lighthouse audit:**
+- Spustit Lighthouse na klíčových stránkách:
+  - Homepage (/)
+  - Katalog vozidel (/nabidka)
+  - Detail vozu (/nabidka/[slug])
+  - Eshop katalog (/shop/katalog)
+  - Marketplace landing (/marketplace)
+- Zaznamenat skóre: Performance, Accessibility, Best Practices, SEO
+- Cíl: Performance > 70, Accessibility > 80, Best Practices > 80, SEO > 80
+
+**4.2 Response times API:**
+- Změřit response time KLÍČOVÝCH API endpointů:
+  - GET /api/vehicles (seznam)
+  - GET /api/vehicles/[id] (detail)
+  - POST /api/vehicles (vytvoření)
+  - GET /api/listings (inzeráty)
+  - GET /api/parts (díly)
+  - POST /api/auth/login
+- Cíl: < 500ms pro GET, < 1s pro POST
+- Zaznamenat pomalé endpointy
+
+**4.3 Bundle size:**
+- Ověřit velikost JS bundlu (next build output)
+- Identifikovat příliš velké chunky (> 500KB)
+
+**4.4 Obrázky:**
+- Ověřit, že obrázky používají next/image s optimalizací
+- Ověřit lazy loading
+- Ověřit placeholder/blur
+
+---
+
+### FÁZE 5 — Responzivita (mobilní + tablet)
+
+**5.1 Mobilní zobrazení (375px šířka) — KAŽDÁ stránka:**
+- Homepage — ověřit hamburger menu, hero se vejde, CTA tlačítka klikatelná
+- Katalog — filtry se schovají do dropdown/drawer, karty jsou na celou šířku
+- Detail vozu — galerie swipovatelná, parametry čitelné, formulář použitelný
+- PWA makléře — dashboard, nabrat auto (všech 7 kroků), smlouvy
+- Admin panel — sidebar se schovává, tabulky scrollovatelné horizontálně
+- Eshop — katalog, košík, checkout
+- Marketplace — dealer a investor dashboardy
+- Formuláře — všechna pole se vejdou, klávesnice nepřekrývá input
+
+**5.2 Tablet zobrazení (768px šířka):**
+- Stejné stránky jako mobilní
+- Ověřit, že layout využívá prostor (není jen natažený mobil)
+
+**5.3 Konkrétní problémy k ověření:**
+- Text nepřetéká z kontejnerů
+- Tlačítka jsou dostatečně velká pro dotek (min 44x44px)
+- Horizontální scroll se neobjevuje na žádné stránce
+- Modály a drawery fungují na mobilu
+- Tabulky jsou buď scrollovatelné nebo se transformují na karty
+
+---
+
+### FÁZE 6 — Přístupnost (a11y)
+
+**6.1 Keyboard navigace:**
+- Projít celý web POUZE klávesnicí (Tab, Enter, Escape, šipky)
+- Ověřit, že focus je viditelný na KAŽDÉM interaktivním prvku
+- Ověřit, že modály zachytávají focus (focus trap)
+- Ověřit, že Escape zavírá modály/dropdown
+
+**6.2 Screen reader kompatibilita:**
+- Ověřit, že všechny obrázky mají alt text
+- Ověřit, že formulářová pole mají label
+- Ověřit, že tlačítka mají srozumitelný text (ne jen ikona bez aria-label)
+- Ověřit heading hierarchy (h1 → h2 → h3, žádné přeskakování)
+- Ověřit, že role="button" je na klikatelných divech
+
+**6.3 Kontrast a čitelnost:**
+- Ověřit kontrastní poměr textu vůči pozadí (min 4.5:1 pro normální text, 3:1 pro velký)
+- Speciálně oranžová (#F97316) na bílém pozadí — OVĚŘIT, že splňuje WCAG AA
+- Ověřit čitelnost textu v tmavých sekcích
+
+**6.4 Formuláře:**
+- Ověřit, že chybové hlášky jsou asociované s polem (aria-describedby)
+- Ověřit, že required pole jsou označená (aria-required)
+- Ověřit, že chybový stav je oznámen (aria-live nebo role="alert")
+
+---
+
+### FÁZE 7 — Edge cases a stresové scénáře
+
+**7.1 Prázdné stavy:**
+- Makléř bez vozidel — dashboard, seznam vozů, statistiky
+- Eshop bez dílů — katalog, vyhledávání
+- Admin bez dat — všechny tabulky
+- Marketplace bez příležitostí
+- Prázdný košík — ověřit UX
+
+**7.2 Extrémní vstupy:**
+- Jméno s diakritikou a speciálními znaky: "Žlutý kůň příšerně úpěl ďábelské ódy"
+- Extrémně dlouhý text v popisu vozu (5000+ znaků)
+- Extrémně vysoká/nízká cena (0 Kč, 999 999 999 Kč)
+- Nula km najeto
+- Rok výroby 1950, rok 2030
+- VIN s nesprávným formátem
+- Email bez @, telefon s písmeny
+- Upload souboru > 10MB
+- Upload souboru s nesprávným typem (.exe, .pdf místo obrázku)
+
+**7.3 Souběžné akce:**
+- Dva makléři editují stejné vozidlo
+- Dva uživatelé přidávají stejný díl do košíku (poslední kus)
+- Rychlé dvojkliknutí na "Odeslat" — ověřit, že se nevytvoří duplikát
+
+**7.4 Navigační edge cases:**
+- Zpět/Vpřed v prohlížeči uprostřed formuláře — ověřit, že se neztrácí data
+- Refresh stránky uprostřed multi-step formuláře
+- Přímý přístup na URL (deep link) — ověřit, že stránka funguje bez předchozí navigace
+- 404 stránka — přístup na neexistující URL
+
+---
+
+### Kontext:
+- Server: `ssh root@91.98.203.239`, appka v `/var/www/carmakler`
+- DB: SQLite v `/var/www/carmakler/dev.db`
+- Deploy po opravě: `cd /var/www/carmakler && git pull && npx prisma generate && npx prisma migrate deploy && npm run build && pm2 restart carmakler`
+- API klíče NEJSOU nastavené: Cloudinary, Pusher, Resend, Claude, Stripe, VIN decoder, Cebia, Mapy.cz — funkce vyžadující API klíč zalogovat jako "vyžaduje API klíč", NEopravovat
+- Funkce padající na chybu v kódu: OKAMŽITĚ OPRAVIT + zdokumentovat do reportu
+- Platforma má 143+ stránek, 175+ API endpointů, 50+ DB modelů, 12 rolí
+- TASK-038 provedl první kolo testování — tento task je komplexní retest + rozšíření o security, performance, responzivitu, a11y a edge cases
+
+### Očekávaný výsledek:
+1. **Každý flow otestovaný end-to-end** za každou roli jako reálný uživatel
+2. **Každý nalezený bug opravený** + zdokumentovaný v reportu
+3. **Security audit report** — žádné kritické zranitelnosti, XSS/SQLi/CSRF ošetřené
+4. **Performance report** — Lighthouse skóre, response times, bundle size
+5. **Responzivita ověřená** na mobilu (375px) a tabletu (768px) pro KAŽDOU stránku
+6. **A11y report** — keyboard nav funguje, kontrasty OK, alt texty, labels
+7. **Edge cases ošetřené** — prázdné stavy mají UX, extrémní vstupy nepadají
+8. **Výstupní tabulka** VŠECH funkcí se stavem: ✅ funguje / ❌ nefunguje / ⚠️ vyžaduje API klíč / 🔧 opraveno / 📱 responzivita OK/NOK
 
 ---
 

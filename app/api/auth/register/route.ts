@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { rateLimit } from "@/lib/rate-limit";
 
 const registerSchema = z.object({
   email: z.string().email("Neplatný formát emailu"),
@@ -18,6 +19,15 @@ const registerSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const ip = request.headers.get("x-forwarded-for") || "unknown";
+    const { success } = rateLimit(ip, 5, 15 * 60 * 1000);
+    if (!success) {
+      return NextResponse.json(
+        { error: "Příliš mnoho pokusů. Zkuste to později." },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
     const data = registerSchema.parse(body);
 

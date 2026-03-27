@@ -13,6 +13,8 @@ interface SupplierForm {
   contactName: string;
   email: string;
   phone: string;
+  password: string;
+  passwordConfirm: string;
   street: string;
   city: string;
   zip: string;
@@ -26,6 +28,8 @@ export default function DodavatelRegistracePage() {
     contactName: "",
     email: "",
     phone: "",
+    password: "",
+    passwordConfirm: "",
     street: "",
     city: "",
     zip: "",
@@ -87,9 +91,12 @@ export default function DodavatelRegistracePage() {
     const newErrors: Partial<Record<keyof SupplierForm, string>> = {};
     if (!form.companyName.trim()) newErrors.companyName = "Vyplňte název firmy";
     if (!form.ico.trim()) newErrors.ico = "Vyplňte IČO";
+    else if (!/^\d{8}$/.test(form.ico.replace(/\s/g, ""))) newErrors.ico = "IČO musí mít 8 číslic";
     if (!form.contactName.trim()) newErrors.contactName = "Vyplňte kontaktní osobu";
     if (!form.email.trim() || !form.email.includes("@")) newErrors.email = "Vyplňte platný email";
     if (!form.phone.trim()) newErrors.phone = "Vyplňte telefon";
+    if (form.password.length < 8) newErrors.password = "Heslo musí mít alespoň 8 znaků";
+    if (form.password !== form.passwordConfirm) newErrors.passwordConfirm = "Hesla se neshodují";
     if (!form.street.trim()) newErrors.street = "Vyplňte adresu";
     if (!form.city.trim()) newErrors.city = "Vyplňte město";
     if (!form.zip.trim()) newErrors.zip = "Vyplňte PSČ";
@@ -105,27 +112,39 @@ export default function DodavatelRegistracePage() {
     setSubmitting(true);
     setSubmitError(null);
     try {
-      const res = await fetch("/api/contact", {
+      const res = await fetch("/api/auth/register/partner", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: form.contactName,
+          companyName: form.companyName,
+          ico: form.ico.replace(/\s/g, ""),
+          type: "VRAKOVISTE",
+          contactName: form.contactName,
           email: form.email,
           phone: form.phone,
-          message: `[Registrace dodavatele] Firma: ${form.companyName}, IČO: ${form.ico}, Adresa: ${form.street}, ${form.city} ${form.zip}. ${form.description || ""}`,
-          source: "SUPPLIER_REGISTRATION",
+          password: form.password,
+          street: form.street,
+          city: form.city,
+          zip: form.zip,
+          description: form.description || undefined,
         }),
       });
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Nepodařilo se odeslat registraci");
+        if (res.status === 409) {
+          throw new Error(data.error || "Uživatel s tímto emailem nebo IČO již existuje");
+        }
+        if (data.details) {
+          throw new Error(data.details.map((d: { message: string }) => d.message).join(", "));
+        }
+        throw new Error(data.error || "Nepodařilo se dokončit registraci");
       }
 
       setSubmitted(true);
     } catch (err) {
       setSubmitError(
-        err instanceof Error ? err.message : "Nepodařilo se odeslat registraci"
+        err instanceof Error ? err.message : "Nepodařilo se dokončit registraci"
       );
     } finally {
       setSubmitting(false);
@@ -143,14 +162,14 @@ export default function DodavatelRegistracePage() {
               </svg>
             </div>
             <h1 className="text-2xl font-extrabold text-gray-900 mb-2">
-              Registrace odeslána!
+              Registrace úspěšná!
             </h1>
             <p className="text-gray-500 mb-6">
-              Vaši žádost nyní ověříme. Po schválení vám přijde email s přístupovými údaji do dodavatelské aplikace.
-              Ověření obvykle trvá 1-2 pracovní dny.
+              Váš účet byl vytvořen. Nyní ověříme vaše údaje a po schválení budete moci
+              začít přidávat díly. Ověření obvykle trvá 1-2 pracovní dny.
             </p>
-            <Button variant="primary" onClick={() => (window.location.href = "/shop")}>
-              Zpět do shopu
+            <Button variant="primary" onClick={() => (window.location.href = "/login")}>
+              Přejít na přihlášení
             </Button>
           </Card>
         </div>
@@ -246,6 +265,27 @@ export default function DodavatelRegistracePage() {
             />
           </div>
 
+          <h2 className="text-lg font-bold text-gray-900 pt-2">Přístupové údaje</h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input
+              label="Heslo *"
+              type="password"
+              value={form.password}
+              onChange={(e) => update("password", e.target.value)}
+              error={errors.password}
+              placeholder="Minimálně 8 znaků"
+            />
+            <Input
+              label="Potvrzení hesla *"
+              type="password"
+              value={form.passwordConfirm}
+              onChange={(e) => update("passwordConfirm", e.target.value)}
+              error={errors.passwordConfirm}
+              placeholder="Zopakujte heslo"
+            />
+          </div>
+
           <h2 className="text-lg font-bold text-gray-900 pt-2">Adresa skladu/vrakoviště</h2>
 
           <Input
@@ -288,7 +328,8 @@ export default function DodavatelRegistracePage() {
           )}
 
           <Alert variant="info">
-            Po odeslání registrace ověříme vaše údaje a do 1-2 pracovních dnů vám zašleme přístup do dodavatelské aplikace.
+            Po registraci ověříme vaše údaje a do 1-2 pracovních dnů aktivujeme váš účet.
+            Poté se budete moci přihlásit a začít přidávat díly.
           </Alert>
 
           <Button

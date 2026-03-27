@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { rateLimit } from "@/lib/rate-limit";
 
 const contactSchema = z.object({
   name: z.string().min(1, "Jméno je povinné"),
@@ -13,6 +14,15 @@ const contactSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const ip = request.headers.get("x-forwarded-for") || "unknown";
+    const { success } = rateLimit(ip, 3, 5 * 60 * 1000);
+    if (!success) {
+      return NextResponse.json(
+        { error: "Příliš mnoho požadavků. Zkuste to později." },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
     const data = contactSchema.parse(body);
 

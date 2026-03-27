@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import DOMPurify from "isomorphic-dompurify";
 import { SignatureCanvas } from "@/components/pwa/contracts/SignatureCanvas";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
@@ -97,7 +98,7 @@ export function ContractSign() {
       <div className="bg-white rounded-2xl shadow-card p-6 max-h-[400px] overflow-y-auto">
         <div
           className="prose prose-sm max-w-none text-gray-700"
-          dangerouslySetInnerHTML={{ __html: contractHtml }}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(contractHtml) }}
         />
       </div>
 

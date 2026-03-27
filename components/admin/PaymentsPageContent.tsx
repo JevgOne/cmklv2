@@ -105,6 +105,7 @@ const columns = [
 
 function PaymentActions({ payment }: { payment: Payment }) {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   if (payment.status !== "PENDING" || payment.method === "CARD") {
     return (
@@ -115,8 +116,6 @@ function PaymentActions({ payment }: { payment: Payment }) {
       </span>
     );
   }
-
-  const [error, setError] = useState("");
 
   async function handleConfirm() {
     if (!confirm("Opravdu chcete potvrdit přijetí platby?")) return;

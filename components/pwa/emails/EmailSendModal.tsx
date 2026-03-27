@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import DOMPurify from "isomorphic-dompurify";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
 import { Textarea } from "@/components/ui/Textarea";
@@ -284,7 +285,7 @@ export function EmailSendModal({
           </div>
           <div
             className="border border-gray-200 rounded-lg overflow-hidden max-h-[400px] overflow-y-auto"
-            dangerouslySetInnerHTML={{ __html: previewHtml }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(previewHtml) }}
           />
           <div className="flex gap-3">
             <Button

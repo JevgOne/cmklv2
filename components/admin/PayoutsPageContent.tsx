@@ -125,6 +125,7 @@ const sellerColumns = [
 
 function SellerPayoutActions({ payout }: { payout: SellerPayout }) {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   if (payout.status !== "PENDING") {
     return (
@@ -133,8 +134,6 @@ function SellerPayoutActions({ payout }: { payout: SellerPayout }) {
       </span>
     );
   }
-
-  const [error, setError] = useState("");
 
   async function handleProcess() {
     const ref = prompt("Zadejte referenci bankovního převodu:");
@@ -246,6 +245,7 @@ const brokerColumns = [
 
 function BrokerPayoutActions({ payout }: { payout: BrokerPayout }) {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   if (payout.status === "PAID") {
     return <span className="text-xs text-gray-400">Vyplaceno</span>;
@@ -262,8 +262,6 @@ function BrokerPayoutActions({ payout }: { payout: BrokerPayout }) {
   if (payout.status !== "INVOICE_UPLOADED") {
     return <span className="text-xs text-gray-400">Čeká na fakturu</span>;
   }
-
-  const [error, setError] = useState("");
 
   async function handleApprove() {
     if (!confirm("Opravdu chcete schválit tuto fakturu?")) return;
