@@ -17,6 +17,8 @@ interface VehicleLandingPageProps {
   description: string;
   h1: string;
   filterDescription?: string;
+  aiSnippet?: string;
+  quickFacts?: string[];
   seoText: React.ReactNode;
   faqItems: FaqSectionItem[];
   breadcrumbs: BreadcrumbItem[];
@@ -32,6 +34,8 @@ interface VehicleLandingPageProps {
 export function VehicleLandingPage({
   h1,
   filterDescription,
+  aiSnippet,
+  quickFacts,
   seoText,
   faqItems,
   breadcrumbs,
@@ -104,6 +108,45 @@ export function VehicleLandingPage({
           )}
         </div>
       </section>
+
+      {/* AI Answer Box + Quick Facts — GEO/AIEO optimized */}
+      {(aiSnippet || (quickFacts && quickFacts.length > 0)) && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <div className="grid md:grid-cols-2 gap-6">
+            {aiSnippet && (
+              <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm" data-speakable="true">
+                <div className="flex items-center gap-2 mb-3">
+                  <svg className="w-5 h-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="text-sm font-semibold text-orange-600 uppercase tracking-wide">Shrnutí</span>
+                </div>
+                <p className="text-gray-700 leading-relaxed text-[15px]">{aiSnippet}</p>
+              </div>
+            )}
+            {quickFacts && quickFacts.length > 0 && (
+              <div className="bg-orange-50 rounded-2xl border border-orange-100 p-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <svg className="w-5 h-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                  <span className="text-sm font-semibold text-orange-600 uppercase tracking-wide">Fakta a ceny</span>
+                </div>
+                <ul className="space-y-2">
+                  {quickFacts.map((fact, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                      <svg className="w-4 h-4 text-orange-400 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                      {fact}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* Optional children (model grid, etc.) */}
       {children && (

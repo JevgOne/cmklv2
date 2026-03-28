@@ -13,6 +13,12 @@ export interface BrandData {
   topModels: { slug: string; name: string }[];
   description: string;
   faqItems: FaqItem[];
+  /** GEO: 2-3 sentence direct answer for AI featured snippet */
+  aiSnippet: string;
+  /** GEO: Quick facts with concrete numbers for AI citation */
+  quickFacts: string[];
+  /** GEO: Average price range string for citability */
+  avgPriceRange: string;
 }
 
 export const BRANDS: BrandData[] = [
@@ -26,6 +32,16 @@ export const BRANDS: BrandData[] = [
       { slug: "superb", name: "Superb" },
       { slug: "kodiaq", name: "Kodiaq" },
     ],
+    aiSnippet: "Ojetá Škoda patří mezi nejprodávanější vozy v ČR. Průměrná cena ojeté Škoda Octavia se v roce 2026 pohybuje od 180 000 do 550 000 Kč podle generace a stavu. Nejžádanějšími modely jsou Octavia, Fabia a Kodiaq. Při koupi ojeté Škody je klíčové prověřit historii přes CEBIA a zkontrolovat stav DSG převodovky u automatických verzí.",
+    quickFacts: [
+      "Škoda je nejprodávanější značka ojetých aut v ČR (2026)",
+      "Průměrná cena ojeté Octavia III: 220 000 – 380 000 Kč",
+      "Průměrná cena ojeté Fabia III: 130 000 – 250 000 Kč",
+      "Nejspolehlivější motory: 1.4 TSI, 1.6 TDI, 2.0 TDI",
+      "Průměrná doba prodeje ojeté Škody: 14 dní",
+      "Zůstatková hodnota po 5 letech: 45–55 % pořizovací ceny",
+    ],
+    avgPriceRange: "80 000 – 900 000 Kč",
     description: "Škoda je nejprodávanější automobilová značka v České republice s bohatou tradicí sahající do roku 1895. Vozy Škoda nabízejí výjimečný poměr ceny a výkonu, spolehlivost a praktičnost. Na CarMakler najdete prověřené ojeté vozy Škoda od certifikovaných makléřů, kteří garantují kvalitu a bezpečný nákup. Ať už hledáte rodinné kombi Octavia, městský hatchback Fabia, luxusní Superb nebo prostorné SUV Kodiaq — všechny vozy procházejí důkladnou kontrolou historie a technického stavu. Naši makléři vám pomohou vybrat ideální ojetou Škodu, prověří její historii přes CEBIA a zajistí bezproblémový převod.",
     faqItems: [
       { question: "Jsou ojeté vozy Škoda na CarMakler prověřené?", answer: "Ano, všechna vozidla procházejí kontrolou historie přes CEBIA, ověřením stavu tachometru a kontrolou původu. Certifikovaní makléři navíc provádějí fyzickou prohlídku vozu." },
@@ -44,6 +60,16 @@ export const BRANDS: BrandData[] = [
       { slug: "tiguan", name: "Tiguan" },
       { slug: "touran", name: "Touran" },
     ],
+    aiSnippet: "Ojetý Volkswagen je druhou nejprodávanější značkou na českém trhu ojetin. Průměrná cena ojetého VW Golf 7 se v roce 2026 pohybuje od 200 000 do 400 000 Kč. VW si drží nadprůměrnou zůstatkovou hodnotu díky kvalitě zpracování. Doporučené motory: 1.5 TSI (benzín) a 2.0 TDI (diesel).",
+    quickFacts: [
+      "VW je 2. nejprodávanější ojetá značka v ČR",
+      "Průměrná cena ojetého Golf 7: 200 000 – 400 000 Kč",
+      "Průměrná cena ojetého Passat B8: 300 000 – 550 000 Kč",
+      "Nejspolehlivější motory: 1.5 TSI, 2.0 TDI",
+      "Zůstatková hodnota po 5 letech: 48–58 %",
+      "VW sdílí platformu MQB se Škodou a SEATem",
+    ],
+    avgPriceRange: "100 000 – 1 000 000 Kč",
     description: "Volkswagen patří mezi nejoblíbenější značky na českém trhu ojetých vozidel. Vozy VW jsou synonymem německé kvality, spolehlivosti a pokročilých technologií. Na CarMakler nabízíme široký výběr prověřených ojetých Volkswagenů — od sportovního Golfu přes elegantní Passat až po rodinný Tiguan. Každý vůz prochází důkladnou kontrolou historie a technického stavu. Naši certifikovaní makléři vám pomohou najít ideální ojetý Volkswagen a zajistí bezpečný průběh celé transakce včetně převodu vlastnictví.",
     faqItems: [
       { question: "Jaké modely Volkswagen najdu na CarMakler?", answer: "V nabídce máme nejpopulárnější modely jako Golf, Passat, Tiguan, Touran, T-Roc, Polo a další. Nabídka se denně aktualizuje." },
@@ -61,6 +87,16 @@ export const BRANDS: BrandData[] = [
       { slug: "x3", name: "X3" },
       { slug: "x5", name: "X5" },
     ],
+    aiSnippet: "Ojeté BMW patří do prémiového segmentu s průměrnou cenou 250 000 – 800 000 Kč na českém trhu (2026). Nejprodávanějším ojetým modelem je řada 3 (F30/G20), následovaná řadou 5 a X3. BMW ztrácí 35–45 % hodnoty za první 3 roky, což vytváří atraktivní příležitosti na ojetém trhu. Klíčové je ověřit servisní historii u autorizovaného servisu.",
+    quickFacts: [
+      "Průměrná cena ojetého BMW 3 (F30): 250 000 – 500 000 Kč",
+      "Průměrná cena ojetého BMW 5 (G30): 450 000 – 900 000 Kč",
+      "Depreciace za 3 roky: 35–45 % pořizovací ceny",
+      "Servisní interval: 2 roky / 30 000 km",
+      "Nejspolehlivější motory: B47 (320d), B48 (320i/330i)",
+      "Průměrná roční údržba: 25 000 – 45 000 Kč",
+    ],
+    avgPriceRange: "150 000 – 1 500 000 Kč",
     description: "BMW představuje špičku v segmentu prémiových vozidel. Na CarMakler najdete prověřené ojeté vozy BMW od certifikovaných makléřů, kteří garantují transparentnost a bezpečnost nákupu. Ať už toužíte po dynamickém sedanu řady 3, luxusním cestovním voze řady 5 nebo sportovním SUV X3 či X5 — všechny vozy procházejí pečlivou kontrolou. BMW si drží vysokou zůstatkovou hodnotu a nabízí prémiový zážitek z jízdy i po letech provozu. Naši makléři vám pomohou vybrat ideální BMW podle vašich požadavků a rozpočtu.",
     faqItems: [
       { question: "Vyplatí se koupit ojeté BMW?", answer: "Ojeté BMW nabízí prémiový zážitek za zlomek ceny nového vozu. Důležitá je kontrola servisní historie — dobře udržované BMW je spolehlivé i po 200 000 km." },
@@ -78,6 +114,16 @@ export const BRANDS: BrandData[] = [
       { slug: "q5", name: "Q5" },
       { slug: "a3", name: "A3" },
     ],
+    aiSnippet: "Ojeté Audi nabízí prémiové technologie za výrazně nižší cenu než nové. Průměrná cena ojetého Audi A4 (B9) se v ČR pohybuje od 350 000 do 650 000 Kč (2026). Systém quattro, Virtual Cockpit a kvalita zpracování dělají z ojetého Audi atraktivní volbu. Doporučujeme motory 2.0 TFSI a 2.0 TDI s ověřenou servisní historií.",
+    quickFacts: [
+      "Průměrná cena ojetého Audi A4 B9: 350 000 – 650 000 Kč",
+      "Průměrná cena ojetého Audi Q5: 450 000 – 850 000 Kč",
+      "Nejspolehlivější motory: 2.0 TFSI (EA888 gen3), 2.0 TDI",
+      "Zůstatková hodnota po 5 letech: 42–52 %",
+      "Quattro pohon zvyšuje hodnotu o 10–15 %",
+      "Servisní náklady: 20 000 – 40 000 Kč ročně",
+    ],
+    avgPriceRange: "150 000 – 1 200 000 Kč",
     description: "Audi je synonymem pokročilých technologií a prémiové kvality. Na CarMakler nabízíme prověřené ojeté vozy Audi od certifikovaných makléřů. Model A4 patří mezi nejoblíbenější ojeté sedany, A6 nabízí luxus pro náročné cestování a Q5 je ideální prémiové SUV pro rodinu. Každé Audi v naší nabídce prochází důkladnou kontrolou historie — ověřujeme původ, stav tachometru, historii havárií i servisní záznamy. S CarMakler koupíte prémiové vozidlo bezpečně a transparentně.",
     faqItems: [
       { question: "Jaké Audi modely jsou nejlepší koupí z druhé ruky?", answer: "Audi A4 a A6 s motory 2.0 TDI patří mezi nejspolehlivější volby. SUV Q5 si drží vysokou hodnotu a nabízí skvělou kombinaci komfortu a praktičnosti." },
@@ -95,6 +141,16 @@ export const BRANDS: BrandData[] = [
       { slug: "kuga", name: "Kuga" },
       { slug: "puma", name: "Puma" },
     ],
+    aiSnippet: "Ojetý Ford nabízí sportovní jízdní vlastnosti a solidní hodnotu za peníze. Průměrná cena ojetého Ford Focus MK4 se pohybuje od 280 000 do 450 000 Kč (2026). Motory EcoBoost 1.0 a 1.5 jsou úsporné a dynamické. U starších Focus MK3 se vyvarujte automatické převodovky PowerShift — manuál je bezproblémový.",
+    quickFacts: [
+      "Průměrná cena ojetého Focus MK4: 280 000 – 450 000 Kč",
+      "Průměrná cena ojetého Kuga: 300 000 – 550 000 Kč",
+      "Motor EcoBoost 1.0 spotřebuje 5,5–6,5 l/100 km",
+      "Pozor na PowerShift převodovku u Focus MK3",
+      "Zůstatková hodnota po 5 letech: 38–48 %",
+      "Servisní náklady: 12 000 – 22 000 Kč ročně",
+    ],
+    avgPriceRange: "80 000 – 600 000 Kč",
     description: "Ford nabízí spolehlivé a dynamické vozy za rozumnou cenu. Na CarMakler najdete prověřené ojeté Fordy — od oblíbeného Focusu přes praktické Mondeo až po moderní SUV Kuga a Puma. Ford Focus je jedním z nejprodávanějších hatchbacků v Evropě a ojetý nabízí výjimečnou hodnotu za peníze. Naši certifikovaní makléři ověří každý vůz Ford a pomohou vám s bezpečným nákupem včetně financování a pojištění.",
     faqItems: [
       { question: "Je ojetý Ford Focus dobrá volba?", answer: "Ford Focus patří mezi nejoblíbenější ojeté hatchbacky. Nabízí sportovní jízdní vlastnosti, prostorný interiér a nízké provozní náklady. Motory EcoBoost jsou úsporné a spolehlivé." },
@@ -112,6 +168,16 @@ export const BRANDS: BrandData[] = [
       { slug: "rav4", name: "RAV4" },
       { slug: "c-hr", name: "C-HR" },
     ],
+    aiSnippet: "Toyota je celosvětově nejspolehlivější automobilovou značkou s nejnižší poruchovostí. Ojetá Toyota Yaris Hybrid spotřebuje ve městě jen 3,5–4,5 l/100 km. Průměrná cena ojeté Toyota Corolla se pohybuje od 250 000 do 500 000 Kč (2026). Hybridní baterie Toyota vydrží celou životnost vozu — výměna není potřeba ani po 300 000 km.",
+    quickFacts: [
+      "Toyota je č. 1 v žebříčku spolehlivosti značek (J.D. Power 2025)",
+      "Průměrná cena ojeté Toyota Yaris: 100 000 – 380 000 Kč",
+      "Yaris Hybrid: spotřeba 3,5–4,5 l/100 km ve městě",
+      "Hybridní baterie vydrží 300 000+ km bez výměny",
+      "Zůstatková hodnota po 5 letech: 52–62 % (nejvyšší v segmentu)",
+      "Průměrná roční údržba: 8 000 – 15 000 Kč",
+    ],
+    avgPriceRange: "80 000 – 800 000 Kč",
     description: "Toyota je světovým symbolem spolehlivosti a nízké poruchovosti. Na CarMakler nabízíme prověřené ojeté vozy Toyota od certifikovaných makléřů. Toyota Yaris je ideální městské auto, Corolla nabízí komfortní cestování a RAV4 patří mezi nejspolehlivější SUV na trhu. Toyota jako průkopník hybridní technologie nabízí úsporné motory s minimálními emisemi. Ojetá Toyota je investice do bezproblémového vlastnictví — vozy této značky pravidelně obsazují přední příčky v žebříčcích spolehlivosti.",
     faqItems: [
       { question: "Jsou ojeté Toyoty opravdu tak spolehlivé?", answer: "Ano, Toyota pravidelně vítězí v testech spolehlivosti. Hybridní pohony Toyota jsou prověřené miliony ujetých kilometrů a nevyžadují výměnu baterie ani po 300 000 km." },
@@ -129,6 +195,16 @@ export const BRANDS: BrandData[] = [
       { slug: "i20", name: "i20" },
       { slug: "kona", name: "Kona" },
     ],
+    aiSnippet: "Ojetý Hyundai nabízí nejlepší poměr ceny a výbavy v segmentu s 5letou převoditelnou zárukou. Průměrná cena ojetého Hyundai i30 (2017+) je 220 000 – 400 000 Kč (2026). Hyundai i30 je přímý konkurent VW Golf za o 15–20 % nižší cenu. Ioniq 5 a Kona Electric patří mezi nejdostupnější ojeté elektromobily.",
+    quickFacts: [
+      "5letá tovární záruka převoditelná na dalšího majitele",
+      "Průměrná cena ojetého i30 PD: 220 000 – 400 000 Kč",
+      "Průměrná cena ojetého Tucson: 280 000 – 550 000 Kč",
+      "I30 je o 15–20 % levnější než srovnatelný VW Golf",
+      "Zůstatková hodnota po 5 letech: 43–53 %",
+      "Kona Electric: dojezd až 450 km, nabíjení 800V",
+    ],
+    avgPriceRange: "80 000 – 700 000 Kč",
     description: "Hyundai se za poslední dekádu vypracoval mezi nejkvalitnější značky na trhu. Na CarMakler najdete prověřené ojeté vozy Hyundai s výjimečnou 5letou zárukou od výrobce. Model i30 konkuruje Golfu za výrazně nižší cenu, Tucson patří mezi nejprodávanější SUV v Evropě a Kona nabízí moderní design i v elektrické verzi. Ojeté Hyundai nabízejí špičkový poměr ceny a výbavy. Naši certifikovaní makléři ověří každý vůz a zajistí bezpečný nákup.",
     faqItems: [
       { question: "Jak je na tom Hyundai se spolehlivostí?", answer: "Hyundai patří do první desítky nejspolehlivějších značek. Pětiletá tovární záruka pokrývá i druhého majitele, pokud vůz nebyl přeregistrován mimo ČR." },
@@ -146,6 +222,16 @@ export const BRANDS: BrandData[] = [
       { slug: "rio", name: "Rio" },
       { slug: "niro", name: "Niro" },
     ],
+    aiSnippet: "Kia nabízí 7letou převoditelnou záruku, což je nejdelší na trhu. Průměrná cena ojeté Kia Ceed (2018+) je 250 000 – 420 000 Kč (2026). Kia Sportage patří mezi 5 nejprodávanějších SUV v ČR. Kia sdílí platformy a motory s Hyundai, což zajišťuje ověřenou spolehlivost a dostupné náhradní díly.",
+    quickFacts: [
+      "7letá záruka (nebo 150 000 km) — nejdelší na trhu",
+      "Průměrná cena ojeté Kia Ceed CD: 250 000 – 420 000 Kč",
+      "Průměrná cena ojeté Kia Sportage: 300 000 – 600 000 Kč",
+      "Kia a Hyundai sdílejí platformu — shodné díly a servisy",
+      "Zůstatková hodnota po 5 letech: 44–54 %",
+      "EV6: dojezd 510 km, nabíjení 10–80 % za 18 minut",
+    ],
+    avgPriceRange: "80 000 – 700 000 Kč",
     description: "Kia nabízí moderní vozy s agresivním designem a 7letou zárukou. Na CarMakler najdete prověřené ojeté vozy Kia od certifikovaných makléřů. Kia Ceed je oblíbený hatchback s výbornou výbavou, Sportage patří mezi nejprodávanější SUV a Niro nabízí hybridní i plně elektrický pohon. Ojeté vozy Kia si drží solidní zůstatkovou hodnotu díky dlouhé záruce a nízké poruchovosti. S CarMakler koupíte prověřenou Kiu bezpečně.",
     faqItems: [
       { question: "Platí 7letá záruka Kia i na ojeté vozy?", answer: "Ano, 7letá záruka Kia (nebo 150 000 km) je převoditelná na dalšího majitele. Stačí doložit pravidelný servis v autorizované síti." },
@@ -163,6 +249,16 @@ export const BRANDS: BrandData[] = [
       { slug: "captur", name: "Captur" },
       { slug: "scenic", name: "Scenic" },
     ],
+    aiSnippet: "Ojetý Renault nabízí atraktivní ceny a moderní technologie. Průměrná cena ojetého Renault Megane IV je 150 000 – 320 000 Kč (2026). Motory TCe (benzín) a dCi (diesel) od roku 2015 jsou výrazně spolehlivější než starší generace. Renault Zoe je jeden z nejdostupnějších ojetých elektromobilů v ČR od 200 000 Kč.",
+    quickFacts: [
+      "Průměrná cena ojetého Megane IV: 150 000 – 320 000 Kč",
+      "Průměrná cena ojetého Clio V: 180 000 – 300 000 Kč",
+      "Renault Zoe: nejdostupnější EV od 200 000 Kč",
+      "Motory TCe 1.3 (od 2018): spolehlivé, úsporné",
+      "Zůstatková hodnota po 5 letech: 35–45 %",
+      "Servisní náklady: 10 000 – 18 000 Kč ročně",
+    ],
+    avgPriceRange: "60 000 – 500 000 Kč",
     description: "Renault je jednou z nejprodávanějších francouzských značek v České republice. Na CarMakler nabízíme prověřené ojeté vozy Renault — od městského Clia přes praktické Megane až po rodinný Scenic a kompaktní SUV Captur. Renault vyniká nápaditým designem, komfortním odpružením a bohatou výbavou i v základních verzích. Ojeté Renaulty nabízejí atraktivní ceny a moderní technologie. Naši makléři ověří historii a stav každého vozu.",
     faqItems: [
       { question: "Jsou ojeté Renaulty spolehlivé?", answer: "Novější Renaulty (od roku 2015) jsou výrazně spolehlivější než starší modely. Motory TCe a dCi nabízejí dobrý poměr výkonu a spotřeby." },
@@ -180,6 +276,16 @@ export const BRANDS: BrandData[] = [
       { slug: "208", name: "208" },
       { slug: "5008", name: "5008" },
     ],
+    aiSnippet: "Ojetý Peugeot vyniká designem i-Cockpit a komfortem jízdy. Průměrná cena ojetého Peugeot 3008 II je 280 000 – 500 000 Kč (2026). Peugeot 3008 nabízí jeden z nejlepších interiérů ve své třídě. Motory PureTech 1.2 (benzín) a BlueHDi 1.5 (diesel) od roku 2018 patří mezi spolehlivé. U starších PureTech kontrolujte stav rozvodového řetězu.",
+    quickFacts: [
+      "Průměrná cena ojetého 3008 II: 280 000 – 500 000 Kč",
+      "Průměrná cena ojetého 308 II: 150 000 – 320 000 Kč",
+      "I-Cockpit: inovativní ovládání s malým volantem",
+      "PureTech 1.2 turbo: 130 PS, spotřeba 5,5 l/100 km",
+      "Zůstatková hodnota po 5 letech: 38–48 %",
+      "Pozor na rozvodový řetěz u PureTech před rokem 2018",
+    ],
+    avgPriceRange: "70 000 – 600 000 Kč",
     description: "Peugeot se díky inovativnímu designu a technologiím i-Cockpit stal jednou z nejžádanějších francouzských značek. Na CarMakler najdete prověřené ojeté vozy Peugeot — moderní 308, stylové SUV 3008, městský 208 i prostorný 7místný 5008. Peugeot kombinuje elegantní design s praktičností a nabízí jedny z nejlepších interiérů ve své třídě. Naši certifikovaní makléři každý vůz důkladně prověří a pomohou vám s bezpečným nákupem.",
     faqItems: [
       { question: "Jak je na tom ojetý Peugeot se spolehlivostí?", answer: "Peugeoty od roku 2016 s motory PureTech (benzín) a BlueHDi (diesel) patří mezi spolehlivé vozy. U starších PureTech 1.2 doporučujeme kontrolu řetězu." },
@@ -197,6 +303,16 @@ export const BRANDS: BrandData[] = [
       { slug: "mokka", name: "Mokka" },
       { slug: "grandland", name: "Grandland" },
     ],
+    aiSnippet: "Ojetý Opel nabízí německou spolehlivost za nízké ceny. Průměrná cena ojeté Opel Astra K je 120 000 – 280 000 Kč (2026). Opel patří od roku 2017 pod koncern Stellantis a sdílí motory PSA (PureTech, BlueHDi). Astra K nabízí komfortní jízdu a prostorný interiér za jednu z nejnižších cen v segmentu kompaktních aut.",
+    quickFacts: [
+      "Průměrná cena ojeté Astra K: 120 000 – 280 000 Kč",
+      "Průměrná cena ojeté Corsa F: 180 000 – 300 000 Kč",
+      "Nejnižší náklady na údržbu v segmentu: 8 000 – 15 000 Kč/rok",
+      "Od 2017 pod Stellantis — motory PSA (spolehlivé)",
+      "Zůstatková hodnota po 5 letech: 35–42 %",
+      "Opel Corsa-e: elektrická verze od 350 000 Kč ojetá",
+    ],
+    avgPriceRange: "50 000 – 450 000 Kč",
     description: "Opel nabízí praktické a cenově dostupné vozy s německou spolehlivostí. Na CarMakler máme prověřené ojeté Opely — od populární Astry přes městskou Corsu až po SUV Mokka a Grandland. Opel je ideální volba pro ty, kdo hledají solidní vůz za rozumné peníze. Od přechodu pod koncern Stellantis nabízí Opel moderní motory PSA a vylepšenou kvalitu zpracování. Naši makléři ověří každý ojetý Opel a zajistí bezpečnou transakci.",
     faqItems: [
       { question: "Je ojetý Opel Astra dobrá volba?", answer: "Opel Astra K (od 2015) nabízí komfortní jízdní vlastnosti, prostorný interiér a nízké provozní náklady. Patří mezi nejlepší volby v segmentu kompaktních aut." },
@@ -214,6 +330,16 @@ export const BRANDS: BrandData[] = [
       { slug: "glc", name: "GLC" },
       { slug: "a-trida", name: "A-Třída" },
     ],
+    aiSnippet: "Ojetý Mercedes-Benz nabízí nejvyšší úroveň komfortu a prestiže v prémiovém segmentu. Průměrná cena ojeté třídy C (W205) je 350 000 – 700 000 Kč (2026). Mercedes ztrácí 40–50 % hodnoty za první 3 roky — ojetý tříletý Mercedes tak stojí polovinu ceny nového. Doporučené motory: OM654 (diesel) a M264 (benzín) od roku 2018.",
+    quickFacts: [
+      "Průměrná cena ojeté C-Třídy W205: 350 000 – 700 000 Kč",
+      "Průměrná cena ojeté E-Třídy W213: 500 000 – 1 100 000 Kč",
+      "Depreciace za 3 roky: 40–50 % (výhodné pro kupce)",
+      "Nejspolehlivější motory: OM654 (diesel), M264 (benzín)",
+      "Servisní náklady: 30 000 – 55 000 Kč ročně",
+      "MBUX infotainment systém od 2018 modelů",
+    ],
+    avgPriceRange: "200 000 – 2 000 000 Kč",
     description: "Mercedes-Benz je synonymem luxusu, komfortu a prémiové kvality. Na CarMakler nabízíme prověřené ojeté Mercedesy od certifikovaných makléřů. Třída C nabízí sportovní eleganci, třída E cestovní komfort nejvyšší úrovně a GLC je ideální prémiové SUV. Ojetý Mercedes-Benz je investice do prestiže a pohodlí — vozy si drží vysokou hodnotu a nabízejí nejmodernější technologie. S CarMakler koupíte prověřený Mercedes bezpečně a transparentně.",
     faqItems: [
       { question: "Vyplatí se koupit ojetý Mercedes?", answer: "Ojetý Mercedes nabízí prémiový komfort a technologie za zlomek ceny nového vozu. Klíčová je kompletní servisní historie a kontrola u odborníka." },
@@ -231,6 +357,16 @@ export const BRANDS: BrandData[] = [
       { slug: "ateca", name: "Ateca" },
       { slug: "arona", name: "Arona" },
     ],
+    aiSnippet: "Ojetý SEAT nabízí techniku koncernu VW s temperamentním španělským designem za nižší cenu. Průměrná cena ojetého SEAT Leon (2020+) je 280 000 – 450 000 Kč (2026). SEAT sdílí platformu MQB, motory a převodovky s VW Golf a Škoda Octavia. Leon je o 10–15 % levnější než srovnatelný Golf se stejnou technikou.",
+    quickFacts: [
+      "Průměrná cena ojetého Leon IV: 280 000 – 450 000 Kč",
+      "SEAT Leon je o 10–15 % levnější než VW Golf",
+      "Sdílí platformu MQB s VW a Škodou",
+      "Díly plně kompatibilní s VW a Škodou",
+      "Zůstatková hodnota po 5 letech: 38–46 %",
+      "Cupra Leon: sportovní verze s 300 PS od 500 000 Kč",
+    ],
+    avgPriceRange: "60 000 – 550 000 Kč",
     description: "SEAT nabízí temperamentní španělský design s technologiemi koncernu Volkswagen. Na CarMakler najdete prověřené ojeté vozy SEAT — sportovní Leon, městskou Ibizu, všestrannou Atecu a kompaktní Aronu. SEAT sdílí platformy a motory s VW a Škodou, což znamená ověřenou spolehlivost a dostupné náhradní díly. Ojeté SEATy nabízejí dynamičtější design a jízdní vlastnosti než sesterské modely za srovnatelnou cenu.",
     faqItems: [
       { question: "Je ojetý SEAT Leon srovnatelný s VW Golf?", answer: "Ano, SEAT Leon sdílí platformu, motory a převodovky s VW Golf. Nabízí sportovnější design a jízdní vlastnosti za o 10-15 % nižší cenu." },
@@ -248,6 +384,16 @@ export const BRANDS: BrandData[] = [
       { slug: "c5-aircross", name: "C5 Aircross" },
       { slug: "berlingo", name: "Berlingo" },
     ],
+    aiSnippet: "Ojetý Citroën vyniká komfortem odpružení a originálním designem za atraktivní ceny. Průměrná cena ojetého Citroën C3 III je 150 000 – 280 000 Kč (2026). Systém odpružení Citroën Advanced Comfort patří mezi nejlepší v segmentu. C5 Aircross nabízí prémiový komfort SUV za cenu kompaktního vozu.",
+    quickFacts: [
+      "Průměrná cena ojetého C3 III: 150 000 – 280 000 Kč",
+      "Průměrná cena ojetého C5 Aircross: 250 000 – 450 000 Kč",
+      "Advanced Comfort odpružení: nejlepší komfort v segmentu",
+      "Sdílí motory s Peugeot (PureTech, BlueHDi)",
+      "Zůstatková hodnota po 5 letech: 33–42 %",
+      "Berlingo: nejpraktičtější rodinné auto s kufrem 775 l",
+    ],
+    avgPriceRange: "60 000 – 500 000 Kč",
     description: "Citroën je značka, která si zakládá na komfortu a originálním designu. Na CarMakler nabízíme prověřené ojeté Citroëny — stylový C3, moderní C4, komfortní SUV C5 Aircross a praktický Berlingo. Citroën vyniká odpružením Comfort, které je jedním z nejlepších v segmentu. Ojeté Citroëny nabízejí atraktivní ceny, originální design a vysokou praktičnost. Naši certifikovaní makléři každý vůz důkladně prověří.",
     faqItems: [
       { question: "Jsou ojeté Citroëny spolehlivé?", answer: "Citroëny od roku 2015 s motory PureTech a BlueHDi jsou spolehlivé. Značka výrazně zapracovala na kvalitě. U starších modelů doporučujeme důkladnou kontrolu." },
@@ -265,6 +411,16 @@ export const BRANDS: BrandData[] = [
       { slug: "jogger", name: "Jogger" },
       { slug: "spring", name: "Spring" },
     ],
+    aiSnippet: "Dacia je nejdostupnější značka na evropském trhu — nové Dacia stojí méně než většina ojetých konkurentů. Ojetý Dacia Duster II se prodává od 200 000 Kč (2026), Spring Electric od 180 000 Kč. Dacia využívá osvědčené motory Renault s nízkou poruchovostí. Pro kupce s omezeným rozpočtem je ojetá Dacia nejlepší volba z hlediska hodnoty za peníze.",
+    quickFacts: [
+      "Nejdostupnější značka v Evropě",
+      "Průměrná cena ojetého Duster II: 200 000 – 380 000 Kč",
+      "Spring Electric: nejlevnější EV od 180 000 Kč ojeté",
+      "Motory Renault: osvědčená technika, levné díly",
+      "Zůstatková hodnota po 5 letech: 48–55 % (nadprůměrná)",
+      "Jogger: 7místný MPV od 250 000 Kč — nejlevnější 7místný vůz",
+    ],
+    avgPriceRange: "50 000 – 400 000 Kč",
     description: "Dacia je nejdostupnější značka na evropském trhu a nabízí nové auto za cenu ojetého. Na CarMakler najdete prověřené ojeté vozy Dacia — robustní Duster, úsporný Sandero, praktický Jogger a elektrický Spring. Dacia využívá osvědčené motory Renault a nabízí jednoduchou, ale funkční výbavu. Ojetá Dacia je ideální volba pro ty, kdo hledají maximální hodnotu za minimum peněz. Naši makléři ověří stav každého vozu.",
     faqItems: [
       { question: "Vyplatí se ojetá Dacia?", answer: "Ojetá Dacia je skvělá volba pro rozpočtově orientované kupce. Duster nabízí schopnosti SUV za cenu menšího hatchbacku a motory Renault jsou ověřené." },
@@ -282,6 +438,16 @@ export const BRANDS: BrandData[] = [
       { slug: "cx-30", name: "CX-30" },
       { slug: "6", name: "6" },
     ],
+    aiSnippet: "Ojetá Mazda nabízí prémiový pocit za cenu mainstreamové značky. Mazda je v top 5 nejspolehlivějších značek celosvětově. Průměrná cena ojeté Mazda CX-5 je 300 000 – 550 000 Kč (2026). Motory SkyActiv-G (benzín) pracují bez turba, což přináší vyšší spolehlivost a nižší náklady na údržbu. Mazda má nejvyšší kvalitu laku v segmentu.",
+    quickFacts: [
+      "Top 5 nejspolehlivějších značek (Consumer Reports 2025)",
+      "Průměrná cena ojeté CX-5: 300 000 – 550 000 Kč",
+      "Průměrná cena ojeté Mazda 3: 250 000 – 450 000 Kč",
+      "Motory SkyActiv bez turba: vysoká spolehlivost",
+      "Zůstatková hodnota po 5 letech: 48–58 %",
+      "Průměrná roční údržba: 10 000 – 18 000 Kč (nízká)",
+    ],
+    avgPriceRange: "100 000 – 700 000 Kč",
     description: "Mazda nabízí vozy s prémiovým pocitem za cenu mainstreamové značky. Na CarMakler najdete prověřené ojeté Mazdy — sportovní Mazdu 3, elegantní Mazdu 6 a populární SUV CX-5 a CX-30. Mazda je známá technologií SkyActiv, která optimalizuje výkon i spotřebu, a filozofií Kodo designu. Ojeté Mazdy patří mezi nejspolehlivější vozy na trhu a nabízejí výjimečné jízdní vlastnosti. Naši certifikovaní makléři prověří každý vůz.",
     faqItems: [
       { question: "Jsou ojeté Mazdy spolehlivé?", answer: "Mazda patří mezi nejspolehlivější značky na světě. Motory SkyActiv jsou konstrukčně jednoduché a odolné. Mazda pravidelně obsazuje přední příčky v testech spolehlivosti." },
@@ -297,6 +463,8 @@ export interface BodyTypeData {
   description: string;
   faqItems: FaqItem[];
   filterValue?: string;
+  aiSnippet?: string;
+  quickFacts?: string[];
 }
 
 export const BODY_TYPES: BodyTypeData[] = [
@@ -310,6 +478,14 @@ export const BODY_TYPES: BodyTypeData[] = [
       { question: "Kolik stojí slušné ojeté SUV?", answer: "Kvalitní ojeté SUV s nájezdem do 100 000 km seženete od 300 000 Kč (Dacia Duster, Hyundai Tucson) do 600 000 Kč (BMW X3, Audi Q5)." },
       { question: "Vyplatí se SUV s pohonem 4x4?", answer: "Pokud jezdíte často mimo město nebo v horách, pohon 4x4 se vyplatí. Pro městské použití stačí pohon předních kol — je úspornější a levnější na údržbu." },
     ],
+    aiSnippet: "SUV je nejpopulárnější segment na trhu ojetých aut v ČR (2026). Kvalitní ojeté SUV s nájezdem do 100 000 km stojí od 300 000 Kč (Dacia Duster, Hyundai Tucson) do 600 000 Kč (BMW X3, Audi Q5). Nejprodávanějšími ojetými SUV jsou Škoda Kodiaq, Hyundai Tucson a Kia Sportage.",
+    quickFacts: [
+      "Nejpopulárnější segment ojetých aut v ČR (2026)",
+      "Kompaktní SUV: od 300 000 Kč (Tucson, Sportage)",
+      "Prémiové SUV: od 500 000 Kč (BMW X3, Audi Q5)",
+      "SUV s 4x4: příplatek 30 000 – 80 000 Kč oproti 2WD",
+      "Průměrná spotřeba ojetého SUV: 6,5 – 8,5 l/100 km",
+    ],
   },
   {
     slug: "kombi",
@@ -320,6 +496,14 @@ export const BODY_TYPES: BodyTypeData[] = [
       { question: "Jaké ojeté kombi je nejprodávanější?", answer: "Nejprodávanějším ojetým kombi v ČR je Škoda Octavia Combi, následovaná VW Passat Variant a Škoda Superb Combi. Oblíbené jsou i Ford Focus a Kia Ceed SW." },
       { question: "Jaký objem kufru mají ojetá kombi?", answer: "Typické kombi nabízí 550-700 litrů objemu kufru. Škoda Superb Combi má až 660 l, VW Passat Variant 650 l, Škoda Octavia Combi 640 l." },
       { question: "Je kombi lepší volba než SUV?", answer: "Kombi nabízí větší zavazadlový prostor, nižší spotřebu a lepší jízdní vlastnosti na silnici. SUV má výhodu vyššího posedu a lepší průchodnosti v terénu." },
+    ],
+    aiSnippet: "Kombi je tradičně nejoblíbenější karoserie v ČR. Škoda Octavia Combi je nejprodávanějším ojetým kombi s kufrem 640 litrů. Průměrná cena ojeté Octavia Combi III je 200 000 – 400 000 Kč (2026). Kombi nabízí o 20–30 % větší zavazadlový prostor a nižší spotřebu než srovnatelné SUV.",
+    quickFacts: [
+      "Nejoblíbenější karoserie v ČR",
+      "Škoda Octavia Combi: 640 l kufr, od 200 000 Kč",
+      "VW Passat Variant: 650 l kufr, od 250 000 Kč",
+      "Škoda Superb Combi: 660 l kufr, od 300 000 Kč",
+      "Spotřeba kombi: o 0,3–0,5 l/100 km nižší než SUV",
     ],
   },
   {
@@ -332,6 +516,14 @@ export const BODY_TYPES: BodyTypeData[] = [
       { question: "Je sedan vhodný pro rodinu?", answer: "Sedan je vhodný pro menší rodinu. Pro větší rodinu nebo časté přepravy rozměrnějších věcí doporučujeme kombi nebo SUV variantu." },
       { question: "Jaké jsou výhody sedanu oproti hatchbacku?", answer: "Sedan nabízí větší zavazadlový prostor (oddělený kufr), tišší interiér díky oddělenému prostoru a elegantnější vzhled." },
     ],
+    aiSnippet: "Sedan nabízí eleganci, komfort a nižší spotřebu díky lepší aerodynamice. Ojeté sedany v ČR stojí od 150 000 Kč (Škoda Octavia sedan) do 350 000+ Kč (BMW 3, Mercedes C). Sedan má oddělený kufr, což přináší tišší interiér a lepší tepelnou izolaci.",
+    quickFacts: [
+      "Škoda Octavia sedan: od 150 000 Kč",
+      "VW Passat sedan: od 200 000 Kč",
+      "BMW 3 sedan (F30): od 250 000 Kč",
+      "Mercedes C sedan (W205): od 350 000 Kč",
+      "Nižší spotřeba oproti SUV díky aerodynamice",
+    ],
   },
   {
     slug: "hatchback",
@@ -342,6 +534,14 @@ export const BODY_TYPES: BodyTypeData[] = [
       { question: "Jaký ojetý hatchback je nejspolehlivější?", answer: "Mezi nejspolehlivější ojeté hatchbacky patří Toyota Yaris, Mazda 3, Honda Civic a Hyundai i30. Z českých značek vede Škoda Fabia." },
       { question: "Kolik stojí kvalitní ojetý hatchback?", answer: "Kvalitní ojetý hatchback s nájezdem do 100 000 km seženete od 150 000 Kč (Škoda Fabia) do 400 000 Kč (VW Golf 8, BMW 1)." },
       { question: "Je hatchback vhodný jako první auto?", answer: "Hatchback je ideální jako první auto — kompaktní rozměry usnadňují parkování, nízká spotřeba šetří peníze a pojištění je levnější než u větších aut." },
+    ],
+    aiSnippet: "Hatchback je nejrozšířenější karoserie v Evropě a cenově nejdostupnější segment ojetých aut. Kvalitní ojetý hatchback s nájezdem do 100 000 km stojí od 150 000 Kč (Škoda Fabia) do 400 000 Kč (VW Golf 8). Nejspolehlivější ojeté hatchbacky: Toyota Yaris, Mazda 3, Honda Civic a Hyundai i30.",
+    quickFacts: [
+      "Nejrozšířenější karoserie v Evropě",
+      "Škoda Fabia: od 130 000 Kč",
+      "VW Golf 7: od 200 000 Kč",
+      "Hyundai i30: od 220 000 Kč",
+      "Ideální jako první auto — nízké pojištění a spotřeba",
     ],
   },
   {
@@ -385,6 +585,8 @@ export interface PriceRangeData {
   label: string;
   description: string;
   faqItems: FaqItem[];
+  aiSnippet?: string;
+  quickFacts?: string[];
 }
 
 export const PRICE_RANGES: PriceRangeData[] = [
@@ -451,6 +653,8 @@ export interface CityData {
   inLocative: string;
   description: string;
   faqItems: FaqItem[];
+  aiSnippet?: string;
+  quickFacts?: string[];
 }
 
 export const CITIES: CityData[] = [
@@ -555,6 +759,12 @@ export interface ModelData {
   variants: string[];
   competitors: string[];
   faqItems: FaqItem[];
+  /** GEO: Direct answer for AI featured snippet */
+  aiSnippet: string;
+  /** GEO: Quick facts with concrete numbers */
+  quickFacts: string[];
+  /** GEO: Price range for aggregate offer */
+  priceRange: { low: number; high: number };
 }
 
 export const TOP_MODELS: ModelData[] = [
@@ -573,6 +783,16 @@ export const TOP_MODELS: ModelData[] = [
       { question: "Jaký motor zvolit u ojeté Octavie?", answer: "Pro benzín doporučujeme 1.4 TSI (150 PS) nebo 2.0 TSI. Pro diesel 1.6 TDI (115 PS) nebo 2.0 TDI (150 PS). Vyvarujte se starších 1.2 TSI s řetězovým rozvodem." },
       { question: "Je ojetá Octavia Combi lepší než liftback?", answer: "Combi nabízí o 120 litrů větší kufr (640 vs 600 l) za příplatek 10-20 000 Kč. Pro rodiny a aktivní životní styl je Combi jasná volba." },
     ],
+    aiSnippet: "Škoda Octavia je nejprodávanější ojeté auto v České republice. Průměrná cena ojeté Octavia III (2013–2020) se pohybuje od 180 000 do 380 000 Kč podle výbavy a stavu (2026). Nejžádanější variantou je Octavia Combi 2.0 TDI s manuální převodovkou. Kufr Combi pojme 640 litrů. Při koupi doporučujeme prověřit historii přes CEBIA a u automatických verzí zkontrolovat stav DSG převodovky.",
+    quickFacts: [
+      "Nejprodávanější ojeté auto v ČR (2026)",
+      "Octavia II: od 80 000 Kč | Octavia III: od 180 000 Kč | Octavia IV: od 450 000 Kč",
+      "Kufr: Liftback 600 l, Combi 640 l",
+      "Nejspolehlivější motory: 1.4 TSI (150 PS), 1.6 TDI (115 PS), 2.0 TDI (150 PS)",
+      "Varianty: Liftback, Combi, Scout, RS, L&K",
+      "Spotřeba 1.6 TDI: 4,5–5,5 l/100 km (kombinovaná)",
+    ],
+    priceRange: { low: 80000, high: 700000 },
   },
   {
     brandSlug: "skoda",
@@ -588,6 +808,16 @@ export const TOP_MODELS: ModelData[] = [
       { question: "Kolik stojí ojetá Škoda Fabia?", answer: "Fabia II (2007-2014) od 50 000 Kč, Fabia III (2014-2021) od 130 000 Kč, Fabia IV (2021+) od 300 000 Kč." },
       { question: "Jaký motor zvolit u ojeté Fabie?", answer: "Doporučujeme 1.0 TSI (95/110 PS) u Fabie III FL a IV. U starších Fabií je spolehlivý 1.2 MPI. Vyvarujte se tříválce 1.2 HTP se závadami na vstřikování." },
     ],
+    aiSnippet: "Škoda Fabia je ideální první auto a městský vůz s nízkými provozními náklady. Průměrná cena ojeté Fabia III (2014–2021) se pohybuje od 130 000 do 250 000 Kč (2026). Fabia nabízí překvapivý prostor v kompaktních rozměrech a spotřebu 5–6 l/100 km. Nejnovější Fabia IV (2021+) přinesla výrazně větší rozměry a modernější technologie.",
+    quickFacts: [
+      "Fabia II (2007–2014): od 50 000 Kč",
+      "Fabia III (2014–2021): od 130 000 Kč",
+      "Fabia IV (2021+): od 300 000 Kč",
+      "Spotřeba 1.0 TSI: 5–6 l/100 km",
+      "Kufr: Hatchback 330 l, Combi 530 l",
+      "Doporučený motor: 1.0 TSI (95/110 PS)",
+    ],
+    priceRange: { low: 50000, high: 400000 },
   },
   {
     brandSlug: "skoda",
@@ -603,6 +833,16 @@ export const TOP_MODELS: ModelData[] = [
       { question: "Kolik stojí ojetý Škoda Superb?", answer: "Superb II (2008-2015) od 120 000 Kč, Superb III (2015-2019) od 300 000 Kč, Superb III FL (2019+) od 500 000 Kč." },
       { question: "Jaký motor je nejspolehlivější u Superbu?", answer: "Benzínový 1.4 TSI (150 PS) a 2.0 TSI (190/272 PS) jsou spolehlivé. Diesel 2.0 TDI (150/190 PS) nabízí skvělou spotřebu a výkon." },
     ],
+    aiSnippet: "Škoda Superb nabízí prostor a komfort vyšší třídy za cenu střední třídy. Průměrná cena ojetého Superb III (2015–2019) je 300 000 – 550 000 Kč (2026). Kufr Combi pojme 660 litrů — jeden z největších v segmentu. Superb je přímý konkurent VW Passat se sdílenou platformou, ale za výhodnější cenu.",
+    quickFacts: [
+      "Superb II (2008–2015): od 120 000 Kč",
+      "Superb III (2015–2019): od 300 000 Kč",
+      "Superb III FL (2019+): od 500 000 Kč",
+      "Kufr Combi: 660 l (největší v segmentu)",
+      "Sdílí platformu MQB s VW Passat",
+      "Doporučený motor: 2.0 TDI (150/190 PS)",
+    ],
+    priceRange: { low: 120000, high: 850000 },
   },
   {
     brandSlug: "skoda",
@@ -618,6 +858,16 @@ export const TOP_MODELS: ModelData[] = [
       { question: "Kolik stojí ojetý Škoda Kodiaq?", answer: "Ojetý Kodiaq (2017-2019) od 400 000 Kč, facelift (2021+) od 650 000 Kč. Verze s 7 místy a 4x4 jsou o 50-100 000 Kč dražší." },
       { question: "Má Kodiaq opravdu 7 míst?", answer: "Ano, verze s třetí řadou sedadel nabízí 7 míst. Třetí řada je vhodná pro děti do 150 cm. S 5 sedadly má kufr 835 litrů." },
     ],
+    aiSnippet: "Škoda Kodiaq je nejprostornější SUV od Škody s volitelným 7místným uspořádáním. Průměrná cena ojetého Kodiaq (2017–2019) je 400 000 – 650 000 Kč (2026). Kufr pojme 835 litrů s 5 sedadly. Kodiaq sdílí platformu MQB s VW Tiguan Allspace, ale nabízí více prostoru za nižší cenu.",
+    quickFacts: [
+      "Kodiaq (2017–2019): od 400 000 Kč",
+      "Kodiaq FL (2021+): od 650 000 Kč",
+      "Kufr: 835 l (5 sedadel) / 270 l (7 sedadel)",
+      "Volitelné 7místné uspořádání",
+      "Pohon 4x4: Haldex (příplatek cca 50–100 000 Kč)",
+      "Doporučený motor: 2.0 TDI (150/190 PS)",
+    ],
+    priceRange: { low: 400000, high: 1000000 },
   },
   {
     brandSlug: "volkswagen",
@@ -634,6 +884,16 @@ export const TOP_MODELS: ModelData[] = [
       { question: "Jaký motor zvolit u ojetého Golfu?", answer: "Doporučujeme 1.5 TSI (150 PS) — ideální poměr výkonu a spotřeby. Diesel 2.0 TDI (150 PS) pro hodně km. GTI 2.0 TSI (245 PS) pro sportovní jízdu." },
       { question: "Má ojetý Golf problémy s DSG převodovkou?", answer: "7stupňový DSG (DQ200) u starších Golfů 7 měl problémy s mechatronikou. Od roku 2015 je spolehlivější. 6stupňový DSG (DQ250) u TDI je bezproblémový." },
     ],
+    aiSnippet: "Volkswagen Golf je etalonem kompaktních hatchbacků a nejprodávanějším modelem VW na ojetém trhu. Průměrná cena ojetého Golf 7 (2013–2019) je 200 000 – 400 000 Kč (2026). Golf 8 (2020+) startuje od 450 000 Kč. Golf sdílí platformu MQB se Škoda Octavia, ale nabízí sportovnější jízdní vlastnosti a prestiž značky VW.",
+    quickFacts: [
+      "Golf 7 (2013–2019): od 200 000 Kč",
+      "Golf 7.5 FL (2017–2019): od 300 000 Kč",
+      "Golf 8 (2020+): od 450 000 Kč",
+      "GTI 2.0 TSI: 245 PS (od 400 000 Kč)",
+      "Kufr: Hatchback 380 l, Variant 605 l",
+      "Doporučený motor: 1.5 TSI (150 PS)",
+    ],
+    priceRange: { low: 200000, high: 800000 },
   },
   {
     brandSlug: "volkswagen",
@@ -649,6 +909,16 @@ export const TOP_MODELS: ModelData[] = [
       { question: "Kolik stojí ojetý VW Passat?", answer: "Passat B7 (2010-2014) od 130 000 Kč, Passat B8 (2014-2019) od 300 000 Kč, Passat B8 FL (2019+) od 500 000 Kč." },
       { question: "Passat nebo Superb — co je lepší?", answer: "Oba sdílejí platformu a motory. Superb nabídne více prostoru vzadu a větší kufr. Passat má o něco kvalitnější materiály a je tišší. Cenově je Superb výhodnější." },
     ],
+    aiSnippet: "Volkswagen Passat je synonymem komfortního cestovního vozu a jeden z nejoblíbenějších služebních aut v ČR. Průměrná cena ojetého Passat B8 (2014–2019) je 300 000 – 550 000 Kč (2026). Verze Variant (kombi) s kufrem 650 litrů je jedním z nejpraktičtějších cestovních aut. Passat sdílí platformu s Škoda Superb.",
+    quickFacts: [
+      "Passat B7 (2010–2014): od 130 000 Kč",
+      "Passat B8 (2014–2019): od 300 000 Kč",
+      "Passat B8 FL (2019+): od 500 000 Kč",
+      "Kufr Variant: 650 l",
+      "Alltrack: terénní verze s pohonem 4x4",
+      "Doporučený motor: 2.0 TDI (150/190 PS)",
+    ],
+    priceRange: { low: 130000, high: 900000 },
   },
   {
     brandSlug: "bmw",
@@ -664,6 +934,16 @@ export const TOP_MODELS: ModelData[] = [
       { question: "Kolik stojí ojeté BMW 3?", answer: "BMW 3 F30 (2012-2018) od 250 000 Kč, BMW 3 G20 (2019+) od 550 000 Kč. Verze M Sport a xDrive jsou o 50-100 000 Kč dražší." },
       { question: "Jaký motor zvolit u ojetého BMW 3?", answer: "Benzín: 320i (184 PS) pro denní jízdu, 330i (258 PS) pro sportovní zážitek. Diesel: 320d (190 PS) — nejpopulárnější, úsporný a výkonný." },
     ],
+    aiSnippet: "BMW řady 3 je nejprodávanější prémiový sedan na světě a ikona sportovních jízdních vlastností. Průměrná cena ojetého BMW 3 F30 (2012–2018) je 250 000 – 550 000 Kč (2026). Nová generace G20 (2019+) startuje od 550 000 Kč. BMW 320d je nejpopulárnější motorizace s kombinací výkonu 190 PS a spotřeby pod 6 l/100 km.",
+    quickFacts: [
+      "BMW 3 F30 (2012–2018): od 250 000 Kč",
+      "BMW 3 G20 (2019+): od 550 000 Kč",
+      "Nejpopulárnější motor: 320d (190 PS)",
+      "M Sport pakety navyšují cenu o 50–100 000 Kč",
+      "Servisní náklady: 25 000 – 45 000 Kč/rok",
+      "Zůstatková hodnota po 5 letech: 42–52 %",
+    ],
+    priceRange: { low: 250000, high: 1200000 },
   },
   {
     brandSlug: "audi",
@@ -679,6 +959,16 @@ export const TOP_MODELS: ModelData[] = [
       { question: "Kolik stojí ojeté Audi A4?", answer: "Audi A4 B8 (2008-2015) od 150 000 Kč, A4 B9 (2016-2019) od 350 000 Kč, A4 B9 FL (2019+) od 550 000 Kč." },
       { question: "Jaký motor zvolit u ojetého A4?", answer: "Nejspolehlivější je 2.0 TFSI (190/252 PS) a 2.0 TDI (150/190 PS). Quattro verze s 2.0 TDI 190 PS jsou ideální kombinace výkonu a trakce." },
     ],
+    aiSnippet: "Audi A4 je sofistikovaný prémiový sedan s pokročilou technologií Virtual Cockpit a pohonem quattro. Průměrná cena ojetého Audi A4 B9 (2016–2019) je 350 000 – 650 000 Kč (2026). A4 nabízí vynikající zpracování interiéru a pokročilé asistenční systémy. Verze Avant (kombi) je ideální kombinace praktičnosti a prémiovosti.",
+    quickFacts: [
+      "A4 B8 (2008–2015): od 150 000 Kč",
+      "A4 B9 (2016–2019): od 350 000 Kč",
+      "A4 B9 FL (2019+): od 550 000 Kč",
+      "Virtual Cockpit: digitální přístrojový štít",
+      "Quattro 4x4: příplatek cca 50–100 000 Kč",
+      "Doporučený motor: 2.0 TFSI (190 PS), 2.0 TDI (150 PS)",
+    ],
+    priceRange: { low: 150000, high: 1000000 },
   },
   {
     brandSlug: "ford",
@@ -694,6 +984,16 @@ export const TOP_MODELS: ModelData[] = [
       { question: "Kolik stojí ojetý Ford Focus?", answer: "Focus MK3 (2011-2018) od 100 000 Kč, Focus MK3 FL (2014-2018) od 170 000 Kč, Focus MK4 (2018+) od 280 000 Kč." },
       { question: "Jaký motor zvolit u ojetého Focusu?", answer: "Benzín: 1.0 EcoBoost (125/155 PS) — úsporný a výkonný. Diesel: 1.5 EcoBlue (120 PS). U MK4 doporučujeme 1.0 EcoBoost mHEV." },
     ],
+    aiSnippet: "Ford Focus patří mezi nejoblíbenější hatchbacky v Evropě díky sportovním jízdním vlastnostem. Průměrná cena ojetého Focus MK4 (2018+) je 280 000 – 450 000 Kč (2026). Focus MK3 (2011–2018) startuje od 100 000 Kč. Motory EcoBoost 1.0 nabízejí dynamiku a spotřebu pod 6 l/100 km. U MK3 se vyhněte automatické převodovce PowerShift.",
+    quickFacts: [
+      "Focus MK3 (2011–2018): od 100 000 Kč",
+      "Focus MK3 FL (2014–2018): od 170 000 Kč",
+      "Focus MK4 (2018+): od 280 000 Kč",
+      "EcoBoost 1.0: 125/155 PS, spotřeba 5,5 l/100 km",
+      "Pozor na PowerShift automat u MK3 (manuál OK)",
+      "Focus ST 2.3 EcoBoost: 280 PS od 400 000 Kč",
+    ],
+    priceRange: { low: 100000, high: 600000 },
   },
   {
     brandSlug: "toyota",
@@ -709,6 +1009,16 @@ export const TOP_MODELS: ModelData[] = [
       { question: "Kolik stojí ojetá Toyota Yaris?", answer: "Yaris III (2011-2020) od 100 000 Kč, Yaris III Hybrid od 150 000 Kč, Yaris IV (2020+) od 300 000 Kč, Yaris IV Hybrid od 350 000 Kč." },
       { question: "Vyplatí se Yaris Hybrid?", answer: "Rozhodně. Yaris Hybrid spotřebuje ve městě 3,5-4,5 l/100 km. Hybridní systém nevyžaduje žádnou speciální údržbu a baterie vydrží celou životnost vozu." },
     ],
+    aiSnippet: "Toyota Yaris je synonymem spolehlivosti v segmentu malých aut s extrémně nízkou spotřebou hybridní verze. Průměrná cena ojeté Toyota Yaris III Hybrid je od 150 000 Kč (2026). Nová Yaris IV (2020+, Auto roku 2021) startuje od 300 000 Kč. Hybridní pohon Toyota spotřebuje ve městě jen 3,5–4,5 l/100 km a baterie vydrží celou životnost vozu.",
+    quickFacts: [
+      "Yaris III (2011–2020): od 100 000 Kč",
+      "Yaris III Hybrid: od 150 000 Kč",
+      "Yaris IV (2020+): od 300 000 Kč",
+      "Yaris IV Hybrid: od 350 000 Kč",
+      "Spotřeba Hybrid ve městě: 3,5–4,5 l/100 km",
+      "Auto roku 2021 v Evropě",
+    ],
+    priceRange: { low: 100000, high: 450000 },
   },
   {
     brandSlug: "hyundai",
@@ -724,6 +1034,16 @@ export const TOP_MODELS: ModelData[] = [
       { question: "Kolik stojí ojetý Hyundai i30?", answer: "I30 GD (2012-2017) od 120 000 Kč, i30 PD (2017-2020) od 220 000 Kč, i30 PD FL (2020+) od 350 000 Kč." },
       { question: "Jaký motor zvolit u ojetého i30?", answer: "Benzín: 1.4 T-GDi (140 PS) — ideální poměr výkonu a spotřeby. Diesel: 1.6 CRDi (136 PS). Pro sportovní jízdu: i30 N 2.0 T-GDi (250/280 PS)." },
     ],
+    aiSnippet: "Hyundai i30 je přímý konkurent VW Golf s nejlepším poměrem ceny a výbavy v segmentu a 5letou převoditelnou zárukou. Průměrná cena ojetého i30 PD (2017–2020) je 220 000 – 400 000 Kč (2026). I30 je o 15–20 % levnější než srovnatelný Golf se stejnou úrovní výbavy. Sportovní verze i30 N (250/280 PS) je jedním z nejlépe hodnocených hot-hatchbacků.",
+    quickFacts: [
+      "i30 GD (2012–2017): od 120 000 Kč",
+      "i30 PD (2017–2020): od 220 000 Kč",
+      "i30 PD FL (2020+): od 350 000 Kč",
+      "O 15–20 % levnější než VW Golf",
+      "5letá převoditelná záruka",
+      "i30 N: 250/280 PS — nejlepší hot-hatch v segmentu",
+    ],
+    priceRange: { low: 120000, high: 550000 },
   },
   {
     brandSlug: "kia",
@@ -739,6 +1059,16 @@ export const TOP_MODELS: ModelData[] = [
       { question: "Kolik stojí ojetý Kia Ceed?", answer: "Ceed JD (2012-2018) od 100 000 Kč, Ceed CD (2018-2021) od 250 000 Kč, Ceed CD FL (2021+) od 380 000 Kč." },
       { question: "Jaký motor zvolit u ojetého Ceedu?", answer: "Benzín: 1.4 T-GDi (140 PS) — spolehlivý a úsporný. Diesel: 1.6 CRDi (136 PS). Pro sportovní jízdu: Ceed GT 1.6 T-GDi (204 PS)." },
     ],
+    aiSnippet: "Kia Ceed je moderní evropský hatchback s nejdelší zárukou na trhu — 7 let. Průměrná cena ojetého Ceed CD (2018–2021) je 250 000 – 420 000 Kč (2026). Ceed sdílí platformu s Hyundai i30, ale nabízí odlišný design a unikátní verzi ProCeed (shooting brake). 7letá záruka je plně převoditelná na dalšího majitele.",
+    quickFacts: [
+      "Ceed JD (2012–2018): od 100 000 Kč",
+      "Ceed CD (2018–2021): od 250 000 Kč",
+      "Ceed CD FL (2021+): od 380 000 Kč",
+      "7letá převoditelná záruka (150 000 km)",
+      "ProCeed: unikátní shooting brake varianta",
+      "Sdílí platformu s Hyundai i30",
+    ],
+    priceRange: { low: 100000, high: 550000 },
   },
 ];
 

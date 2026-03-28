@@ -3,6 +3,8 @@ import { VehicleLandingPage } from "./VehicleLandingPage";
 import {
   generateBreadcrumbJsonLd,
   generateFaqJsonLd,
+  generateWebPageJsonLd,
+  generateBrandItemListJsonLd,
 } from "@/lib/seo";
 import type { BrandData } from "@/lib/seo-data";
 import { BASE_URL, BRANDS, BODY_TYPES, PRICE_RANGES, TOP_MODELS } from "@/lib/seo-data";
@@ -19,6 +21,31 @@ export function BrandLandingContent({ brand }: BrandLandingContentProps) {
   ]);
 
   const faqJsonLd = generateFaqJsonLd(brand.faqItems);
+
+  const webPageJsonLd = generateWebPageJsonLd({
+    name: `Ojeté vozy ${brand.displayName}`,
+    description: `Prověřené ojeté vozy ${brand.displayName} od certifikovaných makléřů. Bezpečný nákup s garancí.`,
+    url: `${BASE_URL}/nabidka/${brand.slug}`,
+    about: [
+      { name: brand.displayName, type: "Brand" },
+      { name: "Ojeté automobily", type: "Thing" },
+    ],
+    mentions: brand.topModels.map((m) => ({
+      name: `${brand.displayName} ${m.name}`,
+      type: "Product",
+      url: `${BASE_URL}/nabidka/${brand.slug}/${m.slug}`,
+    })),
+    speakableCssSelectors: ["[data-speakable]"],
+  });
+
+  const brandItemListJsonLd = generateBrandItemListJsonLd({
+    name: brand.displayName,
+    url: `${BASE_URL}/nabidka/${brand.slug}`,
+    models: brand.topModels.map((m) => ({
+      name: m.name,
+      url: `${BASE_URL}/nabidka/${brand.slug}/${m.slug}`,
+    })),
+  });
 
   const brandModels = TOP_MODELS.filter((m) => m.brandSlug === brand.slug);
   const otherBrands = BRANDS.filter((b) => b.slug !== brand.slug).slice(0, 8);
@@ -44,6 +71,8 @@ export function BrandLandingContent({ brand }: BrandLandingContentProps) {
       description={`Prověřené ojeté vozy ${brand.displayName} od certifikovaných makléřů. ${brand.topModels.map((m) => m.name).join(", ")} a další. Bezpečný nákup s garancí.`}
       h1={`Ojeté vozy ${brand.displayName}`}
       filterDescription={`Prověřené vozy ${brand.displayName} od certifikovaných makléřů. ${brand.topModels.map((m) => m.name).join(", ")} a další modely v nabídce.`}
+      aiSnippet={brand.aiSnippet}
+      quickFacts={brand.quickFacts}
       seoText={<BrandSeoText brand={brand} />}
       faqItems={brand.faqItems}
       breadcrumbs={[
@@ -51,7 +80,7 @@ export function BrandLandingContent({ brand }: BrandLandingContentProps) {
         { name: "Nabídka", href: "/nabidka" },
         { name: brand.displayName, href: `/nabidka/${brand.slug}` },
       ]}
-      jsonLdScripts={[breadcrumbJsonLd, faqJsonLd]}
+      jsonLdScripts={[breadcrumbJsonLd, faqJsonLd, webPageJsonLd, brandItemListJsonLd]}
       ctaText={`Prodat ${brand.displayName} s makléřem`}
       ctaHeading={`Chcete prodat ${brand.displayName}?`}
       relatedLinks={relatedLinks}

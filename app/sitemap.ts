@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
+import { BRANDS, TOP_MODELS, BODY_TYPES, PRICE_RANGES, CITIES, PARTS_CATEGORIES, PARTS_BRANDS } from "@/lib/seo-data";
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://www.carmakler.cz";
 
@@ -90,7 +91,76 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.5,
     },
+    // Informační SEO stránky
+    {
+      url: `${BASE_URL}/jak-prodat-auto`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${BASE_URL}/kolik-stoji-moje-auto`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
   ];
+
+  // SEO landing pages — značky (16)
+  const brandPages: MetadataRoute.Sitemap = BRANDS.map((brand) => ({
+    url: `${BASE_URL}/nabidka/${brand.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }));
+
+  // SEO landing pages — modely (12)
+  const modelPages: MetadataRoute.Sitemap = TOP_MODELS.map((model) => ({
+    url: `${BASE_URL}/nabidka/${model.brandSlug}/${model.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  // SEO landing pages — kategorie karoserií (7)
+  const bodyTypePages: MetadataRoute.Sitemap = BODY_TYPES.map((bt) => ({
+    url: `${BASE_URL}/nabidka/${bt.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  // SEO landing pages — cenové rozsahy (5)
+  const pricePages: MetadataRoute.Sitemap = PRICE_RANGES.map((pr) => ({
+    url: `${BASE_URL}/nabidka/${pr.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  // SEO landing pages — města (8)
+  const cityPages: MetadataRoute.Sitemap = CITIES.map((city) => ({
+    url: `${BASE_URL}/nabidka/${city.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  // SEO landing pages — díly kategorie (11)
+  const partsCategoryPages: MetadataRoute.Sitemap = PARTS_CATEGORIES.map((cat) => ({
+    url: `${BASE_URL}/dily/kategorie/${cat.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
+  // SEO landing pages — díly značky (8)
+  const partsBrandPages: MetadataRoute.Sitemap = PARTS_BRANDS.map((brand) => ({
+    url: `${BASE_URL}/dily/znacka/${brand.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
 
   // Dynamické stránky — vozidla
   let vehiclePages: MetadataRoute.Sitemap = [];
@@ -132,5 +202,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // DB nedostupná
   }
 
-  return [...staticPages, ...vehiclePages, ...brokerPages];
+  return [
+    ...staticPages,
+    ...brandPages,
+    ...modelPages,
+    ...bodyTypePages,
+    ...pricePages,
+    ...cityPages,
+    ...partsCategoryPages,
+    ...partsBrandPages,
+    ...vehiclePages,
+    ...brokerPages,
+  ];
 }

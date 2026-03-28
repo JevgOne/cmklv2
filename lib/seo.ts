@@ -191,3 +191,107 @@ export function generateWebApplicationJsonLd(app: {
   };
   return JSON.stringify(jsonLd);
 }
+
+// --- GEO / AIEO optimized JSON-LD generators ---
+
+export interface WebPageJsonLdData {
+  name: string;
+  description: string;
+  url: string;
+  about?: { name: string; type: string; url?: string }[];
+  mentions?: { name: string; type: string; url?: string }[];
+  speakableCssSelectors?: string[];
+  dateModified?: string;
+}
+
+export function generateWebPageJsonLd(page: WebPageJsonLdData): string {
+  const jsonLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: page.name,
+    description: page.description,
+    url: page.url,
+    publisher: {
+      "@type": "Organization",
+      name: "CarMakler",
+      url: "https://www.carmakler.cz",
+    },
+  };
+
+  if (page.dateModified) {
+    jsonLd.dateModified = page.dateModified;
+  }
+
+  if (page.about && page.about.length > 0) {
+    jsonLd.about = page.about.map((entity) => ({
+      "@type": entity.type,
+      name: entity.name,
+      ...(entity.url && { url: entity.url }),
+    }));
+  }
+
+  if (page.mentions && page.mentions.length > 0) {
+    jsonLd.mentions = page.mentions.map((entity) => ({
+      "@type": entity.type,
+      name: entity.name,
+      ...(entity.url && { url: entity.url }),
+    }));
+  }
+
+  if (page.speakableCssSelectors && page.speakableCssSelectors.length > 0) {
+    jsonLd.speakable = {
+      "@type": "SpeakableSpecification",
+      cssSelector: page.speakableCssSelectors,
+    };
+  }
+
+  return JSON.stringify(jsonLd);
+}
+
+export function generateBrandItemListJsonLd(brand: {
+  name: string;
+  url: string;
+  models: { name: string; url: string }[];
+}): string {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `Ojeté vozy ${brand.name}`,
+    url: brand.url,
+    numberOfItems: brand.models.length,
+    itemListElement: brand.models.map((model, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: `${brand.name} ${model.name}`,
+      url: model.url,
+    })),
+  };
+  return JSON.stringify(jsonLd);
+}
+
+export function generateAggregateOfferJsonLd(vehicle: {
+  name: string;
+  brand: string;
+  model: string;
+  lowPrice: number;
+  highPrice: number;
+  offerCount: number;
+  url: string;
+}): string {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: vehicle.name,
+    brand: { "@type": "Brand", name: vehicle.brand },
+    model: vehicle.model,
+    offers: {
+      "@type": "AggregateOffer",
+      lowPrice: vehicle.lowPrice,
+      highPrice: vehicle.highPrice,
+      priceCurrency: "CZK",
+      offerCount: vehicle.offerCount,
+      url: vehicle.url,
+    },
+  };
+  return JSON.stringify(jsonLd);
+}

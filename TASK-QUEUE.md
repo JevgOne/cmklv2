@@ -6128,4 +6128,168 @@ Projít KOMPLETNĚ všech 10 fází z TASK-038:
 
 ---
 
+## TASK-041: SEO/GEO/AIEO landing pages — kompletní sada pro všechny produkty
+Priorita: 1
+Stav: zpracovává se
+Projekt: /Users/lunagroup/carmakler
+
+### Kompletní zadání:
+
+Vytvořit kompletní sadu SEO-optimalizovaných landing pages pro všechny 4 produkty Carmakler. Každá stránka optimalizovaná nejen pro klasické SEO, ale i pro GEO (Generative Engine Optimization — Google AI Overviews/SGE) a AIEO (AI Engine Optimization — ChatGPT, Perplexity, Claude citace).
+
+**Požadavky na KAŽDOU landing page:**
+- H1 s primárním klíčovým slovem
+- generateMetadata() — title (max 60 zn.), description (max 155 zn.), openGraph
+- JSON-LD structured data (BreadcrumbList + FAQPage + specifický typ)
+- SpeakableSpecification schema pro AI citace
+- "Odpověď na otázku" blok nahoře (featured snippet formát)
+- "Rychlá fakta" box (4-6 bullet pointů s čísly)
+- Srovnávací tabulka kde relevantní
+- Min 5 FAQ otázek s faktickými odpověďmi
+- SEO text (300-600 slov, UNIKÁTNÍ per stránka, autoritativní tón)
+- Citovatelné věty s konkrétními čísly
+- Breadcrumbs (vizuální + JSON-LD)
+- Internal cross-linking (related pages, CTA)
+- Popisné anchor texty (ne "Více zde")
+- loading.tsx + error.tsx
+- Server Component, TypeScript strict, české UI texty s diakritikou
+- Tailwind CSS 4, mobile-first, Outfit font
+
+**Landing pages k vytvoření:**
+
+**A) Značkové LP** — `app/(web)/nabidka/[znacka]/page.tsx` (16 značek):
+Škoda, Volkswagen, BMW, Audi, Ford, Toyota, Hyundai, Kia, Mercedes-Benz, Opel, Renault, Peugeot, Citroën, Seat, Dacia, Fiat
+- Title: `[Značka] bazar | Ojeté vozy [Značka] — CarMakler`
+- H1: `Ojeté vozy [Značka]`
+- Obsah: počet aut, grid TOP modelů, SEO text, FAQ, CTA
+
+**B) Modelové LP** — `app/(web)/nabidka/[znacka]/[model]/page.tsx` (12 TOP modelů):
+Octavia, Fabia, Superb, Kodiaq, Golf, Passat, 3 Series, A4, Focus, Yaris, i30, Ceed
+- Title: `[Značka] [Model] bazar | Ojeté [Model] — CarMakler`
+- H1: `[Značka] [Model] — ojeté vozy v nabídce`
+
+**C) Kategoriové LP** (7 statických):
+`/nabidka/suv`, `/nabidka/kombi`, `/nabidka/sedan`, `/nabidka/hatchback`, `/nabidka/elektromobily`, `/nabidka/hybrid`, `/nabidka/kabriolet`
+
+**D) Cenové LP** (5 statických):
+`/nabidka/do-100000`, `/nabidka/do-200000`, `/nabidka/do-300000`, `/nabidka/do-500000`, `/nabidka/do-1000000`
+
+**E) Lokální LP** (8 měst):
+`/nabidka/praha`, `/nabidka/brno`, `/nabidka/ostrava`, `/nabidka/plzen`, `/nabidka/liberec`, `/nabidka/olomouc`, `/nabidka/ceske-budejovice`, `/nabidka/hradec-kralove`
+
+**F) Informační SEO stránky** (2):
+- `/jak-prodat-auto` — kompletní průvodce prodejem (7 kapitol, HowTo schema)
+- `/kolik-stoji-moje-auto` — kalkulačka ceny vozidla (interaktivní formulář)
+
+**G) Eshop díly LP**:
+- Kategorie dílů (11): `/dily/kategorie/[slug]` — motory, převodovky, brzdy, karoserie, podvozek, elektro, interiér, kola, výfuk, chlazení, palivo
+- Značky dílů (8): `/dily/znacka/[slug]` — Škoda, VW, BMW, Audi, Ford, Toyota, Hyundai, Opel
+
+**H) Aktualizace sitemap.xml** — dynamicky generovat URL všech LP
+
+### Kontext:
+- SEO infrastruktura hotová: lib/seo.ts, lib/seo-data.ts, components/web/FaqSection.tsx, VehicleLandingPage.tsx, Breadcrumbs.tsx
+- SEO audit existujících stránek proveden a opraven (headings, anchors, breadcrumbs, JSON-LD, cross-linking)
+- Konkurenční analýza: Sauto, TipCars, AAA Auto, Carvago, Bazos — žádný nemá kvalitní structured data ani content-rich LP
+- Celkem ~69 nových stránek
+
+### Očekávaný výsledek:
+1. Všechny LP implementované a dostupné
+2. Build prochází bez chyb
+3. Každá LP má unikátní obsah, JSON-LD, FAQ, breadcrumbs
+4. Sitemap.xml zahrnuje všechny nové URL
+5. Stránky optimalizované pro SEO + GEO + AIEO
+
+---
+
+## TASK-042: PDF šablony a prezentace — vizuální design pro všechny materiály
+Priorita: 2
+Stav: čeká
+Projekt: /Users/lunagroup/carmakler
+
+### Kompletní zadání:
+
+Vytvořit kompletní sadu PDF šablon a prezentací v jednotném vizuálním stylu CarMakler. Šablony musí být HTML soubory (A4 landscape pro prezentace, A4 portrait pro dokumenty) s print-ready CSS, exportovatelné do PDF přes prohlížeč (Ctrl+P).
+
+**Existující šablony v `docs/presentations/`:**
+- `carmakler-pro-autobazary.html` — Partnerský program pro autobazary
+- `carmakler-pro-vrakoviste.html` — Partnerský program pro vrakoviště
+- `kroky-prodeje-v2.html` — Jak prodáme vaše auto (kroky prodeje)
+- `skoleni-makleru.html` — Školení makléřů
+- `uvodni-strana.html` — Úvodní strana
+- `zprostredkovatelska-smlouva.html` — Zprostředkovatelská smlouva
+- `generate-pdf.mjs` — PDF generátor script
+
+**Vizuální styl (z existujících šablon):**
+- Font: Outfit (Google Fonts), weights 300-900
+- Primární barva: #F97316 (orange)
+- Tmavá: #1a1a2e
+- Glass morphism efekty (backdrop-filter blur)
+- Gradientové pozadí (orange-to-pink, dark gradients)
+- Print-ready: `-webkit-print-color-adjust: exact`, `@page { size: A4 landscape; margin: 0 }`
+- Slide-based layout (297mm × 210mm per slide)
+- Logo badge s oranžovým pozadím
+- Moderní, profesionální, čistý design
+
+**Nové šablony k vytvoření:**
+
+1. **Landing page šablona (wireframe/mockup)** — `docs/presentations/landing-page-sablona.html`
+   - Vizuální návrh jak mají vypadat SEO landing pages
+   - Wireframe s označenými sekcemi: hero, rychlá fakta, srovnávací tabulka, FAQ, CTA, breadcrumbs, JSON-LD pozice
+   - Příklad pro značkovou LP (Škoda) a modelovou LP (Octavia)
+   - Příklad pro cenovou LP (do 200 000 Kč) a lokální LP (Praha)
+   - Mobilní i desktopová verze
+
+2. **Obchodní prezentace pro klienty** — `docs/presentations/obchodni-prezentace.html`
+   - Kdo jsme, co děláme, proč CarMakler
+   - 4 produkty (makléřská síť, inzerce, eshop dílů, marketplace)
+   - Čísla a statistiky (průměrná doba prodeje, počet makléřů, úspěšnost)
+   - Ceník služeb, provize
+   - Reference/recenze
+   - Kontakt + CTA
+
+3. **Prezentace pro investory (Marketplace)** — `docs/presentations/marketplace-investori.html`
+   - Investiční model (40/40/20 dělení zisku)
+   - Historické výnosy, ROI
+   - Jak to funguje (krok za krokem)
+   - Risk management
+   - Registrace + podmínky
+
+4. **Onboarding makléře — vizuální průvodce** — `docs/presentations/onboarding-makler.html`
+   - 5 kroků onboardingu (profil, dokumenty, smlouva, quiz, aktivace)
+   - Screenshoty PWA
+   - Jak nabrat auto (7 kroků)
+   - Quick mode
+   - Provize a odměny
+   - Gamifikace (levely, achievementy)
+
+5. **Ceník služeb** — `docs/presentations/cenik-sluzeb.html`
+   - Provize makléřská síť (5%, min 25 000 Kč)
+   - Ceník inzerce (zdarma/premium/topování)
+   - Ceník prověrky, financování, pojištění
+   - Marketplace poplatky
+   - Eshop díly — provize dodavatele
+
+6. **Šablona faktury** — `docs/presentations/faktura-sablona.html`
+   - A4 portrait
+   - Hlavička s logem a firemními údaji
+   - Tabulka položek, DPH, celková cena
+   - Bankovní údaje, QR platba
+   - Patička s kontaktem
+
+### Kontext:
+- Existující šablony používají Outfit font, orange gradient, glass efekty
+- HTML → PDF konverze přes prohlížeč nebo generate-pdf.mjs (Puppeteer)
+- Design musí být konzistentní s webem (carmakler-design-system.html)
+- Referenční soubor: `carmakler-design-system.html` v kořenu projektu
+
+### Očekávaný výsledek:
+1. 6 nových HTML šablon v `docs/presentations/`
+2. Konzistentní vizuální styl s existujícími šablonami
+3. Print-ready (exportovatelné do PDF bez ztráty kvality)
+4. Landing page šablona ukazuje přesně jak mají vypadat SEO stránky
+5. Profesionální obchodní materiály připravené pro klienty, investory a makléře
+
+---
+
 <!-- Další úkoly přidávej pod tuto čáru ve stejném formátu -->
