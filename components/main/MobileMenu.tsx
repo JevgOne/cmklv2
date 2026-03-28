@@ -53,7 +53,7 @@ export function MainMobileMenu() {
     <div className="fixed inset-0 z-[9999] bg-white flex flex-col" style={{ height: '100dvh' }}>
       <div className="flex items-center justify-between px-4 sm:px-6 h-[72px] border-b border-gray-200 shrink-0">
         <Link href="/" className="flex items-center no-underline" onClick={closeMenu}>
-          <img src="/brand/logo-color.png" alt="CarMakléř" className="h-10 sm:h-12 w-auto object-contain" />
+          <img src="/brand/logo-dark.png" alt="CarMakléř" className="h-10 sm:h-12 w-auto object-contain" />
         </Link>
         <button
           type="button"

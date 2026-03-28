@@ -118,7 +118,7 @@ export function AdminSidebar({ open, onClose }: AdminSidebarProps) {
         {/* Header */}
         <div className="p-6 border-b border-white/[0.08]">
           <div className="flex items-center gap-3">
-            <img src="/brand/logo-color.png" alt="CarMakler" className="h-10 brightness-0 invert" />
+            <img src="/brand/logo-white.png" alt="CarMakléř" className="h-10 w-auto object-contain" />
             <span className="text-[10px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full ml-2">
               {userRole === "MANAGER" ? "MANAŽER" : "ADMIN"}
             </span>

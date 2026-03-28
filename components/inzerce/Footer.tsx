@@ -11,7 +11,7 @@ export function InzerceFooter() {
           {/* Logo + popis */}
           <div className="col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2 no-underline mb-4">
-              <img src="/brand/logo-color.png" alt="CarMakléř" className="h-10 brightness-0 invert" />
+              <img src="/brand/logo-white.png" alt="CarMakléř" className="h-10 w-auto object-contain" />
               <span className="text-sm font-semibold text-orange-400">Inzerce</span>
             </Link>
             <p className="text-sm text-gray-500 leading-relaxed">

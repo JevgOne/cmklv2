@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CarMakler - Partnersky program pro vrakoviste</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    color: #1a1a2e;
+    background: #f5f5f5;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+
+  .slide {
+    width: 297mm;
+    height: 210mm;
+    padding: 40px 60px;
+    page-break-after: always;
+    page-break-inside: avoid;
+    position: relative;
+    overflow: hidden;
+    background: white;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .slide:last-child { page-break-after: auto; }
+
+  /* ---- SLIDE TITLE ---- */
+  .slide-title {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: white;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .slide-title::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: rgba(249, 115, 22, 0.08);
+  }
+  .slide-title::after {
+    content: '';
+    position: absolute;
+    bottom: -150px;
+    left: -150px;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: rgba(249, 115, 22, 0.05);
+  }
+  .slide-title .logo { height: 80px; margin-bottom: 30px; position: relative; z-index: 1; }
+  .slide-title h1 { font-size: 42px; font-weight: 800; line-height: 1.2; margin-bottom: 16px; position: relative; z-index: 1; }
+  .slide-title h1 span { color: #F97316; }
+  .slide-title .subtitle { font-size: 22px; font-weight: 300; color: rgba(255,255,255,0.8); position: relative; z-index: 1; }
+  .slide-title .date { position: absolute; bottom: 40px; right: 60px; font-size: 14px; color: rgba(255,255,255,0.5); }
+  .slide-title .web { position: absolute; bottom: 40px; left: 60px; font-size: 14px; color: rgba(255,255,255,0.5); }
+
+  /* ---- COMMON ---- */
+  .slide-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    padding-bottom: 16px;
+    border-bottom: 3px solid #F97316;
+  }
+  .slide-header h2 { font-size: 32px; font-weight: 700; color: #1a1a2e; }
+  .slide-header .logo-small { height: 36px; opacity: 0.6; }
+
+  .orange { color: #F97316; }
+  .highlight { background: linear-gradient(135deg, #FFF7ED, #FFEDD5); border-radius: 16px; padding: 24px; }
+  .dark-box { background: #1a1a2e; color: white; border-radius: 16px; padding: 24px; }
+  .green-box { background: linear-gradient(135deg, #f0fdf4, #dcfce7); border-radius: 16px; padding: 24px; border: 1px solid #bbf7d0; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; flex: 1; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; flex: 1; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px; flex: 1; }
+
+  .feature-card {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #e2e8f0;
+  }
+  .feature-card .icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #F97316, #ea580c);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 14px;
+    color: white;
+  }
+  .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #1a1a2e; }
+  .feature-card p { font-size: 13px; line-height: 1.5; color: #64748b; }
+  .feature-card ul { font-size: 13px; line-height: 1.8; color: #64748b; list-style: none; }
+  .feature-card ul li::before { content: "✓ "; color: #F97316; font-weight: 700; }
+
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .step-num {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    background: #F97316;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .step h4 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .step p { font-size: 13px; color: #64748b; line-height: 1.5; }
+
+  .slide-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #F97316, #ea580c, #F97316);
+  }
+
+  .slide-cta {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: white;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .slide-cta h2 { font-size: 38px; font-weight: 800; margin-bottom: 20px; }
+  .slide-cta h2 span { color: #F97316; }
+  .slide-cta .contact-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; margin-top: 40px; }
+  .slide-cta .contact-item { font-size: 18px; }
+  .slide-cta .contact-item .label { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+  .slide-cta .contact-item .value { font-weight: 600; }
+  .slide-cta .contact-item .value a { color: #F97316; text-decoration: none; }
+
+  .stat-box {
+    text-align: center;
+    padding: 24px;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+  }
+  .stat-box .number { font-size: 42px; font-weight: 800; color: #F97316; display: block; }
+  .stat-box .label { font-size: 14px; color: #64748b; margin-top: 4px; }
+
+  @media print {
+    body { background: white; }
+    .slide { box-shadow: none; margin: 0; }
+  }
+
+  @media screen {
+    .slide {
+      margin: 20px auto;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1: TITLE -->
+<div class="slide slide-title">
+  <img src="../../public/brand/logo-white.png" alt="CarMakler" class="logo">
+  <h1>Prodejte sve dily<br>tisicum <span>zakazniku</span></h1>
+  <p class="subtitle">Partnersky program pro vrakoviste a dodavatele dilu</p>
+  <p class="web">www.carmakler.cz/shop</p>
+  <p class="date">2026</p>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 2: PROBLEM -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Soucasna <span class="orange">realita</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div class="grid-2" style="align-items: center;">
+    <div>
+      <div style="margin-bottom: 24px;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+          <span style="font-size: 28px;">📦</span>
+          <div>
+            <h3 style="font-size: 18px; font-weight: 700;">Tisice dilu, zadny e-shop</h3>
+            <p style="font-size: 14px; color: #64748b;">Mate plny sklad, ale zakaznici vas nenajdou online. Prodavate jen mistne.</p>
+          </div>
+        </div>
+      </div>
+      <div style="margin-bottom: 24px;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+          <span style="font-size: 28px;">📷</span>
+          <div>
+            <h3 style="font-size: 18px; font-weight: 700;">Slozite pridavani</h3>
+            <p style="font-size: 14px; color: #64748b;">Vytvorit e-shop? Fotit kazdy dil? Psat popisy? Na to neni cas.</p>
+          </div>
+        </div>
+      </div>
+      <div style="margin-bottom: 24px;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+          <span style="font-size: 28px;">🔍</span>
+          <div>
+            <h3 style="font-size: 18px; font-weight: 700;">Zakaznik hleda podle VIN</h3>
+            <p style="font-size: 14px; color: #64748b;">Zakaznici chteji hledat dily podle sveho vozu, ne prochazel nesortovane seznamy.</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 28px;">💰</span>
+          <div>
+            <h3 style="font-size: 18px; font-weight: 700;">Vlastni e-shop je drahy</h3>
+            <p style="font-size: 14px; color: #64748b;">Vyvoj, hosting, marketing, platebni brana... desitky tisic mesicne.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="highlight" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 100%;">
+      <p style="font-size: 64px; margin-bottom: 16px;">🔧</p>
+      <h3 style="font-size: 24px; font-weight: 800; margin-bottom: 12px;">CarMakler Shop resi vse.</h3>
+      <p style="font-size: 16px; color: #64748b; line-height: 1.6;">Mobilni aplikace na pridavani dilu. E-shop s tisici zakazniky. Nulove naklady na start.</p>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 3: JAK TO FUNGUJE -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Jak to <span class="orange">funguje</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+    <div style="display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; gap: 16px; align-items: center;">
+      <div style="text-align: center; padding: 20px;">
+        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #F97316, #ea580c); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 16px; color: white;">📱</div>
+        <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 6px;">1. Vyfotte dil</h3>
+        <p style="font-size: 13px; color: #64748b; line-height: 1.5;">Primo z telefonu na vrakovisti. Mobilni PWA aplikace.</p>
+      </div>
+      <div style="font-size: 32px; color: #F97316;">→</div>
+      <div style="text-align: center; padding: 20px;">
+        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #F97316, #ea580c); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 16px; color: white;">📝</div>
+        <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 6px;">2. Vyplnte udaje</h3>
+        <p style="font-size: 13px; color: #64748b; line-height: 1.5;">Nazev, kategorie, stav, OEM cislo, kompatibilita. 3 kroky.</p>
+      </div>
+      <div style="font-size: 32px; color: #F97316;">→</div>
+      <div style="text-align: center; padding: 20px;">
+        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #F97316, #ea580c); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 16px; color: white;">🛒</div>
+        <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 6px;">3. Dil je v eshopu</h3>
+        <p style="font-size: 13px; color: #64748b; line-height: 1.5;">Automaticky se objevi v katalogu. Zakaznici ho najdou.</p>
+      </div>
+      <div style="font-size: 32px; color: #F97316;">→</div>
+      <div style="text-align: center; padding: 20px;">
+        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #22c55e, #16a34a); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 16px; color: white;">💰</div>
+        <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 6px;">4. Prijde objednavka</h3>
+        <p style="font-size: 13px; color: #64748b; line-height: 1.5;">Zabalte a odeslite. 85 % ceny jde vam.</p>
+      </div>
+    </div>
+
+    <div class="green-box" style="margin-top: 30px; text-align: center;">
+      <p style="font-size: 18px; font-weight: 600; color: #166534;">
+        Nebo nahrajte stovky dilu najednou pres <strong>CSV import</strong> — nazev, cena, OEM, kategorie, fotky. Vse automaticky.
+      </p>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 4: MOBILNI APLIKACE -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Mobilni <span class="orange">aplikace</span> pro dodavatele</h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div class="grid-2">
+    <div>
+      <div class="feature-card" style="margin-bottom: 20px;">
+        <div class="icon">📱</div>
+        <h3>PWA — funguje jako nativni appka</h3>
+        <p style="line-height: 1.7;">Zadna instalace z App Store. Otevrete v prohlizeci, pridate na plochu a mate plnohodnotnou aplikaci. Funguje i offline.</p>
+      </div>
+      <div class="feature-card" style="margin-bottom: 20px;">
+        <div class="icon">📸</div>
+        <h3>3-krokovy wizard na pridani dilu</h3>
+        <ul>
+          <li>Krok 1: Nahrajte fotky primo z telefonu</li>
+          <li>Krok 2: Nazev, kategorie, stav, OEM cislo, kompatibilita</li>
+          <li>Krok 3: Cena, DPH, mnozstvi, doruceni</li>
+        </ul>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📊</div>
+        <h3>Dashboard na dlani</h3>
+        <ul>
+          <li>Celkovy pocet dilu v systemu</li>
+          <li>Aktivni dily v prodeji</li>
+          <li>Objednavky za mesic</li>
+          <li>Nevyrizene objednavky</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="dark-box" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+        <h3 style="font-size: 20px; margin-bottom: 20px; color: #F97316;">Kategorie dilu</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div style="background: rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 14px; font-size: 14px;">🔧 Motor</div>
+          <div style="background: rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 14px; font-size: 14px;">⚙️ Prevodovka</div>
+          <div style="background: rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 14px; font-size: 14px;">🛞 Brzdy</div>
+          <div style="background: rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 14px; font-size: 14px;">🔩 Podvozek</div>
+          <div style="background: rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 14px; font-size: 14px;">🚗 Karoserie</div>
+          <div style="background: rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 14px; font-size: 14px;">⚡ Elektrika</div>
+          <div style="background: rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 14px; font-size: 14px;">💺 Interior</div>
+          <div style="background: rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 14px; font-size: 14px;">🔘 Kola a disky</div>
+          <div style="background: rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 14px; font-size: 14px;">💨 Vyfuk</div>
+          <div style="background: rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 14px; font-size: 14px;">❄️ Chlazeni</div>
+          <div style="background: rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 14px; font-size: 14px;">⛽ Palivo</div>
+          <div style="background: rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 14px; font-size: 14px;">📦 Ostatni</div>
+        </div>
+        <p style="margin-top: 16px; font-size: 13px; color: rgba(255,255,255,0.6);">
+          Stavy dilu: Novy, Pouzity dobry, Pouzity prijatelny, Pouzity spatny, Repasovany
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 5: E-SHOP PRO ZAKAZNIKY -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Co vidi <span class="orange">zakaznik</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div class="grid-4" style="margin-bottom: 20px;">
+    <div class="feature-card">
+      <div class="icon">🔍</div>
+      <h3>Hledani podle VIN</h3>
+      <p>Zakaznik zada VIN sveho vozu a vidi dily, ktere na nej pasou. Presne a rychle.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🏷️</div>
+      <h3>Filtry a razeni</h3>
+      <p>Podle znacky, modelu, typu dilu, stavu, ceny. Serazeni od nejlevnejsiho ci nejnovejsiho.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🛒</div>
+      <h3>Kosik a checkout</h3>
+      <p>Plnohodnotny e-shop: pridani do kosiku, dodaci udaje, platba, potvrzeni objednavky.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">📦</div>
+      <h3>Sledovani objednavky</h3>
+      <p>Zakaznik vidi stav sve objednavky: Cekajici → Potvrzena → Odeslana → Dorucena.</p>
+    </div>
+  </div>
+  <div class="grid-3">
+    <div class="stat-box">
+      <span class="number">6</span>
+      <span class="label">mesicu zaruka na pouzite dily</span>
+    </div>
+    <div class="stat-box">
+      <span class="number">69 Kc</span>
+      <span class="label">doruceni od — nebo osobni odber</span>
+    </div>
+    <div class="stat-box">
+      <span class="number">24h</span>
+      <span class="label">expedice — rychle odeslani</span>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 6: FINANCNI MODEL -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Financni <span class="orange">model</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div class="grid-2" style="align-items: center;">
+    <div>
+      <div class="highlight" style="margin-bottom: 20px; text-align: center;">
+        <p style="font-size: 14px; color: #92400e; margin-bottom: 8px;">Vase podil z kazdeho prodeje</p>
+        <p style="font-size: 64px; font-weight: 800; color: #F97316;">85 %</p>
+        <p style="font-size: 14px; color: #92400e; margin-top: 8px;">CarMakler si nechava pouze 15 %</p>
+      </div>
+      <div class="green-box" style="text-align: center;">
+        <h3 style="font-size: 18px; font-weight: 700; color: #166534; margin-bottom: 12px;">Priklad mesicniho vydelku</h3>
+        <table style="width: 100%; font-size: 14px;">
+          <tr style="background: none;">
+            <td style="text-align: left; border: none; padding: 6px 0;">Prodanych dilu/mesic:</td>
+            <td style="text-align: right; border: none; padding: 6px 0; font-weight: 700;">50 ks</td>
+          </tr>
+          <tr style="background: none;">
+            <td style="text-align: left; border: none; padding: 6px 0;">Prumerna cena dilu:</td>
+            <td style="text-align: right; border: none; padding: 6px 0; font-weight: 700;">800 Kc</td>
+          </tr>
+          <tr style="background: none;">
+            <td style="text-align: left; border: none; padding: 6px 0;">Celkovy obrat:</td>
+            <td style="text-align: right; border: none; padding: 6px 0; font-weight: 700;">40 000 Kc</td>
+          </tr>
+          <tr style="background: none; border-top: 2px solid #166534;">
+            <td style="text-align: left; border: none; padding: 10px 0; font-size: 16px;"><strong>Vas vydelek (85 %):</strong></td>
+            <td style="text-align: right; border: none; padding: 10px 0; font-size: 20px; font-weight: 800; color: #166534;">34 000 Kc</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="feature-card" style="margin-bottom: 16px;">
+        <h3 style="color: #22c55e;">✓ Zadny mesicni poplatek</h3>
+        <p>Neplatime si mesicne. Plati se jen z uskutecnenych prodejú — 15% provize.</p>
+      </div>
+      <div class="feature-card" style="margin-bottom: 16px;">
+        <h3 style="color: #22c55e;">✓ Zadne naklady na start</h3>
+        <p>Registrace, nastaveni, import dilu — vse zdarma. Zacnete prodavat bez investice.</p>
+      </div>
+      <div class="feature-card" style="margin-bottom: 16px;">
+        <h3 style="color: #22c55e;">✓ Transparentni fakturace</h3>
+        <p>V partnerskem portalu vidite kazdy prodej, provizi a vyplatu. Mesicni vyuctovani.</p>
+      </div>
+      <div class="feature-card">
+        <h3 style="color: #22c55e;">✓ Hromadny import zdarma</h3>
+        <p>CSV import stovek dilu najednou. S automatickym mapovanim poli a nastavenim marze.</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 7: JAK ZACIT -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Jak <span class="orange">zacit</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div class="grid-2" style="align-items: center;">
+    <div>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div>
+          <h4>Registrace na carmakler.cz</h4>
+          <p>Vyplnte ICO — system automaticky nacte udaje vaseho vrakoviste z ARESu. Registrace trva 2 minuty.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div>
+          <h4>Instalace mobilni appky</h4>
+          <p>Otevrete odkaz na telefonu, "Pridat na plochu" — mate mobilni appku pro pridavani dilu.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div>
+          <h4>Nahrajte prvni dily</h4>
+          <p>Vyfotte dily primo na vrakovisti, vyplnte udaje ve 3-krokovem wizardu. Nebo nahrajte CSV s celym skladem.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div>
+          <h4>Objednavky prijdou samy</h4>
+          <p>Zakaznici najdou vase dily v eshopu, objednaji, vy zabalite a odeslite. 85 % ceny je vasich.</p>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+      <div class="highlight" style="text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: center;">
+        <p style="font-size: 48px; margin-bottom: 12px;">📱</p>
+        <h3 style="font-size: 22px; font-weight: 800; margin-bottom: 8px;">Pridani dilu: 60 sekund</h3>
+        <p style="font-size: 14px; color: #64748b;">Fotka → Udaje → Cena → Hotovo.<br>Primo z telefonu, primo na vrakovisti.</p>
+      </div>
+      <div class="dark-box" style="text-align: center;">
+        <h3 style="font-size: 18px; margin-bottom: 12px; color: #F97316;">Podporovane znacky</h3>
+        <p style="font-size: 13px; line-height: 1.8; color: rgba(255,255,255,0.8);">
+          Skoda, Volkswagen, BMW, Audi, Mercedes-Benz, Hyundai, Toyota, Ford, Peugeot, Renault, Citroen, Opel, Kia, Seat, Fiat a desitky dalsich...
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 8: CTA -->
+<div class="slide slide-cta">
+  <img src="../../public/brand/logo-white.png" alt="CarMakler" class="logo" style="height: 60px; margin-bottom: 30px;">
+  <h2>Promentes sklad<br>v <span>online byznys</span></h2>
+  <p style="font-size: 20px; color: rgba(255,255,255,0.7); max-width: 600px; line-height: 1.6;">
+    Pripojte sve vrakoviste k platforme CarMakler. Tisice zakazniku uz cekaji na vase dily. Bez poplatku, bez rizika.
+  </p>
+  <div class="contact-grid">
+    <div class="contact-item">
+      <div class="label">Web</div>
+      <div class="value"><a href="https://www.carmakler.cz/shop">www.carmakler.cz/shop</a></div>
+    </div>
+    <div class="contact-item">
+      <div class="label">E-mail</div>
+      <div class="value"><a href="mailto:partneri@carmakler.cz">partneri@carmakler.cz</a></div>
+    </div>
+    <div class="contact-item">
+      <div class="label">Telefon</div>
+      <div class="value">+420 123 456 789</div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+</body>
+</html>

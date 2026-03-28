@@ -51,7 +51,7 @@ export function Footer() {
           {/* Logo + description */}
           <div className="col-span-2 sm:col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center no-underline mb-4">
-              <img src="/brand/logo-color.png" alt="CarMakléř" className="h-10 sm:h-12 w-auto object-contain brightness-0 invert" />
+              <img src="/brand/logo-white.png" alt="CarMakléř" className="h-10 sm:h-12 w-auto object-contain" />
             </Link>
             <p className="text-sm text-gray-500 leading-relaxed">
               Prodejte nebo kupte auto bezpečně přes síť ověřených makléřů. Rychle, transparentně a bez starostí.

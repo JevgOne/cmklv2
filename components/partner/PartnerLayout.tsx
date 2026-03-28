@@ -66,7 +66,7 @@ export function PartnerLayout({ children }: { children: React.ReactNode }) {
         <div className="p-5 border-b border-gray-100">
           <div className="flex items-center gap-3">
             <img
-              src="/brand/logo-color.png"
+              src="/brand/logo-dark.png"
               alt="CarMakler"
               className="h-8"
             />
@@ -128,7 +128,7 @@ export function PartnerLayout({ children }: { children: React.ReactNode }) {
               ☰
             </button>
             <img
-              src="/brand/logo-color.png"
+              src="/brand/logo-dark.png"
               alt="CarMakler"
               className="h-7"
             />

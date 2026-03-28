@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CarMakler - Partnersky program pro autobazary</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    color: #1a1a2e;
+    background: #f5f5f5;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+
+  .slide {
+    width: 297mm;
+    height: 210mm;
+    padding: 40px 60px;
+    page-break-after: always;
+    page-break-inside: avoid;
+    position: relative;
+    overflow: hidden;
+    background: white;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .slide:last-child { page-break-after: auto; }
+
+  /* ---- SLIDE 1: TITLE ---- */
+  .slide-title {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: white;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .slide-title::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: rgba(249, 115, 22, 0.08);
+  }
+  .slide-title::after {
+    content: '';
+    position: absolute;
+    bottom: -150px;
+    left: -150px;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: rgba(249, 115, 22, 0.05);
+  }
+  .slide-title .logo { height: 80px; margin-bottom: 30px; position: relative; z-index: 1; }
+  .slide-title h1 { font-size: 42px; font-weight: 800; line-height: 1.2; margin-bottom: 16px; position: relative; z-index: 1; }
+  .slide-title h1 span { color: #F97316; }
+  .slide-title .subtitle { font-size: 22px; font-weight: 300; color: rgba(255,255,255,0.8); position: relative; z-index: 1; }
+  .slide-title .date { position: absolute; bottom: 40px; right: 60px; font-size: 14px; color: rgba(255,255,255,0.5); }
+  .slide-title .web { position: absolute; bottom: 40px; left: 60px; font-size: 14px; color: rgba(255,255,255,0.5); }
+
+  /* ---- COMMON SLIDE STYLES ---- */
+  .slide-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    padding-bottom: 16px;
+    border-bottom: 3px solid #F97316;
+  }
+  .slide-header h2 { font-size: 32px; font-weight: 700; color: #1a1a2e; }
+  .slide-header .logo-small { height: 36px; opacity: 0.6; }
+
+  .orange { color: #F97316; }
+  .highlight { background: linear-gradient(135deg, #FFF7ED, #FFEDD5); border-radius: 16px; padding: 24px; }
+  .dark-box { background: #1a1a2e; color: white; border-radius: 16px; padding: 24px; }
+
+  /* ---- GRID ---- */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; flex: 1; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; flex: 1; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px; flex: 1; }
+
+  /* ---- FEATURE CARD ---- */
+  .feature-card {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s;
+  }
+  .feature-card .icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #F97316, #ea580c);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 14px;
+    color: white;
+  }
+  .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #1a1a2e; }
+  .feature-card p { font-size: 13px; line-height: 1.5; color: #64748b; }
+  .feature-card ul { font-size: 13px; line-height: 1.8; color: #64748b; list-style: none; }
+  .feature-card ul li::before { content: "✓ "; color: #F97316; font-weight: 700; }
+
+  /* ---- PRICING ---- */
+  .pricing-card {
+    border-radius: 16px;
+    padding: 28px;
+    text-align: center;
+    border: 2px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+  }
+  .pricing-card.popular {
+    border-color: #F97316;
+    background: linear-gradient(135deg, #FFF7ED, white);
+    transform: scale(1.02);
+    box-shadow: 0 8px 30px rgba(249,115,22,0.15);
+  }
+  .pricing-card .badge {
+    background: #F97316;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 12px;
+  }
+  .pricing-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .pricing-card .price { font-size: 36px; font-weight: 800; color: #F97316; margin: 12px 0; }
+  .pricing-card .price small { font-size: 14px; font-weight: 400; color: #94a3b8; }
+  .pricing-card ul { text-align: left; list-style: none; margin: 16px 0; flex: 1; }
+  .pricing-card ul li { font-size: 13px; padding: 6px 0; color: #475569; border-bottom: 1px solid #f1f5f9; }
+  .pricing-card ul li::before { content: "✓ "; color: #22c55e; font-weight: 700; }
+
+  /* ---- STATS ---- */
+  .stat-box {
+    text-align: center;
+    padding: 24px;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+  }
+  .stat-box .number { font-size: 42px; font-weight: 800; color: #F97316; display: block; }
+  .stat-box .label { font-size: 14px; color: #64748b; margin-top: 4px; }
+
+  /* ---- STEPS ---- */
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .step-num {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    background: #F97316;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .step h4 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .step p { font-size: 13px; color: #64748b; line-height: 1.5; }
+
+  /* ---- COMPARISON TABLE ---- */
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { background: #1a1a2e; color: white; padding: 12px 16px; text-align: left; font-weight: 600; }
+  th:first-child { border-radius: 8px 0 0 0; }
+  th:last-child { border-radius: 0 8px 0 0; }
+  td { padding: 10px 16px; border-bottom: 1px solid #f1f5f9; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  .check { color: #22c55e; font-weight: 700; font-size: 18px; }
+  .cross { color: #ef4444; font-weight: 700; font-size: 18px; }
+  .partial { color: #f59e0b; font-weight: 700; font-size: 18px; }
+  .cm-col { background: rgba(249, 115, 22, 0.05) !important; }
+
+  /* ---- CTA SLIDE ---- */
+  .slide-cta {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: white;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .slide-cta h2 { font-size: 38px; font-weight: 800; margin-bottom: 20px; }
+  .slide-cta h2 span { color: #F97316; }
+  .slide-cta .contact-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; margin-top: 40px; }
+  .slide-cta .contact-item { font-size: 18px; }
+  .slide-cta .contact-item .label { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+  .slide-cta .contact-item .value { font-weight: 600; }
+  .slide-cta .contact-item .value a { color: #F97316; text-decoration: none; }
+
+  /* FOOTER BAR */
+  .slide-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #F97316, #ea580c, #F97316);
+  }
+
+  @media print {
+    body { background: white; }
+    .slide { box-shadow: none; margin: 0; }
+  }
+
+  @media screen {
+    .slide {
+      margin: 20px auto;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1: TITLE -->
+<div class="slide slide-title">
+  <img src="../../public/brand/logo-white.png" alt="CarMakler" class="logo">
+  <h1>Partnersky program<br>pro <span>autobazary</span></h1>
+  <p class="subtitle">Prodejte vice aut s mene namahy. Zdarma.</p>
+  <p class="web">www.carmakler.cz</p>
+  <p class="date">2026</p>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 2: PROBLEM -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Znate tyto <span class="orange">problemy</span>?</h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div class="grid-2" style="align-items: center;">
+    <div>
+      <div style="margin-bottom: 24px;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+          <span style="font-size: 28px;">😤</span>
+          <div>
+            <h3 style="font-size: 18px; font-weight: 700;">Inzerovani na vice portalech</h3>
+            <p style="font-size: 14px; color: #64748b;">Sauto, Bazos, TipCars... Kazdy portal zvlast, rucne. Hodiny prace.</p>
+          </div>
+        </div>
+      </div>
+      <div style="margin-bottom: 24px;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+          <span style="font-size: 28px;">📉</span>
+          <div>
+            <h3 style="font-size: 18px; font-weight: 700;">Ztracene poptavky</h3>
+            <p style="font-size: 14px; color: #64748b;">Emaily, telefony, zpravy z portalu — vse roztrousene, nic nesledovane.</p>
+          </div>
+        </div>
+      </div>
+      <div style="margin-bottom: 24px;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+          <span style="font-size: 28px;">💸</span>
+          <div>
+            <h3 style="font-size: 18px; font-weight: 700;">Vysoke naklady na inzerci</h3>
+            <p style="font-size: 14px; color: #64748b;">Tisice korun mesicne za topovani a zvyraznovani na kazdem portalu.</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 28px;">📊</span>
+          <div>
+            <h3 style="font-size: 18px; font-weight: 700;">Zadne analyticke nastroje</h3>
+            <p style="font-size: 14px; color: #64748b;">Nevidite, co funguje. Nevidite konverze. Strilite naslepo.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="highlight" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 100%;">
+      <p style="font-size: 64px; margin-bottom: 16px;">🚗</p>
+      <h3 style="font-size: 24px; font-weight: 800; margin-bottom: 12px;">CarMakler to resi.</h3>
+      <p style="font-size: 16px; color: #64748b; line-height: 1.6;">Jeden system na spravu vozidel, leadu a inzerce. Propojeny s celou siti kupujicich.</p>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 3: CO NABIZIME -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Co vam <span class="orange">nabizime</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div class="grid-4">
+    <div class="feature-card">
+      <div class="icon">🚗</div>
+      <h3>Sprava vozidel</h3>
+      <ul>
+        <li>Neomezeny pocet inzeratu</li>
+        <li>Foto galerie</li>
+        <li>Stavy: aktivni, prodano, draft</li>
+        <li>Pocitadlo zobrazeni</li>
+      </ul>
+    </div>
+    <div class="feature-card">
+      <div class="icon">📋</div>
+      <h3>CRM & Leady</h3>
+      <ul>
+        <li>Centralni prehled poptavek</li>
+        <li>Stavy: Novy → Kontaktovan → Prodano</li>
+        <li>Kontaktni udaje kupujicich</li>
+        <li>Mesicni metriky</li>
+      </ul>
+    </div>
+    <div class="feature-card">
+      <div class="icon">📡</div>
+      <h3>Feed import</h3>
+      <ul>
+        <li>Import z Sauto.cz XML</li>
+        <li>Import z TipCars XML</li>
+        <li>CSV import</li>
+        <li>Automaticka synchronizace</li>
+      </ul>
+    </div>
+    <div class="feature-card">
+      <div class="icon">📊</div>
+      <h3>Statistiky</h3>
+      <ul>
+        <li>Dashboard v realnem case</li>
+        <li>Konverzni metriky</li>
+        <li>Prehled zobrazeni</li>
+        <li>Trendy a vykony</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 4: PARTNERSKY PORTAL -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Partnersky <span class="orange">portal</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div class="grid-2">
+    <div>
+      <div class="feature-card" style="margin-bottom: 20px;">
+        <h3 style="font-size: 20px; margin-bottom: 12px;">📱 Dashboard</h3>
+        <p style="font-size: 14px; line-height: 1.7; color: #475569;">
+          Prehledny panel s klicovymi cisly: celkovy pocet vozidel, aktivni inzeraty,
+          leady za mesic, prodana auta. Vse na jednom miste, aktualizovane v realnem case.
+        </p>
+      </div>
+      <div class="feature-card" style="margin-bottom: 20px;">
+        <h3 style="font-size: 20px; margin-bottom: 12px;">💬 Komunikace</h3>
+        <p style="font-size: 14px; line-height: 1.7; color: #475569;">
+          Integrovany system zprav pro komunikaci se zajemci. Vsechny konverzace
+          na jednom miste, historie zprav, rychle odpovedi.
+        </p>
+      </div>
+      <div class="feature-card">
+        <h3 style="font-size: 20px; margin-bottom: 12px;">📄 Dokumenty & Fakturace</h3>
+        <p style="font-size: 14px; line-height: 1.7; color: #475569;">
+          Uloziste obchodnich dokumentu, prehledna fakturace s rozpisem provizi,
+          mesicni vyuceni a historie plateb.
+        </p>
+      </div>
+    </div>
+    <div>
+      <div class="dark-box" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+        <h3 style="font-size: 20px; margin-bottom: 20px; color: #F97316;">Kompletni funkce portalu</h3>
+        <ul style="list-style: none; font-size: 15px; line-height: 2.2;">
+          <li>✅ Dashboard s real-time statistikami</li>
+          <li>✅ Sprava vozidel (pridani, editace, mazani)</li>
+          <li>✅ CRM — sprava leadu a poptavek</li>
+          <li>✅ Feed import (Sauto, TipCars, CSV)</li>
+          <li>✅ Interni komunikace se zajemci</li>
+          <li>✅ Statistiky a analyza vykonu</li>
+          <li>✅ Firemni profil a kontaktni udaje</li>
+          <li>✅ Dokumenty a fakturace</li>
+          <li>✅ Hromadne operace</li>
+          <li>✅ Mobilni pristup (responzivni design)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 5: SROVNANI -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Srovnani s <span class="orange">konkurenci</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div style="flex: 1;">
+    <table>
+      <tr>
+        <th style="width: 28%;">Funkce</th>
+        <th class="cm-col" style="width: 18%; text-align: center;">CarMakler</th>
+        <th style="width: 18%; text-align: center;">Sauto.cz</th>
+        <th style="width: 18%; text-align: center;">Bazos.cz</th>
+        <th style="width: 18%; text-align: center;">TipCars.cz</th>
+      </tr>
+      <tr>
+        <td><strong>Zakladni inzerce zdarma</strong></td>
+        <td class="cm-col" style="text-align: center;"><span class="check">✓</span></td>
+        <td style="text-align: center;"><span class="cross">✗</span></td>
+        <td style="text-align: center;"><span class="check">✓</span></td>
+        <td style="text-align: center;"><span class="cross">✗</span></td>
+      </tr>
+      <tr>
+        <td><strong>CRM / Sprava leadu</strong></td>
+        <td class="cm-col" style="text-align: center;"><span class="check">✓</span></td>
+        <td style="text-align: center;"><span class="cross">✗</span></td>
+        <td style="text-align: center;"><span class="cross">✗</span></td>
+        <td style="text-align: center;"><span class="cross">✗</span></td>
+      </tr>
+      <tr>
+        <td><strong>Feed import / export</strong></td>
+        <td class="cm-col" style="text-align: center;"><span class="check">✓</span></td>
+        <td style="text-align: center;"><span class="partial">~</span></td>
+        <td style="text-align: center;"><span class="cross">✗</span></td>
+        <td style="text-align: center;"><span class="partial">~</span></td>
+      </tr>
+      <tr>
+        <td><strong>Partnersky portal / dashboard</strong></td>
+        <td class="cm-col" style="text-align: center;"><span class="check">✓</span></td>
+        <td style="text-align: center;"><span class="partial">~</span></td>
+        <td style="text-align: center;"><span class="cross">✗</span></td>
+        <td style="text-align: center;"><span class="partial">~</span></td>
+      </tr>
+      <tr>
+        <td><strong>Statistiky a analytika</strong></td>
+        <td class="cm-col" style="text-align: center;"><span class="check">✓</span></td>
+        <td style="text-align: center;"><span class="partial">~</span></td>
+        <td style="text-align: center;"><span class="cross">✗</span></td>
+        <td style="text-align: center;"><span class="partial">~</span></td>
+      </tr>
+      <tr>
+        <td><strong>Maklerska sit (doplnkovy prodej)</strong></td>
+        <td class="cm-col" style="text-align: center;"><span class="check">✓</span></td>
+        <td style="text-align: center;"><span class="cross">✗</span></td>
+        <td style="text-align: center;"><span class="cross">✗</span></td>
+        <td style="text-align: center;"><span class="cross">✗</span></td>
+      </tr>
+      <tr>
+        <td><strong>Integrovaný messaging</strong></td>
+        <td class="cm-col" style="text-align: center;"><span class="check">✓</span></td>
+        <td style="text-align: center;"><span class="cross">✗</span></td>
+        <td style="text-align: center;"><span class="cross">✗</span></td>
+        <td style="text-align: center;"><span class="cross">✗</span></td>
+      </tr>
+      <tr>
+        <td><strong>Proverka vozidla (Cebia)</strong></td>
+        <td class="cm-col" style="text-align: center;"><span class="check">✓</span></td>
+        <td style="text-align: center;"><span class="check">✓</span></td>
+        <td style="text-align: center;"><span class="cross">✗</span></td>
+        <td style="text-align: center;"><span class="check">✓</span></td>
+      </tr>
+      <tr>
+        <td><strong>Financovani & pojisteni</strong></td>
+        <td class="cm-col" style="text-align: center;"><span class="check">✓</span></td>
+        <td style="text-align: center;"><span class="partial">~</span></td>
+        <td style="text-align: center;"><span class="cross">✗</span></td>
+        <td style="text-align: center;"><span class="partial">~</span></td>
+      </tr>
+    </table>
+    <p style="margin-top: 16px; font-size: 12px; color: #94a3b8;">✓ = plna podpora &nbsp; ~ = castecna / za priplatek &nbsp; ✗ = neni k dispozici</p>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 6: CENOVY MODEL -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Cenovy <span class="orange">model</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div class="grid-3" style="align-items: stretch;">
+    <div class="pricing-card">
+      <h3>Zakladni</h3>
+      <div class="price">0 Kc <small>/mesic</small></div>
+      <p style="font-size: 13px; color: #64748b; margin-bottom: 12px;">Pro male bazary do 10 vozidel</p>
+      <ul>
+        <li>Az 10 aktivnich inzeratu</li>
+        <li>Platnost 90 dni</li>
+        <li>Zakladni statistiky</li>
+        <li>Sprava poptavek</li>
+        <li>Partnersky dashboard</li>
+        <li>Feed import (CSV)</li>
+      </ul>
+    </div>
+    <div class="pricing-card popular">
+      <span class="badge">Nejoblibenejsi</span>
+      <h3>Bazar</h3>
+      <div class="price">990 Kc <small>/mesic</small></div>
+      <p style="font-size: 13px; color: #64748b; margin-bottom: 12px;">Pro stredni a velke bazary</p>
+      <ul>
+        <li>Neomezeny pocet inzeratu</li>
+        <li>Neomezena platnost</li>
+        <li>Detailni statistiky</li>
+        <li>CRM se spravou leadu</li>
+        <li>Feed import (Sauto, TipCars, CSV)</li>
+        <li>Prioritni podpora</li>
+        <li>TOP zvyrazneni 5x/mesic zdarma</li>
+      </ul>
+    </div>
+    <div class="pricing-card">
+      <h3>Dealer</h3>
+      <div class="price">Individualne</div>
+      <p style="font-size: 13px; color: #64748b; margin-bottom: 12px;">Pro autorizovane dealery</p>
+      <ul>
+        <li>Vse z tarifu Bazar</li>
+        <li>API pristup</li>
+        <li>Brandovany profil</li>
+        <li>Dedickovany account manager</li>
+        <li>Neomezene TOP zvyrazneni</li>
+        <li>Pristup na Marketplace</li>
+        <li>Proverovani vozidel v cene</li>
+      </ul>
+    </div>
+  </div>
+  <div style="text-align: center; margin-top: 16px;">
+    <p style="font-size: 14px; color: #64748b;">Provize z prodeje: <strong style="color: #F97316;">85 % pro vas</strong>, 15 % platforma. Zadne skryte poplatky.</p>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 7: JAK ZACIT -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Jak <span class="orange">zacit</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div class="grid-2" style="align-items: center;">
+    <div>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div>
+          <h4>Registrace na carmakler.cz</h4>
+          <p>Vyplnte ICO — system automaticky nacte udaje z ARESu. Registrace trva 2 minuty.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div>
+          <h4>Nastaveni profilu</h4>
+          <p>Doplnte popis bazaru, kontaktni udaje, otviraci dobu a logo. Vse v partnerskem portalu.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div>
+          <h4>Import vozidel</h4>
+          <p>Nahrajte vozidla rucne, nebo importujte hromadne pres XML/CSV feed z vaseho stavajiciho systemu.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div>
+          <h4>Prijimejte poptavky</h4>
+          <p>Poptavky od kupujicich prisou primo do vaseho CRM. Sledujte, odpovidejte, prodavejte.</p>
+        </div>
+      </div>
+    </div>
+    <div class="highlight" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
+      <p style="font-size: 72px; margin-bottom: 20px;">🚀</p>
+      <h3 style="font-size: 28px; font-weight: 800; margin-bottom: 12px;">Za 10 minut jste online</h3>
+      <p style="font-size: 16px; color: #64748b; line-height: 1.6; max-width: 300px;">
+        Zadne dlouhe onboardingy. Zadne smlouvy na rok. Zaregistrujte se a zacnete prodavat hned.
+      </p>
+      <div style="margin-top: 24px; background: white; border-radius: 12px; padding: 16px 24px; display: inline-block;">
+        <p style="font-size: 14px; color: #64748b;">Prvnich 30 dni</p>
+        <p style="font-size: 32px; font-weight: 800; color: #F97316;">ZDARMA</p>
+        <p style="font-size: 12px; color: #94a3b8;">Bez zavazku. Zrusite kdykoliv.</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 8: CTA -->
+<div class="slide slide-cta">
+  <img src="../../public/brand/logo-white.png" alt="CarMakler" class="logo" style="height: 60px; margin-bottom: 30px;">
+  <h2>Pojdme <span>rust spolecne</span></h2>
+  <p style="font-size: 20px; color: rgba(255,255,255,0.7); max-width: 600px; line-height: 1.6;">
+    Pripojte svuj bazar k platforme CarMakler a ziskejte pristup k tisicum kupujicim. Bez rizika, bez zavazku.
+  </p>
+  <div class="contact-grid">
+    <div class="contact-item">
+      <div class="label">Web</div>
+      <div class="value"><a href="https://www.carmakler.cz">www.carmakler.cz</a></div>
+    </div>
+    <div class="contact-item">
+      <div class="label">E-mail</div>
+      <div class="value"><a href="mailto:partneri@carmakler.cz">partneri@carmakler.cz</a></div>
+    </div>
+    <div class="contact-item">
+      <div class="label">Telefon</div>
+      <div class="value">+420 123 456 789</div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+</body>
+</html>

@@ -12,7 +12,7 @@ export function InzerceNavbar() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 no-underline shrink-0">
-          <img src="/brand/logo-color.png" alt="CarMakléř" className="h-10 sm:h-12" />
+          <img src="/brand/logo-dark.png" alt="CarMakléř" className="h-10 sm:h-12 w-auto object-contain" />
           <span className="text-sm font-semibold text-orange-500 border border-orange-200 rounded-full px-2 py-0.5">
             Inzerce
           </span>
