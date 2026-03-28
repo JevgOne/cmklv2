@@ -289,7 +289,7 @@ export default async function HomePage() {
               <div className="relative aspect-video bg-gray-200 rounded-2xl overflow-hidden flex items-center justify-center">
                 <img
                   src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&q=80"
-                  alt="Auto na prodej"
+                  alt="Prodej ojetých vozidel přes certifikované makléře CarMakléř"
                   className="w-full h-full object-cover"
                 />
                 {/* Overlay gradient */}
@@ -376,7 +376,7 @@ export default async function HomePage() {
               href="/nabidka"
               className="text-orange-500 font-semibold hover:text-orange-600 transition-colors no-underline"
             >
-              Zobrazit vše &rarr;
+              Zobrazit celou nabídku vozidel &rarr;
             </Link>
           </div>
 
@@ -523,7 +523,7 @@ export default async function HomePage() {
               href="/makleri"
               className="text-orange-500 font-semibold hover:text-orange-600 transition-colors no-underline"
             >
-              Zobrazit vše &rarr;
+              Zobrazit všechny makléře &rarr;
             </Link>
           </div>
 
@@ -556,9 +556,9 @@ export default async function HomePage() {
                           {broker.initials}
                         </div>
                         <div className="mb-1">
-                          <h4 className="text-xl font-extrabold text-white">
+                          <h3 className="text-xl font-extrabold text-white">
                             {broker.name}
-                          </h4>
+                          </h3>
                           <p className="text-sm text-white/70">
                             📍 {broker.region}
                           </p>
@@ -646,7 +646,7 @@ export default async function HomePage() {
               </Link>
               <Link href="/o-nas" className="no-underline">
                 <Button variant="outline" size="lg" className="!border-2 !border-white/30 !text-white !bg-transparent !shadow-none hover:!bg-white/10 hover:!border-white/50">
-                  Více informací
+                  Zjistit více o CarMakléři
                 </Button>
               </Link>
             </div>

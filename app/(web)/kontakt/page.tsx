@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Card } from "@/components/ui/Card";
+import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { ContactPageForm } from "@/components/web/ContactPageForm";
 
 export const metadata: Metadata = {
@@ -48,9 +50,41 @@ const contactInfo = [
 /*  Page                                                               */
 /* ------------------------------------------------------------------ */
 
+const contactJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  name: "CarMakléř",
+  url: "https://www.carmakler.cz",
+  telephone: "+420-800-123-456",
+  email: "info@carmakler.cz",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Vinohradská 123",
+    addressLocality: "Praha",
+    postalCode: "120 00",
+    addressCountry: "CZ",
+  },
+  openingHoursSpecification: {
+    "@type": "OpeningHoursSpecification",
+    dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    opens: "08:00",
+    closes: "18:00",
+  },
+};
+
 export default function KontaktPage() {
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(contactJsonLd) }}
+      />
+      <Breadcrumbs
+        items={[
+          { label: "Domů", href: "/" },
+          { label: "Kontakt" },
+        ]}
+      />
       {/* Map placeholder */}
       <section className="bg-gray-200 flex items-center justify-center h-[250px] sm:h-[300px] md:h-[400px]">
         <div className="text-center">
@@ -133,6 +167,32 @@ export default function KontaktPage() {
                 </div>
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Quick links */}
+      <section className="py-12 sm:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-extrabold text-gray-900 text-center mb-6">
+            Rychlé odkazy
+          </h2>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link href="/nabidka" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+              Prohlédnout nabídku vozidel
+            </Link>
+            <Link href="/chci-prodat" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+              Prodat auto přes makléře
+            </Link>
+            <Link href="/makleri" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+              Najít makléře v okolí
+            </Link>
+            <Link href="/sluzby/financovani" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+              Financování auta na splátky
+            </Link>
+            <Link href="/recenze" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+              Přečíst recenze klientů
+            </Link>
           </div>
         </div>
       </section>

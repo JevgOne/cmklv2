@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
+
+export const metadata: Metadata = {
+  title: "Katalog inzerátů — nabídka vozidel",
+  description:
+    "Prohlédněte si katalog inzerátů na prodej aut. Ojetá vozidla od soukromých prodejců, autobazarů i makléřů na jednom místě.",
+};
 
 export default function InzerceKatalogPage() {
   return (

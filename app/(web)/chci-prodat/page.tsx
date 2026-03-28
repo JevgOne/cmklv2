@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Card } from "@/components/ui/Card";
 import { SellCarForm } from "@/components/web/SellCarForm";
 import { FAQ } from "@/components/web/FAQ";
+import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Chci prodat auto",
@@ -109,6 +110,12 @@ export default function ChciProdatPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <Breadcrumbs
+        items={[
+          { label: "Domů", href: "/" },
+          { label: "Prodat auto přes makléře" },
+        ]}
       />
       {/* SECTION 1: Hero */}
       <section className="max-w-6xl mx-auto w-full px-4 pt-8 md:pt-12">

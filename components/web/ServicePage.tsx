@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/Card";
 import { FAQ } from "@/components/web/FAQ";
+import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 
 export interface ServicePageProps {
   hero: {
@@ -22,6 +23,7 @@ export interface ServicePageProps {
     question: string;
     answer: string;
   }[];
+  breadcrumbLabel?: string;
 }
 
 export function ServicePage({
@@ -30,6 +32,7 @@ export function ServicePage({
   benefits,
   cta,
   faq,
+  breadcrumbLabel,
 }: ServicePageProps) {
   // Split title around highlight if provided
   const renderTitle = () => {
@@ -53,6 +56,15 @@ export function ServicePage({
 
   return (
     <div className="flex flex-col gap-10 sm:gap-16 md:gap-24 pb-12 sm:pb-16 md:pb-24">
+      {breadcrumbLabel && (
+        <Breadcrumbs
+          items={[
+            { label: "Domů", href: "/" },
+            { label: "Služby", href: "/chci-prodat" },
+            { label: breadcrumbLabel },
+          ]}
+        />
+      )}
       {/* HERO */}
       <section className="max-w-6xl mx-auto w-full px-4 pt-6 sm:pt-8 md:pt-12">
         <div className="bg-orange-50 rounded-2xl p-5 sm:p-8 md:p-12 lg:p-16 text-center">

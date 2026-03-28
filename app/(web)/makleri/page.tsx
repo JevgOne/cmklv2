@@ -2,12 +2,18 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Naši makléři — CarMakléř",
   description:
     "Certifikovaní automakléři po celé ČR. Najděte svého makléře a prodejte auto rychle a bezpečně.",
+  openGraph: {
+    title: "Certifikovaní automakléři | CarMakléř",
+    description:
+      "Najděte svého makléře a prodejte auto rychle a bezpečně. Síť ověřených makléřů po celé ČR.",
+  },
 };
 
 /* ------------------------------------------------------------------ */
@@ -66,6 +72,12 @@ export default async function MakleriPage() {
 
   return (
     <main>
+      <Breadcrumbs
+        items={[
+          { label: "Domů", href: "/" },
+          { label: "Naši makléři" },
+        ]}
+      />
       {/* Hero */}
       <section className="bg-gradient-to-br from-gray-900 to-gray-950 py-10 sm:py-16 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -175,6 +187,40 @@ export default async function MakleriPage() {
               </p>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Cross-linking CTA */}
+      <section className="py-12 sm:py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid sm:grid-cols-2 gap-6">
+            <Link href="/chci-prodat" className="no-underline block">
+              <Card hover className="p-8 text-center h-full">
+                <h2 className="text-xl font-extrabold text-gray-900 mb-2">
+                  Chcete prodat auto?
+                </h2>
+                <p className="text-sm text-gray-500">
+                  Vyplňte formulář a makléř vás kontaktuje do 30 minut. Průměrná doba prodeje 20 dní.
+                </p>
+                <span className="inline-block mt-4 text-orange-500 font-semibold text-sm">
+                  Prodat auto přes makléře &rarr;
+                </span>
+              </Card>
+            </Link>
+            <Link href="/kariera" className="no-underline block">
+              <Card hover className="p-8 text-center h-full">
+                <h2 className="text-xl font-extrabold text-gray-900 mb-2">
+                  Chcete se stát makléřem?
+                </h2>
+                <p className="text-sm text-gray-500">
+                  Přidejte se k naší síti certifikovaných makléřů. Flexibilní úvazek, neomezený výdělek.
+                </p>
+                <span className="inline-block mt-4 text-orange-500 font-semibold text-sm">
+                  Zjistit více o kariéře &rarr;
+                </span>
+              </Card>
+            </Link>
+          </div>
         </div>
       </section>
     </main>

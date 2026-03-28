@@ -2,12 +2,18 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { ApplyForm } from "@/components/web/marketplace/ApplyForm";
 
 export const metadata: Metadata = {
   title: "Marketplace | Investiční platforma pro flipping aut",
   description:
     "Investujte do aut a vydělejte 15-25 % ročně. Ověření dealeři nabízí příležitosti, ověření investoři financují. Bezpečně přes CarMakléř.",
+  openGraph: {
+    title: "Marketplace — investice do aut | CarMakléř",
+    description:
+      "Investujte do aut a vydělejte 15-25 % ročně. Ověření dealeři, bezpečné transakce přes CarMakléř.",
+  },
 };
 
 const howItWorks = [
@@ -95,9 +101,32 @@ const guarantees = [
   { icon: "📊", title: "Transparentní kalkulace", desc: "Všechny náklady a zisky jsou viditelné. Žádné skryté poplatky." },
 ];
 
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.a,
+    },
+  })),
+};
+
 export default function MarketplacePage() {
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <Breadcrumbs
+        items={[
+          { label: "Domů", href: "/" },
+          { label: "Marketplace" },
+        ]}
+      />
       {/* Hero */}
       <section className="bg-gradient-to-br from-gray-900 to-gray-950 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">

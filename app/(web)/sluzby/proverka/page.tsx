@@ -91,6 +91,7 @@ export default function ProverkaPage() {
       benefits={benefits}
       cta={<ProverkaForm />}
       faq={faq}
+      breadcrumbLabel="Prověrka vozidla"
     />
   );
 }

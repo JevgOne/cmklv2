@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
@@ -109,6 +110,12 @@ export default async function InzercePage() {
 
   return (
     <main className="min-h-screen">
+      <Breadcrumbs
+        items={[
+          { label: "Domů", href: "/" },
+          { label: "Inzerce vozidel zdarma" },
+        ]}
+      />
       {/* ============================================================ */}
       {/* Hero                                                          */}
       {/* ============================================================ */}

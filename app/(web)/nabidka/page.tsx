@@ -208,8 +208,26 @@ export default async function NabidkaPage({
   const vehicles = allCards.slice(skip, skip + limit);
   const totalPages = Math.ceil(total / limit);
 
+  const catalogJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Nabídka vozidel — CarMakléř",
+    description: "Prověřená ojetá vozidla od certifikovaných makléřů i soukromých prodejců.",
+    numberOfItems: total,
+    itemListElement: vehicles.slice(0, 10).map((car, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `https://www.carmakler.cz/nabidka/${car.slug}`,
+      name: car.name,
+    })),
+  };
+
   return (
     <main className="min-h-screen bg-gray-50">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(catalogJsonLd) }}
+      />
       {/* ============================================================ */}
       {/* Hero strip                                                    */}
       {/* ============================================================ */}
@@ -306,6 +324,35 @@ export default async function NabidkaPage({
           </>
         )}
       </div>
+
+      {/* Cross-linking SEO section */}
+      <section className="bg-white border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <h2 className="text-xl font-extrabold text-gray-900 mb-4">
+            Další služby CarMakléř
+          </h2>
+          <div className="flex flex-wrap gap-x-8 gap-y-3 text-sm">
+            <Link href="/chci-prodat" className="text-orange-500 hover:text-orange-600 no-underline font-medium">
+              Prodat auto přes makléře
+            </Link>
+            <Link href="/sluzby/proverka" className="text-orange-500 hover:text-orange-600 no-underline font-medium">
+              Prověrka vozidla před koupí
+            </Link>
+            <Link href="/sluzby/financovani" className="text-orange-500 hover:text-orange-600 no-underline font-medium">
+              Financování auta na splátky
+            </Link>
+            <Link href="/sluzby/pojisteni" className="text-orange-500 hover:text-orange-600 no-underline font-medium">
+              Pojištění vozidla online
+            </Link>
+            <Link href="/makleri" className="text-orange-500 hover:text-orange-600 no-underline font-medium">
+              Najít certifikovaného makléře
+            </Link>
+            <Link href="/nabidka/porovnani" className="text-orange-500 hover:text-orange-600 no-underline font-medium">
+              Porovnání vozidel
+            </Link>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }

@@ -91,6 +91,7 @@ export default function VykupPage() {
       benefits={benefits}
       cta={<VykupForm />}
       faq={faq}
+      breadcrumbLabel="Výkup vozidel"
     />
   );
 }

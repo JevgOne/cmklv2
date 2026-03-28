@@ -92,6 +92,7 @@ export default function FinancovaniPage() {
       benefits={benefits}
       cta={<FinancovaniCalc />}
       faq={faq}
+      breadcrumbLabel="Financování"
     />
   );
 }

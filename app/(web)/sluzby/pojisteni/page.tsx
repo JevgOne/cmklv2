@@ -92,6 +92,7 @@ export default function PojisteniPage() {
       benefits={benefits}
       cta={<PojisteniForm />}
       faq={faq}
+      breadcrumbLabel="Pojištění"
     />
   );
 }

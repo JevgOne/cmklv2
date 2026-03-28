@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Card } from "@/components/ui/Card";
+import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
@@ -88,11 +90,46 @@ const values = [
 /*  Page                                                               */
 /* ------------------------------------------------------------------ */
 
+const orgJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "CarMakléř",
+  url: "https://www.carmakler.cz",
+  logo: "https://www.carmakler.cz/brand/logo.svg",
+  description:
+    "CarMakléř je moderní platforma pro prodej a nákup vozidel přes síť certifikovaných makléřů v celé České republice.",
+  foundingDate: "2024",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Vinohradská 123",
+    addressLocality: "Praha",
+    postalCode: "120 00",
+    addressCountry: "CZ",
+  },
+  contactPoint: {
+    "@type": "ContactPoint",
+    telephone: "+420-800-123-456",
+    contactType: "customer service",
+    areaServed: "CZ",
+    availableLanguage: "Czech",
+  },
+};
+
 export default async function ONasPage() {
   const stats = await getStats();
 
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+      />
+      <Breadcrumbs
+        items={[
+          { label: "Domů", href: "/" },
+          { label: "O nás" },
+        ]}
+      />
       {/* Hero */}
       <section className="bg-gradient-to-br from-gray-900 to-gray-950 py-12 sm:py-16 md:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -193,6 +230,35 @@ export default async function ONasPage() {
                 </p>
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Cross-linking */}
+      <section className="py-12 sm:py-16 lg:py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-2xl sm:text-[28px] font-extrabold text-gray-900 mb-6">
+            Jak vám můžeme pomoci?
+          </h2>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link href="/nabidka" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+              Prohlédnout nabídku vozidel
+            </Link>
+            <Link href="/chci-prodat" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+              Prodat auto přes makléře
+            </Link>
+            <Link href="/makleri" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+              Najít certifikovaného makléře
+            </Link>
+            <Link href="/recenze" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+              Přečíst recenze klientů
+            </Link>
+            <Link href="/kontakt" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+              Kontaktovat nás
+            </Link>
+            <Link href="/kariera" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+              Kariéra u CarMakléř
+            </Link>
           </div>
         </div>
       </section>

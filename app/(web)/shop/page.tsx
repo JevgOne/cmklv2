@@ -172,7 +172,7 @@ export default async function ShopPage() {
               href="/shop/katalog"
               className="text-orange-500 font-semibold hover:text-orange-600 transition-colors no-underline"
             >
-              Zobrazit vše &rarr;
+              Zobrazit všechny autodíly &rarr;
             </Link>
           </div>
 

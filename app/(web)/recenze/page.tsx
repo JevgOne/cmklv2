@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Tabs } from "@/components/ui/Tabs";
@@ -179,6 +180,40 @@ export default function RecenzePage() {
                 Napište nám recenzi
               </Button>
             </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Cross-linking */}
+      <section className="py-12 sm:py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid sm:grid-cols-2 gap-6">
+            <Link href="/chci-prodat" className="no-underline block">
+              <Card hover className="p-8 text-center h-full">
+                <h2 className="text-xl font-extrabold text-gray-900 mb-2">
+                  Chcete prodat auto?
+                </h2>
+                <p className="text-sm text-gray-500">
+                  Přidejte se ke spokojeným klientům. Průměrná doba prodeje 20 dní, férová cena.
+                </p>
+                <span className="inline-block mt-4 text-orange-500 font-semibold text-sm">
+                  Prodat auto přes makléře &rarr;
+                </span>
+              </Card>
+            </Link>
+            <Link href="/makleri" className="no-underline block">
+              <Card hover className="p-8 text-center h-full">
+                <h2 className="text-xl font-extrabold text-gray-900 mb-2">
+                  Najděte svého makléře
+                </h2>
+                <p className="text-sm text-gray-500">
+                  Vyberte si z naší sítě certifikovaných makléřů po celé ČR.
+                </p>
+                <span className="inline-block mt-4 text-orange-500 font-semibold text-sm">
+                  Zobrazit certifikované makléře &rarr;
+                </span>
+              </Card>
+            </Link>
           </div>
         </div>
       </section>

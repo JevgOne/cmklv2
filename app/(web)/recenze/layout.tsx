@@ -11,10 +11,31 @@ export const metadata: Metadata = {
   },
 };
 
+const reviewJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "CarMakléř",
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: "4.8",
+    reviewCount: "8",
+    bestRating: "5",
+    worstRating: "1",
+  },
+};
+
 export default function RecenzeLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewJsonLd) }}
+      />
+      {children}
+    </>
+  );
 }
