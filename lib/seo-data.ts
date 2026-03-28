@@ -554,6 +554,14 @@ export const BODY_TYPES: BodyTypeData[] = [
       { question: "Jak zkontrolovat stav baterie u ojetého elektromobilu?", answer: "Naši makléři provedou diagnostiku baterie a zjistí její aktuální kapacitu (SOH). Kvalitní baterie by měla mít po 100 000 km stále 90 %+ kapacity." },
       { question: "Jaký je dojezd ojetého elektromobilu?", answer: "Záleží na modelu: Renault Zoe (300 km), VW ID.3 (350-550 km), Tesla Model 3 (400-600 km). Reálný dojezd je v zimě o 20-30 % nižší." },
     ],
+    aiSnippet: "Ojeté elektromobily nabízejí nulové emise a provozní náklady 3-5x nižší než spalovací motor. Nabíjení doma stojí cca 1 Kč/km. Renault Zoe a Dacia Spring startují od 180 000 Kč, VW ID.3 od 450 000 Kč, Tesla Model 3 od 600 000 Kč (2026). Kvalitní baterie má po 100 000 km stále 90 %+ kapacity.",
+    quickFacts: [
+      "Provozní náklady: 3-5x nižší než spalovací motor",
+      "Nabíjení doma: cca 1 Kč/km",
+      "Renault Zoe / Dacia Spring: od 180 000 Kč",
+      "VW ID.3: od 450 000 Kč, dojezd 350–550 km",
+      "Tesla Model 3: od 600 000 Kč, dojezd 400–600 km",
+    ],
   },
   {
     slug: "hybrid",
@@ -565,6 +573,14 @@ export const BODY_TYPES: BodyTypeData[] = [
       { question: "Kolik ušetřím s ojetým hybridem na palivu?", answer: "Hybrid spotřebuje ve městě o 30-50 % méně paliva. Toyota Yaris Hybrid spotřebuje 4 l/100 km, RAV4 Hybrid 5,5 l/100 km. PHEV umí jezdit čistě na elektřinu." },
       { question: "Na co si dát pozor u ojetého hybridu?", answer: "Zkontrolujte stav hybridní baterie a servisní historii. U PHEV ověřte, zda majitel pravidelně nabíjel — plug-in hybrid bez nabíjení spotřebuje více než běžný motor." },
     ],
+    aiSnippet: "Hybridní vozy spotřebují ve městě o 30–50 % méně paliva. Toyota Yaris Hybrid spotřebuje 4 l/100 km, RAV4 Hybrid 5,5 l/100 km. Toyota hybridy jsou prokázaně spolehlivé i po 300 000 km — baterie vydrží celou životnost vozu. Plug-in hybridy (PHEV) umí jezdit čistě na elektřinu ve městě.",
+    quickFacts: [
+      "Toyota Yaris Hybrid: spotřeba 3,5–4,5 l/100 km",
+      "Toyota RAV4 Hybrid: od 400 000 Kč",
+      "Úspora paliva ve městě: 30–50 % oproti benzínu",
+      "Hybridní baterie Toyota: bez výměny po 300 000+ km",
+      "PHEV: elektrický dojezd 40–80 km ve městě",
+    ],
   },
   {
     slug: "kabriolet",
@@ -575,6 +591,14 @@ export const BODY_TYPES: BodyTypeData[] = [
       { question: "Na co si dát pozor u ojetého kabrioletu?", answer: "Klíčový je stav střechy (plátěné nebo kovové), těsnění, funkčnost mechanismu otevírání, stav interiéru (vyblednutí od slunce) a kontrola koroze." },
       { question: "Který ojetý kabriolet je nejspolehlivější?", answer: "Mazda MX-5 je legendární spolehlivý kabriolet. BMW řady 2/4 Cabrio nabízí prémiový zážitek. MINI Cabrio je ideální městský kabriolet." },
       { question: "Vyplatí se ojetý kabriolet celoročně?", answer: "Se střechou zavřenou je kabriolet pohodlný i v zimě. Moderní kabriolety mají kvalitní izolaci a vytápění. Počítejte s vyšší spotřebou a náklady na údržbu střechy." },
+    ],
+    aiSnippet: "Ojetý kabriolet nabízí nezapomenutelný zážitek z jízdy za zlomek ceny nového vozu. Mazda MX-5 je nejspolehlivější kabriolet od 250 000 Kč. MINI Cabrio je ideální městský kabriolet od 200 000 Kč. BMW 4 Cabrio nabízí prémiový zážitek od 500 000 Kč (2026). Klíčové je prověřit stav střechy a těsnění.",
+    quickFacts: [
+      "Mazda MX-5: nejspolehlivější kabriolet, od 250 000 Kč",
+      "MINI Cabrio: městský kabriolet, od 200 000 Kč",
+      "BMW 4 Cabrio: prémiový segment, od 500 000 Kč",
+      "Kontrola střechy, těsnění a mechanismu je klíčová",
+      "Moderní kabriolety jsou pohodlné celoročně",
     ],
   },
 ];
@@ -600,6 +624,14 @@ export const PRICE_RANGES: PriceRangeData[] = [
       { question: "Na co si dát pozor u auta do 100 000 Kč?", answer: "Zkontrolujte STK, servisní historii, stav tachometru (přes CEBIA), stav karoserie (koroze) a motor. Náš makléř to vše prověří za vás." },
       { question: "Jaké jsou skryté náklady u levného ojetého auta?", answer: "Počítejte s STK (1 500 Kč), přepisem (800 Kč), pojištěním (3-5 000 Kč/rok) a případnými opravami. Celkový budget by měl být 120-130 000 Kč." },
     ],
+    aiSnippet: "Za 100 000 Kč koupíte spolehlivé ojeté auto jako Škoda Fabia (2008–2012), Ford Fiesta nebo Hyundai i20. Důležitá je servisní historie a technická kontrola. Celkový budget by měl být 120–130 000 Kč po započtení STK (1 500 Kč), přepisu (800 Kč) a pojištění (3–5 000 Kč/rok).",
+    quickFacts: [
+      "Škoda Fabia (2008–2012): od 60 000 Kč",
+      "Ford Fiesta: od 70 000 Kč",
+      "Hyundai i20: od 80 000 Kč",
+      "Skryté náklady: STK + přepis + pojištění = cca 5–8 000 Kč",
+      "Doporučený celkový budget: 120–130 000 Kč",
+    ],
   },
   {
     slug: "do-200000",
@@ -610,6 +642,14 @@ export const PRICE_RANGES: PriceRangeData[] = [
       { question: "Jaké auto koupit do 200 000 Kč?", answer: "Za 200 000 Kč doporučujeme Škoda Octavia III (2013-2015), VW Golf 7 (2013-2015), Hyundai i30 (2015-2017) nebo Kia Ceed (2016-2018). Všechny nabízejí spolehlivost a nízké náklady." },
       { question: "Je lepší novější malé auto nebo starší větší?", answer: "Záleží na prioritách: novější malé auto (Fabia 2017) nabídne moderní výbavu a záruku. Starší větší auto (Octavia 2014) nabídne více prostoru. Naši makléři vám poradí." },
       { question: "Nabízíte financování pro auta do 200 000 Kč?", answer: "Ano, financování je dostupné od 50 000 Kč. U aut do 200 000 Kč nabízíme splátkový prodej s akontací od 20 % a splátkami od 3 000 Kč měsíčně." },
+    ],
+    aiSnippet: "Za 200 000 Kč koupíte kvalitní ojeté auto jako Škoda Octavia III (2013–2015), VW Golf 7, Hyundai i30 nebo Kia Ceed. V tomto segmentu najdete novější malá auta i starší vozy střední třídy. Financování je dostupné s akontací od 20 % a splátkami od 3 000 Kč/měsíc.",
+    quickFacts: [
+      "Škoda Octavia III (2013–2015): od 180 000 Kč",
+      "VW Golf 7 (2013–2015): od 190 000 Kč",
+      "Hyundai i30 (2015–2017): od 170 000 Kč",
+      "Financování: akontace od 20 %, splátky od 3 000 Kč",
+      "Typický nájezd: 100 000 – 150 000 km",
     ],
   },
   {
@@ -622,6 +662,14 @@ export const PRICE_RANGES: PriceRangeData[] = [
       { question: "Mohu za 300 000 Kč koupit SUV?", answer: "Ano, za 300 000 Kč koupíte kvalitní SUV — Dacia Duster (novější), Hyundai Tucson (2017-2018), Kia Sportage (2017-2018) nebo Škoda Karoq (2018-2019)." },
       { question: "Jaký nájezd očekávat u auta za 300 000 Kč?", answer: "U aut z let 2017-2019 za 300 000 Kč očekávejte nájezd 60 000-120 000 km. Nižší nájezd typicky znamená benzínový motor, vyšší dieselový." },
     ],
+    aiSnippet: "Rozpočet do 300 000 Kč otevírá přístup k moderním ojetým autům (2017–2020) s bohatou výbavou. Škoda Octavia III FL, VW Golf 7.5, Hyundai Tucson nebo Toyota Corolla — všechny s navigací, parkovací kamerou a bezpečnostními asistenty. Typický nájezd: 60 000–120 000 km.",
+    quickFacts: [
+      "Škoda Octavia III FL (2017–2019): od 250 000 Kč",
+      "Hyundai Tucson (2017–2019): od 280 000 Kč",
+      "SUV v rozpočtu: Dacia Duster, Škoda Karoq",
+      "Typický nájezd: 60 000 – 120 000 km",
+      "Vozy s navigací, kamerou a asistenčními systémy",
+    ],
   },
   {
     slug: "do-500000",
@@ -633,6 +681,14 @@ export const PRICE_RANGES: PriceRangeData[] = [
       { question: "Je lepší nová Fabia nebo ojetá Octavia za 500 000 Kč?", answer: "Ojetá Octavia IV (2021) za 500 000 Kč nabídne výrazně více prostoru, výkonu a výbavy než nová Fabia. Navíc na CarMakler je každý ojetý vůz prověřený." },
       { question: "Mohu za 500 000 Kč koupit elektromobil?", answer: "Ano, za 500 000 Kč koupíte Renault Zoe (2020), Hyundai Ioniq Electric (2020), VW ID.3 (2021) nebo starší Nissan Leaf e+ s dobrým dojezdem." },
     ],
+    aiSnippet: "Za 500 000 Kč koupíte nové nebo téměř nové ojeté auto s kompletní výbavou. Škoda Octavia IV, VW Golf 8, BMW 3 F30 nebo Audi A4 B9 — vozy s nájezdem pod 80 000 km a často se zůstatkovou zárukou. V tomto segmentu jsou dostupné i ojeté elektromobily jako VW ID.3 nebo Hyundai Ioniq.",
+    quickFacts: [
+      "Škoda Octavia IV (2021): od 450 000 Kč",
+      "BMW 3 F30 (2016–2018): od 350 000 Kč",
+      "Audi A4 B9 (2016–2018): od 350 000 Kč",
+      "Elektromobily: VW ID.3, Hyundai Ioniq od 400 000 Kč",
+      "Typický nájezd: pod 80 000 km",
+    ],
   },
   {
     slug: "do-1000000",
@@ -643,6 +699,14 @@ export const PRICE_RANGES: PriceRangeData[] = [
       { question: "Jaký prémiový vůz koupím do milionu?", answer: "Za milion koupíte BMW 5 G30 (2019-2021), Mercedes E W213 (2019-2021), Audi A6 C8 (2019-2021), Volvo XC60 (2020-2022) nebo Tesla Model 3 Long Range (2021-2022)." },
       { question: "Vyplatí se kupovat téměř nové prémiové auto?", answer: "Prémiové vozy ztrácejí 30-40 % hodnoty za první 3 roky. Ojetý prémiový vůz za milion tak nabízí výbavu a kvalitu, která stála nová 1,5-2 miliony." },
       { question: "Nabízíte prověrku u nezávislého servisu?", answer: "Ano, u vozidel v tomto cenovém segmentu doporučujeme a zajistíme kontrolu u autorizovaného servisu dané značky. Náklady prověrky se vám mnohonásobně vrátí." },
+    ],
+    aiSnippet: "Za milion koupíte prémiový vůz stáří 1–3 roky s minimálním nájezdem. BMW 5 G30, Mercedes E W213, Audi A6 C8 nebo Tesla Model 3 Long Range — všechny s plnou servisní historií a často zbytkovou zárukou. Prémiové vozy ztrácejí 30–40 % hodnoty za první 3 roky, proto ojetý tříletý prémiový vůz stojí polovinu nového.",
+    quickFacts: [
+      "BMW 5 G30 (2019–2021): od 700 000 Kč",
+      "Mercedes E W213 (2019–2021): od 750 000 Kč",
+      "Tesla Model 3 LR (2021–2022): od 800 000 Kč",
+      "Ztráta hodnoty prémia: 30–40 % za 3 roky",
+      "Vozy s kompletní servisní historií a zbytkovou zárukou",
     ],
   },
 ];
@@ -668,6 +732,14 @@ export const CITIES: CityData[] = [
       { question: "Mohu si auto prohlédnout osobně v Praze?", answer: "Samozřejmě. Náš makléř vám domluví osobní prohlídku na místě dle vašich časových možností. Prohlídka je zdarma a nezávazná." },
       { question: "Zajišťujete převod vozidla v Praze?", answer: "Ano, naši makléři zajistí kompletní převod včetně smlouvy, přepisu na registru vozidel a předání všech dokumentů." },
     ],
+    aiSnippet: "Praha je největší trh s ojetými vozy v ČR s nejširším výběrem značek a modelů. Průměrná cena ojetého auta v Praze je o 5–10 % vyšší než v regionech (2026). CarMakler má v Praze a okolí síť certifikovaných makléřů, kteří zajistí prohlídku, prověrku CEBIA a kompletní administrativu nákupu.",
+    quickFacts: [
+      "Největší trh s ojetými vozy v ČR",
+      "Ceny o 5–10 % vyšší než v regionech",
+      "Nejširší výběr značek a modelů",
+      "Osobní prohlídka makléřem zdarma",
+      "Kompletní převod: smlouva + přepis + předání",
+    ],
   },
   {
     slug: "brno",
@@ -678,6 +750,14 @@ export const CITIES: CityData[] = [
       { question: "Máte makléře přímo v Brně?", answer: "Ano, v Brně a okolí máme certifikované makléře, kteří znají lokální trh a pomohou vám s výběrem i prohlídkou vozidla." },
       { question: "Jaká auta se nejčastěji prodávají v Brně?", answer: "V Brně jsou nejpopulárnější Škoda Octavia, VW Golf, Hyundai Tucson a Kia Sportage. Rostoucí zájem je i o elektromobily." },
       { question: "Nabízíte doručení auta v rámci Brna?", answer: "Ano, po dohodě s makléřem je možné doručení vozidla na vámi zvolenou adresu v Brně a okolí." },
+    ],
+    aiSnippet: "Brno je druhý největší trh s ojetými vozy v ČR. Nejpopulárnější ojeté vozy v Brně: Škoda Octavia, VW Golf, Hyundai Tucson a Kia Sportage. Ceny jsou srovnatelné s celorepublikovým průměrem. CarMakler má v Brně a Jihomoravském kraji certifikované makléře s doručením na adresu.",
+    quickFacts: [
+      "Druhý největší trh s ojetými vozy v ČR",
+      "Nejprodávanější: Škoda Octavia, VW Golf",
+      "Certifikovaní makléři v Brně a okolí",
+      "Doručení vozidla na adresu v Brně",
+      "Proces koupě: 3–7 dní od výběru po předání",
     ],
   },
   {
@@ -690,6 +770,14 @@ export const CITIES: CityData[] = [
       { question: "Jak ověřujete původ aut v Ostravě?", answer: "Každý vůz prochází kontrolou CEBIA, ověřením v registru vozidel a kontrolou, zda nebyl dovezen z ciziny bez řádného proclení." },
       { question: "Máte makléře v Ostravě a okolí?", answer: "Ano, naši certifikovaní makléři působí v Ostravě, Opavě, Frýdku-Místku a dalších městech Moravskoslezského kraje." },
     ],
+    aiSnippet: "Ceny ojetých aut v Ostravě jsou o 5–10 % nižší než v Praze (2026). Blízkost Polska přináší specifika trhu — důkladné ověřování původu vozu je klíčové. CarMakler má makléře v Ostravě, Opavě a Frýdku-Místku. Ostravský trh nabízí atraktivní ceny u SUV a užitkových vozidel.",
+    quickFacts: [
+      "Ceny o 5–10 % nižší než v Praze",
+      "Makléři v Ostravě, Opavě, Frýdku-Místku",
+      "Důkladné ověřování původu (blízkost PL)",
+      "Atraktivní ceny SUV a užitkových vozidel",
+      "Kontrola CEBIA + registr vozidel u každého vozu",
+    ],
   },
   {
     slug: "plzen",
@@ -700,6 +788,14 @@ export const CITIES: CityData[] = [
       { question: "Nabízíte v Plzni i vozy dovezené z Německa?", answer: "Ano, v nabídce máme i kvalitní vozy dovezené z Německa s ověřenou historií. Každý dovozový vůz prochází stejně důkladnou kontrolou jako tuzemský." },
       { question: "Kolik stojí prověřené ojeté auto v Plzni?", answer: "Ceny jsou srovnatelné s celorepublikovým průměrem. Kvalitní ojetý vůz seženete od 150 000 Kč (kompakt) do 500 000 Kč (SUV/prémiový)." },
       { question: "Jak dlouho trvá proces koupě přes makléře?", answer: "Od výběru vozu po předání klíčů trvá proces obvykle 3-7 dní. Zahrnuje prověrku, financování, smlouvu a přepis." },
+    ],
+    aiSnippet: "Plzeň je 4. největší město ČR a blízkost Německa přináší kvalitní německé ojetiny za výhodné ceny. Každý dovozový vůz prochází stejně důkladnou kontrolou jako tuzemský. Kvalitní ojetý vůz v Plzni seženete od 150 000 Kč (kompakt) do 500 000 Kč (SUV/prémiový). Proces koupě přes makléře trvá 3–7 dní.",
+    quickFacts: [
+      "4. největší město ČR",
+      "Blízkost DE: kvalitní německé ojetiny",
+      "Kompaktní vůz: od 150 000 Kč",
+      "SUV/prémiový: od 500 000 Kč",
+      "Proces koupě: 3–7 dní (prověrka + smlouva + přepis)",
     ],
   },
   {
@@ -712,6 +808,14 @@ export const CITIES: CityData[] = [
       { question: "Máte makléře v Liberci?", answer: "Ano, v Liberci a okolí působí naši certifikovaní makléři, kteří znají specifika lokálního trhu a pomohou s výběrem." },
       { question: "Zajišťujete zimní přípravu vozu?", answer: "Naši makléři vám poradí s výběrem vozu vhodného do zimních podmínek a doporučí zimní pneumatiky a příslušenství." },
     ],
+    aiSnippet: "V Libereckém kraji je zvýšená poptávka po SUV a vozech s pohonem 4x4 díky blízkosti Jizerských hor a Krkonoš. Doporučené vozy pro Liberecko: Škoda Kodiaq/Karoq, Hyundai Tucson nebo Subaru s AWD. CarMakler má certifikované makléře v Liberci a okolí, kteří znají specifika lokálního trhu.",
+    quickFacts: [
+      "Zvýšená poptávka po SUV a 4x4",
+      "Blízkost Jizerských hor a Krkonoš",
+      "Doporučené: Škoda Kodiaq, Hyundai Tucson, Subaru",
+      "Certifikovaní makléři v Liberci a okolí",
+      "Poradenství k zimní přípravě vozu",
+    ],
   },
   {
     slug: "olomouc",
@@ -722,6 +826,14 @@ export const CITIES: CityData[] = [
       { question: "Jaká je nabídka ojetých aut v Olomouci?", answer: "V Olomouci nabízíme prověřené vozy všech populárních značek. Nejprodávanější jsou Škoda, VW, Hyundai a Kia. Nabídka se denně aktualizuje." },
       { question: "Nabízíte dopravu vozu z jiného města do Olomouce?", answer: "Ano, pokud vás zaujme vůz z jiného města, můžeme zajistit jeho převoz do Olomouce pro osobní prohlídku." },
       { question: "Jak rychle vyřídíme koupi v Olomouci?", answer: "Celý proces od výběru po předání vozu trvá obvykle 3-5 pracovních dní. V urgentních případech i rychleji." },
+    ],
+    aiSnippet: "Olomouc nabízí stabilní trh s ojetými vozy v srdci Moravy se stabilními cenami. Nejprodávanější značky v Olomouci: Škoda, VW, Hyundai a Kia. CarMakler zajistí i převoz vozu z jiného města do Olomouce. Celý proces od výběru po předání vozu: 3–5 pracovních dní.",
+    quickFacts: [
+      "Stabilní ceny ojetých aut v Olomouckém kraji",
+      "Nejprodávanější: Škoda, VW, Hyundai, Kia",
+      "Převoz vozu z jiného města: možný",
+      "Proces koupě: 3–5 pracovních dní",
+      "Denní aktualizace nabídky",
     ],
   },
   {
