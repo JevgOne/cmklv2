@@ -6130,7 +6130,7 @@ Projít KOMPLETNĚ všech 10 fází z TASK-038:
 
 ## TASK-041: SEO/GEO/AIEO landing pages — kompletní sada pro všechny produkty
 Priorita: 1
-Stav: zpracovává se
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:

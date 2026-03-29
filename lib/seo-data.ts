@@ -846,6 +846,14 @@ export const CITIES: CityData[] = [
       { question: "Jsou v jižních Čechách výhodné ceny ojetých aut?", answer: "Ceny v Českých Budějovicích jsou srovnatelné s celorepublikovým průměrem. Blízkost Rakouska může přinést zajímavé dovozové příležitosti." },
       { question: "Zajišťujete financování v Českých Budějovicích?", answer: "Ano, financování je dostupné po celé ČR. V Českých Budějovicích vyřídíme vše na místě — od žádosti po podpis smlouvy." },
     ],
+    aiSnippet: "České Budějovice jsou centrem jihočeského trhu s ojetými vozidly. Blízkost Rakouska přináší možnost kvalitních dovozových vozidel. Ceny jsou srovnatelné s celorepublikovým průměrem. CarMakler zajistí financování přímo na místě — od žádosti po podpis smlouvy.",
+    quickFacts: [
+      "Centrum jihočeského automobilového trhu",
+      "Blízkost Rakouska: kvalitní dovozové vozy",
+      "Ceny srovnatelné s celorepublikovým průměrem",
+      "Financování na místě v Českých Budějovicích",
+      "Certifikovaní makléři v Jihočeském kraji",
+    ],
   },
   {
     slug: "hradec-kralove",
@@ -856,6 +864,14 @@ export const CITIES: CityData[] = [
       { question: "Jaká je nabídka ojetých aut v Hradci Králové?", answer: "V Hradci a okolí nabízíme desítky prověřených vozidel. Populární jsou Škoda, VW, Hyundai a Ford. Nabídka se pravidelně rozšiřuje." },
       { question: "Mohu si auto v Hradci prohlédnout o víkendu?", answer: "Ano, naši makléři jsou flexibilní a prohlídku je možné domluvit i o víkendu dle vašich časových možností." },
       { question: "Nabízíte výkup starého auta v Hradci Králové?", answer: "Ano, přes CarMakler můžete staré auto prodat nebo vyměnit. Náš makléř auto ocení a nabídne férovou výkupní cenu." },
+    ],
+    aiSnippet: "Hradec Králové je důležité centrum automobilového trhu ve východních Čechách na křižovatce hlavních dopravních tahů. Nejpopulárnější značky: Škoda, VW, Hyundai a Ford. CarMakler nabízí i výkup starého auta za férovou cenu. Prohlídky možné i o víkendu.",
+    quickFacts: [
+      "Centrum automobilového trhu ve východních Čechách",
+      "Strategická poloha na křižovatce hlavních tahů",
+      "Nejprodávanější: Škoda, VW, Hyundai, Ford",
+      "Prohlídky i o víkendu",
+      "Výkup starého auta za férovou cenu",
     ],
   },
 ];

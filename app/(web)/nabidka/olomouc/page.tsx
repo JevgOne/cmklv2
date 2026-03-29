@@ -50,6 +50,8 @@ export default function Page() {
       description={city.description}
       h1={`Ojeté vozy ${city.inLocative}`}
       filterDescription={`Prověřené ojeté vozy od certifikovaných makléřů ${city.inLocative} a okolí.`}
+      aiSnippet={city.aiSnippet}
+      quickFacts={city.quickFacts}
       seoText={
         <div>
           <h2>Ojeté vozy {city.inLocative} na CarMakler</h2>

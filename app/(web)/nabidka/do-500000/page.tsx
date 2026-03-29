@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { VehicleLandingPage } from "@/components/web/VehicleLandingPage";
-import { generateBreadcrumbJsonLd, generateFaqJsonLd } from "@/lib/seo";
+import { generateBreadcrumbJsonLd, generateFaqJsonLd, generateWebPageJsonLd } from "@/lib/seo";
 import { PRICE_RANGES, BASE_URL, BRANDS, BODY_TYPES } from "@/lib/seo-data";
 import { notFound } from "next/navigation";
 
@@ -24,6 +24,13 @@ export default function Page() {
     { name: `Auta ${priceRange.label}`, url: `${BASE_URL}/nabidka/${priceRange.slug}` },
   ]);
   const faqJsonLd = generateFaqJsonLd(priceRange.faqItems);
+  const webPageJsonLd = generateWebPageJsonLd({
+    name: `Ojeté vozy ${priceRange.label}`,
+    description: priceRange.description,
+    url: `${BASE_URL}/nabidka/${priceRange.slug}`,
+    about: [{ name: "Ojeté automobily", type: "Thing" }],
+    speakableCssSelectors: ["[data-speakable]"],
+  });
 
   const relatedLinks = [
     ...PRICE_RANGES.filter((p) => p.slug !== priceRange.slug).map((p) => ({
@@ -46,6 +53,8 @@ export default function Page() {
       description={priceRange.description}
       h1={`Ojeté vozy ${priceRange.label}`}
       filterDescription={`Prověřené ojeté vozy v cenové kategorii ${priceRange.label} od certifikovaných makléřů.`}
+      aiSnippet={priceRange.aiSnippet}
+      quickFacts={priceRange.quickFacts}
       seoText={
         <div>
           <h2>Ojetá auta {priceRange.label} na CarMakler</h2>
@@ -71,7 +80,7 @@ export default function Page() {
         { name: "Nabídka", href: "/nabidka" },
         { name: `Auta ${priceRange.label}`, href: `/nabidka/${priceRange.slug}` },
       ]}
-      jsonLdScripts={[breadcrumbJsonLd, faqJsonLd]}
+      jsonLdScripts={[breadcrumbJsonLd, faqJsonLd, webPageJsonLd]}
       relatedLinks={relatedLinks}
       filterHref={`/nabidka?maxPrice=${priceRange.maxPrice}`}
     />

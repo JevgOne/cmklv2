@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { VehicleLandingPage } from "@/components/web/VehicleLandingPage";
-import { generateBreadcrumbJsonLd, generateFaqJsonLd } from "@/lib/seo";
+import { generateBreadcrumbJsonLd, generateFaqJsonLd, generateWebPageJsonLd } from "@/lib/seo";
 import { BODY_TYPES, BASE_URL, BRANDS, PRICE_RANGES } from "@/lib/seo-data";
 import { notFound } from "next/navigation";
 
@@ -24,6 +24,13 @@ export default function Page() {
     { name: bodyType.name, url: `${BASE_URL}/nabidka/${bodyType.slug}` },
   ]);
   const faqJsonLd = generateFaqJsonLd(bodyType.faqItems);
+  const webPageJsonLd = generateWebPageJsonLd({
+    name: `Ojeté ${bodyType.name} vozy`,
+    description: bodyType.description,
+    url: `${BASE_URL}/nabidka/${bodyType.slug}`,
+    about: [{ name: bodyType.name, type: "Thing" }, { name: "Ojeté automobily", type: "Thing" }],
+    speakableCssSelectors: ["[data-speakable]"],
+  });
 
   const filterParam = bodyType.filterValue
     ? (bodyType.filterValue === "ELECTRIC" || bodyType.filterValue === "HYBRID"
@@ -52,6 +59,8 @@ export default function Page() {
       description={bodyType.description}
       h1={`Ojeté ${bodyType.name.toLowerCase()} vozy`}
       filterDescription={`Prověřené ojeté ${bodyType.name.toLowerCase()} vozy od certifikovaných makléřů. Široký výběr značek a modelů.`}
+      aiSnippet={bodyType.aiSnippet}
+      quickFacts={bodyType.quickFacts}
       seoText={
         <div>
           <h2>Proč koupit ojeté {bodyType.name.toLowerCase()} na CarMakler?</h2>
@@ -70,7 +79,7 @@ export default function Page() {
         { name: "Nabídka", href: "/nabidka" },
         { name: bodyType.name, href: `/nabidka/${bodyType.slug}` },
       ]}
-      jsonLdScripts={[breadcrumbJsonLd, faqJsonLd]}
+      jsonLdScripts={[breadcrumbJsonLd, faqJsonLd, webPageJsonLd]}
       ctaHeading={`Chcete prodat váš ${bodyType.name.toLowerCase()}?`}
       relatedLinks={relatedLinks}
       filterHref={`/nabidka?${filterParam}`}
