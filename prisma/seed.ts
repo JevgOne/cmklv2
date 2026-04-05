@@ -10,27 +10,44 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log("Clearing existing data...");
+  // Partner subsystem
+  await prisma.partnerActivity.deleteMany();
+  await prisma.partnerLead.deleteMany();
+  await prisma.partner.deleteMany();
+  // Tokens
+  await prisma.emailVerificationToken.deleteMany();
+  await prisma.passwordResetToken.deleteMany();
+  // Orders & returns
+  await prisma.returnRequest.deleteMany();
+  await prisma.orderItem.deleteMany();
+  await prisma.order.deleteMany();
+  // Parts
+  await prisma.partImage.deleteMany();
+  await prisma.part.deleteMany();
+  await prisma.partsFeedConfig.deleteMany();
+  // Vehicles & related
   await prisma.sellerCommunication.deleteMany();
   await prisma.sellerContact.deleteMany();
   await prisma.sellerPayout.deleteMany();
   await prisma.brokerPayout.deleteMany();
   await prisma.payment.deleteMany();
+  await prisma.reservation.deleteMany();
+  await prisma.cebiaReport.deleteMany();
   await prisma.escalation.deleteMany();
   await prisma.priceReduction.deleteMany();
   await prisma.damageReport.deleteMany();
   await prisma.vehicleInquiry.deleteMany();
   await prisma.lead.deleteMany();
+  // Marketplace
   await prisma.investment.deleteMany();
   await prisma.flipOpportunity.deleteMany();
-  await prisma.orderItem.deleteMany();
-  await prisma.order.deleteMany();
-  await prisma.partImage.deleteMany();
-  await prisma.part.deleteMany();
+  // Listings
   await prisma.favorite.deleteMany();
   await prisma.inquiry.deleteMany();
   await prisma.watchdog.deleteMany();
   await prisma.listingImage.deleteMany();
   await prisma.listing.deleteMany();
+  // User-related
   await prisma.invitation.deleteMany();
   await prisma.contract.deleteMany();
   await prisma.emailLog.deleteMany();
@@ -40,9 +57,11 @@ async function main() {
   await prisma.userAchievement.deleteMany();
   await prisma.aiConversation.deleteMany();
   await prisma.commission.deleteMany();
+  // Vehicles
   await prisma.vehicleChangeLog.deleteMany();
   await prisma.vehicleImage.deleteMany();
   await prisma.vehicle.deleteMany();
+  // Core
   await prisma.user.deleteMany();
   await prisma.region.deleteMany();
 
@@ -1231,8 +1250,7 @@ async function main() {
       firstName: "Petr",
       lastName: "Kupující",
       passwordHash,
-      role: "BROKER",
-      accountType: "BUYER",
+      role: "BUYER",
       status: "ACTIVE",
     },
   });
@@ -1743,16 +1761,20 @@ async function main() {
       orderNumber: "OBJ-260315-A1B2C",
       buyerId: buyer1.id,
       status: "DELIVERED",
-      deliveryName: "Jan Kupující",
+      deliveryName: "Petr Kupující",
       deliveryPhone: "+420111222333",
       deliveryEmail: "kupujici@email.cz",
       deliveryAddress: "Vinohradská 42",
       deliveryCity: "Praha 2",
       deliveryZip: "12000",
+      deliveryMethod: "ZASILKOVNA",
+      zasilkovnaPointId: "12345",
+      zasilkovnaPointName: "Zásilkovna — Praha 2, Vinohradská",
       paymentMethod: "BANK_TRANSFER",
       paymentStatus: "PAID",
-      totalPrice: 890,
-      shippingPrice: 0,
+      totalPrice: 969,
+      shippingPrice: 79,
+      shippedAt: new Date("2026-03-16"),
       deliveredAt: new Date("2026-03-18"),
       items: {
         create: {
@@ -1772,16 +1794,17 @@ async function main() {
       orderNumber: "OBJ-260320-X9Y8Z",
       buyerId: buyer1.id,
       status: "CONFIRMED",
-      deliveryName: "Jan Kupující",
+      deliveryName: "Petr Kupující",
       deliveryPhone: "+420111222333",
       deliveryEmail: "kupujici@email.cz",
       deliveryAddress: "Vinohradská 42",
       deliveryCity: "Praha 2",
       deliveryZip: "12000",
+      deliveryMethod: "PPL",
       paymentMethod: "COD",
       paymentStatus: "PENDING",
-      totalPrice: 16549,
-      shippingPrice: 49,
+      totalPrice: 16668,
+      shippingPrice: 168,
       items: {
         create: [
           {
@@ -1815,10 +1838,11 @@ async function main() {
       deliveryAddress: "Náměstí Svobody 12",
       deliveryCity: "Brno",
       deliveryZip: "60200",
+      deliveryMethod: "CESKA_POSTA",
       paymentMethod: "BANK_TRANSFER",
       paymentStatus: "PENDING",
-      totalPrice: 2079,
-      shippingPrice: 0,
+      totalPrice: 477,
+      shippingPrice: 99,
       items: {
         create: {
           partId: part6.id,

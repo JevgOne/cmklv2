@@ -85,6 +85,8 @@ export default function LoginPage() {
           router.push("/partner/dashboard");
           break;
         case "BUYER":
+          router.push("/shop/moje-objednavky");
+          break;
         default:
           router.push("/");
           break;
