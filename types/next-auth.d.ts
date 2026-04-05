@@ -10,6 +10,7 @@ declare module "next-auth" {
     accountType?: string | null;
     onboardingStep?: number;
     onboardingCompleted?: boolean;
+    isEmailVerified?: boolean;
   }
   interface Session {
     user: {
@@ -24,6 +25,7 @@ declare module "next-auth" {
       accountType: string | null;
       onboardingStep: number;
       onboardingCompleted: boolean;
+      isEmailVerified: boolean;
     };
   }
 }
@@ -38,5 +40,6 @@ declare module "next-auth/jwt" {
     accountType?: string | null;
     onboardingStep?: number;
     onboardingCompleted?: boolean;
+    isEmailVerified?: boolean;
   }
 }

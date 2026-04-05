@@ -50,6 +50,9 @@ model User {
   brokerSignature     String?  // Base64 PNG podpisu makléře (onboarding smlouva)
   quickModeEnabled    Boolean  @default(false) // Rychlé nabírání (Makléř+ level)
 
+  // Kreditový systém pro inzeráty
+  listingCredits      Int      @default(0)  // Počet předplacených inzerátů (Bundle 30ks)
+
   // Profil inzerenta (ADVERTISER)
   accountType String? // PRIVATE, DEALER, BAZAAR
   companyName String?
@@ -171,6 +174,9 @@ model Vehicle {
   // VIN
   vin       String  @unique
   vinLocked Boolean @default(false)
+
+  // Fulltext search
+  searchVector Unsupported("tsvector")?
 
   // Základní info
   brand   String
@@ -590,6 +596,9 @@ model Listing {
   slug        String @unique
   listingType String // PRIVATE, DEALER, BROKER
 
+  // Fulltext search
+  searchVector Unsupported("tsvector")?
+
   // Vlastník inzerátu
   userId    String
   user      User     @relation(fields: [userId], references: [id])
@@ -884,6 +893,9 @@ model Part {
   category    String // ENGINE, TRANSMISSION, BRAKES, SUSPENSION, BODY, ELECTRICAL, INTERIOR, WHEELS, EXHAUST, COOLING, FUEL, OTHER
   name        String
   description String?
+
+  // Fulltext search (generováno z name + description + oemNumber + partNumber)
+  searchVector Unsupported("tsvector")?
   partNumber  String?
   oemNumber   String?
 
@@ -968,8 +980,13 @@ model Order {
   deliveryCity    String
   deliveryZip     String
 
+  // Způsob doručení
+  deliveryMethod      String  @default("PPL") // ZASILKOVNA, PPL, CESKA_POSTA, PICKUP
+  zasilkovnaPointId   String? // ID výdejního místa Zásilkovny
+  zasilkovnaPointName String? // Název výdejního místa
+
   // Platba
-  paymentMethod String @default("BANK_TRANSFER") // BANK_TRANSFER, COD
+  paymentMethod String @default("BANK_TRANSFER") // BANK_TRANSFER, COD, CARD
   paymentStatus String @default("PENDING")        // PENDING, PAID
 
   // Ceny
@@ -1643,4 +1660,20 @@ model PasswordResetToken {
   @@index([email])
   @@index([token])
   @@index([expiresAt])
+}
+
+// ============================================
+// EMAIL VERIFICATION
+// ============================================
+
+model EmailVerificationToken {
+  id        String   @id @default(cuid())
+  email     String
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([token])
 }

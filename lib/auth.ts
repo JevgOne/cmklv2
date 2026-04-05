@@ -40,6 +40,7 @@ export const authOptions: NextAuthOptions = {
           accountType: user.accountType ?? null,
           onboardingStep: user.onboardingStep,
           onboardingCompleted: user.onboardingCompleted,
+          isEmailVerified: !!user.emailVerified,
         };
       },
     }),
@@ -71,6 +72,7 @@ export const authOptions: NextAuthOptions = {
         token.accountType = user.accountType;
         token.onboardingStep = user.onboardingStep;
         token.onboardingCompleted = user.onboardingCompleted;
+        token.isEmailVerified = user.isEmailVerified;
       }
       return token;
     },
@@ -85,6 +87,7 @@ export const authOptions: NextAuthOptions = {
         session.user.accountType = (token.accountType as string | null) ?? null;
         session.user.onboardingStep = (token.onboardingStep as number) ?? 1;
         session.user.onboardingCompleted = (token.onboardingCompleted as boolean) ?? false;
+        session.user.isEmailVerified = (token.isEmailVerified as boolean) ?? false;
       }
       return session;
     },

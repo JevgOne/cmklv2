@@ -3,6 +3,13 @@
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
+import { ZasilkovnaWidget } from "@/components/web/ZasilkovnaWidget";
+
+export interface ZasilkovnaPoint {
+  id: string;
+  name: string;
+  address: string;
+}
 
 export interface DeliveryFormData {
   firstName: string;
@@ -14,6 +21,7 @@ export interface DeliveryFormData {
   zip: string;
   note: string;
   deliveryMethod: string;
+  zasilkovnaPoint?: ZasilkovnaPoint | null;
 }
 
 const deliveryOptions = [
@@ -109,6 +117,20 @@ export function OrderForm({
         placeholder="Vyberte způsob doručení"
         error={errors?.deliveryMethod}
       />
+
+      {data.deliveryMethod === "ZASILKOVNA" && (
+        <div className="mt-1">
+          <ZasilkovnaWidget
+            onSelect={(point) => {
+              onChange({ ...data, zasilkovnaPoint: point });
+            }}
+            selectedPoint={data.zasilkovnaPoint}
+          />
+          {errors?.deliveryMethod === "zasilkovnaPointId" && (
+            <p className="text-sm text-red-500 mt-1">Vyberte výdejní místo</p>
+          )}
+        </div>
+      )}
 
       <Textarea
         label="Poznámka k objednávce"

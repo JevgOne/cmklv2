@@ -3,6 +3,7 @@ import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { brokerRegistrationSchema } from "@/lib/validators/onboarding";
+import { sendVerificationEmail } from "@/lib/email-verification";
 
 // POST /api/auth/register/broker — registrace makléře přes pozvánku
 export async function POST(request: Request) {
@@ -96,7 +97,14 @@ export async function POST(request: Request) {
       return newUser;
     });
 
-    return NextResponse.json({ user }, { status: 201 });
+    // Odeslat verifikacni email
+    try {
+      await sendVerificationEmail(user.email, user.firstName);
+    } catch (error) {
+      console.error("Failed to send verification email:", error);
+    }
+
+    return NextResponse.json({ user, emailVerificationRequired: true }, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(

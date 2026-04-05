@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { PartsSearch } from "@/components/web/PartsSearch";
+import { SmartSearchBar } from "@/components/web/SmartSearchBar";
 import { ProductCard } from "@/components/web/ProductCard";
 import { prisma } from "@/lib/prisma";
 import { PART_CATEGORIES } from "@/lib/parts-categories";
@@ -110,6 +111,13 @@ export default async function DilyPage() {
               </Button>
             </a>
           </div>
+        </div>
+      </section>
+
+      {/* Smart text search */}
+      <section className="py-8 bg-white">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SmartSearchBar className="w-full" />
         </div>
       </section>
 

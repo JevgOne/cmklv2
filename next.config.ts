@@ -13,6 +13,53 @@ const withSerwist = withSerwistInit({
   disable: process.env.NODE_ENV === "development",
 });
 
+// Content Security Policy
+const isDev = process.env.NODE_ENV === "development";
+
+const cspDirectives = [
+  // Základní politika
+  "default-src 'self'",
+
+  // Skripty: self + inline (Next.js hydrace) + unsafe-eval jen v dev
+  `script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval'" : ""} https://plausible.io https://widget.packeta.com https://js.stripe.com`.trim(),
+
+  // Styly: self + inline (Tailwind CSS injection, framer-motion)
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://widget.packeta.com",
+
+  // Obrázky: self + Cloudinary + data: URIs (base64 previews) + blob:
+  "img-src 'self' data: blob: https://res.cloudinary.com https://*.sentry.io https://widget.packeta.com",
+
+  // Fonty: self + Google Fonts (design system fallback)
+  "font-src 'self' https://fonts.gstatic.com",
+
+  // API/fetch: self + Sentry + Plausible + Stripe + Packeta
+  "connect-src 'self' https://*.sentry.io https://plausible.io https://api.stripe.com https://widget.packeta.com",
+
+  // Iframes: Stripe Checkout + Packeta widget
+  "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://widget.packeta.com",
+
+  // Service Worker (Serwist PWA)
+  "worker-src 'self'",
+
+  // Media: self
+  "media-src 'self'",
+
+  // Žádné pluginy
+  "object-src 'none'",
+
+  // Prevence base tag hijack
+  "base-uri 'self'",
+
+  // Prevence form action hijack
+  "form-action 'self'",
+
+  // Prevence iframe embedding (ekvivalent X-Frame-Options: DENY)
+  "frame-ancestors 'none'",
+
+  // CSP violation reporting
+  "report-uri /api/csp-report",
+].join("; ");
+
 const nextConfig: NextConfig = {
   turbopack: {},
   images: {
@@ -33,6 +80,14 @@ const nextConfig: NextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "X-XSS-Protection", value: "1; mode=block" },
           { key: "Permissions-Policy", value: "camera=(), microphone=()" },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
+          },
+          {
+            key: "Content-Security-Policy-Report-Only",
+            value: cspDirectives,
+          },
         ],
       },
     ];

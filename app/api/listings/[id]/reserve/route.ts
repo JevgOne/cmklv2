@@ -32,6 +32,7 @@ export async function POST(
       where: { id },
       select: {
         id: true,
+        slug: true,
         status: true,
         listingTier: true,
         listingType: true,
@@ -106,8 +107,8 @@ export async function POST(
         listingId: id,
       },
       customer_email: data.buyerEmail,
-      success_url: `${process.env.NEXTAUTH_URL}/inzerat/${id}?reserved=true`,
-      cancel_url: `${process.env.NEXTAUTH_URL}/inzerat/${id}`,
+      success_url: `${process.env.NEXTAUTH_URL}/nabidka/${listing.slug}?reserved=true`,
+      cancel_url: `${process.env.NEXTAUTH_URL}/nabidka/${listing.slug}`,
     });
 
     // Uložit Stripe session ID

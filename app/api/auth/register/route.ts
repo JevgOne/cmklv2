@@ -3,6 +3,7 @@ import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { rateLimit } from "@/lib/rate-limit";
+import { sendVerificationEmail } from "@/lib/email-verification";
 
 const registerSchema = z.object({
   email: z.string().email("Neplatný formát emailu"),
@@ -78,7 +79,17 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json({ user }, { status: 201 });
+    // Odeslat verifikacni email
+    try {
+      await sendVerificationEmail(user.email, user.firstName);
+    } catch (error) {
+      console.error("Failed to send verification email:", error);
+    }
+
+    return NextResponse.json({
+      user,
+      emailVerificationRequired: true,
+    }, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(

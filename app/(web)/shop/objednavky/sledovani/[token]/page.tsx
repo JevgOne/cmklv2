@@ -46,6 +46,8 @@ interface Order {
   paymentMethod: string;
   paymentStatus: string;
   trackingNumber: string | null;
+  deliveryMethod: string;
+  zasilkovnaPointName: string | null;
   deliveryName: string;
   createdAt: string;
   shippedAt: string | null;
@@ -170,6 +172,17 @@ export default function SledovaniPage({ params }: { params: Promise<{ token: str
             <div className="flex justify-between">
               <span className="text-gray-500">Doručení pro</span>
               <span className="text-gray-900">{order.deliveryName}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Způsob doručení</span>
+              <span className="text-gray-900">
+                {order.deliveryMethod === "ZASILKOVNA"
+                  ? `Zásilkovna${order.zasilkovnaPointName ? ` — ${order.zasilkovnaPointName}` : ""}`
+                  : order.deliveryMethod === "PPL" ? "PPL"
+                  : order.deliveryMethod === "CESKA_POSTA" ? "Česká pošta"
+                  : order.deliveryMethod === "PICKUP" ? "Osobní odběr"
+                  : order.deliveryMethod}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Platba</span>

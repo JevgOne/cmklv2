@@ -71,9 +71,15 @@ export const createOrderSchema = z.object({
   deliveryAddress: z.string().min(1, "Adresa je povinná"),
   deliveryCity: z.string().min(1, "Město je povinné"),
   deliveryZip: z.string().min(3, "PSČ je povinné"),
-  paymentMethod: z.enum(["BANK_TRANSFER", "COD"]),
+  deliveryMethod: z.enum(["ZASILKOVNA", "PPL", "CESKA_POSTA", "PICKUP"]),
+  zasilkovnaPointId: z.string().optional(),
+  zasilkovnaPointName: z.string().optional(),
+  paymentMethod: z.enum(["BANK_TRANSFER", "COD", "CARD"]),
   note: z.string().optional(),
-});
+}).refine(
+  (data) => data.deliveryMethod !== "ZASILKOVNA" || !!data.zasilkovnaPointId,
+  { message: "Vyberte výdejní místo Zásilkovny", path: ["zasilkovnaPointId"] }
+);
 
 export const orderStatusSchema = z.object({
   status: z.enum(["PENDING", "CONFIRMED", "SHIPPED", "DELIVERED", "CANCELLED"]),

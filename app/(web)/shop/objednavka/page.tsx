@@ -16,6 +16,7 @@ const STEP_LABELS = ["Doručení", "Platba", "Potvrzení"];
 const paymentMethods = [
   { value: "BANK_TRANSFER", label: "Bankovní převod", desc: "Platba předem na účet" },
   { value: "COD", label: "Dobírka", desc: "Platba při převzetí (+39 Kč)" },
+  { value: "CARD", label: "Platba kartou", desc: "Okamžitá platba přes Stripe" },
 ];
 
 const deliveryPrices: Record<string, number> = {
@@ -70,6 +71,9 @@ export default function ObjednavkaPage() {
     if (!delivery.city.trim()) newErrors.city = "Vyplňte město";
     if (!delivery.zip.trim()) newErrors.zip = "Vyplňte PSČ";
     if (!delivery.deliveryMethod) newErrors.deliveryMethod = "Vyberte způsob doručení";
+    if (delivery.deliveryMethod === "ZASILKOVNA" && !delivery.zasilkovnaPoint?.id) {
+      newErrors.deliveryMethod = "Vyberte výdejní místo Zásilkovny";
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -97,6 +101,9 @@ export default function ObjednavkaPage() {
           deliveryAddress: delivery.street,
           deliveryCity: delivery.city,
           deliveryZip: delivery.zip,
+          deliveryMethod: delivery.deliveryMethod,
+          zasilkovnaPointId: delivery.zasilkovnaPoint?.id ?? undefined,
+          zasilkovnaPointName: delivery.zasilkovnaPoint?.name ?? undefined,
           paymentMethod,
           note: delivery.note || undefined,
         }),
@@ -105,6 +112,11 @@ export default function ObjednavkaPage() {
       if (res.ok) {
         const data = await res.json();
         clearCart();
+        // Kartová platba — redirect na Stripe Checkout
+        if (data.checkoutUrl) {
+          window.location.href = data.checkoutUrl;
+          return;
+        }
         const trackingParam = data.trackingUrl ? `&tracking=${encodeURIComponent(data.trackingUrl)}` : "";
         router.push(`/shop/objednavka/potvrzeni?id=${data.order?.orderNumber ?? data.order?.id ?? "demo"}${trackingParam}`);
       } else {

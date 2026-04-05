@@ -37,7 +37,9 @@ export async function POST(request: NextRequest) {
         if (!metadata) break;
 
         // Zpracování podle typu
-        if (metadata.promoType) {
+        if (metadata.orderId) {
+          await handleOrderPayment(metadata.orderId);
+        } else if (metadata.promoType) {
           await handlePromoPayment(metadata);
         } else if (metadata.reservationId) {
           await handleReservationPayment(metadata.reservationId);
@@ -117,11 +119,26 @@ async function handlePromoPayment(metadata: Record<string, string>) {
       break;
     }
     case "BUNDLE": {
-      // Bundle — 30 inzerátů, prozatím jen logujeme (implementace kreditového systému v další fázi)
-      console.log(`Bundle purchased for user, listing: ${listingId}`);
+      const bundleListing = await prisma.listing.findUnique({
+        where: { id: listingId },
+        select: { userId: true },
+      });
+      if (bundleListing?.userId) {
+        await prisma.user.update({
+          where: { id: bundleListing.userId },
+          data: { listingCredits: { increment: 30 } },
+        });
+      }
       break;
     }
   }
+}
+
+async function handleOrderPayment(orderId: string) {
+  await prisma.order.update({
+    where: { id: orderId },
+    data: { paymentStatus: "PAID" },
+  });
 }
 
 async function handleReservationPayment(reservationId: string) {

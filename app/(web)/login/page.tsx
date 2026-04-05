@@ -11,6 +11,23 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [emailNotVerified, setEmailNotVerified] = useState(false);
+  const [resendSent, setResendSent] = useState(false);
+
+  const handleResendVerification = async () => {
+    try {
+      const res = await fetch("/api/auth/resend-verification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (res.ok) {
+        setResendSent(true);
+      }
+    } catch {
+      // Ignorovat chyby
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,6 +50,12 @@ export default function LoginPage() {
       // Získání session pro určení role
       const res = await fetch("/api/auth/session");
       const session = await res.json();
+
+      // Zkontrolovat ověření emailu (soft enforcement)
+      if (session?.user && !session.user.isEmailVerified) {
+        setEmailNotVerified(true);
+        // Nepřerušovat login — pokračovat na dashboard
+      }
 
       const role = session?.user?.role;
       switch (role) {
@@ -82,6 +105,27 @@ export default function LoginPage() {
               Přihlaste se do svého účtu CarMakléř
             </p>
           </div>
+
+          {emailNotVerified && (
+            <div className="mb-6 rounded-lg bg-amber-50 border border-amber-200 px-4 py-3">
+              <p className="text-sm text-gray-700 font-medium">
+                Váš email ještě nebyl ověřen. Zkontrolujte svou schránku.
+              </p>
+              {resendSent ? (
+                <p className="text-sm text-green-600 mt-1">
+                  Ověřovací email odeslán!
+                </p>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleResendVerification}
+                  className="text-sm text-orange-600 hover:text-orange-700 underline mt-1"
+                >
+                  Odeslat ověřovací email znovu
+                </button>
+              )}
+            </div>
+          )}
 
           {error && (
             <div className="mb-6 rounded-lg bg-error-50 px-4 py-3 text-sm text-error-600">

@@ -120,11 +120,12 @@ export async function GET(request: NextRequest) {
     }
 
     if (filters.search) {
+      // Fallback na ILIKE — fulltext search je dostupný přes /api/search/smart
       where.OR = [
-        { name: { contains: filters.search } },
-        { description: { contains: filters.search } },
-        { oemNumber: { contains: filters.search } },
-        { partNumber: { contains: filters.search } },
+        { name: { contains: filters.search, mode: "insensitive" as const } },
+        { description: { contains: filters.search, mode: "insensitive" as const } },
+        { oemNumber: { contains: filters.search, mode: "insensitive" as const } },
+        { partNumber: { contains: filters.search, mode: "insensitive" as const } },
       ];
     }
 

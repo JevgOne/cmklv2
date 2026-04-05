@@ -48,6 +48,8 @@ export async function GET(
         paymentMethod: order.paymentMethod,
         paymentStatus: order.paymentStatus,
         trackingNumber: order.trackingNumber,
+        deliveryMethod: order.deliveryMethod,
+        zasilkovnaPointName: order.zasilkovnaPointName,
         deliveryName: order.deliveryName,
         createdAt: order.createdAt,
         shippedAt: order.shippedAt,

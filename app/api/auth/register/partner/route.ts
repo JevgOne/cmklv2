@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { rateLimit } from "@/lib/rate-limit";
 import { slugify } from "@/lib/utils";
+import { sendVerificationEmail } from "@/lib/email-verification";
 
 const registerPartnerSchema = z.object({
   // Firemni udaje
@@ -129,6 +130,13 @@ export async function POST(request: Request) {
       return { user, partner };
     });
 
+    // Odeslat verifikacni email
+    try {
+      await sendVerificationEmail(result.user.email, result.user.firstName);
+    } catch (error) {
+      console.error("Failed to send verification email:", error);
+    }
+
     return NextResponse.json(
       {
         user: {
@@ -140,6 +148,7 @@ export async function POST(request: Request) {
           status: result.user.status,
         },
         partnerId: result.partner.id,
+        emailVerificationRequired: true,
       },
       { status: 201 }
     );

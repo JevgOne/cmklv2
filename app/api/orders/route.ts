@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createOrderSchema } from "@/lib/validators/parts";
+import { getStripe } from "@/lib/stripe";
 
 /* ------------------------------------------------------------------ */
 /*  POST /api/orders — Vytvoření objednávky z košíku                    */
@@ -68,7 +69,16 @@ export async function POST(request: NextRequest) {
       };
     });
 
-    const shippingPrice = data.paymentMethod === "COD" ? 49 : 0;
+    // Dopravné dle metody doručení
+    const DELIVERY_PRICES: Record<string, number> = {
+      ZASILKOVNA: 79,
+      PPL: 129,
+      CESKA_POSTA: 99,
+      PICKUP: 0,
+    };
+    const deliveryPrice = DELIVERY_PRICES[data.deliveryMethod] ?? 0;
+    const codFee = data.paymentMethod === "COD" ? 39 : 0;
+    const shippingPrice = deliveryPrice + codFee;
     totalPrice += shippingPrice;
 
     // Generovat guest token pokud neni prihlaseny
@@ -100,6 +110,9 @@ export async function POST(request: NextRequest) {
           deliveryAddress: data.deliveryAddress,
           deliveryCity: data.deliveryCity,
           deliveryZip: data.deliveryZip,
+          deliveryMethod: data.deliveryMethod,
+          zasilkovnaPointId: data.zasilkovnaPointId ?? null,
+          zasilkovnaPointName: data.zasilkovnaPointName ?? null,
           paymentMethod: data.paymentMethod,
           paymentStatus: "PENDING",
           totalPrice,
@@ -126,6 +139,55 @@ export async function POST(request: NextRequest) {
 
       return created;
     });
+
+    // Kartová platba — vytvořit Stripe Checkout Session
+    if (data.paymentMethod === "CARD") {
+      try {
+        const stripe = getStripe();
+        const checkoutSession = await stripe.checkout.sessions.create({
+          mode: "payment",
+          payment_method_types: ["card"],
+          line_items: orderItems.map((item) => {
+            const part = parts.find((p) => p.id === item.partId)!;
+            return {
+              price_data: {
+                currency: "czk",
+                product_data: { name: part.name },
+                unit_amount: item.unitPrice * 100, // v haléřích
+              },
+              quantity: item.quantity,
+            };
+          }),
+          ...(shippingPrice > 0 && {
+            shipping_options: [{
+              shipping_rate_data: {
+                display_name: `Doprava${codFee > 0 ? " + dobírka" : ""}`,
+                type: "fixed_amount" as const,
+                fixed_amount: { amount: shippingPrice * 100, currency: "czk" },
+              },
+            }],
+          }),
+          metadata: { orderId: order.id },
+          customer_email: data.deliveryEmail,
+          success_url: `${process.env.NEXTAUTH_URL}/shop/objednavka/potvrzeni?order=${order.orderNumber}${guestToken ? `&tracking=${encodeURIComponent(`/shop/objednavky/sledovani/${guestToken}`)}` : ""}`,
+          cancel_url: `${process.env.NEXTAUTH_URL}/shop/kosik`,
+        });
+
+        return NextResponse.json({
+          order,
+          checkoutUrl: checkoutSession.url,
+          ...(guestToken && { trackingUrl: `/shop/objednavky/sledovani/${guestToken}` }),
+        }, { status: 201 });
+      } catch (stripeError) {
+        console.error("Stripe checkout error:", stripeError);
+        // Order was created, but Stripe failed — return order without checkout URL
+        return NextResponse.json({
+          order,
+          error: "Kartová platba není momentálně dostupná. Objednávka byla vytvořena — kontaktujte nás.",
+          ...(guestToken && { trackingUrl: `/shop/objednavky/sledovani/${guestToken}` }),
+        }, { status: 201 });
+      }
+    }
 
     return NextResponse.json({
       order,
