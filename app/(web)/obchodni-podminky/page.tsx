@@ -4,13 +4,13 @@ import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { BASE_URL } from "@/lib/seo-data";
 
 export const metadata: Metadata = {
-  title: "Obchodni podminky",
+  title: "Obchodní podmínky",
   description:
-    "Obchodni podminky platformy CarMakler. Podminky pro nakup autodilu, inzertni sluzby, maklerske sluzby a investicni marketplace.",
+    "Obchodní podmínky platformy CarMakler. Podmínky pro nákup autodílů, inzertní služby, makléřské služby a investiční marketplace.",
   openGraph: {
-    title: "Obchodni podminky | CarMakler",
+    title: "Obchodní podmínky | CarMakler",
     description:
-      "Obchodni podminky platformy CarMakler — e-shop s autodily, inzerce vozidel, maklerske sluzby.",
+      "Obchodní podmínky platformy CarMakler — e-shop s autodíly, inzerce vozidel, makléřské služby.",
   },
   alternates: {
     canonical: `${BASE_URL}/obchodni-podminky`,
@@ -20,9 +20,9 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  name: "Obchodni podminky — CarMakler",
+  name: "Obchodní podmínky — CarMakler",
   url: `${BASE_URL}/obchodni-podminky`,
-  description: "Obchodni podminky platformy CarMakler",
+  description: "Obchodní podmínky platformy CarMakler",
   isPartOf: {
     "@type": "WebSite",
     name: "CarMakler",
@@ -46,14 +46,14 @@ export default function ObchodniPodminkyPage() {
       />
       <Breadcrumbs
         items={[
-          { label: "Domu", href: "/" },
-          { label: "Obchodni podminky" },
+          { label: "Domů", href: "/" },
+          { label: "Obchodní podmínky" },
         ]}
       />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
         <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-2">
-          Obchodni podminky
+          Obchodní podmínky
         </h1>
         <p className="text-sm text-gray-500 mb-10">
           Platne od [DOPLNIT DATUM] | Posledni aktualizace: [DOPLNIT DATUM]
@@ -227,12 +227,12 @@ export default function ObchodniPodminkyPage() {
             </ul>
           </section>
 
-          {/* 10. Ochrana osobnich udaju */}
+          {/* 10. Ochrana osobních údajů */}
           <section id="ochrana-udaju">
-            <h2>10. Ochrana osobnich udaju</h2>
+            <h2>10. Ochrana osobních údajů</h2>
             <p>
               Informace o zpracovani osobnich udaju najdete na strance{" "}
-              <Link href="/ochrana-osobnich-udaju">Ochrana osobnich udaju</Link>.
+              <Link href="/ochrana-osobnich-udaju">Ochrana osobních údajů</Link>.
             </p>
           </section>
 

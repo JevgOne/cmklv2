@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/Badge";
+
+export const revalidate = 600; // ISR: 10 minut
 import { Card } from "@/components/ui/Card";
 import { ProductCard } from "@/components/web/ProductCard";
 import { ProductDetailTabs } from "./ProductDetailTabs";
@@ -117,7 +119,7 @@ export default async function ProductDetailPage({
       {/* Breadcrumbs */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <nav className="flex items-center gap-2 text-sm text-gray-500">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm text-gray-500">
             <Link
               href="/shop"
               className="hover:text-orange-500 transition-colors no-underline text-gray-500"
@@ -155,7 +157,7 @@ export default async function ProductDetailPage({
               ) : (
                 <div className="text-center">
                   <span className="text-7xl block mb-3">🔧</span>
-                  <span className="text-sm text-gray-400">Bez fotky</span>
+                  <span className="text-sm text-gray-500">Bez fotky</span>
                 </div>
               )}
             </div>
@@ -210,7 +212,7 @@ export default async function ProductDetailPage({
 
             {/* OEM / Part number */}
             {(part.oemNumber || part.partNumber) && (
-              <p className="text-sm text-gray-400 mt-1 font-mono">
+              <p className="text-sm text-gray-500 mt-1 font-mono">
                 {part.oemNumber ? `OE: ${part.oemNumber}` : ""}
                 {part.oemNumber && part.partNumber ? " | " : ""}
                 {part.partNumber ? `PN: ${part.partNumber}` : ""}
@@ -275,7 +277,7 @@ export default async function ProductDetailPage({
               <div className="text-3xl sm:text-4xl font-extrabold text-gray-900">
                 {formatCzk(part.price)} Kč
               </div>
-              <p className="text-sm text-gray-400 mt-1">
+              <p className="text-sm text-gray-500 mt-1">
                 {part.vatIncluded ? "Cena včetně DPH" : "Cena bez DPH"}
               </p>
             </div>

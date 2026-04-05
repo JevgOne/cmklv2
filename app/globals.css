@@ -142,3 +142,16 @@ html {
   background-color: var(--orange-100);
   color: var(--orange-700);
 }
+
+/* ===== Accessibility: Focus visible ===== */
+*:focus-visible {
+  outline: 2px solid var(--orange-500);
+  outline-offset: 2px;
+}
+
+/* Inputs maji vlastni focus styl — reset outline */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+}

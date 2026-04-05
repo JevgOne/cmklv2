@@ -208,7 +208,7 @@ export default async function ShopPage() {
           </div>
 
           {featuredParts.length === 0 && (
-            <p className="text-center text-gray-400 py-12">
+            <p className="text-center text-gray-500 py-12">
               Zatím nejsou k dispozici žádné díly.
             </p>
           )}

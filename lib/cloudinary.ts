@@ -79,3 +79,20 @@ export async function uploadToCloudinary(
   const data = await response.json();
   return data.secure_url as string;
 }
+
+/**
+ * Transformuje Cloudinary URL na optimalizovanou verzi.
+ * Input:  https://res.cloudinary.com/xxx/image/upload/v123/photo.jpg
+ * Output: https://res.cloudinary.com/xxx/image/upload/w_800,q_auto,f_auto,c_fill/v123/photo.jpg
+ */
+export function getOptimizedUrl(
+  url: string,
+  width: number = 800,
+  quality: string = "auto"
+): string {
+  if (!url.includes("res.cloudinary.com")) return url;
+  return url.replace(
+    "/image/upload/",
+    `/image/upload/w_${width},q_${quality},f_auto,c_fill/`
+  );
+}

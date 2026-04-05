@@ -306,7 +306,7 @@ export default function RegistracePage() {
                 className="mb-1.5 block text-sm font-medium text-gray-700"
               >
                 Telefon{" "}
-                <span className="font-normal text-gray-400">(nepovinné)</span>
+                <span className="font-normal text-gray-500">(nepovinné)</span>
               </label>
               <input
                 id="phone"

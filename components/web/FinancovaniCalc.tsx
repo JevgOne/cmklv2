@@ -93,7 +93,7 @@ export function FinancovaniCalc() {
               <p className="text-3xl font-extrabold text-orange-500">
                 ~{formatNumber(monthlyPayment)} Kč
               </p>
-              <p className="text-xs text-gray-400 mt-2">
+              <p className="text-xs text-gray-500 mt-2">
                 Úrok od 3,9 % p.a. Kalkulace je orientační.
               </p>
             </div>

@@ -289,7 +289,7 @@ export default function DilyKatalogPage() {
             })}
             {totalPages > 5 && (
               <>
-                <span className="text-gray-400 px-1">...</span>
+                <span className="text-gray-500 px-1">...</span>
                 <button
                   onClick={() => setPage(totalPages)}
                   className={`inline-flex items-center justify-center w-10 h-10 rounded-full font-semibold text-sm cursor-pointer transition-colors border-none ${

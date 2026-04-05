@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 
@@ -21,6 +21,15 @@ export function CookieConsent() {
     analytics: false,
     marketing: false,
   });
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (visible) {
+      requestAnimationFrame(() => {
+        dialogRef.current?.querySelector<HTMLButtonElement>("button")?.focus();
+      });
+    }
+  }, [visible]);
 
   useEffect(() => {
     // Zpozdeni aby se banner nezobrazil behem SSR hydrace
@@ -72,8 +81,10 @@ export function CookieConsent() {
 
   return (
     <div
+      ref={dialogRef}
       className="fixed bottom-0 inset-x-0 z-[100] p-4 sm:p-6"
       role="dialog"
+      aria-modal="true"
       aria-label="Nastaveni cookies"
     >
       <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl border border-gray-200 p-6">
@@ -85,7 +96,7 @@ export function CookieConsent() {
           Vice informaci v nasich{" "}
           <Link
             href="/zasady-cookies"
-            className="text-orange-500 underline hover:text-orange-600"
+            className="text-orange-700 underline hover:text-orange-600"
           >
             zasadach cookies
           </Link>

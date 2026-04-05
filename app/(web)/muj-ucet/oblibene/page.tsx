@@ -135,7 +135,7 @@ export default function OblibenePage() {
                     <span className="text-lg font-extrabold text-gray-900">
                       {formatPrice(listing.price)}
                     </span>
-                    <span className="text-xs text-gray-400">{listing.city}</span>
+                    <span className="text-xs text-gray-500">{listing.city}</span>
                   </div>
                 </div>
               </Link>

@@ -50,8 +50,14 @@ export default async function WebLayout({
 
   return (
     <CompareProvider>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[300] focus:px-4 focus:py-2 focus:bg-orange-600 focus:text-white focus:rounded-lg focus:text-sm focus:font-semibold focus:no-underline"
+      >
+        Prejit na obsah
+      </a>
       {navbar}
-      <main className="min-h-[calc(100vh-72px)]">{children}</main>
+      <main id="main-content" className="min-h-[calc(100vh-72px)]">{children}</main>
       {footer}
       <CompareBar />
       <CookieConsent />

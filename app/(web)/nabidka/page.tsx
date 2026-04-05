@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/Button";
 import { prisma } from "@/lib/prisma";
 import type { VehicleData } from "@/components/web/VehicleCard";
 
+export const revalidate = 300; // ISR: 5 minut
+
 export const metadata: Metadata = {
   title: "Nabídka vozidel",
   description:

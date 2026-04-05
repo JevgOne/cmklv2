@@ -317,7 +317,7 @@ export default function BrokerRegistrationPage() {
                 error={fieldErrors.ico}
               />
               {icoStatus === "loading" && (
-                <p className="mt-1 text-xs text-gray-400">Ověřuji v ARES...</p>
+                <p className="mt-1 text-xs text-gray-500">Ověřuji v ARES...</p>
               )}
               {icoStatus === "valid" && icoCompany && (
                 <p className="mt-1 text-xs text-success-600">{icoCompany}</p>

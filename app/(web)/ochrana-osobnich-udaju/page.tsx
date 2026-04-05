@@ -4,13 +4,13 @@ import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { BASE_URL } from "@/lib/seo-data";
 
 export const metadata: Metadata = {
-  title: "Ochrana osobnich udaju",
+  title: "Ochrana osobních údajů",
   description:
-    "Informace o zpracovani osobnich udaju na platforme CarMakler dle GDPR a zakona 110/2019 Sb.",
+    "Informace o zpracování osobních údajů na platformě CarMakler dle GDPR a zákona 110/2019 Sb.",
   openGraph: {
-    title: "Ochrana osobnich udaju | CarMakler",
+    title: "Ochrana osobních údajů | CarMakler",
     description:
-      "Zasady ochrany osobnich udaju platformy CarMakler — spravce, ucely zpracovani, prava subjektu.",
+      "Zásady ochrany osobních údajů platformy CarMakler — správce, účely zpracování, práva subjektů.",
   },
   alternates: {
     canonical: `${BASE_URL}/ochrana-osobnich-udaju`,
@@ -20,9 +20,9 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  name: "Ochrana osobnich udaju — CarMakler",
+  name: "Ochrana osobních údajů — CarMakler",
   url: `${BASE_URL}/ochrana-osobnich-udaju`,
-  description: "Zasady ochrany osobnich udaju platformy CarMakler dle GDPR",
+  description: "Zásady ochrany osobních údajů platformy CarMakler dle GDPR",
   isPartOf: {
     "@type": "WebSite",
     name: "CarMakler",
@@ -46,14 +46,14 @@ export default function OchranaOsobnichUdajuPage() {
       />
       <Breadcrumbs
         items={[
-          { label: "Domu", href: "/" },
-          { label: "Ochrana osobnich udaju" },
+          { label: "Domů", href: "/" },
+          { label: "Ochrana osobních údajů" },
         ]}
       />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
         <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-2">
-          Ochrana osobnich udaju
+          Ochrana osobních údajů
         </h1>
         <p className="text-sm text-gray-500 mb-10">
           Platne od [DOPLNIT DATUM] | Posledni aktualizace: [DOPLNIT DATUM]
@@ -134,7 +134,7 @@ export default function OchranaOsobnichUdajuPage() {
                   <tr className="border-b border-gray-100">
                     <td className="py-3 pr-4">Cookies (analyticke, marketingove)</td>
                     <td className="py-3 pr-4">Souhlas (cl. 6/1a)</td>
-                    <td className="py-3">Viz <Link href="/zasady-cookies">Zasady cookies</Link></td>
+                    <td className="py-3">Viz <Link href="/zasady-cookies">Zásady cookies</Link></td>
                   </tr>
                 </tbody>
               </table>
@@ -241,7 +241,7 @@ export default function OchranaOsobnichUdajuPage() {
             </ul>
             <p>
               Podrobnosti vcetne seznamu konkretnich cookies najdete na strance{" "}
-              <Link href="/zasady-cookies">Zasady cookies</Link>.
+              <Link href="/zasady-cookies">Zásady cookies</Link>.
               Svuj souhlas muzete kdykoliv zmenit pomoci cookie banneru na nasem webu.
             </p>
           </section>

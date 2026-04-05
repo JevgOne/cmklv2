@@ -77,7 +77,7 @@ export function PartnerLayout({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto px-3 py-4">
+        <nav aria-label="Partner menu" className="flex-1 overflow-y-auto px-3 py-4">
           {navItems.map((item) => {
             const isActive =
               pathname === item.href || pathname.startsWith(item.href + "/");

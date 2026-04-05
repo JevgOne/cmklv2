@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -62,9 +63,9 @@ export default function DilyKosikPage() {
             {items.map((item) => (
               <Card key={item.id} className="p-4">
                 <div className="flex gap-4">
-                  <div className="w-20 h-20 bg-gray-100 rounded-xl flex items-center justify-center shrink-0">
+                  <div className="relative w-20 h-20 bg-gray-100 rounded-xl flex items-center justify-center shrink-0">
                     {item.image ? (
-                      <img src={item.image} alt={item.name} className="w-full h-full object-cover rounded-xl" />
+                      <Image src={item.image} alt={item.name} fill className="object-cover rounded-xl" sizes="80px" />
                     ) : (
                       <span className="text-3xl text-gray-300">🔧</span>
                     )}
@@ -95,7 +96,7 @@ export default function DilyKosikPage() {
                       <div className="text-right">
                         <div className="font-bold text-gray-900">{formatPrice(item.price * item.quantity)}</div>
                         {item.quantity > 1 && (
-                          <div className="text-xs text-gray-400">{formatPrice(item.price)} / ks</div>
+                          <div className="text-xs text-gray-500">{formatPrice(item.price)} / ks</div>
                         )}
                       </div>
                     </div>
@@ -130,7 +131,7 @@ export default function DilyKosikPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-500">Doprava</span>
-                  <span className="font-medium text-gray-400">dle výběru</span>
+                  <span className="font-medium text-gray-500">dle výběru</span>
                 </div>
               </div>
               <hr className="my-4 border-gray-200" />

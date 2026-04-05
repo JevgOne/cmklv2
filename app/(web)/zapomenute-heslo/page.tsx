@@ -24,10 +24,10 @@ export default function ZapomenuteHesloPage() {
       if (res.ok) {
         setSent(true);
       } else {
-        setError("Doslo k chybe. Zkuste to prosim znovu.");
+        setError("Došlo k chybě. Zkuste to prosím znovu.");
       }
     } catch {
-      setError("Doslo k chybe. Zkuste to prosim znovu.");
+      setError("Došlo k chybě. Zkuste to prosím znovu.");
     } finally {
       setLoading(false);
     }
@@ -38,9 +38,9 @@ export default function ZapomenuteHesloPage() {
       <div className="w-full max-w-md">
         <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-card">
           <div className="mb-8 text-center">
-            <h1 className="text-2xl font-bold text-gray-900">Zapomenute heslo</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Zapomenuté heslo</h1>
             <p className="mt-2 text-sm text-gray-500">
-              Zadejte svuj email a poslem vam odkaz pro obnovu hesla
+              Zadejte svůj email a pošleme vám odkaz pro obnovu hesla
             </p>
           </div>
 
@@ -57,16 +57,16 @@ export default function ZapomenuteHesloPage() {
                   <path d="M22.5 6.908V6.75a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3v.158l9.714 5.978a1.5 1.5 0 0 0 1.572 0L22.5 6.908Z" />
                 </svg>
               </div>
-              <h2 className="text-lg font-bold text-gray-900 mb-2">Zkontrolujte svuj email</h2>
+              <h2 className="text-lg font-bold text-gray-900 mb-2">Zkontrolujte svůj email</h2>
               <p className="text-sm text-gray-500 mb-6">
-                Pokud ucet s timto emailem existuje, odeslali jsme odkaz pro obnovu hesla.
-                Zkontrolujte i slozku spam.
+                Pokud účet s tímto emailem existuje, odeslali jsme odkaz pro obnovu hesla.
+                Zkontrolujte i složku spam.
               </p>
               <Link
                 href="/login"
                 className="text-sm font-medium text-orange-600 hover:text-orange-700 no-underline"
               >
-                Zpet na prihlaseni
+                Zpět na přihlášení
               </Link>
             </div>
           ) : (
@@ -101,7 +101,7 @@ export default function ZapomenuteHesloPage() {
                   disabled={loading}
                   className="w-full rounded-lg bg-orange-500 px-4 py-3 text-base sm:text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-600 focus:ring-2 focus:ring-orange-500/20 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 min-h-[44px]"
                 >
-                  {loading ? "Odesilam..." : "Odeslat odkaz"}
+                  {loading ? "Odesílám..." : "Odeslat odkaz"}
                 </button>
               </form>
 
@@ -110,7 +110,7 @@ export default function ZapomenuteHesloPage() {
                   href="/login"
                   className="text-sm font-medium text-orange-600 hover:text-orange-700 no-underline"
                 >
-                  Zpet na prihlaseni
+                  Zpět na přihlášení
                 </Link>
               </div>
             </>

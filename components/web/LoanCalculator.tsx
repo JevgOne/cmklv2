@@ -69,7 +69,7 @@ export function LoanCalculator({ vehiclePrice, vehicleName }: LoanCalculatorProp
           onChange={(e) => setDownPaymentPercent(Number(e.target.value))}
           className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-orange-500"
         />
-        <div className="flex justify-between text-xs text-gray-400 mt-1">
+        <div className="flex justify-between text-xs text-gray-500 mt-1">
           <span>0 %</span>
           <span>80 %</span>
         </div>
@@ -108,7 +108,7 @@ export function LoanCalculator({ vehiclePrice, vehicleName }: LoanCalculatorProp
           <p className="text-sm text-gray-600 mb-1">Měsíční splátka</p>
           <p className="text-3xl font-extrabold text-gray-900">
             {new Intl.NumberFormat("cs-CZ").format(monthlyPayment)}{" "}
-            <span className="text-base font-medium text-gray-400">Kč/měs.</span>
+            <span className="text-base font-medium text-gray-500">Kč/měs.</span>
           </p>
         </div>
         <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-orange-200/50">
@@ -125,7 +125,7 @@ export function LoanCalculator({ vehiclePrice, vehicleName }: LoanCalculatorProp
             </p>
           </div>
         </div>
-        <p className="text-[11px] text-gray-400 text-center mt-3">
+        <p className="text-[11px] text-gray-500 text-center mt-3">
           Roční úroková sazba: {INTEREST_RATE} % p.a.
         </p>
       </div>

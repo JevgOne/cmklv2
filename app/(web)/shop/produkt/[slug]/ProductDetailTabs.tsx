@@ -72,7 +72,7 @@ export function ProductDetailTabs({
                 {description}
               </p>
             ) : (
-              <p className="text-gray-400 mt-3">
+              <p className="text-gray-500 mt-3">
                 Popis není k dispozici.
               </p>
             )}
@@ -125,7 +125,7 @@ export function ProductDetailTabs({
                 ))}
               </div>
             ) : (
-              <p className="text-gray-400">
+              <p className="text-gray-500">
                 Informace o kompatibilitě nejsou k dispozici.
               </p>
             )}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -91,12 +92,12 @@ export function ProfileForm() {
         </label>
         <div className="flex items-center gap-4">
           <div
-            className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden cursor-pointer border-2 border-dashed border-gray-300 hover:border-orange-400 transition-colors"
+            className="relative w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden cursor-pointer border-2 border-dashed border-gray-300 hover:border-orange-400 transition-colors"
             onClick={() => fileInputRef.current?.click()}
           >
             {photoPreview ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={photoPreview} alt="Preview" className="w-full h-full object-cover" />
+              
+              <Image src={photoPreview} alt="Preview" fill className="object-cover" unoptimized />
             ) : (
               <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />

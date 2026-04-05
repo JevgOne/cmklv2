@@ -4,13 +4,13 @@ import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { BASE_URL } from "@/lib/seo-data";
 
 export const metadata: Metadata = {
-  title: "Reklamacni rad",
+  title: "Reklamační řád",
   description:
-    "Reklamacni rad e-shopu CarMakler. Zarucni doby, uplatneni reklamace, odstoupeni od smlouvy, mimosoudni reseni sporu.",
+    "Reklamační řád e-shopu CarMakler. Záruční doby, uplatnění reklamace, odstoupení od smlouvy, mimosoudní řešení sporů.",
   openGraph: {
-    title: "Reklamacni rad | CarMakler",
+    title: "Reklamační řád | CarMakler",
     description:
-      "Reklamacni rad e-shopu s autodily CarMakler — zarucni doby, postup reklamace, prava spotrebitele.",
+      "Reklamační řád e-shopu s autodíly CarMakler — záruční doby, postup reklamace, práva spotřebitele.",
   },
   alternates: {
     canonical: `${BASE_URL}/reklamacni-rad`,
@@ -20,9 +20,9 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  name: "Reklamacni rad — CarMakler",
+  name: "Reklamační řád — CarMakler",
   url: `${BASE_URL}/reklamacni-rad`,
-  description: "Reklamacni rad e-shopu CarMakler",
+  description: "Reklamační řád e-shopu CarMakler",
   isPartOf: {
     "@type": "WebSite",
     name: "CarMakler",
@@ -46,14 +46,14 @@ export default function ReklamacniRadPage() {
       />
       <Breadcrumbs
         items={[
-          { label: "Domu", href: "/" },
-          { label: "Reklamacni rad" },
+          { label: "Domů", href: "/" },
+          { label: "Reklamační řád" },
         ]}
       />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
         <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-2">
-          Reklamacni rad
+          Reklamační řád
         </h1>
         <p className="text-sm text-gray-500 mb-10">
           Platny od [DOPLNIT DATUM] | Posledni aktualizace: [DOPLNIT DATUM]
@@ -73,7 +73,7 @@ export default function ReklamacniRadPage() {
               se sidlem [DOPLNIT ADRESA].
             </p>
             <p>
-              Reklamacni rad je vydany v souladu se zakonem c. 89/2012 Sb., obcansky zakonik (dale jen
+              Reklamační řád je vydany v souladu se zakonem c. 89/2012 Sb., obcansky zakonik (dale jen
               &bdquo;OZ&ldquo;), a zakonem c. 634/1992 Sb., o ochrane spotrebitele (dale jen &bdquo;ZOS&ldquo;).
             </p>
           </section>
@@ -276,7 +276,7 @@ export default function ReklamacniRadPage() {
             </p>
             <p>
               Podrobne obchodni podminky vcetne informaci o objednavkovem procesu najdete na strance{" "}
-              <Link href="/obchodni-podminky">Obchodni podminky</Link>.
+              <Link href="/obchodni-podminky">Obchodní podmínky</Link>.
             </p>
           </section>
 

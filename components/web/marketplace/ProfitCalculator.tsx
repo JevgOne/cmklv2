@@ -63,15 +63,15 @@ export function ProfitCalculator({
         ) : (
           <div className="grid grid-cols-3 gap-4 mb-6">
             <div className="bg-gray-50 rounded-lg p-3 text-center">
-              <div className="text-[11px] font-semibold text-gray-400 uppercase">Nákup</div>
+              <div className="text-[11px] font-semibold text-gray-500 uppercase">Nákup</div>
               <div className="text-sm font-bold text-gray-900 mt-1">{formatPrice(purchasePrice)}</div>
             </div>
             <div className="bg-gray-50 rounded-lg p-3 text-center">
-              <div className="text-[11px] font-semibold text-gray-400 uppercase">Oprava</div>
+              <div className="text-[11px] font-semibold text-gray-500 uppercase">Oprava</div>
               <div className="text-sm font-bold text-gray-900 mt-1">{formatPrice(repairCost)}</div>
             </div>
             <div className="bg-gray-50 rounded-lg p-3 text-center">
-              <div className="text-[11px] font-semibold text-gray-400 uppercase">Prodej</div>
+              <div className="text-[11px] font-semibold text-gray-500 uppercase">Prodej</div>
               <div className="text-sm font-bold text-success-500 mt-1">{formatPrice(salePrice)}</div>
             </div>
           </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { Button } from "@/components/ui";
@@ -53,7 +54,7 @@ export function MainMobileMenu() {
     <div className="fixed inset-0 z-[9999] bg-white flex flex-col" style={{ height: '100dvh' }}>
       <div className="flex items-center justify-between px-4 sm:px-6 h-[72px] border-b border-gray-200 shrink-0">
         <Link href="/" className="flex items-center no-underline" onClick={closeMenu}>
-          <img src="/brand/logo-dark.png" alt="CarMakléř" className="h-10 sm:h-12 w-auto object-contain" />
+          <Image src="/brand/logo-dark.png" alt="CarMakléř" width={120} height={48} className="h-10 sm:h-12 w-auto object-contain" priority />
         </Link>
         <button
           type="button"
@@ -67,7 +68,7 @@ export function MainMobileMenu() {
         </button>
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-6 pt-6 min-h-0">
+      <nav aria-label="Mobilni menu" className="flex-1 overflow-y-auto px-6 pt-6 min-h-0">
         <Link
           href="/nabidka"
           className="flex items-center text-lg font-semibold text-gray-900 hover:text-orange-500 transition-colors py-4 border-b border-gray-100 no-underline min-h-[44px]"

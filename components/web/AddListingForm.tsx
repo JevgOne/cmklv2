@@ -367,7 +367,7 @@ export function AddListingForm() {
       <div className="mt-4">
         <label className="block text-sm font-semibold text-gray-700 mb-1.5">
           Popis{" "}
-          <span className="font-normal text-gray-400">(volitelné)</span>
+          <span className="font-normal text-gray-500">(volitelné)</span>
         </label>
         <textarea
           className={cn(inputClass, "min-h-[100px] resize-y")}
@@ -409,7 +409,7 @@ export function AddListingForm() {
         <p className="text-gray-700 font-semibold mt-4">
           Přetáhněte fotky sem
         </p>
-        <p className="text-sm text-gray-400 mt-2">
+        <p className="text-sm text-gray-500 mt-2">
           nebo klikněte pro výběr z galerie
         </p>
       </div>
@@ -488,7 +488,7 @@ export function AddListingForm() {
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1.5">
             Email{" "}
-            <span className="font-normal text-gray-400">(volitelné)</span>
+            <span className="font-normal text-gray-500">(volitelné)</span>
           </label>
           <input
             type="email"

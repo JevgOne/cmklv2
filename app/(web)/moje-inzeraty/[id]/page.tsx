@@ -347,7 +347,7 @@ export default function ListingDetailPage() {
                     <span className="font-semibold text-gray-900 text-sm">
                       {inquiry.name}
                     </span>
-                    <span className="text-xs text-gray-400 ml-2">
+                    <span className="text-xs text-gray-500 ml-2">
                       {inquiry.email} &middot; {formatDate(inquiry.createdAt)}
                     </span>
                   </div>

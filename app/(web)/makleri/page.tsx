@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/Badge";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { prisma } from "@/lib/prisma";
 
+export const revalidate = 3600; // ISR: 1 hodina
+
 export const metadata: Metadata = {
   title: "Naši makléři — CarMakléř",
   description:

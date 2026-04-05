@@ -95,7 +95,7 @@ export function VehicleTimeline({ vehicleId }: { vehicleId: string }) {
 
                 {/* Content */}
                 <div className="pt-0.5">
-                  <div className="text-xs font-semibold text-gray-400 mb-0.5">
+                  <div className="text-xs font-semibold text-gray-500 mb-0.5">
                     {formattedDate}
                   </div>
                   <div className="text-sm font-semibold text-gray-900">

@@ -192,7 +192,7 @@ export function OpportunityWizard() {
               <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 text-center">
                 <span className="text-3xl block mb-2">📸</span>
                 <p className="text-sm text-gray-500">Přetáhněte fotky sem nebo klikněte pro výběr</p>
-                <p className="text-xs text-gray-400 mt-1">JPG, PNG, max 10 MB na fotku</p>
+                <p className="text-xs text-gray-500 mt-1">JPG, PNG, max 10 MB na fotku</p>
               </div>
             </div>
           </div>

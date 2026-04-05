@@ -4,11 +4,11 @@ import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { BASE_URL } from "@/lib/seo-data";
 
 export const metadata: Metadata = {
-  title: "Zasady cookies",
-  description: "Informace o pouzivani cookies na platforme CarMakler. Prehled cookies, ucely a zpusob spravy.",
+  title: "Zásady cookies",
+  description: "Informace o používání cookies na platformě CarMakler. Přehled cookies, účely a způsob správy.",
   openGraph: {
-    title: "Zasady cookies | CarMakler",
-    description: "Informace o pouzivani cookies na platforme CarMakler.",
+    title: "Zásady cookies | CarMakler",
+    description: "Informace o používání cookies na platformě CarMakler.",
   },
   alternates: {
     canonical: `${BASE_URL}/zasady-cookies`,
@@ -71,14 +71,14 @@ export default function ZasadyCookiesPage() {
     <>
       <Breadcrumbs
         items={[
-          { label: "Domu", href: "/" },
-          { label: "Zasady cookies" },
+          { label: "Domů", href: "/" },
+          { label: "Zásady cookies" },
         ]}
       />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
         <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-2">
-          Zasady cookies
+          Zásady cookies
         </h1>
         <p className="text-sm text-gray-500 mb-10">
           Posledni aktualizace: [DOPLNIT DATUM]
@@ -168,7 +168,7 @@ export default function ZasadyCookiesPage() {
             </p>
             <p>
               Podrobne informace o zpracovani osobnich udaju najdete na strance{" "}
-              <Link href="/ochrana-osobnich-udaju">Ochrana osobnich udaju</Link>.
+              <Link href="/ochrana-osobnich-udaju">Ochrana osobních údajů</Link>.
             </p>
           </section>
         </div>

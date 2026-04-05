@@ -7,7 +7,8 @@ import "./globals.css";
 const outfit = Outfit({
   variable: "--font-outfit",
   subsets: ["latin", "latin-ext"],
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
 });
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://www.carmakler.cz";

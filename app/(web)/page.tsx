@@ -426,7 +426,7 @@ export default async function HomePage() {
                     <div className="flex items-center justify-between pt-4 mt-4 border-t border-gray-100">
                       <div className="text-[22px] font-extrabold text-gray-900">
                         {car.price}{" "}
-                        <span className="text-sm font-medium text-gray-400">
+                        <span className="text-sm font-medium text-gray-500">
                           Kč
                         </span>
                       </div>
@@ -501,7 +501,7 @@ export default async function HomePage() {
                   <span className="font-bold text-gray-900 text-sm">
                     {t.name}
                   </span>
-                  <span className="text-gray-400 text-sm">, {t.city}</span>
+                  <span className="text-gray-500 text-sm">, {t.city}</span>
                 </div>
               </Card>
             ))}
@@ -581,7 +581,7 @@ export default async function HomePage() {
                         <div className="text-xl font-extrabold bg-gradient-to-br from-orange-500 to-orange-600 bg-clip-text text-transparent">
                           {broker.rating}
                         </div>
-                        <div className="text-[10px] font-semibold text-gray-400 mt-0.5 uppercase tracking-wide">
+                        <div className="text-[10px] font-semibold text-gray-500 mt-0.5 uppercase tracking-wide">
                           Hodnocení
                         </div>
                       </div>
@@ -589,7 +589,7 @@ export default async function HomePage() {
                         <div className="text-xl font-extrabold text-gray-900">
                           {broker.sales}
                         </div>
-                        <div className="text-[10px] font-semibold text-gray-400 mt-0.5 uppercase tracking-wide">
+                        <div className="text-[10px] font-semibold text-gray-500 mt-0.5 uppercase tracking-wide">
                           Prodejů
                         </div>
                       </div>
@@ -597,7 +597,7 @@ export default async function HomePage() {
                         <div className="text-xl font-extrabold text-gray-900">
                           {broker.avgDays}
                         </div>
-                        <div className="text-[10px] font-semibold text-gray-400 mt-0.5 uppercase tracking-wide">
+                        <div className="text-[10px] font-semibold text-gray-500 mt-0.5 uppercase tracking-wide">
                           Dní
                         </div>
                       </div>
@@ -605,7 +605,7 @@ export default async function HomePage() {
                         <div className="text-xl font-extrabold text-gray-900">
                           {broker.activeVehicles}
                         </div>
-                        <div className="text-[10px] font-semibold text-gray-400 mt-0.5 uppercase tracking-wide">
+                        <div className="text-[10px] font-semibold text-gray-500 mt-0.5 uppercase tracking-wide">
                           Vozidel
                         </div>
                       </div>

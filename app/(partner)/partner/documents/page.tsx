@@ -22,9 +22,9 @@ const documents: DocumentItem[] = [
     available: true,
   },
   {
-    title: "Obchodni podminky",
+    title: "Obchodní podmínky",
     description:
-      "Obchodni podminky pro partnery platformy Carmakler. Aktualni verze.",
+      "Obchodní podmínky pro partnery platformy Carmakler. Aktualni verze.",
     href: "/documents/obchodni-podminky.pdf",
     available: true,
   },

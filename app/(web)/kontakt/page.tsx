@@ -71,7 +71,7 @@ export default function KontaktPage() {
           <p className="text-gray-600 font-semibold mt-3 text-lg">
             CarMakléř — Praha
           </p>
-          <p className="text-gray-400 text-sm mt-1">
+          <p className="text-gray-500 text-sm mt-1">
             {companyInfo.address.full}
           </p>
         </div>

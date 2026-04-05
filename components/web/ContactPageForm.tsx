@@ -69,7 +69,7 @@ export function ContactPageForm() {
         </p>
         <button
           onClick={() => setSubmitted(false)}
-          className="mt-4 text-sm text-orange-500 font-semibold hover:text-orange-600 transition-colors cursor-pointer bg-transparent border-none"
+          className="mt-4 text-sm text-orange-700 font-semibold hover:text-orange-600 transition-colors cursor-pointer bg-transparent border-none"
         >
           Odeslat další zprávu
         </button>

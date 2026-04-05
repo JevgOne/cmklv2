@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
@@ -125,7 +126,7 @@ export default async function DilyDetailPage({
       {/* Breadcrumbs */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <nav className="flex items-center gap-2 text-sm text-gray-500">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm text-gray-500">
             <Link href="/dily" className="hover:text-orange-500 transition-colors no-underline text-gray-500">
               Díly
             </Link>
@@ -143,13 +144,13 @@ export default async function DilyDetailPage({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12">
           {/* Left — Gallery */}
           <div>
-            <div className="aspect-square bg-gray-100 rounded-2xl flex items-center justify-center mb-4 overflow-hidden">
+            <div className="relative aspect-square bg-gray-100 rounded-2xl flex items-center justify-center mb-4 overflow-hidden">
               {part.images[0] ? (
-                <img src={part.images[0].url} alt={part.name} className="w-full h-full object-cover" />
+                <Image src={part.images[0].url} alt={part.name} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 50vw" />
               ) : (
                 <div className="text-center">
                   <span className="text-7xl block mb-3">🔧</span>
-                  <span className="text-sm text-gray-400">Bez fotky</span>
+                  <span className="text-sm text-gray-500">Bez fotky</span>
                 </div>
               )}
             </div>
@@ -158,11 +159,11 @@ export default async function DilyDetailPage({
                 {part.images.slice(0, 4).map((img, i) => (
                   <div
                     key={img.id}
-                    className={`aspect-square bg-gray-100 rounded-xl overflow-hidden cursor-pointer transition-all ${
+                    className={`relative aspect-square bg-gray-100 rounded-xl overflow-hidden cursor-pointer transition-all ${
                       i === 0 ? "ring-2 ring-orange-500" : "hover:ring-2 hover:ring-gray-300"
                     }`}
                   >
-                    <img src={img.url} alt={`${part.name} - foto ${i + 1}`} className="w-full h-full object-cover" />
+                    <Image src={img.url} alt={`${part.name} - foto ${i + 1}`} fill className="object-cover" sizes="25vw" />
                   </div>
                 ))}
               </div>
@@ -194,7 +195,7 @@ export default async function DilyDetailPage({
             </p>
 
             {(part.oemNumber || part.partNumber) && (
-              <p className="text-sm text-gray-400 mt-1 font-mono">
+              <p className="text-sm text-gray-500 mt-1 font-mono">
                 {part.oemNumber ? `OE: ${part.oemNumber}` : ""}
                 {part.oemNumber && part.partNumber ? " | " : ""}
                 {part.partNumber ? `PN: ${part.partNumber}` : ""}
@@ -249,7 +250,7 @@ export default async function DilyDetailPage({
               <div className="text-3xl sm:text-4xl font-extrabold text-gray-900">
                 {formatCzk(part.price)} Kč
               </div>
-              <p className="text-sm text-gray-400 mt-1">
+              <p className="text-sm text-gray-500 mt-1">
                 {part.vatIncluded ? "Cena včetně DPH" : "Cena bez DPH"}
               </p>
             </div>

@@ -116,7 +116,7 @@ export default function MojeObjednavkyPage() {
                     </span>
                     <Badge variant={badge.variant}>{badge.label}</Badge>
                   </div>
-                  <span className="text-sm text-gray-400">{date}</span>
+                  <span className="text-sm text-gray-500">{date}</span>
                 </div>
 
                 {/* Tracker */}

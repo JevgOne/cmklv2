@@ -105,7 +105,7 @@ export default function DilyMojeObjednavkyPage() {
                     <span className="text-sm font-mono text-gray-500">#{order.orderNumber}</span>
                     <Badge variant={badge.variant}>{badge.label}</Badge>
                   </div>
-                  <span className="text-sm text-gray-400">{date}</span>
+                  <span className="text-sm text-gray-500">{date}</span>
                 </div>
                 <div className="mb-6">
                   <OrderTracker status={mapToTrackerStatus(order.status)} />

@@ -102,13 +102,13 @@ export default async function BazarProfilePage({ params }: Props) {
               <span className="text-yellow-500">⭐</span>
               <span className="font-bold">{partner.googleRating.toFixed(1)}</span>
               {partner.googleReviewCount && (
-                <span className="text-gray-400 text-sm">
+                <span className="text-gray-500 text-sm">
                   ({partner.googleReviewCount} hodnocení)
                 </span>
               )}
             </div>
           )}
-          <div className="text-xs text-gray-400 mt-2">
+          <div className="text-xs text-gray-500 mt-2">
             Na CarMakléři od {new Date(partner.createdAt).toLocaleDateString("cs-CZ")}
           </div>
         </div>
@@ -143,7 +143,7 @@ export default async function BazarProfilePage({ params }: Props) {
           Vozidla ({vehicles.length})
         </h2>
         {vehicles.length === 0 ? (
-          <p className="text-gray-400">Žádná vozidla k dispozici.</p>
+          <p className="text-gray-500">Žádná vozidla k dispozici.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {vehicles.map((v) => (
@@ -178,7 +178,7 @@ export default async function BazarProfilePage({ params }: Props) {
                           maximumFractionDigits: 0,
                         }).format(v.price)}
                       </span>
-                      <span className="text-xs text-gray-400">
+                      <span className="text-xs text-gray-500">
                         {new Intl.NumberFormat("cs-CZ").format(v.mileage)} km
                       </span>
                     </div>

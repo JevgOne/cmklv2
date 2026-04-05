@@ -116,14 +116,14 @@ export function SellerNotificationPreferences({
       {/* Hlavicka */}
       <Card className="p-4">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-xs font-bold text-gray-400 uppercase tracking-wide">
+          <span className="text-xs font-bold text-gray-500 uppercase tracking-wide">
             Udalost
           </span>
           <div className="flex gap-6">
-            <span className="text-xs font-bold text-gray-400 uppercase tracking-wide w-12 text-center">
+            <span className="text-xs font-bold text-gray-500 uppercase tracking-wide w-12 text-center">
               Email
             </span>
-            <span className="text-xs font-bold text-gray-400 uppercase tracking-wide w-12 text-center">
+            <span className="text-xs font-bold text-gray-500 uppercase tracking-wide w-12 text-center">
               SMS
             </span>
           </div>
@@ -179,7 +179,7 @@ export function SellerNotificationPreferences({
       })}
 
       {saving && (
-        <p className="text-xs text-gray-400 text-center">Ukladam...</p>
+        <p className="text-xs text-gray-500 text-center">Ukladam...</p>
       )}
       {savedMessage && (
         <p className="text-xs text-green-600 text-center">Ulozeno</p>

@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
 import withSerwistInit from "@serwist/next";
 import { withSentryConfig } from "@sentry/nextjs";
+import withBundleAnalyzer from "@next/bundle-analyzer";
+
+const withAnalyze = withBundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+});
 
 const withSerwist = withSerwistInit({
   swSrc: "app/sw.ts",
@@ -34,7 +39,7 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withSentryConfig(withSerwist(nextConfig), {
+export default withSentryConfig(withAnalyze(withSerwist(nextConfig)), {
   // Sentry webpack plugin options
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,

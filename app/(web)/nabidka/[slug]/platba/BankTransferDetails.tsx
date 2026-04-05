@@ -96,7 +96,7 @@ export function BankTransferDetails({
             />
           ) : (
             <div className="w-[250px] h-[250px] bg-gray-100 rounded-xl flex items-center justify-center">
-              <span className="text-gray-400">Generování QR...</span>
+              <span className="text-gray-500">Generování QR...</span>
             </div>
           )}
         </div>

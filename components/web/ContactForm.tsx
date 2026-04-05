@@ -105,7 +105,7 @@ export function ContactForm({ vehicleName, vehicleId, brokerId, className }: Con
             setSubmitted(false);
             setError(null);
           }}
-          className="mt-4 text-sm text-orange-500 font-semibold hover:text-orange-600 transition-colors"
+          className="mt-4 text-sm text-orange-700 font-semibold hover:text-orange-600 transition-colors"
         >
           Odeslat další poptávku
         </button>
@@ -182,7 +182,7 @@ export function ContactForm({ vehicleName, vehicleId, brokerId, className }: Con
           {submitting ? "Odesílám..." : "Odeslat poptávku"}
         </Button>
 
-        <p className="text-xs text-gray-400 text-center">
+        <p className="text-xs text-gray-500 text-center">
           Odesláním souhlasíte se zpracováním osobních údajů za účelem
           odpovědi na vaši poptávku.
         </p>

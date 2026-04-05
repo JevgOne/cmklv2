@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 interface NavItem {
   id: string;
@@ -118,7 +119,7 @@ export function AdminSidebar({ open, onClose }: AdminSidebarProps) {
         {/* Header */}
         <div className="p-6 border-b border-white/[0.08]">
           <div className="flex items-center gap-3">
-            <img src="/brand/logo-white.png" alt="CarMakléř" className="h-10 w-auto object-contain" />
+            <Image src="/brand/logo-white.png" alt="CarMakléř" width={120} height={40} className="h-10 w-auto object-contain" priority />
             <span className="text-[10px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full ml-2">
               {userRole === "MANAGER" ? "MANAŽER" : "ADMIN"}
             </span>
@@ -126,7 +127,7 @@ export function AdminSidebar({ open, onClose }: AdminSidebarProps) {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto px-3 py-4">
+        <nav aria-label="Administrace" className="flex-1 overflow-y-auto px-3 py-4">
           {visibleSections.map((section) => (
             <div key={section.title} className="mb-2">
               <div className="text-[11px] font-bold text-gray-500 uppercase tracking-widest px-3 py-2">

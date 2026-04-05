@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { urls } from "@/lib/urls";
 
@@ -9,10 +10,10 @@ export function InzerceNavbar() {
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/80">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between">
+      <nav aria-label="Hlavni navigace" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 no-underline shrink-0">
-          <img src="/brand/logo-dark.png" alt="CarMakléř" className="h-10 sm:h-12 w-auto object-contain" />
+          <Image src="/brand/logo-dark.png" alt="CarMakléř" width={120} height={48} className="h-10 sm:h-12 w-auto object-contain" priority />
           <span className="text-sm font-semibold text-orange-500 border border-orange-200 rounded-full px-2 py-0.5">
             Inzerce
           </span>

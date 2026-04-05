@@ -138,7 +138,7 @@ export function Step5PriceContact({ data, updateData, onNext, onPrev }: Step5Pro
           onChange={(e) => update("description", e.target.value)}
           error={errors.description}
         />
-        <span className="text-xs text-gray-400 mt-1 block">
+        <span className="text-xs text-gray-500 mt-1 block">
           {data.description.length} / 50 min. znaků
         </span>
       </div>

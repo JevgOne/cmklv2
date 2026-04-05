@@ -81,7 +81,7 @@ export default function SledovaniPage({ params }: { params: Promise<{ token: str
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-pulse text-gray-400">Nacitani objednavky...</div>
+        <div className="animate-pulse text-gray-500">Nacitani objednavky...</div>
       </div>
     );
   }
@@ -123,7 +123,7 @@ export default function SledovaniPage({ params }: { params: Promise<{ token: str
               <span className="text-sm font-mono text-gray-500">#{order.orderNumber}</span>
               <Badge variant={badge.variant}>{badge.label}</Badge>
             </div>
-            <span className="text-sm text-gray-400">{date}</span>
+            <span className="text-sm text-gray-500">{date}</span>
           </div>
 
           <div className="mb-4">

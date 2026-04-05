@@ -162,7 +162,7 @@ export function PriceHistory({ vehicleId }: { vehicleId: string }) {
                   {formatPrice(entry.price)} Kč
                 </div>
                 {entry.previousPrice !== null && (
-                  <div className="text-xs text-gray-400 line-through">
+                  <div className="text-xs text-gray-500 line-through">
                     {formatPrice(entry.previousPrice)} Kč
                   </div>
                 )}

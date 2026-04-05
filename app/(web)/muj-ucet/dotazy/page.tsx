@@ -137,7 +137,7 @@ export default function DotazyPage() {
 
                   {/* My message */}
                   <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                    <span className="text-[11px] text-gray-400 font-medium uppercase tracking-wide">
+                    <span className="text-[11px] text-gray-500 font-medium uppercase tracking-wide">
                       Váš dotaz ({formatDate(inquiry.createdAt)})
                     </span>
                     <p className="text-sm text-gray-700 mt-1">{inquiry.message}</p>

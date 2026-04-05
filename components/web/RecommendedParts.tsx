@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 
@@ -52,7 +53,7 @@ function formatCzk(price: number): string {
 /*  Komponenta                                                         */
 /* ------------------------------------------------------------------ */
 
-export function RecommendedParts({ brand, model, year }: RecommendedPartsProps) {
+export const RecommendedParts = memo(function RecommendedParts({ brand, model, year }: RecommendedPartsProps) {
   const [parts, setParts] = useState<PartData[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -124,10 +125,12 @@ export function RecommendedParts({ brand, model, year }: RecommendedPartsProps) 
                 {/* Obrazek */}
                 <div className="relative aspect-square bg-gray-100 flex items-center justify-center overflow-hidden">
                   {part.image ? (
-                    <img
+                    <Image
                       src={part.image}
                       alt={part.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                     />
                   ) : (
                     <span className="text-4xl text-gray-300">🔧</span>
@@ -177,7 +180,7 @@ export function RecommendedParts({ brand, model, year }: RecommendedPartsProps) 
         <div className="mt-6 text-center">
           <Link
             href={catalogUrl}
-            className="inline-flex items-center gap-2 text-orange-500 font-semibold hover:text-orange-600 transition-colors"
+            className="inline-flex items-center gap-2 text-orange-700 font-semibold hover:text-orange-600 transition-colors"
           >
             Zobrazit všech {totalCount} dílů pro tento vůz
             <svg
@@ -199,4 +202,4 @@ export function RecommendedParts({ brand, model, year }: RecommendedPartsProps) 
       )}
     </div>
   );
-}
+});

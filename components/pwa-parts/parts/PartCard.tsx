@@ -1,4 +1,6 @@
+import { memo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { formatPrice } from "@/lib/utils";
@@ -21,7 +23,7 @@ const statusConfig = {
   RESERVED: { label: "Rezervováno", variant: "new" as const },
 };
 
-export function PartCard({ id, name, category, price, status, image, views, quantity }: PartCardProps) {
+export const PartCard = memo(function PartCard({ id, name, category, price, status, image, views, quantity }: PartCardProps) {
   const cfg = statusConfig[status];
 
   return (
@@ -29,9 +31,9 @@ export function PartCard({ id, name, category, price, status, image, views, quan
       <Card className="p-3 active:scale-[0.98] transition-transform">
         <div className="flex gap-3">
           {/* Image */}
-          <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
+          <div className="relative w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
             {image ? (
-              <img src={image} alt={name} className="w-full h-full object-cover" />
+              <Image src={image} alt={name} fill className="object-cover" sizes="64px" />
             ) : (
               <span className="text-2xl text-gray-300">🔧</span>
             )}
@@ -56,4 +58,4 @@ export function PartCard({ id, name, category, price, status, image, views, quan
       </Card>
     </Link>
   );
-}
+});

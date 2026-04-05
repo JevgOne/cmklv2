@@ -41,7 +41,7 @@ export function BrokerBox({
         </div>
         <div>
           <h4 className="text-lg font-bold text-gray-900">{name}</h4>
-          <p className="text-sm text-orange-500 font-semibold">
+          <p className="text-sm text-orange-700 font-semibold">
             Certifikovaný makléř
           </p>
         </div>
@@ -119,7 +119,7 @@ export function BrokerBox({
       {/* Profile link */}
       <Link
         href={`/makler/${slug}`}
-        className="text-sm text-orange-500 font-semibold hover:text-orange-600 transition-colors text-center no-underline"
+        className="text-sm text-orange-700 font-semibold hover:text-orange-600 transition-colors text-center no-underline"
       >
         Zobrazit profil makléře &rarr;
       </Link>

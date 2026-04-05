@@ -27,7 +27,7 @@ export default function MujUcetLayout({ children }: { children: React.ReactNode 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Sidebar nav */}
-          <nav className="lg:w-56 shrink-0">
+          <nav aria-label="Menu uctu" className="lg:w-56 shrink-0">
             <div className="flex lg:flex-col gap-2 overflow-x-auto">
               {navItems.map((item) => {
                 const isActive = item.exact

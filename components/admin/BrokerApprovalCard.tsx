@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -91,10 +92,10 @@ export function BrokerApprovalCard({ broker, onActivate, onReject }: BrokerAppro
 
       <div className="flex items-start gap-4">
         {/* Avatar */}
-        <div className="w-14 h-14 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center text-white text-lg font-bold shrink-0">
+        <div className="relative w-14 h-14 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center text-white text-lg font-bold shrink-0">
           {broker.avatar ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={broker.avatar} alt={broker.name} className="w-full h-full rounded-xl object-cover" />
+            
+            <Image src={broker.avatar} alt={broker.name} fill className="rounded-xl object-cover" sizes="56px" />
           ) : (
             broker.initials
           )}

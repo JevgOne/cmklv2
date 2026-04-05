@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+
+export const revalidate = 600; // ISR: 10 minut
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -11,7 +13,11 @@ import { ContactForm } from "@/components/web/ContactForm";
 import { VehicleDetailTabs } from "./VehicleDetailTabs";
 import { VehicleCard } from "@/components/web/VehicleCard";
 import { ContactBrokerButton } from "./ContactBrokerButton";
-import { PriceHistory } from "@/components/web/PriceHistory";
+import dynamic from "next/dynamic";
+const PriceHistory = dynamic(
+  () => import("@/components/web/PriceHistory").then((m) => ({ default: m.PriceHistory })),
+  { loading: () => <div className="animate-pulse h-64 bg-gray-100 rounded-lg" /> }
+);
 import { VehicleTimeline } from "@/components/web/VehicleTimeline";
 import { ListingBadge } from "@/components/web/ListingBadge";
 import { ReservationButton } from "@/components/web/ReservationButton";
@@ -490,7 +496,7 @@ export default async function VehicleDetailPage({
       />
       {/* Breadcrumb */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
-        <nav className="text-sm text-gray-500 flex items-center gap-2 overflow-hidden">
+        <nav aria-label="Breadcrumb" className="text-sm text-gray-500 flex items-center gap-2 overflow-hidden">
           <Link href="/" className="hover:text-gray-900 transition-colors">
             Domů
           </Link>
@@ -534,7 +540,7 @@ export default async function VehicleDetailPage({
                 <span className="text-2xl sm:text-[32px] font-extrabold text-gray-900">
                   {formattedPrice}
                 </span>
-                <span className="text-lg font-medium text-gray-400">Kč</span>
+                <span className="text-lg font-medium text-gray-500">Kč</span>
               </div>
               {vehicle.priceNegotiable && (
                 <span className="text-sm text-orange-500 font-semibold">
@@ -747,7 +753,7 @@ export default async function VehicleDetailPage({
           <h3 className="text-lg font-bold text-gray-900 mb-4">
             Lokace vozidla
           </h3>
-          <div className="bg-gray-100 rounded-xl h-48 flex items-center justify-center text-gray-400">
+          <div className="bg-gray-100 rounded-xl h-48 flex items-center justify-center text-gray-500">
             <div className="text-center">
               <div className="text-4xl mb-2">📍</div>
               <div className="font-semibold text-gray-600">
@@ -926,7 +932,7 @@ function renderListingDetail(listing: ListingWithRelations, slug: string) {
     <div className="min-h-screen bg-gray-50">
       {/* Breadcrumb */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
-        <nav className="text-sm text-gray-500 flex items-center gap-2 overflow-hidden">
+        <nav aria-label="Breadcrumb" className="text-sm text-gray-500 flex items-center gap-2 overflow-hidden">
           <Link href="/" className="hover:text-gray-900 transition-colors">Domů</Link>
           <span>/</span>
           <Link href="/nabidka" className="hover:text-gray-900 transition-colors">Nabídka</Link>
@@ -952,7 +958,7 @@ function renderListingDetail(listing: ListingWithRelations, slug: string) {
             <div className="bg-white rounded-2xl shadow-card p-5">
               <div className="flex items-baseline gap-2">
                 <span className="text-2xl sm:text-[32px] font-extrabold text-gray-900">{formattedPrice}</span>
-                <span className="text-lg font-medium text-gray-400">Kč</span>
+                <span className="text-lg font-medium text-gray-500">Kč</span>
               </div>
               {listing.priceNegotiable && (
                 <span className="text-sm text-orange-500 font-semibold">Cena k jednání</span>

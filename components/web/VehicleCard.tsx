@@ -1,4 +1,6 @@
+import { memo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Badge } from "@/components/ui/Badge";
 import { TrustScore } from "@/components/ui/TrustScore";
 import { Card } from "@/components/ui/Card";
@@ -39,7 +41,7 @@ export interface VehicleCardProps {
   className?: string;
 }
 
-export function VehicleCard({ car, className }: VehicleCardProps) {
+export const VehicleCard = memo(function VehicleCard({ car, className }: VehicleCardProps) {
   const href = `/nabidka/${car.slug || car.name.toLowerCase().replace(/\s+/g, '-')}`;
 
   return (
@@ -47,11 +49,12 @@ export function VehicleCard({ car, className }: VehicleCardProps) {
       <Card hover className={`group ${className ?? ""}`}>
         {/* Image */}
         <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
-          <img
+          <Image
             src={car.photo}
             alt={car.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            loading="lazy"
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            sizes="(max-width: 768px) 100vw, 33vw"
           />
 
           {/* Badges */}
@@ -132,7 +135,7 @@ export function VehicleCard({ car, className }: VehicleCardProps) {
 
           {/* Broker name */}
           {(!car.sellerType || car.sellerType === "broker") && car.brokerName && (
-            <p className="text-xs text-gray-400 mt-2">
+            <p className="text-xs text-gray-500 mt-2">
               Makléř: {car.brokerName}
             </p>
           )}
@@ -141,7 +144,7 @@ export function VehicleCard({ car, className }: VehicleCardProps) {
           <div className="flex items-center justify-between pt-4 mt-4 border-t border-gray-100">
             <div className="text-[22px] font-extrabold text-gray-900">
               {car.price}{" "}
-              <span className="text-sm font-medium text-gray-400">Kč</span>
+              <span className="text-sm font-medium text-gray-500">Kč</span>
             </div>
             <Button variant="secondary" size="sm">
               Detail &rarr;
@@ -151,4 +154,4 @@ export function VehicleCard({ car, className }: VehicleCardProps) {
       </Card>
     </Link>
   );
-}
+});

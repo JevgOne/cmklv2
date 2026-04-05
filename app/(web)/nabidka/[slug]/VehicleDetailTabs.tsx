@@ -97,7 +97,7 @@ export function VehicleDetailTabs({
 
                   {/* Content */}
                   <div>
-                    <div className="text-xs font-semibold text-gray-400 mb-1">
+                    <div className="text-xs font-semibold text-gray-500 mb-1">
                       {entry.date}
                     </div>
                     <div className="text-sm font-semibold text-gray-900">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Textarea } from "@/components/ui/Textarea";
@@ -150,8 +151,8 @@ export function DamageReportForm({ vehicleId, onSuccess, onCancel }: DamageRepor
         <div className="flex flex-wrap gap-2">
           {previews.map((preview, i) => (
             <div key={i} className="relative w-20 h-20 rounded-lg overflow-hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={preview} alt={`Foto ${i + 1}`} className="w-full h-full object-cover" />
+              
+              <Image src={preview} alt={`Foto ${i + 1}`} fill className="object-cover" unoptimized />
               <button
                 type="button"
                 onClick={() => removePhoto(i)}

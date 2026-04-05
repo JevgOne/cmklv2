@@ -44,7 +44,7 @@ export function CompareBar() {
             {Array.from({ length: 3 - vehicles.length }).map((_, i) => (
               <div
                 key={`empty-${i}`}
-                className="w-[180px] h-[52px] border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center text-sm text-gray-400 shrink-0"
+                className="w-[180px] h-[52px] border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center text-sm text-gray-500 shrink-0"
               >
                 + Přidat vůz
               </div>

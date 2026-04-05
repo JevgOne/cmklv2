@@ -117,7 +117,7 @@ export default function KosikPage() {
                           {formatPrice(item.price * item.quantity)}
                         </div>
                         {item.quantity > 1 && (
-                          <div className="text-xs text-gray-400">
+                          <div className="text-xs text-gray-500">
                             {formatPrice(item.price)} / ks
                           </div>
                         )}
@@ -159,7 +159,7 @@ export default function KosikPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-500">Doprava</span>
-                  <span className="font-medium text-gray-400">dle výběru</span>
+                  <span className="font-medium text-gray-500">dle výběru</span>
                 </div>
               </div>
 

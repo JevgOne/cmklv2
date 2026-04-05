@@ -31,7 +31,7 @@ export function Pagination({ currentPage, totalPages, onPageChange, className }:
       </button>
       {pages.map((page, i) =>
         page === "..." ? (
-          <span key={`dots-${i}`} className="w-10 h-10 flex items-center justify-center text-gray-400">
+          <span key={`dots-${i}`} className="w-10 h-10 flex items-center justify-center text-gray-500">
             ...
           </span>
         ) : (

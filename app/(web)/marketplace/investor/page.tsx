@@ -75,7 +75,7 @@ export default async function InvestorDashboardPage() {
       <div className="mt-10">
         <h2 className="text-xl font-bold text-gray-900 mb-4">Dostupné příležitosti</h2>
         {opportunities.filter((o) => o.status === "FUNDING" || o.status === "APPROVED").length === 0 ? (
-          <p className="text-gray-400 text-center py-12">Žádné dostupné příležitosti.</p>
+          <p className="text-gray-500 text-center py-12">Žádné dostupné příležitosti.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {opportunities
@@ -91,7 +91,7 @@ export default async function InvestorDashboardPage() {
       <div className="mt-10">
         <h2 className="text-xl font-bold text-gray-900 mb-4">Aktivní investice</h2>
         {opportunities.filter((o) => o.status !== "FUNDING" && o.status !== "APPROVED").length === 0 ? (
-          <p className="text-gray-400 text-center py-12">Žádné aktivní investice.</p>
+          <p className="text-gray-500 text-center py-12">Žádné aktivní investice.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {opportunities

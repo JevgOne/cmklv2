@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -102,11 +103,15 @@ export default async function DealerFlipDetailPage({
           {/* Photo */}
           <Card className="overflow-hidden">
             {flipDetail.photos[0] && (
-              <img
-                src={flipDetail.photos[0]}
-                alt={`${flipDetail.brand} ${flipDetail.model}`}
-                className="w-full aspect-video object-cover"
-              />
+              <div className="relative aspect-video">
+                <Image
+                  src={flipDetail.photos[0]}
+                  alt={`${flipDetail.brand} ${flipDetail.model}`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 66vw"
+                />
+              </div>
             )}
           </Card>
 
@@ -129,7 +134,7 @@ export default async function DealerFlipDetailPage({
               ) : (
                 <div className="grid grid-cols-3 gap-3">
                   {flipDetail.repairPhotos.map((url, i) => (
-                    <img key={i} src={url} alt={`Oprava ${i + 1}`} className="rounded-lg aspect-square object-cover" />
+                    <div key={i} className="relative aspect-square"><Image src={url} alt={`Oprava ${i + 1}`} fill className="rounded-lg object-cover" sizes="33vw" /></div>
                   ))}
                 </div>
               )}

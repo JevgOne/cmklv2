@@ -7,7 +7,7 @@ export default function PridatInzeratPage() {
       {/* Header + Breadcrumb */}
       <section className="bg-white border-b border-gray-200">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
-          <nav className="flex items-center gap-2 text-sm text-gray-400 mb-4">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm text-gray-500 mb-4">
             <Link
               href="/inzerce"
               className="text-orange-500 hover:text-orange-600 no-underline transition-colors"

@@ -95,7 +95,7 @@ export function CebiaCheck({ vehicleId, vin, isBrokerListing }: CebiaCheckProps)
               : `Jednorázová cena ${CEBIA_PRICE} Kč`}
           </p>
           {vin && !vin.startsWith("PRIV") && (
-            <p className="text-xs text-gray-400 mt-0.5">VIN: {vin}</p>
+            <p className="text-xs text-gray-500 mt-0.5">VIN: {vin}</p>
           )}
         </div>
         <Button

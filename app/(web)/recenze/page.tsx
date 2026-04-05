@@ -161,7 +161,7 @@ export default function RecenzePage() {
                     <span className="font-bold text-gray-900 text-sm">
                       {review.name}
                     </span>
-                    <span className="text-gray-400 text-sm">
+                    <span className="text-gray-500 text-sm">
                       , {review.city} · {review.date}
                     </span>
                   </div>

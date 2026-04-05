@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, memo } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { addToCart } from "@/lib/cart";
@@ -38,7 +38,7 @@ function Stars({ count }: { count: number }) {
           ★
         </span>
       ))}
-      <span className="text-xs text-gray-400 ml-1">{count}/5</span>
+      <span className="text-xs text-gray-500 ml-1">{count}/5</span>
     </div>
   );
 }
@@ -47,7 +47,7 @@ function formatCzk(price: number): string {
   return new Intl.NumberFormat("cs-CZ").format(price);
 }
 
-export function ProductCard({
+export const ProductCard = memo(function ProductCard({
   partId,
   name,
   compatibility,
@@ -112,7 +112,7 @@ export function ProductCard({
               {formatCzk(price)} Kč
             </span>
             {oldPrice && (
-              <span className="text-sm text-gray-400 line-through">
+              <span className="text-sm text-gray-500 line-through">
                 {formatCzk(oldPrice)} Kč
               </span>
             )}
@@ -146,4 +146,4 @@ export function ProductCard({
       </div>
     </Card>
   );
-}
+});

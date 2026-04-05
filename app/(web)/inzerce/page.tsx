@@ -135,7 +135,7 @@ export default async function InzercePage() {
               </Button>
             </Link>
           </div>
-          <p className="text-sm text-gray-400 mt-5 flex items-center justify-center gap-4 flex-wrap">
+          <p className="text-sm text-gray-500 mt-5 flex items-center justify-center gap-4 flex-wrap">
             <span className="text-green-500 font-medium">&#10003; Zcela zdarma</span>
             <span className="text-green-500 font-medium">&#10003; Bez registrace</span>
             <span className="text-green-500 font-medium">&#10003; Online za 60 sekund</span>
@@ -396,11 +396,11 @@ export default async function InzercePage() {
                     <div className="flex items-center justify-between pt-4 mt-4 border-t border-gray-100">
                       <div className="text-[22px] font-extrabold text-gray-900">
                         {listing.price}{" "}
-                        <span className="text-sm font-medium text-gray-400">
+                        <span className="text-sm font-medium text-gray-500">
                           Kč
                         </span>
                       </div>
-                      <span className="text-xs text-gray-400">{listing.city}</span>
+                      <span className="text-xs text-gray-500">{listing.city}</span>
                     </div>
                   </div>
                 </Card>
@@ -408,7 +408,7 @@ export default async function InzercePage() {
             ))}
           </div>
           ) : (
-            <p className="text-center text-gray-400 py-8">
+            <p className="text-center text-gray-500 py-8">
               Zatím nejsou k dispozici žádné inzeráty. Buďte první!
             </p>
           )}
@@ -468,7 +468,7 @@ function PricingRow({
           —
         </span>
       )}
-      <span className={included ? "text-gray-700" : "text-gray-400"}>
+      <span className={included ? "text-gray-700" : "text-gray-500"}>
         {children}
       </span>
     </li>

@@ -1,4 +1,6 @@
+import { memo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { ProgressBar } from "@/components/ui/ProgressBar";
@@ -33,7 +35,7 @@ const statusMap: Record<string, { label: string; variant: "verified" | "top" | "
   CANCELLED: { label: "Zamítnuto", variant: "rejected" },
 };
 
-export function OpportunityCard({
+export const OpportunityCard = memo(function OpportunityCard({
   id,
   brand,
   model,
@@ -60,10 +62,12 @@ export function OpportunityCard({
         {/* Image */}
         <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
           {photoUrl ? (
-            <img
+            <Image
               src={photoUrl}
               alt={`${brand} ${model}`}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              sizes="(max-width: 768px) 100vw, 33vw"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-5xl text-gray-300">
@@ -92,15 +96,15 @@ export function OpportunityCard({
           {/* Prices */}
           <div className="grid grid-cols-3 gap-2 mt-4">
             <div>
-              <div className="text-[11px] font-semibold text-gray-400 uppercase">Nákup</div>
+              <div className="text-[11px] font-semibold text-gray-500 uppercase">Nákup</div>
               <div className="text-sm font-bold text-gray-900">{formatPrice(purchasePrice)}</div>
             </div>
             <div>
-              <div className="text-[11px] font-semibold text-gray-400 uppercase">Oprava</div>
+              <div className="text-[11px] font-semibold text-gray-500 uppercase">Oprava</div>
               <div className="text-sm font-bold text-gray-900">{formatPrice(repairCost)}</div>
             </div>
             <div>
-              <div className="text-[11px] font-semibold text-gray-400 uppercase">Prodej</div>
+              <div className="text-[11px] font-semibold text-gray-500 uppercase">Prodej</div>
               <div className="text-sm font-bold text-success-500">{formatPrice(estimatedSalePrice)}</div>
             </div>
           </div>
@@ -122,7 +126,7 @@ export function OpportunityCard({
           <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
             <div className="text-lg font-extrabold text-gray-900">
               {formatPrice(profit)}
-              <span className="text-xs font-medium text-gray-400 ml-1">zisk</span>
+              <span className="text-xs font-medium text-gray-500 ml-1">zisk</span>
             </div>
             <Button variant="primary" size="sm">
               {status === "FUNDING" ? "Investovat" : "Detail"}
@@ -132,4 +136,4 @@ export function OpportunityCard({
       </Card>
     </Link>
   );
-}
+});

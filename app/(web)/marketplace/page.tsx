@@ -248,7 +248,7 @@ export default async function MarketplacePage() {
               return (
                 <Card key={ex.car} hover className="p-6">
                   <h3 className="font-bold text-gray-900">{ex.car}</h3>
-                  <p className="text-sm text-gray-400">{ex.year}</p>
+                  <p className="text-sm text-gray-500">{ex.year}</p>
 
                   <div className="mt-4 space-y-2 text-sm">
                     <div className="flex justify-between">
@@ -268,7 +268,7 @@ export default async function MarketplacePage() {
                   <div className="mt-4 pt-4 border-t border-gray-100">
                     <div className="flex justify-between items-center">
                       <div>
-                        <div className="text-xs text-gray-400 uppercase font-semibold">Zisk investora</div>
+                        <div className="text-xs text-gray-500 uppercase font-semibold">Zisk investora</div>
                         <div className="text-xl font-extrabold text-success-500">{investorProfit.toLocaleString("cs-CZ")} Kč</div>
                       </div>
                       <div className="bg-orange-100 text-orange-600 font-extrabold text-lg px-4 py-2 rounded-xl">

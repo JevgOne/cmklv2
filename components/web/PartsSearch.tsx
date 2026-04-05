@@ -263,7 +263,7 @@ export function PartsSearch({ basePath = "/shop" }: PartsSearchProps) {
             }}
             maxLength={17}
           />
-          <p className="text-xs text-gray-400 mt-2">
+          <p className="text-xs text-gray-500 mt-2">
             VIN najdete v technickém průkazu nebo na štítku ve dveřích řidiče
           </p>
         </div>

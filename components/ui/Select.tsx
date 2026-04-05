@@ -12,6 +12,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
   ({ label, error, options, placeholder, className, children, id: idProp, ...props }, ref) => {
     const generatedId = useId();
     const id = idProp || generatedId;
+    const errorId = error ? `${id}-error` : undefined;
 
     return (
       <div className="flex flex-col gap-2">
@@ -23,6 +24,8 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         <select
           ref={ref}
           id={id}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={errorId}
           className={cn(
             "w-full px-[18px] py-3.5 text-[15px] font-medium text-gray-900 bg-gray-50 border-2 border-transparent rounded-lg transition-all duration-200 cursor-pointer appearance-none pr-12",
             "hover:bg-gray-100",
@@ -47,7 +50,11 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
               ))
             : children}
         </select>
-        {error && <span className="text-[13px] text-error-500">{error}</span>}
+        {error && (
+          <span id={errorId} role="alert" className="text-[13px] text-error-500">
+            {error}
+          </span>
+        )}
       </div>
     );
   }

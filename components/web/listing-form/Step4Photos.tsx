@@ -169,8 +169,8 @@ export function Step4Photos({ data, updateData, onNext, onPrev }: Step4Props) {
           &#128247;
         </div>
         <p className="text-gray-700 font-semibold mt-4">Přetáhněte fotky sem</p>
-        <p className="text-sm text-gray-400 mt-2">nebo klikněte pro výběr z galerie</p>
-        <p className="text-xs text-gray-400 mt-1">JPG, PNG, max 10 MB na fotku</p>
+        <p className="text-sm text-gray-500 mt-2">nebo klikněte pro výběr z galerie</p>
+        <p className="text-xs text-gray-500 mt-1">JPG, PNG, max 10 MB na fotku</p>
       </div>
 
       <input
@@ -281,7 +281,7 @@ export function Step4Photos({ data, updateData, onNext, onPrev }: Step4Props) {
           {data.photos.length} / {minPhotos} min. fotek
         </span>
         {data.photos.length > 0 && data.photos.length < 10 && (
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-gray-500">
             (doporučujeme alespoň 10)
           </span>
         )}

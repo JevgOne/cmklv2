@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { urls } from "@/lib/urls";
 import { companyInfo } from "@/lib/company-info";
+import Image from "next/image";
 
 export function ShopFooter() {
   const currentYear = new Date().getFullYear();
@@ -12,7 +13,7 @@ export function ShopFooter() {
           {/* Logo + popis */}
           <div className="col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2 no-underline mb-4">
-              <img src="/brand/logo-white.png" alt="CarMakléř" className="h-10 w-auto object-contain" />
+              <Image src="/brand/logo-white.png" alt="CarMakléř" width={120} height={40} className="h-10 w-auto object-contain" />
               <span className="text-sm font-semibold text-orange-400">Shop</span>
             </Link>
             <p className="text-sm text-gray-500 leading-relaxed">
