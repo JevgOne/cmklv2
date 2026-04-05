@@ -3,15 +3,16 @@ import { Card } from "@/components/ui/Card";
 import { SellCarForm } from "@/components/web/SellCarForm";
 import { FAQ } from "@/components/web/FAQ";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
+import { getBrokerStats } from "@/lib/stats";
 
 export const metadata: Metadata = {
   title: "Chci prodat auto",
   description:
-    "Prodáme vaše auto rychleji a za lepší cenu. Průměrná doba prodeje 20 dní. Nechte to na certifikovaném makléři.",
+    "Prodáme vaše auto rychleji a za lepší cenu. Nechte to na certifikovaném makléři CarMakléř.",
   openGraph: {
     title: "Prodejte auto přes makléře | CarMakléř",
     description:
-      "Prodáme vaše auto rychleji a za lepší cenu. Průměrná doba prodeje 20 dní.",
+      "Prodáme vaše auto rychleji a za lepší cenu. Nechte to na certifikovaném makléři CarMakléř.",
   },
 };
 
@@ -104,7 +105,10 @@ const faqJsonLd = {
   })),
 };
 
-export default function ChciProdatPage() {
+export const revalidate = 3600; // 1 hodina
+
+export default async function ChciProdatPage() {
+  const stats = await getBrokerStats();
   return (
     <div className="flex flex-col gap-16 md:gap-24 pb-16 md:pb-24">
       <script
@@ -133,7 +137,7 @@ export default function ChciProdatPage() {
             <div className="flex flex-wrap gap-6 md:gap-10">
               <div>
                 <div className="text-2xl md:text-3xl font-extrabold text-gray-900">
-                  20 dní
+                  {stats.avgSaleDays > 0 ? `${stats.avgSaleDays} dní` : "–"}
                 </div>
                 <div className="text-sm text-gray-500">
                   průměrná doba prodeje
@@ -141,13 +145,13 @@ export default function ChciProdatPage() {
               </div>
               <div>
                 <div className="text-2xl md:text-3xl font-extrabold text-gray-900">
-                  247
+                  {stats.soldVehicles > 0 ? stats.soldVehicles.toLocaleString("cs-CZ") : "–"}
                 </div>
                 <div className="text-sm text-gray-500">prodaných vozidel</div>
               </div>
               <div>
                 <div className="text-2xl md:text-3xl font-extrabold text-gray-900">
-                  4.8
+                  {stats.avgRating > 0 ? stats.avgRating.toFixed(1) : "–"}
                 </div>
                 <div className="text-sm text-gray-500">hodnocení</div>
               </div>

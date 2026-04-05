@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { companyInfo } from "@/lib/company-info";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { TrustScore } from "@/components/ui/TrustScore";
@@ -216,23 +217,23 @@ const proKoho = [
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "CarMakléř",
-  url: "https://www.carmakler.cz",
-  logo: "https://www.carmakler.cz/brand/logo.svg",
+  name: companyInfo.name,
+  url: companyInfo.web.url,
+  logo: companyInfo.web.logo,
   description:
     "Prodejte nebo kupte auto bezpečně přes síť ověřených makléřů. Rychle, transparentně a bez starostí.",
   contactPoint: {
     "@type": "ContactPoint",
-    telephone: "+420-800-123-456",
+    telephone: companyInfo.contact.phoneJsonLd,
     contactType: "customer service",
     areaServed: "CZ",
     availableLanguage: "Czech",
   },
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Vinohradská 123",
-    addressLocality: "Praha",
-    postalCode: "120 00",
+    streetAddress: companyInfo.address.street,
+    addressLocality: companyInfo.address.city,
+    postalCode: companyInfo.address.zip,
     addressCountry: "CZ",
   },
 };

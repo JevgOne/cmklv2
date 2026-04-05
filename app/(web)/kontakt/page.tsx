@@ -3,47 +3,26 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { ContactPageForm } from "@/components/web/ContactPageForm";
+import { companyInfo } from "@/lib/company-info";
 
 export const metadata: Metadata = {
   title: "Kontakt",
   description:
-    "Kontaktujte CarMakléř. Centrála Praha, pobočky Brno a Ostrava. Telefon +420 800 123 456, e-mail info@carmakler.cz.",
+    `Kontaktujte ${companyInfo.name}. ${companyInfo.address.city}. Telefon ${companyInfo.contact.phone}, e-mail ${companyInfo.contact.email}.`,
   openGraph: {
     title: "Kontakt | CarMakléř",
     description:
-      "Kontaktujte nás. Centrála Praha, pobočky Brno a Ostrava. Telefon +420 800 123 456.",
+      `Kontaktujte nás. ${companyInfo.address.city}. Telefon ${companyInfo.contact.phone}.`,
   },
 };
 
-const branches = [
-  {
-    city: "Praha",
-    type: "Centrála",
-    address: "Vinohradská 123, 120 00 Praha 2",
-    phone: "+420 800 123 456",
-    hours: "Po-Pá 8:00-18:00",
-  },
-  {
-    city: "Brno",
-    type: "Pobočka",
-    address: "Masarykova 45, 602 00 Brno",
-    phone: "+420 800 123 457",
-    hours: "Po-Pá 9:00-17:00",
-  },
-  {
-    city: "Ostrava",
-    type: "Pobočka",
-    address: "Nádražní 12, 702 00 Ostrava",
-    phone: "+420 800 123 458",
-    hours: "Po-Pá 9:00-17:00",
-  },
-];
+const branches = companyInfo.branches;
 
 const contactInfo = [
-  { icon: "📍", label: "Adresa", value: "Vinohradská 123, 120 00 Praha 2" },
-  { icon: "📞", label: "Telefon", value: "+420 800 123 456" },
-  { icon: "✉️", label: "E-mail", value: "info@carmakler.cz" },
-  { icon: "🕐", label: "Otevírací doba", value: "Po-Pá 8:00-18:00" },
+  { icon: "📍", label: "Adresa", value: companyInfo.address.full },
+  { icon: "📞", label: "Telefon", value: companyInfo.contact.phone },
+  { icon: "✉️", label: "E-mail", value: companyInfo.contact.email },
+  { icon: "🕐", label: "Otevírací doba", value: companyInfo.hours },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -53,22 +32,22 @@ const contactInfo = [
 const contactJsonLd = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  name: "CarMakléř",
-  url: "https://www.carmakler.cz",
-  telephone: "+420-800-123-456",
-  email: "info@carmakler.cz",
+  name: companyInfo.name,
+  url: companyInfo.web.url,
+  telephone: companyInfo.contact.phoneJsonLd,
+  email: companyInfo.contact.email,
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Vinohradská 123",
-    addressLocality: "Praha",
-    postalCode: "120 00",
+    streetAddress: companyInfo.address.street,
+    addressLocality: companyInfo.address.city,
+    postalCode: companyInfo.address.zip,
     addressCountry: "CZ",
   },
   openingHoursSpecification: {
     "@type": "OpeningHoursSpecification",
-    dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-    opens: "08:00",
-    closes: "18:00",
+    dayOfWeek: companyInfo.hoursSpec.dayOfWeek,
+    opens: companyInfo.hoursSpec.opens,
+    closes: companyInfo.hoursSpec.closes,
   },
 };
 
@@ -93,7 +72,7 @@ export default function KontaktPage() {
             CarMakléř — Praha
           </p>
           <p className="text-gray-400 text-sm mt-1">
-            Vinohradská 123, Praha 2
+            {companyInfo.address.full}
           </p>
         </div>
       </section>

@@ -83,7 +83,6 @@ function getRewriteUrl(
 }
 
 // Heslo pro přístup na web (nahrazuje nginx basic auth)
-const SITE_PASSWORD = "Admin2026";
 const SITE_AUTH_COOKIE = "site_access";
 
 // Cesty, které nepotřebují site password
@@ -105,10 +104,11 @@ function shouldSkipSiteAuth(pathname: string): boolean {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Site-wide password ochrana (cookie-based, nahrazuje nginx basic auth)
-  if (!shouldSkipSiteAuth(pathname)) {
+  // Site-wide password ochrana — jen pokud je SITE_PASSWORD nastaveno v env
+  const sitePassword = process.env.SITE_PASSWORD || null;
+  if (sitePassword && !shouldSkipSiteAuth(pathname)) {
     const siteAuth = request.cookies.get(SITE_AUTH_COOKIE);
-    if (!siteAuth || siteAuth.value !== SITE_PASSWORD) {
+    if (!siteAuth || siteAuth.value !== sitePassword) {
       const gateUrl = new URL("/gate", request.url);
       gateUrl.searchParams.set("next", pathname);
       return NextResponse.redirect(gateUrl);

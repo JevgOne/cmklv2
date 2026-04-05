@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 
 // PUT /api/onboarding/profile — uložení profilu makléře (krok 1)
 export async function PUT(request: Request) {
@@ -48,10 +49,17 @@ export async function PUT(request: Request) {
       );
     }
 
-    // TODO: Upload profilové fotky na Cloudinary (pokud přiložena)
-    // const photo = formData.get("photo") as File | null;
-    // let avatarUrl = null;
-    // if (photo) { avatarUrl = await uploadToCloudinary(photo); }
+    // Upload profilove fotky na Cloudinary
+    const photo = formData.get("photo") as File | null;
+    let avatarUrl: string | null = null;
+    if (photo && photo.size > 0) {
+      try {
+        avatarUrl = await uploadToCloudinary(photo, `carmakler/avatars/${session.user.id}`);
+      } catch (uploadError) {
+        console.error("Avatar upload failed:", uploadError);
+        // Pokracovat bez fotky — neni to bloker pro onboarding
+      }
+    }
 
     const user = await prisma.user.update({
       where: { id: session.user.id },
@@ -61,6 +69,7 @@ export async function PUT(request: Request) {
         cities: JSON.stringify(citiesArray),
         bankAccount: iban,
         onboardingStep: 2, // posun na krok 2 (dokumenty)
+        ...(avatarUrl && { avatar: avatarUrl }),
       },
       select: {
         id: true,

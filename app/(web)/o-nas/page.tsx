@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { prisma } from "@/lib/prisma";
+import { companyInfo } from "@/lib/company-info";
 
 export const metadata: Metadata = {
   title: "O nás",
@@ -93,22 +94,22 @@ const values = [
 const orgJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "CarMakléř",
-  url: "https://www.carmakler.cz",
-  logo: "https://www.carmakler.cz/brand/logo.svg",
+  name: companyInfo.name,
+  url: companyInfo.web.url,
+  logo: companyInfo.web.logo,
   description:
     "CarMakléř je moderní platforma pro prodej a nákup vozidel přes síť certifikovaných makléřů v celé České republice.",
   foundingDate: "2024",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Vinohradská 123",
-    addressLocality: "Praha",
-    postalCode: "120 00",
+    streetAddress: companyInfo.address.street,
+    addressLocality: companyInfo.address.city,
+    postalCode: companyInfo.address.zip,
     addressCountry: "CZ",
   },
   contactPoint: {
     "@type": "ContactPoint",
-    telephone: "+420-800-123-456",
+    telephone: companyInfo.contact.phoneJsonLd,
     contactType: "customer service",
     areaServed: "CZ",
     availableLanguage: "Czech",

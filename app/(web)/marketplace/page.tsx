@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { ApplyForm } from "@/components/web/marketplace/ApplyForm";
+import { getMarketplaceStats } from "@/lib/stats";
 
 export const metadata: Metadata = {
   title: "Marketplace | Investiční platforma pro flipping aut",
@@ -114,7 +115,10 @@ const faqJsonLd = {
   })),
 };
 
-export default function MarketplacePage() {
+export const revalidate = 3600; // 1 hodina
+
+export default async function MarketplacePage() {
+  const stats = await getMarketplaceStats();
   return (
     <main>
       <script
@@ -162,15 +166,21 @@ export default function MarketplacePage() {
               {/* Quick stats */}
               <div className="grid grid-cols-3 gap-6 mt-12 pt-8 border-t border-white/10">
                 <div>
-                  <div className="text-2xl font-extrabold text-orange-500">127</div>
+                  <div className="text-2xl font-extrabold text-orange-500">
+                    {stats.completedFlips > 0 ? stats.completedFlips : "–"}
+                  </div>
                   <div className="text-sm text-white/50">Dokončených flipů</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-extrabold text-orange-500">21%</div>
+                  <div className="text-2xl font-extrabold text-orange-500">
+                    {stats.avgROI > 0 ? `${stats.avgROI}%` : "–"}
+                  </div>
                   <div className="text-sm text-white/50">Průměrný ROI</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-extrabold text-orange-500">48 dní</div>
+                  <div className="text-2xl font-extrabold text-orange-500">
+                    {stats.avgFlipDays > 0 ? `${stats.avgFlipDays} dní` : "–"}
+                  </div>
                   <div className="text-sm text-white/50">Průměrná doba</div>
                 </div>
               </div>

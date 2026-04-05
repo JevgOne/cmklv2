@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import { AuthProvider } from "@/components/providers/AuthProvider";
+import { Analytics } from "@/components/web/Analytics";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -72,6 +73,7 @@ export default function RootLayout({
     <html lang="cs">
       <body className={`${outfit.variable} font-sans antialiased overflow-x-hidden`}>
         <AuthProvider>{children}</AuthProvider>
+        <Analytics />
       </body>
     </html>
   );

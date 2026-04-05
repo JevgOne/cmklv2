@@ -177,8 +177,8 @@ export function Step5PriceContact({ data, updateData, onNext, onPrev }: Step5Pro
       <div className="mt-6 p-4 bg-orange-50 rounded-xl">
         <Checkbox
           label="Chci pomoc od makléře Carmakler"
-          checked={data.wantBrokerHelp}
-          onChange={(e) => update("wantBrokerHelp", e.target.checked)}
+          checked={data.wantsBrokerHelp}
+          onChange={(e) => update("wantsBrokerHelp", e.target.checked)}
         />
         <p className="text-xs text-gray-500 mt-2 ml-8">
           Certifikovaný makléř vám pomůže s prodejem vozu. Bez závazku, pouze provize z úspěšného prodeje.

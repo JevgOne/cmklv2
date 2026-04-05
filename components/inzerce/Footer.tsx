@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { urls } from "@/lib/urls";
+import { companyInfo } from "@/lib/company-info";
 
 export function InzerceFooter() {
   const currentYear = new Date().getFullYear();
@@ -79,8 +80,8 @@ export function InzerceFooter() {
                 </a>
               </li>
               <li>
-                <a href="tel:+420123456789" className="text-sm text-gray-500 hover:text-white transition-colors no-underline">
-                  +420 123 456 789
+                <a href={companyInfo.contact.phoneHref} className="text-sm text-gray-500 hover:text-white transition-colors no-underline">
+                  {companyInfo.contact.phone}
                 </a>
               </li>
             </ul>
@@ -92,11 +93,14 @@ export function InzerceFooter() {
             &copy; {currentYear} CarMakléř. Všechna práva vyhrazena.
           </p>
           <div className="flex items-center gap-6">
-            <a href={urls.main("/kontakt")} className="text-sm text-gray-500 hover:text-white transition-colors no-underline">
-              Ochrana soukromí
+            <a href={urls.main("/ochrana-osobnich-udaju")} className="text-sm text-gray-500 hover:text-white transition-colors no-underline">
+              Ochrana osobních údajů
             </a>
-            <a href={urls.main("/kontakt")} className="text-sm text-gray-500 hover:text-white transition-colors no-underline">
+            <a href={urls.main("/obchodni-podminky")} className="text-sm text-gray-500 hover:text-white transition-colors no-underline">
               Obchodní podmínky
+            </a>
+            <a href={urls.main("/reklamacni-rad")} className="text-sm text-gray-500 hover:text-white transition-colors no-underline">
+              Reklamační řád
             </a>
           </div>
         </div>

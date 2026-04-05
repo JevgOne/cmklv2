@@ -1,0 +1,66 @@
+/**
+ * Centralni kontaktni a firemni udaje CarMakler.
+ * Meni se na JEDNOM miste — vsude jinde importovat.
+ *
+ * TODO: Pred launchem nahradit vsechny [DOPLNIT] realnymi udaji.
+ */
+
+export const companyInfo = {
+  name: "CarMakler",
+  legalName: "CarMakler s.r.o.",
+  ico: "[DOPLNIT]",
+  dic: "[DOPLNIT]",
+
+  address: {
+    street: "[DOPLNIT ULICE A CISLO]",
+    city: "Praha",
+    zip: "[DOPLNIT PSC]",
+    country: "CZ",
+    /** Plna adresa pro zobrazeni */
+    full: "[DOPLNIT ULICE], [DOPLNIT PSC] Praha",
+  },
+
+  contact: {
+    /** Zobrazovany format telefonu */
+    phone: "[DOPLNIT TELEFON]",
+    /** Format pro href="tel:" */
+    phoneHref: "tel:+420[DOPLNIT]",
+    /** Zobrazovany format telefonu pro JSON-LD (s pomlckami) */
+    phoneJsonLd: "+420-[DOPLNIT]",
+    email: "info@carmakler.cz",
+    emailHref: "mailto:info@carmakler.cz",
+  },
+
+  hours: "Po-Pa 8:00-18:00",
+  hoursSpec: {
+    dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    opens: "08:00",
+    closes: "18:00",
+  },
+
+  web: {
+    url: "https://www.carmakler.cz",
+    logo: "https://www.carmakler.cz/brand/logo.svg",
+  },
+
+  social: {
+    facebook: "https://facebook.com/carmakler",
+    instagram: "https://instagram.com/carmakler",
+    youtube: "https://youtube.com/@carmakler",
+  },
+
+  /**
+   * Pobocky.
+   * POZNAMKA: Odebrat fiktivni pobocky Brno a Ostrava.
+   * Pridat realne pobocky az budou existovat.
+   */
+  branches: [
+    {
+      city: "Praha",
+      type: "Centrala" as const,
+      address: "[DOPLNIT ULICE], [DOPLNIT PSC] Praha",
+      phone: "[DOPLNIT TELEFON]",
+      hours: "Po-Pa 8:00-18:00",
+    },
+  ],
+} as const;

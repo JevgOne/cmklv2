@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 
 // Mock next-auth/jwt
 vi.mock('next-auth/jwt', () => ({
@@ -67,6 +67,12 @@ function createRequest(
 describe('middleware', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    // Nastavit SITE_PASSWORD pro testy (middleware cte z process.env)
+    process.env.SITE_PASSWORD = 'Admin2026'
+  })
+
+  afterEach(() => {
+    delete process.env.SITE_PASSWORD
   })
 
   describe('site password ochrana', () => {
@@ -79,6 +85,13 @@ describe('middleware', () => {
 
     it('pustí dál s platným cookie', async () => {
       await middleware(createRequest('/', 'localhost:3000', { site_access: 'Admin2026' }))
+      expect(mockNext).toHaveBeenCalled()
+    })
+
+    it('bez SITE_PASSWORD v env je web veřejný', async () => {
+      delete process.env.SITE_PASSWORD
+      await middleware(createRequest('/'))
+      expect(mockRedirect).not.toHaveBeenCalled()
       expect(mockNext).toHaveBeenCalled()
     })
 

@@ -4,6 +4,7 @@ import { useRef, Suspense } from "react";
 import { motion, useInView } from "framer-motion";
 import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { companyInfo } from "@/lib/company-info";
 
 function AnimatedSection({
   id,
@@ -356,11 +357,11 @@ function PrezentaceContent() {
                 <span className="font-semibold">partneri@carmakler.cz</span>
               </a>
               <a
-                href="tel:+420800123456"
+                href={companyInfo.contact.phoneHref}
                 className="flex gap-3 items-center hover:text-orange-400 transition-colors no-underline text-white"
               >
                 <span>📞</span>
-                <span className="font-semibold">+420 800 123 456</span>
+                <span className="font-semibold">{companyInfo.contact.phone}</span>
               </a>
               <div className="flex gap-3 items-center">
                 <span>🌐</span>

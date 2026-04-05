@@ -54,9 +54,8 @@ const createListingSchema = z.object({
   equipment: z.array(z.string()).optional(),
   highlights: z.array(z.string()).optional(),
 
-  // Propojení — akceptujeme obě varianty názvu pole
+  // Propojení
   wantsBrokerHelp: z.boolean().default(false),
-  wantBrokerHelp: z.boolean().optional(),
   vehicleId: z.string().optional(),
 
   // Status (z klienta pro draft/active)
@@ -74,8 +73,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const data = createListingSchema.parse(body);
 
-    // Resolve wantBrokerHelp vs wantsBrokerHelp mismatch
-    const wantsBrokerHelp = data.wantsBrokerHelp || data.wantBrokerHelp || false;
+    const wantsBrokerHelp = data.wantsBrokerHelp;
 
     // Určit listingType na základě role uživatele (nebo PRIVATE pro nepřihlášené)
     let listingType = "PRIVATE";

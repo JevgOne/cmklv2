@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { companyInfo } from "@/lib/company-info";
 
 const footerSections = [
   {
@@ -34,7 +35,7 @@ const footerSections = [
     title: "Kontakt",
     links: [
       { href: "mailto:info@carmakler.cz", label: "info@carmakler.cz" },
-      { href: "tel:+420123456789", label: "+420 123 456 789" },
+      { href: companyInfo.contact.phoneHref, label: companyInfo.contact.phone },
       { href: "/kontakt", label: "Praha, Česká republika", plainText: true },
     ],
   },
@@ -102,16 +103,22 @@ export function Footer() {
           </p>
           <div className="flex items-center gap-6">
             <Link
-              href="/kontakt"
+              href="/ochrana-osobnich-udaju"
               className="text-sm text-gray-500 hover:text-white transition-colors no-underline"
             >
-              Ochrana soukromí
+              Ochrana osobních údajů
             </Link>
             <Link
-              href="/kontakt"
+              href="/obchodni-podminky"
               className="text-sm text-gray-500 hover:text-white transition-colors no-underline"
             >
               Obchodní podmínky
+            </Link>
+            <Link
+              href="/reklamacni-rad"
+              className="text-sm text-gray-500 hover:text-white transition-colors no-underline"
+            >
+              Reklamační řád
             </Link>
           </div>
           {/* Social links */}

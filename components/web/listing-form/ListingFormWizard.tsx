@@ -56,7 +56,7 @@ export interface ListingFormData {
   contactName: string;
   contactPhone: string;
   contactEmail: string;
-  wantBrokerHelp: boolean;
+  wantsBrokerHelp: boolean;
 
   // Step 6 meta
   status: "DRAFT" | "ACTIVE";
@@ -106,7 +106,7 @@ const initialFormData: ListingFormData = {
   contactName: "",
   contactPhone: "",
   contactEmail: "",
-  wantBrokerHelp: false,
+  wantsBrokerHelp: false,
   status: "ACTIVE",
 };
 
@@ -173,7 +173,7 @@ export function ListingFormWizard() {
         contactEmail: data.contactEmail || undefined,
         equipment: [...data.equipment, ...data.customEquipment],
         highlights: data.highlights,
-        wantsBrokerHelp: data.wantBrokerHelp,
+        wantsBrokerHelp: data.wantsBrokerHelp,
         status: asDraft ? "DRAFT" : "ACTIVE",
       };
 

@@ -192,7 +192,7 @@ export function Step6Preview({ data, onPrev, onSubmit, submitting, submitError, 
             </div>
           </div>
 
-          {data.wantBrokerHelp && (
+          {data.wantsBrokerHelp && (
             <div className="mt-4 p-3 bg-orange-50 rounded-lg">
               <span className="text-sm text-orange-700 font-medium">
                 Požadována pomoc makléře Carmakler

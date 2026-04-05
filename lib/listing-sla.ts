@@ -1,4 +1,11 @@
 import { prisma } from "@/lib/prisma";
+import { Resend } from "resend";
+import {
+  watchdogMatchSubject,
+  watchdogMatchHtml,
+  watchdogMatchText,
+  type WatchdogMatchData,
+} from "@/lib/email-templates/listing/watchdog-match";
 
 // ============================================
 // SLA kontrolní logika pro inzerátní platformu
@@ -156,6 +163,60 @@ export async function checkReservationExpiry(): Promise<number> {
   return result.count;
 }
 
+const WATCHDOG_BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://www.carmakler.cz";
+
+async function sendWatchdogEmail(
+  recipientEmail: string,
+  watchdog: { id: string; brand?: string | null; model?: string | null; city?: string | null },
+  listings: Array<{
+    id: string;
+    brand: string;
+    model: string;
+    price: number;
+    year: number | null;
+    mileage: number | null;
+    slug: string | null;
+    images: { url: string }[];
+  }>
+) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.warn("RESEND_API_KEY not set, skipping watchdog email");
+    return;
+  }
+
+  const resend = new Resend(apiKey);
+
+  // Sestavit lidsky citelny popis kriterii
+  const criteriaParts: string[] = [];
+  if (watchdog.brand) criteriaParts.push(watchdog.brand);
+  if (watchdog.model) criteriaParts.push(watchdog.model);
+  if (watchdog.city) criteriaParts.push(watchdog.city);
+  const criteria = criteriaParts.length > 0 ? criteriaParts.join(", ") : "Vsechna vozidla";
+
+  const data: WatchdogMatchData = {
+    userName: recipientEmail.split("@")[0], // fallback pokud nemame jmeno
+    criteria,
+    matches: listings.map((l) => ({
+      title: `${l.brand} ${l.model}`,
+      price: `${l.price.toLocaleString("cs-CZ")} Kc`,
+      year: l.year || 0,
+      mileage: l.mileage ? `${l.mileage.toLocaleString("cs-CZ")} km` : "neuvedeno",
+      imageUrl: l.images[0]?.url,
+      listingUrl: `${WATCHDOG_BASE_URL}/nabidka/${l.slug || l.id}`,
+    })),
+    manageUrl: `${WATCHDOG_BASE_URL}/muj-ucet/watchdogy`,
+  };
+
+  await resend.emails.send({
+    from: process.env.RESEND_FROM_EMAIL || "info@carmakler.cz",
+    to: recipientEmail,
+    subject: watchdogMatchSubject(data),
+    html: watchdogMatchHtml(data),
+    text: watchdogMatchText(data),
+  });
+}
+
 /**
  * Watchdog matching — najít nové inzeráty odpovídající hlídacím psům
  */
@@ -197,7 +258,16 @@ export async function matchWatchdogs(): Promise<number> {
 
     const newListings = await prisma.listing.findMany({
       where,
-      select: { id: true, brand: true, model: true, price: true },
+      select: {
+        id: true,
+        brand: true,
+        model: true,
+        price: true,
+        year: true,
+        mileage: true,
+        slug: true,
+        images: { take: 1, select: { url: true } },
+      },
       take: 10,
     });
 
@@ -210,9 +280,16 @@ export async function matchWatchdogs(): Promise<number> {
         data: { lastNotified: new Date() },
       });
 
-      // TODO: Odeslat email notifikaci
-      // const recipientEmail = watchdog.email || watchdog.user?.email;
-      // if (recipientEmail) { ... }
+      // Odeslat email notifikaci
+      const recipientEmail = watchdog.email || watchdog.user?.email;
+      if (recipientEmail) {
+        try {
+          await sendWatchdogEmail(recipientEmail, watchdog, newListings);
+        } catch (emailError) {
+          console.error(`Watchdog email failed for ${watchdog.id}:`, emailError);
+          // Nepropagovat chybu — watchdog match se zapise, email se zkusi znovu priste
+        }
+      }
     }
   }
 

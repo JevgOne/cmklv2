@@ -11,6 +11,7 @@ import { MarketplaceNavbar } from "@/components/marketplace/Navbar";
 import { MarketplaceFooter } from "@/components/marketplace/Footer";
 import { CompareProvider } from "@/components/web/CompareContext";
 import { CompareBar } from "@/components/web/CompareBar";
+import { CookieConsent } from "@/components/web/CookieConsent";
 
 function getNavbarAndFooter(subdomain: SubdomainType) {
   switch (subdomain) {
@@ -53,6 +54,7 @@ export default async function WebLayout({
       <main className="min-h-[calc(100vh-72px)]">{children}</main>
       {footer}
       <CompareBar />
+      <CookieConsent />
     </CompareProvider>
   );
 }
