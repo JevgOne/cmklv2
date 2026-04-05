@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { sendEmail, RESEND_FROM_CONTRACTS } from "@/lib/resend";
 
 /* ------------------------------------------------------------------ */
 /*  POST /api/contracts/[id]/send — Odeslání smlouvy emailem           */
@@ -87,11 +88,8 @@ export async function POST(
         : "Předávací protokol";
 
     // Send email via Resend
-    const { Resend } = await import("resend");
-    const resend = new Resend(process.env.RESEND_API_KEY);
-
-    await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || "smlouvy@carmakler.cz",
+    const emailResult = await sendEmail({
+      from: RESEND_FROM_CONTRACTS,
       to: contract.sellerEmail,
       subject: `${contractType} - ${vehicleName} | Carmakler`,
       html: `
@@ -113,6 +111,11 @@ export async function POST(
         },
       ],
     });
+
+    if (!emailResult.success) {
+      console.error("Contract email failed:", emailResult.error);
+      // Pokracovat — smlouva je ulozena, email se muze odeslat manualne
+    }
 
     // Update contract status
     await prisma.contract.update({

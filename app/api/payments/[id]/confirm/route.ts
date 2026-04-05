@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createPayoutRecords } from "@/lib/stripe";
+import { sendEmail } from "@/lib/resend";
 
 export async function PUT(
   request: NextRequest,
@@ -86,19 +87,12 @@ export async function PUT(
 
     // Email kupujícímu
     const vehicleName = `${payment.vehicle.brand} ${payment.vehicle.model}`;
-    try {
-      const { Resend } = await import("resend");
-      const resend = new Resend(process.env.RESEND_API_KEY);
-      await resend.emails.send({
-        from: process.env.RESEND_FROM_EMAIL || "info@carmakler.cz",
-        to: payment.buyerEmail,
-        subject: "Potvrzení platby | Carmakler",
-        html: `<p>Vaše platba ${payment.amount.toLocaleString("cs-CZ")} Kč za ${vehicleName} byla přijata.</p><p>Děkujeme za nákup přes Carmakler.</p>`,
-        text: `Vaše platba ${payment.amount.toLocaleString("cs-CZ")} Kč za ${vehicleName} byla přijata. Děkujeme za nákup přes Carmakler.`,
-      });
-    } catch (emailErr) {
-      console.error("Failed to send payment confirmation email:", emailErr);
-    }
+    await sendEmail({
+      to: payment.buyerEmail,
+      subject: "Potvrzení platby | Carmakler",
+      html: `<p>Vaše platba ${payment.amount.toLocaleString("cs-CZ")} Kč za ${vehicleName} byla přijata.</p><p>Děkujeme za nákup přes Carmakler.</p>`,
+      text: `Vaše platba ${payment.amount.toLocaleString("cs-CZ")} Kč za ${vehicleName} byla přijata. Děkujeme za nákup přes Carmakler.`,
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {

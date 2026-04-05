@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { Resend } from "resend";
+import { sendEmail } from "@/lib/resend";
 import {
   watchdogMatchSubject,
   watchdogMatchHtml,
@@ -179,14 +179,6 @@ async function sendWatchdogEmail(
     images: { url: string }[];
   }>
 ) {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) {
-    console.warn("RESEND_API_KEY not set, skipping watchdog email");
-    return;
-  }
-
-  const resend = new Resend(apiKey);
-
   // Sestavit lidsky citelny popis kriterii
   const criteriaParts: string[] = [];
   if (watchdog.brand) criteriaParts.push(watchdog.brand);
@@ -208,8 +200,7 @@ async function sendWatchdogEmail(
     manageUrl: `${WATCHDOG_BASE_URL}/muj-ucet/watchdogy`,
   };
 
-  await resend.emails.send({
-    from: process.env.RESEND_FROM_EMAIL || "info@carmakler.cz",
+  await sendEmail({
     to: recipientEmail,
     subject: watchdogMatchSubject(data),
     html: watchdogMatchHtml(data),

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 
 /* ------------------------------------------------------------------ */
 /*  POST /api/listings/[id]/images — Upload obrázků k inzerátu        */
@@ -64,14 +65,19 @@ export async function POST(
       }
     }
 
-    // V MVP ukládáme jen placeholder URL (v produkci Cloudinary upload)
+    // Upload na Cloudinary
     const images = [];
     for (let i = 0; i < photos.length; i++) {
       const order = parseInt(formData.get(`order_${i}`) as string, 10) || i;
       const isPrimary = formData.get(`isPrimary_${i}`) === "true";
 
-      // V produkci: upload na Cloudinary, zde placeholder
-      const url = `/uploads/listings/${id}/photo-${i}.jpg`;
+      let url: string;
+      try {
+        url = await uploadToCloudinary(photos[i], `carmakler/listings/${id}`);
+      } catch (uploadError) {
+        console.error(`Failed to upload photo ${i}:`, uploadError);
+        continue; // Preskocit selhany upload, pokracovat s dalsimi
+      }
 
       const image = await prisma.listingImage.create({
         data: {

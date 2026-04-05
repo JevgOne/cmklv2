@@ -143,20 +143,49 @@ export function QuickStep3() {
       const vin = draft.vin?.vin as string;
       const contact = draft.contact ?? {};
 
-      // Přečíst fotky — v quick flow jsou uložené v IndexedDB
-      // Pro MVP pošleme placeholder URLs, reálné fotky se uploadují přes Cloudinary
+      // Precist fotky z IndexedDB a uploadovat na Cloudinary
       const photos = (draft.photos as unknown as Array<{
         slotId: string;
         imageId: string;
         thumbnailUrl: string;
         isMain: boolean;
+        file?: File;
+        blob?: Blob;
       }>) ?? [];
 
-      const imageUrls = photos.map((p, i) => ({
-        url: p.thumbnailUrl || `/api/images/${p.imageId}`,
-        isPrimary: p.isMain || i === 0,
-        order: i,
-      }));
+      const imageUrls: Array<{ url: string; isPrimary: boolean; order: number }> = [];
+      for (let i = 0; i < photos.length; i++) {
+        const p = photos[i];
+        // Pokud mame soubor, uploadovat na Cloudinary pres /api/upload
+        if (p.file || p.blob) {
+          const uploadFormData = new FormData();
+          const fileToUpload = p.file || new File([p.blob!], `photo-${i}.jpg`, { type: "image/jpeg" });
+          uploadFormData.append("file", fileToUpload);
+          uploadFormData.append("upload_preset", "vehicles");
+
+          try {
+            const uploadRes = await fetch("/api/upload", {
+              method: "POST",
+              body: uploadFormData,
+            });
+            if (uploadRes.ok) {
+              const { url } = await uploadRes.json();
+              imageUrls.push({ url, isPrimary: p.isMain || i === 0, order: i });
+              continue;
+            }
+          } catch (err) {
+            console.error(`Failed to upload photo ${i}:`, err);
+          }
+        }
+        // Fallback: pouzit thumbnailUrl (IndexedDB data URL)
+        if (p.thumbnailUrl) {
+          imageUrls.push({
+            url: p.thumbnailUrl,
+            isPrimary: p.isMain || i === 0,
+            order: i,
+          });
+        }
+      }
 
       const payload = {
         vin,

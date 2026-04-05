@@ -59,10 +59,11 @@ export function BrokerPayoutsContent({ payouts }: BrokerPayoutsContentProps) {
   const handleUploadInvoice = async (payoutId: string, file: File) => {
     setUploadingId(payoutId);
     try {
-      // Upload file to get URL (using Cloudinary or similar)
+      // Upload file to Cloudinary
       const formData = new FormData();
       formData.append("file", file);
       formData.append("upload_preset", "invoices");
+      formData.append("subfolder", payoutId);
 
       const uploadRes = await fetch("/api/upload", {
         method: "POST",

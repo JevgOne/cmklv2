@@ -56,16 +56,26 @@ export function DamageReportForm({ vehicleId, onSuccess, onCancel }: DamageRepor
     setError(null);
 
     try {
-      // Upload photos if any — for now, send as base64 in JSON
-      // In production, this would use Cloudinary
+      // Upload photos na Cloudinary
       const imageData: string[] = [];
       for (const photo of photos) {
-        const reader = new FileReader();
-        const base64 = await new Promise<string>((resolve) => {
-          reader.onload = (ev) => resolve(ev.target?.result as string);
-          reader.readAsDataURL(photo);
-        });
-        imageData.push(base64);
+        const uploadFormData = new FormData();
+        uploadFormData.append("file", photo);
+        uploadFormData.append("upload_preset", "damages");
+        uploadFormData.append("subfolder", vehicleId);
+
+        try {
+          const uploadRes = await fetch("/api/upload", {
+            method: "POST",
+            body: uploadFormData,
+          });
+          if (uploadRes.ok) {
+            const { url } = await uploadRes.json();
+            imageData.push(url);
+          }
+        } catch (err) {
+          console.error("Failed to upload damage photo:", err);
+        }
       }
 
       const res = await fetch(`/api/vehicles/${vehicleId}/damage`, {

@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { sendEmailSchema } from "@/lib/validators/email";
 import { generateEmail } from "@/lib/email-templates";
 import type { BrokerSignatureData } from "@/lib/email-templates";
+import { sendEmail } from "@/lib/resend";
 
 /* ------------------------------------------------------------------ */
 /*  POST /api/emails/send — Odeslání emailu z PWA                     */
@@ -113,24 +114,17 @@ export async function POST(request: NextRequest) {
     });
 
     // Send via Resend
-    let resendId: string | undefined;
-    try {
-      const { Resend } = await import("resend");
-      const resend = new Resend(process.env.RESEND_API_KEY);
-      const result = await resend.emails.send({
-        from: process.env.RESEND_FROM_EMAIL || "info@carmakler.cz",
-        to: recipientEmail,
-        subject: email.subject,
-        html: email.html,
-        text: email.text,
-        attachments: attachmentUrl
-          ? [{ path: attachmentUrl, filename: "smlouva.pdf" }]
-          : undefined,
-      });
-      resendId = result.data?.id ?? undefined;
-    } catch (sendError) {
-      console.error("Resend send error:", sendError);
-      // Log as failed
+    const result = await sendEmail({
+      to: recipientEmail,
+      subject: email.subject,
+      html: email.html,
+      text: email.text,
+      attachments: attachmentUrl
+        ? [{ path: attachmentUrl, filename: "smlouva.pdf" }]
+        : undefined,
+    });
+
+    if (!result.success) {
       await prisma.emailLog.create({
         data: {
           templateType,
@@ -145,6 +139,7 @@ export async function POST(request: NextRequest) {
       });
       return NextResponse.json({ error: "Chyba pri odesilani emailu" }, { status: 500 });
     }
+    const resendId = result.id;
 
     // Log success
     const log = await prisma.emailLog.create({

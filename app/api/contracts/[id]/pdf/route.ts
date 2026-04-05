@@ -209,17 +209,25 @@ export async function POST(
     // Generate PDF buffer
     const pdfBuffer = Buffer.from(doc.output("arraybuffer"));
 
-    // For now, store as base64 data URL (can be replaced with Cloudinary upload)
-    const pdfBase64 = `data:application/pdf;base64,${pdfBuffer.toString("base64")}`;
+    // Upload PDF na Cloudinary
+    let pdfUrl: string;
+    try {
+      const { uploadToCloudinary } = await import("@/lib/cloudinary");
+      const pdfFile = new File([pdfBuffer], `smlouva-${id}.pdf`, { type: "application/pdf" });
+      pdfUrl = await uploadToCloudinary(pdfFile, `carmakler/contracts/${id}`);
+    } catch (uploadError) {
+      console.error("PDF upload failed, using base64 fallback:", uploadError);
+      pdfUrl = `data:application/pdf;base64,${pdfBuffer.toString("base64")}`;
+    }
 
     // Update contract with PDF URL
     await prisma.contract.update({
       where: { id },
-      data: { pdfUrl: pdfBase64 },
+      data: { pdfUrl },
     });
 
     return NextResponse.json({
-      pdfUrl: pdfBase64,
+      pdfUrl,
       message: "PDF vygenerováno",
     });
   } catch (error) {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createNotification } from "@/lib/notifications";
+import { sendEmail } from "@/lib/resend";
 import {
   dailySummaryHtml,
   dailySummaryText,
@@ -241,21 +242,17 @@ export async function POST(request: NextRequest) {
           stalingVehicles,
         };
 
-        try {
-          const { Resend } = await import("resend");
-          const resend = new Resend(process.env.RESEND_API_KEY);
+        const emailResult = await sendEmail({
+          to: broker.email,
+          subject: dailySummarySubject(summaryData),
+          html: dailySummaryHtml(summaryData),
+          text: dailySummaryText(summaryData),
+        });
 
-          await resend.emails.send({
-            from: process.env.RESEND_FROM_EMAIL || "info@carmakler.cz",
-            to: broker.email,
-            subject: dailySummarySubject(summaryData),
-            html: dailySummaryHtml(summaryData),
-            text: dailySummaryText(summaryData),
-          });
-
+        if (emailResult.success) {
           emailsSent++;
-        } catch (emailError) {
-          console.error(`Chyba pri odesilani emailu makleri ${broker.id}:`, emailError);
+        } else {
+          console.error(`Chyba pri odesilani emailu makleri ${broker.id}:`, emailResult.error);
         }
       }
 

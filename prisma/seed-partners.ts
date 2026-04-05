@@ -1,8 +1,13 @@
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 import { readFileSync } from "fs";
 import { join } from "path";
 
-const prisma = new PrismaClient();
+const connectionString = process.env.DATABASE_URL || "postgresql://zen@localhost:5432/carmakler";
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 interface SeedPartner {
   name: string;

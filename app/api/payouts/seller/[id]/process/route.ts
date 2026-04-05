@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { processSellerPayoutSchema } from "@/lib/validators/payment";
+import { sendEmail } from "@/lib/resend";
 
 export async function POST(
   request: NextRequest,
@@ -67,19 +68,12 @@ export async function POST(
     });
 
     if (vehicle?.sellerEmail) {
-      try {
-        const { Resend } = await import("resend");
-        const resend = new Resend(process.env.RESEND_API_KEY);
-        await resend.emails.send({
-          from: process.env.RESEND_FROM_EMAIL || "info@carmakler.cz",
-          to: vehicle.sellerEmail,
-          subject: "Výplata z prodeje vozidla | Carmakler",
-          html: `<p>Částka ${payout.amount.toLocaleString("cs-CZ")} Kč za prodej vozidla ${vehicle.brand} ${vehicle.model} byla odeslána na váš účet.</p><p>Děkujeme, že jste prodávali přes Carmakler.</p>`,
-          text: `Částka ${payout.amount.toLocaleString("cs-CZ")} Kč za prodej vozidla ${vehicle.brand} ${vehicle.model} byla odeslána na váš účet. Děkujeme, že jste prodávali přes Carmakler.`,
-        });
-      } catch (emailErr) {
-        console.error("Failed to send seller payout email:", emailErr);
-      }
+      await sendEmail({
+        to: vehicle.sellerEmail,
+        subject: "Výplata z prodeje vozidla | Carmakler",
+        html: `<p>Částka ${payout.amount.toLocaleString("cs-CZ")} Kč za prodej vozidla ${vehicle.brand} ${vehicle.model} byla odeslána na váš účet.</p><p>Děkujeme, že jste prodávali přes Carmakler.</p>`,
+        text: `Částka ${payout.amount.toLocaleString("cs-CZ")} Kč za prodej vozidla ${vehicle.brand} ${vehicle.model} byla odeslána na váš účet. Děkujeme, že jste prodávali přes Carmakler.`,
+      });
     }
 
     return NextResponse.json({ success: true });
