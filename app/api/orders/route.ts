@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import crypto from "crypto";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -70,6 +71,10 @@ export async function POST(request: NextRequest) {
     const shippingPrice = data.paymentMethod === "COD" ? 49 : 0;
     totalPrice += shippingPrice;
 
+    // Generovat guest token pokud neni prihlaseny
+    const isGuest = !buyerId;
+    const guestToken = isGuest ? crypto.randomBytes(32).toString("hex") : null;
+
     // Vytvořit objednávku + snížit stock v transakci (prevence race condition)
     const order = await prisma.$transaction(async (tx) => {
       // Znovu ověřit stock uvnitř transakce
@@ -87,6 +92,7 @@ export async function POST(request: NextRequest) {
         data: {
           orderNumber: generateOrderNumber(),
           buyerId,
+          guestToken,
           status: "PENDING",
           deliveryName: data.deliveryName,
           deliveryPhone: data.deliveryPhone,
@@ -121,7 +127,10 @@ export async function POST(request: NextRequest) {
       return created;
     });
 
-    return NextResponse.json({ order }, { status: 201 });
+    return NextResponse.json({
+      order,
+      ...(guestToken && { trackingUrl: `/shop/objednavky/sledovani/${guestToken}` }),
+    }, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(

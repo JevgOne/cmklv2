@@ -5,7 +5,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
-    exclude: ['node_modules', '.next', 'playwright'],
+    exclude: ['node_modules', '.next', 'playwright', 'e2e'],
     alias: {
       '@': path.resolve(__dirname, '.'),
     },

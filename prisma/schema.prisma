@@ -984,8 +984,12 @@ model Order {
   shippedAt      DateTime?
   deliveredAt    DateTime?
 
+  // Guest checkout
+  guestToken  String?  @unique  // Token pro sledovani objednavky bez prihlaseni
+
   // Relace
-  items OrderItem[]
+  items   OrderItem[]
+  returns ReturnRequest[]
 
   // Timestamps
   createdAt DateTime @default(now())
@@ -993,6 +997,7 @@ model Order {
 
   @@index([buyerId])
   @@index([status])
+  @@index([guestToken])
 }
 
 model OrderItem {
@@ -1015,6 +1020,60 @@ model OrderItem {
   @@index([orderId])
   @@index([partId])
   @@index([supplierId])
+}
+
+// ============================================
+// VRÁCENÍ A REKLAMACE
+// ============================================
+
+model ReturnRequest {
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id])
+
+  // Typ
+  type String // WITHDRAWAL (14-den odstoupení), WARRANTY (záruční reklamace)
+
+  // Položky k vrácení
+  items String // JSON array: [{orderItemId, quantity, reason}]
+
+  // Důvod
+  reason     String  // Textový popis důvodu
+  defectDesc String? // Popis závady (jen pro WARRANTY)
+  photos     String? // JSON array URL fotek závady
+
+  // Kontakt
+  contactName  String
+  contactEmail String
+  contactPhone String?
+
+  // Bankovní účet pro vrácení peněz
+  bankAccount String?
+
+  // Finance
+  requestedAmount Int        // Částka k vrácení
+  approvedAmount  Int?       // Schválená částka
+  refundedAt      DateTime?
+
+  // Stav
+  status String @default("NEW")
+  // NEW, RECEIVED, IN_REVIEW, APPROVED, REFUNDED, PARTIALLY_REFUNDED, REJECTED, CANCELLED
+
+  rejectionReason String?
+
+  // 30-den lhůta na vyřízení (§19/3 ZOS)
+  deadlineAt DateTime?
+
+  // Interní poznámky
+  adminNotes String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([status])
+  @@index([type])
+  @@index([createdAt])
 }
 
 // ============================================
@@ -1567,4 +1626,21 @@ model PartnerLead {
 
   @@index([partnerId])
   @@index([status])
+}
+
+// ============================================
+// PASSWORD RESET
+// ============================================
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  email     String
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([token])
+  @@index([expiresAt])
 }

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { OrderTracker } from "@/components/web/OrderTracker";
+import { Button } from "@/components/ui/Button";
 import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
 
@@ -153,6 +154,17 @@ export default function MojeObjednavkyPage() {
                     {formatPrice(order.totalPrice)}
                   </div>
                 </div>
+
+                {order.status === "DELIVERED" && (
+                  <div className="flex gap-2 mt-4 pt-4 border-t border-gray-200">
+                    <Link href={`/shop/moje-objednavky/${order.id}/vraceni`}>
+                      <Button variant="outline" size="sm">Chci vrátit</Button>
+                    </Link>
+                    <Link href={`/shop/moje-objednavky/${order.id}/reklamace`}>
+                      <Button variant="outline" size="sm">Reklamovat</Button>
+                    </Link>
+                  </div>
+                )}
               </Card>
             );
           })

@@ -13,10 +13,7 @@ export async function GET(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
-    }
-
+    const token = request.nextUrl.searchParams.get("token");
     const { id } = await params;
 
     const order = await prisma.order.findFirst({
@@ -46,12 +43,16 @@ export async function GET(
       return NextResponse.json({ error: "Objednávka nenalezena" }, { status: 404 });
     }
 
-    // Ověřit přístup: kupující, dodavatel položek, nebo admin
-    const isAdmin = session.user.role === "ADMIN" || session.user.role === "BACKOFFICE";
-    const isBuyer = order.buyerId === session.user.id;
-    const isSupplier = order.items.some((i) => i.supplierId === session.user.id);
+    // Ověřit přístup: kupující, dodavatel položek, admin, nebo guest s tokenem
+    const isAdmin = session?.user?.role === "ADMIN" || session?.user?.role === "BACKOFFICE";
+    const isBuyer = session?.user?.id && order.buyerId === session.user.id;
+    const isSupplier = session?.user?.id && order.items.some((i) => i.supplierId === session.user.id);
+    const isGuest = token && order.guestToken && token === order.guestToken;
 
-    if (!isBuyer && !isSupplier && !isAdmin) {
+    if (!isBuyer && !isSupplier && !isAdmin && !isGuest) {
+      if (!session?.user?.id) {
+        return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
+      }
       return NextResponse.json({ error: "Nemáte oprávnění" }, { status: 403 });
     }
 

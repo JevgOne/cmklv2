@@ -105,7 +105,8 @@ export default function ObjednavkaPage() {
       if (res.ok) {
         const data = await res.json();
         clearCart();
-        router.push(`/shop/objednavka/potvrzeni?id=${data.order?.orderNumber ?? data.order?.id ?? "demo"}`);
+        const trackingParam = data.trackingUrl ? `&tracking=${encodeURIComponent(data.trackingUrl)}` : "";
+        router.push(`/shop/objednavka/potvrzeni?id=${data.order?.orderNumber ?? data.order?.id ?? "demo"}${trackingParam}`);
       } else {
         const errData = await res.json().catch(() => null);
         console.error("Order error:", errData);

@@ -105,7 +105,8 @@ export default function DilyObjednavkaPage() {
       if (res.ok) {
         const data = await res.json();
         clearCart();
-        router.push(`/dily/objednavka/potvrzeni?id=${data.order?.orderNumber ?? data.order?.id ?? "demo"}`);
+        const trackingParam = data.trackingUrl ? `&tracking=${encodeURIComponent(data.trackingUrl)}` : "";
+        router.push(`/dily/objednavka/potvrzeni?id=${data.order?.orderNumber ?? data.order?.id ?? "demo"}${trackingParam}`);
       } else {
         clearCart();
         router.push("/dily/objednavka/potvrzeni?id=demo-" + Date.now());

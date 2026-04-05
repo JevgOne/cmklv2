@@ -127,12 +127,12 @@ export default function LoginPage() {
             </div>
 
             <div className="flex items-center justify-end">
-              <a
-                href="mailto:info@carmakler.cz?subject=Obnova%20hesla"
+              <Link
+                href="/zapomenute-heslo"
                 className="text-sm text-orange-600 hover:text-orange-700 no-underline"
               >
                 Zapomenuté heslo?
-              </a>
+              </Link>
             </div>
 
             <button

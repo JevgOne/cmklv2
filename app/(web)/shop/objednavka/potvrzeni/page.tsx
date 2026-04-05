@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/Card";
 export default function PotvrzeniPage() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("id") ?? "---";
+  const trackingUrl = searchParams.get("tracking");
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -49,13 +50,39 @@ export default function PotvrzeniPage() {
             <p>V případě platby převodem obdržíte platební údaje emailem.</p>
           </div>
 
+          {trackingUrl && (
+            <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 mb-6 text-left">
+              <p className="font-bold text-gray-900 text-sm mb-1">Odkaz pro sledovani objednavky</p>
+              <p className="text-xs text-gray-500 mb-2">
+                Ulozte si tento odkaz — muzete pres nej sledovat stav objednavky bez prihlaseni.
+              </p>
+              <Link
+                href={trackingUrl}
+                className="text-orange-500 font-semibold text-sm break-all no-underline hover:text-orange-600"
+              >
+                {typeof window !== "undefined" ? window.location.origin : ""}{trackingUrl}
+              </Link>
+            </div>
+          )}
+
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/shop/moje-objednavky" className="no-underline">
-              <Button variant="primary">Moje objednávky</Button>
-            </Link>
+            {trackingUrl ? (
+              <Link href={trackingUrl} className="no-underline">
+                <Button variant="primary">Sledovat objednavku</Button>
+              </Link>
+            ) : (
+              <Link href="/shop/moje-objednavky" className="no-underline">
+                <Button variant="primary">Moje objednávky</Button>
+              </Link>
+            )}
             <Link href="/shop" className="no-underline">
               <Button variant="outline">Zpět do shopu</Button>
             </Link>
+            {trackingUrl && (
+              <Link href="/registrace" className="no-underline">
+                <Button variant="outline">Vytvorit ucet</Button>
+              </Link>
+            )}
           </div>
         </Card>
       </div>

@@ -567,6 +567,7 @@ CREATE TABLE "Order" (
     "trackingNumber" TEXT,
     "shippedAt" TIMESTAMP(3),
     "deliveredAt" TIMESTAMP(3),
+    "guestToken" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -586,6 +587,32 @@ CREATE TABLE "OrderItem" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "OrderItem_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ReturnRequest" (
+    "id" TEXT NOT NULL,
+    "orderId" TEXT NOT NULL,
+    "type" TEXT NOT NULL,
+    "items" TEXT NOT NULL,
+    "reason" TEXT NOT NULL,
+    "defectDesc" TEXT,
+    "photos" TEXT,
+    "contactName" TEXT NOT NULL,
+    "contactEmail" TEXT NOT NULL,
+    "contactPhone" TEXT,
+    "bankAccount" TEXT,
+    "requestedAmount" INTEGER NOT NULL,
+    "approvedAmount" INTEGER,
+    "refundedAt" TIMESTAMP(3),
+    "status" TEXT NOT NULL DEFAULT 'NEW',
+    "rejectionReason" TEXT,
+    "deadlineAt" TIMESTAMP(3),
+    "adminNotes" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "ReturnRequest_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -1225,10 +1252,16 @@ CREATE INDEX "PartImage_partId_idx" ON "PartImage"("partId");
 CREATE UNIQUE INDEX "Order_orderNumber_key" ON "Order"("orderNumber");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Order_guestToken_key" ON "Order"("guestToken");
+
+-- CreateIndex
 CREATE INDEX "Order_buyerId_idx" ON "Order"("buyerId");
 
 -- CreateIndex
 CREATE INDEX "Order_status_idx" ON "Order"("status");
+
+-- CreateIndex
+CREATE INDEX "Order_guestToken_idx" ON "Order"("guestToken");
 
 -- CreateIndex
 CREATE INDEX "OrderItem_orderId_idx" ON "OrderItem"("orderId");
@@ -1238,6 +1271,18 @@ CREATE INDEX "OrderItem_partId_idx" ON "OrderItem"("partId");
 
 -- CreateIndex
 CREATE INDEX "OrderItem_supplierId_idx" ON "OrderItem"("supplierId");
+
+-- CreateIndex
+CREATE INDEX "ReturnRequest_orderId_idx" ON "ReturnRequest"("orderId");
+
+-- CreateIndex
+CREATE INDEX "ReturnRequest_status_idx" ON "ReturnRequest"("status");
+
+-- CreateIndex
+CREATE INDEX "ReturnRequest_type_idx" ON "ReturnRequest"("type");
+
+-- CreateIndex
+CREATE INDEX "ReturnRequest_createdAt_idx" ON "ReturnRequest"("createdAt");
 
 -- CreateIndex
 CREATE INDEX "FlipOpportunity_dealerId_idx" ON "FlipOpportunity"("dealerId");
@@ -1550,6 +1595,9 @@ ALTER TABLE "OrderItem" ADD CONSTRAINT "OrderItem_partId_fkey" FOREIGN KEY ("par
 
 -- AddForeignKey
 ALTER TABLE "OrderItem" ADD CONSTRAINT "OrderItem_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ReturnRequest" ADD CONSTRAINT "ReturnRequest_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "Order"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "FlipOpportunity" ADD CONSTRAINT "FlipOpportunity_dealerId_fkey" FOREIGN KEY ("dealerId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
