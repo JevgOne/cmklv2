@@ -4,7 +4,7 @@ test.describe("Homepage", () => {
   test("nacte se a ma spravny title", async ({ page }) => {
     await page.goto("/");
     await expect(page).toHaveTitle(/CarMakléř/);
-    await expect(page.locator("main")).toBeVisible();
+    await expect(page.locator("#main-content")).toBeVisible();
   });
 
   test("navigace obsahuje hlavni odkazy", async ({ page }) => {

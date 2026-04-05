@@ -132,7 +132,7 @@ test.describe("BATCH 2 — Homepage", () => {
   test("homepage — hero sekce přítomna", async ({ page }) => {
     await page.goto(`${BASE}/`);
     // Should have some hero/banner text
-    const hasContent = await page.locator("main").first().isVisible();
+    const hasContent = await page.locator("#main-content").first().isVisible();
     expect(hasContent).toBeTruthy();
   });
 

@@ -22,11 +22,11 @@ function mapToTrackerStatus(apiStatus: string): OrderTrackerStatus {
 }
 
 const statusBadge: Record<string, { label: string; variant: "verified" | "pending" | "new" | "default" | "rejected" }> = {
-  PENDING: { label: "Nova", variant: "new" },
-  CONFIRMED: { label: "Potvrzena", variant: "pending" },
-  SHIPPED: { label: "Odeslano", variant: "verified" },
-  DELIVERED: { label: "Doruceno", variant: "verified" },
-  CANCELLED: { label: "Zrusena", variant: "rejected" },
+  PENDING: { label: "Nová", variant: "new" },
+  CONFIRMED: { label: "Potvrzená", variant: "pending" },
+  SHIPPED: { label: "Odesláno", variant: "verified" },
+  DELIVERED: { label: "Doručeno", variant: "verified" },
+  CANCELLED: { label: "Zrušená", variant: "rejected" },
 };
 
 interface OrderItem {
@@ -67,10 +67,10 @@ export default function SledovaniPage({ params }: { params: Promise<{ token: str
           const data = await res.json();
           setOrder(data.order);
         } else {
-          setError("Objednavka nenalezena nebo neplatny odkaz");
+          setError("Objednávka nenalezena nebo neplatný odkaz");
         }
       } catch {
-        setError("Chyba pri nacitani");
+        setError("Chyba při načítání");
       } finally {
         setLoading(false);
       }
@@ -81,7 +81,7 @@ export default function SledovaniPage({ params }: { params: Promise<{ token: str
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-pulse text-gray-500">Nacitani objednavky...</div>
+        <div className="animate-pulse text-gray-500">Načítání objednávky...</div>
       </div>
     );
   }
@@ -91,12 +91,12 @@ export default function SledovaniPage({ params }: { params: Promise<{ token: str
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-2xl mx-auto px-4 py-16 text-center">
           <div className="text-5xl mb-4">🔍</div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Objednavka nenalezena</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Objednávka nenalezena</h1>
           <p className="text-gray-500 mb-6">
-            {error ?? "Odkaz pro sledovani je neplatny nebo vyprsela jeho platnost."}
+            {error ?? "Odkaz pro sledování je neplatný nebo vypršela jeho platnost."}
           </p>
           <Link href="/shop" className="no-underline">
-            <Button variant="outline">Zpet do shopu</Button>
+            <Button variant="outline">Zpět do shopu</Button>
           </Link>
         </div>
       </div>
@@ -110,8 +110,8 @@ export default function SledovaniPage({ params }: { params: Promise<{ token: str
     <div className="min-h-screen bg-gray-50">
       <section className="bg-white border-b border-gray-200">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 className="text-3xl font-extrabold text-gray-900">Sledovani objednavky</h1>
-          <p className="text-gray-500 mt-1">Objednavka #{order.orderNumber}</p>
+          <h1 className="text-3xl font-extrabold text-gray-900">Sledování objednávky</h1>
+          <p className="text-gray-500 mt-1">Objednávka #{order.orderNumber}</p>
         </div>
       </section>
 
@@ -132,14 +132,14 @@ export default function SledovaniPage({ params }: { params: Promise<{ token: str
 
           {order.trackingNumber && (
             <div className="text-sm text-orange-500 font-medium">
-              Tracking cislo: {order.trackingNumber}
+              Tracking číslo: {order.trackingNumber}
             </div>
           )}
         </Card>
 
         {/* Items */}
         <Card className="p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">Polozky objednavky</h2>
+          <h2 className="text-lg font-bold text-gray-900 mb-4">Položky objednávky</h2>
           <div className="space-y-3">
             {order.items.map((item) => (
               <div key={item.id} className="flex justify-between text-sm">
@@ -168,30 +168,30 @@ export default function SledovaniPage({ params }: { params: Promise<{ token: str
           <h2 className="text-lg font-bold text-gray-900 mb-4">Informace</h2>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-gray-500">Doruceni pro</span>
+              <span className="text-gray-500">Doručení pro</span>
               <span className="text-gray-900">{order.deliveryName}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Platba</span>
               <span className="text-gray-900">
-                {order.paymentMethod === "BANK_TRANSFER" ? "Bankovni prevod" : "Dobirka"}
+                {order.paymentMethod === "BANK_TRANSFER" ? "Bankovní převod" : "Dobírka"}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Stav platby</span>
               <span className="text-gray-900">
-                {order.paymentStatus === "PAID" ? "Zaplaceno" : "Ceka na platbu"}
+                {order.paymentStatus === "PAID" ? "Zaplaceno" : "Čeká na platbu"}
               </span>
             </div>
             {order.shippedAt && (
               <div className="flex justify-between">
-                <span className="text-gray-500">Odeslano</span>
+                <span className="text-gray-500">Odesláno</span>
                 <span className="text-gray-900">{new Date(order.shippedAt).toLocaleDateString("cs-CZ")}</span>
               </div>
             )}
             {order.deliveredAt && (
               <div className="flex justify-between">
-                <span className="text-gray-500">Doruceno</span>
+                <span className="text-gray-500">Doručeno</span>
                 <span className="text-gray-900">{new Date(order.deliveredAt).toLocaleDateString("cs-CZ")}</span>
               </div>
             )}
@@ -200,18 +200,18 @@ export default function SledovaniPage({ params }: { params: Promise<{ token: str
 
         {/* CTA: Registration */}
         <Card className="p-6 bg-orange-50 border border-orange-200">
-          <h3 className="font-bold text-gray-900 mb-2">Registrujte se pro snadnejsi sledovani</h3>
+          <h3 className="font-bold text-gray-900 mb-2">Registrujte se pro snadnější sledování</h3>
           <p className="text-sm text-gray-600 mb-4">
-            S uctem uvidite vsechny sve objednavky na jednom miste a muzete je snadno reklamovat.
+            S účtem uvidíte všechny své objednávky na jednom místě a můžete je snadno reklamovat.
           </p>
           <Link href="/registrace" className="no-underline">
-            <Button variant="primary" size="sm">Vytvorit ucet</Button>
+            <Button variant="primary" size="sm">Vytvořit účet</Button>
           </Link>
         </Card>
 
         <div className="text-center pt-4">
           <Link href="/shop" className="text-orange-500 font-semibold hover:text-orange-600 no-underline">
-            Zpet do shopu
+            Zpět do shopu
           </Link>
         </div>
       </div>

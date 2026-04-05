@@ -85,20 +85,20 @@ export function CookieConsent() {
       className="fixed bottom-0 inset-x-0 z-[100] p-4 sm:p-6"
       role="dialog"
       aria-modal="true"
-      aria-label="Nastaveni cookies"
+      aria-label="Nastavení cookies"
     >
       <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl border border-gray-200 p-6">
         <h3 className="text-lg font-bold text-gray-900 mb-2">
-          Pouzivame cookies
+          Používáme cookies
         </h3>
         <p className="text-sm text-gray-600 mb-4">
-          Pouzivame cookies pro spravne fungovani webu a analyzu navstevnosti.
-          Vice informaci v nasich{" "}
+          Používáme cookies pro správné fungování webu a analýzu návštěvnosti.
+          Více informací v našich{" "}
           <Link
             href="/zasady-cookies"
             className="text-orange-700 underline hover:text-orange-600"
           >
-            zasadach cookies
+            zásadách cookies
           </Link>
           .
         </p>
@@ -114,10 +114,10 @@ export function CookieConsent() {
               />
               <div>
                 <span className="text-sm font-medium text-gray-900">
-                  Nutne cookies
+                  Nutné cookies
                 </span>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  Zakladni funkce webu — prihlaseni, kosik, cookie consent. Nelze vypnout.
+                  Základní funkce webu — přihlášení, košík, cookie consent. Nelze vypnout.
                 </p>
               </div>
             </label>
@@ -132,10 +132,10 @@ export function CookieConsent() {
               />
               <div>
                 <span className="text-sm font-medium text-gray-900">
-                  Analyticke cookies
+                  Analytické cookies
                 </span>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  Mereni navstevnosti webu (Plausible Analytics / Google Analytics).
+                  Měření návštěvnosti webu (Plausible Analytics / Google Analytics).
                 </p>
               </div>
             </label>
@@ -150,10 +150,10 @@ export function CookieConsent() {
               />
               <div>
                 <span className="text-sm font-medium text-gray-900">
-                  Marketingove cookies
+                  Marketingové cookies
                 </span>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  Cilena reklama a remarketing (Facebook Pixel, Google Ads).
+                  Cílená reklama a remarketing (Facebook Pixel, Google Ads).
                 </p>
               </div>
             </label>
@@ -162,21 +162,21 @@ export function CookieConsent() {
 
         <div className="flex flex-col sm:flex-row gap-3">
           <Button onClick={acceptAll} variant="primary" size="sm">
-            Prijmout vse
+            Přijmout vše
           </Button>
           <Button onClick={acceptNecessaryOnly} variant="outline" size="sm">
-            Pouze nutne
+            Pouze nutné
           </Button>
           {!showDetails ? (
             <button
               onClick={() => setShowDetails(true)}
               className="text-sm text-gray-500 hover:text-gray-900 underline py-2"
             >
-              Nastaveni
+              Nastavení
             </button>
           ) : (
             <Button onClick={saveCustom} variant="outline" size="sm">
-              Ulozit nastaveni
+              Uložit nastavení
             </Button>
           )}
         </div>

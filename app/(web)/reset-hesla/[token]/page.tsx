@@ -18,12 +18,12 @@ export default function ResetHeslaPage({ params }: { params: Promise<{ token: st
     setError("");
 
     if (password.length < 8) {
-      setError("Heslo musi mit alespon 8 znaku");
+      setError("Heslo musí mít alespoň 8 znaků");
       return;
     }
 
     if (password !== passwordConfirm) {
-      setError("Hesla se neshoduji");
+      setError("Hesla se neshodují");
       return;
     }
 
@@ -42,10 +42,10 @@ export default function ResetHeslaPage({ params }: { params: Promise<{ token: st
         setSuccess(true);
         setTimeout(() => router.push("/login"), 3000);
       } else {
-        setError(data.error || "Doslo k chybe. Zkuste to prosim znovu.");
+        setError(data.error || "Došlo k chybě. Zkuste to prosím znovu.");
       }
     } catch {
-      setError("Doslo k chybe. Zkuste to prosim znovu.");
+      setError("Došlo k chybě. Zkuste to prosím znovu.");
     } finally {
       setLoading(false);
     }
@@ -56,9 +56,9 @@ export default function ResetHeslaPage({ params }: { params: Promise<{ token: st
       <div className="w-full max-w-md">
         <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-card">
           <div className="mb-8 text-center">
-            <h1 className="text-2xl font-bold text-gray-900">Nove heslo</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Nové heslo</h1>
             <p className="mt-2 text-sm text-gray-500">
-              Zadejte sve nove heslo
+              Zadejte své nové heslo
             </p>
           </div>
 
@@ -78,15 +78,15 @@ export default function ResetHeslaPage({ params }: { params: Promise<{ token: st
                   />
                 </svg>
               </div>
-              <h2 className="text-lg font-bold text-gray-900 mb-2">Heslo zmeneno</h2>
+              <h2 className="text-lg font-bold text-gray-900 mb-2">Heslo změněno</h2>
               <p className="text-sm text-gray-500 mb-6">
-                Vase heslo bylo uspesne zmeneno. Za moment budete presmerovani na prihlaseni.
+                Vaše heslo bylo úspěšně změněno. Za moment budete přesměrováni na přihlášení.
               </p>
               <Link
                 href="/login"
                 className="text-sm font-medium text-orange-600 hover:text-orange-700 no-underline"
               >
-                Prejit na prihlaseni
+                Přejít na přihlášení
               </Link>
             </div>
           ) : (
@@ -99,7 +99,7 @@ export default function ResetHeslaPage({ params }: { params: Promise<{ token: st
                       href="/zapomenute-heslo"
                       className="block mt-2 font-medium text-orange-600 hover:text-orange-700 no-underline"
                     >
-                      Zadat novou zadost
+                      Zadat novou žádost
                     </Link>
                   )}
                 </div>
@@ -111,14 +111,14 @@ export default function ResetHeslaPage({ params }: { params: Promise<{ token: st
                     htmlFor="password"
                     className="mb-1.5 block text-sm font-medium text-gray-700"
                   >
-                    Nove heslo
+                    Nové heslo
                   </label>
                   <input
                     id="password"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Minimalne 8 znaku"
+                    placeholder="Minimálně 8 znaků"
                     required
                     minLength={8}
                     className="w-full rounded-lg border border-gray-300 px-4 py-3 text-base sm:text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
@@ -130,7 +130,7 @@ export default function ResetHeslaPage({ params }: { params: Promise<{ token: st
                     htmlFor="passwordConfirm"
                     className="mb-1.5 block text-sm font-medium text-gray-700"
                   >
-                    Potvrzeni hesla
+                    Potvrzení hesla
                   </label>
                   <input
                     id="passwordConfirm"
@@ -149,7 +149,7 @@ export default function ResetHeslaPage({ params }: { params: Promise<{ token: st
                   disabled={loading}
                   className="w-full rounded-lg bg-orange-500 px-4 py-3 text-base sm:text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-600 focus:ring-2 focus:ring-orange-500/20 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 min-h-[44px]"
                 >
-                  {loading ? "Menim heslo..." : "Zmenit heslo"}
+                  {loading ? "Měním heslo..." : "Změnit heslo"}
                 </button>
               </form>
 
@@ -158,7 +158,7 @@ export default function ResetHeslaPage({ params }: { params: Promise<{ token: st
                   href="/login"
                   className="text-sm font-medium text-orange-600 hover:text-orange-700 no-underline"
                 >
-                  Zpet na prihlaseni
+                  Zpět na přihlášení
                 </Link>
               </div>
             </>
