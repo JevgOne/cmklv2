@@ -64,3 +64,15 @@ export const companyInfo = {
     },
   ],
 } as const;
+
+/**
+ * Vrátí true pokud hodnota obsahuje placeholder marker `[DOPLNIT`.
+ * Footery a další UI pouzivaji pro skryti neuplnych dat pred launchem.
+ *
+ * Pokrývá všechny current patterns: `[DOPLNIT]`, `[DOPLNIT TELEFON]`,
+ * `[DOPLNIT ULICE A CISLO]`, `[DOPLNIT PSC]`, apod.
+ */
+export function isPlaceholder(value: string | undefined | null): boolean {
+  if (!value) return true;
+  return value.includes("[DOPLNIT");
+}
