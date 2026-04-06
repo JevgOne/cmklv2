@@ -981,7 +981,7 @@ model Order {
   deliveryZip     String
 
   // Způsob doručení
-  deliveryMethod      String  @default("PPL") // ZASILKOVNA, PPL, CESKA_POSTA, PICKUP
+  deliveryMethod      String  @default("PPL") // ZASILKOVNA, DPD, PPL, GLS, CESKA_POSTA, PICKUP
   zasilkovnaPointId   String? // ID výdejního místa Zásilkovny
   zasilkovnaPointName String? // Název výdejního místa
 
@@ -996,10 +996,13 @@ model Order {
   // Poznámka
   note String?
 
-  // Tracking
-  trackingNumber String?
-  shippedAt      DateTime?
-  deliveredAt    DateTime?
+  // Tracking + přepravní štítek (generované naším systémem přes API dopravce)
+  trackingNumber   String?
+  trackingCarrier  String? // Reálný dopravce (zpravidla stejný jako deliveryMethod)
+  trackingUrl      String? // Link na tracking u dopravce
+  shippingLabelUrl String? // URL na PDF přepravní štítek k vytištění ve vrakovišti
+  shippedAt        DateTime?
+  deliveredAt      DateTime?
 
   // Guest checkout
   guestToken  String?  @unique  // Token pro sledovani objednavky bez prihlaseni
