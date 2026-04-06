@@ -171,7 +171,7 @@ export function FooterBase({
               <li className="text-gray-600">{companyInfo.hours}</li>
               <li>
                 <a
-                  href={urls.main("/faq")}
+                  href={urls.main("/jak-to-funguje")}
                   className="hover:text-white transition-colors no-underline"
                 >
                   FAQ
@@ -270,7 +270,7 @@ export function FooterBase({
                 Obchodní podmínky
               </a>
               <a
-                href={urls.main("/cookies")}
+                href={urls.main("/zasady-cookies")}
                 className="hover:text-white transition-colors no-underline"
               >
                 Cookies

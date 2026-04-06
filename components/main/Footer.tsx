@@ -11,8 +11,7 @@ export function MainFooter() {
           { href: "/nabidka", label: "Nabídka vozidel" },
           { href: "/chci-prodat", label: "Prodat auto" },
           { href: "/jak-to-funguje", label: "Jak to funguje" },
-          { href: "/stan-se-maklerem", label: "Staň se makléřem" },
-          { href: "/blog", label: "Blog" },
+          { href: "/kariera", label: "Staň se makléřem" },
         ],
       }}
     />
