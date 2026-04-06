@@ -6,6 +6,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createOrderSchema } from "@/lib/validators/parts";
 import { getStripe } from "@/lib/stripe";
+import { getShippingPrice } from "@/lib/shipping/prices";
 
 /* ------------------------------------------------------------------ */
 /*  POST /api/orders — Vytvoření objednávky z košíku                    */
@@ -69,14 +70,8 @@ export async function POST(request: NextRequest) {
       };
     });
 
-    // Dopravné dle metody doručení
-    const DELIVERY_PRICES: Record<string, number> = {
-      ZASILKOVNA: 79,
-      PPL: 129,
-      CESKA_POSTA: 99,
-      PICKUP: 0,
-    };
-    const deliveryPrice = DELIVERY_PRICES[data.deliveryMethod] ?? 0;
+    // Dopravné dle metody doručení (single source of truth)
+    const deliveryPrice = getShippingPrice(data.deliveryMethod);
     const codFee = data.paymentMethod === "COD" ? 39 : 0;
     const shippingPrice = deliveryPrice + codFee;
     totalPrice += shippingPrice;

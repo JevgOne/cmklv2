@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { getCart, getCartTotal, clearCart, onCartChange, type CartItem } from "@/lib/cart";
 import { OrderForm, type DeliveryFormData } from "@/components/web/OrderForm";
+import { getShippingPrice } from "@/lib/shipping/prices";
+import type { DeliveryMethod } from "@/lib/shipping/types";
 import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
@@ -18,13 +20,6 @@ const paymentMethods = [
   { value: "COD", label: "Dobírka", desc: "Platba při převzetí (+39 Kč)" },
   { value: "CARD", label: "Platba kartou", desc: "Okamžitá platba přes Stripe" },
 ];
-
-const deliveryPrices: Record<string, number> = {
-  ZASILKOVNA: 79,
-  PPL: 129,
-  CESKA_POSTA: 99,
-  PICKUP: 0,
-};
 
 export default function ObjednavkaPage() {
   const router = useRouter();
@@ -57,7 +52,9 @@ export default function ObjednavkaPage() {
     return onCartChange(refresh);
   }, []);
 
-  const deliveryPrice = deliveryPrices[delivery.deliveryMethod] ?? 0;
+  const deliveryPrice = delivery.deliveryMethod
+    ? getShippingPrice(delivery.deliveryMethod as DeliveryMethod)
+    : 0;
   const codFee = paymentMethod === "COD" ? 39 : 0;
   const grandTotal = total + deliveryPrice + codFee;
 

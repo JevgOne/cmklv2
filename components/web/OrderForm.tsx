@@ -1,9 +1,11 @@
 "use client";
 
 import { Input } from "@/components/ui/Input";
-import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
 import { ZasilkovnaWidget } from "@/components/web/ZasilkovnaWidget";
+import { getShippingMethods } from "@/lib/shipping/prices";
+import { formatPrice, cn } from "@/lib/utils";
+import type { DeliveryMethod } from "@/lib/shipping/types";
 
 export interface ZasilkovnaPoint {
   id: string;
@@ -20,16 +22,9 @@ export interface DeliveryFormData {
   city: string;
   zip: string;
   note: string;
-  deliveryMethod: string;
+  deliveryMethod: DeliveryMethod | ""; // Prázdný string = ještě nevybráno
   zasilkovnaPoint?: ZasilkovnaPoint | null;
 }
-
-const deliveryOptions = [
-  { value: "ZASILKOVNA", label: "Zásilkovna — 79 Kč" },
-  { value: "PPL", label: "PPL — 129 Kč" },
-  { value: "CESKA_POSTA", label: "Česká pošta — 99 Kč" },
-  { value: "PICKUP", label: "Osobní odběr — Zdarma" },
-];
 
 export function OrderForm({
   data,
@@ -44,10 +39,13 @@ export function OrderForm({
     onChange({ ...data, [field]: value });
   };
 
+  const shippingMethods = getShippingMethods();
+
   return (
     <div className="space-y-6">
       <h3 className="text-lg font-bold text-gray-900">Doručovací údaje</h3>
 
+      {/* Jméno + Příjmení */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Input
           label="Jméno *"
@@ -65,6 +63,7 @@ export function OrderForm({
         />
       </div>
 
+      {/* Email + Telefon */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Input
           label="Email *"
@@ -84,6 +83,7 @@ export function OrderForm({
         />
       </div>
 
+      {/* Adresa */}
       <Input
         label="Ulice a číslo *"
         value={data.street}
@@ -91,7 +91,6 @@ export function OrderForm({
         error={errors?.street}
         placeholder="Hlavní 123"
       />
-
       <div className="grid grid-cols-2 gap-4">
         <Input
           label="Město *"
@@ -109,29 +108,82 @@ export function OrderForm({
         />
       </div>
 
-      <Select
-        label="Způsob doručení *"
-        value={data.deliveryMethod}
-        onChange={(e) => update("deliveryMethod", e.target.value)}
-        options={deliveryOptions}
-        placeholder="Vyberte způsob doručení"
-        error={errors?.deliveryMethod}
-      />
+      {/* Způsob doručení — radio karty */}
+      <div className="space-y-3">
+        <label className="block text-sm font-medium text-gray-700">
+          Způsob doručení *
+        </label>
 
-      {data.deliveryMethod === "ZASILKOVNA" && (
-        <div className="mt-1">
-          <ZasilkovnaWidget
-            onSelect={(point) => {
-              onChange({ ...data, zasilkovnaPoint: point });
-            }}
-            selectedPoint={data.zasilkovnaPoint}
-          />
-          {errors?.deliveryMethod === "zasilkovnaPointId" && (
-            <p className="text-sm text-red-500 mt-1">Vyberte výdejní místo</p>
-          )}
-        </div>
-      )}
+        {shippingMethods.map((m) => {
+          const isSelected = data.deliveryMethod === m.method;
+          return (
+            <label
+              key={m.method}
+              className={cn(
+                "flex items-start gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all",
+                isSelected
+                  ? "border-orange-500 bg-orange-50"
+                  : "border-gray-200 hover:border-gray-300",
+              )}
+            >
+              <input
+                type="radio"
+                name="deliveryMethod"
+                value={m.method}
+                checked={isSelected}
+                onChange={(e) => update("deliveryMethod", e.target.value)}
+                className="mt-1 w-5 h-5 accent-orange-500 shrink-0"
+              />
 
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl" aria-hidden>
+                      {m.icon}
+                    </span>
+                    <div>
+                      <div className="font-semibold text-gray-900">{m.label}</div>
+                      <div className="text-sm text-gray-500">{m.description}</div>
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <div className="font-bold text-gray-900">
+                      {m.price === 0 ? "Zdarma" : formatPrice(m.price)}
+                    </div>
+                    <div className="text-xs text-gray-400">{m.eta}</div>
+                  </div>
+                </div>
+
+                {/* Zásilkovna widget — jen když je vybraná */}
+                {isSelected && m.method === "ZASILKOVNA" && (
+                  <div className="mt-3">
+                    <ZasilkovnaWidget
+                      onSelect={(point) => {
+                        onChange({ ...data, zasilkovnaPoint: point });
+                      }}
+                      selectedPoint={data.zasilkovnaPoint}
+                    />
+                  </div>
+                )}
+
+                {/* PICKUP info box */}
+                {isSelected && m.method === "PICKUP" && (
+                  <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-900">
+                    Objednávku si vyzvednete v sídle CarMakler v Praze.
+                    Přesnou adresu a otevírací dobu najdete v potvrzovacím emailu.
+                  </div>
+                )}
+              </div>
+            </label>
+          );
+        })}
+
+        {errors?.deliveryMethod && (
+          <p className="text-sm text-red-500 mt-1">{errors.deliveryMethod}</p>
+        )}
+      </div>
+
+      {/* Poznámka */}
       <Textarea
         label="Poznámka k objednávce"
         value={data.note}

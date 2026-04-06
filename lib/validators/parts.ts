@@ -71,7 +71,7 @@ export const createOrderSchema = z.object({
   deliveryAddress: z.string().min(1, "Adresa je povinná"),
   deliveryCity: z.string().min(1, "Město je povinné"),
   deliveryZip: z.string().min(3, "PSČ je povinné"),
-  deliveryMethod: z.enum(["ZASILKOVNA", "PPL", "CESKA_POSTA", "PICKUP"]),
+  deliveryMethod: z.enum(["ZASILKOVNA", "DPD", "PPL", "GLS", "CESKA_POSTA", "PICKUP"]),
   zasilkovnaPointId: z.string().optional(),
   zasilkovnaPointName: z.string().optional(),
   paymentMethod: z.enum(["BANK_TRANSFER", "COD", "CARD"]),
