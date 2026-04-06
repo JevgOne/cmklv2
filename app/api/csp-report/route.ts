@@ -18,8 +18,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ received: true }, { status: 204 });
+    return new NextResponse(null, { status: 204 });
   } catch {
-    return NextResponse.json({ received: true }, { status: 204 });
+    return new NextResponse(null, { status: 204 });
   }
 }
