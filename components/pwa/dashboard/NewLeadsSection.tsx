@@ -113,33 +113,37 @@ export function NewLeadsSection() {
       {leads.map((lead) => (
         <Card key={lead.id} className="p-4">
           <div className="flex items-start justify-between gap-3">
-            <Link
-              href={`/makler/leads/${lead.id}`}
-              className="flex-1 no-underline"
-            >
-              <div className="font-semibold text-gray-900 text-sm">
-                {lead.name}
-              </div>
-              <div className="text-xs text-gray-500 mt-0.5">
-                {[
-                  lead.brand && lead.model
-                    ? `${lead.brand} ${lead.model}`
-                    : lead.brand,
-                  lead.city,
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </div>
+            <div className="flex-1 min-w-0">
+              {/* Detail navigation — jméno + vůz */}
+              <Link
+                href={`/makler/leads/${lead.id}`}
+                className="block no-underline"
+              >
+                <div className="font-semibold text-gray-900 text-sm">
+                  {lead.name}
+                </div>
+                <div className="text-xs text-gray-500 mt-0.5">
+                  {[
+                    lead.brand && lead.model
+                      ? `${lead.brand} ${lead.model}`
+                      : lead.brand,
+                    lead.city,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </div>
+              </Link>
+
+              {/* Tel: link — sourozenec, ne potomek */}
               <div className="text-xs text-gray-400 mt-1">
                 <a
                   href={`tel:${lead.phone}`}
                   className="text-orange-500 font-medium no-underline"
-                  onClick={(e) => e.stopPropagation()}
                 >
                   {lead.phone}
                 </a>
               </div>
-            </Link>
+            </div>
 
             <div className="flex gap-2 flex-shrink-0">
               <Button
