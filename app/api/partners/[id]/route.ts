@@ -22,7 +22,7 @@ export async function GET(
       where: { id },
       include: {
         manager: { select: { id: true, firstName: true, lastName: true, email: true } },
-        user: { select: { id: true, email: true, firstName: true, lastName: true } },
+        user: { select: { id: true, email: true, firstName: true, lastName: true, status: true } },
         _count: { select: { activities: true, leads: true } },
       },
     });

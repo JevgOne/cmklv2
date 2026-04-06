@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -34,7 +35,7 @@ interface Partner {
   notes: string | null;
   description: string | null;
   manager: { id: string; firstName: string; lastName: string; email: string } | null;
-  user: { id: string; email: string; firstName: string; lastName: string } | null;
+  user: { id: string; email: string; firstName: string; lastName: string; status: string } | null;
   _count: { activities: number; leads: number };
 }
 
@@ -77,6 +78,9 @@ const statusOptions = [
 
 export function PartnerDetail({ partnerId }: { partnerId: string }) {
   const router = useRouter();
+  const { data: session } = useSession();
+  const canActivate =
+    session?.user?.role === "ADMIN" || session?.user?.role === "BACKOFFICE";
   const [partner, setPartner] = useState<Partner | null>(null);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [managers, setManagers] = useState<Manager[]>([]);
@@ -107,7 +111,7 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
   const [showActivateModal, setShowActivateModal] = useState(false);
-  const [activateResult, setActivateResult] = useState<{ email: string; temporaryPassword: string } | null>(null);
+  const [activateResult, setActivateResult] = useState<{ email: string; temporaryPassword?: string } | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -307,7 +311,7 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
             <span>/</span>
             <span className="text-gray-900 font-medium">{partner.name}</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <h1 className="text-2xl font-extrabold text-gray-900">
               {partner.name}
             </h1>
@@ -315,16 +319,21 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
             <Badge variant="default">
               {partner.type === "AUTOBAZAR" ? "Autobazar" : "Vrakoviště"}
             </Badge>
+            {partner.user?.status === "PENDING" && (
+              <Badge variant="warning">Čeká na schválení</Badge>
+            )}
           </div>
         </div>
         <div className="flex gap-2">
-          {partner.status !== "AKTIVNI_PARTNER" && !partner.userId && (
+          {canActivate && partner.status !== "AKTIVNI_PARTNER" && (
             <Button
               variant="success"
               size="sm"
               onClick={() => setShowActivateModal(true)}
             >
-              Aktivovat partnerství
+              {partner.userId && partner.user?.status === "PENDING"
+                ? "Schválit registraci"
+                : "Aktivovat partnerství"}
             </Button>
           )}
         </div>
@@ -592,7 +601,11 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
           setShowActivateModal(false);
           setActivateResult(null);
         }}
-        title="Aktivovat partnerství"
+        title={
+          partner.userId && partner.user?.status === "PENDING"
+            ? "Schválit registraci"
+            : "Aktivovat partnerství"
+        }
         footer={
           activateResult ? (
             <Button
@@ -619,7 +632,9 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
                 size="sm"
                 onClick={activatePartnership}
               >
-                Aktivovat
+                {partner.userId && partner.user?.status === "PENDING"
+                  ? "Schválit"
+                  : "Aktivovat"}
               </Button>
             </>
           )
@@ -628,22 +643,39 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
         {activateResult ? (
           <div className="space-y-3">
             <p className="text-sm text-green-700 font-semibold">
-              Účet úspěšně vytvořen!
+              {activateResult.temporaryPassword
+                ? "Účet úspěšně vytvořen!"
+                : "Registrace schválena!"}
             </p>
             <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-sm">
               <div>
                 <span className="font-semibold">Email: </span>
                 {activateResult.email}
               </div>
-              <div>
-                <span className="font-semibold">Dočasné heslo: </span>
-                <code className="bg-gray-200 px-2 py-0.5 rounded">
-                  {activateResult.temporaryPassword}
-                </code>
-              </div>
+              {activateResult.temporaryPassword && (
+                <div>
+                  <span className="font-semibold">Dočasné heslo: </span>
+                  <code className="bg-gray-200 px-2 py-0.5 rounded">
+                    {activateResult.temporaryPassword}
+                  </code>
+                </div>
+              )}
             </div>
             <p className="text-xs text-gray-400">
-              Odešlete partnerovi tyto údaje emailem.
+              {activateResult.temporaryPassword
+                ? "Odešlete partnerovi tyto údaje emailem."
+                : "Partner se nyní může přihlásit svým heslem zvoleným při registraci."}
+            </p>
+          </div>
+        ) : partner.userId && partner.user?.status === "PENDING" ? (
+          <div className="space-y-3">
+            <p className="text-sm text-gray-600">
+              Schválením povolíte uživateli{" "}
+              <strong>{partner.user.email}</strong> přihlášení. Účet partnera{" "}
+              <strong>{partner.name}</strong> přejde do stavu Aktivní partner.
+            </p>
+            <p className="text-xs text-gray-400">
+              Self-service registrace přes /registrace/dodavatel.
             </p>
           </div>
         ) : (
