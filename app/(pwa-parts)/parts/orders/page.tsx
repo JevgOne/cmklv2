@@ -7,6 +7,7 @@ import { OrderCard } from "@/components/pwa-parts/orders/OrderCard";
 const tabs = [
   { value: "all", label: "Vše" },
   { value: "PENDING", label: "Nové" },
+  { value: "to-ship", label: "K odeslání" },
   { value: "active", label: "Aktivní" },
   { value: "done", label: "Dokončené" },
 ];
@@ -18,6 +19,10 @@ interface OrderResult {
   totalPrice: number;
   createdAt: string;
   deliveryName: string;
+  deliveryMethod: string;
+  trackingCarrier: string | null;
+  shippingLabelUrl: string | null;
+  shippedAt: string | null;
   items: {
     id: string;
     quantity: number;
@@ -26,7 +31,7 @@ interface OrderResult {
 }
 
 // Mapování statusu pro OrderCard
-function mapStatus(apiStatus: string): "NEW" | "CONFIRMED" | "PACKING" | "SHIPPED" | "DELIVERED" | "CANCELLED" {
+function mapStatus(apiStatus: string): "NEW" | "CONFIRMED" | "SHIPPED" | "DELIVERED" | "CANCELLED" {
   switch (apiStatus) {
     case "PENDING": return "NEW";
     case "CONFIRMED": return "CONFIRMED";
@@ -35,6 +40,14 @@ function mapStatus(apiStatus: string): "NEW" | "CONFIRMED" | "PACKING" | "SHIPPE
     case "CANCELLED": return "CANCELLED";
     default: return "NEW";
   }
+}
+
+function getShippingBadge(order: OrderResult): "label-ready" | "shipped" | null {
+  if (order.shippedAt) return "shipped";
+  if (order.shippingLabelUrl && !order.shippedAt && order.status !== "CANCELLED") {
+    return "label-ready";
+  }
+  return null;
 }
 
 export default function SupplierOrdersPage() {
@@ -63,6 +76,14 @@ export default function SupplierOrdersPage() {
     switch (activeTab) {
       case "PENDING":
         return orders.filter((o) => o.status === "PENDING");
+      case "to-ship":
+        // Štítek připraven, ale ještě neodesláno (a není zrušeno)
+        return orders.filter(
+          (o) =>
+            o.shippingLabelUrl != null &&
+            o.shippedAt == null &&
+            o.status !== "CANCELLED"
+        );
       case "active":
         return orders.filter((o) => ["CONFIRMED", "SHIPPED"].includes(o.status));
       case "done":
@@ -106,7 +127,8 @@ export default function SupplierOrdersPage() {
                 totalPrice={order.totalPrice}
                 status={mapStatus(order.status)}
                 date={dateStr}
-                deliveryMethod=""
+                deliveryMethod={order.deliveryMethod ?? ""}
+                shippingBadge={getShippingBadge(order)}
               />
             );
           })}

@@ -5,9 +5,10 @@ import { useParams } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { OrderActions } from "@/components/pwa-parts/orders/OrderActions";
+import { ShippingLabelCard } from "@/components/pwa-parts/orders/ShippingLabelCard";
 import { formatPrice } from "@/lib/utils";
 
-type OrderStatus = "NEW" | "CONFIRMED" | "PACKING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
+type OrderStatus = "NEW" | "CONFIRMED" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 
 // Mapování API statusů na interní
 function mapStatus(apiStatus: string): OrderStatus {
@@ -25,7 +26,6 @@ function mapStatus(apiStatus: string): OrderStatus {
 function mapToApiStatus(status: OrderStatus): string {
   switch (status) {
     case "NEW": return "PENDING";
-    case "PACKING": return "CONFIRMED"; // API nemá PACKING, zůstane CONFIRMED
     default: return status;
   }
 }
@@ -33,7 +33,6 @@ function mapToApiStatus(status: OrderStatus): string {
 const statusConfig: Record<OrderStatus, { label: string; variant: "new" | "pending" | "verified" | "rejected" }> = {
   NEW: { label: "Nová", variant: "new" },
   CONFIRMED: { label: "Potvrzena", variant: "pending" },
-  PACKING: { label: "Balení", variant: "pending" },
   SHIPPED: { label: "Odesláno", variant: "verified" },
   DELIVERED: { label: "Doručeno", variant: "verified" },
   CANCELLED: { label: "Zrušena", variant: "rejected" },
@@ -49,11 +48,19 @@ interface OrderDetail {
   deliveryAddress: string;
   deliveryCity: string;
   deliveryZip: string;
+  deliveryMethod: string;
+  zasilkovnaPointName: string | null;
   paymentMethod: string;
   totalPrice: number;
   shippingPrice: number;
   note: string | null;
   createdAt: string;
+  trackingNumber: string | null;
+  trackingCarrier: string | null;
+  trackingUrl: string | null;
+  shippingLabelUrl: string | null;
+  shippedAt: string | null;
+  deliveredAt: string | null;
   items: {
     id: string;
     quantity: number;
@@ -71,22 +78,24 @@ export default function OrderDetailPage() {
   const [status, setStatus] = useState<OrderStatus>("NEW");
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchOrder() {
-      try {
-        const res = await fetch(`/api/orders/${id}`);
-        if (res.ok) {
-          const data = await res.json();
-          setOrder(data.order);
-          setStatus(mapStatus(data.order.status));
-        }
-      } catch {
-        // Zůstane null
-      } finally {
-        setLoading(false);
+  async function fetchOrder() {
+    try {
+      const res = await fetch(`/api/orders/${id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setOrder(data.order);
+        setStatus(mapStatus(data.order.status));
       }
+    } catch {
+      // Zůstane null
+    } finally {
+      setLoading(false);
     }
+  }
+
+  useEffect(() => {
     fetchOrder();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const handleStatusChange = async (newStatus: OrderStatus) => {
@@ -138,6 +147,7 @@ export default function OrderDetailPage() {
     hour: "2-digit",
     minute: "2-digit",
   });
+  const supplierCount = new Set(order.items.map((i) => i.supplier.id)).size;
 
   return (
     <div className="px-4 py-6 max-w-lg mx-auto space-y-4">
@@ -221,9 +231,32 @@ export default function OrderDetailPage() {
         </Card>
       )}
 
+      {/* Shipping label & mark-shipped flow — zobraz jen když objednávka není NEW/CANCELLED */}
+      {status !== "NEW" && status !== "CANCELLED" && (
+        <ShippingLabelCard
+          orderId={order.id}
+          orderNumber={order.orderNumber}
+          deliveryMethod={order.deliveryMethod}
+          trackingCarrier={order.trackingCarrier}
+          trackingNumber={order.trackingNumber}
+          trackingUrl={order.trackingUrl}
+          shippingLabelUrl={order.shippingLabelUrl}
+          shippedAt={order.shippedAt}
+          zasilkovnaPointName={order.zasilkovnaPointName}
+          deliveryAddress={{
+            street: order.deliveryAddress,
+            city: order.deliveryCity,
+            zip: order.deliveryZip,
+            name: order.deliveryName,
+          }}
+          supplierCount={supplierCount}
+          onShipped={fetchOrder}
+          onDelivered={fetchOrder}
+        />
+      )}
+
       {/* Actions */}
       <OrderActions
-        orderId={order.id}
         status={status}
         onStatusChange={handleStatusChange}
       />
