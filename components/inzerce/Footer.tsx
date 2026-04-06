@@ -11,8 +11,6 @@ export function InzerceFooter() {
           { href: "/katalog", label: "Katalog vozidel" },
           { href: "/pridat", label: "Přidat inzerát" },
           { href: "/moje-inzeraty", label: "Moje inzeráty" },
-          { href: "/cenik", label: "Ceník" },
-          { href: "/tipy", label: "Tipy prodejcům" },
         ],
       }}
     />
