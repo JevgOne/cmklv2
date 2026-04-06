@@ -2,6 +2,7 @@ import Link from "next/link";
 import { urls } from "@/lib/urls";
 import { companyInfo } from "@/lib/company-info";
 import Image from "next/image";
+import { PlatformSwitcher } from "@/components/ui/PlatformSwitcher";
 
 export function InzerceFooter() {
   const currentYear = new Date().getFullYear();
@@ -45,23 +46,12 @@ export function InzerceFooter() {
             </ul>
           </div>
 
-          {/* Další platformy */}
+          {/* Platformy */}
           <div>
             <h3 className="text-sm font-bold uppercase tracking-wide text-gray-400 mb-4">
-              Další platformy
+              Platformy
             </h3>
-            <ul className="list-none p-0 m-0 flex flex-col gap-3">
-              <li>
-                <a href={urls.main("/")} className="text-sm text-gray-500 hover:text-white transition-colors no-underline">
-                  CarMakléř
-                </a>
-              </li>
-              <li>
-                <a href={urls.shop("/")} className="text-sm text-gray-500 hover:text-white transition-colors no-underline">
-                  Shop autodíly
-                </a>
-              </li>
-            </ul>
+            <PlatformSwitcher current="inzerce" variant="footer" />
           </div>
 
           {/* Kontakt */}

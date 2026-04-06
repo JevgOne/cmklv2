@@ -1,7 +1,14 @@
+/**
+ * TODO(cleanup): Pravděpodobně orphan — není importován v žádné App Router route.
+ * Grep provedeno 2026-04-06, žádné importy nenalezeny.
+ * Zachováno pro safety margin — smazat v cleanup tasku po ověření >= 1 týden produkce.
+ * Aktivní varianta je v `components/main/Navbar.tsx` (viz app/(web)/layout.tsx).
+ */
 import Link from "next/link";
 import Image from "next/image";
 import { MobileMenu } from "./MobileMenu";
 import { CartIcon } from "./CartIcon";
+import { PlatformSwitcher } from "@/components/ui/PlatformSwitcher";
 
 const dropdownItems = {
   sluzby: [
@@ -80,14 +87,6 @@ const dropdownItems = {
   ],
 };
 
-function ExternalLinkIcon() {
-  return (
-    <svg className="w-3.5 h-3.5 ml-1 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-    </svg>
-  );
-}
-
 function ChevronDownIcon() {
   return (
     <svg className="w-4 h-4 ml-1 text-gray-400 transition-transform group-hover:rotate-180" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
@@ -115,21 +114,8 @@ export function Navbar() {
             Nabídka vozidel
           </Link>
 
-          {/* Inzerce */}
-          <Link
-            href="/inzerce"
-            className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors no-underline px-4 py-2 rounded-lg hover:bg-gray-50"
-          >
-            Inzerce
-          </Link>
-
-          {/* Shop */}
-          <Link
-            href="/shop"
-            className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors no-underline px-4 py-2 rounded-lg hover:bg-gray-50"
-          >
-            Shop
-          </Link>
+          {/* Platformy (cross-subdomain) */}
+          <PlatformSwitcher current="main" hideCurrent />
 
           {/* Služby - dropdown */}
           <div className="relative group">

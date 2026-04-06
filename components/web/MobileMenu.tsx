@@ -1,10 +1,16 @@
+/**
+ * TODO(cleanup): Pravděpodobně orphan — není importován v žádné App Router route.
+ * Grep provedeno 2026-04-06, žádné importy nenalezeny (kromě samotného `Navbar.tsx` sourozence).
+ * Zachováno pro safety margin — smazat v cleanup tasku po ověření >= 1 týden produkce.
+ * Aktivní varianta je v `components/main/MobileMenu.tsx` (viz app/(web)/layout.tsx).
+ */
 "use client";
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { Button } from "@/components/ui";
+import { Button, PlatformSwitcher } from "@/components/ui";
 
 const serviceItems = [
   { href: "/sluzby/proverka", title: "Prověrka vozidla" },
@@ -76,28 +82,19 @@ export function MobileMenu() {
         </Link>
 
         <Link
-          href="/inzerce"
-          className="flex items-center text-lg font-semibold text-gray-900 hover:text-orange-500 transition-colors py-4 border-b border-gray-100 no-underline min-h-[44px]"
-          onClick={closeMenu}
-        >
-          Inzerce
-        </Link>
-
-        <Link
-          href="/shop"
-          className="flex items-center text-lg font-semibold text-gray-900 hover:text-orange-500 transition-colors py-4 border-b border-gray-100 no-underline min-h-[44px]"
-          onClick={closeMenu}
-        >
-          Shop
-        </Link>
-
-        <Link
           href="/kontakt"
           className="flex items-center text-lg font-semibold text-gray-900 hover:text-orange-500 transition-colors py-4 border-b border-gray-100 no-underline min-h-[44px]"
           onClick={closeMenu}
         >
           Kontakt
         </Link>
+
+        <PlatformSwitcher
+          current="main"
+          variant="navbar-mobile"
+          hideCurrent
+          onLinkClick={closeMenu}
+        />
 
         <div className="border-b border-gray-100">
           <button

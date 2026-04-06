@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { MainMobileMenu } from "./MobileMenu";
 import { CartIcon } from "@/components/web/CartIcon";
-import { urls } from "@/lib/urls";
+import { PlatformSwitcher } from "@/components/ui/PlatformSwitcher";
 
 const dropdownItems = {
   sluzby: [
@@ -105,19 +105,7 @@ export function MainNavbar() {
             Nabídka vozidel
           </Link>
 
-          <a
-            href={urls.inzerce("/")}
-            className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors no-underline px-4 py-2 rounded-lg hover:bg-gray-50"
-          >
-            Inzerce
-          </a>
-
-          <a
-            href={urls.shop("/")}
-            className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors no-underline px-4 py-2 rounded-lg hover:bg-gray-50"
-          >
-            Shop
-          </a>
+          <PlatformSwitcher current="main" hideCurrent />
 
           <div className="relative group">
             <button

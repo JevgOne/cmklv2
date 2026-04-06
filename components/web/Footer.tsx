@@ -1,6 +1,13 @@
+/**
+ * TODO(cleanup): Pravděpodobně orphan — není importován v žádné App Router route.
+ * Grep provedeno 2026-04-06, žádné importy nenalezeny.
+ * Zachováno pro safety margin — smazat v cleanup tasku po ověření >= 1 týden produkce.
+ * Aktivní varianta je v `components/main/Footer.tsx` (viz app/(web)/layout.tsx).
+ */
 import Link from "next/link";
 import { companyInfo } from "@/lib/company-info";
 import Image from "next/image";
+import { PlatformSwitcher } from "@/components/ui/PlatformSwitcher";
 
 const footerSections = [
   {
@@ -11,15 +18,6 @@ const footerSections = [
       { href: "/sluzby/proverka", label: "Prověrka vozidla" },
       { href: "/sluzby/financovani", label: "Financování" },
       { href: "/sluzby/pojisteni", label: "Pojištění" },
-    ],
-  },
-  {
-    title: "Platformy",
-    links: [
-      { href: "/inzerce", label: "Inzerce" },
-      { href: "/shop", label: "Shop" },
-      { href: "/kariera", label: "Pro makléře" },
-      { href: "/sluzby/financovani", label: "Provizní systém" },
     ],
   },
   {
@@ -94,6 +92,14 @@ export function Footer() {
               </ul>
             </div>
           ))}
+
+          {/* Platformy (cross-subdomain) */}
+          <div>
+            <h3 className="text-sm font-bold uppercase tracking-wide text-gray-400 mb-4">
+              Platformy
+            </h3>
+            <PlatformSwitcher current="main" variant="footer" />
+          </div>
         </div>
 
         {/* Bottom bar */}

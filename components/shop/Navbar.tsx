@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { CartIcon } from "@/components/web/CartIcon";
 import { urls } from "@/lib/urls";
+import { PlatformSwitcher } from "@/components/ui/PlatformSwitcher";
 
 export function ShopNavbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -40,17 +41,15 @@ export function ShopNavbar() {
           >
             Moje objednávky
           </Link>
+
+          <span className="mx-2 h-5 w-px bg-gray-200" aria-hidden="true" />
+
+          <PlatformSwitcher current="shop" hideCurrent />
         </div>
 
         {/* CTA - desktop */}
         <div className="hidden lg:flex items-center gap-3 shrink-0">
           <CartIcon />
-          <a
-            href={urls.main("/")}
-            className="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors no-underline px-3 py-2"
-          >
-            carmakler.cz
-          </a>
           <a
             href={urls.main("/login")}
             className="inline-flex items-center justify-center gap-2 font-semibold rounded-full border-none cursor-pointer transition-all duration-200 whitespace-nowrap py-2 px-4 text-[13px] bg-gradient-to-br from-orange-500 to-orange-600 text-white shadow-orange hover:-translate-y-0.5 hover:shadow-orange-hover no-underline"
@@ -107,13 +106,14 @@ export function ShopNavbar() {
           >
             Moje objednávky
           </Link>
-          <a
-            href={urls.main("/")}
-            className="block text-base font-medium text-gray-500 hover:text-orange-500 py-3 no-underline border-b border-gray-100"
-            onClick={() => setIsOpen(false)}
-          >
-            carmakler.cz
-          </a>
+
+          <PlatformSwitcher
+            current="shop"
+            variant="navbar-mobile"
+            hideCurrent
+            onLinkClick={() => setIsOpen(false)}
+          />
+
           <div className="pt-3">
             <a
               href={urls.main("/login")}

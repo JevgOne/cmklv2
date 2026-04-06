@@ -4,8 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { Button } from "@/components/ui";
-import { urls } from "@/lib/urls";
+import { Button, PlatformSwitcher } from "@/components/ui";
 
 const serviceItems = [
   { href: "/sluzby/proverka", title: "Prověrka vozidla" },
@@ -76,22 +75,6 @@ export function MainMobileMenu() {
           Nabídka vozidel
         </Link>
 
-        <a
-          href={urls.inzerce("/")}
-          className="flex items-center text-lg font-semibold text-gray-900 hover:text-orange-500 transition-colors py-4 border-b border-gray-100 no-underline min-h-[44px]"
-          onClick={closeMenu}
-        >
-          Inzerce
-        </a>
-
-        <a
-          href={urls.shop("/")}
-          className="flex items-center text-lg font-semibold text-gray-900 hover:text-orange-500 transition-colors py-4 border-b border-gray-100 no-underline min-h-[44px]"
-          onClick={closeMenu}
-        >
-          Shop
-        </a>
-
         <Link
           href="/kontakt"
           className="flex items-center text-lg font-semibold text-gray-900 hover:text-orange-500 transition-colors py-4 border-b border-gray-100 no-underline min-h-[44px]"
@@ -99,6 +82,13 @@ export function MainMobileMenu() {
         >
           Kontakt
         </Link>
+
+        <PlatformSwitcher
+          current="main"
+          variant="navbar-mobile"
+          hideCurrent
+          onLinkClick={closeMenu}
+        />
 
         <div className="border-b border-gray-100">
           <button

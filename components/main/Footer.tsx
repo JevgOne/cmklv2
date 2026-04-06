@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { urls } from "@/lib/urls";
 import { companyInfo } from "@/lib/company-info";
 import Image from "next/image";
+import { PlatformSwitcher } from "@/components/ui/PlatformSwitcher";
 
 const footerSections = [
   {
@@ -12,14 +12,6 @@ const footerSections = [
       { href: "/sluzby/proverka", label: "Prověrka vozidla" },
       { href: "/sluzby/financovani", label: "Financování" },
       { href: "/sluzby/pojisteni", label: "Pojištění" },
-    ],
-  },
-  {
-    title: "Platformy",
-    links: [
-      { href: urls.inzerce("/"), label: "Inzerce", external: true },
-      { href: urls.shop("/"), label: "Shop", external: true },
-      { href: "/kariera", label: "Pro makléře" },
     ],
   },
   {
@@ -89,6 +81,13 @@ export function MainFooter() {
               </ul>
             </div>
           ))}
+
+          <div>
+            <h3 className="text-sm font-bold uppercase tracking-wide text-gray-400 mb-4">
+              Platformy
+            </h3>
+            <PlatformSwitcher current="main" variant="footer" />
+          </div>
         </div>
 
         <div className="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">

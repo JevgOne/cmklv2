@@ -51,3 +51,6 @@ export type { CheckboxProps } from "./Checkbox";
 
 export { EmptyState } from "./EmptyState";
 export type { EmptyStateProps } from "./EmptyState";
+
+export { PlatformSwitcher } from "./PlatformSwitcher";
+export type { PlatformKey, PlatformSwitcherProps } from "./PlatformSwitcher";
