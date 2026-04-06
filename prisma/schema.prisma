@@ -110,6 +110,8 @@ model User {
   // Marketplace relace
   dealerFlips FlipOpportunity[]
   investments Investment[]
+  marketplaceApplicationsReviewed  MarketplaceApplication[] @relation("MarketplaceApplicationReviewer")
+  marketplaceApplicationsConverted MarketplaceApplication[] @relation("MarketplaceApplicationConvertedUser")
 
   // Partnerský modul relace
   managedPartners    Partner[]         @relation("PartnerManager")
@@ -1167,6 +1169,50 @@ model Investment {
   @@index([investorId])
   @@index([opportunityId])
   @@index([paymentStatus])
+}
+
+// Marketplace žádosti o přístup — public apply form (není potřeba login)
+model MarketplaceApplication {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Basic contact
+  firstName String
+  lastName  String
+  email     String
+  phone     String
+  role      String // "VERIFIED_DEALER" | "INVESTOR"
+
+  // Dealer-specific (optional)
+  companyName String?
+  ico         String?
+
+  // Investor-specific (optional)
+  investmentRange String? // "10k-50k" | "50k-200k" | "200k-1M" | "1M+"
+
+  // Common
+  message     String  @db.Text
+  gdprConsent Boolean @default(false)
+
+  // Admin workflow
+  status       String    @default("NEW") // NEW | CONTACTED | APPROVED | REJECTED | SPAM
+  adminNotes   String?   @db.Text
+  reviewedAt   DateTime?
+  reviewedById String?
+  reviewedBy   User?     @relation("MarketplaceApplicationReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  // Když byl převeden na user account
+  convertedUserId String?
+  convertedUser   User?   @relation("MarketplaceApplicationConvertedUser", fields: [convertedUserId], references: [id], onDelete: SetNull)
+
+  // Rate limiting / anti-spam metadata
+  ipAddress String?
+  userAgent String? @db.Text
+
+  @@index([status, createdAt])
+  @@index([email])
+  @@index([role, status])
 }
 
 // ============================================

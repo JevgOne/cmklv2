@@ -232,13 +232,18 @@ export async function middleware(request: NextRequest) {
     });
 
     if (!token) {
-      const loginUrl = new URL("/login", request.url);
-      loginUrl.searchParams.set("callbackUrl", pathname);
-      return NextResponse.redirect(loginUrl);
+      // Neauth → nasměrovat rovnou na apply flow s důvodem + předvyplněnou rolí
+      const applyUrl = new URL("/marketplace/apply", request.url);
+      applyUrl.searchParams.set("reason", "auth_required");
+      applyUrl.searchParams.set("role", "dealer");
+      return NextResponse.redirect(applyUrl);
     }
 
     if (!MARKETPLACE_DEALER_ROLES.includes(token.role as string)) {
-      return NextResponse.redirect(new URL("/marketplace", request.url));
+      // Auth ale špatná role → zpět na landing s not_authorized bannerem
+      const landingUrl = new URL("/marketplace", request.url);
+      landingUrl.searchParams.set("reason", "not_authorized");
+      return NextResponse.redirect(landingUrl);
     }
   }
 
@@ -250,13 +255,16 @@ export async function middleware(request: NextRequest) {
     });
 
     if (!token) {
-      const loginUrl = new URL("/login", request.url);
-      loginUrl.searchParams.set("callbackUrl", pathname);
-      return NextResponse.redirect(loginUrl);
+      const applyUrl = new URL("/marketplace/apply", request.url);
+      applyUrl.searchParams.set("reason", "auth_required");
+      applyUrl.searchParams.set("role", "investor");
+      return NextResponse.redirect(applyUrl);
     }
 
     if (!MARKETPLACE_INVESTOR_ROLES.includes(token.role as string)) {
-      return NextResponse.redirect(new URL("/marketplace", request.url));
+      const landingUrl = new URL("/marketplace", request.url);
+      landingUrl.searchParams.set("reason", "not_authorized");
+      return NextResponse.redirect(landingUrl);
     }
   }
 

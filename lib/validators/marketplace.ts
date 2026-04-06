@@ -90,10 +90,37 @@ export const investmentFilterSchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(12),
 });
 
-// Žádost o přístup
-export const applySchema = z.object({
-  role: z.enum(["VERIFIED_DEALER", "INVESTOR"]),
-  companyName: z.string().optional(),
-  ico: z.string().optional(),
-  message: z.string().min(10, "Zpráva musí mít alespoň 10 znaků"),
-});
+// Žádost o přístup — PUBLIC (nevyžaduje login)
+export const applySchema = z
+  .object({
+    role: z.enum(["VERIFIED_DEALER", "INVESTOR"]),
+    firstName: z.string().min(2, "Jméno je povinné"),
+    lastName: z.string().min(2, "Příjmení je povinné"),
+    email: z.string().email("Neplatný email"),
+    phone: z.string().min(9, "Telefon je povinný (min. 9 znaků)"),
+    companyName: z.string().optional(),
+    ico: z
+      .string()
+      .regex(/^\d{8}$/, "IČO musí mít 8 číslic")
+      .optional()
+      .or(z.literal("")),
+    investmentRange: z
+      .enum(["10k-50k", "50k-200k", "200k-1M", "1M+"])
+      .optional(),
+    message: z
+      .string()
+      .min(10, "Zpráva musí mít alespoň 10 znaků")
+      .max(2000, "Zpráva je příliš dlouhá (max 2000 znaků)"),
+    gdprConsent: z.literal(true, {
+      message: "Musíte souhlasit se zpracováním osobních údajů",
+    }),
+  })
+  .refine(
+    (data) =>
+      data.role !== "VERIFIED_DEALER" ||
+      (!!data.companyName && data.companyName.length > 0 && !!data.ico && data.ico.length > 0),
+    {
+      message: "Dealer musí vyplnit název firmy a IČO",
+      path: ["companyName"],
+    }
+  );

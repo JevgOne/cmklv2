@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { Alert } from "@/components/ui/Alert";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
-import { ApplyForm } from "@/components/web/marketplace/ApplyForm";
 import { getMarketplaceStats } from "@/lib/stats";
 
 export const metadata: Metadata = {
@@ -119,9 +119,14 @@ const faqJsonLd = {
   })),
 };
 
-export const revalidate = 3600; // 1 hodina
+// Landing má searchParams → nesmí mít revalidate (jinak Next.js static prerender se pokoušel cache invaidovat na každé query change). Necháme dynamic.
 
-export default async function MarketplacePage() {
+type MarketplacePageProps = {
+  searchParams: Promise<{ reason?: string }>;
+};
+
+export default async function MarketplacePage({ searchParams }: MarketplacePageProps) {
+  const { reason } = await searchParams;
   const stats = await getMarketplaceStats();
   return (
     <main>
@@ -135,6 +140,21 @@ export default async function MarketplacePage() {
           { label: "Marketplace" },
         ]}
       />
+
+      {reason === "not_authorized" && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+          <Alert variant="warning">
+            <span className="text-sm leading-relaxed">
+              <strong className="block mb-1">Vaše role nemá přístup k detailům marketplace</strong>
+              Pokud máte zájem o investování nebo nabízení flip příležitostí, vyplňte{" "}
+              <Link href="/marketplace/apply" className="underline font-semibold">
+                žádost o rozšíření role
+              </Link>
+              .
+            </span>
+          </Alert>
+        </div>
+      )}
       {/* Hero */}
       <section className="bg-gradient-to-br from-gray-900 to-gray-950 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
@@ -151,12 +171,12 @@ export default async function MarketplacePage() {
                 Ověření realizátoři nacházejí příležitosti. Vy investujete. Auto se opraví, prodá a zisk se dělí férově.
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
-                <Link href="#apply" className="no-underline">
+                <Link href="/marketplace/apply?role=investor" className="no-underline">
                   <Button variant="primary" size="lg">
                     Chci investovat
                   </Button>
                 </Link>
-                <Link href="#apply" className="no-underline">
+                <Link href="/marketplace/apply?role=dealer" className="no-underline">
                   <Button
                     variant="outline"
                     size="lg"
@@ -331,17 +351,34 @@ export default async function MarketplacePage() {
         </div>
       </section>
 
-      {/* Apply CTA */}
-      <section id="apply" className="py-16 md:py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl sm:text-[28px] font-extrabold text-gray-900">
-              Připojte se k platformě
-            </h2>
-            <p className="text-gray-500 mt-2">Vyplňte formulář a začněte vydělávat</p>
+      {/* Apply CTA — linkuje na dedikovanou /marketplace/apply stránku */}
+      <section className="py-16 md:py-20 bg-gradient-to-br from-orange-50 to-orange-100/40">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-2xl sm:text-[28px] font-extrabold text-gray-900">
+            Připojte se k platformě
+          </h2>
+          <p className="text-gray-600 mt-3 mb-8 max-w-xl mx-auto leading-relaxed">
+            Marketplace je VIP platforma — přístup mají jen ověření dealeři a investoři.
+            Vyplňte žádost a my vás do 48 hodin prověříme.
+          </p>
+          <div className="flex flex-wrap gap-4 justify-center">
+            <Link href="/marketplace/apply?role=investor" className="no-underline">
+              <Button variant="primary" size="lg">
+                💰 Chci investovat
+              </Button>
+            </Link>
+            <Link href="/marketplace/apply?role=dealer" className="no-underline">
+              <Button variant="outline" size="lg">
+                🚗 Jsem realizátor
+              </Button>
+            </Link>
           </div>
-
-          <ApplyForm />
+          <p className="text-sm text-gray-500 mt-6">
+            Už máte účet?{" "}
+            <Link href="/prihlaseni" className="text-orange-500 hover:underline font-semibold">
+              Přihlaste se
+            </Link>
+          </p>
         </div>
       </section>
     </main>
