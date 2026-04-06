@@ -53,7 +53,11 @@ export default function NewPartPage() {
         compatibleYearTo: validCompat[0]?.yearTo
           ? parseInt(validCompat[0].yearTo)
           : undefined,
-        // Photos would be uploaded via separate endpoint
+        images: photos.map((url, i) => ({
+          url,
+          order: i,
+          isPrimary: i === 0,
+        })),
       };
 
       const res = await fetch("/api/parts", {
