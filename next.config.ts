@@ -27,7 +27,7 @@ const cspDirectives = [
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://widget.packeta.com",
 
   // Obrázky: self + Cloudinary + data: URIs (base64 previews) + blob:
-  "img-src 'self' data: blob: https://res.cloudinary.com https://*.sentry.io https://widget.packeta.com",
+  "img-src 'self' data: blob: https://res.cloudinary.com https://placehold.co https://*.sentry.io https://widget.packeta.com",
 
   // Fonty: self + Google Fonts (design system fallback)
   "font-src 'self' https://fonts.gstatic.com",

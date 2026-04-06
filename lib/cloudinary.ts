@@ -3,7 +3,7 @@
  * Pouziva primo fetch + SHA-1 podpis — NEPOUZIVA npm package `cloudinary`.
  *
  * Podporuje dev mode: pokud env promenne nejsou nastavene,
- * vrati placeholder URL (dev_upload:folder/filename).
+ * vrati validni placeholder URL na placehold.co (projde Zod url() validaci).
  */
 
 // Maximalni velikost souboru: 10 MB
@@ -30,7 +30,10 @@ export async function uploadToCloudinary(
   // Dev mode — Cloudinary neni nakonfigurovano
   if (!cloudName || !apiKey || !apiSecret) {
     console.log(`[Cloudinary:DEV] Skipping upload for: ${file.name}`);
-    return `dev_upload:${folder}/${file.name}`;
+    // Validni HTTPS placeholder URL — projde Zod z.string().url() validaci.
+    // Folder + timestamp v `?text=` query pro identifikaci uploadu v dev.
+    const label = encodeURIComponent(`dev-${folder.replace(/\//g, "-")}-${Date.now()}`);
+    return `https://placehold.co/600x400/png?text=${label}`;
   }
 
   if (file.size > MAX_FILE_SIZE) {
