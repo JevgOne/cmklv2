@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
     }
 
-    const allowedRoles = ["PARTS_SUPPLIER", "ADMIN", "BACKOFFICE"];
+    const allowedRoles = ["PARTS_SUPPLIER", "PARTNER_VRAKOVISTE", "ADMIN", "BACKOFFICE"];
     if (!allowedRoles.includes(session.user.role)) {
       return NextResponse.json({ error: "Nemáte oprávnění" }, { status: 403 });
     }
