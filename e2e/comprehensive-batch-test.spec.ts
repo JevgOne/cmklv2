@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import fs from "node:fs";
 
 const BASE = "http://localhost:3000";
 
@@ -87,14 +88,12 @@ test.describe("BATCH 1 — Security", () => {
   test("middleware.ts neobsahuje hardcoded heslo", async ({ page }) => {
     // This is checked via file system, not browser
     // We verify via reading the source file
-    const fs = require("fs");
     const content = fs.readFileSync("middleware.ts", "utf-8");
     expect(content).not.toMatch(/password\s*===\s*["'][^"']{3,}["']/);
     expect(content).not.toMatch(/secret\s*===\s*["'][^"']{3,}["']/);
   });
 
   test(".env.example existuje", async ({ page }) => {
-    const fs = require("fs");
     expect(fs.existsSync(".env.example")).toBeTruthy();
   });
 });
@@ -172,22 +171,18 @@ test.describe("BATCH 2 — Další stránky", () => {
 
 test.describe("BATCH 2 — Soubory (Analytics, CI)", () => {
   test("lib/resend.ts existuje", async ({ page }) => {
-    const fs = require("fs");
     expect(fs.existsSync("lib/resend.ts")).toBeTruthy();
   });
 
   test("lib/cloudinary.ts existuje", async ({ page }) => {
-    const fs = require("fs");
     expect(fs.existsSync("lib/cloudinary.ts")).toBeTruthy();
   });
 
   test("components/web/Analytics.tsx existuje", async ({ page }) => {
-    const fs = require("fs");
     expect(fs.existsSync("components/web/Analytics.tsx")).toBeTruthy();
   });
 
   test(".github/workflows/ci.yml existuje", async ({ page }) => {
-    const fs = require("fs");
     expect(fs.existsSync(".github/workflows/ci.yml")).toBeTruthy();
   });
 });
@@ -254,17 +249,14 @@ test.describe("BATCH 3 — Guest checkout tracking", () => {
 
 test.describe("BATCH 3 — Sentry config soubory", () => {
   test("sentry.client.config.ts existuje", async ({ page }) => {
-    const fs = require("fs");
     expect(fs.existsSync("sentry.client.config.ts")).toBeTruthy();
   });
 
   test("sentry.server.config.ts existuje", async ({ page }) => {
-    const fs = require("fs");
     expect(fs.existsSync("sentry.server.config.ts")).toBeTruthy();
   });
 
   test("sentry.edge.config.ts existuje", async ({ page }) => {
-    const fs = require("fs");
     expect(fs.existsSync("sentry.edge.config.ts")).toBeTruthy();
   });
 });

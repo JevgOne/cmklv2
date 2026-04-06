@@ -19,6 +19,18 @@ function createPrismaClient() {
   });
 }
 
-export const prisma = globalForPrisma.prisma ?? createPrismaClient();
+function getPrismaClient(): PrismaClient {
+  if (globalForPrisma.prisma) return globalForPrisma.prisma;
+  const client = createPrismaClient();
+  if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = client;
+  return client;
+}
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+// Lazy proxy — defer client creation until first property access. This lets
+// tests of pure helpers (e.g. gamification level math) import modules whose
+// dependency tree includes lib/prisma without requiring DATABASE_URL.
+export const prisma = new Proxy({} as PrismaClient, {
+  get(_target, prop, receiver) {
+    return Reflect.get(getPrismaClient(), prop, receiver);
+  },
+}) as PrismaClient;

@@ -22,10 +22,13 @@ export function Tabs({ tabs, activeTab: controlledTab, defaultTab, onTabChange, 
   const currentTab = isControlled ? controlledTab : internalTab;
   const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
-  const handleChange = (value: string) => {
-    if (!isControlled) setInternalTab(value);
-    onTabChange?.(value);
-  };
+  const handleChange = useCallback(
+    (value: string) => {
+      if (!isControlled) setInternalTab(value);
+      onTabChange?.(value);
+    },
+    [isControlled, onTabChange]
+  );
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -50,7 +53,7 @@ export function Tabs({ tabs, activeTab: controlledTab, defaultTab, onTabChange, 
       handleChange(newTab.value);
       tabRefs.current.get(newTab.value)?.focus();
     },
-    [tabs, currentTab]
+    [tabs, currentTab, handleChange]
   );
 
   return (
