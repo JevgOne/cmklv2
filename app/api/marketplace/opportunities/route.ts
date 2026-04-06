@@ -76,6 +76,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
     }
 
+    // Marketplace role allow-list — BROKER/BUYER/ADVERTISER/PARTS_SUPPLIER atd. nemají přístup
+    const MARKETPLACE_ALLOWED_ROLES = ["VERIFIED_DEALER", "INVESTOR", "ADMIN", "BACKOFFICE"] as const;
+    if (!MARKETPLACE_ALLOWED_ROLES.includes(session.user.role as typeof MARKETPLACE_ALLOWED_ROLES[number])) {
+      return NextResponse.json(
+        { error: "Nemáte oprávnění k zobrazení marketplace příležitostí" },
+        { status: 403 }
+      );
+    }
+
     const params = request.nextUrl.searchParams;
     const filters = opportunityFilterSchema.parse(Object.fromEntries(params));
 
