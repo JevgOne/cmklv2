@@ -12,7 +12,6 @@ const footerSections = [
       { href: "/sluzby/proverka", label: "Prověrka vozidla" },
       { href: "/sluzby/financovani", label: "Financování" },
       { href: "/sluzby/pojisteni", label: "Pojištění" },
-      { href: "/sluzby/vykup", label: "Výkup vozidel" },
     ],
   },
   {
@@ -20,7 +19,6 @@ const footerSections = [
     links: [
       { href: urls.inzerce("/"), label: "Inzerce", external: true },
       { href: urls.shop("/"), label: "Shop", external: true },
-      { href: urls.marketplace("/"), label: "Marketplace", external: true },
       { href: "/kariera", label: "Pro makléře" },
     ],
   },

@@ -56,84 +56,84 @@ export default function OchranaOsobnichUdajuPage() {
           Ochrana osobních údajů
         </h1>
         <p className="text-sm text-gray-500 mb-10">
-          Platne od [DOPLNIT DATUM] | Posledni aktualizace: [DOPLNIT DATUM]
+          Platné od [DOPLNIT DATUM] | Poslední aktualizace: [DOPLNIT DATUM]
         </p>
 
         <div className="prose prose-gray max-w-none prose-headings:text-gray-900 prose-p:text-gray-600 prose-p:leading-relaxed prose-a:text-orange-500 prose-a:no-underline hover:prose-a:underline">
 
-          {/* 1. Spravce */}
+          {/* 1. Správce */}
           <section id="spravce">
-            <h2>1. Spravce osobnich udaju</h2>
+            <h2>1. Správce osobních údajů</h2>
             <p>
-              Spravcem osobnich udaju je <strong>CarMakler s.r.o.</strong>, ICO: [DOPLNIT],
-              se sidlem [DOPLNIT ADRESA], zapsana v obchodnim rejstriku vedenem [DOPLNIT] soudem.
+              Správcem osobních údajů je <strong>CarMakler s.r.o.</strong>, IČO: [DOPLNIT],
+              se sídlem [DOPLNIT ADRESA], zapsaná v obchodním rejstříku vedeném [DOPLNIT] soudem.
             </p>
             <p>
-              <strong>Kontakt pro ochranu osobnich udaju:</strong><br />
+              <strong>Kontakt pro ochranu osobních údajů:</strong><br />
               E-mail: <a href="mailto:gdpr@carmakler.cz">gdpr@carmakler.cz</a><br />
               Telefon: [DOPLNIT]<br />
               Adresa: [DOPLNIT ADRESA]
             </p>
           </section>
 
-          {/* 2. Ucely zpracovani */}
+          {/* 2. Účely zpracování */}
           <section id="ucely-zpracovani">
-            <h2>2. Ucely zpracovani a pravni zaklady</h2>
-            <p>Vase osobni udaje zpracovavame pro nasledujici ucely:</p>
+            <h2>2. Účely zpracování a právní základy</h2>
+            <p>Vaše osobní údaje zpracováváme pro následující účely:</p>
 
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="text-left py-3 pr-4 font-semibold text-gray-900">Ucel</th>
-                    <th className="text-left py-3 pr-4 font-semibold text-gray-900">Pravni zaklad</th>
-                    <th className="text-left py-3 font-semibold text-gray-900">Doba uchovani</th>
+                    <th className="text-left py-3 pr-4 font-semibold text-gray-900">Účel</th>
+                    <th className="text-left py-3 pr-4 font-semibold text-gray-900">Právní základ</th>
+                    <th className="text-left py-3 font-semibold text-gray-900">Doba uchování</th>
                   </tr>
                 </thead>
                 <tbody className="text-gray-600">
                   <tr className="border-b border-gray-100">
-                    <td className="py-3 pr-4">Registrace uzivatelskeho uctu</td>
-                    <td className="py-3 pr-4">Plneni smlouvy (cl. 6 odst. 1 pism. b GDPR)</td>
-                    <td className="py-3">Po dobu trvani uctu + 3 roky</td>
+                    <td className="py-3 pr-4">Registrace uživatelského účtu</td>
+                    <td className="py-3 pr-4">Plnění smlouvy (čl. 6 odst. 1 písm. b GDPR)</td>
+                    <td className="py-3">Po dobu trvání účtu + 3 roky</td>
                   </tr>
                   <tr className="border-b border-gray-100">
-                    <td className="py-3 pr-4">Zpracovani objednavky v e-shopu</td>
-                    <td className="py-3 pr-4">Plneni smlouvy (cl. 6/1b)</td>
-                    <td className="py-3">10 let (danove a ucetni predpisy)</td>
+                    <td className="py-3 pr-4">Zpracování objednávky v e-shopu</td>
+                    <td className="py-3 pr-4">Plnění smlouvy (čl. 6/1b)</td>
+                    <td className="py-3">10 let (daňové a účetní předpisy)</td>
                   </tr>
                   <tr className="border-b border-gray-100">
-                    <td className="py-3 pr-4">Podani inzeratu na prodej vozidla</td>
-                    <td className="py-3 pr-4">Plneni smlouvy (cl. 6/1b)</td>
-                    <td className="py-3">Po dobu inzeratu + 1 rok</td>
+                    <td className="py-3 pr-4">Podání inzerátu na prodej vozidla</td>
+                    <td className="py-3 pr-4">Plnění smlouvy (čl. 6/1b)</td>
+                    <td className="py-3">Po dobu inzerátu + 1 rok</td>
                   </tr>
                   <tr className="border-b border-gray-100">
-                    <td className="py-3 pr-4">Maklerske sluzby (zprostredkovani prodeje)</td>
-                    <td className="py-3 pr-4">Plneni smlouvy (cl. 6/1b)</td>
-                    <td className="py-3">10 let (danove ucely)</td>
+                    <td className="py-3 pr-4">Makléřské služby (zprostředkování prodeje)</td>
+                    <td className="py-3 pr-4">Plnění smlouvy (čl. 6/1b)</td>
+                    <td className="py-3">10 let (daňové účely)</td>
                   </tr>
                   <tr className="border-b border-gray-100">
-                    <td className="py-3 pr-4">Investicni marketplace (dealeri/investori)</td>
-                    <td className="py-3 pr-4">Plneni smlouvy (cl. 6/1b)</td>
+                    <td className="py-3 pr-4">Investiční marketplace (dealeři/investoři)</td>
+                    <td className="py-3 pr-4">Plnění smlouvy (čl. 6/1b)</td>
                     <td className="py-3">10 let</td>
                   </tr>
                   <tr className="border-b border-gray-100">
-                    <td className="py-3 pr-4">Kontaktni formular / dotaz</td>
-                    <td className="py-3 pr-4">Opravneny zajem (cl. 6/1f)</td>
-                    <td className="py-3">1 rok od posledni komunikace</td>
+                    <td className="py-3 pr-4">Kontaktní formulář / dotaz</td>
+                    <td className="py-3 pr-4">Oprávněný zájem (čl. 6/1f)</td>
+                    <td className="py-3">1 rok od poslední komunikace</td>
                   </tr>
                   <tr className="border-b border-gray-100">
-                    <td className="py-3 pr-4">Hlidaci pes (watchdog) — notifikace o novych vozidlech</td>
-                    <td className="py-3 pr-4">Souhlas (cl. 6/1a)</td>
-                    <td className="py-3">Do odvolani souhlasu</td>
+                    <td className="py-3 pr-4">Hlídací pes (watchdog) — notifikace o nových vozidlech</td>
+                    <td className="py-3 pr-4">Souhlas (čl. 6/1a)</td>
+                    <td className="py-3">Do odvolání souhlasu</td>
                   </tr>
                   <tr className="border-b border-gray-100">
-                    <td className="py-3 pr-4">Analyza navstevnosti webu (Plausible Analytics)</td>
-                    <td className="py-3 pr-4">Opravneny zajem (cl. 6/1f)</td>
-                    <td className="py-3">Agregovane, bez identifikace</td>
+                    <td className="py-3 pr-4">Analýza návštěvnosti webu (Plausible Analytics)</td>
+                    <td className="py-3 pr-4">Oprávněný zájem (čl. 6/1f)</td>
+                    <td className="py-3">Agregované, bez identifikace</td>
                   </tr>
                   <tr className="border-b border-gray-100">
-                    <td className="py-3 pr-4">Cookies (analyticke, marketingove)</td>
-                    <td className="py-3 pr-4">Souhlas (cl. 6/1a)</td>
+                    <td className="py-3 pr-4">Cookies (analytické, marketingové)</td>
+                    <td className="py-3 pr-4">Souhlas (čl. 6/1a)</td>
                     <td className="py-3">Viz <Link href="/zasady-cookies">Zásady cookies</Link></td>
                   </tr>
                 </tbody>
@@ -141,71 +141,71 @@ export default function OchranaOsobnichUdajuPage() {
             </div>
           </section>
 
-          {/* 3. Kategorie udaju */}
+          {/* 3. Kategorie údajů */}
           <section id="kategorie-udaju">
-            <h2>3. Kategorie zpracovavanych udaju</h2>
+            <h2>3. Kategorie zpracovávaných údajů</h2>
             <ul>
-              <li><strong>Identifikacni udaje:</strong> jmeno, prijmeni, e-mail, telefon, ICO (u podnikatelu).</li>
-              <li><strong>Adresni udaje:</strong> ulice, mesto, PSC (pro doruceni a fakturaci).</li>
-              <li><strong>Financni udaje:</strong> bankovni ucet (makleri, dodavatele), platebni informace.</li>
-              <li><strong>Technicke udaje:</strong> IP adresa, typ prohlizece, cookie identifikatory.</li>
-              <li><strong>Udaje o vozidle:</strong> VIN, znacka, model, rok vyroby, fotografie (pri inzerci a maklerskich sluzbah).</li>
-              <li><strong>Komunikace:</strong> obsah zprav z kontaktniho formulare, e-mailova korespondence.</li>
+              <li><strong>Identifikační údaje:</strong> jméno, příjmení, e-mail, telefon, IČO (u podnikatelů).</li>
+              <li><strong>Adresní údaje:</strong> ulice, město, PSČ (pro doručení a fakturaci).</li>
+              <li><strong>Finanční údaje:</strong> bankovní účet (makléři, dodavatelé), platební informace.</li>
+              <li><strong>Technické údaje:</strong> IP adresa, typ prohlížeče, cookie identifikátory.</li>
+              <li><strong>Údaje o vozidle:</strong> VIN, značka, model, rok výroby, fotografie (při inzerci a makléřských službách).</li>
+              <li><strong>Komunikace:</strong> obsah zpráv z kontaktního formuláře, e-mailová korespondence.</li>
             </ul>
           </section>
 
-          {/* 4. Prijemci udaju */}
+          {/* 4. Příjemci údajů */}
           <section id="prijemci">
-            <h2>4. Prijemci osobnich udaju</h2>
-            <p>Vase udaje mohou byt predany nasledujicim kategoriam prijemcu:</p>
+            <h2>4. Příjemci osobních údajů</h2>
+            <p>Vaše údaje mohou být předány následujícím kategoriím příjemců:</p>
             <ul>
-              <li><strong>Poskytovatele hostingu a infrastruktury:</strong> Vercel Inc. (hosting aplikace).</li>
-              <li><strong>E-mailove sluzby:</strong> Resend (odeslani transakcnich e-mailu).</li>
-              <li><strong>Uloziste obrazku:</strong> Cloudinary (fotografie vozidel a dilu).</li>
-              <li><strong>Analyticke nastroje:</strong> Plausible Analytics (anonymizovana analytika, bez cookies).</li>
-              <li><strong>Proverka vozidel:</strong> Cebia s.r.o. (VIN proverky).</li>
-              <li><strong>Dorucovaci sluzby:</strong> Zasilkovna, PPL, Ceska posta (pri doruceni zbozi).</li>
-              <li><strong>Platebni brana:</strong> Stripe (zpracovani plateb — faze 2).</li>
-              <li><strong>Statni organy:</strong> na zaklade zakona (napr. daňova sprava, organy cinne v trestnim rizeni).</li>
+              <li><strong>Poskytovatelé hostingu a infrastruktury:</strong> Vercel Inc. (hosting aplikace).</li>
+              <li><strong>E-mailové služby:</strong> Resend (odesílání transakčních e-mailů).</li>
+              <li><strong>Úložiště obrázků:</strong> Cloudinary (fotografie vozidel a dílů).</li>
+              <li><strong>Analytické nástroje:</strong> Plausible Analytics (anonymizovaná analytika, bez cookies).</li>
+              <li><strong>Prověrka vozidel:</strong> Cebia s.r.o. (VIN prověrky).</li>
+              <li><strong>Doručovací služby:</strong> Zásilkovna, PPL, Česká pošta (při doručení zboží).</li>
+              <li><strong>Platební brána:</strong> Stripe (zpracování plateb — fáze 2).</li>
+              <li><strong>Státní orgány:</strong> na základě zákona (např. daňová správa, orgány činné v trestním řízení).</li>
             </ul>
           </section>
 
-          {/* 5. Predavani mimo EU */}
+          {/* 5. Předávání mimo EU */}
           <section id="predavani-mimo-eu">
-            <h2>5. Predavani udaju mimo EU/EEA</h2>
+            <h2>5. Předávání údajů mimo EU/EEA</h2>
             <p>
-              Nektere nase poskytovatele sluzeb (Vercel, Cloudinary, Stripe) mohou zpracovavat udaje
-              na serverech mimo Evropsky hospodarsky prostor (USA). V takovych pripadech je prenos
-              zabezpecen standardnimi smluvnimi dolozkami (SCCs) dle cl. 46 odst. 2 pism. c GDPR
-              nebo na zaklade rozhodnuti o primenosti (adequacy decision).
+              Někteří naši poskytovatelé služeb (Vercel, Cloudinary, Stripe) mohou zpracovávat údaje
+              na serverech mimo Evropský hospodářský prostor (USA). V takových případech je přenos
+              zabezpečen standardními smluvními doložkami (SCCs) dle čl. 46 odst. 2 písm. c GDPR
+              nebo na základě rozhodnutí o přiměřenosti (adequacy decision).
             </p>
           </section>
 
-          {/* 6. Prava subjektu */}
+          {/* 6. Práva subjektů */}
           <section id="prava-subjektu">
-            <h2>6. Vase prava</h2>
-            <p>Jako subjekt udaju mate nasledujici prava:</p>
+            <h2>6. Vaše práva</h2>
+            <p>Jako subjekt údajů máte následující práva:</p>
             <ul>
-              <li><strong>Pravo na pristup</strong> (cl. 15 GDPR) — miste ziskat potvrzeni, zda zpracovavame vase udaje, a ziskat jejich kopii.</li>
-              <li><strong>Pravo na opravu</strong> (cl. 16) — muzete pozadovat opravu nepresnych udaju.</li>
-              <li><strong>Pravo na vymazani</strong> (cl. 17) — &bdquo;pravo byt zapomenut&ldquo; — muzete pozadovat smazani udaju, pokud neni duvod pro dalsi zpracovani.</li>
-              <li><strong>Pravo na omezeni zpracovani</strong> (cl. 18) — muzete pozadovat docasne omezeni zpracovani.</li>
-              <li><strong>Pravo na prenositelnost</strong> (cl. 20) — mate pravo ziskat sve udaje ve strojove citelnem formatu.</li>
-              <li><strong>Pravo vznest namitku</strong> (cl. 21) — muzete namitat proti zpracovani na zaklade opravneneho zajmu.</li>
-              <li><strong>Pravo odvolat souhlas</strong> — pokud je zpracovani zalozeno na souhlasu, muzete jej kdykoliv odvolat (bez vlivu na zakonnost predchoziho zpracovani).</li>
+              <li><strong>Právo na přístup</strong> (čl. 15 GDPR) — máte právo získat potvrzení, zda zpracováváme vaše údaje, a získat jejich kopii.</li>
+              <li><strong>Právo na opravu</strong> (čl. 16) — můžete požadovat opravu nepřesných údajů.</li>
+              <li><strong>Právo na výmaz</strong> (čl. 17) — &bdquo;právo být zapomenut&ldquo; — můžete požadovat smazání údajů, pokud není důvod pro další zpracování.</li>
+              <li><strong>Právo na omezení zpracování</strong> (čl. 18) — můžete požadovat dočasné omezení zpracování.</li>
+              <li><strong>Právo na přenositelnost</strong> (čl. 20) — máte právo získat své údaje ve strojově čitelném formátu.</li>
+              <li><strong>Právo vznést námitku</strong> (čl. 21) — můžete namítat proti zpracování na základě oprávněného zájmu.</li>
+              <li><strong>Právo odvolat souhlas</strong> — pokud je zpracování založeno na souhlasu, můžete jej kdykoliv odvolat (bez vlivu na zákonnost předchozího zpracování).</li>
             </ul>
             <p>
-              Pro uplatneni svych prav kontaktujte nas na{" "}
+              Pro uplatnění svých práv kontaktujte nás na{" "}
               <a href="mailto:gdpr@carmakler.cz">gdpr@carmakler.cz</a>.
-              Na vas pozadavek odpovime do 30 dni.
+              Na váš požadavek odpovíme do 30 dní.
             </p>
-            <h3>Pravo podat stiznost</h3>
+            <h3>Právo podat stížnost</h3>
             <p>
-              Pokud se domnivate, ze vase udaje zpracovavame v rozporu s predpisy, mate pravo
-              podat stiznost u dozoroveho uradu:
+              Pokud se domníváte, že vaše údaje zpracováváme v rozporu s předpisy, máte právo
+              podat stížnost u dozorového úřadu:
             </p>
             <p>
-              <strong>Urad pro ochranu osobnich udaju (UOOU)</strong><br />
+              <strong>Úřad pro ochranu osobních údajů (ÚOOÚ)</strong><br />
               Pplk. Sochorova 27, 170 00 Praha 7<br />
               Tel.: +420 234 665 111<br />
               Web: <a href="https://www.uoou.cz" target="_blank" rel="noopener noreferrer">www.uoou.cz</a><br />
@@ -213,18 +213,18 @@ export default function OchranaOsobnichUdajuPage() {
             </p>
           </section>
 
-          {/* 7. Automatizovane rozhodovani */}
+          {/* 7. Automatizované rozhodování */}
           <section id="automatizovane-rozhodovani">
-            <h2>7. Automatizovane rozhodovani a profilovani</h2>
+            <h2>7. Automatizované rozhodování a profilování</h2>
             <p>
-              Platforma vyuziva AI asistenta (na bazi Claude od Anthropic) pro generovani popisu
-              vozidel a pomoc maklerum. Toto zpracovani nepredstavuje automatizovane rozhodovani
-              s pravnimi ucinky ve smyslu cl. 22 GDPR — vsechna rozhodnuti cinni clovek.
+              Platforma využívá AI asistenta (na bázi Claude od Anthropic) pro generování popisů
+              vozidel a pomoc makléřům. Toto zpracování nepředstavuje automatizované rozhodování
+              s právními účinky ve smyslu čl. 22 GDPR — všechna rozhodnutí činí člověk.
             </p>
             <p>
-              Pro ucely zobrazeni relevantnich nabidek (napr. hlidaci pes) muze dochazet k zakladnimu
-              profilovani na zaklade vasich preferenci (znacka, model, cenove rozmezi). Proti tomuto
-              zpracovani muzete vznest namitku.
+              Pro účely zobrazení relevantních nabídek (např. hlídací pes) může docházet k základnímu
+              profilování na základě vašich preferencí (značka, model, cenové rozmezí). Proti tomuto
+              zpracování můžete vznést námitku.
             </p>
           </section>
 
@@ -232,30 +232,30 @@ export default function OchranaOsobnichUdajuPage() {
           <section id="cookies">
             <h2>8. Cookies</h2>
             <p>
-              Nase platforma pouziva cookies. Rozdelujeme je do tri kategorii:
+              Naše platforma používá cookies. Rozdělujeme je do tří kategorií:
             </p>
             <ul>
-              <li><strong>Nutne cookies</strong> — nezbytne pro fungovani webu (prihlaseni, kosik, consent). Nevyzaduji souhlas.</li>
-              <li><strong>Analyticke cookies</strong> — mereni navstevnosti. Vyzaduji vas souhlas.</li>
-              <li><strong>Marketingove cookies</strong> — cilena reklama. Vyzaduji vas souhlas.</li>
+              <li><strong>Nutné cookies</strong> — nezbytné pro fungování webu (přihlášení, košík, consent). Nevyžadují souhlas.</li>
+              <li><strong>Analytické cookies</strong> — měření návštěvnosti. Vyžadují váš souhlas.</li>
+              <li><strong>Marketingové cookies</strong> — cílená reklama. Vyžadují váš souhlas.</li>
             </ul>
             <p>
-              Podrobnosti vcetne seznamu konkretnich cookies najdete na strance{" "}
+              Podrobnosti včetně seznamu konkrétních cookies najdete na stránce{" "}
               <Link href="/zasady-cookies">Zásady cookies</Link>.
-              Svuj souhlas muzete kdykoliv zmenit pomoci cookie banneru na nasem webu.
+              Svůj souhlas můžete kdykoliv změnit pomocí cookie banneru na našem webu.
             </p>
           </section>
 
-          {/* 9. Zabezpeceni */}
+          {/* 9. Zabezpečení */}
           <section id="zabezpeceni">
-            <h2>9. Zabezpeceni udaju</h2>
-            <p>Prijimame nasledujici technicka a organizacni opatreni k ochrane vasich udaju:</p>
+            <h2>9. Zabezpečení údajů</h2>
+            <p>Přijímáme následující technická a organizační opatření k ochraně vašich údajů:</p>
             <ul>
-              <li>Veskera komunikace probiha pres sifrovane spojeni (HTTPS/TLS).</li>
-              <li>Hesla jsou ukladana v hashovane podobe (bcrypt) — nikdy v otevrenem textu.</li>
-              <li>Pristup k osobnim udajum je omezen na zaklade roli (role-based access control).</li>
-              <li>Databaze je pravidelne zalohovana.</li>
-              <li>Pouzivame autentizaci pres JWT tokeny s omezenou platnosti.</li>
+              <li>Veškerá komunikace probíhá přes šifrované spojení (HTTPS/TLS).</li>
+              <li>Hesla jsou ukládána v hashované podobě (bcrypt) — nikdy v otevřeném textu.</li>
+              <li>Přístup k osobním údajům je omezen na základě rolí (role-based access control).</li>
+              <li>Databáze je pravidelně zálohována.</li>
+              <li>Používáme autentizaci přes JWT tokeny s omezenou platností.</li>
             </ul>
           </section>
 
@@ -263,12 +263,12 @@ export default function OchranaOsobnichUdajuPage() {
           <section id="aktualizace">
             <h2>10. Aktualizace tohoto dokumentu</h2>
             <p>
-              Tato zasady ochrany osobnich udaju mohou byt aktualizovany. O vyznamnych zmenach vas
-              budeme informovat prostrednictvim e-mailu nebo oznamenim na platforme minimalne 14 dni
-              pred ucinnosti novych zasad.
+              Tyto zásady ochrany osobních údajů mohou být aktualizovány. O významných změnách vás
+              budeme informovat prostřednictvím e-mailu nebo oznámením na platformě minimálně 14 dní
+              před účinností nových zásad.
             </p>
             <p>
-              Datum posledni aktualizace je uvedeno v hlavicce tohoto dokumentu.
+              Datum poslední aktualizace je uvedeno v hlavičce tohoto dokumentu.
             </p>
           </section>
 

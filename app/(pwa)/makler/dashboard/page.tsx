@@ -107,7 +107,7 @@ export default async function DashboardPage() {
             Ahoj, {session.user.firstName}!
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Prehled tveho mesice
+            Přehled tvého měsíce
           </p>
         </div>
         <LevelBadge level={userLevel} size="md" />

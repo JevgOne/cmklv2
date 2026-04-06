@@ -11,7 +11,6 @@ const footerSections = [
       { href: "/sluzby/proverka", label: "Prověrka vozidla" },
       { href: "/sluzby/financovani", label: "Financování" },
       { href: "/sluzby/pojisteni", label: "Pojištění" },
-      { href: "/sluzby/vykup", label: "Výkup vozidel" },
     ],
   },
   {
@@ -99,9 +98,12 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-gray-500">
-            &copy; {currentYear} CarMakléř. Všechna práva vyhrazena.
-          </p>
+          <div className="flex items-center gap-3">
+            <Image src="/brand/logo-white.png" alt="CarMakléř" width={80} height={32} className="h-6 w-auto object-contain" />
+            <p className="text-sm text-gray-500">
+              &copy; {currentYear} CarMakléř. Všechna práva vyhrazena.
+            </p>
+          </div>
           <div className="flex items-center gap-6">
             <Link
               href="/ochrana-osobnich-udaju"

@@ -863,15 +863,15 @@ export const CITIES: CityData[] = [
     faqItems: [
       { question: "Jaká je nabídka ojetých aut v Hradci Králové?", answer: "V Hradci a okolí nabízíme desítky prověřených vozidel. Populární jsou Škoda, VW, Hyundai a Ford. Nabídka se pravidelně rozšiřuje." },
       { question: "Mohu si auto v Hradci prohlédnout o víkendu?", answer: "Ano, naši makléři jsou flexibilní a prohlídku je možné domluvit i o víkendu dle vašich časových možností." },
-      { question: "Nabízíte výkup starého auta v Hradci Králové?", answer: "Ano, přes CarMakler můžete staré auto prodat nebo vyměnit. Náš makléř auto ocení a nabídne férovou výkupní cenu." },
+      { question: "Mohu přes CarMakler prodat auto v Hradci Králové?", answer: "Ano, přes CarMakler můžete auto prodat snadno a rychle. Náš makléř vám pomůže s celým procesem prodeje." },
     ],
-    aiSnippet: "Hradec Králové je důležité centrum automobilového trhu ve východních Čechách na křižovatce hlavních dopravních tahů. Nejpopulárnější značky: Škoda, VW, Hyundai a Ford. CarMakler nabízí i výkup starého auta za férovou cenu. Prohlídky možné i o víkendu.",
+    aiSnippet: "Hradec Králové je důležité centrum automobilového trhu ve východních Čechách na křižovatce hlavních dopravních tahů. Nejpopulárnější značky: Škoda, VW, Hyundai a Ford. CarMakler zprostředkuje prodej auta za férovou cenu. Prohlídky možné i o víkendu.",
     quickFacts: [
       "Centrum automobilového trhu ve východních Čechách",
       "Strategická poloha na křižovatce hlavních tahů",
       "Nejprodávanější: Škoda, VW, Hyundai, Ford",
       "Prohlídky i o víkendu",
-      "Výkup starého auta za férovou cenu",
+      "Zprostředkování prodeje za férovou cenu",
     ],
   },
 ];

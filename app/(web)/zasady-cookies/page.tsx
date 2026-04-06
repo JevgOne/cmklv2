@@ -18,51 +18,51 @@ export const metadata: Metadata = {
 const cookies = [
   {
     name: "next-auth.session-token",
-    purpose: "Autentizace uzivatele (prihlaseni)",
-    expiry: "30 dni",
-    type: "Nutne",
+    purpose: "Autentizace uživatele (přihlášení)",
+    expiry: "30 dní",
+    type: "Nutné",
   },
   {
     name: "next-auth.csrf-token",
-    purpose: "Ochrana proti CSRF utokum",
+    purpose: "Ochrana proti CSRF útokům",
     expiry: "Relace",
-    type: "Nutne",
+    type: "Nutné",
   },
   {
     name: "next-auth.callback-url",
-    purpose: "Presmerovani po prihlaseni",
+    purpose: "Přesměrování po přihlášení",
     expiry: "Relace",
-    type: "Nutne",
+    type: "Nutné",
   },
   {
     name: "site_access",
-    purpose: "Overeni pristupu na staging prostredi",
-    expiry: "30 dni",
-    type: "Nutne",
+    purpose: "Ověření přístupu na staging prostředí",
+    expiry: "30 dní",
+    type: "Nutné",
   },
   {
     name: "cookie_consent",
-    purpose: "Ulozeni vasich preferenci ohledne cookies (localStorage)",
-    expiry: "Neomezene",
-    type: "Nutne",
+    purpose: "Uložení vašich preferencí ohledně cookies (localStorage)",
+    expiry: "Neomezené",
+    type: "Nutné",
   },
   {
     name: "plausible_ignore",
-    purpose: "Plausible Analytics — vylouceni z analytiky (opt-out)",
-    expiry: "Neomezene",
-    type: "Analyticke",
+    purpose: "Plausible Analytics — vyloučení z analytiky (opt-out)",
+    expiry: "Neomezené",
+    type: "Analytické",
   },
   {
     name: "_ga, _ga_*",
-    purpose: "Google Analytics 4 — identifikace navstevnika (pokud pouzito)",
+    purpose: "Google Analytics 4 — identifikace návštěvníka (pokud použito)",
     expiry: "2 roky",
-    type: "Analyticke",
+    type: "Analytické",
   },
   {
     name: "_fbp",
-    purpose: "Facebook Pixel — identifikace pro remarketing (pokud pouzito)",
-    expiry: "3 mesice",
-    type: "Marketingove",
+    purpose: "Facebook Pixel — identifikace pro remarketing (pokud použito)",
+    expiry: "3 měsíce",
+    type: "Marketingové",
   },
 ];
 
@@ -81,7 +81,7 @@ export default function ZasadyCookiesPage() {
           Zásady cookies
         </h1>
         <p className="text-sm text-gray-500 mb-10">
-          Posledni aktualizace: [DOPLNIT DATUM]
+          Poslední aktualizace: [DOPLNIT DATUM]
         </p>
 
         <div className="prose prose-gray max-w-none prose-headings:text-gray-900 prose-p:text-gray-600 prose-p:leading-relaxed prose-a:text-orange-500">
@@ -89,37 +89,37 @@ export default function ZasadyCookiesPage() {
           <section>
             <h2>Co jsou cookies</h2>
             <p>
-              Cookies jsou male textove soubory, ktere se ukladaji do vaseho prohlizece pri
-              navsteve webovych stranek. Slouzi k zapamatovani vasich preferenci, prihlaseni
-              a analyze navstevnosti.
+              Cookies jsou malé textové soubory, které se ukládají do vašeho prohlížeče při
+              návštěvě webových stránek. Slouží k zapamatování vašich preferencí, přihlášení
+              a analýze návštěvnosti.
             </p>
           </section>
 
           <section>
             <h2>Kategorie cookies</h2>
-            <h3>Nutne cookies</h3>
+            <h3>Nutné cookies</h3>
             <p>
-              Nezbytne pro zakladni funkce webu — prihlaseni, kosik, ochrana proti utokum.
-              Tyto cookies se nastavuji automaticky a nelze je vypnout, aniz by doslo k
-              naruseni funkce webu.
+              Nezbytné pro základní funkce webu — přihlášení, košík, ochrana proti útokům.
+              Tyto cookies se nastavují automaticky a nelze je vypnout, aniž by došlo k
+              narušení funkce webu.
             </p>
-            <h3>Analyticke cookies</h3>
+            <h3>Analytické cookies</h3>
             <p>
-              Pouzivame je pro mereni navstevnosti a pochopeni, jak navstevnici pouzivaji
-              nasi platformu. Primarni nastroj: <strong>Plausible Analytics</strong> (privacy-friendly,
-              bez osobnich cookies). Data jsou agregovana a anonymni.
-              Tyto cookies se aktivuji jen s vasim souhlasem.
+              Používáme je pro měření návštěvnosti a pochopení, jak návštěvníci používají
+              naši platformu. Primární nástroj: <strong>Plausible Analytics</strong> (privacy-friendly,
+              bez osobních cookies). Data jsou agregovaná a anonymní.
+              Tyto cookies se aktivují jen s vaším souhlasem.
             </p>
-            <h3>Marketingove cookies</h3>
+            <h3>Marketingové cookies</h3>
             <p>
-              Slouzi k zobrazeni relevantnich reklam na externich platformach (Facebook, Google).
-              Aktualne nepouzivame marketingove cookies. V budoucnu mohou byt aktivovany
-              jen s vasim vylednym souhlasem.
+              Slouží k zobrazení relevantních reklam na externích platformách (Facebook, Google).
+              Aktuálně nepoužíváme marketingové cookies. V budoucnu mohou být aktivovány
+              jen s vaším výslovným souhlasem.
             </p>
           </section>
 
           <section>
-            <h2>Prehled cookies</h2>
+            <h2>Přehled cookies</h2>
           </section>
         </div>
 
@@ -128,8 +128,8 @@ export default function ZasadyCookiesPage() {
           <table className="min-w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
             <thead className="bg-gray-50">
               <tr>
-                <th className="text-left py-3 px-4 font-semibold text-gray-900">Nazev</th>
-                <th className="text-left py-3 px-4 font-semibold text-gray-900">Ucel</th>
+                <th className="text-left py-3 px-4 font-semibold text-gray-900">Název</th>
+                <th className="text-left py-3 px-4 font-semibold text-gray-900">Účel</th>
                 <th className="text-left py-3 px-4 font-semibold text-gray-900">Expirace</th>
                 <th className="text-left py-3 px-4 font-semibold text-gray-900">Typ</th>
               </tr>
@@ -143,9 +143,9 @@ export default function ZasadyCookiesPage() {
                   <td className="py-3 px-4">
                     <span
                       className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${
-                        c.type === "Nutne"
+                        c.type === "Nutné"
                           ? "bg-gray-100 text-gray-700"
-                          : c.type === "Analyticke"
+                          : c.type === "Analytické"
                             ? "bg-blue-50 text-blue-700"
                             : "bg-purple-50 text-purple-700"
                       }`}
@@ -163,11 +163,11 @@ export default function ZasadyCookiesPage() {
           <section>
             <h2>Jak spravovat cookies</h2>
             <p>
-              Svuj souhlas s cookies muzete kdykoliv zmenit kliknutim na odkaz &bdquo;Nastaveni
-              cookies&ldquo; v paticce naseho webu, nebo smazanim cookies ve svem prohlizeci.
+              Svůj souhlas s cookies můžete kdykoliv změnit kliknutím na odkaz &bdquo;Nastavení
+              cookies&ldquo; v patičce našeho webu, nebo smazáním cookies ve svém prohlížeči.
             </p>
             <p>
-              Podrobne informace o zpracovani osobnich udaju najdete na strance{" "}
+              Podrobné informace o zpracování osobních údajů najdete na stránce{" "}
               <Link href="/ochrana-osobnich-udaju">Ochrana osobních údajů</Link>.
             </p>
           </section>

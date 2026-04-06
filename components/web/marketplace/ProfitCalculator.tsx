@@ -110,14 +110,14 @@ export function ProfitCalculator({
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-info-500" />
-                  <span className="text-sm text-gray-600">Dealer (40%)</span>
+                  <span className="text-sm text-gray-600">Realizátor (40%)</span>
                 </div>
                 <span className="font-bold text-gray-900">{formatPrice(dealerShare)}</span>
               </div>
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-orange-500" />
-                  <span className="text-sm text-gray-600">Carmakler (20%)</span>
+                  <span className="text-sm text-gray-600">CarMakléř (20%)</span>
                 </div>
                 <span className="font-bold text-gray-900">{formatPrice(platformShare)}</span>
               </div>

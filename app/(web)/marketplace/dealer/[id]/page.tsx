@@ -12,7 +12,7 @@ import { formatPrice } from "@/lib/utils";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
-  title: "Detail flipu | Dealer | Marketplace | CarMakléř",
+  title: "Detail flipu | Realizátor | Marketplace | CarMakléř",
 };
 
 export default async function DealerFlipDetailPage({
@@ -72,7 +72,7 @@ export default async function DealerFlipDetailPage({
         </Link>
         <span>/</span>
         <Link href="/marketplace/dealer" className="hover:text-orange-500 transition-colors no-underline text-gray-500">
-          Dealer
+          Realizátor
         </Link>
         <span>/</span>
         <span className="text-gray-900">{flipDetail.brand} {flipDetail.model}</span>

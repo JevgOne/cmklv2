@@ -218,14 +218,14 @@ export default function InvestorOpportunityDetailPage() {
 
           {/* Dealer info */}
           <Card className="p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Dealer</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Realizátor</h3>
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center">
                 <span className="font-bold text-white">{dealerName.split(" ").map(n => n[0]).join("")}</span>
               </div>
               <div>
                 <p className="font-bold text-gray-900">{dealerName}</p>
-                <p className="text-xs text-gray-500">Dealer</p>
+                <p className="text-xs text-gray-500">Realizátor</p>
               </div>
             </div>
           </Card>

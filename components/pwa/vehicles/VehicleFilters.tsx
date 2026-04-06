@@ -3,11 +3,11 @@
 import { cn } from "@/lib/utils";
 
 const FILTERS = [
-  { value: "all", label: "Vsechny" },
-  { value: "ACTIVE", label: "Aktivni" },
+  { value: "all", label: "Všechny" },
+  { value: "ACTIVE", label: "Aktivní" },
   { value: "DRAFT", label: "Draft" },
-  { value: "PENDING", label: "Ke schvaleni" },
-  { value: "SOLD", label: "Prodane" },
+  { value: "PENDING", label: "Ke schválení" },
+  { value: "SOLD", label: "Prodané" },
 ] as const;
 
 interface VehicleFiltersProps {

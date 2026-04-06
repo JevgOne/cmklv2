@@ -3,7 +3,7 @@ import Link from "next/link";
 import { OpportunityWizard } from "@/components/web/marketplace/OpportunityWizard";
 
 export const metadata: Metadata = {
-  title: "Nová příležitost | Dealer | Marketplace | CarMakléř",
+  title: "Nová příležitost | Realizátor | Marketplace | CarMakléř",
 };
 
 export default function NewOpportunityPage() {
@@ -17,7 +17,7 @@ export default function NewOpportunityPage() {
           </Link>
           <span>/</span>
           <Link href="/marketplace/dealer" className="hover:text-orange-500 transition-colors no-underline text-gray-500">
-            Dealer
+            Realizátor
           </Link>
           <span>/</span>
           <span className="text-gray-900">Nová příležitost</span>

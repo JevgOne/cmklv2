@@ -83,7 +83,7 @@ export function ApplyForm() {
             )}
           >
             <span className="text-3xl block mb-3">🚗</span>
-            <span className="font-bold text-gray-900 block">Jsem dealer</span>
+            <span className="font-bold text-gray-900 block">Jsem realizátor</span>
             <span className="text-sm text-gray-500 mt-1 block">Chci nabízet auta k flipování</span>
           </button>
           <button

@@ -15,19 +15,25 @@ export default async function MessagesPage() {
   const userId = session.user.id;
 
   // Nacist vsechny vozy maklere s dotazy
-  const vehicles = await prisma.vehicle.findMany({
-    where: {
-      brokerId: userId,
-      inquiries: { some: {} },
-    },
-    include: {
-      images: { where: { isPrimary: true }, take: 1 },
-      inquiries: {
-        orderBy: { createdAt: "desc" },
+  let vehicles;
+  try {
+    vehicles = await prisma.vehicle.findMany({
+      where: {
+        brokerId: userId,
+        inquiries: { some: {} },
       },
-    },
-    orderBy: { updatedAt: "desc" },
-  });
+      include: {
+        images: { where: { isPrimary: true }, take: 1 },
+        inquiries: {
+          orderBy: { createdAt: "desc" },
+        },
+      },
+      orderBy: { updatedAt: "desc" },
+    });
+  } catch (error) {
+    console.error("[Messages] Prisma query failed for userId:", userId, error);
+    throw error;
+  }
 
   // Seskupit dotazy podle vozu
   const vehiclesWithInquiries = vehicles.map((vehicle) => {
@@ -53,16 +59,16 @@ export default async function MessagesPage() {
     <div className="p-4 pb-24">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-extrabold text-gray-900">Zpravy</h1>
-          <p className="text-sm text-gray-500 mt-1">Dotazy od kupujicich</p>
+          <h1 className="text-2xl font-extrabold text-gray-900">Zprávy</h1>
+          <p className="text-sm text-gray-500 mt-1">Dotazy od kupujících</p>
         </div>
       </div>
 
       {vehiclesWithInquiries.length === 0 ? (
         <EmptyState
           icon="💬"
-          title="Zatim zadne dotazy"
-          description="Jakmile kupujici projevi zajem o vase vozidla, uvidite zde jejich dotazy."
+          title="Zatím žádné dotazy"
+          description="Jakmile kupující projeví zájem o vaše vozidla, uvidíte zde jejich dotazy."
         />
       ) : (
         <div className="space-y-3">
@@ -129,14 +135,14 @@ function formatDate(dateStr: string): string {
   const diffMs = now.getTime() - date.getTime();
   const diffMins = Math.floor(diffMs / 60000);
 
-  if (diffMins < 1) return "Prave ted";
-  if (diffMins < 60) return `pred ${diffMins} min`;
+  if (diffMins < 1) return "Právě teď";
+  if (diffMins < 60) return `před ${diffMins} min`;
 
   const diffHours = Math.floor(diffMins / 60);
-  if (diffHours < 24) return `pred ${diffHours} hod`;
+  if (diffHours < 24) return `před ${diffHours} hod`;
 
   const diffDays = Math.floor(diffHours / 24);
-  if (diffDays < 7) return `pred ${diffDays} dny`;
+  if (diffDays < 7) return `před ${diffDays} dny`;
 
   return date.toLocaleDateString("cs-CZ");
 }

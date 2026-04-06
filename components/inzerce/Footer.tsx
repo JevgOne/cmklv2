@@ -61,11 +61,6 @@ export function InzerceFooter() {
                   Shop autodíly
                 </a>
               </li>
-              <li>
-                <a href={urls.marketplace("/")} className="text-sm text-gray-500 hover:text-white transition-colors no-underline">
-                  Marketplace
-                </a>
-              </li>
             </ul>
           </div>
 

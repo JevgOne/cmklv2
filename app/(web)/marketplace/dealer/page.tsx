@@ -6,7 +6,7 @@ import { OpportunityCard } from "@/components/web/marketplace/OpportunityCard";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
-  title: "Dealer Dashboard | Marketplace | CarMakléř",
+  title: "Realizátor Dashboard | Marketplace | CarMakléř",
 };
 
 async function getDealerData() {
@@ -68,7 +68,7 @@ export default async function DealerDashboardPage() {
               Marketplace
             </Link>
             <span>/</span>
-            <span className="text-gray-900">Dealer</span>
+            <span className="text-gray-900">Realizátor</span>
           </div>
           <h1 className="text-[28px] font-extrabold text-gray-900">
             Moje příležitosti

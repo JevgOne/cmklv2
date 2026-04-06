@@ -56,174 +56,174 @@ export default function ObchodniPodminkyPage() {
           Obchodní podmínky
         </h1>
         <p className="text-sm text-gray-500 mb-10">
-          Platne od [DOPLNIT DATUM] | Posledni aktualizace: [DOPLNIT DATUM]
+          Platné od [DOPLNIT DATUM] | Poslední aktualizace: [DOPLNIT DATUM]
         </p>
 
         <div className="prose prose-gray max-w-none prose-headings:text-gray-900 prose-p:text-gray-600 prose-p:leading-relaxed prose-a:text-orange-500 prose-a:no-underline hover:prose-a:underline">
 
-          {/* 1. Uvodni ustanoveni */}
+          {/* 1. Úvodní ustanovení */}
           <section id="uvodni-ustanoveni">
-            <h2>1. Uvodni ustanoveni a definice pojmu</h2>
+            <h2>1. Úvodní ustanovení a definice pojmů</h2>
             <p>
-              Tyto obchodni podminky (dale jen &bdquo;podminky&ldquo;) upravuji vzajemna prava a povinnosti
-              mezi provozovatelem platformy a jejimi uzivateli.
+              Tyto obchodní podmínky (dále jen &bdquo;podmínky&ldquo;) upravují vzájemná práva a povinnosti
+              mezi provozovatelem platformy a jejími uživateli.
             </p>
             <p>
-              <strong>Provozovatel:</strong> CarMakler s.r.o., ICO: [DOPLNIT], se sidlem [DOPLNIT ADRESA],
-              zapsana v obchodnim rejstriku vedenem [DOPLNIT] soudem v [DOPLNIT], oddil C, vlozka [DOPLNIT].
+              <strong>Provozovatel:</strong> CarMakler s.r.o., IČO: [DOPLNIT], se sídlem [DOPLNIT ADRESA],
+              zapsaná v obchodním rejstříku vedeném [DOPLNIT] soudem v [DOPLNIT], oddíl C, vložka [DOPLNIT].
             </p>
             <p>
               <strong>Kontakt:</strong> e-mail info@carmakler.cz, telefon [DOPLNIT].
             </p>
             <h3>Definice</h3>
             <ul>
-              <li><strong>Prodavajici</strong> — provozovatel platformy CarMakler s.r.o.</li>
-              <li><strong>Kupujici</strong> — fyzicka nebo pravnicka osoba, ktera prostrednictvim platformy objednava zbozi nebo sluzby.</li>
-              <li><strong>Zbozi</strong> — autodily (nove i pouzite) nabizene v e-shopu.</li>
-              <li><strong>Sluzba</strong> — inzertni sluzby, maklerske sluzby zprostredkovani prodeje vozidel, investicni marketplace.</li>
-              <li><strong>Platforma</strong> — webova aplikace dostupna na domene carmakler.cz a jejich subdomenach.</li>
-              <li><strong>Spotrebitel</strong> — kupujici, ktery je fyzickou osobou a nejedna v ramci sve podnikatelske cinnosti.</li>
+              <li><strong>Prodávající</strong> — provozovatel platformy CarMakler s.r.o.</li>
+              <li><strong>Kupující</strong> — fyzická nebo právnická osoba, která prostřednictvím platformy objednává zboží nebo služby.</li>
+              <li><strong>Zboží</strong> — autodíly (nové i použité) nabízené v e-shopu.</li>
+              <li><strong>Služba</strong> — inzertní služby, makléřské služby zprostředkování prodeje vozidel, investiční marketplace.</li>
+              <li><strong>Platforma</strong> — webová aplikace dostupná na doméně carmakler.cz a jejích subdoménách.</li>
+              <li><strong>Spotřebitel</strong> — kupující, který je fyzickou osobou a nejedná v rámci své podnikatelské činnosti.</li>
             </ul>
           </section>
 
-          {/* 2. Objednavkovy proces */}
+          {/* 2. Objednávkový proces */}
           <section id="objednavkovy-proces">
-            <h2>2. Objednavkovy proces (e-shop autodily)</h2>
+            <h2>2. Objednávkový proces (e-shop autodíly)</h2>
             <p>
-              Zbozi prezentovane v e-shopu neni nabidkou k uzavreni smlouvy ve smyslu § 1732 odst. 2
-              obcanskeho zakoniku, ale vyzva k podani nabidky.
+              Zboží prezentované v e-shopu není nabídkou k uzavření smlouvy ve smyslu § 1732 odst. 2
+              občanského zákoníku, ale výzvou k podání nabídky.
             </p>
             <ol>
-              <li>Kupujici vlozi zbozi do kosiku a vyplni dodaci a fakturacni udaje.</li>
-              <li>Pred odeslanim objednavky ma kupujici moznost zkontrolovat a menit udaje (§ 1826 OZ).</li>
-              <li>Odeslanim objednavky kupujici potvrzuje, ze se seznamil s temito podminkami.</li>
-              <li>Prodavajici neprodlene potvrdi prijeti objednavky e-mailem. Toto potvrzeni je akceptaci nabidky a okamzikem uzavreni kupni smlouvy.</li>
+              <li>Kupující vloží zboží do košíku a vyplní dodací a fakturační údaje.</li>
+              <li>Před odesláním objednávky má kupující možnost zkontrolovat a měnit údaje (§ 1826 OZ).</li>
+              <li>Odesláním objednávky kupující potvrzuje, že se seznámil s těmito podmínkami.</li>
+              <li>Prodávající neprodleně potvrdí přijetí objednávky e-mailem. Toto potvrzení je akceptací nabídky a okamžikem uzavření kupní smlouvy.</li>
             </ol>
             <p>
-              Prodavajici si vyhrazuje pravo odmitnou objednavku, pokud je zbozi nedostupne (zvlaste
-              u pouzitych dilu, ktere jsou unikaty). V takovem pripade kupujiciho neprodlene informuje.
+              Prodávající si vyhrazuje právo odmítnout objednávku, pokud je zboží nedostupné (zvláště
+              u použitých dílů, které jsou unikáty). V takovém případě kupujícího neprodleně informuje.
             </p>
           </section>
 
-          {/* 3. Ceny a platebni podminky */}
+          {/* 3. Ceny a platební podmínky */}
           <section id="ceny-a-platby">
-            <h2>3. Ceny a platebni podminky</h2>
+            <h2>3. Ceny a platební podmínky</h2>
             <p>
-              Vsechny ceny v e-shopu jsou uvedeny <strong>vcetne DPH</strong> a vsech povinnych poplatku.
-              Celkova cena objednavky vcetne dopravy je kupujicimu zobrazena pred odeslanim objednavky.
+              Všechny ceny v e-shopu jsou uvedeny <strong>včetně DPH</strong> a všech povinných poplatků.
+              Celková cena objednávky včetně dopravy je kupujícímu zobrazena před odesláním objednávky.
             </p>
-            <h3>Zpusoby platby</h3>
+            <h3>Způsoby platby</h3>
             <ul>
-              <li><strong>Bankovni prevod</strong> — platba predem na ucet prodavajiciho. Zbozi je expedovano po pripisu platby.</li>
-              <li><strong>Dobirka</strong> — platba pri prevzeti zbozi. Priplatek dle aktualniho ceniku dopravce.</li>
+              <li><strong>Bankovní převod</strong> — platba předem na účet prodávajícího. Zboží je expedováno po připsání platby.</li>
+              <li><strong>Dobírka</strong> — platba při převzetí zboží. Příplatek dle aktuálního ceníku dopravce.</li>
             </ul>
             <p>
-              Prodavajici si vyhrazuje pravo rozsirit platebni metody (napr. o platbu kartou online).
+              Prodávající si vyhrazuje právo rozšířit platební metody (např. o platbu kartou online).
             </p>
           </section>
 
-          {/* 4. Dodani zbozi */}
+          {/* 4. Dodání zboží */}
           <section id="dodani-zbozi">
-            <h2>4. Dodani zbozi</h2>
-            <h3>Zpusoby doruceni</h3>
+            <h2>4. Dodání zboží</h2>
+            <h3>Způsoby doručení</h3>
             <ul>
-              <li><strong>Zasilkovna</strong> — doruceni na vydejni misto dle vyberu kupujiciho.</li>
-              <li><strong>PPL</strong> — doruceni na adresu.</li>
-              <li><strong>Ceska posta</strong> — doruceni na adresu.</li>
-              <li><strong>Osobni odber</strong> — u dodavatele dle dostupnosti.</li>
+              <li><strong>Zásilkovna</strong> — doručení na výdejní místo dle výběru kupujícího.</li>
+              <li><strong>PPL</strong> — doručení na adresu.</li>
+              <li><strong>Česká pošta</strong> — doručení na adresu.</li>
+              <li><strong>Osobní odběr</strong> — u dodavatele dle dostupnosti.</li>
             </ul>
-            <h3>Dodaci lhuty</h3>
+            <h3>Dodací lhůty</h3>
             <p>
-              Obvykla dodaci lhuta je 2-7 pracovnich dni od potvrzeni objednavky (resp. od pripisu
-              platby u prevodu). U pouzitych dilu z vrakovist muze byt lhuta delsi.
-              Prodavajici informuje kupujiciho o predpokladanem terminu doruceni.
+              Obvyklá dodací lhůta je 2–7 pracovních dní od potvrzení objednávky (resp. od připsání
+              platby u převodu). U použitých dílů z vrakovišť může být lhůta delší.
+              Prodávající informuje kupujícího o předpokládaném termínu doručení.
             </p>
-            <h3>Naklady na doruceni</h3>
+            <h3>Náklady na doručení</h3>
             <p>
-              Cena dopravy se zobrazuje pri vytvrareni objednavky a zavisi na zvolenem zpusobu doruceni
-              a rozmerech/hmotnosti zbozi. Aktualni cenik je uveden v procesu objednavky.
+              Cena dopravy se zobrazuje při vytváření objednávky a závisí na zvoleném způsobu doručení
+              a rozměrech/hmotnosti zboží. Aktuální ceník je uveden v procesu objednávky.
             </p>
           </section>
 
-          {/* 5. Odstoupeni od smlouvy */}
+          {/* 5. Odstoupení od smlouvy */}
           <section id="odstoupeni-od-smlouvy">
-            <h2>5. Odstoupeni od smlouvy</h2>
+            <h2>5. Odstoupení od smlouvy</h2>
             <p>
-              Spotrebitel ma pravo odstoupit od smlouvy bez udani duvodu ve lhute <strong>14 dni</strong> ode
-              dne prevzeti zbozi (§ 1829 obcanskeho zakoniku).
+              Spotřebitel má právo odstoupit od smlouvy bez udání důvodu ve lhůtě <strong>14 dní</strong> ode
+              dne převzetí zboží (§ 1829 občanského zákoníku).
             </p>
             <h3>Postup</h3>
             <ol>
-              <li>Kupujici informuje prodavajiciho o rozhodnuti odstoupit e-mailem na info@carmakler.cz nebo prostrednictvim formulare na webu.</li>
-              <li>Kupujici zasle zbozi zpet na adresu [DOPLNIT] do 14 dni od odstoupeni, na vlastni naklady.</li>
-              <li>Zbozi musi byt neposkozone, nepouzite (nemontovane) a v puvodnim obalu, je-li to mozne.</li>
-              <li>Prodavajici vrati kupujicimu vsechny prijate penezni prostredky do 14 dni od obdrzeni vraceneho zbozi.</li>
+              <li>Kupující informuje prodávajícího o rozhodnutí odstoupit e-mailem na info@carmakler.cz nebo prostřednictvím formuláře na webu.</li>
+              <li>Kupující zašle zboží zpět na adresu [DOPLNIT] do 14 dní od odstoupení, na vlastní náklady.</li>
+              <li>Zboží musí být nepoškozené, nepoužité (nemontované) a v původním obalu, je-li to možné.</li>
+              <li>Prodávající vrátí kupujícímu všechny přijaté peněžní prostředky do 14 dní od obdržení vráceného zboží.</li>
             </ol>
-            <h3>Vyjimky z prava na odstoupeni (§ 1837 OZ)</h3>
+            <h3>Výjimky z práva na odstoupení (§ 1837 OZ)</h3>
             <ul>
-              <li>Zbozi upravene podle prani kupujiciho nebo na jeho miru.</li>
-              <li>Pouzite dily, ktere byly po prevzeti namontovany na vozidlo (zmena charakteru zbozi).</li>
+              <li>Zboží upravené podle přání kupujícího nebo na jeho míru.</li>
+              <li>Použité díly, které byly po převzetí namontovány na vozidlo (změna charakteru zboží).</li>
             </ul>
           </section>
 
-          {/* 6. Reklamace a zaruka */}
+          {/* 6. Reklamace a záruka */}
           <section id="reklamace">
-            <h2>6. Reklamace a zaruka</h2>
+            <h2>6. Reklamace a záruka</h2>
             <p>
-              Prava kupujiciho z vadneho plneni se ridi prislusnymi ustanovenimi obcanskeho zakoniku
-              (§ 2099-2117, § 2161-2174) a zakonem o ochrane spotrebitele.
+              Práva kupujícího z vadného plnění se řídí příslušnými ustanoveními občanského zákoníku
+              (§ 2099–2117, § 2161–2174) a zákonem o ochraně spotřebitele.
             </p>
             <ul>
-              <li><strong>Nove dily:</strong> zarucni doba 24 mesicu od prevzeti (§ 2165 OZ).</li>
-              <li><strong>Pouzite dily:</strong> zarucni doba 12 mesicu od prevzeti (§ 2167 OZ — zkracena zaruka u pouziteho zbozi).</li>
+              <li><strong>Nové díly:</strong> záruční doba 24 měsíců od převzetí (§ 2165 OZ).</li>
+              <li><strong>Použité díly:</strong> záruční doba 12 měsíců od převzetí (§ 2167 OZ — zkrácená záruka u použitého zboží).</li>
             </ul>
             <p>
-              Podrobnosti o uplatneni reklamace najdete v nasem{" "}
-              <Link href="/reklamacni-rad">Reklamacnim radu</Link>.
+              Podrobnosti o uplatnění reklamace najdete v našem{" "}
+              <Link href="/reklamacni-rad">Reklamačním řádu</Link>.
             </p>
           </section>
 
-          {/* 7. Inzertni sluzby */}
+          {/* 7. Inzertní služby */}
           <section id="inzertni-sluzby">
-            <h2>7. Inzertni sluzby</h2>
+            <h2>7. Inzertní služby</h2>
             <p>
-              Platforma umoznuje registrovanym uzivatelum vkladat inzeraty na prodej vozidel.
+              Platforma umožňuje registrovaným uživatelům vkládat inzeráty na prodej vozidel.
             </p>
             <ul>
-              <li><strong>Zakladni inzerat:</strong> zdarma, s omezenou dobou platnosti (60 dni).</li>
-              <li><strong>TOP inzerat:</strong> za poplatek dle aktualniho ceniku — zvyrazneni v katalogu a prioritni zobrazeni.</li>
+              <li><strong>Základní inzerát:</strong> zdarma, s omezenou dobou platnosti (60 dní).</li>
+              <li><strong>TOP inzerát:</strong> za poplatek dle aktuálního ceníku — zvýraznění v katalogu a prioritní zobrazení.</li>
             </ul>
             <h3>Povinnosti inzerenta</h3>
             <ul>
-              <li>Inzerent odpovida za pravdivost a uplnost uvedenych udaju.</li>
-              <li>Zakazano je inzerovat vozidla s nesrovnalostmi v dokumentech, odcizena vozidla, nebo vozidla zatizena pravem treti osoby bez uvedeni teto skutecnosti.</li>
-              <li>Provozovatel si vyhrazuje pravo odstranit inzerat, ktery porousuje tyto podminky, bez nahrady.</li>
+              <li>Inzerent odpovídá za pravdivost a úplnost uvedených údajů.</li>
+              <li>Zakázáno je inzerovat vozidla s nesrovnalostmi v dokumentech, odcizená vozidla, nebo vozidla zatížená právem třetí osoby bez uvedení této skutečnosti.</li>
+              <li>Provozovatel si vyhrazuje právo odstranit inzerát, který porušuje tyto podmínky, bez náhrady.</li>
             </ul>
           </section>
 
-          {/* 8. Maklerske sluzby */}
+          {/* 8. Makléřské služby */}
           <section id="maklerske-sluzby">
-            <h2>8. Maklerske sluzby</h2>
+            <h2>8. Makléřské služby</h2>
             <p>
-              CarMakler zprostredkovava prodej vozidel prostrednictvim site certifikovanych makleru.
+              CarMakler zprostředkovává prodej vozidel prostřednictvím sítě certifikovaných makléřů.
             </p>
             <ul>
-              <li><strong>Provize:</strong> 5 % z prodejni ceny, minimalne 25 000 Kc vcetne DPH.</li>
-              <li>Spoluprace se ridi samostatnou smlouvou o zprostredkovani.</li>
-              <li>Makler provadi: naceneni vozidla, fotografii, vytvoreni inzeratu, organizaci prohlidek, pripravu kupni smlouvy a asistenci pri prepisu.</li>
+              <li><strong>Provize:</strong> 5 % z prodejní ceny, minimálně 25 000 Kč včetně DPH.</li>
+              <li>Spolupráce se řídí samostatnou smlouvou o zprostředkování.</li>
+              <li>Makléř provádí: nacenění vozidla, fotografie, vytvoření inzerátu, organizaci prohlídek, přípravu kupní smlouvy a asistenci při přepisu.</li>
             </ul>
           </section>
 
           {/* 9. Marketplace */}
           <section id="marketplace">
-            <h2>9. Investicni marketplace</h2>
+            <h2>9. Investiční marketplace</h2>
             <p>
-              Uzavrena platforma pro overene dealery a investory. Pristup podleha verifikaci.
+              Uzavřená platforma pro ověřené dealery a investory. Přístup podléhá verifikaci.
             </p>
             <ul>
-              <li><strong>Deleni zisku:</strong> 40 % investor, 40 % dealer, 20 % CarMakler.</li>
-              <li>Vozidlo se kupuje na firmu CarMakler s.r.o.; po prodeji se zisk deli dle smluvniho pomeru.</li>
-              <li>Podrobnosti upravuje samostatna investicni smlouva.</li>
+              <li><strong>Dělení zisku:</strong> 40 % investor, 40 % dealer, 20 % CarMakler.</li>
+              <li>Vozidlo se kupuje na firmu CarMakler s.r.o.; po prodeji se zisk dělí dle smluvního poměru.</li>
+              <li>Podrobnosti upravuje samostatná investiční smlouva.</li>
             </ul>
           </section>
 
@@ -231,42 +231,42 @@ export default function ObchodniPodminkyPage() {
           <section id="ochrana-udaju">
             <h2>10. Ochrana osobních údajů</h2>
             <p>
-              Informace o zpracovani osobnich udaju najdete na strance{" "}
+              Informace o zpracování osobních údajů najdete na stránce{" "}
               <Link href="/ochrana-osobnich-udaju">Ochrana osobních údajů</Link>.
             </p>
           </section>
 
-          {/* 11. Zaverecna ustanoveni */}
+          {/* 11. Závěrečná ustanovení */}
           <section id="zaverecna-ustanoveni">
-            <h2>11. Zaverecna ustanoveni</h2>
+            <h2>11. Závěrečná ustanovení</h2>
             <p>
-              Tyto podminky se ridi pravnim radem Ceske republiky. Pripadne spory budou reseny
-              prislunymi soudy Ceske republiky.
+              Tyto podmínky se řídí právním řádem České republiky. Případné spory budou řešeny
+              příslušnými soudy České republiky.
             </p>
-            <h3>Mimosoudni reseni spotrebitelskych sporu</h3>
+            <h3>Mimosoudní řešení spotřebitelských sporů</h3>
             <p>
-              K mimosoudnimu reseni spotrebitelskych sporu z kupni smlouvy je prislusna
-              <strong> Ceska obchodni inspekce</strong>, se sidlem Stepanska 567/15, 120 00 Praha 2,
-              IcO: 000 20 869, web:{" "}
+              K mimosoudnímu řešení spotřebitelských sporů z kupní smlouvy je příslušná
+              <strong> Česká obchodní inspekce</strong>, se sídlem Štěpánská 567/15, 120 00 Praha 2,
+              IČO: 000 20 869, web:{" "}
               <a href="https://www.coi.cz" target="_blank" rel="noopener noreferrer">
                 www.coi.cz
               </a>
               .
             </p>
             <p>
-              Spotrebitel muze vyuzit rovnez platformu pro reseni sporu online (ODR) zrizenou
-              Evropskou komisi na adrese:{" "}
+              Spotřebitel může využít rovněž platformu pro řešení sporů online (ODR) zřízenou
+              Evropskou komisí na adrese:{" "}
               <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer">
                 https://ec.europa.eu/consumers/odr
               </a>
               .
             </p>
-            <h3>Zmena podminek</h3>
+            <h3>Změna podmínek</h3>
             <p>
-              Prodavajici si vyhrazuje pravo tyto podminky menit. O zmene bude kupujici informovan
-              minimalne 14 dni pred ucinnosti novych podminek prostrednictvim e-mailu nebo oznamenim
-              na platforme. Pokracovanim v uzivani platformy po ucinnosti novych podminek kupujici
-              vyjadruje svuj souhlas s nimi.
+              Prodávající si vyhrazuje právo tyto podmínky měnit. O změně bude kupující informován
+              minimálně 14 dní před účinností nových podmínek prostřednictvím e-mailu nebo oznámením
+              na platformě. Pokračováním v užívání platformy po účinnosti nových podmínek kupující
+              vyjadřuje svůj souhlas s nimi.
             </p>
           </section>
 

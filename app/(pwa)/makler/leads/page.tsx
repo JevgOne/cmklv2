@@ -6,11 +6,11 @@ import { LeadCard, LeadCardData } from "@/components/pwa/leads/LeadCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 
 const LEAD_TABS = [
-  { value: "NEW", label: "Nove" },
-  { value: "ASSIGNED", label: "Prijate" },
-  { value: "CONTACTED", label: "Kontaktovano" },
-  { value: "MEETING_SCHEDULED", label: "Schuzka" },
-  { value: "REJECTED", label: "Odmitnute" },
+  { value: "NEW", label: "Nové" },
+  { value: "ASSIGNED", label: "Přijaté" },
+  { value: "CONTACTED", label: "Kontaktováno" },
+  { value: "MEETING_SCHEDULED", label: "Schůzka" },
+  { value: "REJECTED", label: "Odmítnuté" },
 ];
 
 export default function LeadsPage() {
@@ -48,7 +48,7 @@ export default function LeadsPage() {
       <div>
         <h1 className="text-2xl font-extrabold text-gray-900">Leady</h1>
         <p className="text-sm text-gray-500 mt-1">
-          Prehled vasich prirazenych leadu
+          Přehled vašich přiřazených leadů
         </p>
       </div>
 
@@ -71,8 +71,8 @@ export default function LeadsPage() {
       ) : leads.length === 0 ? (
         <EmptyState
           icon="📋"
-          title="Zadne leady"
-          description={`V kategorii "${LEAD_TABS.find((t) => t.value === activeTab)?.label}" nemáte zadne leady.`}
+          title="Žádné leady"
+          description={`V kategorii "${LEAD_TABS.find((t) => t.value === activeTab)?.label}" nemáte žádné leady.`}
         />
       ) : (
         <div className="space-y-3">

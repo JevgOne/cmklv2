@@ -10,7 +10,6 @@ const serviceItems = [
   { href: "/sluzby/proverka", title: "Prověrka vozidla" },
   { href: "/sluzby/financovani", title: "Financování" },
   { href: "/sluzby/pojisteni", title: "Pojištění" },
-  { href: "/sluzby/vykup", title: "Výkup vozidel" },
 ];
 
 const aboutItems = [

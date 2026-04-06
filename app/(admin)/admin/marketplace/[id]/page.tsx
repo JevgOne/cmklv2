@@ -311,10 +311,10 @@ export default function AdminFlipDetailPage() {
 
           {/* Dealer info */}
           <Card className="p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Dealer</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Realizátor</h3>
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-500">Jmeno</span>
+                <span className="text-gray-500">Jméno</span>
                 <span className="font-medium">{flip.dealerName}</span>
               </div>
               {flip.dealerEmail && (
@@ -338,7 +338,7 @@ export default function AdminFlipDetailPage() {
                     onClick={() => handleAction("approve")}
                     disabled={processing}
                   >
-                    Schvalit prilezitost
+                    Schválit příležitost
                   </Button>
                   <Button
                     variant="danger"
@@ -346,7 +346,7 @@ export default function AdminFlipDetailPage() {
                     onClick={() => handleAction("reject")}
                     disabled={processing}
                   >
-                    Zamitnout
+                    Zamítnout
                   </Button>
                 </>
               )}
@@ -357,7 +357,7 @@ export default function AdminFlipDetailPage() {
                   onClick={() => handleAction("payout")}
                   disabled={processing}
                 >
-                  Spustit vyplatu
+                  Spustit výplatu
                 </Button>
               )}
               {flip.dealerEmail && (
@@ -366,7 +366,7 @@ export default function AdminFlipDetailPage() {
                   className="w-full"
                   onClick={() => window.location.href = `mailto:${flip.dealerEmail}`}
                 >
-                  Kontaktovat dealera
+                  Kontaktovat realizátora
                 </Button>
               )}
             </div>

@@ -66,8 +66,8 @@ export default async function VehicleInquiriesPage({
       {inquiries.length === 0 ? (
         <EmptyState
           icon="💬"
-          title="Zatim zadne dotazy"
-          description="K tomuto vozidlu zatim nikdo neprojevil zajem."
+          title="Zatím žádné dotazy"
+          description="K tomuto vozidlu zatím nikdo neprojevil zájem."
         />
       ) : (
         <div className="space-y-4">

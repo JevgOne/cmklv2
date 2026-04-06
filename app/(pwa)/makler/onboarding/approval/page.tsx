@@ -12,11 +12,11 @@ export default function OnboardingApprovalPage() {
       </div>
 
       <h2 className="text-2xl font-bold text-gray-900 mb-3">
-        Cekame na schvaleni
+        Čekáme na schválení
       </h2>
 
       <p className="text-gray-500 mb-2 max-w-sm mx-auto">
-        Vas profil byl odeslan ke schvaleni. Manazer vas bude kontaktovat.
+        Váš profil byl odeslán ke schválení. Manažer vás bude kontaktovat.
       </p>
 
       <p className="text-sm text-gray-400 mb-8">
@@ -25,26 +25,26 @@ export default function OnboardingApprovalPage() {
 
       {/* Info cards */}
       <div className="bg-white rounded-2xl shadow-card p-6 mb-6 text-left max-w-sm mx-auto">
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">Co se deje dal?</h3>
+        <h3 className="text-sm font-semibold text-gray-900 mb-3">Co se děje dál?</h3>
         <ul className="space-y-2.5">
           <li className="flex items-start gap-3">
             <div className="w-6 h-6 rounded-full bg-orange-100 flex items-center justify-center text-orange-500 text-xs font-bold shrink-0 mt-0.5">1</div>
-            <span className="text-sm text-gray-600">Manazer zkontroluje vase dokumenty</span>
+            <span className="text-sm text-gray-600">Manažer zkontroluje vaše dokumenty</span>
           </li>
           <li className="flex items-start gap-3">
             <div className="w-6 h-6 rounded-full bg-orange-100 flex items-center justify-center text-orange-500 text-xs font-bold shrink-0 mt-0.5">2</div>
-            <span className="text-sm text-gray-600">Overí vasi smlouvu a podpis</span>
+            <span className="text-sm text-gray-600">Ověří vaši smlouvu a podpis</span>
           </li>
           <li className="flex items-start gap-3">
             <div className="w-6 h-6 rounded-full bg-orange-100 flex items-center justify-center text-orange-500 text-xs font-bold shrink-0 mt-0.5">3</div>
-            <span className="text-sm text-gray-600">Aktivuje vas ucet a budete moci zacit pracovat</span>
+            <span className="text-sm text-gray-600">Aktivuje váš účet a budete moci začít pracovat</span>
           </li>
         </ul>
       </div>
 
       <Link href="/">
         <Button variant="outline" size="default">
-          Zpet na uvod
+          Zpět na úvod
         </Button>
       </Link>
     </div>

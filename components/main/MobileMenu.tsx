@@ -11,7 +11,6 @@ const serviceItems = [
   { href: "/sluzby/proverka", title: "Prověrka vozidla" },
   { href: "/sluzby/financovani", title: "Financování" },
   { href: "/sluzby/pojisteni", title: "Pojištění" },
-  { href: "/sluzby/vykup", title: "Výkup vozidel" },
 ];
 
 const aboutItems = [
@@ -91,14 +90,6 @@ export function MainMobileMenu() {
           onClick={closeMenu}
         >
           Shop
-        </a>
-
-        <a
-          href={urls.marketplace("/")}
-          className="flex items-center text-lg font-semibold text-gray-900 hover:text-orange-500 transition-colors py-4 border-b border-gray-100 no-underline min-h-[44px]"
-          onClick={closeMenu}
-        >
-          Marketplace
         </a>
 
         <Link

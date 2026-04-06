@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { getSubdomain, type SubdomainType } from "@/lib/subdomain";
 
-const ADMIN_ROLES = ["ADMIN", "BACKOFFICE", "MANAGER"];
+const ADMIN_ROLES = ["ADMIN", "BACKOFFICE", "MANAGER", "REGIONAL_DIRECTOR"];
 const MAKLER_ROLES = [
   "BROKER",
   "MANAGER",

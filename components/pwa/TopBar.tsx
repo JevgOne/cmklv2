@@ -34,7 +34,7 @@ export function TopBar() {
           {/* Logo */}
           <div className="flex items-center gap-2">
             <span className="text-lg font-bold text-gray-900">
-              Car<span className="text-orange-500">Makler</span>
+              Car<span className="text-orange-500">Makléř</span>
             </span>
             <span className="text-[10px] font-medium text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded-full">
               Pro

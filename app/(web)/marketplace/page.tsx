@@ -9,11 +9,11 @@ import { getMarketplaceStats } from "@/lib/stats";
 export const metadata: Metadata = {
   title: "Marketplace | Investiční platforma pro flipping aut",
   description:
-    "Investujte do aut a vydělejte 15-25 % ročně. Ověření dealeři nabízí příležitosti, ověření investoři financují. Bezpečně přes CarMakléř.",
+    "Investujte do aut a vydělejte 15-25 % ročně. Ověření realizátoři nabízí příležitosti, ověření investoři financují. Bezpečně přes CarMakléř.",
   openGraph: {
     title: "Marketplace — investice do aut | CarMakléř",
     description:
-      "Investujte do aut a vydělejte 15-25 % ročně. Ověření dealeři, bezpečné transakce přes CarMakléř.",
+      "Investujte do aut a vydělejte 15-25 % ročně. Ověření realizátoři, bezpečné transakce přes CarMakléř.",
   },
 };
 
@@ -21,8 +21,8 @@ const howItWorks = [
   {
     step: 1,
     icon: "🔍",
-    title: "Dealer najde auto",
-    desc: "Ověřený dealer najde auto s potenciálem — podceněné, po leasingu, nebo na opravu.",
+    title: "Realizátor najde auto",
+    desc: "Ověřený realizátor najde auto s potenciálem — podceněné, po leasingu, nebo na opravu.",
   },
   {
     step: 2,
@@ -34,13 +34,13 @@ const howItWorks = [
     step: 3,
     icon: "🔧",
     title: "Oprava a příprava",
-    desc: "Dealer auto opraví, připraví a nafotí pro prodej. Vše pod dohledem CarMakléř.",
+    desc: "Realizátor auto opraví, připraví a nafotí pro prodej. Vše pod dohledem CarMakléř.",
   },
   {
     step: 4,
     icon: "🎉",
     title: "Prodej a dělení zisku",
-    desc: "Auto se prodá za tržní cenu. Zisk se dělí: 40 % investor, 40 % dealer, 20 % CarMakléř.",
+    desc: "Auto se prodá za tržní cenu. Zisk se dělí: 40 % investor, 40 % realizátor, 20 % CarMakléř.",
   },
 ];
 
@@ -83,7 +83,7 @@ const faqs = [
   },
   {
     q: "Jak se dělí zisk?",
-    a: "Zisk se dělí v poměru 40 % investor, 40 % dealer, 20 % CarMakléř. Poměr je fixní pro všechny flipy.",
+    a: "Zisk se dělí v poměru 40 % investor, 40 % realizátor, 20 % CarMakléř. Poměr je fixní pro všechny flipy.",
   },
   {
     q: "Co když se auto neprodá?",
@@ -93,12 +93,16 @@ const faqs = [
     q: "Jak se stanu dealerem nebo investorem?",
     a: "Vyplňte formulář žádosti níže. Váš profil prověříme a ozveme se do 48 hodin.",
   },
+  {
+    q: "Co je realizátor?",
+    a: "Realizátor je ověřený odborník, který najde vhodné auto, zajistí jeho nákup, opravu a přípravu k prodeji. Je to člověk, který celý deal realizuje od A do Z.",
+  },
 ];
 
 const guarantees = [
   { icon: "🏢", title: "Auto na firmu CarMakléř", desc: "Každé auto se kupuje na naši firmu. Minimalizace rizika." },
   { icon: "🔒", title: "Smlouva s každým investorem", desc: "Jasné podmínky, práva a povinnosti. Žádné překvapení." },
-  { icon: "✅", title: "Ověření dealeři", desc: "Každý dealer prochází ověřovacím procesem a má historii flipů." },
+  { icon: "✅", title: "Ověření realizátoři", desc: "Každý realizátor prochází ověřovacím procesem a má historii flipů." },
   { icon: "📊", title: "Transparentní kalkulace", desc: "Všechny náklady a zisky jsou viditelné. Žádné skryté poplatky." },
 ];
 
@@ -144,7 +148,7 @@ export default async function MarketplacePage() {
                 <span className="text-orange-500">vydělejte 15-25 %</span> ročně
               </h1>
               <p className="text-lg text-white/60 mt-5 leading-relaxed max-w-lg">
-                Ověření dealeři nacházejí příležitosti. Vy investujete. Auto se opraví, prodá a zisk se dělí férově.
+                Ověření realizátoři nacházejí příležitosti. Vy investujete. Auto se opraví, prodá a zisk se dělí férově.
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <Link href="#apply" className="no-underline">
@@ -158,7 +162,7 @@ export default async function MarketplacePage() {
                     size="lg"
                     className="!border-2 !border-white/30 !text-white !bg-transparent !shadow-none hover:!bg-white/10"
                   >
-                    Jsem dealer
+                    Jsem realizátor
                   </Button>
                 </Link>
               </div>

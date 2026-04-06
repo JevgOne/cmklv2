@@ -113,7 +113,7 @@ export default async function StatsPage() {
     .sort(([, a], [, b]) => b - a)
     .slice(0, 5);
 
-  // Cenove segmenty
+  // Cenové segmenty
   const segments = { "do 300k": 0, "300k-600k": 0, "600k-1M": 0, "nad 1M": 0 };
   allSoldVehicles.forEach((v) => {
     const p = v.soldPrice ?? v.price;
@@ -160,7 +160,7 @@ export default async function StatsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-extrabold text-gray-900">Statistiky</h1>
-          <p className="text-sm text-gray-500 mt-1">Vas vykon a achievementy</p>
+          <p className="text-sm text-gray-500 mt-1">Váš výkon a achievementy</p>
         </div>
         <LevelBadge level={user?.level ?? "JUNIOR"} size="lg" />
       </div>
@@ -168,44 +168,44 @@ export default async function StatsPage() {
       {/* Prehled */}
       <div className="grid grid-cols-2 gap-3">
         <Card className="p-4">
-          <p className="text-xs text-gray-500">Nabrana auta</p>
+          <p className="text-xs text-gray-500">Nabraná auta</p>
           <p className="text-2xl font-extrabold text-gray-900">{totalVehicles}</p>
         </Card>
         <Card className="p-4">
-          <p className="text-xs text-gray-500">Prodana auta</p>
+          <p className="text-xs text-gray-500">Prodaná auta</p>
           <p className="text-2xl font-extrabold text-gray-900">{soldVehicles}</p>
         </Card>
         <Card className="p-4">
-          <p className="text-xs text-gray-500">Konverzni pomer</p>
+          <p className="text-xs text-gray-500">Konverzní poměr</p>
           <p className="text-2xl font-extrabold text-orange-500">{conversionRate}%</p>
         </Card>
         <Card className="p-4">
-          <p className="text-xs text-gray-500">Prum. doba prodeje</p>
-          <p className="text-2xl font-extrabold text-gray-900">{avgSaleDays} dni</p>
+          <p className="text-xs text-gray-500">Prům. doba prodeje</p>
+          <p className="text-2xl font-extrabold text-gray-900">{avgSaleDays} dní</p>
         </Card>
         <Card className="p-4">
-          <p className="text-xs text-gray-500">Prum. provize</p>
+          <p className="text-xs text-gray-500">Prům. provize</p>
           <p className="text-lg font-extrabold text-gray-900">
             {formatPrice(Math.round(userCommissions._avg.commission ?? 0))}
           </p>
         </Card>
         <Card className="p-4">
-          <p className="text-xs text-gray-500">Celkove provize</p>
+          <p className="text-xs text-gray-500">Celkové provize</p>
           <p className="text-lg font-extrabold text-orange-500">
             {formatPrice(userCommissions._sum.commission ?? 0)}
           </p>
         </Card>
       </div>
 
-      {/* Tento mesic */}
+      {/* Tento měsíc */}
       <Card className="p-4 bg-orange-50 border border-orange-200">
-        <h3 className="font-bold text-orange-800 mb-2">Tento mesic</h3>
+        <h3 className="font-bold text-orange-800 mb-2">Tento měsíc</h3>
         <div className="flex justify-between">
           <div>
             <p className="text-2xl font-extrabold text-orange-600">
               {monthlyCommissions._count}
             </p>
-            <p className="text-xs text-orange-500">prodeju</p>
+            <p className="text-xs text-orange-500">prodejů</p>
           </div>
           <div className="text-right">
             <p className="text-2xl font-extrabold text-orange-600">
@@ -218,18 +218,18 @@ export default async function StatsPage() {
 
       {/* Porovnání s průměrem */}
       <div>
-        <h3 className="font-extrabold text-gray-900 mb-3">Porovnani s prumerem</h3>
+        <h3 className="font-extrabold text-gray-900 mb-3">Porovnání s průměrem</h3>
         <div className="grid grid-cols-1 gap-3">
           {/* Průměrná doba prodeje */}
           <Card className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-gray-500">Prumerna doba prodeje</p>
-                <p className="text-lg font-extrabold text-gray-900">{avgSaleDays} dni</p>
+                <p className="text-xs text-gray-500">Průměrná doba prodeje</p>
+                <p className="text-lg font-extrabold text-gray-900">{avgSaleDays} dní</p>
               </div>
               <div className="text-right">
-                <p className="text-xs text-gray-500">Prumer</p>
-                <p className="text-lg font-bold text-gray-400">{avgAllSaleDays} dni</p>
+                <p className="text-xs text-gray-500">Průměr</p>
+                <p className="text-lg font-bold text-gray-400">{avgAllSaleDays} dní</p>
               </div>
             </div>
             <div className="mt-2">
@@ -242,8 +242,8 @@ export default async function StatsPage() {
                   }`}
                 >
                   {avgSaleDays <= avgAllSaleDays
-                    ? `O ${avgAllSaleDays - avgSaleDays} dni rychleji`
-                    : `O ${avgSaleDays - avgAllSaleDays} dni pomaleji`}
+                    ? `O ${avgAllSaleDays - avgSaleDays} dní rychleji`
+                    : `O ${avgSaleDays - avgAllSaleDays} dní pomaleji`}
                 </span>
               ) : (
                 <span className="text-xs text-gray-400">Nedostatek dat</span>
@@ -255,11 +255,11 @@ export default async function StatsPage() {
           <Card className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-gray-500">Konverzni pomer</p>
+                <p className="text-xs text-gray-500">Konverzní poměr</p>
                 <p className="text-lg font-extrabold text-orange-500">{conversionRate}%</p>
               </div>
               <div className="text-right">
-                <p className="text-xs text-gray-500">Prumer</p>
+                <p className="text-xs text-gray-500">Průměr</p>
                 <p className="text-lg font-bold text-gray-400">{avgConversionRate}%</p>
               </div>
             </div>
@@ -273,8 +273,8 @@ export default async function StatsPage() {
                   }`}
                 >
                   {conversionRate >= avgConversionRate
-                    ? `O ${conversionRate - avgConversionRate}% lepsi`
-                    : `O ${avgConversionRate - conversionRate}% horsi`}
+                    ? `O ${conversionRate - avgConversionRate}% lepší`
+                    : `O ${avgConversionRate - conversionRate}% horší`}
                 </span>
               ) : (
                 <span className="text-xs text-gray-400">Nedostatek dat</span>
@@ -286,13 +286,13 @@ export default async function StatsPage() {
           <Card className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-gray-500">Prumerna provize</p>
+                <p className="text-xs text-gray-500">Průměrná provize</p>
                 <p className="text-lg font-extrabold text-gray-900">
                   {formatPrice(Math.round(userCommissions._avg.commission ?? 0))}
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-xs text-gray-500">Prumer</p>
+                <p className="text-xs text-gray-500">Průměr</p>
                 <p className="text-lg font-bold text-gray-400">
                   {formatPrice(avgAllCommission)}
                 </p>
@@ -308,8 +308,8 @@ export default async function StatsPage() {
                   }`}
                 >
                   {(userCommissions._avg.commission ?? 0) >= avgAllCommission
-                    ? "Nad prumerem"
-                    : "Pod prumerem"}
+                    ? "Nad průměrem"
+                    : "Pod průměrem"}
                 </span>
               ) : (
                 <span className="text-xs text-gray-400">Nedostatek dat</span>
@@ -319,9 +319,9 @@ export default async function StatsPage() {
         </div>
       </div>
 
-      {/* Prodeje po mesicich - bar chart placeholder */}
+      {/* Prodeje po měsících - bar chart placeholder */}
       <Card className="p-4">
-        <h3 className="font-bold text-gray-900 mb-4">Prodeje po mesicich</h3>
+        <h3 className="font-bold text-gray-900 mb-4">Prodeje po měsících</h3>
         <div className="flex items-end gap-2 h-32">
           {monthlyStats.map((m, i) => (
             <div key={i} className="flex-1 flex flex-col items-center gap-1">
@@ -340,9 +340,9 @@ export default async function StatsPage() {
         </div>
       </Card>
 
-      {/* Provize po mesicich - line chart placeholder */}
+      {/* Provize po měsících - line chart placeholder */}
       <Card className="p-4">
-        <h3 className="font-bold text-gray-900 mb-4">Provize po mesicich</h3>
+        <h3 className="font-bold text-gray-900 mb-4">Provize po měsících</h3>
         <div className="flex items-end gap-2 h-32">
           {monthlyStats.map((m, i) => (
             <div key={i} className="flex-1 flex flex-col items-center gap-1">
@@ -364,7 +364,7 @@ export default async function StatsPage() {
       {/* Top znacky */}
       {topBrands.length > 0 && (
         <Card className="p-4">
-          <h3 className="font-bold text-gray-900 mb-3">Nejuspesnejsi znacky</h3>
+          <h3 className="font-bold text-gray-900 mb-3">Nejúspěšnější značky</h3>
           <div className="space-y-2">
             {topBrands.map(([brand, count]) => (
               <div key={brand} className="flex items-center gap-3">
@@ -388,9 +388,9 @@ export default async function StatsPage() {
         </Card>
       )}
 
-      {/* Cenove segmenty */}
+      {/* Cenové segmenty */}
       <Card className="p-4">
-        <h3 className="font-bold text-gray-900 mb-3">Cenove segmenty</h3>
+        <h3 className="font-bold text-gray-900 mb-3">Cenové segmenty</h3>
         <div className="grid grid-cols-2 gap-2">
           {Object.entries(segments).map(([segment, count]) => (
             <div key={segment} className="bg-gray-50 rounded-xl p-3 text-center">
@@ -425,16 +425,16 @@ export default async function StatsPage() {
 
       {/* Uroven - progress */}
       <Card className="p-4">
-        <h3 className="font-bold text-gray-900 mb-2">Uroven</h3>
+        <h3 className="font-bold text-gray-900 mb-2">Úroveň</h3>
         <LevelBadge level={user?.level ?? "JUNIOR"} size="lg" className="mb-3" />
         <p className="text-sm text-gray-500 mb-2">
-          {user?.totalSales ?? 0} prodeju celkem
+          {user?.totalSales ?? 0} prodejů celkem
         </p>
         {level.key !== "TOP" && (
           <div>
             <div className="flex justify-between text-xs text-gray-400 mb-1">
-              <span>{level.minSales} prodeju</span>
-              <span>{level.maxSales === Infinity ? "50+" : level.maxSales} prodeju</span>
+              <span>{level.minSales} prodejů</span>
+              <span>{level.maxSales === Infinity ? "50+" : level.maxSales} prodejů</span>
             </div>
             <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
               <div
@@ -458,13 +458,13 @@ export default async function StatsPage() {
         <Link href="/makler/leaderboard">
           <Card hover className="p-4 text-center">
             <p className="text-2xl mb-1">🏆</p>
-            <p className="text-sm font-bold text-gray-900">Zebricek</p>
+            <p className="text-sm font-bold text-gray-900">Žebříček</p>
           </Card>
         </Link>
         <Link href="/makler/financing-calculator">
           <Card hover className="p-4 text-center">
             <p className="text-2xl mb-1">🧮</p>
-            <p className="text-sm font-bold text-gray-900">Kalkulacka</p>
+            <p className="text-sm font-bold text-gray-900">Kalkulačka</p>
           </Card>
         </Link>
       </div>

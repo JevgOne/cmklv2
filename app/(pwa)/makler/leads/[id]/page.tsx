@@ -9,12 +9,12 @@ import { LeadActions } from "@/components/pwa/leads/LeadActions";
 import Link from "next/link";
 
 const statusLabels: Record<string, { label: string; variant: "new" | "verified" | "pending" | "top" | "rejected" | "default" }> = {
-  NEW: { label: "Novy", variant: "new" },
-  ASSIGNED: { label: "Prijaty", variant: "verified" },
-  CONTACTED: { label: "Kontaktovano", variant: "pending" },
-  MEETING_SCHEDULED: { label: "Schuzka domluvena", variant: "top" },
-  VEHICLE_ADDED: { label: "Auto nabrano", variant: "verified" },
-  REJECTED: { label: "Odmitnuty", variant: "rejected" },
+  NEW: { label: "Nový", variant: "new" },
+  ASSIGNED: { label: "Přijatý", variant: "verified" },
+  CONTACTED: { label: "Kontaktováno", variant: "pending" },
+  MEETING_SCHEDULED: { label: "Schůzka domluvena", variant: "top" },
+  VEHICLE_ADDED: { label: "Auto nabráno", variant: "verified" },
+  REJECTED: { label: "Odmítnutý", variant: "rejected" },
   EXPIRED: { label: "Expiroval", variant: "default" },
 };
 
@@ -68,7 +68,7 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
         href="/makler/leads"
         className="inline-flex items-center gap-1 text-sm text-gray-500 no-underline hover:text-gray-700"
       >
-        ← Zpet na leady
+        ← Zpět na leady
       </Link>
 
       {/* Hlavicka */}
@@ -81,7 +81,7 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
             <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
             {lead.source && (
               <span className="text-xs text-gray-400">
-                Zdroj: {lead.source === "WEB_FORM" ? "Web" : lead.source === "EXTERNAL_APP" ? "Externi" : lead.source === "MANUAL" ? "Rucne" : "Doporuceni"}
+                Zdroj: {lead.source === "WEB_FORM" ? "Web" : lead.source === "EXTERNAL_APP" ? "Externí" : lead.source === "MANUAL" ? "Ručně" : "Doporučení"}
               </span>
             )}
           </div>
@@ -147,7 +147,7 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
 
           {lead.city && (
             <div>
-              <div className="text-xs text-gray-400">Mesto</div>
+              <div className="text-xs text-gray-400">Město</div>
               <div className="font-semibold text-gray-900">{lead.city}</div>
             </div>
           )}
@@ -163,7 +163,7 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
           <div className="grid grid-cols-2 gap-3">
             {(lead.brand || lead.model) && (
               <div>
-                <div className="text-xs text-gray-400">Znacka / Model</div>
+                <div className="text-xs text-gray-400">Značka / Model</div>
                 <div className="font-semibold text-gray-900">
                   {[lead.brand, lead.model].filter(Boolean).join(" ")}
                 </div>
@@ -171,7 +171,7 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
             )}
             {lead.year && (
               <div>
-                <div className="text-xs text-gray-400">Rok vyroby</div>
+                <div className="text-xs text-gray-400">Rok výroby</div>
                 <div className="font-semibold text-gray-900">{lead.year}</div>
               </div>
             )}
@@ -185,16 +185,16 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
             )}
             {lead.expectedPrice && (
               <div>
-                <div className="text-xs text-gray-400">Ocekavana cena</div>
+                <div className="text-xs text-gray-400">Očekávaná cena</div>
                 <div className="font-semibold text-gray-900">
-                  {lead.expectedPrice.toLocaleString("cs-CZ")} Kc
+                  {lead.expectedPrice.toLocaleString("cs-CZ")} Kč
                 </div>
               </div>
             )}
           </div>
           {lead.description && (
             <div>
-              <div className="text-xs text-gray-400">Poznamka</div>
+              <div className="text-xs text-gray-400">Poznámka</div>
               <div className="text-sm text-gray-700 mt-1">{lead.description}</div>
             </div>
           )}
@@ -204,7 +204,7 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
       {/* Status timeline */}
       <Card className="p-4 space-y-3">
         <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wide">
-          Pruběh
+          Průběh
         </h2>
         <div className="flex items-center gap-1">
           {statusTimeline.map((step, index) => {
@@ -238,7 +238,7 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
         </div>
         {isRejected && lead.rejectionReason && (
           <div className="mt-2 p-3 bg-error-50 rounded-lg">
-            <div className="text-xs font-bold text-error-500">Duvod odmitnuti</div>
+            <div className="text-xs font-bold text-error-500">Důvod odmítnutí</div>
             <div className="text-sm text-error-600 mt-0.5">{lead.rejectionReason}</div>
           </div>
         )}
@@ -248,7 +248,7 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
       {lead.vehicle && (
         <Card className="p-4">
           <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-2">
-            Propojene vozidlo
+            Propojené vozidlo
           </h2>
           <Link
             href={`/makler/vehicles/${lead.vehicle.id}`}
@@ -291,8 +291,8 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
 
       {/* Metadata */}
       <div className="text-xs text-gray-400 text-center pt-2">
-        Vytvoreno: {new Date(lead.createdAt).toLocaleDateString("cs-CZ")} ·
-        Aktualizovano: {new Date(lead.updatedAt).toLocaleDateString("cs-CZ")}
+        Vytvořeno: {new Date(lead.createdAt).toLocaleDateString("cs-CZ")} ·
+        Aktualizováno: {new Date(lead.updatedAt).toLocaleDateString("cs-CZ")}
       </div>
     </div>
   );
