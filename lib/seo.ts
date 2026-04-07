@@ -53,6 +53,48 @@ export function generateItemListJsonLd(urls: string[]): string {
   return JSON.stringify(jsonLd);
 }
 
+/**
+ * Parts ItemList — top dílů per brand / model / model+rok landing page.
+ * Per #87b plán §9.2-9.3. Obsahuje jen `name + url` (bez offers/price);
+ * full Product schema je na detail page.
+ */
+export function generatePartsItemListJsonLd(
+  listName: string,
+  items: { name: string; url: string }[]
+): string {
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: listName,
+    numberOfItems: items.length,
+    itemListElement: items.map((item, idx) => ({
+      "@type": "ListItem",
+      position: idx + 1,
+      url: item.url,
+      name: item.name,
+    })),
+  });
+}
+
+/**
+ * FAQPage JSON-LD generator (alias of generateFaqJsonLd s explicitnějším názvem).
+ * Per #87b plán §9.4 — universal FAQs na parts landing pages.
+ */
+export function generateFaqPageJsonLd(faqs: { question: string; answer: string }[]): string {
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  });
+}
+
 export interface VehicleJsonLdData {
   name: string;
   brand: string;

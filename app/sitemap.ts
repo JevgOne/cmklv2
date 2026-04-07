@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
-import { BRANDS, TOP_MODELS, BODY_TYPES, PRICE_RANGES, CITIES, PARTS_CATEGORIES, PARTS_BRANDS } from "@/lib/seo-data";
+import { BRANDS, TOP_MODELS, BODY_TYPES, PRICE_RANGES, CITIES, PARTS_CATEGORIES, PARTS_BRANDS, PARTS_MODELS_BY_BRAND } from "@/lib/seo-data";
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://carmakler.cz";
 
@@ -181,6 +181,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
+  // SEO landing pages — díly značka+model (#87b 3-segment routing, ~24)
+  const partsModelPages: MetadataRoute.Sitemap = PARTS_BRANDS.flatMap((brand) =>
+    (PARTS_MODELS_BY_BRAND[brand.slug] || []).map((model) => ({
+      url: `${BASE_URL}/dily/znacka/${brand.slug}/${model.slug}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    }))
+  );
+
+  // SEO landing pages — díly značka+model+rok (#87b 3-segment routing, ~72)
+  const partsModelYearPages: MetadataRoute.Sitemap = PARTS_BRANDS.flatMap(
+    (brand) =>
+      (PARTS_MODELS_BY_BRAND[brand.slug] || []).flatMap((model) =>
+        (model.topYears ?? [2015, 2018, 2020]).map((year) => ({
+          url: `${BASE_URL}/dily/znacka/${brand.slug}/${model.slug}/${year}`,
+          lastModified: new Date(),
+          changeFrequency: "monthly" as const,
+          priority: 0.6,
+        }))
+      )
+  );
+
   // Dynamické stránky — vozidla
   let vehiclePages: MetadataRoute.Sitemap = [];
   try {
@@ -248,6 +271,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...cityPages,
     ...partsCategoryPages,
     ...partsBrandPages,
+    ...partsModelPages,
+    ...partsModelYearPages,
     ...vehiclePages,
     ...brokerPages,
     ...partnerPages,

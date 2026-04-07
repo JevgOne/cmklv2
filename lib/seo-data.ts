@@ -1234,6 +1234,316 @@ export const PARTS_BRANDS = [
   { slug: "opel", name: "Opel" },
 ];
 
+// Parts models data — #87b 3-segment routing seed.
+// Used by /dily/znacka/[brand]/[model] + /dily/znacka/[brand]/[model]/[rok] generateStaticParams.
+// Stub data only — full FAQ + long-form description přijde s #87c (SeoContent + AI gen).
+export interface PartsModelGeneration {
+  /** Display name, e.g. "3. generace (5E)" */
+  name: string;
+  yearFrom: number;
+  yearTo: number;
+}
+
+export interface PartsModelData {
+  slug: string;
+  name: string;
+  brandSlug: string;
+  generations: PartsModelGeneration[];
+  /** Years to pre-build via SSG (default [2015, 2018, 2020]) */
+  topYears?: number[];
+}
+
+export const PARTS_MODELS_BY_BRAND: Record<string, PartsModelData[]> = {
+  skoda: [
+    {
+      slug: "octavia",
+      name: "Octavia",
+      brandSlug: "skoda",
+      generations: [
+        { name: "2. generace (1Z)", yearFrom: 2004, yearTo: 2013 },
+        { name: "3. generace (5E)", yearFrom: 2013, yearTo: 2020 },
+        { name: "4. generace (NX)", yearFrom: 2020, yearTo: 2026 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+    {
+      slug: "fabia",
+      name: "Fabia",
+      brandSlug: "skoda",
+      generations: [
+        { name: "2. generace (5J)", yearFrom: 2007, yearTo: 2014 },
+        { name: "3. generace (NJ)", yearFrom: 2014, yearTo: 2021 },
+        { name: "4. generace (PJ)", yearFrom: 2021, yearTo: 2026 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+    {
+      slug: "superb",
+      name: "Superb",
+      brandSlug: "skoda",
+      generations: [
+        { name: "2. generace (3T)", yearFrom: 2008, yearTo: 2015 },
+        { name: "3. generace (3V)", yearFrom: 2015, yearTo: 2024 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+  ],
+  volkswagen: [
+    {
+      slug: "golf",
+      name: "Golf",
+      brandSlug: "volkswagen",
+      generations: [
+        { name: "Golf 6", yearFrom: 2008, yearTo: 2013 },
+        { name: "Golf 7", yearFrom: 2012, yearTo: 2020 },
+        { name: "Golf 8", yearFrom: 2020, yearTo: 2026 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+    {
+      slug: "passat",
+      name: "Passat",
+      brandSlug: "volkswagen",
+      generations: [
+        { name: "Passat B7", yearFrom: 2010, yearTo: 2014 },
+        { name: "Passat B8", yearFrom: 2014, yearTo: 2023 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+    {
+      slug: "tiguan",
+      name: "Tiguan",
+      brandSlug: "volkswagen",
+      generations: [
+        { name: "1. generace (5N)", yearFrom: 2007, yearTo: 2016 },
+        { name: "2. generace (AD1)", yearFrom: 2016, yearTo: 2024 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+  ],
+  bmw: [
+    {
+      slug: "rada-3",
+      name: "Řada 3",
+      brandSlug: "bmw",
+      generations: [
+        { name: "E90/E91/E92/E93", yearFrom: 2005, yearTo: 2013 },
+        { name: "F30/F31/F34", yearFrom: 2012, yearTo: 2019 },
+        { name: "G20/G21", yearFrom: 2019, yearTo: 2026 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+    {
+      slug: "rada-5",
+      name: "Řada 5",
+      brandSlug: "bmw",
+      generations: [
+        { name: "F10/F11", yearFrom: 2010, yearTo: 2017 },
+        { name: "G30/G31", yearFrom: 2017, yearTo: 2024 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+    {
+      slug: "x5",
+      name: "X5",
+      brandSlug: "bmw",
+      generations: [
+        { name: "E70", yearFrom: 2006, yearTo: 2013 },
+        { name: "F15", yearFrom: 2013, yearTo: 2018 },
+        { name: "G05", yearFrom: 2018, yearTo: 2026 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+  ],
+  audi: [
+    {
+      slug: "a4",
+      name: "A4",
+      brandSlug: "audi",
+      generations: [
+        { name: "B8", yearFrom: 2007, yearTo: 2015 },
+        { name: "B9", yearFrom: 2015, yearTo: 2024 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+    {
+      slug: "a6",
+      name: "A6",
+      brandSlug: "audi",
+      generations: [
+        { name: "C7", yearFrom: 2011, yearTo: 2018 },
+        { name: "C8", yearFrom: 2018, yearTo: 2024 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+    {
+      slug: "q5",
+      name: "Q5",
+      brandSlug: "audi",
+      generations: [
+        { name: "8R", yearFrom: 2008, yearTo: 2017 },
+        { name: "FY", yearFrom: 2017, yearTo: 2024 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+  ],
+  ford: [
+    {
+      slug: "focus",
+      name: "Focus",
+      brandSlug: "ford",
+      generations: [
+        { name: "Mk2", yearFrom: 2004, yearTo: 2011 },
+        { name: "Mk3", yearFrom: 2011, yearTo: 2018 },
+        { name: "Mk4", yearFrom: 2018, yearTo: 2026 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+    {
+      slug: "mondeo",
+      name: "Mondeo",
+      brandSlug: "ford",
+      generations: [
+        { name: "Mk4", yearFrom: 2007, yearTo: 2014 },
+        { name: "Mk5", yearFrom: 2014, yearTo: 2022 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+    {
+      slug: "kuga",
+      name: "Kuga",
+      brandSlug: "ford",
+      generations: [
+        { name: "Mk1", yearFrom: 2008, yearTo: 2012 },
+        { name: "Mk2", yearFrom: 2012, yearTo: 2019 },
+        { name: "Mk3", yearFrom: 2019, yearTo: 2026 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+  ],
+  toyota: [
+    {
+      slug: "corolla",
+      name: "Corolla",
+      brandSlug: "toyota",
+      generations: [
+        { name: "E150", yearFrom: 2006, yearTo: 2012 },
+        { name: "E170", yearFrom: 2013, yearTo: 2018 },
+        { name: "E210", yearFrom: 2018, yearTo: 2026 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+    {
+      slug: "yaris",
+      name: "Yaris",
+      brandSlug: "toyota",
+      generations: [
+        { name: "XP90", yearFrom: 2005, yearTo: 2011 },
+        { name: "XP130", yearFrom: 2011, yearTo: 2020 },
+        { name: "XP210", yearFrom: 2020, yearTo: 2026 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+    {
+      slug: "rav4",
+      name: "RAV4",
+      brandSlug: "toyota",
+      generations: [
+        { name: "XA30", yearFrom: 2005, yearTo: 2012 },
+        { name: "XA40", yearFrom: 2012, yearTo: 2018 },
+        { name: "XA50", yearFrom: 2018, yearTo: 2026 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+  ],
+  hyundai: [
+    {
+      slug: "i30",
+      name: "i30",
+      brandSlug: "hyundai",
+      generations: [
+        { name: "FD", yearFrom: 2007, yearTo: 2012 },
+        { name: "GD", yearFrom: 2012, yearTo: 2017 },
+        { name: "PD", yearFrom: 2017, yearTo: 2024 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+    {
+      slug: "tucson",
+      name: "Tucson",
+      brandSlug: "hyundai",
+      generations: [
+        { name: "ix35 (LM)", yearFrom: 2010, yearTo: 2015 },
+        { name: "TL", yearFrom: 2015, yearTo: 2020 },
+        { name: "NX4", yearFrom: 2020, yearTo: 2026 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+    {
+      slug: "kona",
+      name: "Kona",
+      brandSlug: "hyundai",
+      generations: [
+        { name: "OS", yearFrom: 2017, yearTo: 2023 },
+        { name: "SX2", yearFrom: 2023, yearTo: 2026 },
+      ],
+      topYears: [2018, 2020, 2022],
+    },
+  ],
+  opel: [
+    {
+      slug: "astra",
+      name: "Astra",
+      brandSlug: "opel",
+      generations: [
+        { name: "Astra J", yearFrom: 2009, yearTo: 2015 },
+        { name: "Astra K", yearFrom: 2015, yearTo: 2021 },
+        { name: "Astra L", yearFrom: 2021, yearTo: 2026 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+    {
+      slug: "insignia",
+      name: "Insignia",
+      brandSlug: "opel",
+      generations: [
+        { name: "A", yearFrom: 2008, yearTo: 2017 },
+        { name: "B", yearFrom: 2017, yearTo: 2022 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+    {
+      slug: "mokka",
+      name: "Mokka",
+      brandSlug: "opel",
+      generations: [
+        { name: "1. generace", yearFrom: 2012, yearTo: 2019 },
+        { name: "2. generace", yearFrom: 2020, yearTo: 2026 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+  ],
+};
+
+/** Vrátí všechny roky v rozsahu generations daného modelu. */
+export function getValidYearsForModel(brandSlug: string, modelSlug: string): number[] {
+  const model = (PARTS_MODELS_BY_BRAND[brandSlug] || []).find((m) => m.slug === modelSlug);
+  if (!model) return [];
+  const allYears = new Set<number>();
+  for (const gen of model.generations) {
+    for (let y = gen.yearFrom; y <= gen.yearTo; y++) allYears.add(y);
+  }
+  return Array.from(allYears).sort();
+}
+
+/** Validates rok param: 4 digits, range 2000..currentYear+1. */
+export function isValidPartsYear(rok: string): boolean {
+  if (!/^\d{4}$/.test(rok)) return false;
+  const year = parseInt(rok, 10);
+  const maxYear = new Date().getFullYear() + 1;
+  return year >= 2000 && year <= maxYear;
+}
+
 // Slugs for route resolution
 export const ALL_BRAND_SLUGS = BRANDS.map((b) => b.slug);
 export const ALL_BODY_TYPE_SLUGS = BODY_TYPES.map((b) => b.slug);
