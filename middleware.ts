@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { getSubdomain, type SubdomainType } from "@/lib/subdomain";
+import { aliasFor } from "@/lib/seo/slugify";
 
 const ADMIN_ROLES = ["ADMIN", "BACKOFFICE", "MANAGER", "REGIONAL_DIRECTOR"];
 const MAKLER_ROLES = [
@@ -40,6 +41,40 @@ const SKIP_REWRITE_PREFIXES = [
 
 function shouldSkipRewrite(pathname: string): boolean {
   return SKIP_REWRITE_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+}
+
+/**
+ * /dily/znacka/{brand}[/{model}[/{rok}]] diakritika 301 redirect.
+ * Vrací canonical path pokud aspoň jeden segment má diakritika alias, jinak null.
+ * Musí běžet PŘED subdomain rewrite (page-level redirect nefunguje s dynamicParams=false).
+ */
+const PARTS_BRAND_ROUTE = /^\/dily\/znacka\/([^/]+)(?:\/([^/]+)(?:\/([^/]+))?)?\/?$/;
+
+function getPartsRouteDiakritikaRedirect(pathname: string): string | null {
+  // Next.js vrací pathname URL-encoded (např. `%C5%A1koda` pro `škoda`).
+  // Musíme dekódovat PŘED match, jinak `aliasFor()` strip-uje `%` chars
+  // a vrátí nesmysl jako `c5a1koda`.
+  let decoded: string;
+  try {
+    decoded = decodeURIComponent(pathname);
+  } catch {
+    return null; // Malformed URI sequence
+  }
+
+  const match = decoded.match(PARTS_BRAND_ROUTE);
+  if (!match) return null;
+  const [, brand, model, rok] = match;
+
+  const brandCanonical = aliasFor(brand);
+  const modelCanonical = model ? aliasFor(model) : null;
+  if (!brandCanonical && !modelCanonical) return null;
+
+  const finalBrand = brandCanonical ?? brand;
+  const finalModel = modelCanonical ?? model;
+  let canonicalPath = `/dily/znacka/${finalBrand}`;
+  if (finalModel) canonicalPath += `/${finalModel}`;
+  if (rok) canonicalPath += `/${rok}`;
+  return canonicalPath;
 }
 
 /**
@@ -118,6 +153,15 @@ export async function middleware(request: NextRequest) {
   // Detekce subdomény
   const host = request.headers.get("host") || "localhost:3000";
   const subdomain = getSubdomain(host);
+
+  // Diakritika 301 redirect pro /dily/znacka/* — musí běžet PŘED subdomain rewrite
+  // Aplikuje se na main + shop (oba mohou mít /dily/znacka/* paths po rewrite)
+  if (subdomain === "main" || subdomain === "shop") {
+    const canonicalPath = getPartsRouteDiakritikaRedirect(pathname);
+    if (canonicalPath) {
+      return NextResponse.redirect(new URL(canonicalPath, request.url), 301);
+    }
+  }
 
   // Subdomain rewrite
   const rewriteUrl = getRewriteUrl(subdomain, pathname, request);

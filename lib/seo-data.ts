@@ -1536,14 +1536,6 @@ export function getValidYearsForModel(brandSlug: string, modelSlug: string): num
   return Array.from(allYears).sort();
 }
 
-/** Validates rok param: 4 digits, range 2000..currentYear+1. */
-export function isValidPartsYear(rok: string): boolean {
-  if (!/^\d{4}$/.test(rok)) return false;
-  const year = parseInt(rok, 10);
-  const maxYear = new Date().getFullYear() + 1;
-  return year >= 2000 && year <= maxYear;
-}
-
 // Slugs for route resolution
 export const ALL_BRAND_SLUGS = BRANDS.map((b) => b.slug);
 export const ALL_BODY_TYPE_SLUGS = BODY_TYPES.map((b) => b.slug);

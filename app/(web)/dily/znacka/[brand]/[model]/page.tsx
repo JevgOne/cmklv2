@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound, permanentRedirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import {
   generateOrganizationJsonLd,
@@ -12,7 +12,6 @@ import {
   PARTS_CATEGORIES,
   BASE_URL,
 } from "@/lib/seo-data";
-import { aliasFor } from "@/lib/seo/slugify";
 import { getTopPartsForBrandModel } from "@/lib/seo/partsItemList";
 import { PartsBreadcrumbs } from "@/components/web/dily/PartsBreadcrumbs";
 
@@ -83,15 +82,7 @@ export default async function PartsBrandModelPage({
 }) {
   const { brand, model } = await params;
 
-  // Diakritika alias 301 — `škoda/octávia` → `skoda/octavia`
-  const brandCanonical = aliasFor(brand);
-  const modelCanonical = aliasFor(model);
-  if (brandCanonical || modelCanonical) {
-    permanentRedirect(
-      `/dily/znacka/${brandCanonical ?? brand}/${modelCanonical ?? model}`
-    );
-  }
-
+  // Diakritika 301 redirect handled v middleware.ts (pre-routing).
   const brandData = PARTS_BRANDS.find((b) => b.slug === brand);
   if (!brandData) notFound();
 

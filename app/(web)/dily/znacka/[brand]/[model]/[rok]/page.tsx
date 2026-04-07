@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound, permanentRedirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import {
   generateOrganizationJsonLd,
@@ -11,15 +11,16 @@ import {
   PARTS_MODELS_BY_BRAND,
   PARTS_CATEGORIES,
   BASE_URL,
-  isValidPartsYear,
   getValidYearsForModel,
 } from "@/lib/seo-data";
-import { aliasFor } from "@/lib/seo/slugify";
 import { getTopPartsForBrandModelYear } from "@/lib/seo/partsItemList";
 import { PartsBreadcrumbs } from "@/components/web/dily/PartsBreadcrumbs";
 
 export const dynamic = "force-static";
-export const dynamicParams = true;
+// dynamicParams=false: Next.js #63483 — notFound() v force-static má caching
+// anomálii (cached fallback render místo 404). Pre-buildujeme všechny valid
+// years z generation ranges → invalid years dostanou 404 ze segment resolveru.
+export const dynamicParams = false;
 export const revalidate = 86400;
 
 const UNIVERSAL_FAQS = [
@@ -41,11 +42,14 @@ const UNIVERSAL_FAQS = [
 ];
 
 export function generateStaticParams() {
+  // Pre-build VŠECHNY valid years z generation ranges (ne jen topYears).
+  // Eliminuje runtime year validation — invalid years dostanou 404 ze segment
+  // resolveru (Next.js) díky dynamicParams=false.
   const params: { brand: string; model: string; rok: string }[] = [];
   for (const brand of PARTS_BRANDS) {
     const models = PARTS_MODELS_BY_BRAND[brand.slug] || [];
     for (const model of models) {
-      const years = model.topYears ?? [2015, 2018, 2020];
+      const years = getValidYearsForModel(brand.slug, model.slug);
       for (const year of years) {
         params.push({
           brand: brand.slug,
@@ -68,7 +72,7 @@ export async function generateMetadata({
   const modelData = (PARTS_MODELS_BY_BRAND[brand] || []).find(
     (m) => m.slug === model
   );
-  if (!brandData || !modelData || !isValidPartsYear(rok)) return {};
+  if (!brandData || !modelData) return {};
 
   const title = `Náhradní díly ${brandData.name} ${modelData.name} ${rok} | Carmakler`;
   const description = `Náhradní díly pro ${brandData.name} ${modelData.name} ročník ${rok}. Použité originální i nové díly.`;
@@ -94,17 +98,9 @@ export default async function PartsBrandModelYearPage({
 }) {
   const { brand, model, rok } = await params;
 
-  // Diakritika alias 301
-  const brandCanonical = aliasFor(brand);
-  const modelCanonical = aliasFor(model);
-  if (brandCanonical || modelCanonical) {
-    permanentRedirect(
-      `/dily/znacka/${brandCanonical ?? brand}/${modelCanonical ?? model}/${rok}`
-    );
-  }
-
-  if (!isValidPartsYear(rok)) notFound();
-
+  // Diakritika 301 redirect handled v middleware.ts (pre-routing).
+  // Year validation handled v generateStaticParams + dynamicParams=false:
+  // invalid years (out-of-range / non-numeric) dostanou 404 ze segment resolveru.
   const brandData = PARTS_BRANDS.find((b) => b.slug === brand);
   if (!brandData) notFound();
 
@@ -114,12 +110,6 @@ export default async function PartsBrandModelYearPage({
   if (!modelData) notFound();
 
   const year = parseInt(rok, 10);
-
-  // Pokud rok je mimo všechny generation ranges → 404
-  const validYears = getValidYearsForModel(brand, model);
-  if (validYears.length > 0 && !validYears.includes(year)) {
-    notFound();
-  }
 
   const { parts: topParts } = await getTopPartsForBrandModelYear(
     brandData.name,
