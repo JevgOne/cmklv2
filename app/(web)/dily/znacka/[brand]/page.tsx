@@ -13,30 +13,13 @@ import {
   BASE_URL,
 } from "@/lib/seo-data";
 import { getTopPartsForBrand } from "@/lib/seo/partsItemList";
+import { loadPartsBrandContent } from "@/lib/seo/loadPartsContent";
 import { PartsBreadcrumbs } from "@/components/web/dily/PartsBreadcrumbs";
 import { pageCanonical } from "@/lib/canonical";
 
 export const dynamic = "force-static";
 export const dynamicParams = false;
 export const revalidate = 86400;
-
-const UNIVERSAL_FAQS = [
-  {
-    question: "Jaká je záruka na použité díly?",
-    answer:
-      "Na použité originální díly poskytujeme záruku 3 měsíce. Repasované díly mají záruku 12 měsíců.",
-  },
-  {
-    question: "Jak rychle doručíte díl?",
-    answer:
-      "Standardní doručení do 2-5 pracovních dnů po celé ČR. U rozměrnějších dílů zajistíme přepravní službu.",
-  },
-  {
-    question: "Mohu díl vrátit, pokud nesedí?",
-    answer:
-      "Ano, máte 14 dnů na vrácení. Doporučujeme vždy ověřit kompatibilitu přes VIN před objednáním.",
-  },
-];
 
 export function generateStaticParams() {
   return PARTS_BRANDS.map((b) => ({ brand: b.slug }));
@@ -51,17 +34,16 @@ export async function generateMetadata({
   const brandData = PARTS_BRANDS.find((b) => b.slug === brand);
   if (!brandData) return {};
 
-  const title = `Náhradní díly ${brandData.name} | Carmakler`;
-  const description = `Použité a nové náhradní díly pro vozy ${brandData.name}. Ověřená vrakoviště, doručení do 5 dnů.`;
+  const seo = await loadPartsBrandContent(brandData.slug, brandData.name);
   const url = `${BASE_URL}/dily/znacka/${brand}`;
 
   return {
-    title,
-    description,
+    title: seo.metaTitle,
+    description: seo.metaDesc,
     alternates: pageCanonical(`/dily/znacka/${brand}`),
     openGraph: {
-      title,
-      description,
+      title: seo.metaTitle,
+      description: seo.metaDesc,
       url,
       type: "website",
     },
@@ -83,6 +65,7 @@ export default async function PartsBrandPage({
 
   const models = PARTS_MODELS_BY_BRAND[brand] || [];
   const { parts: topParts } = await getTopPartsForBrand(brandData.name);
+  const seo = await loadPartsBrandContent(brandData.slug, brandData.name);
 
   const itemListJsonLd = generatePartsItemListJsonLd(
     `Náhradní díly ${brandData.name}`,
@@ -91,7 +74,7 @@ export default async function PartsBrandPage({
       url: `${BASE_URL}/dily/${p.slug}`,
     }))
   );
-  const faqJsonLd = generateFaqPageJsonLd(UNIVERSAL_FAQS);
+  const faqJsonLd = generateFaqPageJsonLd(seo.faq);
   const organizationJsonLd = generateOrganizationJsonLd();
 
   return (
@@ -223,22 +206,31 @@ export default async function PartsBrandPage({
         </section>
       )}
 
-      {/* SEO content stub */}
+      {/* SEO content (DB → template fallback) */}
       <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="prose prose-gray prose-headings:font-bold prose-p:text-gray-600 prose-p:leading-relaxed">
-          <h2>Náhradní díly pro {brandData.name} na CarMakler</h2>
-          <p>
-            Na CarMakler nabízíme široký výběr náhradních dílů pro vozy{" "}
-            {brandData.name}. Použité originální díly z ověřených vrakovišť i nové
-            aftermarket díly za výhodné ceny. Všechny díly jsou katalogizovány podle
-            VIN kódu pro maximální kompatibilitu s vaším vozem.
-          </p>
-          <h3>Proč nakupovat díly na CarMakler?</h3>
-          <p>
-            Všichni naši dodavatelé dílů procházejí verifikací. Díly jsou detailně
-            popsány a vyfoceny. Na použité díly poskytujeme záruku funkčnosti.
-            Objednávky doručujeme po celé ČR do 2-5 pracovních dní. Platba je možná
-            převodem, kartou nebo dobírkou.
+        <div
+          className="prose prose-gray prose-headings:font-bold prose-p:text-gray-600 prose-p:leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: seo.introHtml }}
+        />
+        {seo.sections.map((s) => (
+          <div key={s.h2} className="mt-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{s.h2}</h2>
+            <div
+              className="prose prose-gray prose-headings:font-bold prose-p:text-gray-600 prose-p:leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: s.html }}
+            />
+          </div>
+        ))}
+      </section>
+
+      {/* AI snippet */}
+      <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="bg-orange-50 border border-orange-100 rounded-xl p-5">
+          <div className="text-xs font-semibold text-orange-600 uppercase tracking-wide mb-2">
+            Shrnutí
+          </div>
+          <p className="text-sm text-gray-700 leading-relaxed">
+            {seo.aiSnippetText}
           </p>
         </div>
       </section>
@@ -247,7 +239,7 @@ export default async function PartsBrandPage({
       <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Časté dotazy</h2>
         <div className="space-y-4">
-          {UNIVERSAL_FAQS.map((faq) => (
+          {seo.faq.map((faq) => (
             <details
               key={faq.question}
               className="group bg-white rounded-xl border border-gray-200 p-5"

@@ -12,7 +12,8 @@
     "test:run": "vitest run",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "analyze": "ANALYZE=true next build --webpack"
+    "analyze": "ANALYZE=true next build --webpack",
+    "seed:seo": "npx tsx scripts/generate-parts-seo-content.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.80.0",

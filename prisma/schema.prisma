@@ -965,6 +965,41 @@ model PartImage {
   @@index([partId])
 }
 
+// SEO long-form content pro /dily/znacka/* landing pages.
+// Source of truth: plán-81 §C3.2 + plán-139 §3.1.
+// Hybrid Cesta C: DB pre-seed pro brand+model (32 entries), MODEL_YEAR
+// fallback je render-time template factory (no DB row).
+model SeoContent {
+  id String @id @default(cuid())
+
+  // URL identifier
+  pageType String  // "BRAND", "MODEL", "MODEL_YEAR", "CATEGORY"
+  brand    String? // brand slug, e.g. "skoda"
+  model    String? // model slug, e.g. "octavia"
+  year     Int?    // year, e.g. 2018
+  category String? // category slug (future use, e.g. "brzdy")
+
+  // Content (JSON for flexibility — JSON.parse on render)
+  h1            String // H1 text
+  metaTitle     String // <title>
+  metaDesc      String // <meta name="description">
+  introHtml     String // Hero paragraph (raw HTML, sanitized v gen scriptu Zod whitelist)
+  sectionsJson  String // JSON: [{h2: string, html: string}, ...]
+  faqJson       String // JSON: [{question: string, answer: string}, ...]
+  aiSnippetText String // 2-3 věty pro AI featured snippet (Perplexity, ChatGPT, AI Overview)
+  quickFacts    String // JSON: string[] (numerická data pro UI panel)
+
+  // Meta
+  wordCount   Int      // Auto-computed, pro analytics
+  generatedBy String   @default("template") // "template", "claude", "manual"
+  generatedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([pageType, brand, model, year, category])
+  @@index([pageType])
+  @@index([brand])
+}
+
 model Order {
   id          String  @id @default(cuid())
   orderNumber String  @unique
