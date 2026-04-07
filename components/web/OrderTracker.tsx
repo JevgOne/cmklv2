@@ -3,12 +3,11 @@ import { cn } from "@/lib/utils";
 const STEPS = [
   { key: "NEW", label: "Přijata" },
   { key: "CONFIRMED", label: "Potvrzena" },
-  { key: "PACKING", label: "Balení" },
   { key: "SHIPPED", label: "Odesláno" },
   { key: "DELIVERED", label: "Doručeno" },
 ] as const;
 
-type OrderStatus = "NEW" | "CONFIRMED" | "PACKING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
+type OrderStatus = "NEW" | "CONFIRMED" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 
 export function OrderTracker({
   status,
@@ -29,7 +28,7 @@ export function OrderTracker({
   const currentIndex = STEPS.findIndex((s) => s.key === status);
 
   return (
-    <div className={cn("flex items-center gap-1", className)}>
+    <div data-testid="order-tracker" className={cn("flex items-center gap-1", className)}>
       {STEPS.map((step, i) => {
         const isCompleted = i <= currentIndex;
         const isCurrent = i === currentIndex;

@@ -8,7 +8,7 @@ import { OrderTracker } from "@/components/web/OrderTracker";
 import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
 
-type OrderTrackerStatus = "NEW" | "CONFIRMED" | "PACKING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
+type OrderTrackerStatus = "NEW" | "CONFIRMED" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 
 function mapToTrackerStatus(apiStatus: string): OrderTrackerStatus {
   switch (apiStatus) {
