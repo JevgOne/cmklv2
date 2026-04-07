@@ -17,7 +17,7 @@ describe('urls', () => {
   it('urls.shop("/katalog") vrací správnou URL', () => {
     const result = urls.shop('/katalog')
     expect(result).toContain('/katalog')
-    expect(result).toMatch(/shop/)
+    expect(result).toMatch(/dily/)
   })
 
   it('urls.marketplace("/") vrací správnou URL', () => {
