@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import Link from "next/link";
 import {
   generateOrganizationJsonLd,
@@ -18,7 +17,10 @@ import { PartsBreadcrumbs } from "@/components/web/dily/PartsBreadcrumbs";
 import { pageCanonical } from "@/lib/canonical";
 
 export const dynamic = "force-static";
-export const dynamicParams = true;
+// dynamicParams=false: Next.js #63483 — notFound() v force-static má caching
+// anomálii (cached fallback render místo 404). Pre-buildujeme všech 51 modelů
+// (17 brands × 3) → unknown modely dostanou 404 ze segment resolveru.
+export const dynamicParams = false;
 export const revalidate = 86400;
 
 export function generateStaticParams() {
@@ -71,13 +73,12 @@ export default async function PartsBrandModelPage({
   const { brand, model } = await params;
 
   // Diakritika 301 redirect handled v middleware.ts (pre-routing).
-  const brandData = PARTS_BRANDS.find((b) => b.slug === brand);
-  if (!brandData) notFound();
-
+  // Model validation handled v generateStaticParams + dynamicParams=false:
+  // unknown modely dostanou 404 ze segment resolveru → find() je guaranteed hit.
+  const brandData = PARTS_BRANDS.find((b) => b.slug === brand)!;
   const modelData = (PARTS_MODELS_BY_BRAND[brand] || []).find(
     (m) => m.slug === model
-  );
-  if (!modelData) notFound();
+  )!;
 
   const { parts: topParts } = await getTopPartsForBrandModel(
     brandData.name,
