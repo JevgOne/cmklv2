@@ -295,3 +295,174 @@ export function generateAggregateOfferJsonLd(vehicle: {
   };
   return JSON.stringify(jsonLd);
 }
+
+// --- #87a SEO MVP foundation: Organization, WebSite, Product, Store ---
+
+/**
+ * Carmakler Organization JSON-LD — single source of truth.
+ * Reusable napříč všemi landing pages.
+ */
+export function generateOrganizationJsonLd(): string {
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Carmakler",
+    url: "https://www.carmakler.cz",
+    logo: "https://www.carmakler.cz/logo.png",
+    description:
+      "Česká marketplace platforma pro použité autodíly z vrakovišť. Spojuje vrakoviště s kupujícími přes katalogizovanou nabídku s detailními popisy, fotkami a kompatibilitou podle VIN.",
+    foundingDate: "2025",
+    sameAs: [
+      "https://www.facebook.com/carmakler",
+      "https://www.linkedin.com/company/carmakler",
+    ],
+    address: {
+      "@type": "PostalAddress",
+      addressCountry: "CZ",
+      addressLocality: "Praha",
+    },
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "customer service",
+      email: "info@carmakler.cz",
+      availableLanguage: ["Czech", "English"],
+    },
+  });
+}
+
+/**
+ * WebSite JSON-LD s SearchAction (Sitelinks searchbox).
+ * Pouze pro homepage / root layout.
+ */
+export function generateWebSiteJsonLd(): string {
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Carmakler",
+    url: "https://www.carmakler.cz",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: "https://www.carmakler.cz/dily/katalog?q={search_term_string}",
+      },
+      "query-input": "required name=search_term_string",
+    },
+  });
+}
+
+export interface PartProductJsonLdData {
+  name: string;
+  description: string;
+  image: string;
+  brand: string;
+  sku: string;
+  url: string;
+  price: number;
+  inStock: boolean;
+  /** "NEW" | "USED" | "REFURBISHED" — Carmakler Part.partType / Part.condition derivative */
+  condition: string;
+}
+
+/**
+ * Part Product JSON-LD per detail card.
+ * Single source of truth — reusable v PartCard, vrakoviste landing, /dily/[slug] detail.
+ */
+export function generatePartProductJsonLd(part: PartProductJsonLdData): string {
+  const conditionUrl =
+    part.condition === "NEW"
+      ? "https://schema.org/NewCondition"
+      : part.condition === "REFURBISHED"
+        ? "https://schema.org/RefurbishedCondition"
+        : "https://schema.org/UsedCondition";
+
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: part.name,
+    description: part.description,
+    image: part.image,
+    sku: part.sku,
+    brand: { "@type": "Brand", name: part.brand },
+    offers: {
+      "@type": "Offer",
+      url: part.url,
+      priceCurrency: "CZK",
+      price: part.price,
+      itemCondition: conditionUrl,
+      availability: part.inStock
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      seller: {
+        "@type": "Organization",
+        name: "Carmakler",
+      },
+    },
+  });
+}
+
+export interface StoreJsonLdData {
+  name: string;
+  description: string;
+  url: string;
+  logo?: string;
+  address?: {
+    streetAddress?: string;
+    addressLocality?: string;
+    addressRegion?: string;
+    postalCode?: string;
+  };
+  telephone?: string;
+  email?: string;
+  geo?: { latitude: number; longitude: number };
+  openingHours?: string; // schema.org/openingHours format ("Mo-Fr 08:00-17:00")
+  aggregateRating?: { ratingValue: number; reviewCount: number };
+}
+
+/**
+ * Store (vrakoviště) JSON-LD pro per-vrakoviste landing page.
+ * Type: AutoPartsStore (schema.org subtype of Store).
+ */
+export function generateStoreJsonLd(store: StoreJsonLdData): string {
+  const jsonLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "AutoPartsStore",
+    name: store.name,
+    description: store.description,
+    url: store.url,
+  };
+
+  if (store.logo) jsonLd.logo = store.logo;
+  if (store.telephone) jsonLd.telephone = store.telephone;
+  if (store.email) jsonLd.email = store.email;
+  if (store.openingHours) jsonLd.openingHours = store.openingHours;
+
+  if (store.address) {
+    jsonLd.address = {
+      "@type": "PostalAddress",
+      addressCountry: "CZ",
+      ...(store.address.streetAddress && { streetAddress: store.address.streetAddress }),
+      ...(store.address.addressLocality && { addressLocality: store.address.addressLocality }),
+      ...(store.address.addressRegion && { addressRegion: store.address.addressRegion }),
+      ...(store.address.postalCode && { postalCode: store.address.postalCode }),
+    };
+  }
+
+  if (store.geo) {
+    jsonLd.geo = {
+      "@type": "GeoCoordinates",
+      latitude: store.geo.latitude,
+      longitude: store.geo.longitude,
+    };
+  }
+
+  if (store.aggregateRating) {
+    jsonLd.aggregateRating = {
+      "@type": "AggregateRating",
+      ratingValue: store.aggregateRating.ratingValue,
+      reviewCount: store.aggregateRating.reviewCount,
+    };
+  }
+
+  return JSON.stringify(jsonLd);
+}

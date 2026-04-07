@@ -221,6 +221,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // DB nedostupná
   }
 
+  // Dynamické stránky — vrakoviště (partner landing pages, #87a SEO MVP)
+  let partnerPages: MetadataRoute.Sitemap = [];
+  try {
+    const partners = await prisma.partner.findMany({
+      where: { status: "AKTIVNI_PARTNER", type: "VRAKOVISTE" },
+      select: { slug: true, updatedAt: true },
+    });
+
+    partnerPages = partners.map((p) => ({
+      url: `${BASE_URL}/dily/vrakoviste/${p.slug}`,
+      lastModified: p.updatedAt,
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    }));
+  } catch {
+    // DB nedostupná
+  }
+
   return [
     ...staticPages,
     ...brandPages,
@@ -232,5 +250,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...partsBrandPages,
     ...vehiclePages,
     ...brokerPages,
+    ...partnerPages,
   ];
 }
