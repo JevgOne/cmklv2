@@ -14,6 +14,10 @@ const statusLabels: Record<string, { label: string; variant: "new" | "verified" 
   EXPIRED: { label: "Expiroval", variant: "default" },
 };
 
+// Admin pages call Prisma at top of server component — force dynamic
+// rendering aby Next.js neskoušel prerender v build time bez DB.
+export const dynamic = "force-dynamic";
+
 export default async function AdminLeadsPage() {
   const session = await getServerSession(authOptions);
   const isManager = session?.user?.role === "MANAGER";

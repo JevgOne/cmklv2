@@ -13,6 +13,10 @@ interface MonthlyBonus {
   bonus: number;
 }
 
+// Admin pages call Prisma at top of server component — force dynamic
+// rendering aby Next.js neskoušel prerender v build time bez DB.
+export const dynamic = "force-dynamic";
+
 export default async function ManagerBonusesPage() {
   const session = await getServerSession(authOptions);
 

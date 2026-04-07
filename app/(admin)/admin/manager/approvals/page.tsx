@@ -7,6 +7,10 @@ import { Badge } from "@/components/ui/Badge";
 import { QualityChecklist } from "@/components/admin/QualityChecklist";
 import { ManagerApprovalActions } from "@/components/admin/ManagerApprovalActions";
 
+// Admin pages call Prisma at top of server component — force dynamic
+// rendering aby Next.js neskoušel prerender v build time bez DB.
+export const dynamic = "force-dynamic";
+
 export default async function ManagerApprovalsPage() {
   const session = await getServerSession(authOptions);
 

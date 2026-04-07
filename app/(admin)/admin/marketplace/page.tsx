@@ -4,6 +4,10 @@ import { Badge } from "@/components/ui/Badge";
 import { FlipManagement } from "@/components/admin/marketplace/FlipManagement";
 import { PaymentConfirmation } from "@/components/admin/marketplace/PaymentConfirmation";
 
+// Admin pages call Prisma at top of server component — force dynamic
+// rendering aby Next.js neskoušel prerender v build time bez DB.
+export const dynamic = "force-dynamic";
+
 export default async function AdminMarketplacePage() {
   // Real stats from DB
   const [totalFlips, activeFlips, pendingApprovalCount, pendingInvestments, allFlipsRaw] =

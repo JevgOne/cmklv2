@@ -7,6 +7,10 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import Link from "next/link";
 
+// Admin pages call Prisma at top of server component — force dynamic
+// rendering aby Next.js neskoušel prerender v build time bez DB.
+export const dynamic = "force-dynamic";
+
 export default async function ManagerDashboardPage() {
   const session = await getServerSession(authOptions);
 

@@ -19,6 +19,10 @@ function formatRelativeTime(date: Date): string {
   return `před ${diffDay} dny`;
 }
 
+// Admin pages call Prisma at top of server component — force dynamic
+// rendering aby Next.js neskoušel prerender v build time bez DB.
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboardPage() {
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);

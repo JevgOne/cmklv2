@@ -26,6 +26,10 @@ interface AdminLeadDetailPageProps {
   params: Promise<{ id: string }>;
 }
 
+// Admin pages call Prisma at top of server component — force dynamic
+// rendering aby Next.js neskoušel prerender v build time bez DB.
+export const dynamic = "force-dynamic";
+
 export default async function AdminLeadDetailPage({ params }: AdminLeadDetailPageProps) {
   const { id } = await params;
 

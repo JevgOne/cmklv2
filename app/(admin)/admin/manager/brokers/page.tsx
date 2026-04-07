@@ -4,6 +4,10 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ManagerBrokersContent } from "@/components/admin/ManagerBrokersContent";
 
+// Admin pages call Prisma at top of server component — force dynamic
+// rendering aby Next.js neskoušel prerender v build time bez DB.
+export const dynamic = "force-dynamic";
+
 export default async function ManagerBrokersPage() {
   const session = await getServerSession(authOptions);
 

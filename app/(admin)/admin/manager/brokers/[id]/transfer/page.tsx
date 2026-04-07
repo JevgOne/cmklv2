@@ -8,6 +8,10 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
+// Admin pages call Prisma at top of server component — force dynamic
+// rendering aby Next.js neskoušel prerender v build time bez DB.
+export const dynamic = "force-dynamic";
+
 export default async function TransferVehiclesPage({ params }: PageProps) {
   const session = await getServerSession(authOptions);
 
