@@ -1222,7 +1222,7 @@ export const PARTS_CATEGORIES: PartsCategoryData[] = [
   { slug: "palivo", name: "Palivový systém", description: "Palivové komponenty — vstřikovače, čerpadla, palivové filtry, regulátory tlaku a palivové nádrže. Originální díly s ověřenou funkčností.", faqItems: [{ question: "Jsou použité vstřikovače spolehlivé?", answer: "Použité vstřikovače testujeme na zkušebním stavu. Dodáváme je s protokolem o měření a zárukou funkčnosti 3 měsíce." }, { question: "Nabízíte i repasované vstřikovače?", answer: "Ano, repasované vstřikovače procházejí kompletní renovací — čištění, výměna těsnění, kalibrace. Záruka 12 měsíců." }] },
 ];
 
-// Parts brands data
+// Parts brands data — 17 brands (8 H1 priority + 9 H2 expansion #87d)
 export const PARTS_BRANDS = [
   { slug: "skoda", name: "Škoda" },
   { slug: "volkswagen", name: "Volkswagen" },
@@ -1232,6 +1232,16 @@ export const PARTS_BRANDS = [
   { slug: "toyota", name: "Toyota" },
   { slug: "hyundai", name: "Hyundai" },
   { slug: "opel", name: "Opel" },
+  // H2 expansion (#87d) — added 2026-04-07
+  { slug: "alfa-romeo", name: "Alfa Romeo" },
+  { slug: "suzuki", name: "Suzuki" },
+  { slug: "fiat", name: "Fiat" },
+  { slug: "mini", name: "Mini" },
+  { slug: "mitsubishi", name: "Mitsubishi" },
+  { slug: "jeep", name: "Jeep" },
+  { slug: "jaguar", name: "Jaguar" },
+  { slug: "dodge", name: "Dodge" },
+  { slug: "lexus", name: "Lexus" },
 ];
 
 // Parts models data — #87b 3-segment routing seed.
@@ -1521,6 +1531,288 @@ export const PARTS_MODELS_BY_BRAND: Record<string, PartsModelData[]> = {
         { name: "2. generace", yearFrom: 2020, yearTo: 2026 },
       ],
       topYears: [2015, 2018, 2020],
+    },
+  ],
+  // ─── H2 expansion (#87d) — 9 brands × 3 models = 27 entries ─────────────────
+  "alfa-romeo": [
+    {
+      slug: "giulia",
+      name: "Giulia",
+      brandSlug: "alfa-romeo",
+      generations: [
+        { name: "952", yearFrom: 2016, yearTo: 2026 },
+      ],
+      topYears: [2018, 2020, 2022],
+    },
+    {
+      slug: "stelvio",
+      name: "Stelvio",
+      brandSlug: "alfa-romeo",
+      generations: [
+        { name: "949", yearFrom: 2017, yearTo: 2026 },
+      ],
+      topYears: [2018, 2020, 2022],
+    },
+    {
+      slug: "giulietta",
+      name: "Giulietta",
+      brandSlug: "alfa-romeo",
+      generations: [
+        { name: "940", yearFrom: 2010, yearTo: 2020 },
+      ],
+      topYears: [2012, 2015, 2018],
+    },
+  ],
+  suzuki: [
+    {
+      slug: "vitara",
+      name: "Vitara",
+      brandSlug: "suzuki",
+      generations: [
+        { name: "3. generace (LY)", yearFrom: 2015, yearTo: 2026 },
+      ],
+      topYears: [2016, 2018, 2020],
+    },
+    {
+      slug: "swift",
+      name: "Swift",
+      brandSlug: "suzuki",
+      generations: [
+        { name: "3. generace (FZ/NZ)", yearFrom: 2010, yearTo: 2017 },
+        { name: "4. generace (AZ)", yearFrom: 2017, yearTo: 2024 },
+        { name: "5. generace (A2L)", yearFrom: 2024, yearTo: 2026 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+    {
+      slug: "s-cross",
+      name: "S-Cross",
+      brandSlug: "suzuki",
+      generations: [
+        { name: "1. generace (JY)", yearFrom: 2013, yearTo: 2021 },
+        { name: "2. generace (JYB)", yearFrom: 2021, yearTo: 2026 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+  ],
+  fiat: [
+    {
+      slug: "500",
+      name: "500",
+      brandSlug: "fiat",
+      generations: [
+        { name: "312", yearFrom: 2007, yearTo: 2020 },
+        { name: "500e (332)", yearFrom: 2020, yearTo: 2026 },
+      ],
+      topYears: [2012, 2015, 2018],
+    },
+    {
+      slug: "panda",
+      name: "Panda",
+      brandSlug: "fiat",
+      generations: [
+        { name: "2. generace (169)", yearFrom: 2003, yearTo: 2012 },
+        { name: "3. generace (319)", yearFrom: 2011, yearTo: 2026 },
+      ],
+      topYears: [2013, 2016, 2019],
+    },
+    {
+      slug: "tipo",
+      name: "Tipo",
+      brandSlug: "fiat",
+      generations: [
+        { name: "356", yearFrom: 2015, yearTo: 2026 },
+      ],
+      topYears: [2017, 2019, 2021],
+    },
+  ],
+  mini: [
+    {
+      slug: "cooper",
+      name: "Cooper",
+      brandSlug: "mini",
+      generations: [
+        { name: "R56", yearFrom: 2006, yearTo: 2013 },
+        { name: "F56", yearFrom: 2013, yearTo: 2024 },
+        { name: "F66", yearFrom: 2024, yearTo: 2026 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+    {
+      slug: "countryman",
+      name: "Countryman",
+      brandSlug: "mini",
+      generations: [
+        { name: "R60", yearFrom: 2010, yearTo: 2016 },
+        { name: "F60", yearFrom: 2017, yearTo: 2023 },
+        { name: "U25", yearFrom: 2024, yearTo: 2026 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+    {
+      slug: "clubman",
+      name: "Clubman",
+      brandSlug: "mini",
+      generations: [
+        { name: "R55", yearFrom: 2007, yearTo: 2014 },
+        { name: "F54", yearFrom: 2015, yearTo: 2024 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+  ],
+  mitsubishi: [
+    {
+      slug: "outlander",
+      name: "Outlander",
+      brandSlug: "mitsubishi",
+      generations: [
+        { name: "2. generace (CW)", yearFrom: 2006, yearTo: 2012 },
+        { name: "3. generace (GG/GF)", yearFrom: 2012, yearTo: 2021 },
+        { name: "4. generace (GN)", yearFrom: 2021, yearTo: 2026 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+    {
+      slug: "asx",
+      name: "ASX",
+      brandSlug: "mitsubishi",
+      generations: [
+        { name: "1. generace (GA)", yearFrom: 2010, yearTo: 2023 },
+        { name: "2. generace (GA0W)", yearFrom: 2023, yearTo: 2026 },
+      ],
+      topYears: [2014, 2017, 2020],
+    },
+    {
+      slug: "lancer",
+      name: "Lancer",
+      brandSlug: "mitsubishi",
+      generations: [
+        { name: "10. generace (CY)", yearFrom: 2007, yearTo: 2017 },
+      ],
+      topYears: [2010, 2013, 2016],
+    },
+  ],
+  jeep: [
+    {
+      slug: "renegade",
+      name: "Renegade",
+      brandSlug: "jeep",
+      generations: [
+        { name: "BU", yearFrom: 2014, yearTo: 2026 },
+      ],
+      topYears: [2016, 2019, 2022],
+    },
+    {
+      slug: "compass",
+      name: "Compass",
+      brandSlug: "jeep",
+      generations: [
+        { name: "1. generace (MK49)", yearFrom: 2007, yearTo: 2017 },
+        { name: "2. generace (MP)", yearFrom: 2017, yearTo: 2026 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+    {
+      slug: "grand-cherokee",
+      name: "Grand Cherokee",
+      brandSlug: "jeep",
+      generations: [
+        { name: "WK2", yearFrom: 2010, yearTo: 2021 },
+        { name: "WL", yearFrom: 2021, yearTo: 2026 },
+      ],
+      topYears: [2014, 2017, 2020],
+    },
+  ],
+  jaguar: [
+    {
+      slug: "xf",
+      name: "XF",
+      brandSlug: "jaguar",
+      generations: [
+        { name: "X250", yearFrom: 2008, yearTo: 2015 },
+        { name: "X260", yearFrom: 2015, yearTo: 2026 },
+      ],
+      topYears: [2014, 2017, 2020],
+    },
+    {
+      slug: "f-pace",
+      name: "F-Pace",
+      brandSlug: "jaguar",
+      generations: [
+        { name: "X761", yearFrom: 2016, yearTo: 2026 },
+      ],
+      topYears: [2017, 2019, 2021],
+    },
+    {
+      slug: "xe",
+      name: "XE",
+      brandSlug: "jaguar",
+      generations: [
+        { name: "X760", yearFrom: 2015, yearTo: 2024 },
+      ],
+      topYears: [2016, 2018, 2020],
+    },
+  ],
+  dodge: [
+    {
+      slug: "caliber",
+      name: "Caliber",
+      brandSlug: "dodge",
+      generations: [
+        { name: "PM", yearFrom: 2006, yearTo: 2012 },
+      ],
+      topYears: [2008, 2010, 2012],
+    },
+    {
+      slug: "journey",
+      name: "Journey",
+      brandSlug: "dodge",
+      generations: [
+        { name: "JC", yearFrom: 2008, yearTo: 2020 },
+      ],
+      topYears: [2012, 2015, 2018],
+    },
+    {
+      slug: "charger",
+      name: "Charger",
+      brandSlug: "dodge",
+      generations: [
+        { name: "LD", yearFrom: 2011, yearTo: 2023 },
+      ],
+      topYears: [2014, 2017, 2020],
+    },
+  ],
+  lexus: [
+    {
+      slug: "is",
+      name: "IS",
+      brandSlug: "lexus",
+      generations: [
+        { name: "XE20", yearFrom: 2005, yearTo: 2013 },
+        { name: "XE30", yearFrom: 2013, yearTo: 2026 },
+      ],
+      topYears: [2014, 2017, 2020],
+    },
+    {
+      slug: "rx",
+      name: "RX",
+      brandSlug: "lexus",
+      generations: [
+        { name: "AL10", yearFrom: 2009, yearTo: 2015 },
+        { name: "AL20", yearFrom: 2015, yearTo: 2022 },
+        { name: "AL30", yearFrom: 2022, yearTo: 2026 },
+      ],
+      topYears: [2015, 2018, 2020],
+    },
+    {
+      slug: "nx",
+      name: "NX",
+      brandSlug: "lexus",
+      generations: [
+        { name: "AZ10", yearFrom: 2014, yearTo: 2021 },
+        { name: "AZ20", yearFrom: 2021, yearTo: 2026 },
+      ],
+      topYears: [2016, 2019, 2022],
     },
   ],
 };
