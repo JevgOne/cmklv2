@@ -7,6 +7,7 @@ import { WatchdogEmailForm } from "@/components/web/WatchdogEmailForm";
 import { Button } from "@/components/ui/Button";
 import { prisma } from "@/lib/prisma";
 import type { VehicleData } from "@/components/web/VehicleCard";
+import { pageCanonical } from "@/lib/canonical";
 
 export const revalidate = 300; // ISR: 5 minut
 
@@ -19,6 +20,7 @@ export const metadata: Metadata = {
     description:
       "Prověřená ojetá vozidla od makléřů i soukromých prodejců. Snadné vyhledávání s filtry.",
   },
+  alternates: pageCanonical("/nabidka"),
 };
 
 /* ------------------------------------------------------------------ */

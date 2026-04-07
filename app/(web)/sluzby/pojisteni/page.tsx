@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ServicePage } from "@/components/web/ServicePage";
 import { PojisteniForm } from "@/components/web/PojisteniForm";
+import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
   title: "Pojištění",
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
     description:
       "Srovnání nabídek všech pojišťoven. Nejlepší cena, sjednání online bez papírování.",
   },
+  alternates: pageCanonical("/sluzby/pojisteni"),
 };
 
 const steps = [

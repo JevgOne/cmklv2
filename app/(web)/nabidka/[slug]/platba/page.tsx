@@ -6,6 +6,9 @@ import { PaymentPageContent } from "./PaymentPageContent";
 export const metadata: Metadata = {
   title: "Platba za vozidlo — CarMakléř",
   description: "Bezpečná platba za vozidlo přes CarMakléř",
+  // Transactional/private page — not indexable. Žádný canonical, místo toho
+  // robots noindex.
+  robots: { index: false, follow: false },
 };
 
 export default async function PaymentPage({

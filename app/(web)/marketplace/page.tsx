@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Alert } from "@/components/ui/Alert";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { getMarketplaceStats } from "@/lib/stats";
+import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
   title: "Marketplace | Investiční platforma pro flipping aut",
@@ -15,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "Investujte do aut a vydělejte 15-25 % ročně. Ověření realizátoři, bezpečné transakce přes CarMakléř.",
   },
+  alternates: pageCanonical("/marketplace"),
 };
 
 const howItWorks = [

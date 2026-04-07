@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { prisma } from "@/lib/prisma";
+import { pageCanonical } from "@/lib/canonical";
 
 export const revalidate = 3600; // ISR: 1 hodina
 
@@ -16,6 +17,7 @@ export const metadata: Metadata = {
     description:
       "Najděte svého makléře a prodejte auto rychle a bezpečně. Síť ověřených makléřů po celé ČR.",
   },
+  alternates: pageCanonical("/makleri"),
 };
 
 /* ------------------------------------------------------------------ */

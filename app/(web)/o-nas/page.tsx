@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/Card";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { prisma } from "@/lib/prisma";
 import { companyInfo } from "@/lib/company-info";
+import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
   title: "O nás",
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
     description:
       "Certifikovaní makléři, prověřená vozidla, spokojení klienti. Poznejte náš příběh.",
   },
+  alternates: pageCanonical("/o-nas"),
 };
 
 async function getStats() {

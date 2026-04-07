@@ -4,6 +4,7 @@ import Link from "next/link";
 import { FaqSection } from "@/components/web/FaqSection";
 import { generateBreadcrumbJsonLd, generateFaqJsonLd } from "@/lib/seo";
 import { PARTS_CATEGORIES, PARTS_BRANDS, BASE_URL } from "@/lib/seo-data";
+import { pageCanonical } from "@/lib/canonical";
 
 export function generateStaticParams() {
   return PARTS_CATEGORIES.map((cat) => ({ slug: cat.slug }));
@@ -21,6 +22,7 @@ export async function generateMetadata({
   return {
     title: `${category.name} | Náhradní díly — CarMakler`,
     description: `Náhradní díly — ${category.name.toLowerCase()}. Použité i nové díly od ověřených dodavatelů za výhodné ceny s garancí funkčnosti.`,
+    alternates: pageCanonical(`/dily/kategorie/${slug}`),
     openGraph: {
       title: `${category.name} | Náhradní díly CarMakler`,
       description: `${category.name} — použité i nové díly za výhodné ceny.`,

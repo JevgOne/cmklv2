@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { BASE_URL } from "@/lib/seo-data";
+import { pageCanonical } from "@/lib/canonical";
 
 export const revalidate = 3600; // ISR: 1 hodina
 
@@ -15,9 +16,7 @@ export const metadata: Metadata = {
     description:
       "Zjistěte, jak funguje CarMakléř — prodej auta přes makléře, nákup prověřených ojetin, e-shop s autodíly a investiční marketplace.",
   },
-  alternates: {
-    canonical: `${BASE_URL}/jak-to-funguje`,
-  },
+  alternates: pageCanonical("/jak-to-funguje"),
 };
 
 const jsonLd = {

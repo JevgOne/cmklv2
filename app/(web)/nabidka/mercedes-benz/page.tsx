@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { BRANDS } from "@/lib/seo-data";
 import { BrandLandingContent } from "@/components/web/BrandLandingContent";
 import { notFound } from "next/navigation";
+import { pageCanonical } from "@/lib/canonical";
 
 const BRAND_SLUG = "mercedes-benz";
 
@@ -15,6 +16,7 @@ export const metadata: Metadata = brand
         title: `Ojeté vozy ${brand.displayName} | CarMakler`,
         description: `Prověřené ojeté ${brand.displayName} od certifikovaných makléřů. Bezpečný nákup s garancí.`,
       },
+      alternates: pageCanonical("/nabidka/mercedes-benz"),
     }
   : {};
 

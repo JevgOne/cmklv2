@@ -3,6 +3,7 @@ import { VehicleLandingPage } from "@/components/web/VehicleLandingPage";
 import { generateBreadcrumbJsonLd, generateFaqJsonLd } from "@/lib/seo";
 import { CITIES, BASE_URL, BRANDS, BODY_TYPES, PRICE_RANGES } from "@/lib/seo-data";
 import { notFound } from "next/navigation";
+import { pageCanonical } from "@/lib/canonical";
 
 const city = CITIES.find((c) => c.slug === "ceske-budejovice");
 
@@ -13,6 +14,7 @@ export const metadata: Metadata = city ? {
     title: `Ojeté vozy ${city.inLocative} | CarMakler`,
     description: `Prověřené ojeté vozy ${city.inLocative}. Bezpečný nákup od makléřů.`,
   },
+  alternates: pageCanonical("/nabidka/ceske-budejovice"),
 } : {};
 
 export default function Page() {

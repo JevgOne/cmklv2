@@ -7,6 +7,7 @@ import { VehicleCard } from "@/components/web/VehicleCard";
 import { MaklerContactForm } from "./MaklerContactForm";
 import type { VehicleData } from "@/components/web/VehicleCard";
 import { prisma } from "@/lib/prisma";
+import { pageCanonical } from "@/lib/canonical";
 
 /* ------------------------------------------------------------------ */
 /*  Metadata                                                           */
@@ -29,6 +30,7 @@ export async function generateMetadata({
       return {
         title: `${broker.firstName} ${broker.lastName} — CarMakléř`,
         description: `Profil certifikovaného automakléře ${broker.firstName} ${broker.lastName}. Hodnocení, aktivní vozidla a kontakt.`,
+        alternates: pageCanonical(`/makler/${slug}`),
       };
     }
   } catch {
@@ -39,6 +41,7 @@ export async function generateMetadata({
     title: "Profil makléře — CarMakléř",
     description:
       "Profil certifikovaného automakléře CarMakléř. Hodnocení, recenze, aktivní vozidla a kontakt.",
+    alternates: pageCanonical(`/makler/${slug}`),
   };
 }
 

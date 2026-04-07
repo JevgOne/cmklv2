@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/Badge";
 import { TrustScore } from "@/components/ui/TrustScore";
 import { Card } from "@/components/ui/Card";
 import { prisma } from "@/lib/prisma";
+import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
   title: "CarMakléř | Prodej aut přes certifikované makléře",
@@ -18,6 +19,7 @@ export const metadata: Metadata = {
     type: "website",
     url: "https://carmakler.cz",
   },
+  alternates: pageCanonical("/"),
 };
 
 /* ------------------------------------------------------------------ */

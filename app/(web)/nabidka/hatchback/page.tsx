@@ -3,6 +3,7 @@ import { VehicleLandingPage } from "@/components/web/VehicleLandingPage";
 import { generateBreadcrumbJsonLd, generateFaqJsonLd, generateWebPageJsonLd } from "@/lib/seo";
 import { BODY_TYPES, BASE_URL, BRANDS, PRICE_RANGES } from "@/lib/seo-data";
 import { notFound } from "next/navigation";
+import { pageCanonical } from "@/lib/canonical";
 
 const bodyType = BODY_TYPES.find((b) => b.slug === "hatchback");
 
@@ -13,6 +14,7 @@ export const metadata: Metadata = bodyType ? {
     title: `Ojeté ${bodyType.name} vozy | CarMakler`,
     description: `Prověřené ojeté ${bodyType.name.toLowerCase()} vozy. Bezpečný nákup od makléřů.`,
   },
+  alternates: pageCanonical("/nabidka/hatchback"),
 } : {};
 
 export default function Page() {

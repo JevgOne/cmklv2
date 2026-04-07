@@ -14,6 +14,7 @@ import {
 } from "@/lib/seo-data";
 import { getTopPartsForBrand } from "@/lib/seo/partsItemList";
 import { PartsBreadcrumbs } from "@/components/web/dily/PartsBreadcrumbs";
+import { pageCanonical } from "@/lib/canonical";
 
 export const dynamic = "force-static";
 export const dynamicParams = false;
@@ -57,7 +58,7 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: { canonical: url },
+    alternates: pageCanonical(`/dily/znacka/${brand}`),
     openGraph: {
       title,
       description,

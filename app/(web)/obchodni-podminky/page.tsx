@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { BASE_URL } from "@/lib/seo-data";
+import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
   title: "Obchodní podmínky",
@@ -12,9 +13,7 @@ export const metadata: Metadata = {
     description:
       "Obchodní podmínky platformy CarMakler — e-shop s autodíly, inzerce vozidel, makléřské služby.",
   },
-  alternates: {
-    canonical: `${BASE_URL}/obchodni-podminky`,
-  },
+  alternates: pageCanonical("/obchodni-podminky"),
 };
 
 const jsonLd = {

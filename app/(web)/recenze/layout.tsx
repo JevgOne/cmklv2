@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
+import { pageCanonical } from "@/lib/canonical";
 
+// Canonical exportujeme na layout level (kontrolovaná výjimka pravidla Q5):
+// /recenze/page.tsx je client component (`"use client"`) a NEMŮŽE exportovat
+// vlastní `metadata`. Single-page subtree → layout-level canonical bez rizika
+// inheritance leak-u na child routes (žádné child routes nejsou).
 export const metadata: Metadata = {
   title: "Recenze",
   description:
@@ -9,6 +14,7 @@ export const metadata: Metadata = {
     description:
       "Skutečné zkušenosti prodejců i kupujících. Přečtěte si hodnocení od našich klientů.",
   },
+  alternates: pageCanonical("/recenze"),
 };
 
 const reviewJsonLd = {

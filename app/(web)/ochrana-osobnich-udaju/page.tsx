@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { BASE_URL } from "@/lib/seo-data";
+import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
   title: "Ochrana osobních údajů",
@@ -12,9 +13,7 @@ export const metadata: Metadata = {
     description:
       "Zásady ochrany osobních údajů platformy CarMakler — správce, účely zpracování, práva subjektů.",
   },
-  alternates: {
-    canonical: `${BASE_URL}/ochrana-osobnich-udaju`,
-  },
+  alternates: pageCanonical("/ochrana-osobnich-udaju"),
 };
 
 const jsonLd = {

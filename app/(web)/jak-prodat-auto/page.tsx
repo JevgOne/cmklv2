@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { FaqSection } from "@/components/web/FaqSection";
+import { pageCanonical } from "@/lib/canonical";
 import {
   generateBreadcrumbJsonLd,
   generateFaqJsonLd,
@@ -18,6 +19,7 @@ export const metadata: Metadata = {
     description:
       "7 kroků k úspěšnému prodeji auta. Od přípravy vozu po daňové přiznání.",
   },
+  alternates: pageCanonical("/jak-prodat-auto"),
 };
 
 const faqItems = [

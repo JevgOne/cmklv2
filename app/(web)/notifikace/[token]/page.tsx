@@ -7,6 +7,9 @@ import { SellerNotificationPreferences } from "@/components/web/SellerNotificati
 export const metadata: Metadata = {
   title: "Nastaveni notifikaci | Carmakler",
   description: "Upravte si, jak Vas budeme informovat o Vasem vozidle.",
+  // Token-based private page — not indexable. Žádný canonical, místo toho
+  // robots noindex.
+  robots: { index: false, follow: false },
 };
 
 interface PageProps {

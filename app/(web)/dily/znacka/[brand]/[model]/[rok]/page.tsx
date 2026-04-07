@@ -15,6 +15,7 @@ import {
 } from "@/lib/seo-data";
 import { getTopPartsForBrandModelYear } from "@/lib/seo/partsItemList";
 import { PartsBreadcrumbs } from "@/components/web/dily/PartsBreadcrumbs";
+import { pageCanonical } from "@/lib/canonical";
 
 export const dynamic = "force-static";
 // dynamicParams=false: Next.js #63483 — notFound() v force-static má caching
@@ -81,7 +82,7 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: { canonical: url },
+    alternates: pageCanonical(`/dily/znacka/${brand}/${model}/${rok}`),
     openGraph: {
       title,
       description,

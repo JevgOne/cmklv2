@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/Card";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { ContactPageForm } from "@/components/web/ContactPageForm";
 import { companyInfo } from "@/lib/company-info";
+import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
   title: "Kontakt",
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
     description:
       `Kontaktujte nás. ${companyInfo.address.city}. Telefon ${companyInfo.contact.phone}.`,
   },
+  alternates: pageCanonical("/kontakt"),
 };
 
 const branches = companyInfo.branches;

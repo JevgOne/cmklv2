@@ -13,6 +13,7 @@ import {
   generateOrganizationJsonLd,
 } from "@/lib/seo";
 import { BASE_URL } from "@/lib/seo-data";
+import { pageCanonical } from "@/lib/canonical";
 
 // ISR — revalidate každých 24h (parts inventář se mění průběžně, partner info zřídka)
 export const revalidate = 86400;
@@ -129,9 +130,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: titleBase,
     description,
-    alternates: {
-      canonical: `${BASE_URL}/dily/vrakoviste/${partner.slug}`,
-    },
+    alternates: pageCanonical(`/dily/vrakoviste/${partner.slug}`),
     openGraph: {
       title: titleBase,
       description,

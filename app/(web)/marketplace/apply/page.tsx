@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { ApplyForm } from "@/components/web/marketplace/ApplyForm";
 import { Alert } from "@/components/ui/Alert";
+import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
   title: "Žádost o přístup | Marketplace | CarMakléř",
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
     description:
       "Staňte se součástí VIP investiční platformy pro flipping vozidel. Ověřeni dealeři + investoři.",
   },
+  alternates: pageCanonical("/marketplace/apply"),
 };
 
 type Props = {

@@ -3,6 +3,7 @@ import { VehicleLandingPage } from "@/components/web/VehicleLandingPage";
 import { generateBreadcrumbJsonLd, generateFaqJsonLd, generateWebPageJsonLd } from "@/lib/seo";
 import { PRICE_RANGES, BASE_URL, BRANDS, BODY_TYPES } from "@/lib/seo-data";
 import { notFound } from "next/navigation";
+import { pageCanonical } from "@/lib/canonical";
 
 const priceRange = PRICE_RANGES.find((p) => p.slug === "do-1000000");
 
@@ -13,6 +14,7 @@ export const metadata: Metadata = priceRange ? {
     title: `Ojeté vozy ${priceRange.label} | CarMakler`,
     description: `Prověřené ojeté vozy ${priceRange.label}. Bezpečný nákup od makléřů.`,
   },
+  alternates: pageCanonical("/nabidka/do-1000000"),
 } : {};
 
 export default function Page() {

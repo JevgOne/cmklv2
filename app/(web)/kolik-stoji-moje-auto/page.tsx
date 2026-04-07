@@ -3,6 +3,7 @@ import Link from "next/link";
 import { PriceCalculator } from "@/components/web/PriceCalculator";
 import { generateBreadcrumbJsonLd } from "@/lib/seo";
 import { BASE_URL } from "@/lib/seo-data";
+import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
   title: "Kolik stojí moje auto? | Kalkulačka ceny vozidla — CarMakler",
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
     description:
       "Zjistěte orientační cenu vašeho vozidla během minuty. Profesionální ocenění makléřem zdarma.",
   },
+  alternates: pageCanonical("/kolik-stoji-moje-auto"),
 };
 
 const breadcrumbJsonLd = generateBreadcrumbJsonLd([

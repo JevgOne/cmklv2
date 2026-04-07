@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import type { Metadata } from "next";
+import { pageCanonical } from "@/lib/canonical";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -21,6 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${partner.name} | Ověřený partner CarMakléř`,
     description: partner.description || `Autobazar ${partner.name} v ${partner.city || "ČR"} — ověřený partner CarMakléř.`,
+    alternates: pageCanonical(`/bazar/${slug}`),
   };
 }
 

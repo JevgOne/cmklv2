@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ServicePage } from "@/components/web/ServicePage";
 import { ProverkaForm } from "@/components/web/ProverkaForm";
+import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
   title: "Prověrka vozidla",
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
     description:
       "Kompletní prověrka historie a technického stavu vozidla. Kupte auto s jistotou.",
   },
+  alternates: pageCanonical("/sluzby/proverka"),
 };
 
 const steps = [

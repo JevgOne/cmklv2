@@ -29,6 +29,7 @@ import { RecommendedParts } from "@/components/web/RecommendedParts";
 import { prisma } from "@/lib/prisma";
 import { listingTypeLabels } from "@/lib/listings";
 import type { VehicleData } from "@/components/web/VehicleCard";
+import { pageCanonical } from "@/lib/canonical";
 
 export async function generateMetadata({
   params,
@@ -49,6 +50,7 @@ export async function generateMetadata({
     return {
       title: `${name} (${vehicle.year}) — ${price} Kč`,
       description: `${name}, rok ${vehicle.year}, cena ${price} Kč. ${vehicle.city}. Prověřené vozidlo na CarMakléř.`,
+      alternates: pageCanonical(`/nabidka/${slug}`),
       openGraph: {
         title: `${name} — ${price} Kč`,
         description: `${name}, rok ${vehicle.year}. Prověřené vozidlo od makléře.`,
@@ -68,6 +70,7 @@ export async function generateMetadata({
     return {
       title: `${name} (${listing.year}) — ${price} Kč`,
       description: `${name}, rok ${listing.year}, cena ${price} Kč. ${listing.city}. Inzerát na CarMakléř.`,
+      alternates: pageCanonical(`/nabidka/${slug}`),
       openGraph: {
         title: `${name} — ${price} Kč`,
         description: `${name}, rok ${listing.year}. Vozidlo na CarMakléř.`,

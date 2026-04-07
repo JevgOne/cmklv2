@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { Button } from "@/components/ui/Button";
 import { BASE_URL } from "@/lib/seo-data";
+import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
   title: "Vrácení zboží | CarMakléř Shop",
@@ -13,9 +14,7 @@ export const metadata: Metadata = {
     description:
       "14 dní na odstoupení od smlouvy. Postup vrácení ve 3 krocích.",
   },
-  alternates: {
-    canonical: `${BASE_URL}/shop/vraceni-zbozi`,
-  },
+  alternates: pageCanonical("/shop/vraceni-zbozi"),
 };
 
 const jsonLd = {

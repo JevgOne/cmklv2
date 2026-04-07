@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/Button";
 import { DealerStats } from "@/components/web/marketplace/DealerStats";
 import { OpportunityCard } from "@/components/web/marketplace/OpportunityCard";
 import { prisma } from "@/lib/prisma";
+import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
   title: "Realizátor Dashboard | Marketplace | CarMakléř",
+  alternates: pageCanonical("/marketplace/dealer"),
 };
 
 async function getDealerData() {

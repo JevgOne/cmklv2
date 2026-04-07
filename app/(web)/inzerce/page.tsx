@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { prisma } from "@/lib/prisma";
+import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
   title: "Inzerce — vložte inzerát zdarma",
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
     description:
       "Prodejte své auto online. Vložte inzerát za minutu, zcela zdarma.",
   },
+  alternates: pageCanonical("/inzerce"),
 };
 
 /* ------------------------------------------------------------------ */

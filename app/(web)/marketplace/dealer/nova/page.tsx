@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { OpportunityWizard } from "@/components/web/marketplace/OpportunityWizard";
+import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
   title: "Nová příležitost | Realizátor | Marketplace | CarMakléř",
+  alternates: pageCanonical("/marketplace/dealer/nova"),
 };
 
 export default function NewOpportunityPage() {

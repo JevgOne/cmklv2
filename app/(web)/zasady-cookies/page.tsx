@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { BASE_URL } from "@/lib/seo-data";
+import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
   title: "Zásady cookies",
@@ -10,9 +11,7 @@ export const metadata: Metadata = {
     title: "Zásady cookies | CarMakler",
     description: "Informace o používání cookies na platformě CarMakler.",
   },
-  alternates: {
-    canonical: `${BASE_URL}/zasady-cookies`,
-  },
+  alternates: pageCanonical("/zasady-cookies"),
 };
 
 const cookies = [

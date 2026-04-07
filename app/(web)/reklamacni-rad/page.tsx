@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { BASE_URL } from "@/lib/seo-data";
+import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
   title: "Reklamační řád",
@@ -12,9 +13,7 @@ export const metadata: Metadata = {
     description:
       "Reklamační řád e-shopu s autodíly CarMakler — záruční doby, postup reklamace, práva spotřebitele.",
   },
-  alternates: {
-    canonical: `${BASE_URL}/reklamacni-rad`,
-  },
+  alternates: pageCanonical("/reklamacni-rad"),
 };
 
 const jsonLd = {

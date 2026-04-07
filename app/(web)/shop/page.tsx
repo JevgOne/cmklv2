@@ -6,6 +6,7 @@ import { PartsSearch } from "@/components/web/PartsSearch";
 import { ProductCard } from "@/components/web/ProductCard";
 import { prisma } from "@/lib/prisma";
 import { PART_CATEGORIES } from "@/lib/parts-categories";
+import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
   title: "Shop — autodíly a příslušenství",
@@ -16,6 +17,7 @@ export const metadata: Metadata = {
     description:
       "Největší výběr dílů z vrakovišť. Garantovaná kvalita, expedice do 24h.",
   },
+  alternates: pageCanonical("/shop"),
 };
 
 /* ------------------------------------------------------------------ */

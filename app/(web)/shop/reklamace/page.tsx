@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { Button } from "@/components/ui/Button";
 import { BASE_URL } from "@/lib/seo-data";
+import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
   title: "Reklamace | CarMakléř Shop",
@@ -13,9 +14,7 @@ export const metadata: Metadata = {
     description:
       "Uplatněte reklamaci online. Záruka 24 měs. na nové / 12 měs. na použité díly.",
   },
-  alternates: {
-    canonical: `${BASE_URL}/shop/reklamace`,
-  },
+  alternates: pageCanonical("/shop/reklamace"),
 };
 
 const jsonLd = {

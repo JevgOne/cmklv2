@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ServicePage } from "@/components/web/ServicePage";
 import { FinancovaniCalc } from "@/components/web/FinancovaniCalc";
+import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
   title: "Financování",
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
     description:
       "Auto na splátky do 30 minut. Bez zálohy, nízký úrok od 3,9 %.",
   },
+  alternates: pageCanonical("/sluzby/financovani"),
 };
 
 const steps = [

@@ -4,6 +4,7 @@ import { SellCarForm } from "@/components/web/SellCarForm";
 import { FAQ } from "@/components/web/FAQ";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { getBrokerStats } from "@/lib/stats";
+import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
   title: "Chci prodat auto",
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
     description:
       "Prodáme vaše auto rychleji a za lepší cenu. Nechte to na certifikovaném makléři CarMakléř.",
   },
+  alternates: pageCanonical("/chci-prodat"),
 };
 
 const steps = [

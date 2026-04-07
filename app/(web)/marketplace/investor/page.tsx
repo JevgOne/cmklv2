@@ -3,9 +3,11 @@ import Link from "next/link";
 import { InvestorPortfolio } from "@/components/web/marketplace/InvestorPortfolio";
 import { OpportunityCard } from "@/components/web/marketplace/OpportunityCard";
 import { prisma } from "@/lib/prisma";
+import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
   title: "Investor Dashboard | Marketplace | CarMakléř",
+  alternates: pageCanonical("/marketplace/investor"),
 };
 
 async function getOpportunities() {

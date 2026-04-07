@@ -60,9 +60,11 @@ export const metadata: Metadata = {
     icon: "/brand/favicon.ico",
     apple: "/brand/apple-touch-icon.png",
   },
-  alternates: {
-    canonical: BASE_URL,
-  },
+  // POZN: `alternates.canonical` SE NEEXPORTUJE v root layoutu — způsobovalo
+  // bug #127 (všechny child stránky dědily homepage URL místo svého). Každá
+  // indexovaná stránka MUSÍ exportovat vlastní `alternates: pageCanonical("/path")`
+  // přes helper z `lib/canonical.ts`. `metadataBase` zachováme — používá se pro
+  // resolve relative URLs v openGraph.images apod.
 };
 
 export default function RootLayout({

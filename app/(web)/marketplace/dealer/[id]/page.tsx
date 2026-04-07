@@ -13,6 +13,9 @@ import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Detail flipu | Realizátor | Marketplace | CarMakléř",
+  // Gated marketplace VIP content — not indexable. Žádný canonical, místo
+  // toho robots noindex.
+  robots: { index: false, follow: false },
 };
 
 export default async function DealerFlipDetailPage({
