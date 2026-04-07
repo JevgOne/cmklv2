@@ -24,7 +24,7 @@ export const brand = {
   },
   company: {
     name: "Carmakler s.r.o.",
-    web: "www.carmakler.cz",
+    web: "carmakler.cz",
     email: "info@carmakler.cz",
     emailPartners: "partneri@carmakler.cz",
     phone: "+420 123 456 789",

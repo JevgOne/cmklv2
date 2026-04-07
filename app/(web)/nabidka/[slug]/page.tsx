@@ -456,7 +456,7 @@ export default async function VehicleDetailPage({
         : { "@type": "Person", name: vehicle.contactName || "Soukromý prodejce" },
     },
     image: photos.map((p) => p.src),
-    url: `https://www.carmakler.cz/nabidka/${slug}`,
+    url: `https://carmakler.cz/nabidka/${slug}`,
   };
 
   const breadcrumbJsonLd = {
@@ -467,19 +467,19 @@ export default async function VehicleDetailPage({
         "@type": "ListItem",
         position: 1,
         name: "Domů",
-        item: "https://www.carmakler.cz",
+        item: "https://carmakler.cz",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Nabídka",
-        item: "https://www.carmakler.cz/nabidka",
+        item: "https://carmakler.cz/nabidka",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: vehicleName,
-        item: `https://www.carmakler.cz/nabidka/${slug}`,
+        item: `https://carmakler.cz/nabidka/${slug}`,
       },
     ],
   };

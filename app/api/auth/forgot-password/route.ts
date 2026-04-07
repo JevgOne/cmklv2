@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Odeslat email
-    const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://www.carmakler.cz"}/reset-hesla/${token}`;
+    const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://carmakler.cz"}/reset-hesla/${token}`;
 
     await sendEmail({
       to: email,

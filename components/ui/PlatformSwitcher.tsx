@@ -29,7 +29,7 @@ const PLATFORMS: Platform[] = [
     href: urls.shop("/"),
   },
   // marketplace ENTRY ZÁMĚRNĚ ODSTRANĚN (#101) — VIP invite-only,
-  // přístupný pouze přes přímý URL (https://www.carmakler.cz/marketplace)
+  // přístupný pouze přes přímý URL (https://marketplace.carmakler.cz)
   // a interní navbar pro přihlášené investory/dealery.
   // NEPRIDÁVAT zpět bez konzultace s product ownerem.
 ];

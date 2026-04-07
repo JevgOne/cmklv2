@@ -8,8 +8,8 @@ const SUBDOMAIN_MAP: Record<string, SubdomainType> = {
 
 /**
  * Parsuje host header a vrací typ subdomény.
- * Dev: inzerce.localhost:3000 → 'inzerce', localhost:3000 → 'main'
- * Prod: inzerce.carmakler.cz → 'inzerce', www.carmakler.cz → 'main'
+ * Dev:  inzerce.localhost:3000 → 'inzerce', localhost:3000 → 'main'
+ * Prod: inzerce.carmakler.cz   → 'inzerce', carmakler.cz   → 'main' (www.* → 'main' via redirect)
  */
 export function getSubdomain(host: string): SubdomainType {
   // Odstraň port

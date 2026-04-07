@@ -78,6 +78,24 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      // www.carmakler.cz → carmakler.cz (301 permanent)
+      // Bare domain je canonical (user pokyn 2026-04-07).
+      // Dual-layer redirect: DNS-level + Next.js fallback pro safety.
+      {
+        source: "/:path*",
+        has: [
+          {
+            type: "host",
+            value: "www.carmakler.cz",
+          },
+        ],
+        destination: "https://carmakler.cz/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

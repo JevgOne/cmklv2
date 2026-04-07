@@ -2,7 +2,7 @@
  * Cross-platform URL builder.
  *
  * Default chování (dev, žádné env vars):
- *   - urls.main("/x")        → "http://localhost:3000/x"
+ *   - urls.main("/x")        → "https://carmakler.cz/x" (prod)  |  "http://localhost:3000/x" (dev, env override)
  *   - urls.inzerce("/x")     → "/inzerce/x"      (path-based, žádný subdomain)
  *   - urls.shop("/x")        → "/dily/x"         (path-based — /dily je canonical, viz #87/#87a SEO)
  *   - urls.marketplace("/x") → "/marketplace/x"  (path-based)
@@ -17,7 +17,7 @@
  */
 
 const MAIN_URL =
-  process.env.NEXT_PUBLIC_MAIN_URL || "http://localhost:3000";
+  process.env.NEXT_PUBLIC_MAIN_URL || "https://carmakler.cz";
 
 // Subdomain URLs — env vars override path-based defaults.
 // Empty/undefined → fallback na path-based routing (žádný /etc/hosts setup nutný).

@@ -58,7 +58,7 @@ Carmakler je ekosystém 4 propojených produktů pod jednou značkou — všechn
 
 ## Kontakt
 
-- Web: https://www.carmakler.cz
+- Web: https://carmakler.cz
 - Email: info@carmakler.cz
 - Adresa: Praha, Česká republika
 - [Kontaktní formulář](${BASE_URL}/kontakt)

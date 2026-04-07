@@ -219,7 +219,7 @@ export default async function NabidkaPage({
     itemListElement: vehicles.slice(0, 10).map((car, i) => ({
       "@type": "ListItem",
       position: i + 1,
-      url: `https://www.carmakler.cz/nabidka/${car.slug}`,
+      url: `https://carmakler.cz/nabidka/${car.slug}`,
       name: car.name,
     })),
   };

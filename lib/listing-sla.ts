@@ -163,7 +163,7 @@ export async function checkReservationExpiry(): Promise<number> {
   return result.count;
 }
 
-const WATCHDOG_BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://www.carmakler.cz";
+const WATCHDOG_BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://carmakler.cz";
 
 async function sendWatchdogEmail(
   recipientEmail: string,

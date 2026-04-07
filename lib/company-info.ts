@@ -39,8 +39,8 @@ export const companyInfo = {
   },
 
   web: {
-    url: "https://www.carmakler.cz",
-    logo: "https://www.carmakler.cz/brand/logo.svg",
+    url: "https://carmakler.cz",
+    logo: "https://carmakler.cz/brand/logo.svg",
   },
 
   social: {

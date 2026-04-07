@@ -113,7 +113,7 @@ export function generateServiceJsonLd(service: ServiceJsonLdData): string {
     provider: {
       "@type": "Organization",
       name: service.provider || "CarMakler",
-      url: "https://www.carmakler.cz",
+      url: "https://carmakler.cz",
     },
     ...(service.areaServed && { areaServed: service.areaServed }),
   };
@@ -143,7 +143,7 @@ export function generateArticleJsonLd(article: {
     publisher: {
       "@type": "Organization",
       name: "CarMakler",
-      url: "https://www.carmakler.cz",
+      url: "https://carmakler.cz",
     },
   };
   return JSON.stringify(jsonLd);
@@ -214,7 +214,7 @@ export function generateWebPageJsonLd(page: WebPageJsonLdData): string {
     publisher: {
       "@type": "Organization",
       name: "CarMakler",
-      url: "https://www.carmakler.cz",
+      url: "https://carmakler.cz",
     },
   };
 
@@ -307,8 +307,8 @@ export function generateOrganizationJsonLd(): string {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "Carmakler",
-    url: "https://www.carmakler.cz",
-    logo: "https://www.carmakler.cz/logo.png",
+    url: "https://carmakler.cz",
+    logo: "https://carmakler.cz/logo.png",
     description:
       "Česká marketplace platforma pro použité autodíly z vrakovišť. Spojuje vrakoviště s kupujícími přes katalogizovanou nabídku s detailními popisy, fotkami a kompatibilitou podle VIN.",
     foundingDate: "2025",
@@ -339,12 +339,12 @@ export function generateWebSiteJsonLd(): string {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "Carmakler",
-    url: "https://www.carmakler.cz",
+    url: "https://carmakler.cz",
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: "https://www.carmakler.cz/dily/katalog?q={search_term_string}",
+        urlTemplate: "https://carmakler.cz/dily/katalog?q={search_term_string}",
       },
       "query-input": "required name=search_term_string",
     },

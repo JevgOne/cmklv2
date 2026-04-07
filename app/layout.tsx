@@ -11,7 +11,7 @@ const outfit = Outfit({
   display: "swap",
 });
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://www.carmakler.cz";
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://carmakler.cz";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),

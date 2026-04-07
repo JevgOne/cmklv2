@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
 import { BRANDS, TOP_MODELS, BODY_TYPES, PRICE_RANGES, CITIES, PARTS_CATEGORIES, PARTS_BRANDS } from "@/lib/seo-data";
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://www.carmakler.cz";
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://carmakler.cz";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Statické stránky

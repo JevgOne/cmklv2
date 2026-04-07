@@ -49,7 +49,7 @@ export async function sendVerificationEmail(email: string, firstName: string) {
         </p>
         <hr style="border: none; border-top: 1px solid #E4E4E7; margin: 32px 0;" />
         <p style="font-size: 12px; color: #A1A1AA; text-align: center;">
-          CarMakléř s.r.o. | <a href="${process.env.NEXTAUTH_URL}" style="color: #F97316;">www.carmakler.cz</a>
+          CarMakléř s.r.o. | <a href="${process.env.NEXTAUTH_URL}" style="color: #F97316;">carmakler.cz</a>
         </p>
       </div>
     `,

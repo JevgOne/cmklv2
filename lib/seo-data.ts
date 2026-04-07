@@ -2,7 +2,7 @@
 
 import type { FaqItem } from "./seo";
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://www.carmakler.cz";
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://carmakler.cz";
 
 export { BASE_URL };
 
