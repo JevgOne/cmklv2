@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "Prodejte nebo kupte auto bezpečně přes síť ověřených makléřů. Rychle, transparentně a bez starostí.",
     type: "website",
+    url: "https://carmakler.cz",
   },
 };
 
