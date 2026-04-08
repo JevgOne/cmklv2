@@ -10,7 +10,7 @@ import {
   type StripePartnerFields,
 } from "@/lib/stripe-connect-shared";
 import { formatRelativeCz } from "@/lib/utils";
-import { StripeStatusBadge } from "./StripeStatusBadge";
+import { StripeStatusBadge } from "@/components/ui/StripeStatusBadge";
 
 interface StripeOnboardingCardProps {
   partner: StripePartnerFields & { id: string };

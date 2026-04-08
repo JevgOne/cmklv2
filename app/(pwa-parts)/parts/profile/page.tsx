@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
+import { SupplierStripeCard } from "@/components/pwa-parts/profile/SupplierStripeCard";
 
 export default function SupplierProfilePage() {
   const { data: session } = useSession();
@@ -89,6 +90,9 @@ export default function SupplierProfilePage() {
           </div>
         </div>
       </Card>
+
+      {/* Stripe Connect self-service */}
+      <SupplierStripeCard />
 
       {/* Edit form */}
       <Card className="p-4 space-y-3">
