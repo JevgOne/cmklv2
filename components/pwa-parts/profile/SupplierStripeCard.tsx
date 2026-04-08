@@ -1,14 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { StripeStatusBadge } from "@/components/ui/StripeStatusBadge";
 import {
   deriveOnboardingState,
+  mapStatusResponseToPartnerFields,
   translateRequirementsList,
   type OnboardingState,
+  type StripeConnectStatusResponse,
   type StripePartnerFields,
 } from "@/lib/stripe-connect-shared";
 import { formatRelativeCz } from "@/lib/utils";
@@ -47,62 +49,39 @@ const STATE_COPY: Record<
 type Feedback = { kind: "ok" | "err"; message: string };
 type BusyAction = "link" | "dashboard";
 
+async function fetchConnectStatus(refresh: boolean): Promise<StripePartnerFields> {
+  const res = await fetch(
+    `/api/stripe/connect/status${refresh ? "?refresh=1" : ""}`,
+  );
+  if (!res.ok) {
+    const payload = await res.json().catch(() => ({}));
+    throw new Error(payload.error ?? "stripe_error");
+  }
+  const data = (await res.json()) as StripeConnectStatusResponse;
+  return mapStatusResponseToPartnerFields(data);
+}
+
 export function SupplierStripeCard() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [partner, setPartner] = useState<StripePartnerFields | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loaded, setLoaded] = useState(false);
   const [busy, setBusy] = useState<BusyAction | null>(null);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
 
-  const fetchStatus = useCallback(
-    async (refresh: boolean): Promise<StripePartnerFields> => {
-      const res = await fetch(
-        `/api/stripe/connect/status${refresh ? "?refresh=1" : ""}`,
-      );
-      if (!res.ok) {
-        const payload = await res.json().catch(() => ({}));
-        throw new Error(payload.error ?? "stripe_error");
-      }
-      const data = (await res.json()) as {
-        stripeAccountId: string | null;
-        detailsSubmitted: boolean;
-        payoutsEnabled: boolean;
-        chargesEnabled: boolean;
-        requirementsCurrentlyDue: string[];
-        disabledReason: string | null;
-        startedAt: string | null;
-        completedAt: string | null;
-        updatedAt: string | null;
-      };
-      const mapped: StripePartnerFields = {
-        stripeAccountId: data.stripeAccountId,
-        stripeDetailsSubmitted: data.detailsSubmitted,
-        stripePayoutsEnabled: data.payoutsEnabled,
-        stripeChargesEnabled: data.chargesEnabled,
-        stripeRequirementsCurrentlyDue: data.requirementsCurrentlyDue,
-        stripeDisabledReason: data.disabledReason,
-        stripeOnboardingStartedAt: data.startedAt,
-        stripeOnboardingCompletedAt: data.completedAt,
-        stripeAccountUpdatedAt: data.updatedAt,
-      };
-      setPartner(mapped);
-      return mapped;
-    },
-    [],
-  );
-
-  // Mount: load status + handle Stripe return/refresh query params
   useEffect(() => {
     const stripeParam = searchParams.get("stripe");
     const isReturn = stripeParam === "return";
     const isRefresh = stripeParam === "refresh";
+    let ignore = false;
 
     async function init() {
       try {
-        // Return from Stripe → force refresh (sync account state) so partner
-        // sees the latest data immediately, not cached DB snapshot.
-        const updated = await fetchStatus(isReturn || isRefresh);
+        // Return/refresh z Stripe → vynucený sync přes Stripe API, jinak
+        // cheap DB read stačí (partner jen otevírá profil).
+        const updated = await fetchConnectStatus(isReturn || isRefresh);
+        if (ignore) return;
+        setPartner(updated);
         if (isReturn) {
           const newState = deriveOnboardingState(updated);
           if (newState === "complete") {
@@ -123,7 +102,13 @@ export function SupplierStripeCard() {
             });
           }
         }
+        if (isReturn || isRefresh) {
+          // Query wipe jen po úspěšném loadu — při chybě necháme `?stripe=return`
+          // aby partner mohl stránku načíst znovu a spustit refresh flow.
+          router.replace("/parts/profile");
+        }
       } catch (err) {
+        if (ignore) return;
         console.error("stripe status load failed:", err);
         setFeedback({
           kind: "err",
@@ -131,31 +116,18 @@ export function SupplierStripeCard() {
             err instanceof Error ? err.message : "Nepodařilo se načíst stav",
         });
       } finally {
-        setLoading(false);
-        if (isReturn || isRefresh) {
-          // Wipe query tak ať refresh stránky nezobrazí toast znovu.
-          router.replace("/parts/profile");
-        }
+        if (!ignore) setLoaded(true);
       }
     }
 
     init();
-    // Mount-only: záměrně neposloucháme změny searchParams, aby se nezopakoval
-    // flow při navigaci v rámci stránky.
+    return () => {
+      ignore = true;
+    };
+    // Mount-only: změny searchParams během pobytu na stránce ignorujeme,
+    // aby se return flow nezopakoval při navigaci v rámci stránky.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const state = useMemo<OnboardingState | null>(
-    () => (partner ? deriveOnboardingState(partner) : null),
-    [partner],
-  );
-  const requirementsCz = useMemo(
-    () =>
-      partner
-        ? translateRequirementsList(partner.stripeRequirementsCurrentlyDue)
-        : [],
-    [partner],
-  );
 
   async function handleStartOnboarding() {
     setBusy("link");
@@ -169,8 +141,8 @@ export function SupplierStripeCard() {
         throw new Error(payload.error ?? "stripe_error");
       }
       const { url } = (await res.json()) as { url: string };
+      // Busy zůstává aktivní — browser už přesměrovává, clear by způsobil flash.
       window.location.href = url;
-      // Nechávám `busy` aktivní — browser přesměrovává, další klik je zbytečný.
     } catch (err) {
       console.error("stripe onboard-link failed:", err);
       setFeedback({
@@ -211,7 +183,7 @@ export function SupplierStripeCard() {
     }
   }
 
-  if (loading) {
+  if (!loaded) {
     return (
       <Card className="p-4">
         <div className="h-24 animate-pulse bg-gray-100 rounded-lg" />
@@ -219,26 +191,28 @@ export function SupplierStripeCard() {
     );
   }
 
-  if (!state || !partner) {
+  if (!partner) {
     return (
       <Card className="p-4">
         <h3 className="text-base font-bold text-gray-900 mb-1">
           Stripe Connect
         </h3>
         <p className="text-sm text-gray-600">
-          Stav se nepodařilo načíst. Zkus to prosím znovu později.
+          {feedback?.kind === "err"
+            ? feedback.message
+            : "Stav se nepodařilo načíst. Zkus to prosím znovu později."}
         </p>
-        {feedback?.kind === "err" && (
-          <div className="mt-2 text-xs font-medium text-red-600">
-            {feedback.message}
-          </div>
-        )}
       </Card>
     );
   }
 
+  const state = deriveOnboardingState(partner);
+  const requirementsCz = translateRequirementsList(
+    partner.stripeRequirementsCurrentlyDue,
+  );
   const copy = STATE_COPY[state];
-  const primaryAction = state === "complete" ? handleOpenDashboard : handleStartOnboarding;
+  const primaryAction =
+    state === "complete" ? handleOpenDashboard : handleStartOnboarding;
   const primaryLabel =
     busy === "link"
       ? "Připravuji onboarding..."

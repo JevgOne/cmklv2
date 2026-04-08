@@ -99,3 +99,39 @@ export function translateRequirementsList(keys: string[]): string[] {
   const translated = keys.map(translateRequirement);
   return Array.from(new Set(translated));
 }
+
+/* ------------------------------------------------------------------ */
+/*  API ↔ shared field contract                                        */
+/*  Jeden source of truth pro `/api/stripe/connect/status` response    */
+/*  shape + mapping na `StripePartnerFields`. Používá se v admin UI    */
+/*  (StripeOnboardingCard) i PWA UI (SupplierStripeCard) — držet tady  */
+/*  eliminuje backend/frontend field drift.                            */
+/* ------------------------------------------------------------------ */
+
+export interface StripeConnectStatusResponse {
+  stripeAccountId: string | null;
+  detailsSubmitted: boolean;
+  payoutsEnabled: boolean;
+  chargesEnabled: boolean;
+  requirementsCurrentlyDue: string[];
+  disabledReason: string | null;
+  startedAt: string | null;
+  completedAt: string | null;
+  updatedAt: string | null;
+}
+
+export function mapStatusResponseToPartnerFields(
+  data: StripeConnectStatusResponse,
+): StripePartnerFields {
+  return {
+    stripeAccountId: data.stripeAccountId,
+    stripeDetailsSubmitted: data.detailsSubmitted,
+    stripePayoutsEnabled: data.payoutsEnabled,
+    stripeChargesEnabled: data.chargesEnabled,
+    stripeRequirementsCurrentlyDue: data.requirementsCurrentlyDue,
+    stripeDisabledReason: data.disabledReason,
+    stripeOnboardingStartedAt: data.startedAt,
+    stripeOnboardingCompletedAt: data.completedAt,
+    stripeAccountUpdatedAt: data.updatedAt,
+  };
+}

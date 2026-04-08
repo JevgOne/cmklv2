@@ -5,8 +5,10 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import {
   deriveOnboardingState,
+  mapStatusResponseToPartnerFields,
   translateRequirementsList,
   type OnboardingState,
+  type StripeConnectStatusResponse,
   type StripePartnerFields,
 } from "@/lib/stripe-connect-shared";
 import { formatRelativeCz } from "@/lib/utils";
@@ -71,28 +73,8 @@ export function StripeOnboardingCard({
       const payload = await res.json().catch(() => ({}));
       throw new Error(payload.error ?? "stripe_error");
     }
-    const data = (await res.json()) as {
-      stripeAccountId: string | null;
-      detailsSubmitted: boolean;
-      payoutsEnabled: boolean;
-      chargesEnabled: boolean;
-      requirementsCurrentlyDue: string[];
-      disabledReason: string | null;
-      startedAt: string | null;
-      completedAt: string | null;
-      updatedAt: string | null;
-    };
-    onRefresh({
-      stripeAccountId: data.stripeAccountId,
-      stripeDetailsSubmitted: data.detailsSubmitted,
-      stripePayoutsEnabled: data.payoutsEnabled,
-      stripeChargesEnabled: data.chargesEnabled,
-      stripeRequirementsCurrentlyDue: data.requirementsCurrentlyDue,
-      stripeDisabledReason: data.disabledReason,
-      stripeOnboardingStartedAt: data.startedAt,
-      stripeOnboardingCompletedAt: data.completedAt,
-      stripeAccountUpdatedAt: data.updatedAt,
-    });
+    const data = (await res.json()) as StripeConnectStatusResponse;
+    onRefresh(mapStatusResponseToPartnerFields(data));
   }
 
   async function handleCopyOnboardingLink() {
