@@ -534,12 +534,79 @@ import { getStripe } from "@/lib/stripe";  // Již importováno (line 3)
 
 ---
 
-**STATUS:** Ready for implementator dispatch (#88a)
-**BLOCKING:** Q1 (Stripe Connect onboarding) — plánovač recommends graceful fallback, eskalovat onboarding jako separátní task pokud chybí
+**STATUS:** Ready for implementator dispatch (#88a) — all open questions resolved (viz §13)
 
 ---
 
-## 13. OUT OF SCOPE (#88a) — detailní literal seznam
+## 13. LEAD DECISIONS (verbatim user authorization 2026-04-08)
+
+Všech 5 otevřených otázek z §7 bylo rozhodnuto team-leadem. Implementator se musí řídit těmito rozhodnutími **doslovně** — žádné odchylky, žádné self-interpretation.
+
+### Q1: Stripe Connect onboarding status
+**Decision:** ACCEPT planovac recommendation (a).
+**Rationale:**
+- Migrace **přidá `Partner.stripeAccountId String?` sloupec** (nullable) — schema gate pro budoucnost
+- Webhook extension používá **graceful fallback**: pokud `partner.stripeAccountId === null`, snapshot fields se zapíšou normálně (audit/reporting funguje), ale **NE Stripe Transfer call** (jen log warning "stripeAccountId missing — fee accumulated, no payout")
+- **Onboarding UI je samostatný task #88a-stripe-onboarding** (Stripe Connect Express flow pro vrakoviště) — POZDĚJI, NE blocker pro #88a
+- #88a může jít do production bez onboarding — Carmakler manuálně vyplácí přes bank transfer + vede `OrderItem.supplierPayout` jako neuhrazený debt → po onboardingu auto-flow
+
+**How to apply:** Implementator přidá `stripeAccountId String?` do Partner model + null-guard v `applyCommissionSplit()` před `stripe.transfers.create()`. Žádný onboarding UI v #88a.
+
+---
+
+### Q2: Reason mandatory pro commission change?
+**Decision:** ACCEPT recommendation YES, min 10 znaků.
+**Rationale:** Audit log bez důvodu je k ničemu. Forced reason donutí admin přemýšlet nad změnou (volume discount? strategic partnership? penalty?) a slouží pro reporting, B2B vztahy a případné spory s vrakovišti. 10 znaků je minimum (vyloučí "ok", "test").
+
+**How to apply:** Zod schema na PATCH `/api/admin/partners/[id]/commission` → `reason: z.string().min(10).max(500)`. UI dialog má required textarea s placeholder ("Důvod změny — např. Volume discount, strategic partnership, post-pilot adjustment...") a disable Save dokud není ≥10 znaků.
+
+---
+
+### Q3: Kdo může editovat commission?
+**Decision:** ACCEPT recommendation **ADMIN + BACKOFFICE only**, NE REGIONAL_DIRECTOR/MANAGER/BROKER.
+**Rationale:**
+- Commission je obchodní rozhodnutí s direct revenue impact → centrální control
+- REGIONAL_DIRECTOR může mít konflikt zájmů (chtěli by snížit pro své vrakoviště → boost trust skóre)
+- BACKOFFICE zahrnuto protože dělají daily ops + accounting reconciliation — potřebují schopnost adjust komise (např. po LEGAL change)
+- V budoucí fázi 2 můžeme přidat REGIONAL_DIRECTOR s narrower range (např. 14-16% capped) — separate task
+
+**How to apply:** Helper `canEditCommission(session)` v API route + UI gate v PartnerDetail (slider visible jen pro povolené role). 403 pro neautorizované role na PATCH endpointu.
+
+---
+
+### Q4: Slider granularity
+**Decision:** ACCEPT recommendation **0.5% step** (12.0 → 12.5 → ... → 20.0 = 17 hodnot).
+**Rationale:** Per Evžen #84 review point §1.Q1 (verbatim). 0.5% step je dost granular pro business deals (např. 14.5% volume discount) ale ne tak fine že admin se zasekne na rozhodování (např. 14.37%). Také čistá UI — slider má 17 distinct positions, vizuálně srozumitelné.
+
+**How to apply:** `<input type="range" min="12" max="20" step="0.5">` + Decimal(4,2) v Prisma. Žádný free-form numeric input.
+
+---
+
+### Q5: Y2D timezone pro fee reporting
+**Decision:** ACCEPT recommendation **CET (Europe/Prague)**.
+**Rationale:** Carmakler je 100% CZ market produkt (žádný cross-border ambitions v MVP). Všichni vrakoviště + admins jsou v CZ. Reporting v CET = no surprises s cutoff times. Také matchuje českou účetní praxi (DPH závěrka, výroční hlášení atd.).
+
+**How to apply:** GET `/api/admin/partners/commissions/summary` používá `Intl.DateTimeFormat('cs-CZ', { timeZone: 'Europe/Prague' })` pro Y2D bucketing. Database queries používají `created_at BETWEEN '2026-01-01 00:00:00 CET' AND NOW()` ekvivalent (TZ-aware).
+
+---
+
+**IMPLEMENTATOR ACTIONS (consolidated):**
+1. Partner model: add `stripeAccountId String?` (nullable) — Q1
+2. Webhook `applyCommissionSplit()`: null-guard před `stripe.transfers.create()` — Q1
+3. Zod PATCH schema: `reason: z.string().min(10).max(500)` — Q2
+4. UI CommissionEditDialog: required textarea, disable Save pokud reason.length < 10 — Q2
+5. Helper `canEditCommission(session)` v API + UI gate: ADMIN + BACKOFFICE only — Q3
+6. 403 response pro ne-authorized roles na PATCH endpointu — Q3
+7. Slider HTML: `<input type="range" min="12" max="20" step="0.5">` — Q4
+8. Prisma: `Decimal(4,2)` pro commissionRate — Q4 (už v §3.1)
+9. Summary endpoint: `Intl.DateTimeFormat('cs-CZ', { timeZone: 'Europe/Prague' })` — Q5
+10. Y2D query: TZ-aware cutoff `'2026-01-01 00:00:00 CET'` ekvivalent — Q5
+
+**NO onboarding UI in #88a.** Pokud STOP-1 trigger (Stripe env chybí) → ponechat jen snapshot fields, žádné `stripe.transfers.create()` call, samostatný task #88a-stripe-onboarding.
+
+---
+
+## 14. OUT OF SCOPE (#88a) — detailní literal seznam
 
 Každá položka patří do #88b nebo #88c nebo jiného separátního tasku. Implementator #88a NESMÍ se jich dotknout, i kdyby v kódu zahlédl místo. Změna vyžaduje nový task od team-leada.
 
@@ -565,11 +632,11 @@ Každá položka patří do #88b nebo #88c nebo jiného separátního tasku. Imp
 **→ Separátní task (TBD):**
 - ❌ Stripe Connect Express onboarding flow pro vrakoviště (získání `stripeAccountId`) — viz §7 Q1, **pokud chybí env setup → blocker pro production commission split, ale #88a scope přidává jen sloupec + graceful webhook fallback**
 
-**Rationale:** Evžen review (#84) rozdělil #76 na fáze #88a/b/c právě proto, aby #88a mohl být malý, čistě Wolt business model (schema + admin UI + payment split) bez komplexity Vision/Voice/PWA. Scope creep = automatický STOP & ESCALATE (viz §14).
+**Rationale:** Evžen review (#84) rozdělil #76 na fáze #88a/b/c právě proto, aby #88a mohl být malý, čistě Wolt business model (schema + admin UI + payment split) bez komplexity Vision/Voice/PWA. Scope creep = automatický STOP & ESCALATE (viz §15).
 
 ---
 
-## 14. STOP & ESCALATE Rules (literal — honor narrow thresholds)
+## 15. STOP & ESCALATE Rules (literal — honor narrow thresholds)
 
 Implementator MUSÍ zastavit práci a escalate team-leadu v těchto případech. Žádné workarounds, žádné self-resolution:
 
@@ -606,7 +673,7 @@ Implementator MUSÍ zastavit práci a escalate team-leadu v těchto případech.
 
 ---
 
-## 15. Dispatch Checklist pro implementátora
+## 16. Dispatch Checklist pro implementátora
 
 Před commit + HOTOVO ověř (zaškrtni všechny):
 
