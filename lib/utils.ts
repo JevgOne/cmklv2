@@ -17,6 +17,28 @@ export function formatMileage(km: number): string {
   return new Intl.NumberFormat("cs-CZ").format(km) + " km";
 }
 
+/**
+ * Formátuje ISO timestamp jako relativní čas v češtině ("před 5 min",
+ * "před 3 h", "před 2 d"). Starší než 30 dní → absolutní datum.
+ */
+export function formatRelativeCz(input: string | Date | null): string {
+  if (!input) return "nikdy";
+  const date = input instanceof Date ? input : new Date(input);
+  const diffMs = Date.now() - date.getTime();
+  const diffMin = Math.round(diffMs / 60_000);
+  if (diffMin < 1) return "právě teď";
+  if (diffMin < 60) return `před ${diffMin} min`;
+  const diffH = Math.round(diffMin / 60);
+  if (diffH < 24) return `před ${diffH} h`;
+  const diffD = Math.round(diffH / 24);
+  if (diffD < 30) return `před ${diffD} d`;
+  return new Intl.DateTimeFormat("cs-CZ", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+}
+
 export function slugify(text: string): string {
   return text
     .normalize("NFD")

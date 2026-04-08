@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { formatRelativeCz } from "@/lib/utils";
 
 interface HistoryEntry {
   id: string;
@@ -17,23 +18,6 @@ interface CommissionHistoryListProps {
 }
 
 const COLLAPSED_LIMIT = 3;
-
-function formatRelative(iso: string): string {
-  const date = new Date(iso);
-  const diffMs = Date.now() - date.getTime();
-  const diffMin = Math.round(diffMs / 60_000);
-  if (diffMin < 1) return "právě teď";
-  if (diffMin < 60) return `před ${diffMin} min`;
-  const diffH = Math.round(diffMin / 60);
-  if (diffH < 24) return `před ${diffH} h`;
-  const diffD = Math.round(diffH / 24);
-  if (diffD < 30) return `před ${diffD} d`;
-  return new Intl.DateTimeFormat("cs-CZ", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(date);
-}
 
 type FetchState =
   | { kind: "loading" }
@@ -120,7 +104,7 @@ export function CommissionHistoryList({
                   {entry.newRate.toFixed(1)} %
                 </div>
                 <div className="text-xs text-gray-500">
-                  {formatRelative(entry.changedAt)}
+                  {formatRelativeCz(entry.changedAt)}
                 </div>
               </div>
               <div className="mt-1 text-gray-700">{entry.reason}</div>

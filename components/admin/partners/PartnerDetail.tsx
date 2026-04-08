@@ -13,8 +13,10 @@ import { Badge } from "@/components/ui/Badge";
 import { PartnerStatusBadge } from "./PartnerStatusBadge";
 import { CommissionEditDialog } from "./CommissionEditDialog";
 import { CommissionHistoryList } from "./CommissionHistoryList";
+import { StripeOnboardingCard } from "./StripeOnboardingCard";
+import type { StripePartnerFields } from "@/lib/stripe-connect-shared";
 
-interface Partner {
+interface Partner extends StripePartnerFields {
   id: string;
   name: string;
   type: string;
@@ -41,7 +43,6 @@ interface Partner {
   _count: { activities: number; leads: number };
   commissionRate: number;
   commissionRateAt: string;
-  stripeAccountId: string | null;
 }
 
 interface Activity {
@@ -451,13 +452,6 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
                 }).format(new Date(partner.commissionRateAt))}
               </span>
             </div>
-            {!partner.stripeAccountId && (
-              <div className="mt-3 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-xs text-amber-700">
-                Stripe Connect účet zatím nepřipojen — výplaty proběhnou
-                manuálně bankovním převodem (snapshot v <code>OrderItem</code>{" "}
-                je autoritativní).
-              </div>
-            )}
             {canEditCommission && (
               <div className="mt-4">
                 <Button
@@ -493,6 +487,14 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
               setCommissionHistoryReloadKey((k) => k + 1);
               setCommissionDialogOpen(false);
             }}
+          />
+
+          <StripeOnboardingCard
+            partner={partner}
+            canEdit={canActivate}
+            onRefresh={(updated) =>
+              setPartner((prev) => (prev ? { ...prev, ...updated } : prev))
+            }
           />
 
           {/* Status + Manager */}
