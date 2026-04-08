@@ -1688,6 +1688,16 @@ model Partner {
   commissionRateAt  DateTime @default(now())
   stripeAccountId   String?
 
+  // Stripe Connect Express onboarding state — mirror account.updated webhooku.
+  stripeOnboardingStartedAt      DateTime?
+  stripeOnboardingCompletedAt    DateTime?
+  stripeDetailsSubmitted         Boolean  @default(false)
+  stripePayoutsEnabled           Boolean  @default(false)
+  stripeChargesEnabled           Boolean  @default(false)
+  stripeRequirementsCurrentlyDue String[] @default([])
+  stripeDisabledReason           String?
+  stripeAccountUpdatedAt         DateTime?
+
   activities      PartnerActivity[]
   leads           PartnerLead[]
   commissionLog   PartnerCommissionLog[]
@@ -1701,6 +1711,8 @@ model Partner {
   @@index([city])
   @@index([region])
   @@index([score])
+  @@index([stripeAccountId])
+  @@index([stripePayoutsEnabled])
 }
 
 model PartnerCommissionLog {

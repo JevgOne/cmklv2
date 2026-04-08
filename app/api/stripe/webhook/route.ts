@@ -1,6 +1,8 @@
+import type Stripe from "stripe";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getStripe, STRIPE_WEBHOOK_SECRET } from "@/lib/stripe";
+import { syncAccountToDb } from "@/lib/stripe-connect";
 import { sendEmail } from "@/lib/resend";
 import { createShipmentForOrder } from "@/lib/shipping/dispatcher";
 import type { CreateShipmentResult } from "@/lib/shipping/types";
@@ -81,6 +83,11 @@ export async function POST(request: NextRequest) {
             });
           }
         }
+        break;
+      }
+
+      case "account.updated": {
+        await handleStripeAccountUpdate(event.data.object as Stripe.Account);
         break;
       }
     }
@@ -417,5 +424,39 @@ async function sendOrderNotificationEmails(
       html: orderNotificationSupplierHtml(supplierData),
       text: orderNotificationSupplierText(supplierData),
     });
+  }
+}
+
+/**
+ * Zpracovává Stripe `account.updated` eventy z Connect Express onboardingu.
+ * Lookuje partnera podle stripeAccountId a sync-uje state do DB přes sdílený
+ * helper. MUSÍ never throw — webhook vrací 200, jinak Stripe retryuje.
+ */
+async function handleStripeAccountUpdate(account: Stripe.Account) {
+  try {
+    const partner = await prisma.partner.findFirst({
+      where: { stripeAccountId: account.id },
+      select: { id: true },
+    });
+
+    if (!partner) {
+      // Account není v našem systému — smazaný Partner záznam, Stripe test
+      // event, nebo account z jiné aplikace. Log + ignore.
+      console.warn(
+        `[webhook] account.updated for unknown Stripe account ${account.id} — ignoring`,
+      );
+      return;
+    }
+
+    await syncAccountToDb(partner.id, account);
+    console.log(
+      `[webhook] Synced Stripe account ${account.id} → partner ${partner.id}: ` +
+        `detailsSubmitted=${account.details_submitted}, payoutsEnabled=${account.payouts_enabled}`,
+    );
+  } catch (error) {
+    console.error(
+      `[webhook] handleStripeAccountUpdate failed for ${account.id}:`,
+      error,
+    );
   }
 }
