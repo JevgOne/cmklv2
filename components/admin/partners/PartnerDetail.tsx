@@ -11,6 +11,8 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Modal } from "@/components/ui/Modal";
 import { Badge } from "@/components/ui/Badge";
 import { PartnerStatusBadge } from "./PartnerStatusBadge";
+import { CommissionEditDialog } from "./CommissionEditDialog";
+import { CommissionHistoryList } from "./CommissionHistoryList";
 
 interface Partner {
   id: string;
@@ -37,6 +39,9 @@ interface Partner {
   manager: { id: string; firstName: string; lastName: string; email: string } | null;
   user: { id: string; email: string; firstName: string; lastName: string; status: string } | null;
   _count: { activities: number; leads: number };
+  commissionRate: number;
+  commissionRateAt: string;
+  stripeAccountId: string | null;
 }
 
 interface Activity {
@@ -81,6 +86,7 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
   const { data: session } = useSession();
   const canActivate =
     session?.user?.role === "ADMIN" || session?.user?.role === "BACKOFFICE";
+  const canEditCommission = canActivate;
   const [partner, setPartner] = useState<Partner | null>(null);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [managers, setManagers] = useState<Manager[]>([]);
@@ -112,6 +118,8 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
   const [rejectionReason, setRejectionReason] = useState("");
   const [showActivateModal, setShowActivateModal] = useState(false);
   const [activateResult, setActivateResult] = useState<{ email: string; temporaryPassword?: string } | null>(null);
+  const [commissionDialogOpen, setCommissionDialogOpen] = useState(false);
+  const [commissionHistoryReloadKey, setCommissionHistoryReloadKey] = useState(0);
 
   useEffect(() => {
     async function load() {
@@ -426,6 +434,66 @@ export function PartnerDetail({ partnerId }: { partnerId: string }) {
               </Button>
             </div>
           </Card>
+
+          <Card className="p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Provize</h3>
+            <div className="flex items-baseline gap-3">
+              <span className="text-3xl font-extrabold text-orange-500 tabular-nums">
+                {partner.commissionRate.toFixed(1)} %
+              </span>
+              <span className="text-xs text-gray-500">
+                Aktualizováno{" "}
+                {new Intl.DateTimeFormat("cs-CZ", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                  timeZone: "Europe/Prague",
+                }).format(new Date(partner.commissionRateAt))}
+              </span>
+            </div>
+            {!partner.stripeAccountId && (
+              <div className="mt-3 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-xs text-amber-700">
+                Stripe Connect účet zatím nepřipojen — výplaty proběhnou
+                manuálně bankovním převodem (snapshot v <code>OrderItem</code>{" "}
+                je autoritativní).
+              </div>
+            )}
+            {canEditCommission && (
+              <div className="mt-4">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => setCommissionDialogOpen(true)}
+                >
+                  Upravit sazbu
+                </Button>
+              </div>
+            )}
+            <CommissionHistoryList
+              partnerId={partner.id}
+              reloadKey={commissionHistoryReloadKey}
+            />
+          </Card>
+
+          <CommissionEditDialog
+            open={commissionDialogOpen}
+            currentRate={partner.commissionRate}
+            partnerId={partner.id}
+            onClose={() => setCommissionDialogOpen(false)}
+            onSaved={(newRate, newRateAt) => {
+              setPartner((prev) =>
+                prev
+                  ? {
+                      ...prev,
+                      commissionRate: newRate,
+                      commissionRateAt: newRateAt,
+                    }
+                  : prev
+              );
+              setCommissionHistoryReloadKey((k) => k + 1);
+              setCommissionDialogOpen(false);
+            }}
+          />
 
           {/* Status + Manager */}
           <Card className="p-6">

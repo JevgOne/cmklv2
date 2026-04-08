@@ -156,7 +156,15 @@ async function handleOrderPayment(orderId: string) {
     data: { paymentStatus: "PAID" },
   });
 
-  // 2) Vytvořit zásilku + odeslat emaily (errors nesmí shodit webhook)
+  // 2) Commission split — snapshot do OrderItem + Stripe Connect transfer.
+  //    Errors nesmí shodit webhook (Stripe by retryoval = duplicate emaily).
+  try {
+    await applyCommissionSplit(orderId);
+  } catch (err) {
+    console.error(`[webhook] applyCommissionSplit failed for order ${orderId}:`, err);
+  }
+
+  // 3) Vytvořit zásilku + odeslat emaily (errors nesmí shodit webhook)
   //    Webhook musí vracet 200, jinak Stripe retryuje donekonečna.
   try {
     const shipment = await createShipmentForOrder(orderId);
@@ -172,6 +180,96 @@ async function handleOrderPayment(orderId: string) {
   } catch (err) {
     // Error v shipment nebo email → pouze log, webhook pokračuje normálně
     console.error(`[webhook] Shipment/email pipeline failed for order ${orderId}:`, err);
+  }
+}
+
+/**
+ * Snapshot komise pro každý OrderItem + best-effort Stripe Connect transfer.
+ * DB snapshot je zdroj pravdy; transfer je graceful fallback (chybějící
+ * stripeAccountId → manuální vyplacení podle snapshotu).
+ */
+async function applyCommissionSplit(orderId: string) {
+  const items = await prisma.orderItem.findMany({
+    where: { orderId },
+    include: {
+      supplier: {
+        include: {
+          partnerAccount: {
+            select: {
+              id: true,
+              name: true,
+              commissionRate: true,
+              stripeAccountId: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (items.length === 0) return;
+
+  // Snapshot updaty jsou nezávislé (každý WHERE by id), takže paralelně.
+  // Replay guard: skip pokud už má snapshot — webhook může být doručen vícekrát.
+  const stripe = getStripe();
+  const splits = items
+    .filter((item) => item.commissionRateApplied === null)
+    .map((item) => {
+      const partner = item.supplier.partnerAccount;
+      // Default 15 % pokud supplier nemá partnerAccount (legacy / non-vrakoviště).
+      const commissionRate = Number(partner?.commissionRate ?? 15);
+      const gross = item.totalPrice;
+      const carmaklerFee = Math.round((gross * commissionRate) / 100);
+      const supplierPayout = gross - carmaklerFee;
+      return { item, partner, commissionRate, carmaklerFee, supplierPayout };
+    });
+
+  await Promise.all(
+    splits.map(({ item, commissionRate, carmaklerFee, supplierPayout }) =>
+      prisma.orderItem.update({
+        where: { id: item.id },
+        data: {
+          commissionRateApplied: commissionRate,
+          carmaklerFee,
+          supplierPayout,
+        },
+      })
+    )
+  );
+
+  // Transfery serializujeme — backpressure proti Stripe rate limitům + jasný
+  // log při per-item failures. idempotencyKey chrání před duplicitou při replay.
+  for (const { item, partner, commissionRate, supplierPayout } of splits) {
+    if (!partner?.stripeAccountId) {
+      console.warn(
+        `[webhook] Partner ${partner?.id ?? "(unknown)"} bez stripeAccountId — ` +
+          `transfer skipped pro OrderItem ${item.id} (manuální vyplacení).`
+      );
+      continue;
+    }
+
+    try {
+      await stripe.transfers.create(
+        {
+          amount: supplierPayout,
+          currency: "czk",
+          destination: partner.stripeAccountId,
+          transfer_group: `order_${orderId}`,
+          metadata: {
+            orderId,
+            orderItemId: item.id,
+            partnerId: partner.id,
+            commissionRate: String(commissionRate),
+          },
+        },
+        { idempotencyKey: `commission_${orderId}_${item.id}` }
+      );
+    } catch (err) {
+      console.error(
+        `[webhook] Stripe transfer failed for OrderItem ${item.id}:`,
+        err
+      );
+    }
   }
 }
 

@@ -117,6 +117,7 @@ model User {
   managedPartners    Partner[]         @relation("PartnerManager")
   partnerAccount     Partner?          @relation("PartnerUser")
   partnerActivities  PartnerActivity[]
+  commissionChanges  PartnerCommissionLog[] @relation("PartnerCommissionChanger")
 
   // Platební systém relace
   confirmedPayments Payment[]      @relation("PaymentConfirmer")
@@ -1070,6 +1071,11 @@ model OrderItem {
   unitPrice  Int
   totalPrice Int
 
+  // Snapshot sazby v době platby — imutabilní i pokud se Partner.commissionRate později změní.
+  commissionRateApplied Decimal? @db.Decimal(4, 2)
+  carmaklerFee          Int?
+  supplierPayout        Int?
+
   status String @default("PENDING") // PENDING, CONFIRMED, SHIPPED
 
   createdAt DateTime @default(now())
@@ -1678,8 +1684,13 @@ model Partner {
   userId          String? @unique
   user            User? @relation("PartnerUser", fields: [userId], references: [id])
 
+  commissionRate    Decimal  @default(15.00) @db.Decimal(4, 2)
+  commissionRateAt  DateTime @default(now())
+  stripeAccountId   String?
+
   activities      PartnerActivity[]
   leads           PartnerLead[]
+  commissionLog   PartnerCommissionLog[]
 
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -1690,6 +1701,20 @@ model Partner {
   @@index([city])
   @@index([region])
   @@index([score])
+}
+
+model PartnerCommissionLog {
+  id           String   @id @default(cuid())
+  partnerId    String
+  partner      Partner  @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+  oldRate      Decimal  @db.Decimal(4, 2)
+  newRate      Decimal  @db.Decimal(4, 2)
+  reason       String
+  changedById  String
+  changedBy    User     @relation("PartnerCommissionChanger", fields: [changedById], references: [id])
+  changedAt    DateTime @default(now())
+
+  @@index([partnerId, changedAt])
 }
 
 model PartnerActivity {

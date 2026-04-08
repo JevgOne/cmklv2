@@ -31,7 +31,11 @@ export async function GET(
       return NextResponse.json({ error: "Partner nenalezen" }, { status: 404 });
     }
 
-    return NextResponse.json(partner);
+    return NextResponse.json({
+      ...partner,
+      commissionRate: Number(partner.commissionRate),
+      commissionRateAt: partner.commissionRateAt.toISOString(),
+    });
   } catch (error) {
     console.error("GET /api/partners/[id] error:", error);
     return NextResponse.json({ error: "Chyba serveru" }, { status: 500 });
