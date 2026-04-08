@@ -38,11 +38,14 @@ Implementuj **commission-based payment split** pro Wolt 1:1 marketplace model v 
 - ✅ Stripe webhook rozšíření (handleOrderPayment)
 - ✅ Audit log pattern (oldRate → newRate s reason + changedBy)
 
-### OUT OF SCOPE (#88a)
-- ❌ Vision OCR scanner (#88b — samostatný task)
-- ❌ PWA dispatch wizard pro vrakoviště (#88c — samostatný task)
-- ❌ 5-tier scan workflow, Part model scanLog fields
-- ❌ Stripe Connect onboarding UI pro vrakoviště (viz §7 Open Questions — pravděpodobně samostatný task pokud ještě neexistuje)
+### OUT OF SCOPE (#88a) — summary, detailní seznam v §13
+- ❌ Vision OCR scanner + ZXing barcode (#88b)
+- ❌ Voice input (#88b)
+- ❌ PWA scan UI + offline queue + 5-tier flow (#88c)
+- ❌ Touch target audit (#88c)
+- ❌ Pilot rollout (#88c+)
+- ❌ Legacy `(partner)/partner/parts/new` cleanup (post-#88c)
+- ❌ Stripe Connect onboarding UI pro vrakoviště (→ §7 Q1, samostatný task)
 
 ---
 
@@ -470,6 +473,7 @@ import { getStripe } from "@/lib/stripe";  // Již importováno (line 3)
 - **AC6.** Pokud Partner.stripeAccountId = null → webhook logne warning, nezhoupne se (order status = PAID, email odejde), snapshot v OrderItem je.
 - **AC7.** `GET /api/admin/reports/commission-summary` vrátí 200 s `totalPartners`, `avgCommissionRate`, `rateDistribution`, `totalRevenueY2D`, `carmaklerFeesY2D`.
 - **AC8.** Audit log je immutable — žádný DELETE/UPDATE endpoint na `PartnerCommissionLog`.
+- **AC9.** Build success — `npm run lint` 0 errors, `npx tsc --noEmit` 0 errors, `npm run build` úspěšný bez warnings na Partner/OrderItem typech.
 
 ---
 
@@ -532,3 +536,102 @@ import { getStripe } from "@/lib/stripe";  // Již importováno (line 3)
 
 **STATUS:** Ready for implementator dispatch (#88a)
 **BLOCKING:** Q1 (Stripe Connect onboarding) — plánovač recommends graceful fallback, eskalovat onboarding jako separátní task pokud chybí
+
+---
+
+## 13. OUT OF SCOPE (#88a) — detailní literal seznam
+
+Každá položka patří do #88b nebo #88c nebo jiného separátního tasku. Implementator #88a NESMÍ se jich dotknout, i kdyby v kódu zahlédl místo. Změna vyžaduje nový task od team-leada.
+
+**→ Patří do #88b (Vision + Voice):**
+- ❌ Vision OCR scanner (Anthropic Claude Vision API call pro rozpoznání štítků / VIN / part number z fotky)
+- ❌ ZXing barcode scanner (JS library pro EAN-13 / QR z kamery)
+- ❌ Voice input (Web Speech API / Whisper pro hlasové zadání popisu dílu)
+- ❌ 5-tier scan flow logic (Tier 1 barcode → Tier 2 vision → Tier 3 voice → Tier 4 manual → Tier 5 AI suggest)
+
+**→ Patří do #88c (PWA dispatch flow):**
+- ❌ PWA scan UI pro vrakoviště (kamera button, scan wizard, result confirmation)
+- ❌ Offline queue (IndexedDB background sync pro scans pokud offline)
+- ❌ 5-tier flow UI integration do `app/(pwa-parts)/...` routes
+- ❌ Touch target audit (44×44pt min pro mobile UI)
+- ❌ Skeleton loading states pro slow 3G PWA testing
+
+**→ Patří do #88c+ nebo post-MVP:**
+- ❌ Pilot phase rollout (3 vrakoviště beta, telemetrie, feedback loop)
+- ❌ Cleanup legacy `(partner)/partner/parts/new` duplicate page (post-#88c migrace)
+- ❌ AI price suggestions (Claude API call pro odhad ceny dílu)
+- ❌ Similar parts matching (ML model na deduplikaci napříč vrakovišti)
+
+**→ Separátní task (TBD):**
+- ❌ Stripe Connect Express onboarding flow pro vrakoviště (získání `stripeAccountId`) — viz §7 Q1, **pokud chybí env setup → blocker pro production commission split, ale #88a scope přidává jen sloupec + graceful webhook fallback**
+
+**Rationale:** Evžen review (#84) rozdělil #76 na fáze #88a/b/c právě proto, aby #88a mohl být malý, čistě Wolt business model (schema + admin UI + payment split) bez komplexity Vision/Voice/PWA. Scope creep = automatický STOP & ESCALATE (viz §14).
+
+---
+
+## 14. STOP & ESCALATE Rules (literal — honor narrow thresholds)
+
+Implementator MUSÍ zastavit práci a escalate team-leadu v těchto případech. Žádné workarounds, žádné self-resolution:
+
+### STOP-1. Stripe Connect env setup chybí
+**Trigger:** `grep STRIPE_SECRET_KEY .env.example` nebo `.env` nevrátí nic pro `STRIPE_CONNECT_*` / platform account proměnné.
+**Action:** STOP před webhook extension (§6). Napiš team-leadu:
+> "STOP-1: Stripe Connect platform account setup chybí v env. Q1 z §7 není rozhodnuto. Varianty: (a) defer `applyCommissionSplit()` transfer call do #88a-followup, ponechat pouze snapshot v OrderItem, (b) blok #88a do env setup, (c) jiné. Čekám rozhodnutí."
+
+**NESPOUŠTĚJ** webhook extension bez rozhodnutí — snapshot fields (§3.3) lze vytvořit nezávisle, ale `stripe.transfers.create()` call ne.
+
+### STOP-2. PartnerDetail.tsx chybí nebo má jinou strukturu
+**Trigger:** `components/admin/partners/PartnerDetail.tsx` neexistuje, nebo řádky 428/431 neobsahují očekávané Cardy ("Údaje partnera" / "Stav a přiřazení").
+**Action:** STOP před §5.1 integration. Napiš team-leadu:
+> "STOP-2: PartnerDetail.tsx má jinou strukturu než plán předpokládal. Očekávané Cards na řádkách 428/431 nenalezeny. Potřebuji nový insertion point nebo audit že plán je stále aktuální."
+
+### STOP-3. Prisma migration drift
+**Trigger:** `npx prisma migrate dev --name add_partner_commission_and_order_split` detekuje drift proti production schéma nebo failuje s `P3006` / `P3018`.
+**Action:** STOP, **NEDĚLEJ** `prisma migrate reset` ani `--create-only` workaround. Napiš team-leadu:
+> "STOP-3: Prisma migration drift. Exit: {code}. Schema diff: {diff}. Čekám rozhodnutí — reset DB nebo manuální migration merge?"
+
+**Rationale:** Per memory `feedback_stop_escalate_literal.md` + historický incident #45a (searchVector drift) — drift se NIKDY neřeší lokálně bez lead decision.
+
+### STOP-4. User.partnerAccount inverse relace neexistuje
+**Trigger:** Čtení `prisma/schema.prisma` User modelu (line 13+) neodhalí `partnerAccount Partner? @relation(...)` field.
+**Action:** STOP před §6 webhook extension (resolution path by nefungoval). Napiš:
+> "STOP-4: User.partnerAccount inverse neexistuje. Plánovač V2 zjištění bylo chybné. Potřebuji plán aktualizovat — buď přidat inverse relaci (in-scope) nebo refaktorovat webhook query."
+
+### STOP-5. Existing OrderItem rows dostaly NULL commission fields — OK
+**Not a STOP — just awareness:** Existující OrderItem rows před migrací budou mít `commissionRateApplied = NULL`, `carmaklerFee = NULL`, `supplierPayout = NULL`. Reporting §4.3 `carmaklerFeesY2D` používá `SUM(carmaklerFee)` — SQL `SUM` ignoruje NULL, takže summary bude podhodnocený pro pre-commission orders. **To je zamýšlené** (pre-commission legacy = 0 fee k reportování). Nepředělávej.
+
+### STOP-6. Scope creep pokušení
+**Trigger:** Implementator vidí v kódu něco z §13 OUT OF SCOPE a chce to "quickly opravit" (např. PWA parts page, legacy `parts/new`, Vision OCR placeholder).
+**Action:** **NE**. STOP. Commit pouze #88a scope. Pokud je bug v legacy kódu blokující → napiš lead a nechť rozhodne o samostatném task.
+
+---
+
+## 15. Dispatch Checklist pro implementátora
+
+Před commit + HOTOVO ověř (zaškrtni všechny):
+
+- [ ] **Pre-flight:** Přečteny V1/V2/V3 v §2, ověřeno `grep stripeAccountId prisma/schema.prisma` (očekáváno 0 matches pro Partner — pokud jsou → zjisti kde a neduplicuj)
+- [ ] **Pre-flight:** Ověřena existence `User.partnerAccount` inverse relace v `prisma/schema.prisma` User modelu (pokud chybí → STOP-4)
+- [ ] **Schema:** Migration pojmenovaná `add_partner_commission_and_order_split`, migrate dev clean (žádný drift — pokud je → STOP-3)
+- [ ] **Schema:** `Partner.commissionRate` default `15.00`, ověř `SELECT COUNT(*) FROM "Partner" WHERE "commissionRate" != 15;` po migraci = 0
+- [ ] **Schema:** `PartnerCommissionLog` compound index `(partnerId, changedAt)` exists
+- [ ] **Schema:** User model má novou inverse relaci `commissionChanges PartnerCommissionLog[] @relation("PartnerCommissionChanger")`
+- [ ] **API:** PATCH endpoint používá Zod `.multipleOf(0.5)` + `.min(12).max(20)` + reason `.min(10).max(500)`
+- [ ] **API:** PATCH vrací 403 pro BROKER role (AC6 z §8 — ověř manual curl s BROKER session)
+- [ ] **API:** Transakce PATCH je atomic (`prisma.$transaction([...])` — log insert + Partner update buď oba nebo žádný)
+- [ ] **UI:** `canEditCommission` gating nesahá REGIONAL_DIRECTOR (Q3 recommendation)
+- [ ] **UI:** CommissionEditDialog client validace nepustí submit pokud `newRate === currentRate`
+- [ ] **UI:** CommissionHistoryList default zobrazí 3, collapse "Zobrazit všech {n}"
+- [ ] **UI:** Nový Card "Provize" je vložen mezi `</Card>` (řádek 428) a `<Card>` "Stav a přiřazení" (řádek 431) — NEpřesouvat existující Cardy
+- [ ] **Webhook:** `applyCommissionSplit()` je volán PO `prisma.order.update({ paymentStatus: "PAID" })` a PŘED `createShipmentForOrder()`
+- [ ] **Webhook:** Try-catch kolem `stripe.transfers.create()` — webhook NESMÍ shodit pokud transfer failne (Stripe retry loop = duplicate emaily)
+- [ ] **Webhook:** Pokud `partner?.stripeAccountId == null` → `console.warn` + skip transfer, ALE stále zapiš snapshot (AC6)
+- [ ] **Webhook:** Manuální smoke test s Stripe test mode — vytvoř paid order, ověř že OrderItem dostane 3 nová pole
+- [ ] **Audit log:** Žádný DELETE nebo UPDATE endpoint na PartnerCommissionLog — pouze POST/GET (AC8)
+- [ ] **OUT OF SCOPE:** NENÍ v commit žádný kód z §13 (Vision, Voice, PWA, 5-tier, legacy cleanup, Stripe Connect onboarding UI)
+- [ ] **Lint/TSC/Build:** `npm run lint` 0 errors, `npx tsc --noEmit` 0 errors, `npm run build` úspěšný (AC9)
+- [ ] **Commit message:** conventional commit `feat(admin): #88a Wolt commission model (Partner + audit log + split webhook)`
+
+**Pokud KTERÝKOLI checkbox selže → STOP & ESCALATE, NE commit.**
+
+---
