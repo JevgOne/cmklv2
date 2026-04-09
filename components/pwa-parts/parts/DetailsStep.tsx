@@ -13,6 +13,7 @@ export interface PartDetails {
   conditionNote: string;
   description: string;
   oemNumber: string;
+  manufacturer: string;
   sourceVin: string;
   compatibility: CompatibilityEntry[];
 }
@@ -164,6 +165,14 @@ export function DetailsStep({
         value={details.oemNumber}
         onChange={(e) => update("oemNumber", e.target.value)}
         placeholder="např. 5E4 831 051"
+      />
+
+      <Input
+        label="Výrobce dílu (nepovinné)"
+        value={details.manufacturer}
+        onChange={(e) => update("manufacturer", e.target.value)}
+        placeholder="např. TRW, Bosch, LUK"
+        maxLength={100}
       />
 
       {/* Navigation */}

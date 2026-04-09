@@ -14,6 +14,7 @@ export interface PricingData {
   price: string;
   vatIncluded: boolean;
   quantity: string;
+  warranty: string;
   deliveryOptions: string[];
 }
 
@@ -128,6 +129,14 @@ export function PricingStep({
         value={pricing.quantity}
         onChange={(e) => update("quantity", e.target.value)}
         placeholder="1"
+      />
+
+      <Input
+        label="Záruka (nepovinné)"
+        value={pricing.warranty}
+        onChange={(e) => update("warranty", e.target.value)}
+        placeholder="např. 24 měsíců, zákonná, doživotní"
+        maxLength={50}
       />
 
       {/* Delivery */}

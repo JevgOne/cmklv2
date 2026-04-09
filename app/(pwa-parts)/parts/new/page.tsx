@@ -22,6 +22,7 @@ export default function NewPartPage() {
     conditionNote: "",
     description: "",
     oemNumber: "",
+    manufacturer: "",
     sourceVin: "",
     compatibility: [{ brand: "", model: "", yearFrom: "", yearTo: "" }],
   });
@@ -29,6 +30,7 @@ export default function NewPartPage() {
     price: "",
     vatIncluded: true,
     quantity: "1",
+    warranty: "",
     deliveryOptions: ["PICKUP"],
   });
 
@@ -42,6 +44,8 @@ export default function NewPartPage() {
         condition: details.condition,
         description: details.description || undefined,
         oemNumber: details.oemNumber || undefined,
+        manufacturer: details.manufacturer || undefined,
+        warranty: pricing.warranty || undefined,
         price: parseInt(pricing.price),
         vatIncluded: pricing.vatIncluded,
         stock: parseInt(pricing.quantity) || 1,
