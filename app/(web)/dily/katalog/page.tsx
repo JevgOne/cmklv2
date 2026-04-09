@@ -88,6 +88,7 @@ export default function DilyKatalogPage() {
   const [activeTab, setActiveTab] = useState(searchParams.get("category") || "vse");
   const [brand, setBrand] = useState("");
   const [partType, setPartType] = useState("");
+  const [manufacturer, setManufacturer] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [inStock, setInStock] = useState(false);
@@ -106,6 +107,7 @@ export default function DilyKatalogPage() {
     if (activeTab !== "vse") params.set("category", activeTab);
     if (brand) params.set("brand", brand);
     if (partType) params.set("partType", partType);
+    if (manufacturer) params.set("manufacturer", manufacturer);
     if (minPrice) params.set("minPrice", minPrice);
     if (maxPrice) params.set("maxPrice", maxPrice);
     if (inStock) params.set("inStock", "true");
@@ -124,7 +126,7 @@ export default function DilyKatalogPage() {
     } finally {
       setLoading(false);
     }
-  }, [activeTab, brand, partType, minPrice, maxPrice, inStock, sort, page]);
+  }, [activeTab, brand, partType, manufacturer, minPrice, maxPrice, inStock, sort, page]);
 
   useEffect(() => {
     fetchParts();
@@ -163,7 +165,7 @@ export default function DilyKatalogPage() {
 
         {/* Filter bar */}
         <div className="bg-white rounded-xl p-4 sm:p-5 md:p-6 shadow-sm mb-6 sm:mb-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4 items-end">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3 sm:gap-4 items-end">
             <Select
               label="Značka vozu"
               placeholder="Všechny značky"
@@ -177,6 +179,12 @@ export default function DilyKatalogPage() {
               options={partTypeOptions}
               value={partType}
               onChange={(e) => { setPartType(e.target.value); setPage(1); }}
+            />
+            <Input
+              label="Výrobce"
+              placeholder="TRW, Bosch..."
+              value={manufacturer}
+              onChange={(e) => { setManufacturer(e.target.value); setPage(1); }}
             />
             <div className="grid grid-cols-2 gap-2">
               <Input

@@ -232,6 +232,27 @@ export default async function DilyDetailPage({
               </div>
             )}
 
+            {(part.manufacturer || part.warranty) && (
+              <div className="mb-6 p-4 bg-gray-100 rounded-xl space-y-2">
+                {part.manufacturer && (
+                  <div className="flex justify-between text-sm">
+                    <span className="font-bold text-gray-700 uppercase tracking-wide">
+                      Výrobce
+                    </span>
+                    <span className="text-gray-900">{part.manufacturer}</span>
+                  </div>
+                )}
+                {part.warranty && (
+                  <div className="flex justify-between text-sm">
+                    <span className="font-bold text-gray-700 uppercase tracking-wide">
+                      Záruka
+                    </span>
+                    <span className="text-gray-900">{part.warranty}</span>
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="mb-6 p-4 bg-gray-100 rounded-xl">
               <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">
                 Dodavatel
