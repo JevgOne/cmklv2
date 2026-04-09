@@ -1754,6 +1754,97 @@ async function main() {
     },
   });
 
+  console.log("Seeding wholesale supplier (TASK-020 #182)...");
+
+  const wholesale1 = await prisma.user.create({
+    data: {
+      email: "velkoobchod@carmakler.cz",
+      passwordHash,
+      firstName: "Tomáš",
+      lastName: "Kelly",
+      phone: "+420555666777",
+      role: "WHOLESALE_SUPPLIER",
+      status: "ACTIVE",
+      companyName: "Auto Kelly Test s.r.o.",
+      ico: "11223344",
+      icoVerified: true,
+      cities: JSON.stringify(["Praha 4"]),
+      bio: "Velkoobchod s aftermarket a OEM díly. Skladem TRW, Bosch, LUK, Sachs a další top značky.",
+    },
+  });
+
+  await prisma.part.create({
+    data: {
+      slug: "trw-brzdove-desticky-octavia-iii",
+      supplierId: wholesale1.id,
+      name: "Brzdové destičky přední TRW",
+      category: "BRAKES",
+      description: "Originální aftermarket brzdové destičky TRW pro Škoda Octavia III a Volkswagen Golf VII. Vysoká kvalita, certifikace ECE R90.",
+      partNumber: "GDB1955",
+      manufacturer: "TRW",
+      warranty: "24 měsíců",
+      partType: "AFTERMARKET",
+      condition: "NEW",
+      price: 1290,
+      stock: 24,
+      weight: 1.4,
+      compatibleBrands: JSON.stringify(["Škoda", "Volkswagen"]),
+      compatibleModels: JSON.stringify(["Octavia", "Golf"]),
+      compatibleYearFrom: 2013,
+      compatibleYearTo: 2020,
+      status: "ACTIVE",
+      viewCount: 42,
+    },
+  });
+
+  await prisma.part.create({
+    data: {
+      slug: "bosch-alternator-passat-b8",
+      supplierId: wholesale1.id,
+      name: "Alternátor Bosch 140A",
+      category: "ELECTRICAL",
+      description: "Nový alternátor Bosch 140A pro Volkswagen Passat B8 a Škoda Superb III s motory 2.0 TDI. OE kvalita.",
+      partNumber: "0125711018",
+      manufacturer: "Bosch",
+      warranty: "zákonná",
+      partType: "NEW",
+      condition: "NEW",
+      price: 8990,
+      stock: 6,
+      weight: 5.8,
+      compatibleBrands: JSON.stringify(["Volkswagen", "Škoda"]),
+      compatibleModels: JSON.stringify(["Passat", "Superb"]),
+      compatibleYearFrom: 2014,
+      compatibleYearTo: 2023,
+      status: "ACTIVE",
+      viewCount: 18,
+    },
+  });
+
+  await prisma.part.create({
+    data: {
+      slug: "sachs-tlumic-zadni-octavia",
+      supplierId: wholesale1.id,
+      name: "Tlumič pérování zadní Sachs",
+      category: "SUSPENSION",
+      description: "Plynokapalinový tlumič Sachs pro zadní nápravu Škoda Octavia III combi. Originální OE díl pro výrobce.",
+      partNumber: "315 877",
+      manufacturer: "Sachs",
+      warranty: "24 měsíců",
+      partType: "AFTERMARKET",
+      condition: "NEW",
+      price: 1850,
+      stock: 12,
+      weight: 2.1,
+      compatibleBrands: JSON.stringify(["Škoda"]),
+      compatibleModels: JSON.stringify(["Octavia"]),
+      compatibleYearFrom: 2013,
+      compatibleYearTo: 2020,
+      status: "ACTIVE",
+      viewCount: 9,
+    },
+  });
+
   console.log("Seeding orders...");
 
   const order1 = await prisma.order.create({
@@ -2742,6 +2833,7 @@ async function main() {
   console.log("Advertiser login: prodejce@email.cz / heslo123");
   console.log("Buyer login: kupujici@email.cz / heslo123");
   console.log("Supplier login: dodavatel@vrakoviste.cz / heslo123");
+  console.log("Wholesale login: velkoobchod@carmakler.cz / heslo123");
   console.log("Dealer login: dealer1@carmakler.cz / heslo123");
   console.log("Investor login: investor1@carmakler.cz / heslo123");
   console.log("Onboarding broker: onboarding@carmakler.cz / heslo123");
