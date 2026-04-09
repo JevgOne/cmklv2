@@ -902,7 +902,7 @@ model Part {
   partNumber  String?
   oemNumber   String?
 
-  // Výrobce a záruka (rozšíření pro aftermarket a nové díly, TASK-020 #182)
+  // Výrobce a záruka (pro aftermarket a nové díly)
   manufacturer String? // Např. "TRW", "Bosch", "LUK"
   warranty     String? // Např. "24 měsíců", "zákonná", "doživotní"
 

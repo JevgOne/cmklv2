@@ -1754,7 +1754,7 @@ async function main() {
     },
   });
 
-  console.log("Seeding wholesale supplier (TASK-020 #182)...");
+  console.log("Seeding wholesale supplier...");
 
   const wholesale1 = await prisma.user.create({
     data: {
