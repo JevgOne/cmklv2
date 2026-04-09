@@ -17,8 +17,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
     }
 
-    // Role check: PARTS_SUPPLIER, PARTNER_VRAKOVISTE, ADMIN, BACKOFFICE
-    const allowedRoles = ["PARTS_SUPPLIER", "PARTNER_VRAKOVISTE", "ADMIN", "BACKOFFICE"];
+    // Role check: PARTS_SUPPLIER, WHOLESALE_SUPPLIER, PARTNER_VRAKOVISTE, ADMIN, BACKOFFICE
+    const allowedRoles = ["PARTS_SUPPLIER", "WHOLESALE_SUPPLIER", "PARTNER_VRAKOVISTE", "ADMIN", "BACKOFFICE"];
     if (!allowedRoles.includes(session.user.role)) {
       return NextResponse.json({ error: "Nemáte oprávnění" }, { status: 403 });
     }
@@ -40,6 +40,8 @@ export async function POST(request: NextRequest) {
         description: data.description ?? null,
         partNumber: data.partNumber ?? null,
         oemNumber: data.oemNumber ?? null,
+        manufacturer: data.manufacturer ?? null,
+        warranty: data.warranty ?? null,
         condition: data.condition,
         price: data.price,
         currency: data.currency ?? "CZK",
@@ -100,6 +102,9 @@ export async function GET(request: NextRequest) {
     if (filters.model) {
       where.compatibleModels = { contains: filters.model };
     }
+    if (filters.manufacturer) {
+      where.manufacturer = { contains: filters.manufacturer, mode: "insensitive" as const };
+    }
 
     if (filters.year) {
       where.AND = [
@@ -126,6 +131,7 @@ export async function GET(request: NextRequest) {
         { description: { contains: filters.search, mode: "insensitive" as const } },
         { oemNumber: { contains: filters.search, mode: "insensitive" as const } },
         { partNumber: { contains: filters.search, mode: "insensitive" as const } },
+        { manufacturer: { contains: filters.search, mode: "insensitive" as const } },
       ];
     }
 

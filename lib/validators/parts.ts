@@ -15,6 +15,8 @@ export const createPartSchema = z.object({
   description: z.string().optional(),
   partNumber: z.string().optional(),
   oemNumber: z.string().optional(),
+  manufacturer: z.string().max(100, "Výrobce: max 100 znaků").optional(),
+  warranty: z.string().max(50, "Záruka: max 50 znaků").optional(),
   condition: z.enum(partConditions),
   price: z.number().int().min(1, "Cena musí být alespoň 1 Kč"),
   currency: z.string().default("CZK"),
@@ -46,6 +48,7 @@ export const partFilterSchema = z.object({
   partType: z.string().optional(), // USED, NEW, AFTERMARKET
   brand: z.string().optional(),
   model: z.string().optional(),
+  manufacturer: z.string().optional(),
   year: z.coerce.number().int().optional(),
   minPrice: z.coerce.number().int().optional(),
   maxPrice: z.coerce.number().int().optional(),

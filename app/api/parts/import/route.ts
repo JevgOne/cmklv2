@@ -24,6 +24,8 @@ interface CsvRow {
   description?: string;
   oemNumber?: string;
   partNumber?: string;
+  manufacturer?: string;
+  warranty?: string;
   compatibleBrands?: string;
   compatibleModels?: string;
   compatibleYearFrom?: string;
@@ -56,7 +58,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
     }
 
-    const allowedRoles = ["PARTS_SUPPLIER", "PARTNER_VRAKOVISTE", "ADMIN", "BACKOFFICE"];
+    const allowedRoles = ["PARTS_SUPPLIER", "WHOLESALE_SUPPLIER", "PARTNER_VRAKOVISTE", "ADMIN", "BACKOFFICE"];
     if (!allowedRoles.includes(session.user.role)) {
       return NextResponse.json({ error: "Nemáte oprávnění" }, { status: 403 });
     }
@@ -99,6 +101,8 @@ export async function POST(request: NextRequest) {
         description: values[headers.indexOf("description")] ?? undefined,
         oemNumber: values[headers.indexOf("oemnumber")] ?? undefined,
         partNumber: values[headers.indexOf("partnumber")] ?? undefined,
+        manufacturer: values[headers.indexOf("manufacturer")] ?? undefined,
+        warranty: values[headers.indexOf("warranty")] ?? undefined,
         compatibleBrands: values[headers.indexOf("compatiblebrands")] ?? undefined,
         compatibleModels: values[headers.indexOf("compatiblemodels")] ?? undefined,
         compatibleYearFrom: values[headers.indexOf("compatibleyearfrom")] ?? undefined,
@@ -144,6 +148,8 @@ export async function POST(request: NextRequest) {
             description: row.description || null,
             oemNumber: row.oemNumber || null,
             partNumber: row.partNumber || null,
+            manufacturer: row.manufacturer || null,
+            warranty: row.warranty || null,
             compatibleBrands: row.compatibleBrands ? JSON.stringify(row.compatibleBrands.split(";")) : null,
             compatibleModels: row.compatibleModels ? JSON.stringify(row.compatibleModels.split(";")) : null,
             compatibleYearFrom: row.compatibleYearFrom ? parseInt(row.compatibleYearFrom, 10) || null : null,
