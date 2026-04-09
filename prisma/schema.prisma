@@ -18,7 +18,7 @@ model User {
   firstName    String
   lastName     String
   avatar       String?
-  role         String  @default("BROKER") // ADMIN, BACKOFFICE, REGIONAL_DIRECTOR, MANAGER, BROKER, ADVERTISER, BUYER, PARTS_SUPPLIER, INVESTOR, VERIFIED_DEALER, PARTNER_BAZAR, PARTNER_VRAKOVISTE
+  role         String  @default("BROKER") // ADMIN, BACKOFFICE, REGIONAL_DIRECTOR, MANAGER, BROKER, ADVERTISER, BUYER, PARTS_SUPPLIER, WHOLESALE_SUPPLIER, INVESTOR, VERIFIED_DEALER, PARTNER_BAZAR, PARTNER_VRAKOVISTE
   status       String  @default("PENDING") // PENDING, ONBOARDING, ACTIVE, SUSPENDED, INACTIVE
 
   // Hierarchie
@@ -902,6 +902,10 @@ model Part {
   partNumber  String?
   oemNumber   String?
 
+  // Výrobce a záruka (rozšíření pro aftermarket a nové díly, TASK-020 #182)
+  manufacturer String? // Např. "TRW", "Bosch", "LUK"
+  warranty     String? // Např. "24 měsíců", "zákonná", "doživotní"
+
   // Typ dílu
   partType String @default("USED") // USED, NEW, AFTERMARKET
 
@@ -951,6 +955,7 @@ model Part {
   @@index([partType])
   @@index([feedConfigId])
   @@index([externalId])
+  @@index([manufacturer])
 }
 
 model PartImage {
