@@ -74,6 +74,9 @@ export default function LoginPage() {
         case "PARTS_SUPPLIER":
           router.push("/parts/my");
           break;
+        case "WHOLESALE_SUPPLIER":
+          router.push("/parts/my");
+          break;
         case "INVESTOR":
           router.push("/marketplace/investor");
           break;
