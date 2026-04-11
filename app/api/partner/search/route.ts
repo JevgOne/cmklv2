@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-const PARTNER_ROLES = ["PARTNER_BAZAR", "PARTNER_VRAKOVISTE"];
+const PARTNER_ROLES = ["PARTNER_BAZAR", "PARTNER_VRAKOVISTE", "PARTS_SUPPLIER", "WHOLESALE_SUPPLIER"];
 
 export async function GET(request: NextRequest) {
   try {
@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
 
       return NextResponse.json({ vehicles, leads });
     } else {
-      // PARTNER_VRAKOVISTE
+      // PARTNER_VRAKOVISTE / PARTS_SUPPLIER / WHOLESALE_SUPPLIER
       const [parts, orders] = await Promise.all([
         prisma.part.findMany({
           where: {
