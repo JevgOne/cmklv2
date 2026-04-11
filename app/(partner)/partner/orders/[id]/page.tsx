@@ -56,6 +56,25 @@ export default function PartnerOrderDetailPage() {
   const [trackingInput, setTrackingInput] = useState("");
   const [showTrackingInput, setShowTrackingInput] = useState(false);
 
+  const downloadPdf = async (type: "delivery" | "confirmation") => {
+    try {
+      const res = await fetch(`/api/partner/orders/${id}/pdf?type=${type}`, {
+        method: "POST",
+      });
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${type === "delivery" ? "dodaci-list" : "potvrzeni"}-${order?.orderNumber || id}.pdf`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    } catch {
+      // silent fail
+    }
+  };
+
   const fetchOrder = useCallback(async () => {
     try {
       const res = await fetch(`/api/orders/${id}`);
@@ -205,6 +224,26 @@ export default function PartnerOrderDetailPage() {
         <div className="text-xs text-gray-400 mt-2">
           Platba: {order.paymentMethod} ({order.paymentStatus})
         </div>
+      </div>
+
+      {/* PDF download buttons */}
+      <div className="flex gap-3">
+        <Button
+          variant="secondary"
+          size="sm"
+          className="flex-1"
+          onClick={() => downloadPdf("delivery")}
+        >
+          Dodaci list
+        </Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          className="flex-1"
+          onClick={() => downloadPdf("confirmation")}
+        >
+          Potvrzeni objednavky
+        </Button>
       </div>
 
       {/* Status actions */}
