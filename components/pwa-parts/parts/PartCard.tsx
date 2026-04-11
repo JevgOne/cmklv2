@@ -27,7 +27,7 @@ export const PartCard = memo(function PartCard({ id, name, category, price, stat
   const cfg = statusConfig[status];
 
   return (
-    <Link href={`/parts/my`} className="block no-underline">
+    <Link href={`/parts/${id}`} className="block no-underline">
       <Card className="p-3 active:scale-[0.98] transition-transform">
         <div className="flex gap-3">
           {/* Image */}
