@@ -333,6 +333,11 @@ export async function middleware(request: NextRequest) {
     if (!PARTNER_ROLES.includes(token.role as string)) {
       return NextResponse.redirect(new URL("/", request.url));
     }
+
+    // Partner v ONBOARDING stavu → přesměrovat na onboarding (kromě /partner/onboarding)
+    if (token.status === "ONBOARDING" && !pathname.startsWith("/partner/onboarding")) {
+      return NextResponse.redirect(new URL("/partner/onboarding", request.url));
+    }
   }
 
   // Chráněné routy inzertní platformy (moje-inzeraty, muj-ucet, moje-objednavky)
