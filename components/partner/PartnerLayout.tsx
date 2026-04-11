@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
+import { PartnerBottomNav } from "@/components/partner/PartnerBottomNav";
 
 interface NavItem {
   href: string;
@@ -118,26 +119,27 @@ export function PartnerLayout({ children }: { children: React.ReactNode }) {
 
       {/* Main content */}
       <div className="lg:ml-[260px]">
-        {/* Mobile header */}
-        <header className="lg:hidden sticky top-0 bg-white border-b border-gray-200 px-4 py-3 z-50">
-          <div className="flex items-center justify-between">
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 cursor-pointer bg-transparent border-none text-xl"
-            >
-              ☰
-            </button>
+        {/* Mobile top bar */}
+        <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-4 py-3">
+          <div className="flex items-center justify-center">
             <img
               src="/brand/logo-dark.png"
               alt="CarMakler"
               className="h-7"
             />
-            <div className="w-10" />
+            <span className="ml-2 text-[10px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full">
+              PARTNER
+            </span>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="p-4 sm:p-6 lg:p-8 max-w-7xl">{children}</main>
+        <main className="p-4 sm:p-6 lg:p-8 max-w-7xl pt-[calc(56px+16px)] lg:pt-4 pb-24 lg:pb-8">{children}</main>
+      </div>
+
+      {/* Mobile bottom nav */}
+      <div className="lg:hidden">
+        <PartnerBottomNav />
       </div>
     </div>
   );
