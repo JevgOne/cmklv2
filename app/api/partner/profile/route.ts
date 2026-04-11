@@ -63,6 +63,7 @@ export async function PUT(request: NextRequest) {
         email: body.email ?? partner.email,
         web: body.web ?? partner.web,
         address: body.address ?? partner.address,
+        openingHours: body.openingHours !== undefined ? body.openingHours : partner.openingHours,
       },
     });
 

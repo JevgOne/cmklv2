@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
+import { OpeningHoursEditor } from "@/components/partner/OpeningHoursEditor";
 
 export default function PartnerProfilePage() {
   const { data: session } = useSession();
@@ -19,6 +20,7 @@ export default function PartnerProfilePage() {
     email: "",
     web: "",
     address: "",
+    openingHours: null as string | null,
   });
 
   useEffect(() => {
@@ -34,6 +36,7 @@ export default function PartnerProfilePage() {
             email: data.email || "",
             web: data.web || "",
             address: data.address || "",
+            openingHours: data.openingHours || null,
           });
         }
       } catch (err) {
@@ -122,11 +125,12 @@ export default function PartnerProfilePage() {
 
       <Card className="p-6">
         <h3 className="text-lg font-bold text-gray-900 mb-4">
-          Oteviraci doba
+          Otevírací doba
         </h3>
-        <p className="text-sm text-gray-500">
-          Editor oteviraci doby bude brzy k dispozici.
-        </p>
+        <OpeningHoursEditor
+          value={form.openingHours}
+          onChange={(json) => setForm(p => ({ ...p, openingHours: json }))}
+        />
       </Card>
     </div>
   );
