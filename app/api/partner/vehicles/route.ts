@@ -98,6 +98,18 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Create vehicle images if provided
+    if (body.images?.length) {
+      await prisma.vehicleImage.createMany({
+        data: body.images.map((img: { url: string }, i: number) => ({
+          vehicleId: vehicle.id,
+          url: img.url,
+          order: i,
+          isPrimary: i === 0,
+        })),
+      });
+    }
+
     return NextResponse.json(vehicle, { status: 201 });
   } catch (error) {
     console.error("POST /api/partner/vehicles error:", error);

@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { formatPrice, formatMileage } from "@/lib/utils";
+import { PhotoUpload } from "@/components/partner/PhotoUpload";
 
 interface VehicleDetail {
   id: string;
@@ -65,6 +66,7 @@ export default function PartnerVehicleDetailPage() {
   const [editMileage, setEditMileage] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [editCity, setEditCity] = useState("");
+  const [editPhotos, setEditPhotos] = useState<string[]>([]);
 
   const fetchVehicle = useCallback(async () => {
     try {
@@ -90,6 +92,7 @@ export default function PartnerVehicleDetailPage() {
     setEditMileage(String(vehicle.mileage));
     setEditDescription(vehicle.description || "");
     setEditCity(vehicle.city || "");
+    setEditPhotos(vehicle.images.sort((a, b) => a.order - b.order).map((img) => img.url));
     setEditing(true);
     setError(null);
   };
@@ -107,6 +110,7 @@ export default function PartnerVehicleDetailPage() {
           mileage: parseInt(editMileage) || vehicle.mileage,
           description: editDescription || undefined,
           city: editCity || undefined,
+          images: editPhotos.map((url, i) => ({ url, order: i, isPrimary: i === 0 })),
         }),
       });
       if (res.ok) {
@@ -211,6 +215,7 @@ export default function PartnerVehicleDetailPage() {
           <h2 className="text-lg font-bold text-gray-900">
             Upravit: {vehicle.brand} {vehicle.model} ({vehicle.year})
           </h2>
+          <PhotoUpload photos={editPhotos} onChange={setEditPhotos} max={10} />
           <Input
             label="Cena (Kč)"
             type="number"

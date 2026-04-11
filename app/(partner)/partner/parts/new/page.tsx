@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
+import { PhotoUpload } from "@/components/partner/PhotoUpload";
 
 const categoryOptions = [
   { value: "ENGINE", label: "Motor" },
@@ -34,6 +35,7 @@ export default function NewPartPage() {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [photos, setPhotos] = useState<string[]>([]);
   const [form, setForm] = useState({
     name: "",
     category: "",
@@ -67,6 +69,7 @@ export default function NewPartPage() {
           oemNumber: form.oemNumber || undefined,
           brand: form.brand || undefined,
           model: form.model || undefined,
+          images: photos.map((url, i) => ({ url, order: i, isPrimary: i === 0 })),
         }),
       });
 
@@ -96,6 +99,9 @@ export default function NewPartPage() {
               {error}
             </div>
           )}
+
+          <PhotoUpload photos={photos} onChange={setPhotos} max={10} />
+
           <Input
             label="Nazev dilu *"
             value={form.name}

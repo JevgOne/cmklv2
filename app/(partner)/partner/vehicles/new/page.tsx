@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
+import { PhotoUpload } from "@/components/partner/PhotoUpload";
 
 const brandOptions = [
   { value: "Škoda", label: "Škoda" },
@@ -42,6 +43,7 @@ export default function NewVehiclePage() {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [photos, setPhotos] = useState<string[]>([]);
   const [form, setForm] = useState({
     brand: "",
     model: "",
@@ -79,6 +81,7 @@ export default function NewVehiclePage() {
           description: form.description || undefined,
           vin: form.vin || undefined,
           city: form.city || undefined,
+          images: photos.map((url, i) => ({ url, order: i, isPrimary: i === 0 })),
         }),
       });
 
@@ -108,6 +111,8 @@ export default function NewVehiclePage() {
               {error}
             </div>
           )}
+
+          <PhotoUpload photos={photos} onChange={setPhotos} max={10} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Select
               label="Znacka *"

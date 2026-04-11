@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { DeletePartDialog } from "@/components/pwa-parts/parts/DeletePartDialog";
+import { PhotoUpload } from "@/components/partner/PhotoUpload";
 import { formatPrice } from "@/lib/utils";
 
 interface PartDetail {
@@ -66,6 +67,7 @@ export default function PartnerPartDetailPage() {
   const [editPrice, setEditPrice] = useState("");
   const [editStock, setEditStock] = useState("");
   const [editDescription, setEditDescription] = useState("");
+  const [editPhotos, setEditPhotos] = useState<string[]>([]);
 
   const fetchPart = useCallback(async () => {
     try {
@@ -91,6 +93,7 @@ export default function PartnerPartDetailPage() {
     setEditPrice(String(part.price));
     setEditStock(String(part.stock));
     setEditDescription(part.description || "");
+    setEditPhotos(part.images.sort((a, b) => a.order - b.order).map((img) => img.url));
     setEditing(true);
     setError(null);
   };
@@ -111,6 +114,7 @@ export default function PartnerPartDetailPage() {
           vatIncluded: part.vatIncluded,
           stock: parseInt(editStock) || part.stock,
           description: editDescription || undefined,
+          images: editPhotos.map((url, i) => ({ url, order: i, isPrimary: i === 0 })),
         }),
       });
       if (res.ok) {
@@ -190,6 +194,7 @@ export default function PartnerPartDetailPage() {
       {editing ? (
         <div className="space-y-4">
           <h2 className="text-lg font-bold text-gray-900">Upravit díl</h2>
+          <PhotoUpload photos={editPhotos} onChange={setEditPhotos} max={10} />
           <Input label="Název" value={editName} onChange={(e) => setEditName(e.target.value)} />
           <Input label="Cena (Kč)" type="number" value={editPrice} onChange={(e) => setEditPrice(e.target.value)} />
           <Input label="Skladem (ks)" type="number" value={editStock} onChange={(e) => setEditStock(e.target.value)} />
