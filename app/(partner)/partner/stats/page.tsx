@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { Card } from "@/components/ui/Card";
 import { StatCard } from "@/components/ui/StatCard";
+import { RevenueChart } from "@/components/ui/charts/RevenueChart";
+import { OrdersChart } from "@/components/ui/charts/OrdersChart";
 
 interface StatsData {
   type: string;
@@ -21,6 +23,16 @@ export default function PartnerStatsPage() {
   const [stats, setStats] = useState<StatsData | null>(null);
   const [loading, setLoading] = useState(true);
 
+  interface ChartMonth {
+    label: string;
+    month: string;
+    count: number;
+    revenue: number;
+    leads?: number;
+  }
+  const [chartData, setChartData] = useState<ChartMonth[]>([]);
+  const [chartLoading, setChartLoading] = useState(true);
+
   useEffect(() => {
     async function load() {
       try {
@@ -33,6 +45,20 @@ export default function PartnerStatsPage() {
       }
     }
     load();
+  }, []);
+
+  useEffect(() => {
+    async function loadCharts() {
+      try {
+        const res = await fetch("/api/partner/stats/charts?months=6");
+        if (res.ok) {
+          const data = await res.json();
+          setChartData(data.months || []);
+        }
+      } catch { /* silent */ }
+      finally { setChartLoading(false); }
+    }
+    loadCharts();
   }, []);
 
   if (loading) {
@@ -128,6 +154,35 @@ export default function PartnerStatsPage() {
           />
         </div>
       ) : null}
+
+      {/* Charts */}
+      {!chartLoading && chartData.length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
+          <Card className="p-4">
+            <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-3">
+              Trzby po mesicich
+            </h3>
+            <RevenueChart data={chartData} height={180} />
+          </Card>
+          <Card className="p-4">
+            <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-3">
+              {isBazar ? "Prodeje po mesicich" : "Objednavky po mesicich"}
+            </h3>
+            <OrdersChart
+              data={chartData}
+              height={180}
+              barLabel={isBazar ? "Prodeje" : "Objednavky"}
+            />
+          </Card>
+        </div>
+      )}
+
+      {chartLoading && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
+          <div className="bg-white rounded-2xl p-4 shadow-sm h-52 animate-pulse" />
+          <div className="bg-white rounded-2xl p-4 shadow-sm h-52 animate-pulse" />
+        </div>
+      )}
     </div>
   );
 }

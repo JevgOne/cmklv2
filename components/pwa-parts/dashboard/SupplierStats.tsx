@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { StatCard } from "@/components/ui/StatCard";
+import { RevenueChart } from "@/components/ui/charts/RevenueChart";
+import { Card } from "@/components/ui/Card";
 
 interface StatsData {
   activeParts: number;
@@ -13,6 +15,7 @@ interface StatsData {
 export function SupplierStats() {
   const [stats, setStats] = useState<StatsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [chartData, setChartData] = useState<Array<{ label: string; revenue: number }>>([]);
 
   useEffect(() => {
     async function fetchStats() {
@@ -29,6 +32,19 @@ export function SupplierStats() {
       }
     }
     fetchStats();
+  }, []);
+
+  useEffect(() => {
+    async function fetchCharts() {
+      try {
+        const res = await fetch("/api/partner/stats/charts?months=6");
+        if (res.ok) {
+          const data = await res.json();
+          setChartData(data.months || []);
+        }
+      } catch { /* silent */ }
+    }
+    fetchCharts();
   }, []);
 
   if (loading) {
@@ -67,6 +83,12 @@ export function SupplierStats() {
         value={stats?.rating ? stats.rating.toFixed(1) : "—"}
         label="Hodnocení"
       />
+      {chartData.length > 0 && (
+        <Card className="p-3 col-span-2">
+          <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Trzby (6 mesicu)</h4>
+          <RevenueChart data={chartData} height={120} />
+        </Card>
+      )}
     </div>
   );
 }
