@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -36,12 +36,14 @@ export default function PartnerPartsPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const searchDebounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
     async function load() {
       setLoading(true);
       try {
-        const res = await fetch(`/api/partner/parts?page=${page}`);
+        const res = await fetch(`/api/partner/parts?page=${page}${search ? `&q=${encodeURIComponent(search)}` : ""}`);
         if (res.ok) {
           const data = await res.json();
           setParts(data.parts);
@@ -55,7 +57,7 @@ export default function PartnerPartsPage() {
       }
     }
     load();
-  }, [page]);
+  }, [page, search]);
 
   return (
     <div>
@@ -66,6 +68,19 @@ export default function PartnerPartsPage() {
             Pridat dil
           </Button>
         </Link>
+      </div>
+
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Hledat dily..."
+          className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none bg-white"
+          onChange={e => {
+            const val = e.target.value;
+            if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+            searchDebounceRef.current = setTimeout(() => { setSearch(val); setPage(1); }, 300);
+          }}
+        />
       </div>
 
       {loading ? (

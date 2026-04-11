@@ -1,9 +1,26 @@
 "use client";
 
+import { useState, useCallback } from "react";
 import { useOnlineStatusContext } from "@/components/pwa/OnlineStatusProvider";
+import { SearchOverlay } from "@/components/ui/SearchOverlay";
 
 export function SupplierTopBar() {
   const { isOnline } = useOnlineStatusContext();
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  const handleSearch = useCallback(async (q: string) => {
+    const res = await fetch(`/api/partner/search?q=${encodeURIComponent(q)}`);
+    if (!res.ok) return [];
+    const data = await res.json();
+    return [
+      { key: "parts", label: "Dily", icon: "🔧", results: (data.parts || []).map((p: { id: string; name: string; category: string; price: number }) => ({
+        id: p.id, title: p.name, subtitle: p.category, href: `/parts/${p.id}`,
+      }))},
+      { key: "orders", label: "Objednavky", icon: "📦", results: (data.orders || []).map((o: { id: string; orderNumber: string; status: string }) => ({
+        id: o.id, title: `#${o.orderNumber}`, subtitle: o.status, href: `/parts/orders/${o.id}`,
+      }))},
+    ];
+  }, []);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 pt-[env(safe-area-inset-top)]">
@@ -20,6 +37,13 @@ export function SupplierTopBar() {
 
         {/* Right side */}
         <div className="flex items-center gap-3">
+          {/* Search button */}
+          <button onClick={() => setSearchOpen(true)} className="p-1 text-gray-600 bg-transparent border-none cursor-pointer" aria-label="Hledat">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-6 h-6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+            </svg>
+          </button>
+
           {/* Online/offline indicator */}
           <div className="flex items-center gap-1.5">
             <div
@@ -61,6 +85,13 @@ export function SupplierTopBar() {
           </div>
         </div>
       </div>
+
+      <SearchOverlay
+        isOpen={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        onSearch={handleSearch}
+        placeholder="Hledat dily, objednavky..."
+      />
     </header>
   );
 }

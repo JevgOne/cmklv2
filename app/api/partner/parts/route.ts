@@ -20,6 +20,15 @@ export async function GET(request: NextRequest) {
     };
     if (status) where.status = status;
 
+    const search = searchParams.get("q");
+    if (search && search.length >= 2) {
+      where.OR = [
+        { name: { contains: search, mode: "insensitive" } },
+        { oemNumber: { contains: search, mode: "insensitive" } },
+        { category: { contains: search, mode: "insensitive" } },
+      ];
+    }
+
     const skip = (page - 1) * limit;
 
     const [parts, total] = await Promise.all([

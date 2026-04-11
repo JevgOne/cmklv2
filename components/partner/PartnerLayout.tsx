@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { PartnerBottomNav } from "@/components/partner/PartnerBottomNav";
+import { SearchOverlay } from "@/components/ui/SearchOverlay";
 
 interface NavItem {
   href: string;
@@ -40,6 +41,33 @@ export function PartnerLayout({ children }: { children: React.ReactNode }) {
 
   const isVrakoviste = session?.user?.role === "PARTNER_VRAKOVISTE";
   const navItems = isVrakoviste ? vrakovisteNav : bazarNav;
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  const handleSearch = useCallback(async (q: string) => {
+    const res = await fetch(`/api/partner/search?q=${encodeURIComponent(q)}`);
+    if (!res.ok) return [];
+    const data = await res.json();
+
+    if (isVrakoviste) {
+      return [
+        { key: "parts", label: "Dily", icon: "🔧", results: (data.parts || []).map((p: { id: string; name: string; category: string; price: number; slug: string }) => ({
+          id: p.id, title: p.name, subtitle: `${p.category} · ${p.price?.toLocaleString("cs-CZ")} Kc`, href: `/partner/parts/${p.id}`,
+        }))},
+        { key: "orders", label: "Objednavky", icon: "📦", results: (data.orders || []).map((o: { id: string; orderNumber: string; status: string; totalPrice: number }) => ({
+          id: o.id, title: `#${o.orderNumber}`, subtitle: o.status, href: `/partner/orders/${o.id}`,
+        }))},
+      ];
+    } else {
+      return [
+        { key: "vehicles", label: "Vozidla", icon: "🚗", results: (data.vehicles || []).map((v: { id: string; brand: string; model: string; year: number; price: number }) => ({
+          id: v.id, title: `${v.brand} ${v.model} (${v.year})`, subtitle: `${v.price?.toLocaleString("cs-CZ")} Kc`, href: `/partner/vehicles/${v.id}`,
+        }))},
+        { key: "leads", label: "Zajemci", icon: "👥", results: (data.leads || []).map((l: { id: string; name: string; phone: string }) => ({
+          id: l.id, title: l.name, subtitle: l.phone, href: `/partner/leads`,
+        }))},
+      ];
+    }
+  }, [isVrakoviste]);
 
   const companyName = session?.user
     ? `${session.user.firstName || ""} ${session.user.lastName || ""}`.trim()
@@ -121,15 +149,23 @@ export function PartnerLayout({ children }: { children: React.ReactNode }) {
       <div className="lg:ml-[260px]">
         {/* Mobile top bar */}
         <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-4 py-3">
-          <div className="flex items-center justify-center">
-            <img
-              src="/brand/logo-dark.png"
-              alt="CarMakler"
-              className="h-7"
-            />
-            <span className="ml-2 text-[10px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full">
-              PARTNER
-            </span>
+          <div className="flex items-center justify-between">
+            <div className="w-8" />
+            <div className="flex items-center">
+              <img
+                src="/brand/logo-dark.png"
+                alt="CarMakler"
+                className="h-7"
+              />
+              <span className="ml-2 text-[10px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full">
+                PARTNER
+              </span>
+            </div>
+            <button onClick={() => setSearchOpen(true)} className="p-1 text-gray-600 bg-transparent border-none cursor-pointer" aria-label="Hledat">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+              </svg>
+            </button>
           </div>
         </header>
 
@@ -141,6 +177,13 @@ export function PartnerLayout({ children }: { children: React.ReactNode }) {
       <div className="lg:hidden">
         <PartnerBottomNav />
       </div>
+
+      <SearchOverlay
+        isOpen={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        onSearch={handleSearch}
+        placeholder={isVrakoviste ? "Hledat dily, objednavky..." : "Hledat vozidla, zajemce..."}
+      />
     </div>
   );
 }

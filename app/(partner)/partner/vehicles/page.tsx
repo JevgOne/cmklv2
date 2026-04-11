@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -46,6 +46,8 @@ export default function PartnerVehiclesPage() {
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const searchDebounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
     async function load() {
@@ -55,6 +57,7 @@ export default function PartnerVehiclesPage() {
       params.set("page", String(page));
 
       try {
+        if (search) params.set("q", search);
         const res = await fetch(`/api/partner/vehicles?${params}`);
         if (res.ok) {
           const data = await res.json();
@@ -69,7 +72,7 @@ export default function PartnerVehiclesPage() {
       }
     }
     load();
-  }, [status, page]);
+  }, [status, page, search]);
 
   return (
     <div>
@@ -78,6 +81,19 @@ export default function PartnerVehiclesPage() {
         <Link href="/partner/vehicles/new">
           <Button variant="primary" size="sm">Pridat vozidlo</Button>
         </Link>
+      </div>
+
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Hledat vozidla..."
+          className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none bg-white"
+          onChange={e => {
+            const val = e.target.value;
+            if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+            searchDebounceRef.current = setTimeout(() => { setSearch(val); setPage(1); }, 300);
+          }}
+        />
       </div>
 
       <Tabs
