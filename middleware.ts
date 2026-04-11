@@ -266,6 +266,11 @@ export async function middleware(request: NextRequest) {
     if (!PARTS_SUPPLIER_ROLES.includes(token.role as string)) {
       return NextResponse.redirect(new URL("/", request.url));
     }
+
+    // Dodavatel v ONBOARDING stavu → přesměrovat na onboarding (kromě /parts/onboarding)
+    if (token.status === "ONBOARDING" && !pathname.startsWith("/parts/onboarding")) {
+      return NextResponse.redirect(new URL("/parts/onboarding", request.url));
+    }
   }
 
   // Chráněné marketplace dealer routy
