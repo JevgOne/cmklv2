@@ -86,7 +86,8 @@ export default function PartnerPartsPage() {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
             {parts.map((part) => (
-              <Card key={part.id} hover className="p-4">
+              <Link key={part.id} href={`/partner/parts/${part.id}`} className="no-underline">
+              <Card hover className="p-4">
                 <div className="flex items-start justify-between mb-2">
                   <h3 className="font-bold text-gray-900 text-sm line-clamp-2">
                     {part.name}
@@ -107,6 +108,7 @@ export default function PartnerPartsPage() {
                   </span>
                 </div>
               </Card>
+              </Link>
             ))}
           </div>
           {totalPages > 1 && (
