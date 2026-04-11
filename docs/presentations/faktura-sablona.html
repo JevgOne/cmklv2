@@ -32,19 +32,19 @@
   }
 
   .invoice-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
     margin-bottom: 30px;
     padding-bottom: 20px;
     border-bottom: 3px solid #F97316;
   }
 
-  .invoice-header .logo { width: 170px; height: auto; }
+  .invoice-header .logo { width: 200px; height: auto; display: block; margin-bottom: 16px; }
 
-  .invoice-number {
-    text-align: right;
+  .invoice-header .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
   }
+
   .invoice-number h1 {
     font-size: 28px;
     font-weight: 800;
@@ -232,13 +232,16 @@
   <!-- HEADER -->
   <div class="invoice-header">
     <img src="../../public/brand/logo-color.png" alt="CarMakler" class="logo">
-    <div class="invoice-number">
-      <h1>FAKTURA <span>c. FV2026001</span></h1>
-      <p>
-        Datum vystaveni: <strong>01.04.2026</strong><br>
-        Datum splatnosti: <strong>15.04.2026</strong><br>
-        Datum zdanitelneho plneni: <strong>01.04.2026</strong>
-      </p>
+    <div class="header-row">
+      <div></div>
+      <div class="invoice-number">
+        <h1>FAKTURA <span>c. FV2026001</span></h1>
+        <p>
+          Datum vystaveni: <strong>01.04.2026</strong><br>
+          Datum splatnosti: <strong>15.04.2026</strong><br>
+          Datum zdanitelneho plneni: <strong>01.04.2026</strong>
+        </p>
+      </div>
     </div>
   </div>
 
