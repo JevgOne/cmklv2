@@ -105,7 +105,8 @@ export default function PartnerVehiclesPage() {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
             {vehicles.map((v) => (
-              <Card key={v.id} hover className="overflow-hidden">
+              <Link key={v.id} href={`/partner/vehicles/${v.id}`} className="no-underline">
+              <Card hover className="overflow-hidden">
                 <div className="aspect-[16/10] bg-gray-100 relative">
                   {v.images[0] ? (
                     <img
@@ -140,6 +141,7 @@ export default function PartnerVehiclesPage() {
                   </div>
                 </div>
               </Card>
+              </Link>
             ))}
           </div>
 
