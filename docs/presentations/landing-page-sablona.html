@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CarMakler - Struktura SEO Landing Pages</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    color: #1a1a2e;
+    background: #f5f5f5;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+
+  .slide {
+    width: 297mm;
+    height: 210mm;
+    padding: 40px 60px;
+    page-break-after: always;
+    page-break-inside: avoid;
+    position: relative;
+    overflow: hidden;
+    background: white;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .slide:last-child { page-break-after: auto; }
+
+  .slide-title {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: white;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .slide-title::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: rgba(249, 115, 22, 0.08);
+  }
+  .slide-title::after {
+    content: '';
+    position: absolute;
+    bottom: -150px;
+    left: -150px;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: rgba(249, 115, 22, 0.05);
+  }
+  .slide-title .logo { height: 80px; margin-bottom: 30px; position: relative; z-index: 1; }
+  .slide-title h1 { font-size: 42px; font-weight: 800; line-height: 1.2; margin-bottom: 16px; position: relative; z-index: 1; }
+  .slide-title h1 span { color: #F97316; }
+  .slide-title .subtitle { font-size: 22px; font-weight: 300; color: rgba(255,255,255,0.8); position: relative; z-index: 1; }
+  .slide-title .date { position: absolute; bottom: 40px; right: 60px; font-size: 14px; color: rgba(255,255,255,0.5); }
+  .slide-title .web { position: absolute; bottom: 40px; left: 60px; font-size: 14px; color: rgba(255,255,255,0.5); }
+
+  .slide-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    padding-bottom: 16px;
+    border-bottom: 3px solid #F97316;
+  }
+  .slide-header h2 { font-size: 32px; font-weight: 700; color: #1a1a2e; }
+  .slide-header .logo-small { height: 36px; opacity: 0.6; }
+
+  .orange { color: #F97316; }
+  .highlight { background: linear-gradient(135deg, #FFF7ED, #FFEDD5); border-radius: 16px; padding: 24px; }
+  .dark-box { background: #1a1a2e; color: white; border-radius: 16px; padding: 24px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; flex: 1; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; flex: 1; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px; flex: 1; }
+
+  .slide-cta {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: white;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .slide-cta h2 { font-size: 38px; font-weight: 800; margin-bottom: 20px; }
+  .slide-cta h2 span { color: #F97316; }
+  .slide-cta .contact-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; margin-top: 40px; }
+  .slide-cta .contact-item { font-size: 18px; }
+  .slide-cta .contact-item .label { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+  .slide-cta .contact-item .value { font-weight: 600; }
+  .slide-cta .contact-item .value a { color: #F97316; text-decoration: none; }
+
+  .slide-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #F97316, #ea580c, #F97316);
+  }
+
+  /* WIREFRAME SPECIFIC */
+  .wireframe-box {
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 16px;
+    position: relative;
+    margin-bottom: 12px;
+  }
+  .wireframe-box.compact { padding: 10px 16px; margin-bottom: 8px; }
+  .wireframe-label {
+    position: absolute;
+    top: -10px;
+    left: 16px;
+    background: white;
+    padding: 0 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+  }
+  .json-ld-marker {
+    display: inline-block;
+    background: #3b82f6;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  .mobile-mockup {
+    border: 3px solid #1a1a2e;
+    border-radius: 24px;
+    padding: 8px;
+    width: 180px;
+    background: white;
+  }
+  .mobile-mockup .notch {
+    width: 60px;
+    height: 6px;
+    background: #1a1a2e;
+    border-radius: 3px;
+    margin: 0 auto 8px;
+  }
+  .wireframe-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+  .wireframe-grid .item {
+    background: #f1f5f9;
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+    font-size: 11px;
+    color: #94a3b8;
+  }
+  .wireframe-bar {
+    background: #f1f5f9;
+    border-radius: 4px;
+    height: 12px;
+    margin-bottom: 6px;
+  }
+  .wireframe-bar.short { width: 60%; }
+  .wireframe-bar.medium { width: 80%; }
+
+  @media print {
+    body { background: white; }
+    .slide { box-shadow: none; margin: 0; }
+  }
+
+  @media screen {
+    .slide {
+      margin: 20px auto;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1: TITLE -->
+<div class="slide slide-title">
+  <img src="../../public/brand/logo-white.png" alt="CarMakler" class="logo">
+  <h1>Struktura SEO <span>Landing Pages</span></h1>
+  <p class="subtitle">Vizualni wireframe pro znackove, modelove, cenove a lokalni stranky</p>
+  <p class="web">www.carmakler.cz</p>
+  <p class="date">2026</p>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 2: ZNACKOVA LP (Skoda) -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Znackova LP — <span class="orange">Skoda</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div class="grid-2" style="gap: 20px;">
+    <div style="overflow: hidden;">
+      <div class="wireframe-box">
+        <span class="wireframe-label">Hero sekce</span>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-size: 16px; font-weight: 700; margin-bottom: 4px;">H1: Skoda — prodej a vykup</div>
+            <div style="font-size: 11px; color: #94a3b8;">Breadcrumbs: Uvod > Znacky > Skoda</div>
+          </div>
+          <div style="background: #FFF7ED; border-radius: 8px; padding: 8px 12px; font-size: 11px; text-align: center;">
+            <div style="font-weight: 700; color: #F97316;">247</div>
+            <div style="color: #94a3b8;">vozidel</div>
+          </div>
+        </div>
+      </div>
+      <div class="wireframe-box">
+        <span class="wireframe-label">Katalog vozidel</span>
+        <div class="wireframe-grid">
+          <div class="item">🚗 Octavia<br>349 000 Kc</div>
+          <div class="item">🚗 Superb<br>489 000 Kc</div>
+          <div class="item">🚗 Fabia<br>199 000 Kc</div>
+        </div>
+        <div style="text-align: center; margin-top: 8px; font-size: 11px; color: #94a3b8;">Filtry: model, rok, cena, km</div>
+      </div>
+      <div class="wireframe-box compact">
+        <span class="wireframe-label">Srovnavaci tabulka</span>
+        <div style="font-size: 11px; color: #94a3b8;">Octavia vs Superb vs Fabia — cena, rok, spotrebu</div>
+      </div>
+      <div class="wireframe-box compact">
+        <span class="wireframe-label">FAQ Accordion</span>
+        <div style="font-size: 11px; color: #94a3b8;">5-8 otazek: "Kolik stoji Skoda?", "Kde koupit Skodu?"...</div>
+      </div>
+      <div class="wireframe-box compact">
+        <span class="wireframe-label">CTA</span>
+        <div style="font-size: 11px; color: #F97316; font-weight: 700;">"Nabidnete sve auto" + kontaktni formular</div>
+      </div>
+    </div>
+    <div>
+      <div class="dark-box" style="margin-bottom: 16px;">
+        <h3 style="font-size: 16px; color: #F97316; margin-bottom: 12px;">JSON-LD schema pozice</h3>
+        <div style="font-size: 12px; line-height: 2; color: rgba(255,255,255,0.7);">
+          <span class="json-ld-marker">Organization</span> — hlavicka<br>
+          <span class="json-ld-marker">BreadcrumbList</span> — navigace<br>
+          <span class="json-ld-marker">ItemList</span> — katalog vozidel<br>
+          <span class="json-ld-marker">FAQPage</span> — FAQ sekce<br>
+          <span class="json-ld-marker">LocalBusiness</span> — paticka
+        </div>
+      </div>
+      <div class="highlight" style="font-size: 12px; line-height: 1.8;">
+        <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 8px;">SEO cilovky</h4>
+        <strong>Primary:</strong> "Skoda prodej"<br>
+        <strong>Secondary:</strong> "vykup Skoda", "bazar Skoda"<br>
+        <strong>Long-tail:</strong> "Skoda Octavia bazar cena"<br>
+        <strong>Title tag:</strong> Skoda — Prodej a vykup | CarMakler<br>
+        <strong>Meta desc:</strong> max 155 znaku
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 3: MODELOVA LP (Octavia) -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Modelova LP — <span class="orange">Octavia</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div class="grid-2" style="gap: 20px;">
+    <div>
+      <div class="wireframe-box">
+        <span class="wireframe-label">Hero + H1</span>
+        <div style="font-size: 16px; font-weight: 700; margin-bottom: 4px;">H1: Skoda Octavia — vykup, prodej, ceny</div>
+        <div style="font-size: 11px; color: #94a3b8;">Breadcrumbs: Uvod > Skoda > Octavia</div>
+        <div style="display: flex; gap: 8px; margin-top: 8px;">
+          <div style="background: #FFF7ED; border-radius: 6px; padding: 6px 10px; font-size: 10px; text-align: center;">
+            <div style="font-weight: 700; color: #F97316;">89</div><div style="color: #94a3b8;">nabidek</div>
+          </div>
+          <div style="background: #FFF7ED; border-radius: 6px; padding: 6px 10px; font-size: 10px; text-align: center;">
+            <div style="font-weight: 700; color: #F97316;">349k</div><div style="color: #94a3b8;">prumer</div>
+          </div>
+          <div style="background: #FFF7ED; border-radius: 6px; padding: 6px 10px; font-size: 10px; text-align: center;">
+            <div style="font-weight: 700; color: #F97316;">2019</div><div style="color: #94a3b8;">med. rok</div>
+          </div>
+        </div>
+      </div>
+      <div class="wireframe-box">
+        <span class="wireframe-label">Cenova historie</span>
+        <div style="height: 60px; background: linear-gradient(135deg, #FFF7ED, #FFEDD5); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #94a3b8;">
+          📈 Graf: prumerna cena Octavia za posledni 2 roky
+        </div>
+      </div>
+      <div class="wireframe-box">
+        <span class="wireframe-label">Srovnani generaci</span>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px; font-size: 10px; text-align: center;">
+          <div style="background: #f1f5f9; border-radius: 6px; padding: 8px;">
+            <div style="font-weight: 700;">I</div><div style="color: #94a3b8;">1996-2010</div>
+          </div>
+          <div style="background: #f1f5f9; border-radius: 6px; padding: 8px;">
+            <div style="font-weight: 700;">II</div><div style="color: #94a3b8;">2004-2013</div>
+          </div>
+          <div style="background: #f1f5f9; border-radius: 6px; padding: 8px;">
+            <div style="font-weight: 700;">III</div><div style="color: #94a3b8;">2012-2020</div>
+          </div>
+          <div style="background: #FFF7ED; border-radius: 6px; padding: 8px; border: 1px solid #F97316;">
+            <div style="font-weight: 700; color: #F97316;">IV</div><div style="color: #94a3b8;">2020+</div>
+          </div>
+        </div>
+      </div>
+      <div class="wireframe-box compact">
+        <span class="wireframe-label">Technicke parametry</span>
+        <div style="font-size: 11px; color: #94a3b8;">Motor, spotreba, zavazadlovy prostor, rozvor...</div>
+      </div>
+    </div>
+    <div>
+      <div class="dark-box" style="margin-bottom: 16px;">
+        <h3 style="font-size: 16px; color: #F97316; margin-bottom: 12px;">Odlisnosti od znackove LP</h3>
+        <ul style="font-size: 12px; line-height: 2.2; color: rgba(255,255,255,0.8); list-style: none;">
+          <li>✅ Specificka cenova historie modelu</li>
+          <li>✅ Srovnani generaci (I, II, III, IV)</li>
+          <li>✅ Technicke parametry tabulka</li>
+          <li>✅ Filtr predvyplneny na model</li>
+          <li>✅ FAQ specificke pro model</li>
+          <li>❌ Zadny grid vsech modelu znacky</li>
+        </ul>
+      </div>
+      <div class="highlight">
+        <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 8px;">SEO cilovky</h4>
+        <div style="font-size: 12px; line-height: 1.8;">
+          <strong>Primary:</strong> "Skoda Octavia bazar"<br>
+          <strong>Secondary:</strong> "Octavia cena", "Octavia vykup"<br>
+          <strong>Long-tail:</strong> "Skoda Octavia 3 combi bazar"<br>
+          <span class="json-ld-marker">Product</span> + <span class="json-ld-marker">AggregateOffer</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 4: CENOVA + LOKALNI LP -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Cenova & lokalni <span class="orange">LP</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div class="grid-2" style="gap: 30px;">
+    <!-- CENOVA LP -->
+    <div>
+      <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #1a1a2e;">💰 Cenova LP: "Auta do 200 000 Kc"</h3>
+      <div class="wireframe-box">
+        <span class="wireframe-label">Hero</span>
+        <div style="font-size: 14px; font-weight: 700;">H1: Auta do 200 000 Kc</div>
+        <div style="font-size: 11px; color: #94a3b8; margin-top: 4px;">Breadcrumbs: Uvod > Cenove kategorie > Do 200 000</div>
+      </div>
+      <div class="wireframe-box">
+        <span class="wireframe-label">Filtr + Grid</span>
+        <div class="wireframe-grid" style="grid-template-columns: 1fr 1fr;">
+          <div class="item">🚗 Fabia<br>149k</div>
+          <div class="item">🚗 Clio<br>189k</div>
+        </div>
+        <div style="font-size: 10px; color: #94a3b8; margin-top: 6px;">Predvyplneny cenovy filtr</div>
+      </div>
+      <div class="wireframe-box compact">
+        <span class="wireframe-label">Statistiky</span>
+        <div style="font-size: 11px; color: #94a3b8;">Prumerna cena, pocet nabidek, nejcastejsi znacky</div>
+      </div>
+      <div style="margin-top: 8px;">
+        <span class="json-ld-marker">CollectionPage</span>
+        <span class="json-ld-marker" style="margin-left: 4px;">AggregateOffer</span>
+      </div>
+    </div>
+    <!-- LOKALNI LP -->
+    <div>
+      <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #1a1a2e;">📍 Lokalni LP: "Autobazar Praha"</h3>
+      <div class="wireframe-box">
+        <span class="wireframe-label">Hero + Mapa</span>
+        <div style="font-size: 14px; font-weight: 700;">H1: Autobazar Praha — prodej aut</div>
+        <div style="height: 50px; background: #f1f5f9; border-radius: 8px; margin-top: 8px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #94a3b8;">
+          🗺️ Mapa regionu (Google Maps embed)
+        </div>
+      </div>
+      <div class="wireframe-box">
+        <span class="wireframe-label">Regionalni nabidka</span>
+        <div class="wireframe-grid" style="grid-template-columns: 1fr 1fr;">
+          <div class="item">🚗 Praha 4<br>89 aut</div>
+          <div class="item">🚗 Praha 10<br>56 aut</div>
+        </div>
+      </div>
+      <div class="wireframe-box compact">
+        <span class="wireframe-label">Lokalni makleri</span>
+        <div style="font-size: 11px; color: #94a3b8;">Grid makleru v regionu + kontakty</div>
+      </div>
+      <div style="margin-top: 8px;">
+        <span class="json-ld-marker">LocalBusiness</span>
+        <span class="json-ld-marker" style="margin-left: 4px;">GeoCoordinates</span>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 5: MOBILE WIREFRAME -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Mobile <span class="orange">wireframe</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div style="display: flex; gap: 40px; flex: 1; align-items: center; justify-content: center;">
+    <!-- MOBILE -->
+    <div style="text-align: center;">
+      <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">📱 Mobile (375px)</h3>
+      <div class="mobile-mockup">
+        <div class="notch"></div>
+        <div style="padding: 8px;">
+          <div class="wireframe-bar short" style="height: 8px;"></div>
+          <div style="font-size: 9px; font-weight: 700; margin: 6px 0 4px;">H1: Skoda Octavia</div>
+          <div class="wireframe-bar" style="height: 6px;"></div>
+          <div class="wireframe-bar medium" style="height: 6px;"></div>
+          <div style="background: #f1f5f9; border-radius: 4px; padding: 6px; margin: 8px 0; font-size: 8px; color: #94a3b8; text-align: center;">
+            Filtr (sticky)
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr; gap: 4px;">
+            <div style="background: #f1f5f9; border-radius: 4px; padding: 8px; font-size: 8px; color: #94a3b8; text-align: center;">🚗 Vozidlo 1</div>
+            <div style="background: #f1f5f9; border-radius: 4px; padding: 8px; font-size: 8px; color: #94a3b8; text-align: center;">🚗 Vozidlo 2</div>
+            <div style="background: #f1f5f9; border-radius: 4px; padding: 8px; font-size: 8px; color: #94a3b8; text-align: center;">🚗 Vozidlo 3</div>
+          </div>
+          <div style="background: #F97316; border-radius: 4px; padding: 6px; margin-top: 8px; font-size: 8px; color: white; text-align: center; font-weight: 700;">
+            CTA: Nabidnete auto
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ARROW -->
+    <div style="font-size: 48px; color: #cbd5e1;">→</div>
+    <!-- DESKTOP -->
+    <div style="text-align: center;">
+      <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">🖥️ Desktop (1440px)</h3>
+      <div style="border: 3px solid #1a1a2e; border-radius: 12px; padding: 12px; width: 420px; background: white;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+          <div class="wireframe-bar short" style="width: 80px; height: 8px;"></div>
+          <div style="display: flex; gap: 8px;">
+            <div class="wireframe-bar" style="width: 40px; height: 8px;"></div>
+            <div class="wireframe-bar" style="width: 40px; height: 8px;"></div>
+            <div class="wireframe-bar" style="width: 40px; height: 8px;"></div>
+          </div>
+        </div>
+        <div style="font-size: 11px; font-weight: 700; margin: 8px 0 4px;">H1: Skoda Octavia — vykup, prodej, ceny</div>
+        <div class="wireframe-bar medium" style="height: 6px;"></div>
+        <div style="display: flex; gap: 8px; margin: 8px 0;">
+          <div style="background: #f1f5f9; border-radius: 4px; padding: 4px 8px; font-size: 8px; color: #94a3b8;">Filtry (sidebar)</div>
+          <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px;">
+            <div style="background: #f1f5f9; border-radius: 4px; padding: 8px; font-size: 7px; color: #94a3b8; text-align: center;">🚗 1</div>
+            <div style="background: #f1f5f9; border-radius: 4px; padding: 8px; font-size: 7px; color: #94a3b8; text-align: center;">🚗 2</div>
+            <div style="background: #f1f5f9; border-radius: 4px; padding: 8px; font-size: 7px; color: #94a3b8; text-align: center;">🚗 3</div>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 4px;">
+          <div style="background: #FFF7ED; border-radius: 4px; padding: 4px; font-size: 7px; color: #94a3b8; text-align: center;">Srovnani generaci</div>
+          <div style="background: #FFF7ED; border-radius: 4px; padding: 4px; font-size: 7px; color: #94a3b8; text-align: center;">Cenova historie</div>
+        </div>
+      </div>
+    </div>
+    <!-- KEY DIFFERENCES -->
+    <div style="max-width: 200px;">
+      <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">Klicove rozdily</h3>
+      <ul style="font-size: 12px; line-height: 2; color: #475569; list-style: none;">
+        <li>📱 1 sloupec grid</li>
+        <li>📱 Sticky filtr nahore</li>
+        <li>📱 Skladany accordion</li>
+        <li>📱 Vetsi CTA tlacitka</li>
+        <li>🖥️ Sidebar filtry</li>
+        <li>🖥️ 3 sloupce grid</li>
+        <li>🖥️ Tabulky viditelne</li>
+        <li>🖥️ Mapa vedle gridu</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+</body>
+</html>

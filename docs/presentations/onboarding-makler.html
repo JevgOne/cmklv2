@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CarMakler - Pruvodce novym maklerem</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    color: #1a1a2e;
+    background: #f5f5f5;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+
+  .slide {
+    width: 297mm;
+    height: 210mm;
+    padding: 40px 60px;
+    page-break-after: always;
+    page-break-inside: avoid;
+    position: relative;
+    overflow: hidden;
+    background: white;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .slide:last-child { page-break-after: auto; }
+
+  .slide-title {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: white;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .slide-title::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: rgba(249, 115, 22, 0.08);
+  }
+  .slide-title::after {
+    content: '';
+    position: absolute;
+    bottom: -150px;
+    left: -150px;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: rgba(249, 115, 22, 0.05);
+  }
+  .slide-title .logo { height: 80px; margin-bottom: 30px; position: relative; z-index: 1; }
+  .slide-title h1 { font-size: 42px; font-weight: 800; line-height: 1.2; margin-bottom: 16px; position: relative; z-index: 1; }
+  .slide-title h1 span { color: #F97316; }
+  .slide-title .subtitle { font-size: 22px; font-weight: 300; color: rgba(255,255,255,0.8); position: relative; z-index: 1; }
+  .slide-title .date { position: absolute; bottom: 40px; right: 60px; font-size: 14px; color: rgba(255,255,255,0.5); }
+  .slide-title .web { position: absolute; bottom: 40px; left: 60px; font-size: 14px; color: rgba(255,255,255,0.5); }
+
+  .slide-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    padding-bottom: 16px;
+    border-bottom: 3px solid #F97316;
+  }
+  .slide-header h2 { font-size: 32px; font-weight: 700; color: #1a1a2e; }
+  .slide-header .logo-small { height: 36px; opacity: 0.6; }
+
+  .orange { color: #F97316; }
+  .highlight { background: linear-gradient(135deg, #FFF7ED, #FFEDD5); border-radius: 16px; padding: 24px; }
+  .dark-box { background: #1a1a2e; color: white; border-radius: 16px; padding: 24px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; flex: 1; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; flex: 1; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px; flex: 1; }
+  .grid-5 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 16px; flex: 1; }
+
+  .feature-card {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #e2e8f0;
+  }
+  .feature-card .icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #F97316, #ea580c);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 14px;
+    color: white;
+  }
+  .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #1a1a2e; }
+  .feature-card p { font-size: 13px; line-height: 1.5; color: #64748b; }
+  .feature-card ul { font-size: 13px; line-height: 1.8; color: #64748b; list-style: none; }
+  .feature-card ul li::before { content: "✓ "; color: #F97316; font-weight: 700; }
+
+  .stat-box {
+    text-align: center;
+    padding: 24px;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+  }
+  .stat-box .number { font-size: 42px; font-weight: 800; color: #F97316; display: block; }
+  .stat-box .label { font-size: 14px; color: #64748b; margin-top: 4px; }
+
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .step-num {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    background: #F97316;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .step h4 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .step p { font-size: 13px; color: #64748b; line-height: 1.5; }
+
+  .slide-cta {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: white;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .slide-cta h2 { font-size: 38px; font-weight: 800; margin-bottom: 20px; }
+  .slide-cta h2 span { color: #F97316; }
+  .slide-cta .contact-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; margin-top: 40px; }
+  .slide-cta .contact-item { font-size: 18px; }
+  .slide-cta .contact-item .label { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+  .slide-cta .contact-item .value { font-weight: 600; }
+  .slide-cta .contact-item .value a { color: #F97316; text-decoration: none; }
+
+  .slide-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #F97316, #ea580c, #F97316);
+  }
+
+  /* ONBOARDING SPECIFIC */
+  .pwa-screen {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 16px;
+    text-align: center;
+  }
+  .pwa-screen .screen-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .pwa-screen .screen-icon {
+    font-size: 36px;
+    margin-bottom: 8px;
+  }
+  .pwa-screen .screen-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a2e;
+  }
+  .pwa-screen .screen-desc {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 4px;
+  }
+
+  .level-card {
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    border: 2px solid #e2e8f0;
+  }
+  .level-card.active {
+    border-color: #F97316;
+    background: linear-gradient(135deg, #FFF7ED, white);
+  }
+  .level-card .level-icon { font-size: 36px; margin-bottom: 8px; }
+  .level-card .level-name { font-size: 16px; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; }
+  .level-card .level-range { font-size: 13px; color: #F97316; font-weight: 600; margin-bottom: 8px; }
+  .level-card .level-perks { font-size: 12px; color: #64748b; line-height: 1.8; }
+
+  .faq-item {
+    padding: 14px 0;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .faq-item:last-child { border-bottom: none; }
+  .faq-item .question { font-size: 15px; font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
+  .faq-item .answer { font-size: 13px; color: #64748b; line-height: 1.6; }
+
+  @media print {
+    body { background: white; }
+    .slide { box-shadow: none; margin: 0; }
+  }
+
+  @media screen {
+    .slide {
+      margin: 20px auto;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1: TITLE -->
+<div class="slide slide-title">
+  <img src="../../public/brand/logo-white.png" alt="CarMakler" class="logo">
+  <h1>Pruvodce novym <span>maklerem</span></h1>
+  <p class="subtitle">Vse co potrebujete vedet pro uspesny start v siti CarMakler</p>
+  <p class="web">www.carmakler.cz</p>
+  <p class="date">2026</p>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 2: 5 KROKU ONBOARDINGU -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>5 kroku k <span class="orange">aktivaci</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div class="grid-5" style="align-items: stretch;">
+    <div class="feature-card" style="text-align: center; padding: 20px 16px;">
+      <div class="icon" style="margin: 0 auto 14px;">👤</div>
+      <h3 style="font-size: 15px;">1. Profil</h3>
+      <p>Vyplnte osobni udaje, region pusobnosti a nahrajte fotku.</p>
+    </div>
+    <div class="feature-card" style="text-align: center; padding: 20px 16px;">
+      <div class="icon" style="margin: 0 auto 14px;">📄</div>
+      <h3 style="font-size: 15px;">2. Dokumenty</h3>
+      <p>Nahrajte zivnostensky list a obcansky prukaz.</p>
+    </div>
+    <div class="feature-card" style="text-align: center; padding: 20px 16px;">
+      <div class="icon" style="margin: 0 auto 14px;">✍️</div>
+      <h3 style="font-size: 15px;">3. Smlouva</h3>
+      <p>Digitalni podpis zprostredkovatelske smlouvy primo v PWA.</p>
+    </div>
+    <div class="feature-card" style="text-align: center; padding: 20px 16px;">
+      <div class="icon" style="margin: 0 auto 14px;">📝</div>
+      <h3 style="font-size: 15px;">4. Kviz</h3>
+      <p>5 rychlych otazek k overeni znalosti procesu.</p>
+    </div>
+    <div class="feature-card" style="text-align: center; padding: 20px 16px;">
+      <div class="icon" style="margin: 0 auto 14px;">🚀</div>
+      <h3 style="font-size: 15px;">5. Aktivace</h3>
+      <p>Ucet aktivovan — muzete zacinat nabirat auta!</p>
+    </div>
+  </div>
+  <div style="text-align: center; margin-top: 20px;">
+    <p style="font-size: 16px; color: #64748b;">Cely proces trva <strong style="color: #F97316;">priblizne 15 minut</strong>. Vse probehne online v PWA aplikaci.</p>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 3: PWA APLIKACE -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>PWA <span class="orange">aplikace</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div class="grid-5" style="align-items: stretch;">
+    <div class="pwa-screen">
+      <div class="screen-icon">📊</div>
+      <div class="screen-label">Dashboard</div>
+      <div class="screen-desc">Prehled statistik, aktivnich aut a leadu</div>
+    </div>
+    <div class="pwa-screen" style="border-color: #F97316; background: #FFF7ED;">
+      <div class="screen-icon">🚗</div>
+      <div class="screen-label">Nabrat auto</div>
+      <div class="screen-desc">Hlavni CTA — zadani noveho vozidla</div>
+    </div>
+    <div class="pwa-screen">
+      <div class="screen-icon">📋</div>
+      <div class="screen-label">Smlouvy</div>
+      <div class="screen-desc">Prehled a sprava vsech smluv</div>
+    </div>
+    <div class="pwa-screen">
+      <div class="screen-icon">🤖</div>
+      <div class="screen-label">AI Asistent</div>
+      <div class="screen-desc">Pomoc s popisky, cenami, komunikaci</div>
+    </div>
+    <div class="pwa-screen">
+      <div class="screen-icon">👥</div>
+      <div class="screen-label">Kontakty</div>
+      <div class="screen-desc">Leady, klienti, komunikace</div>
+    </div>
+  </div>
+  <div style="margin-top: 20px;">
+    <div class="highlight" style="display: flex; align-items: center; gap: 24px;">
+      <div style="font-size: 48px;">📱</div>
+      <div>
+        <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">Funguje offline</h3>
+        <p style="font-size: 14px; color: #64748b; line-height: 1.6;">PWA aplikace funguje i bez internetu. Data se synchronizuji automaticky po pripojeni. Idealni pro praci v terenu.</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 4: JAK NABRAT AUTO — 7 KROKU -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Jak nabrat <span class="orange">auto</span> — 7 kroku</h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div class="grid-2">
+    <div>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div>
+          <h4>VIN sken / zadani</h4>
+          <p>Naskenujte VIN fotoaparatem nebo zadejte rucne. System automaticky nacte zakladni data.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div>
+          <h4>Zakladni udaje</h4>
+          <p>Znacka, model, rok vyroby, najete km, palivo, prevodovka. Predvyplneno z VIN.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div>
+          <h4>Vybava</h4>
+          <p>Checklisty vybavovych polozek — klimatizace, navigace, parkovaci senzory atd.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div>
+          <h4>Stav vozu</h4>
+          <p>Hodnoceni stavu 1-5 pro karoserii, interiér, motor, podvozek. Poznamky k vadam.</p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div>
+          <h4>Fotografie</h4>
+          <p>Minimum 15 fotek — exteriér (vsechny strany), interiér, motor, detaily. Pruvodce kompozici.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">6</div>
+        <div>
+          <h4>Smlouva</h4>
+          <p>Digitalni podpis zprostredkovatelske smlouvy. Zakaznik podepisuje na vasem telefonu.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">7</div>
+        <div>
+          <h4>Odeslani</h4>
+          <p>Data jdou do BackOffice ke schvaleni. Prumerny cas schvaleni: 2 hodiny. Pak jde auto do inzerce.</p>
+        </div>
+      </div>
+      <div class="highlight" style="margin-top: 8px; text-align: center;">
+        <p style="font-size: 14px; font-weight: 700; color: #1a1a2e;">Prumerna doba nabrani: <span class="orange">20-30 minut</span></p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 5: QUICK MODE -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Quick Mode — <span class="orange">3 kroky</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div class="grid-2" style="align-items: center;">
+    <div>
+      <p style="font-size: 16px; line-height: 1.8; color: #475569; margin-bottom: 24px;">
+        Pro zkusene maklere nabizime <strong style="color: #1a1a2e;">zrychleny rezim</strong>. Minimalni pocet kroku, maximum rychlosti. Idealni kdyz viete presne co delate.
+      </p>
+      <div style="display: flex; gap: 16px; margin-bottom: 24px;">
+        <div style="flex: 1; text-align: center; padding: 24px; background: #f8fafc; border-radius: 16px; border: 2px solid #F97316;">
+          <div style="font-size: 36px; margin-bottom: 8px;">📷</div>
+          <div style="font-size: 14px; font-weight: 700;">1. VIN</div>
+          <div style="font-size: 12px; color: #94a3b8;">Sken nebo zadani</div>
+        </div>
+        <div style="font-size: 24px; color: #F97316; display: flex; align-items: center;">→</div>
+        <div style="flex: 1; text-align: center; padding: 24px; background: #f8fafc; border-radius: 16px; border: 2px solid #F97316;">
+          <div style="font-size: 36px; margin-bottom: 8px;">📸</div>
+          <div style="font-size: 14px; font-weight: 700;">2. Fotky</div>
+          <div style="font-size: 12px; color: #94a3b8;">Min 15 fotografii</div>
+        </div>
+        <div style="font-size: 24px; color: #F97316; display: flex; align-items: center;">→</div>
+        <div style="flex: 1; text-align: center; padding: 24px; background: #f8fafc; border-radius: 16px; border: 2px solid #F97316;">
+          <div style="font-size: 36px; margin-bottom: 8px;">✍️</div>
+          <div style="font-size: 14px; font-weight: 700;">3. Smlouva</div>
+          <div style="font-size: 12px; color: #94a3b8;">Digitalni podpis</div>
+        </div>
+      </div>
+      <div class="dark-box" style="text-align: center;">
+        <p style="font-size: 16px; font-weight: 700;">Cas nabrani v Quick Mode: <span style="color: #F97316;">5-10 minut</span></p>
+      </div>
+    </div>
+    <div class="highlight" style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+      <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">Kdy pouzit Quick Mode?</h3>
+      <ul style="font-size: 14px; line-height: 2.2; color: #475569; list-style: none;">
+        <li>✅ Mate zkusenost s 10+ nabiranymi auty</li>
+        <li>✅ Vuz je v beznem stavu (zadne speciality)</li>
+        <li>✅ Zakaznik ceka a mate malo casu</li>
+        <li>✅ Chcete usetrit cas na administraci</li>
+        <li style="margin-top: 12px; color: #ef4444;">❌ Novy makler (pouzijte plny rezim)</li>
+        <li style="color: #ef4444;">❌ Neobvykly vuz (veteran, tuning...)</li>
+        <li style="color: #ef4444;">❌ Pozkozeny vuz (potreba detailniho popisu)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 6: PROVIZE A ODMENY -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Provize a <span class="orange">odmeny</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div class="grid-2" style="align-items: center;">
+    <div>
+      <div class="stat-box" style="margin-bottom: 20px;">
+        <span class="number">5%</span>
+        <span class="label">z prodejni ceny vozidla (min 25 000 Kc)</span>
+      </div>
+      <div class="feature-card">
+        <h3 style="font-size: 18px; margin-bottom: 16px;">Priklad vydelku</h3>
+        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 14px;">
+          <span style="color: #64748b;">Auto za 200 000 Kc</span>
+          <span style="font-weight: 700; color: #1a1a2e;">25 000 Kc</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 14px;">
+          <span style="color: #64748b;">Auto za 400 000 Kc</span>
+          <span style="font-weight: 700; color: #1a1a2e;">20 000 Kc</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 14px;">
+          <span style="color: #64748b;">Auto za 800 000 Kc</span>
+          <span style="font-weight: 700; color: #1a1a2e;">40 000 Kc</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 10px 0; font-size: 14px;">
+          <span style="color: #64748b;">5 aut mesicne (prumer 500k)</span>
+          <span style="font-weight: 700; color: #F97316; font-size: 18px;">125 000 Kc</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="dark-box" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+        <h3 style="font-size: 20px; color: #F97316; margin-bottom: 20px;">Bonusy za objem</h3>
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 14px;">
+            <span style="color: rgba(255,255,255,0.7);">1-5 aut / mesic</span>
+            <span style="font-weight: 700;">Standardni 5%</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 14px;">
+            <span style="color: rgba(255,255,255,0.7);">6-9 aut / mesic</span>
+            <span style="font-weight: 700; color: #F97316;">+0.25% bonus</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 14px;">
+            <span style="color: rgba(255,255,255,0.7);">10+ aut / mesic</span>
+            <span style="font-weight: 700; color: #F97316;">+0.5% bonus</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 10px 0; font-size: 14px;">
+            <span style="color: rgba(255,255,255,0.7);">20+ aut / mesic</span>
+            <span style="font-weight: 700; color: #22c55e;">Individualni sazba</span>
+          </div>
+        </div>
+        <p style="font-size: 12px; color: rgba(255,255,255,0.5);">Bonusy se pocitaji na konci mesice a pripocitavaji k nasledujici vyplate.</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 7: GAMIFIKACE -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Levely a <span class="orange">achievementy</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div class="grid-4" style="align-items: stretch; margin-bottom: 24px;">
+    <div class="level-card">
+      <div class="level-icon">🌱</div>
+      <div class="level-name">Novacek</div>
+      <div class="level-range">0-5 prodeju</div>
+      <div class="level-perks">
+        Zakladni provize<br>
+        Skolici materialy<br>
+        Podpora mentora
+      </div>
+    </div>
+    <div class="level-card active">
+      <div class="level-icon">⭐</div>
+      <div class="level-name">Profesional</div>
+      <div class="level-range">6-20 prodeju</div>
+      <div class="level-perks">
+        Prioritni leady<br>
+        Rozsirena zona<br>
+        Badge v profilu
+      </div>
+    </div>
+    <div class="level-card">
+      <div class="level-icon">🏆</div>
+      <div class="level-name">Expert</div>
+      <div class="level-range">21-50 prodeju</div>
+      <div class="level-perks">
+        Vyssi provize<br>
+        Exkluzivni akce<br>
+        Mentorovani novacku
+      </div>
+    </div>
+    <div class="level-card">
+      <div class="level-icon">👑</div>
+      <div class="level-name">Sampion</div>
+      <div class="level-range">51+ prodeju</div>
+      <div class="level-perks">
+        Top provize<br>
+        VIP podpora<br>
+        Ambasador znacky
+      </div>
+    </div>
+  </div>
+  <div>
+    <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">Achievementy</h3>
+    <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+      <div style="display: flex; align-items: center; gap: 8px; background: #f8fafc; border-radius: 20px; padding: 8px 16px; border: 1px solid #e2e8f0;">
+        <span style="font-size: 20px;">🎯</span>
+        <div>
+          <div style="font-size: 13px; font-weight: 700;">Prvni prodej</div>
+          <div style="font-size: 11px; color: #94a3b8;">Uspesne dokonceny prvni obchod</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px; background: #f8fafc; border-radius: 20px; padding: 8px 16px; border: 1px solid #e2e8f0;">
+        <span style="font-size: 20px;">⚡</span>
+        <div>
+          <div style="font-size: 13px; font-weight: 700;">Rychly makler</div>
+          <div style="font-size: 11px; color: #94a3b8;">Prodej do 7 dni od nabrani</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px; background: #f8fafc; border-radius: 20px; padding: 8px 16px; border: 1px solid #e2e8f0;">
+        <span style="font-size: 20px;">🔥</span>
+        <div>
+          <div style="font-size: 13px; font-weight: 700;">Mesicni rekordman</div>
+          <div style="font-size: 11px; color: #94a3b8;">Nejvice prodeju v mesici</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px; background: #f8fafc; border-radius: 20px; padding: 8px 16px; border: 1px solid #e2e8f0;">
+        <span style="font-size: 20px;">⭐</span>
+        <div>
+          <div style="font-size: 13px; font-weight: 700;">5 hvezd</div>
+          <div style="font-size: 11px; color: #94a3b8;">10x hodnoceni 5/5 od zakazniku</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px; background: #f8fafc; border-radius: 20px; padding: 8px 16px; border: 1px solid #e2e8f0;">
+        <span style="font-size: 20px;">💰</span>
+        <div>
+          <div style="font-size: 13px; font-weight: 700;">Milionar</div>
+          <div style="font-size: 11px; color: #94a3b8;">Celkove trzby 1M Kc+</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 8: FAQ -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Caste <span class="orange">dotazy</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div class="grid-2">
+    <div>
+      <div class="faq-item">
+        <div class="question">Kolik mohu vydelat jako makler?</div>
+        <div class="answer">Provize je 5% z prodejni ceny (min 25 000 Kc). Pri 5 autech mesicne (prumer 500k) je to 125 000 Kc. Top makleri vydelavaji pres 200 000 Kc mesicne.</div>
+      </div>
+      <div class="faq-item">
+        <div class="question">Potrebuji zivnostensky list?</div>
+        <div class="answer">Ano, k registraci potrebujete platny zivnostensky list (volna zivnost). Pokud jeste nemate, pomuzmeme vam se zalozenim.</div>
+      </div>
+      <div class="faq-item">
+        <div class="question">Jak velky region mohu pokryvat?</div>
+        <div class="answer">Na zacatku vam pridelime region podle bydliste. S rostoucimi zkusenostmi (Level 2+) muzete oblast rozsirit.</div>
+      </div>
+    </div>
+    <div>
+      <div class="faq-item">
+        <div class="question">Co kdyz zakaznik reklamuje auto?</div>
+        <div class="answer">Reklamace resi BackOffice. Makler neni zodpovedny za skryte vady — to pokryva pojisteni. Vy jste zprostredkovatel, ne prodejce.</div>
+      </div>
+      <div class="faq-item">
+        <div class="question">Jak casto dostavem vyplatu?</div>
+        <div class="answer">Provize se vyplaci 2x mesicne (1. a 15. den). Prehled provizi a historii plateb najdete v PWA aplikaci.</div>
+      </div>
+      <div class="faq-item">
+        <div class="question">Mohu byt makler na castecny uvazek?</div>
+        <div class="answer">Ano! Mnoho nasich makleru pracuje na castecny uvazek. Nemame minimalni pozadavky na pocet prodeju. Pracujte podle svych moznosti.</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 9: CTA -->
+<div class="slide slide-cta">
+  <img src="../../public/brand/logo-white.png" alt="CarMakler" class="logo" style="height: 60px; margin-bottom: 30px;">
+  <h2>Pridejte se k <span>siti makleru</span></h2>
+  <p style="font-size: 20px; color: rgba(255,255,255,0.7); max-width: 600px; line-height: 1.6;">
+    Zaregistrujte se jiz dnes a zacnete vydelavat. Cely onboarding trva 15 minut.
+  </p>
+  <div class="contact-grid">
+    <div class="contact-item">
+      <div class="label">Registrace</div>
+      <div class="value"><a href="https://www.carmakler.cz/makler">carmakler.cz/makler</a></div>
+    </div>
+    <div class="contact-item">
+      <div class="label">E-mail</div>
+      <div class="value"><a href="mailto:makleri@carmakler.cz">makleri@carmakler.cz</a></div>
+    </div>
+    <div class="contact-item">
+      <div class="label">Telefon</div>
+      <div class="value">+420 123 456 789</div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CarMakler - Cenik sluzeb</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    color: #1a1a2e;
+    background: #f5f5f5;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+
+  .slide {
+    width: 297mm;
+    height: 210mm;
+    padding: 40px 60px;
+    page-break-after: always;
+    page-break-inside: avoid;
+    position: relative;
+    overflow: hidden;
+    background: white;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .slide:last-child { page-break-after: auto; }
+
+  .slide-title {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: white;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .slide-title::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: rgba(249, 115, 22, 0.08);
+  }
+  .slide-title::after {
+    content: '';
+    position: absolute;
+    bottom: -150px;
+    left: -150px;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: rgba(249, 115, 22, 0.05);
+  }
+  .slide-title .logo { height: 80px; margin-bottom: 30px; position: relative; z-index: 1; }
+  .slide-title h1 { font-size: 42px; font-weight: 800; line-height: 1.2; margin-bottom: 16px; position: relative; z-index: 1; }
+  .slide-title h1 span { color: #F97316; }
+  .slide-title .subtitle { font-size: 22px; font-weight: 300; color: rgba(255,255,255,0.8); position: relative; z-index: 1; }
+  .slide-title .date { position: absolute; bottom: 40px; right: 60px; font-size: 14px; color: rgba(255,255,255,0.5); }
+  .slide-title .web { position: absolute; bottom: 40px; left: 60px; font-size: 14px; color: rgba(255,255,255,0.5); }
+
+  .slide-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    padding-bottom: 16px;
+    border-bottom: 3px solid #F97316;
+  }
+  .slide-header h2 { font-size: 32px; font-weight: 700; color: #1a1a2e; }
+  .slide-header .logo-small { height: 36px; opacity: 0.6; }
+
+  .orange { color: #F97316; }
+  .highlight { background: linear-gradient(135deg, #FFF7ED, #FFEDD5); border-radius: 16px; padding: 24px; }
+  .dark-box { background: #1a1a2e; color: white; border-radius: 16px; padding: 24px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; flex: 1; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; flex: 1; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px; flex: 1; }
+
+  .feature-card {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #e2e8f0;
+  }
+  .feature-card .icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #F97316, #ea580c);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 14px;
+    color: white;
+  }
+  .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #1a1a2e; }
+  .feature-card p { font-size: 13px; line-height: 1.5; color: #64748b; }
+  .feature-card ul { font-size: 13px; line-height: 1.8; color: #64748b; list-style: none; }
+  .feature-card ul li::before { content: "✓ "; color: #F97316; font-weight: 700; }
+
+  .pricing-card {
+    border-radius: 16px;
+    padding: 28px;
+    text-align: center;
+    border: 2px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+  }
+  .pricing-card.popular {
+    border-color: #F97316;
+    background: linear-gradient(135deg, #FFF7ED, white);
+    transform: scale(1.02);
+    box-shadow: 0 8px 30px rgba(249,115,22,0.15);
+  }
+  .pricing-card .badge {
+    background: #F97316;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 12px;
+  }
+  .pricing-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .pricing-card .price { font-size: 36px; font-weight: 800; color: #F97316; margin: 12px 0; }
+  .pricing-card .price small { font-size: 14px; font-weight: 400; color: #94a3b8; }
+  .pricing-card ul { text-align: left; list-style: none; margin: 16px 0; flex: 1; }
+  .pricing-card ul li { font-size: 13px; padding: 6px 0; color: #475569; border-bottom: 1px solid #f1f5f9; }
+  .pricing-card ul li::before { content: "✓ "; color: #22c55e; font-weight: 700; }
+
+  .stat-box {
+    text-align: center;
+    padding: 24px;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+  }
+  .stat-box .number { font-size: 42px; font-weight: 800; color: #F97316; display: block; }
+  .stat-box .label { font-size: 14px; color: #64748b; margin-top: 4px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { background: #1a1a2e; color: white; padding: 12px 16px; text-align: left; font-weight: 600; }
+  th:first-child { border-radius: 8px 0 0 0; }
+  th:last-child { border-radius: 0 8px 0 0; }
+  td { padding: 10px 16px; border-bottom: 1px solid #f1f5f9; }
+  tr:nth-child(even) td { background: #f8fafc; }
+
+  .slide-cta {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: white;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .slide-cta h2 { font-size: 38px; font-weight: 800; margin-bottom: 20px; }
+  .slide-cta h2 span { color: #F97316; }
+  .slide-cta .contact-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; margin-top: 40px; }
+  .slide-cta .contact-item { font-size: 18px; }
+  .slide-cta .contact-item .label { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+  .slide-cta .contact-item .value { font-weight: 600; }
+  .slide-cta .contact-item .value a { color: #F97316; text-decoration: none; }
+
+  .slide-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #F97316, #ea580c, #F97316);
+  }
+
+  .service-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .service-row:last-child { border-bottom: none; }
+  .service-row .service-name { font-size: 14px; font-weight: 600; color: #1a1a2e; }
+  .service-row .service-desc { font-size: 12px; color: #64748b; }
+  .service-row .service-price { font-size: 16px; font-weight: 700; color: #F97316; white-space: nowrap; }
+
+  .split-visual {
+    display: flex;
+    gap: 4px;
+    height: 40px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 16px 0;
+  }
+  .split-visual .segment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+  }
+
+  @media print {
+    body { background: white; }
+    .slide { box-shadow: none; margin: 0; }
+  }
+
+  @media screen {
+    .slide {
+      margin: 20px auto;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1: TITLE -->
+<div class="slide slide-title">
+  <img src="../../public/brand/logo-white.png" alt="CarMakler" class="logo">
+  <h1>Cenik <span>sluzeb</span></h1>
+  <p class="subtitle">Kompletni prehled cen pro vsechny produkty platformy CarMakler</p>
+  <p class="web">www.carmakler.cz</p>
+  <p class="date">2026</p>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 2: MAKLERSKA SIT -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Maklerska <span class="orange">sit</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div class="grid-3" style="align-items: stretch;">
+    <div class="pricing-card">
+      <h3>Standardni provize</h3>
+      <div class="price">5% <small>z prodejni ceny</small></div>
+      <p style="font-size: 14px; color: #64748b; margin-bottom: 12px;">Minimalne 25 000 Kc</p>
+      <ul>
+        <li>Kompletni servis prodeje</li>
+        <li>Fotodokumentace vozu</li>
+        <li>Inzerce na vsech kanalech</li>
+        <li>Pravni podpora</li>
+        <li>Smlouva a prevod</li>
+      </ul>
+    </div>
+    <div class="pricing-card popular">
+      <span class="badge">Doporuceno</span>
+      <h3>Exkluzivni smlouva</h3>
+      <div class="price">4,5% <small>z prodejni ceny</small></div>
+      <p style="font-size: 14px; color: #64748b; margin-bottom: 12px;">Prednost v nabidce</p>
+      <ul>
+        <li>Vse ze standardni provize</li>
+        <li>Nizsi provize (4,5%)</li>
+        <li>Prioritni zobrazeni</li>
+        <li>Dedickovany makler</li>
+        <li>Garantovany prodej do 30 dni</li>
+      </ul>
+    </div>
+    <div class="pricing-card">
+      <h3>Volume partner</h3>
+      <div class="price">Individualne</div>
+      <p style="font-size: 14px; color: #64748b; margin-bottom: 12px;">10+ aut mesicne</p>
+      <ul>
+        <li>Individualni sazba provize</li>
+        <li>Prioritni zpracovani</li>
+        <li>Dedickovany team</li>
+        <li>API integrace</li>
+        <li>Mesicni reporting</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 3: INZERTNI PLATFORMA -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Inzertni <span class="orange">platforma</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div class="grid-3" style="align-items: stretch;">
+    <div class="pricing-card">
+      <h3>Soukromy prodejce</h3>
+      <div class="price">0 Kc</div>
+      <p style="font-size: 14px; color: #64748b; margin-bottom: 12px;">1 inzerat zdarma / 60 dni</p>
+      <ul>
+        <li>1 aktivni inzerat</li>
+        <li>Platnost 60 dni</li>
+        <li>Az 20 fotografii</li>
+        <li>Zakladni statistiky</li>
+        <li>Kontakt se zajemci</li>
+      </ul>
+    </div>
+    <div class="pricing-card popular">
+      <span class="badge">Nejoblibenejsi</span>
+      <h3>Premium inzerce</h3>
+      <div class="price">199 Kc <small>/7 dni</small></div>
+      <p style="font-size: 14px; color: #64748b; margin-bottom: 12px;">TOP zvyrazneni</p>
+      <ul>
+        <li>TOP pozice ve vyhledavani</li>
+        <li>Zvyrazneny inzerat</li>
+        <li>3x vice zobrazeni</li>
+        <li>Prodlouzeni: 99 Kc/30 dni</li>
+        <li>Statistiky zobrazeni</li>
+      </ul>
+    </div>
+    <div class="pricing-card">
+      <h3>Bazar balicek</h3>
+      <div class="price">1 990 Kc <small>/mesic</small></div>
+      <p style="font-size: 14px; color: #64748b; margin-bottom: 12px;">Az 30 inzeratu</p>
+      <ul>
+        <li>30 aktivnich inzeratu</li>
+        <li>Neomezena platnost</li>
+        <li>Feed import (Sauto, TipCars)</li>
+        <li>CRM sprava leadu</li>
+        <li>Partnersky dashboard</li>
+        <li>5x TOP zvyrazneni zdarma</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 4: DOPLNKOVE SLUZBY -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Doplnkove <span class="orange">sluzby</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div class="grid-2">
+    <div>
+      <div class="feature-card" style="height: 100%;">
+        <h3 style="font-size: 20px; margin-bottom: 20px;">Sluzby pro prodejce</h3>
+        <div class="service-row">
+          <div>
+            <div class="service-name">CEBIA proverka</div>
+            <div class="service-desc">Kompletni historie vozidla</div>
+          </div>
+          <div class="service-price">499 Kc</div>
+        </div>
+        <div class="service-row">
+          <div>
+            <div class="service-name">CEBIA proverka (makleri)</div>
+            <div class="service-desc">V ramci maklerske smlouvy</div>
+          </div>
+          <div class="service-price" style="color: #22c55e;">ZDARMA</div>
+        </div>
+        <div class="service-row">
+          <div>
+            <div class="service-name">Kaucni rezervace</div>
+            <div class="service-desc">48h garance na vozidlo</div>
+          </div>
+          <div class="service-price">5 000 Kc</div>
+        </div>
+        <div class="service-row">
+          <div>
+            <div class="service-name">TOP zvyrazneni</div>
+            <div class="service-desc">Prioritni pozice na 7 dni</div>
+          </div>
+          <div class="service-price">199 Kc</div>
+        </div>
+        <div class="service-row">
+          <div>
+            <div class="service-name">Prodlouzeni inzeratu</div>
+            <div class="service-desc">Dalsi 30 dni platnosti</div>
+          </div>
+          <div class="service-price">99 Kc</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="feature-card" style="height: 100%;">
+        <h3 style="font-size: 20px; margin-bottom: 20px;">Financni sluzby</h3>
+        <div class="service-row">
+          <div>
+            <div class="service-name">Kalkulace financovani</div>
+            <div class="service-desc">Porovnani nabidek od 5+ bank</div>
+          </div>
+          <div class="service-price" style="color: #22c55e;">ZDARMA</div>
+        </div>
+        <div class="service-row">
+          <div>
+            <div class="service-name">Sjednani financovani</div>
+            <div class="service-desc">Provize od financni spolecnosti</div>
+          </div>
+          <div class="service-price" style="color: #22c55e;">ZDARMA</div>
+        </div>
+        <div class="service-row">
+          <div>
+            <div class="service-name">Porovnani pojisteni</div>
+            <div class="service-desc">POV + HAV od vsech pojistoven</div>
+          </div>
+          <div class="service-price" style="color: #22c55e;">ZDARMA</div>
+        </div>
+        <div class="service-row">
+          <div>
+            <div class="service-name">Sjednani pojisteni</div>
+            <div class="service-desc">Online sjednani behem minuty</div>
+          </div>
+          <div class="service-price" style="color: #22c55e;">ZDARMA</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 5: ESHOP + MARKETPLACE -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Eshop & <span class="orange">Marketplace</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+  <div class="grid-2">
+    <div>
+      <div class="feature-card" style="margin-bottom: 20px;">
+        <div class="icon">🔧</div>
+        <h3 style="font-size: 20px;">Eshop autodily — Wolt model</h3>
+        <p style="font-size: 14px; line-height: 1.8; margin-top: 12px;">
+          Dodavatele (vrakoviste, velkoobchody) se registruji <strong style="color: #22c55e;">ZDARMA</strong>.
+          Carmakler si bere provizi az z prodanych dilu.
+        </p>
+        <div style="margin-top: 16px;">
+          <div class="service-row">
+            <div>
+              <div class="service-name">Registrace dodavatele</div>
+            </div>
+            <div class="service-price" style="color: #22c55e;">ZDARMA</div>
+          </div>
+          <div class="service-row">
+            <div>
+              <div class="service-name">Provize z prodeje</div>
+              <div class="service-desc">Default sazba, individualne dohodou</div>
+            </div>
+            <div class="service-price">15%</div>
+          </div>
+          <div class="service-row">
+            <div>
+              <div class="service-name">Zakaznik</div>
+              <div class="service-desc">Cena dilu + doprava</div>
+            </div>
+            <div class="service-price">Dle katalogu</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="dark-box" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+        <h3 style="font-size: 20px; margin-bottom: 16px; color: #F97316;">💎 Marketplace VIP</h3>
+        <p style="font-size: 14px; line-height: 1.8; color: rgba(255,255,255,0.8); margin-bottom: 20px;">
+          Uzavrena investicni platforma pro flipping aut.
+          Overeni dealeri nabizi prilezitosti, overeni investori financuji.
+        </p>
+        <div class="split-visual">
+          <div class="segment" style="flex: 4; background: #3b82f6;">40% Investor</div>
+          <div class="segment" style="flex: 4; background: #22c55e;">40% Dealer</div>
+          <div class="segment" style="flex: 2; background: #F97316;">20% CM</div>
+        </div>
+        <div style="margin-top: 16px;">
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 13px;">
+            <span style="color: rgba(255,255,255,0.6);">Registrace + verifikace</span>
+            <span style="color: #22c55e; font-weight: 700;">ZDARMA</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 13px;">
+            <span style="color: rgba(255,255,255,0.6);">Minimalni investice</span>
+            <span style="color: #F97316; font-weight: 700;">od 100 000 Kc</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; font-size: 13px;">
+            <span style="color: rgba(255,255,255,0.6);">Prumerny ROI</span>
+            <span style="color: #F97316; font-weight: 700;">15-25%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+<!-- SLIDE 6: CTA -->
+<div class="slide slide-cta">
+  <img src="../../public/brand/logo-white.png" alt="CarMakler" class="logo" style="height: 60px; margin-bottom: 30px;">
+  <h2>Kontaktujte nas pro <span>individualni nabidku</span></h2>
+  <p style="font-size: 20px; color: rgba(255,255,255,0.7); max-width: 600px; line-height: 1.6;">
+    Kazdy partner je jedinecny. Pripravime cenovou nabidku na miru vasim potrebam.
+  </p>
+  <div class="contact-grid">
+    <div class="contact-item">
+      <div class="label">Web</div>
+      <div class="value"><a href="https://www.carmakler.cz">www.carmakler.cz</a></div>
+    </div>
+    <div class="contact-item">
+      <div class="label">E-mail</div>
+      <div class="value"><a href="mailto:info@carmakler.cz">info@carmakler.cz</a></div>
+    </div>
+    <div class="contact-item">
+      <div class="label">Telefon</div>
+      <div class="value">+420 123 456 789</div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+</div>
+
+</body>
+</html>

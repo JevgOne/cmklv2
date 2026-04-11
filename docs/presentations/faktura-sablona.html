@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CarMakler - Faktura sablona</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    color: #1a1a2e;
+    background: #f5f5f5;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  .invoice-page {
+    width: 210mm;
+    height: 297mm;
+    padding: 30px 40px;
+    background: white;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .invoice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 3px solid #F97316;
+  }
+
+  .invoice-header .logo { height: 50px; }
+
+  .invoice-number {
+    text-align: right;
+  }
+  .invoice-number h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+  }
+  .invoice-number h1 span { color: #F97316; }
+  .invoice-number p {
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.8;
+  }
+
+  .parties {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 30px;
+  }
+
+  .party h3 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #94a3b8;
+    margin-bottom: 12px;
+  }
+
+  .party .name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+  }
+
+  .party p {
+    font-size: 13px;
+    color: #475569;
+    line-height: 1.8;
+  }
+
+  .party .highlight-box {
+    background: linear-gradient(135deg, #FFF7ED, #FFEDD5);
+    border-radius: 12px;
+    padding: 16px 20px;
+  }
+
+  .invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 24px;
+  }
+  .invoice-table th {
+    background: #1a1a2e;
+    color: white;
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .invoice-table th:first-child { border-radius: 8px 0 0 0; }
+  .invoice-table th:last-child { border-radius: 0 8px 0 0; text-align: right; }
+  .invoice-table th.right { text-align: right; }
+  .invoice-table th.center { text-align: center; }
+  .invoice-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 13px;
+    color: #475569;
+  }
+  .invoice-table td.right { text-align: right; }
+  .invoice-table td.center { text-align: center; }
+  .invoice-table tr:nth-child(even) td { background: #f8fafc; }
+
+  .totals {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 30px;
+  }
+  .totals-box {
+    width: 280px;
+  }
+  .totals-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 13px;
+    color: #475569;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .totals-row.total {
+    border-bottom: none;
+    border-top: 2px solid #1a1a2e;
+    padding-top: 12px;
+    margin-top: 4px;
+  }
+  .totals-row.total .label {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a2e;
+  }
+  .totals-row.total .value {
+    font-size: 20px;
+    font-weight: 800;
+    color: #F97316;
+  }
+
+  .payment-section {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 30px;
+    margin-bottom: 20px;
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+  }
+
+  .payment-details h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 12px;
+  }
+
+  .payment-details p {
+    font-size: 13px;
+    color: #475569;
+    line-height: 2;
+  }
+
+  .payment-details strong {
+    color: #1a1a2e;
+    font-weight: 600;
+    display: inline-block;
+    width: 140px;
+  }
+
+  .qr-placeholder {
+    width: 120px;
+    height: 120px;
+    border: 2px dashed #cbd5e1;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #94a3b8;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .invoice-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px 40px;
+    background: #1a1a2e;
+    color: rgba(255,255,255,0.6);
+    font-size: 11px;
+    text-align: center;
+  }
+  .invoice-footer span { color: #F97316; font-weight: 600; }
+
+  @media print {
+    body { background: white; }
+    .invoice-page { box-shadow: none; margin: 0; }
+  }
+
+  @media screen {
+    .invoice-page {
+      margin: 20px auto;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="invoice-page">
+  <!-- HEADER -->
+  <div class="invoice-header">
+    <img src="../../public/brand/logo-color.png" alt="CarMakler" class="logo">
+    <div class="invoice-number">
+      <h1>FAKTURA <span>c. FV2026001</span></h1>
+      <p>
+        Datum vystaveni: <strong>01.04.2026</strong><br>
+        Datum splatnosti: <strong>15.04.2026</strong><br>
+        Datum zdanitelneho plneni: <strong>01.04.2026</strong>
+      </p>
+    </div>
+  </div>
+
+  <!-- PARTIES -->
+  <div class="parties">
+    <div class="party">
+      <h3>Dodavatel</h3>
+      <div class="name">CarMakler s.r.o.</div>
+      <p>
+        ICO: [DOPLNIT]<br>
+        DIC: [DOPLNIT]<br>
+        [DOPLNIT adresu]<br>
+        [DOPLNIT mesto, PSC]
+      </p>
+    </div>
+    <div class="party">
+      <h3>Odberatel</h3>
+      <div class="highlight-box">
+        <div class="name">[Nazev firmy / Jmeno]</div>
+        <p>
+          ICO: [ICO zakaznika]<br>
+          DIC: [DIC zakaznika]<br>
+          [Adresa zakaznika]<br>
+          [Mesto, PSC]
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ITEMS TABLE -->
+  <table class="invoice-table">
+    <thead>
+      <tr>
+        <th style="width: 6%;">#</th>
+        <th style="width: 40%;">Polozka</th>
+        <th class="center" style="width: 10%;">Mn.</th>
+        <th class="right" style="width: 12%;">MJ</th>
+        <th class="right" style="width: 16%;">Cena/ks</th>
+        <th class="right" style="width: 16%;">Celkem</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Zprostredkovatelska provize — prodej vozidla VIN: ABC123</td>
+        <td class="center">1</td>
+        <td class="right">ks</td>
+        <td class="right">25 000 Kc</td>
+        <td class="right">25 000 Kc</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>CEBIA proverka historie vozidla</td>
+        <td class="center">1</td>
+        <td class="right">ks</td>
+        <td class="right">499 Kc</td>
+        <td class="right">499 Kc</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>TOP zvyrazneni inzeratu (7 dni)</td>
+        <td class="center">2</td>
+        <td class="right">ks</td>
+        <td class="right">199 Kc</td>
+        <td class="right">398 Kc</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- TOTALS -->
+  <div class="totals">
+    <div class="totals-box">
+      <div class="totals-row">
+        <span class="label">Zaklad dane (21%)</span>
+        <span class="value">21 402 Kc</span>
+      </div>
+      <div class="totals-row">
+        <span class="label">DPH 21%</span>
+        <span class="value">4 495 Kc</span>
+      </div>
+      <div class="totals-row total">
+        <span class="label">Celkem k uhrade</span>
+        <span class="value">25 897 Kc</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAYMENT -->
+  <div class="payment-section">
+    <div class="payment-details">
+      <h3>Platebni udaje</h3>
+      <p>
+        <strong>Banka:</strong> [DOPLNIT]<br>
+        <strong>Cislo uctu:</strong> [DOPLNIT]<br>
+        <strong>IBAN:</strong> [DOPLNIT]<br>
+        <strong>Variabilni symbol:</strong> FV2026001<br>
+        <strong>Zpusob uhrady:</strong> Bankovni prevod
+      </p>
+    </div>
+    <div class="qr-placeholder">
+      QR platba<br>(vygenerovat)
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="invoice-footer">
+    <span>CarMakler s.r.o.</span> · ICO: [DOPLNIT] · Zapsana v OR u MS v Praze · www.carmakler.cz
+  </div>
+</div>
+
+</body>
+</html>
