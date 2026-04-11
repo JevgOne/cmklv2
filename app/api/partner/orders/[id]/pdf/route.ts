@@ -81,7 +81,7 @@ export async function POST(
       supplier: supplierInfo,
       buyer: buyerInfo,
       items,
-      totalPrice: isAdmin ? order.totalPrice : itemsTotal + (isAdmin ? order.shippingPrice : 0),
+      totalPrice: isAdmin ? order.totalPrice : itemsTotal + order.shippingPrice,
       shippingPrice: order.shippingPrice,
       deliveryMethod: order.deliveryMethod,
       note: order.note,
