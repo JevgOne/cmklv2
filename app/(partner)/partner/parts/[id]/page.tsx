@@ -194,7 +194,7 @@ export default function PartnerPartDetailPage() {
       {editing ? (
         <div className="space-y-4">
           <h2 className="text-lg font-bold text-gray-900">Upravit díl</h2>
-          <PhotoUpload photos={editPhotos} onChange={setEditPhotos} max={10} />
+          <PhotoUpload photos={editPhotos} onChange={setEditPhotos} max={10} preset="parts" />
           <Input label="Název" value={editName} onChange={(e) => setEditName(e.target.value)} />
           <Input label="Cena (Kč)" type="number" value={editPrice} onChange={(e) => setEditPrice(e.target.value)} />
           <Input label="Skladem (ks)" type="number" value={editStock} onChange={(e) => setEditStock(e.target.value)} />

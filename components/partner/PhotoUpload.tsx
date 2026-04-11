@@ -7,9 +7,10 @@ interface PhotoUploadProps {
   photos: string[];
   onChange: (photos: string[]) => void;
   max?: number;
+  preset: string;
 }
 
-export function PhotoUpload({ photos, onChange, max = 10 }: PhotoUploadProps) {
+export function PhotoUpload({ photos, onChange, max = 10, preset }: PhotoUploadProps) {
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -22,6 +23,7 @@ export function PhotoUpload({ photos, onChange, max = 10 }: PhotoUploadProps) {
       try {
         const formData = new FormData();
         formData.append("file", file);
+        formData.append("upload_preset", preset);
         const res = await fetch("/api/upload", { method: "POST", body: formData });
         if (res.ok) {
           const { url } = await res.json();

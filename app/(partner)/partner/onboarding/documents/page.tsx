@@ -27,6 +27,7 @@ export default function PartnerOnboardingDocumentsPage() {
     try {
       const formData = new FormData();
       formData.append("file", file);
+      formData.append("upload_preset", "invoices");
       const res = await fetch("/api/upload", { method: "POST", body: formData });
       if (res.ok) {
         const { url } = await res.json();

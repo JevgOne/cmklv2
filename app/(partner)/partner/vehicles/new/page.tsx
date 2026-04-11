@@ -112,7 +112,7 @@ export default function NewVehiclePage() {
             </div>
           )}
 
-          <PhotoUpload photos={photos} onChange={setPhotos} max={10} />
+          <PhotoUpload photos={photos} onChange={setPhotos} max={10} preset="vehicles" />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Select
               label="Znacka *"

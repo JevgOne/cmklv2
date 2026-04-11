@@ -215,7 +215,7 @@ export default function PartnerVehicleDetailPage() {
           <h2 className="text-lg font-bold text-gray-900">
             Upravit: {vehicle.brand} {vehicle.model} ({vehicle.year})
           </h2>
-          <PhotoUpload photos={editPhotos} onChange={setEditPhotos} max={10} />
+          <PhotoUpload photos={editPhotos} onChange={setEditPhotos} max={10} preset="vehicles" />
           <Input
             label="Cena (Kč)"
             type="number"

@@ -100,7 +100,7 @@ export default function NewPartPage() {
             </div>
           )}
 
-          <PhotoUpload photos={photos} onChange={setPhotos} max={10} />
+          <PhotoUpload photos={photos} onChange={setPhotos} max={10} preset="parts" />
 
           <Input
             label="Nazev dilu *"
