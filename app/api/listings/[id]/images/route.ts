@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { uploadToCloudinary } from "@/lib/cloudinary";
+import { uploadToCloudinary, WATERMARK_TRANSFORMATION } from "@/lib/cloudinary";
 
 /* ------------------------------------------------------------------ */
 /*  POST /api/listings/[id]/images — Upload obrázků k inzerátu        */
@@ -73,7 +73,9 @@ export async function POST(
 
       let url: string;
       try {
-        url = await uploadToCloudinary(photos[i], `carmakler/listings/${id}`);
+        url = await uploadToCloudinary(photos[i], `carmakler/listings/${id}`, {
+          transformation: WATERMARK_TRANSFORMATION,
+        });
       } catch (uploadError) {
         console.error(`Failed to upload photo ${i}:`, uploadError);
         continue; // Preskocit selhany upload, pokracovat s dalsimi

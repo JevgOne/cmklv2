@@ -1,20 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { uploadToCloudinary } from "@/lib/cloudinary";
+import { uploadToCloudinary, WATERMARK_TRANSFORMATION } from "@/lib/cloudinary";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const ALLOWED_DOC_TYPES = ["application/pdf", ...ALLOWED_IMAGE_TYPES];
 
 // Mapping upload_preset -> folder + allowed types
-const PRESETS: Record<string, { folder: string; allowedTypes: string[] }> = {
-  vehicles: { folder: "carmakler/vehicles", allowedTypes: ALLOWED_IMAGE_TYPES },
-  listings: { folder: "carmakler/listings", allowedTypes: ALLOWED_IMAGE_TYPES },
-  parts: { folder: "carmakler/parts", allowedTypes: ALLOWED_IMAGE_TYPES },
+const PRESETS: Record<string, { folder: string; allowedTypes: string[]; watermark?: boolean }> = {
+  vehicles: { folder: "carmakler/vehicles", allowedTypes: ALLOWED_IMAGE_TYPES, watermark: true },
+  listings: { folder: "carmakler/listings", allowedTypes: ALLOWED_IMAGE_TYPES, watermark: true },
+  parts: { folder: "carmakler/parts", allowedTypes: ALLOWED_IMAGE_TYPES, watermark: true },
   invoices: { folder: "carmakler/invoices", allowedTypes: ALLOWED_DOC_TYPES },
   contracts: { folder: "carmakler/contracts", allowedTypes: ALLOWED_DOC_TYPES },
-  damages: { folder: "carmakler/damages", allowedTypes: ALLOWED_IMAGE_TYPES },
+  damages: { folder: "carmakler/damages", allowedTypes: ALLOWED_IMAGE_TYPES, watermark: true },
 };
 
 /**
@@ -65,7 +65,12 @@ export async function POST(request: NextRequest) {
     }
 
     const targetFolder = subfolder ? `${folder}/${subfolder}` : folder;
-    const url = await uploadToCloudinary(file, targetFolder);
+    const { watermark } = PRESETS[preset];
+    const url = await uploadToCloudinary(
+      file,
+      targetFolder,
+      watermark ? { transformation: WATERMARK_TRANSFORMATION } : undefined
+    );
 
     return NextResponse.json({ url }, { status: 201 });
   } catch (error) {

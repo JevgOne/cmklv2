@@ -10,6 +10,18 @@
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 /**
+ * Cloudinary overlay transformation pro vodoznak.
+ * Pouziva nahrany asset "carmakler/watermark" (logo-white.png).
+ * - g_south_east: pravy dolni roh
+ * - w_0.15: 15% sirky obrazku (responsivni)
+ * - o_40: 40% opacity
+ * - x_15,y_15: padding od rohu
+ * - fl_relative: w_0.15 je relativni k obrazku
+ */
+export const WATERMARK_TRANSFORMATION =
+  "l_carmakler:watermark,g_south_east,w_0.15,o_40,x_15,y_15,fl_relative/fl_layer_apply";
+
+/**
  * Upload souboru na Cloudinary pres REST API.
  * @param file - File objekt (z FormData)
  * @param folder - Cloudinary folder (napr. "carmakler/avatars", "carmakler/onboarding/xyz")
