@@ -365,9 +365,206 @@ Serazeno podle business impact (vyssi = dulezitejsi):
 
 ---
 
-## §10 Celkovy verdikt
+## §10 DEEP DIVE — PWA Dily/Vrakoviste vs PWA Partner (Autobazar)
+
+Porovnani s referencnim vzorem **PWA Makler** (46 pages, 96 komponent, kompletni offline-first PWA).
+
+---
+
+### §10.1 PWA Dily / Vrakoviste (`app/(pwa-parts)/parts/*`)
+
+**Route group:** `(pwa-parts)` | **Layout:** SupplierTopBar + SupplierBottomNav + OnlineStatusProvider + OfflineBanner
+**Celkem:** 7 pages, 15 komponent
+
+| Stranka | Route | Stav | Poznamka |
+|---------|-------|------|----------|
+| Dashboard | `/parts` (page.tsx) | **FUNKCNI** | SupplierStats + PendingOrders + CTA "Pridat novy dil" |
+| Moje dily | `/parts/my` | **FUNKCNI** | Fetch `/api/parts?limit=100`, filtry (all/ACTIVE/SOLD/INACTIVE), PartCard, link na CSV import |
+| Pridat dil (wizard) | `/parts/new` | **FUNKCNI** | 3-step wizard: PhotoStep → DetailsStep (manufacturer, warranty, compatibility, OEM) → PricingStep. POST `/api/parts` |
+| CSV import | `/parts/import` | **FUNKCNI** | CsvImport komponenta. Hromadny import dilu |
+| Objednavky (list) | `/parts/orders` | **FUNKCNI** | Fetch `/api/orders?role=supplier`, Tabs (Vse/Nove/K odeslani/Aktivni/Dokoncene), OrderCard |
+| Objednavka (detail) | `/parts/orders/[id]` | **FUNKCNI** | Full detail: kupujici, polozky, doruceni, platba, poznamka, ShippingLabelCard + OrderActions (status change) |
+| Profil | `/parts/profile` | **FUNKCNI** | Session info, SupplierStripeCard (Stripe Connect self-service), verejny profil editor, logout |
+
+**API backend:** Plne pokryty
+- `GET/POST /api/parts` — CRUD dilu
+- `GET /api/parts/[id]` — detail
+- `POST /api/parts/import` — CSV import
+- `GET /api/parts/supplier-stats` — statistiky dodavatele
+- `GET /api/parts/compatible` — kompatibilni dily
+- `GET /api/parts/for-vehicle` — dily pro vozidlo
+- `GET /api/orders?role=supplier` — objednavky pro dodavatele
+- `GET /api/orders/[id]` — detail objednavky
+- `PUT /api/orders/[id]/status` — zmena statusu
+- `GET/PUT /api/partner/profile` — profil dodavatele
+
+**Komponenty (15):**
+- Layout: `SupplierTopBar.tsx`, `SupplierBottomNav.tsx`
+- Dashboard: `SupplierStats.tsx`, `PendingOrders.tsx`
+- Parts: `AddPartWizard.tsx`, `PhotoStep.tsx`, `DetailsStep.tsx`, `PricingStep.tsx`, `PartCard.tsx`, `PartFilters.tsx`, `CompatibilitySelector.tsx`
+- Orders: `OrderCard.tsx`, `OrderActions.tsx`, `ShippingLabelCard.tsx`
+- Profile: `SupplierStripeCard.tsx`
+- Shared: `CsvImport.tsx`
+
+**VERDICT: 85% KOMPLETNI — funkcni PWA s plnym CRUD + order management**
+
+**Co chybi vs Makler PWA (reference):**
+
+| Feature | Makler PWA | PWA Dily | Gap |
+|---------|-----------|----------|-----|
+| Pages count | 46 | 7 | Makler ma 6.5x vic stranek |
+| Components | 96 | 15 | Makler ma 6.4x vic komponent |
+| Onboarding flow | 5-step (profil→dokumenty→trening→smlouva→schvaleni) | **CHYBI** | Neni onboarding pro noveho dodavatele |
+| Offline mode | IndexedDB + background sync | Layout has OfflineBanner | Jen banner, ne full offline CRUD |
+| Settings | Notifikace, theme, jazyk | **CHYBI** | Zadne nastaveni |
+| Edit existujiciho dilu | N/A | **CHYBI** | Jen pridani noveho, ne editace |
+| Smazani dilu | N/A | **CHYBI** | Neni mozne smazat/deaktivovat dil z UI |
+| Notifikace push | Firebase/Pusher | **CHYBI** | Zadne push notifikace |
+| Galerie fotek dilu | Upload v wizardu | PhotoStep existuje | Ale bez Cloudinary klice = nefunkcni |
+| Komunikace s kupujicim | Messages (real-time) | **CHYBI** | Supplier nevi kdo kupil bez kontaktu |
+| Shipping label gen | ShippingLabelCard existuje | **EXISTUJE** | Ale shipping API klice prazdne → dry-run |
+| Search/sort dilu | N/A | **CHYBI** | Jen zakladni tab filtr (status) |
+| Bulk actions | N/A | **CHYBI** | Neni hromadna deaktivace/smazani |
+| Dashboard grafy | Charts, trendy | **CHYBI** | Jen StatCards, zadne grafy |
+| Gamification | Achievements, leaderboard | **CHYBI** | Zadna motivace pro dodavatele |
+
+**TOP 5 gapu pro PWA Dily:**
+1. **Onboarding flow** — novy dodavatel nema jak projit registraci/schvalenim
+2. **Edit/delete dilu** — CRUD je jen Create + Read, chybi Update + Delete
+3. **Fotky (Cloudinary)** — PhotoStep existuje ale bez API klice
+4. **Notifikace o novych objednavkach** — dodavatel se o objednavce dozvi jen kdyz sam refreshne stranku
+5. **Komunikace s kupujicim** — zadny messaging
+
+---
+
+### §10.2 PWA Partner / Autobazar (`app/(partner)/partner/*`)
+
+**Route group:** `(partner)` | **Layout:** PartnerLayout (sidebar + mobile hamburger, ne bottom nav)
+**Celkem:** 12 pages, 1 komponenta (PartnerLayout.tsx)
+
+| Stranka | Route | Stav | Poznamka |
+|---------|-------|------|----------|
+| Dashboard | `/partner/dashboard` | **FUNKCNI** | Dual-mode (bazar=vozidla stats, vrakoviste=dily stats). Fetch `/api/partner/dashboard`, recentLeads. |
+| Moje vozidla | `/partner/vehicles` | **FUNKCNI** | Fetch `/api/partner/vehicles`, status tabs, paginace, vehicle cards s fotkou + inquiry count |
+| Pridat vozidlo | `/partner/vehicles/new` | **FUNKCNI** | Formular (znacka, model, rok, km, cena, palivo, prevodovka, VIN, mesto). POST `/api/partner/vehicles` |
+| Moje dily | `/partner/parts` | **FUNKCNI** | Fetch `/api/partner/parts`, paginace, status badge, cena, skladem |
+| Pridat dil | `/partner/parts/new` | **FUNKCNI** | Formular (nazev, kategorie, stav, cena, ks, znacka, model, OEM, popis). POST `/api/partner/parts` |
+| Objednavky | `/partner/orders` | **FUNKCNI** | Fetch `/api/orders?role=supplier`, status badge, paginace |
+| Zajemci (leads) | `/partner/leads` | **FUNKCNI** | Status tabs (Novy→Kontaktovan→Domluveno→Prodano→Nezajem), inline status change, kontaktni udaje |
+| Zpravy | `/partner/messages` | **SEMI-FUNKCNI** | Server component, cte z Notification tabulky. Ale pise: "Plna komunikace bude brzy k dispozici." |
+| Dokumenty | `/partner/documents` | **PLACEHOLDER** | 3 hardcoded dokumenty (partnerska smlouva, OP, mesicni vyuctovani). PDF linky na `/documents/*.pdf` — PDF soubory pravdepodobne neexistuji. |
+| Profil | `/partner/profile` | **FUNKCNI** | Dual-mode (bazar/vrakoviste label). Fetch/PUT `/api/partner/profile`. Oteviraci doba: "Editor bude brzy k dispozici." |
+| Statistiky | `/partner/stats` | **FUNKCNI** | Dual-mode: bazar=konverzni funnel (views→leads→sold) + bar chart. Vrakoviste=dily/objednavky stat cards. |
+| Vyuctovani | `/partner/billing` | **FUNKCNI** | Fetch `/api/partner/billing`. Revenue/commission/payout stat cards + prodane dily tabulka. |
+
+**API backend:** Plne pokryty (8 route souboru)
+- `GET /api/partner/dashboard` — dashboard data
+- `GET/PUT /api/partner/profile` — profil partnera
+- `GET /api/partner/vehicles` + `POST` — CRUD vozidel
+- `GET /api/partner/parts` + `POST` — CRUD dilu
+- `GET /api/partner/leads` — zajemci
+- `PATCH /api/partner/leads/[id]` — zmena statusu leadu
+- `GET /api/partner/stats` — statistiky
+- `GET /api/partner/billing` — vyuctovani
+
+**Komponenty (1):**
+- `PartnerLayout.tsx` — sidebar nav s dual-mode (bazar vs vrakoviste navigace), mobile hamburger, logout
+
+**VERDICT: 70% KOMPLETNI — solidni desktop-first dashboard, ale chybi klicove PWA vlastnosti**
+
+**Co chybi vs Makler PWA (reference) a vs PWA Dily:**
+
+| Feature | Makler PWA | PWA Dily | PWA Partner | Gap |
+|---------|-----------|----------|-------------|-----|
+| Layout pattern | TopBar + BottomNav (mobile-first) | TopBar + BottomNav | Sidebar (desktop-first) | **Partner neni mobile-optimized** — sidebar layout je desktop, hamburger je fallback. Makler + Dily maji native BottomNav. |
+| Onboarding | 5-step | Chybi | **CHYBI** | Zadny registracni/schvalovaci flow pro partnera |
+| Edit vozidla/dilu | Edit page existuje | Chybi | **CHYBI** | Jen pridani, ne editace/smazani |
+| Fotky upload | Cloudinary integ | PhotoStep | **CHYBI** | Partner nema foto upload pri pridani vozidla/dilu |
+| Offline | Full (IndexedDB) | OfflineBanner | **CHYBI** | Zadny offline support — ani banner |
+| Push notifikace | Badge + alert | Chybi | **CHYBI** | Zadne |
+| Order detail | N/A | Plny detail + actions | **CHYBI** | Jen list, ne detail objednavky |
+| Order status change | N/A | OrderActions | **CHYBI** | Partner nemuze menit status objednavek |
+| Shipping | N/A | ShippingLabelCard | **CHYBI** | Partner nema shipping management |
+| Komunikace | Messages (list + thread) | Chybi | Notification-only | Jen systemove notifikace, ne real-time chat |
+| Stripe Connect | N/A | SupplierStripeCard | **CHYBI** | Partner nema Stripe self-service |
+| Registrace partnera | N/A | N/A | **CHYBI** | `/registrace/partner` existuje ale neni propojeny s onboardingem |
+| Settings | Notifikace, theme | Chybi | **CHYBI** | Zadne nastaveni |
+| Search | GlobalSearch | Chybi | **CHYBI** | Zadne vyhledavani |
+| Gamification | Achievements | Chybi | **CHYBI** | Zadna motivace |
+| Oteviraci doba | N/A | N/A | "Bude brzy" placeholder | Neni implementovano |
+| PDF dokumenty | N/A | N/A | Linky existuji | Realne PDF soubory pravdepodobne neexistuji v /public/documents/ |
+
+**TOP 5 gapu pro PWA Partner:**
+1. **Mobile-first layout** — prechod ze sidebar na BottomNav (jako Makler/Dily PWA vzor)
+2. **Onboarding flow** — registrace + schvaleni partnera (bazar i vrakoviste)
+3. **Foto upload** — pri pridani vozidla/dilu
+4. **Order detail + shipping** — prevzit OrderActions + ShippingLabelCard z PWA Dily
+5. **Offline support** — minimalne OfflineBanner + OnlineStatusProvider z PWA Dily
+
+---
+
+### §10.3 Porovnavaci matice — 3 PWA
+
+| Dimenze | PWA Makler (reference) | PWA Dily | PWA Partner |
+|---------|----------------------|----------|-------------|
+| **Pages** | 46 | 7 | 12 |
+| **Komponenty** | 96 | 15 | 1 |
+| **Layout** | TopBar + BottomNav (mobile) | TopBar + BottomNav (mobile) | Sidebar (desktop) |
+| **Offline** | Full (IndexedDB + sync) | OfflineBanner only | Zadny |
+| **Onboarding** | 5-step flow | Chybi | Chybi |
+| **CRUD** | Full (Create+Read+Update+Delete) | Create+Read only | Create+Read only |
+| **Foto upload** | Cloudinary wizard | PhotoStep (bez API klice) | Chybi uplne |
+| **Real-time** | Messages (planned) | Chybi | Notification-only |
+| **Stripe** | N/A (provize system) | SupplierStripeCard | Chybi |
+| **Push notif** | Badge system | Chybi | Chybi |
+| **Search** | GlobalSearch | Chybi | Chybi |
+| **Settings** | Notif preferences | Chybi | Chybi |
+| **Gamification** | Achievements + leaderboard | Chybi | Chybi |
+| **Hotovost** | **85%** | **85% (zakladni flow)** | **70% (desktop ok, mobile weak)** |
+
+---
+
+### §10.4 Doporuceny plan dodelani obou PWA
+
+**Faze 1 — Zakladni parity (1 tyden):**
+
+| # | Task | PWA | Effort | Popis |
+|---|------|-----|--------|-------|
+| D1 | Edit/delete dilu | Dily | 4h | PUT/DELETE `/api/parts/[id]` + edit page + delete button |
+| D2 | Edit/delete dilu | Partner | 4h | PUT/DELETE `/api/partner/parts/[id]` + edit page |
+| D3 | Edit/delete vozidla | Partner | 4h | PUT/DELETE `/api/partner/vehicles/[id]` + edit page |
+| D4 | Order detail + actions | Partner | 3h | Prevzit OrderActions + ShippingLabelCard z PWA Dily |
+| D5 | Mobile layout refaktor | Partner | 6h | BottomNav + TopBar misto sidebar (Makler/Dily vzor) |
+
+**Faze 2 — Kriticke features (1-2 tydny):**
+
+| # | Task | PWA | Effort | Popis |
+|---|------|-----|--------|-------|
+| D6 | Onboarding flow | Obe | 8h | Registrace → verifikace → schvaleni adminem → aktivace |
+| D7 | Foto upload (Cloudinary) | Obe | 4h | Cloudinary widget v add part/vehicle formu (zavislost: P9 Cloudinary API klic) |
+| D8 | Stripe Connect | Partner | 4h | Prevzit SupplierStripeCard z PWA Dily |
+| D9 | Offline support | Partner | 4h | Prevzit OnlineStatusProvider + OfflineBanner z PWA Dily |
+| D10 | Settings page | Obe | 3h | Notif preferences, profil nastaveni |
+
+**Faze 3 — Nice to have (2-4 tydny):**
+
+| # | Task | PWA | Effort | Popis |
+|---|------|-----|--------|-------|
+| D11 | Search | Obe | 4h | Prevzit GlobalSearch z Makler PWA |
+| D12 | Push notifikace | Obe | 8h | Novy order/lead notification (zavislost: Pusher nebo Web Push) |
+| D13 | Dashboard grafy | Obe | 6h | Trendy, revenue chart, mesicni prehled |
+| D14 | Komunikace/chat | Obe | 16h | Kupujici ↔ dodavatel messaging (zavislost: Pusher) |
+| D15 | Oteviraci doba editor | Partner | 3h | UI editor + API endpoint |
+| D16 | PDF dokumenty | Partner | 2h | Generovani reálnych PDF (smlouva, OP) |
+
+**Celkovy effort odhad:** Faze 1 (~21h) + Faze 2 (~23h) + Faze 3 (~39h) = **~83 hodin** na plnou paritu s Makler PWA.
+
+---
+
+## §11 Celkovy verdikt
 
 **Carmakler je technicky impresivni MVP s solidni architekturou, ale neni pripraveny na real uzivatele.**
+**Obe PWA (Dily + Partner) jsou funkcni pro zakladni happy path, ale chybi CRUD Update/Delete, onboarding, foto upload, a partner PWA neni mobile-optimized.**
 
 Silne stranky:
 - Komplexni aplikace pokryvajici 4 propojene produkty
