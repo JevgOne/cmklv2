@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Pagination } from "@/components/ui/Pagination";
@@ -86,7 +87,8 @@ export default function PartnerOrdersPage() {
             {orders.map((order) => {
               const badge = statusBadge[order.status] ?? statusBadge.PENDING;
               return (
-                <Card key={order.id} className="p-4">
+                <Link key={order.id} href={`/partner/orders/${order.id}`} className="block no-underline">
+                <Card className="p-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
@@ -110,6 +112,7 @@ export default function PartnerOrdersPage() {
                     </div>
                   </div>
                 </Card>
+                </Link>
               );
             })}
           </div>
