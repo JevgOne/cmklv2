@@ -47,23 +47,23 @@ interface PartDetail {
 }
 
 const statusConfig: Record<string, { label: string; variant: "verified" | "default" | "pending" | "new" }> = {
-  ACTIVE: { label: "Aktivni", variant: "verified" },
-  INACTIVE: { label: "Neaktivni", variant: "default" },
-  SOLD: { label: "Prodano", variant: "pending" },
-  RESERVED: { label: "Rezervovano", variant: "new" },
+  ACTIVE: { label: "Aktivní", variant: "verified" },
+  INACTIVE: { label: "Neaktivní", variant: "default" },
+  SOLD: { label: "Prodáno", variant: "pending" },
+  RESERVED: { label: "Rezervováno", variant: "new" },
   DRAFT: { label: "Koncept", variant: "default" },
 };
 
 const categoryLabels: Record<string, string> = {
-  ENGINE: "Motor", TRANSMISSION: "Prevodovka", BODY: "Karoserie",
-  INTERIOR: "Interior", ELECTRICAL: "Elektro", SUSPENSION: "Podvozek",
-  BRAKES: "Brzdy", EXHAUST: "Vyfuk", COOLING: "Klimatizace",
-  WHEELS: "Kola", FUEL: "Palivo", OTHER: "Ostatni",
+  ENGINE: "Motor", TRANSMISSION: "Převodovka", BODY: "Karosérie",
+  INTERIOR: "Interiér", ELECTRICAL: "Elektro", SUSPENSION: "Podvozek",
+  BRAKES: "Brzdy", EXHAUST: "Výfuk", COOLING: "Klimatizace",
+  WHEELS: "Kola", FUEL: "Palivo", OTHER: "Ostatní",
 };
 
 const conditionLabels: Record<string, string> = {
-  NEW: "Novy", USED_GOOD: "Plne funkcni", USED_FAIR: "Funkcni s vadou",
-  USED_POOR: "Na dily", REFURBISHED: "Repasovany",
+  NEW: "Nový", USED_GOOD: "Plně funkční", USED_FAIR: "Funkční s vadou",
+  USED_POOR: "Na díly", REFURBISHED: "Repasovaný",
 };
 
 export default function PartDetailPage() {
@@ -109,11 +109,11 @@ export default function PartDetailPage() {
     return (
       <div className="px-4 py-16 max-w-lg mx-auto text-center">
         <div className="text-4xl mb-3">🔍</div>
-        <h2 className="text-lg font-bold text-gray-900">Dil nenalezen</h2>
-        <p className="text-sm text-gray-500 mt-1">Dil byl odstranen nebo neexistuje.</p>
+        <h2 className="text-lg font-bold text-gray-900">Díl nenalezen</h2>
+        <p className="text-sm text-gray-500 mt-1">Díl byl odstraněn nebo neexistuje.</p>
         <Link href="/parts/my" className="no-underline">
           <Button variant="primary" size="sm" className="mt-4">
-            Zpet na moje dily
+            Zpět na moje díly
           </Button>
         </Link>
       </div>
@@ -167,7 +167,7 @@ export default function PartDetailPage() {
           <Badge variant="default">{categoryLabels[part.category] ?? part.category}</Badge>
           <Badge variant="default">{conditionLabels[part.condition] ?? part.condition}</Badge>
           {part.partType && part.partType !== "USED" && (
-            <Badge variant="new">{part.partType === "NEW" ? "Novy" : "Aftermarket"}</Badge>
+            <Badge variant="new">{part.partType === "NEW" ? "Nový" : "Aftermarket"}</Badge>
           )}
         </div>
 
@@ -193,13 +193,13 @@ export default function PartDetailPage() {
           <div className="p-4 bg-gray-50 rounded-xl space-y-2">
             {part.manufacturer && (
               <div className="flex justify-between text-sm">
-                <span className="font-semibold text-gray-600">Vyrobce</span>
+                <span className="font-semibold text-gray-600">Výrobce</span>
                 <span className="text-gray-900">{part.manufacturer}</span>
               </div>
             )}
             {part.warranty && (
               <div className="flex justify-between text-sm">
-                <span className="font-semibold text-gray-600">Zaruka</span>
+                <span className="font-semibold text-gray-600">Záruka</span>
                 <span className="text-gray-900">{part.warranty}</span>
               </div>
             )}
@@ -210,7 +210,7 @@ export default function PartDetailPage() {
         <div className="p-4 bg-gray-50 rounded-xl space-y-2">
           {part.oemNumber && (
             <div className="flex justify-between text-sm">
-              <span className="font-semibold text-gray-600">OEM cislo</span>
+              <span className="font-semibold text-gray-600">OEM číslo</span>
               <span className="text-gray-900">{part.oemNumber}</span>
             </div>
           )}
@@ -219,7 +219,7 @@ export default function PartDetailPage() {
             <span className="text-gray-900">{part.stock} ks</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="font-semibold text-gray-600">Zobrazeni</span>
+            <span className="font-semibold text-gray-600">Zobrazení</span>
             <span className="text-gray-900">{part.viewCount}</span>
           </div>
         </div>
@@ -248,7 +248,7 @@ export default function PartDetailPage() {
         <div className="flex gap-3 pt-2">
           <Link href="/parts/my" className="flex-1 no-underline">
             <Button variant="outline" size="lg" className="w-full">
-              Zpet
+              Zpět
             </Button>
           </Link>
           <Link href={`/parts/${part.id}/edit`} className="flex-1 no-underline">
@@ -263,7 +263,7 @@ export default function PartDetailPage() {
           className="w-full text-red-500 border-red-200 hover:bg-red-50"
           onClick={() => setDeleteOpen(true)}
         >
-          Smazat dil
+          Smazat díl
         </Button>
       </div>
 

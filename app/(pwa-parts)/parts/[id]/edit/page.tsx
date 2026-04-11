@@ -51,7 +51,7 @@ export default function EditPartPage() {
     try {
       const res = await fetch(`/api/parts/${id}`);
       if (!res.ok) {
-        setError("Dil nenalezen");
+        setError("Díl nenalezen");
         setLoading(false);
         return;
       }
@@ -100,7 +100,7 @@ export default function EditPartPage() {
         deliveryOptions: ["PICKUP"],
       });
     } catch {
-      setError("Chyba pri nacitani dilu");
+      setError("Chyba při načítání dílu");
     } finally {
       setLoading(false);
     }
@@ -150,10 +150,10 @@ export default function EditPartPage() {
         router.push(`/parts/${id}`);
       } else {
         const data = await res.json().catch(() => ({}));
-        setError(data.error || "Ulozeni se nezdarilo");
+        setError(data.error || "Uložení se nezdařilo");
       }
     } catch {
-      setError("Chyba pri ukladani");
+      setError("Chyba při ukládání");
     } finally {
       setSubmitting(false);
     }
@@ -181,7 +181,7 @@ export default function EditPartPage() {
         <h2 className="text-lg font-bold text-gray-900">{error}</h2>
         <Link href="/parts/my" className="no-underline">
           <Button variant="primary" size="sm" className="mt-4">
-            Zpet na moje dily
+            Zpět na moje díly
           </Button>
         </Link>
       </div>
@@ -193,9 +193,9 @@ export default function EditPartPage() {
       {/* Cancel link */}
       <div className="px-4 py-2 bg-gray-50 border-b border-gray-200">
         <div className="max-w-lg mx-auto flex items-center justify-between">
-          <span className="text-sm font-semibold text-gray-700">Upravit dil</span>
+          <span className="text-sm font-semibold text-gray-700">Upravit díl</span>
           <Link href={`/parts/${id}`} className="text-sm text-gray-500 no-underline">
-            Zrusit
+            Zrušit
           </Link>
         </div>
       </div>
