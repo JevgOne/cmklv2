@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { uploadToCloudinary } from "@/lib/cloudinary";
+import { uploadToServer } from "@/lib/upload";
 
 // PUT /api/onboarding/profile — uložení profilu makléře (krok 1)
 export async function PUT(request: Request) {
@@ -49,12 +49,12 @@ export async function PUT(request: Request) {
       );
     }
 
-    // Upload profilove fotky na Cloudinary
+    // Upload profilove fotky
     const photo = formData.get("photo") as File | null;
     let avatarUrl: string | null = null;
     if (photo && photo.size > 0) {
       try {
-        avatarUrl = await uploadToCloudinary(photo, `carmakler/avatars/${session.user.id}`);
+        avatarUrl = await uploadToServer(photo, `carmakler/avatars/${session.user.id}`);
       } catch (uploadError) {
         console.error("Avatar upload failed:", uploadError);
         // Pokracovat bez fotky — neni to bloker pro onboarding

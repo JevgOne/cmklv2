@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { uploadToCloudinary, WATERMARK_TRANSFORMATION } from "@/lib/cloudinary";
+import { uploadToServer } from "@/lib/upload";
 
 /* ------------------------------------------------------------------ */
 /*  POST /api/listings/[id]/images — Upload obrázků k inzerátu        */
@@ -65,7 +65,7 @@ export async function POST(
       }
     }
 
-    // Upload na Cloudinary
+    // Upload fotek
     const images = [];
     for (let i = 0; i < photos.length; i++) {
       const order = parseInt(formData.get(`order_${i}`) as string, 10) || i;
@@ -73,9 +73,7 @@ export async function POST(
 
       let url: string;
       try {
-        url = await uploadToCloudinary(photos[i], `carmakler/listings/${id}`, {
-          transformation: WATERMARK_TRANSFORMATION,
-        });
+        url = await uploadToServer(photos[i], `carmakler/listings/${id}`, { watermark: true });
       } catch (uploadError) {
         console.error(`Failed to upload photo ${i}:`, uploadError);
         continue; // Preskocit selhany upload, pokracovat s dalsimi

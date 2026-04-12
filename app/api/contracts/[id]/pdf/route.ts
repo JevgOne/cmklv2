@@ -209,12 +209,12 @@ export async function POST(
     // Generate PDF buffer
     const pdfBuffer = Buffer.from(doc.output("arraybuffer"));
 
-    // Upload PDF na Cloudinary
+    // Upload PDF
     let pdfUrl: string;
     try {
-      const { uploadToCloudinary } = await import("@/lib/cloudinary");
+      const { uploadToServer } = await import("@/lib/upload");
       const pdfFile = new File([pdfBuffer], `smlouva-${id}.pdf`, { type: "application/pdf" });
-      pdfUrl = await uploadToCloudinary(pdfFile, `carmakler/contracts/${id}`);
+      pdfUrl = await uploadToServer(pdfFile, `carmakler/contracts/${id}`, { skipProcessing: true });
     } catch (uploadError) {
       console.error("PDF upload failed, using base64 fallback:", uploadError);
       pdfUrl = `data:application/pdf;base64,${pdfBuffer.toString("base64")}`;

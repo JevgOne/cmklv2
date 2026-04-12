@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { uploadToCloudinary } from "@/lib/cloudinary";
+import { uploadToServer } from "@/lib/upload";
 
 // Maximalni velikost souboru: 10 MB
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
@@ -58,13 +58,13 @@ export async function POST(request: Request) {
       }
     }
 
-    // Upload na Cloudinary
+    // Upload dokumentu
     const folder = `carmakler/onboarding/${session.user.id}`;
 
     const [tradeLicenseUrl, idFrontUrl, idBackUrl] = await Promise.all([
-      uploadToCloudinary(tradeLicense, folder),
-      uploadToCloudinary(idFront, folder),
-      uploadToCloudinary(idBack, folder),
+      uploadToServer(tradeLicense, folder, { skipProcessing: true }),
+      uploadToServer(idFront, folder, { skipProcessing: true }),
+      uploadToServer(idBack, folder, { skipProcessing: true }),
     ]);
 
     const documentsData = {
