@@ -178,7 +178,7 @@ export function NewLeadsSection() {
 
       {/* Reject modal */}
       {rejectingLeadId && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-end justify-center" onClick={() => setRejectingLeadId(null)}>
+        <div className="fixed inset-0 z-[60] bg-black/50 flex items-end justify-center" onClick={() => setRejectingLeadId(null)}>
           <div
             className="w-full max-w-lg bg-white rounded-t-2xl p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))]"
             onClick={(e) => e.stopPropagation()}

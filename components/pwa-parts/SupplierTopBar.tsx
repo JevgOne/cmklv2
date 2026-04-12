@@ -23,7 +23,7 @@ export function SupplierTopBar() {
   }, []);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 pt-[env(safe-area-inset-top)]">
+    <header className="fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-200 pt-[env(safe-area-inset-top)]">
       <div className="flex items-center justify-between h-14 px-4 max-w-lg mx-auto">
         {/* Logo */}
         <div className="flex items-center gap-2">
