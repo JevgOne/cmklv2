@@ -336,6 +336,10 @@ export function VehicleDetailHub({ vehicle, stats, exclusiveContract, payment }:
             hasPrice: vehicle.price > 0,
             hasSigned: vehicle.contracts.some((c) => c.status === "SIGNED"),
             isActive: vehicle.status === "ACTIVE",
+            // Count-based heuristic (VehicleImage lacks category field)
+            hasExteriorPhotos: vehicle.images.length >= 8,
+            hasInteriorPhotos: vehicle.images.length >= 13,
+            hasEvidencePhotos: vehicle.images.length >= 16,
           }}
         />
 

@@ -40,7 +40,7 @@ export const companyInfo = {
 
   web: {
     url: "https://carmakler.cz",
-    logo: "https://carmakler.cz/brand/logo.svg",
+    logo: "https://carmakler.cz/brand/logo-color.png",
   },
 
   social: {
@@ -49,11 +49,6 @@ export const companyInfo = {
     youtube: "https://youtube.com/@carmakler",
   },
 
-  /**
-   * Pobocky.
-   * POZNAMKA: Odebrat fiktivni pobocky Brno a Ostrava.
-   * Pridat realne pobocky az budou existovat.
-   */
   branches: [
     {
       city: "Praha",
