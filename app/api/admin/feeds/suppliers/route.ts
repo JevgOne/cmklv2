@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-const ADMIN_ROLES = ["ADMIN", "BACKOFFICE"];
+const ADMIN_ROLES = ["ADMIN", "BACKOFFICE", "MANAGER"];
 
 /* ------------------------------------------------------------------ */
 /*  GET /api/admin/feeds/suppliers — Seznam uzivatelu pro feed config  */

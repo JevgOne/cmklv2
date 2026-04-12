@@ -19,7 +19,7 @@ export async function GET(
     }
 
     const isAdmin =
-      session.user.role === "ADMIN" || session.user.role === "BACKOFFICE";
+      session.user.role === "ADMIN" || session.user.role === "BACKOFFICE" || session.user.role === "MANAGER";
     if (!isAdmin) {
       return NextResponse.json({ error: "Nemate opravneni" }, { status: 403 });
     }
@@ -117,7 +117,7 @@ export async function PATCH(
     }
 
     const isAdmin =
-      session.user.role === "ADMIN" || session.user.role === "BACKOFFICE";
+      session.user.role === "ADMIN" || session.user.role === "BACKOFFICE" || session.user.role === "MANAGER";
     if (!isAdmin) {
       return NextResponse.json({ error: "Nemate opravneni" }, { status: 403 });
     }

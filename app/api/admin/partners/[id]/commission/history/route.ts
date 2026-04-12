@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 
 // ADMIN/BACKOFFICE — citlivá obchodní data (sazby + důvody změn).
 function canViewCommissionHistory(role: string | undefined): boolean {
-  return role === "ADMIN" || role === "BACKOFFICE";
+  return role === "ADMIN" || role === "BACKOFFICE" || role === "MANAGER";
 }
 
 export async function GET(

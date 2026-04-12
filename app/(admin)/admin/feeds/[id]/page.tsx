@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
@@ -97,6 +98,7 @@ const partTypeOptions = [
 export default function FeedDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { data: session } = useSession();
   const feedId = params.id as string;
 
   const [feed, setFeed] = useState<FeedDetail | null>(null);
@@ -302,9 +304,11 @@ export default function FeedDetailPage() {
           <Button variant="ghost" onClick={startEdit}>
             Upravit
           </Button>
-          <Button variant="ghost" onClick={handleDelete}>
-            Smazat
-          </Button>
+          {session?.user?.role === "ADMIN" && (
+            <Button variant="ghost" onClick={handleDelete}>
+              Smazat
+            </Button>
+          )}
         </div>
       </div>
 

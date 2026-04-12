@@ -20,7 +20,7 @@ export async function GET(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.role || !["ADMIN", "BACKOFFICE"].includes(session.user.role)) {
+    if (!session?.user?.role || !["ADMIN", "BACKOFFICE", "MANAGER"].includes(session.user.role)) {
       return NextResponse.json({ error: "Přístup odepřen" }, { status: 403 });
     }
 

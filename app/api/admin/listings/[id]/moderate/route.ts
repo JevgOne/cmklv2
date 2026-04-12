@@ -23,7 +23,7 @@ export async function PATCH(
       return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
     }
 
-    const isAdmin = session.user.role === "ADMIN" || session.user.role === "BACKOFFICE";
+    const isAdmin = session.user.role === "ADMIN" || session.user.role === "BACKOFFICE" || session.user.role === "MANAGER";
     if (!isAdmin) {
       return NextResponse.json({ error: "Nemáte oprávnění" }, { status: 403 });
     }

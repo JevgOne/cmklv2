@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 function canViewSummary(role: string | undefined): boolean {
-  return role === "ADMIN" || role === "BACKOFFICE";
+  return role === "ADMIN" || role === "BACKOFFICE" || role === "MANAGER";
 }
 
 // Buckety pro distribuci sazeb. Hranice `max` jsou exkluzivní; poslední bucket

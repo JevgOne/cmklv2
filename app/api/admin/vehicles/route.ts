@@ -11,7 +11,7 @@ export async function GET() {
       return NextResponse.json({ error: "Nepřihlášen" }, { status: 401 });
     }
 
-    if (session.user.role !== "ADMIN" && session.user.role !== "BACKOFFICE") {
+    if (!["ADMIN", "BACKOFFICE", "MANAGER"].includes(session.user.role)) {
       return NextResponse.json({ error: "Nemáte oprávnění" }, { status: 403 });
     }
 

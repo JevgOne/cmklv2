@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { importFeed } from "@/lib/feed-import";
 
-const ADMIN_ROLES = ["ADMIN", "BACKOFFICE"];
+const ADMIN_ROLES = ["ADMIN", "BACKOFFICE", "MANAGER"];
 
 /* ------------------------------------------------------------------ */
 /*  POST /api/admin/feeds/[id]/import — Spustit import manuálně        */

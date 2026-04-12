@@ -115,6 +115,50 @@ async function main() {
 
   const passwordHash = await bcrypt.hash("heslo123", 12);
 
+  // ============================================
+  // REAL ACCOUNTS (production-ready)
+  // ============================================
+  const jevgenijHash = await bcrypt.hash("Xk9$mPw2vR4nQz", 12);
+  const radimHash = await bcrypt.hash("Ht7#jLs5bN8wYx", 12);
+  const katerinaHash = await bcrypt.hash("Rf3&kWp6dM2cJv", 12);
+
+  await prisma.user.create({
+    data: {
+      email: "jevgenij@carmakler.cz",
+      firstName: "Jevgenij",
+      lastName: "Onegin",
+      passwordHash: jevgenijHash,
+      role: "ADMIN",
+      status: "ACTIVE",
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      email: "radim@carmakler.cz",
+      firstName: "Radim",
+      lastName: "Carmakler",
+      passwordHash: radimHash,
+      role: "ADMIN",
+      status: "ACTIVE",
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      email: "katerina@carmakler.cz",
+      firstName: "Kateřina",
+      lastName: "Carmakler",
+      passwordHash: katerinaHash,
+      role: "MANAGER",
+      status: "ACTIVE",
+    },
+  });
+
+  // ============================================
+  // DEMO ACCOUNTS (development only)
+  // ============================================
+
   // 1. Admin
   const admin = await prisma.user.create({
     data: {
@@ -2829,7 +2873,12 @@ async function main() {
   console.log(`Notif. Prefs:    ${await prisma.notificationPreference.count()}`);
   console.log(`SMS Logs:        ${await prisma.smsLog.count()}`);
   console.log(`AI Conversations:${await prisma.aiConversation.count()}`);
-  console.log("\nDemo login: admin@carmakler.cz / heslo123");
+  console.log("\n--- REAL ACCOUNTS ---");
+  console.log("Admin: jevgenij@carmakler.cz (ADMIN)");
+  console.log("Admin: radim@carmakler.cz (ADMIN)");
+  console.log("Manager: katerina@carmakler.cz (MANAGER)");
+  console.log("\n--- DEMO ACCOUNTS ---");
+  console.log("Demo login: admin@carmakler.cz / heslo123");
   console.log("Advertiser login: prodejce@email.cz / heslo123");
   console.log("Buyer login: kupujici@email.cz / heslo123");
   console.log("Supplier login: dodavatel@vrakoviste.cz / heslo123");

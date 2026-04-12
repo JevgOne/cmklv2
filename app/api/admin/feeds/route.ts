@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createFeedConfigSchema } from "@/lib/validators/feeds";
 
-const ADMIN_ROLES = ["ADMIN", "BACKOFFICE"];
+const ADMIN_ROLES = ["ADMIN", "BACKOFFICE", "MANAGER"];
 
 /* ------------------------------------------------------------------ */
 /*  GET /api/admin/feeds — Seznam feed konfigurací                     */

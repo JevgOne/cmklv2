@@ -5,7 +5,8 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { updateFeedConfigSchema } from "@/lib/validators/feeds";
 
-const ADMIN_ROLES = ["ADMIN", "BACKOFFICE"];
+const ADMIN_ROLES = ["ADMIN", "BACKOFFICE", "MANAGER"];
+const DESTRUCTIVE_ROLES = ["ADMIN", "BACKOFFICE"];
 
 /* ------------------------------------------------------------------ */
 /*  GET /api/admin/feeds/[id] — Detail feed konfigurace                */
@@ -117,7 +118,7 @@ export async function DELETE(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id || !ADMIN_ROLES.includes(session.user.role)) {
+    if (!session?.user?.id || !DESTRUCTIVE_ROLES.includes(session.user.role)) {
       return NextResponse.json({ error: "Nemáte oprávnění" }, { status: 403 });
     }
 

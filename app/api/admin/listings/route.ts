@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     }
 
     const isAdmin =
-      session.user.role === "ADMIN" || session.user.role === "BACKOFFICE";
+      session.user.role === "ADMIN" || session.user.role === "BACKOFFICE" || session.user.role === "MANAGER";
     if (!isAdmin) {
       return NextResponse.json({ error: "Nemate opravneni" }, { status: 403 });
     }
