@@ -11,6 +11,7 @@ interface PhotoGuideProps {
   categoryLabel: string;
   currentIndex: number;
   totalInCategory: number;
+  positionNumber?: number;
   onCapture: (full: Blob, thumb: Blob) => void;
   onClose: () => void;
 }
@@ -21,6 +22,7 @@ export function PhotoGuide({
   categoryLabel,
   currentIndex,
   totalInCategory,
+  positionNumber,
   onCapture,
   onClose,
 }: PhotoGuideProps) {
@@ -146,6 +148,11 @@ export function PhotoGuide({
           </span>
         </div>
         <h2 className="text-white text-lg font-bold text-center mt-2">
+          {positionNumber && (
+            <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-orange-500 text-sm font-bold mr-2">
+              {positionNumber}
+            </span>
+          )}
           {slotName}
         </h2>
       </div>

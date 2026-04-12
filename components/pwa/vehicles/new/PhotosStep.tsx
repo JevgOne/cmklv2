@@ -6,6 +6,7 @@ import { useDraftContext } from "@/lib/hooks/useDraft";
 import { StepLayout } from "@/components/pwa/vehicles/new/StepLayout";
 import { PhotoGuide } from "@/components/pwa/vehicles/new/PhotoGuide";
 import { Button, ProgressBar, Dropdown } from "@/components/ui";
+import { PhotoPositionDiagram } from "@/components/pwa/vehicles/new/PhotoPositionDiagram";
 import { offlineStorage } from "@/lib/offline/storage";
 import { resizeImage, createThumbnail } from "@/lib/image-utils";
 
@@ -31,14 +32,19 @@ const PHOTO_CATEGORIES: PhotoCategory[] = [
     id: "exterior",
     label: "Exteriér",
     slots: [
-      { id: "ext_front_34", label: "Přední 3/4 pohled", tip: "Foťte za denního světla, vůz by měl být čistý", required: true },
-      { id: "ext_rear_34", label: "Zadní 3/4 pohled", tip: "Zachyťte celé auto z pravého zadního rohu", required: true },
-      { id: "ext_left", label: "Levý bok", tip: "Foťte kolmo k vozu, celý bok v záběru", required: true },
-      { id: "ext_right", label: "Pravý bok", tip: "Foťte kolmo k vozu, celý bok v záběru", required: true },
-      { id: "ext_front", label: "Přední pohled", tip: "Foťte zepředu, symetricky", required: true },
-      { id: "ext_rear", label: "Zadní pohled", tip: "Foťte zezadu, symetricky", required: true },
-      { id: "ext_lights", label: "Detail světel", tip: "Přiblížte se k předním světlům", required: false },
-      { id: "ext_wheels", label: "Kola", tip: "Detail disku a pneumatiky", required: false },
+      { id: "ext_front_34", label: "1. Přední 3/4 pohled", tip: "Klasický prodejní záběr. Pravý přední roh, 45°. Vůz čistý, denní světlo.", required: true },
+      { id: "ext_front", label: "2. Přímý přední pohled", tip: "Přímo zepředu, symetricky. Zachyťte masku, světla, SPZ.", required: true },
+      { id: "ext_right", label: "3. Pravý bok", tip: "Kolmo k pravému boku, ze středu vozu. Foťte z pasu, ne shora.", required: true },
+      { id: "ext_rear_34", label: "4. Zadní 3/4 (pravý)", tip: "Pravý zadní roh, 45°. Zachyťte svítilny, výfuk.", required: true },
+      { id: "ext_rear", label: "5. Přímý zadní pohled", tip: "Přímo zezadu, symetricky. SPZ, svítilny, nárazník.", required: true },
+      { id: "ext_left", label: "6. Levý bok", tip: "Kolmo k levému boku, ze středu vozu. Stejná výška jako pravý bok.", required: true },
+      { id: "ext_front_34_left", label: "7. Přední 3/4 (levý)", tip: "Levý přední roh, 45°. Doplňkový záběr z druhé strany.", required: true },
+      { id: "ext_rear_34_left", label: "8. Zadní 3/4 (levý)", tip: "Levý zadní roh, 45°. Doplňkový záběr z druhé strany.", required: true },
+      { id: "ext_headlight", label: "9. Detail předního světla", tip: "Přibližte se k pravému světlu. Detail DRL, čočky. Bez orosení.", required: false },
+      { id: "ext_wheel_front", label: "10. Přední kolo", tip: "Pravé přední kolo. Disk, pneumatika (DOT viditelný), brzdový kotouč.", required: false },
+      { id: "ext_wheel_rear", label: "11. Zadní kolo", tip: "Pravé zadní kolo. Stav pneumatiky, hloubka dezénu.", required: false },
+      { id: "ext_badge", label: "12. Logo / badge", tip: "Zadní badge výrobce + model. Pro verifikaci typu vozu.", required: false },
+      { id: "ext_roof", label: "13. Střecha", tip: "Ze strany, mírně shora. Stav střechy, panoramatické okno.", required: false },
     ],
   },
   {
@@ -77,7 +83,7 @@ const PHOTO_CATEGORIES: PhotoCategory[] = [
   },
 ];
 
-const MIN_REGULAR_PHOTOS = 12;
+const MIN_REGULAR_PHOTOS = 13;
 const EVIDENCE_REQUIRED = 3;
 
 interface StoredPhoto {
@@ -105,12 +111,24 @@ export function PhotosStep() {
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Migrace starých slot IDs z draftů
+  const SLOT_MIGRATION: Record<string, string> = {
+    ext_lights: "ext_headlight",
+    ext_wheels: "ext_wheel_front",
+  };
+
   // Load saved photos from draft on mount
   useEffect(() => {
     if (draft?.photos) {
-      setPhotos(draft.photos as unknown as StoredPhoto[]);
+      const raw = draft.photos as unknown as StoredPhoto[];
+      const migrated = raw.map((p) => ({
+        ...p,
+        slotId: SLOT_MIGRATION[p.slotId] || p.slotId,
+      }));
+      setPhotos(migrated);
     }
     setLoading(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft?.photos]);
 
   // Persist photos to draft
@@ -317,6 +335,22 @@ export function PhotosStep() {
               )}
             </h3>
 
+            {category.id === "exterior" && (
+              <PhotoPositionDiagram
+                activeSlot={null}
+                completedSlots={photos
+                  .filter((p) => p.slotId.startsWith("ext_"))
+                  .map((p) => p.slotId)}
+                onSlotClick={(slotId) => {
+                  const slot = category.slots.find((s) => s.id === slotId);
+                  if (slot) {
+                    const slotIndex = category.slots.indexOf(slot);
+                    setActiveGuide({ slot, category, slotIndex });
+                  }
+                }}
+              />
+            )}
+
             <div className="grid grid-cols-4 gap-2">
               {category.slots.map((slot, slotIndex) => {
                 const photo = getPhotoForSlot(slot.id);
@@ -468,6 +502,7 @@ export function PhotosStep() {
           categoryLabel={activeGuide.category.label}
           currentIndex={activeGuide.slotIndex}
           totalInCategory={activeGuide.category.slots.length || defectPhotos.length + 1}
+          positionNumber={activeGuide.category.id === "exterior" ? activeGuide.slotIndex + 1 : undefined}
           onCapture={(full, thumb) =>
             handleCapture(activeGuide.slot.id, full, thumb)
           }
