@@ -16,6 +16,7 @@ import { EmailHistory } from "@/components/pwa/emails/EmailHistory";
 import { VehiclePriceHistory } from "./VehiclePriceHistory";
 import { VehicleTimeline } from "./VehicleTimeline";
 import { EscalationForm } from "@/components/pwa/EscalationForm";
+import { WorkflowChecklist } from "@/components/pwa/vehicles/WorkflowChecklist";
 import { formatPrice, formatMileage } from "@/lib/utils";
 
 // ---- Types ----
@@ -322,6 +323,20 @@ export function VehicleDetailHub({ vehicle, stats, exclusiveContract, payment }:
           vehicleId={vehicle.id}
           exclusiveUntil={vehicle.exclusiveUntil}
           contract={exclusiveContract}
+        />
+
+        {/* Workflow Checklist */}
+        <WorkflowChecklist
+          vehicleId={vehicle.id}
+          autoChecks={{
+            hasContact: !!vehicle.sellerPhone,
+            hasBasicInfo: !!vehicle.brand && !!vehicle.model,
+            hasVin: !!vehicle.vin && vehicle.vin.length === 17,
+            hasDescription: (vehicle.description?.length || 0) >= 20,
+            hasPrice: vehicle.price > 0,
+            hasSigned: vehicle.contracts.some((c) => c.status === "SIGNED"),
+            isActive: vehicle.status === "ACTIVE",
+          }}
         />
 
         {/* Seller info */}

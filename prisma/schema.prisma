@@ -281,6 +281,7 @@ model Vehicle {
   soldAt             DateTime?
   handoverCompleted  Boolean   @default(false)
   handoverDate       DateTime?
+  workflowChecklist  String?   // JSON: WorkflowChecklistData
 
   // CRM — propojení na prodejce
   sellerContactId String?
