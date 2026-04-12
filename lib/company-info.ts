@@ -2,31 +2,31 @@
  * Centralni kontaktni a firemni udaje CarMakler.
  * Meni se na JEDNOM miste — vsude jinde importovat.
  *
- * TODO: Pred launchem nahradit vsechny [DOPLNIT] realnymi udaji.
+ * Firemni udaje CAR makler, s.r.o.
  */
 
 export const companyInfo = {
   name: "CarMakler",
-  legalName: "CarMakler s.r.o.",
-  ico: "[DOPLNIT]",
-  dic: "[DOPLNIT]",
+  legalName: "CAR makléř, s.r.o.",
+  ico: "21957151",
+  dic: "CZ21957151",
 
   address: {
-    street: "[DOPLNIT ULICE A CISLO]",
+    street: "Školská 660/3",
     city: "Praha",
-    zip: "[DOPLNIT PSC]",
+    zip: "110 00",
     country: "CZ",
     /** Plna adresa pro zobrazeni */
-    full: "[DOPLNIT ULICE], [DOPLNIT PSC] Praha",
+    full: "Školská 660/3, 110 00 Praha",
   },
 
   contact: {
     /** Zobrazovany format telefonu */
-    phone: "[DOPLNIT TELEFON]",
+    phone: "733 179 199",
     /** Format pro href="tel:" */
-    phoneHref: "tel:+420[DOPLNIT]",
+    phoneHref: "tel:+420733179199",
     /** Zobrazovany format telefonu pro JSON-LD (s pomlckami) */
-    phoneJsonLd: "+420-[DOPLNIT]",
+    phoneJsonLd: "+420-733-179-199",
     email: "info@carmakler.cz",
     emailHref: "mailto:info@carmakler.cz",
   },
@@ -58,8 +58,8 @@ export const companyInfo = {
     {
       city: "Praha",
       type: "Centrala" as const,
-      address: "[DOPLNIT ULICE], [DOPLNIT PSC] Praha",
-      phone: "[DOPLNIT TELEFON]",
+      address: "Školská 660/3, 110 00 Praha",
+      phone: "733 179 199",
       hours: "Po-Pa 8:00-18:00",
     },
   ],

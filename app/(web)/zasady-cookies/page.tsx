@@ -80,7 +80,7 @@ export default function ZasadyCookiesPage() {
           Zásady cookies
         </h1>
         <p className="text-sm text-gray-500 mb-10">
-          Poslední aktualizace: [DOPLNIT DATUM]
+          Poslední aktualizace: 01.04.2026
         </p>
 
         <div className="prose prose-gray max-w-none prose-headings:text-gray-900 prose-p:text-gray-600 prose-p:leading-relaxed prose-a:text-orange-500">

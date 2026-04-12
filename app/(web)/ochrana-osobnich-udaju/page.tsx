@@ -33,7 +33,7 @@ const jsonLd = {
    POZNAMKA PRO IMPLEMENTATORA:
    Texty nize jsou sablona dle GDPR cl. 13 a 14.
    Pred launchem MUSI byt revidovany pravnikem/DPO.
-   Placeholder [DOPLNIT] oznacuje mista vyzadujici realne udaje.
+   Firemni udaje CAR makler, s.r.o.
    ============================================================ */
 
 export default function OchranaOsobnichUdajuPage() {
@@ -55,7 +55,7 @@ export default function OchranaOsobnichUdajuPage() {
           Ochrana osobních údajů
         </h1>
         <p className="text-sm text-gray-500 mb-10">
-          Platné od [DOPLNIT DATUM] | Poslední aktualizace: [DOPLNIT DATUM]
+          Platné od 01.04.2026 | Poslední aktualizace: 01.04.2026
         </p>
 
         <div className="prose prose-gray max-w-none prose-headings:text-gray-900 prose-p:text-gray-600 prose-p:leading-relaxed prose-a:text-orange-500 prose-a:no-underline hover:prose-a:underline">
@@ -64,14 +64,14 @@ export default function OchranaOsobnichUdajuPage() {
           <section id="spravce">
             <h2>1. Správce osobních údajů</h2>
             <p>
-              Správcem osobních údajů je <strong>CarMakler s.r.o.</strong>, IČO: [DOPLNIT],
-              se sídlem [DOPLNIT ADRESA], zapsaná v obchodním rejstříku vedeném [DOPLNIT] soudem.
+              Správcem osobních údajů je <strong>CAR makléř, s.r.o.</strong>, IČO: 21957151,
+              se sídlem Školská 660/3, Nové Město (Praha 1), 110 00 Praha, zapsaná v obchodním rejstříku vedeném Městským soudem v Praze, oddíl C, vložka 408076.
             </p>
             <p>
               <strong>Kontakt pro ochranu osobních údajů:</strong><br />
               E-mail: <a href="mailto:gdpr@carmakler.cz">gdpr@carmakler.cz</a><br />
-              Telefon: [DOPLNIT]<br />
-              Adresa: [DOPLNIT ADRESA]
+              Telefon: 733 179 199<br />
+              Adresa: Školská 660/3, 110 00 Praha
             </p>
           </section>
 

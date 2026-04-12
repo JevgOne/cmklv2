@@ -33,7 +33,7 @@ const jsonLd = {
    POZNAMKA PRO IMPLEMENTATORA:
    Texty nize odpovidaji ceske legislative (OZ, ZOS).
    Pred launchem MUSI byt revidovany pravnikem.
-   Placeholder [DOPLNIT] oznacuje mista vyzadujici realne udaje.
+   Firemni udaje CAR makler, s.r.o.
    ============================================================ */
 
 export default function ReklamacniRadPage() {
@@ -55,7 +55,7 @@ export default function ReklamacniRadPage() {
           Reklamační řád
         </h1>
         <p className="text-sm text-gray-500 mb-10">
-          Platný od [DOPLNIT DATUM] | Poslední aktualizace: [DOPLNIT DATUM]
+          Platný od 01.04.2026 | Poslední aktualizace: 01.04.2026
         </p>
 
         <div className="prose prose-gray max-w-none prose-headings:text-gray-900 prose-p:text-gray-600 prose-p:leading-relaxed prose-a:text-orange-500 prose-a:no-underline hover:prose-a:underline">
@@ -68,8 +68,8 @@ export default function ReklamacniRadPage() {
               &bdquo;reklamace&ldquo;) u zboží zakoupeného prostřednictvím e-shopu CarMakler.
             </p>
             <p>
-              <strong>Provozovatel a prodávající:</strong> CarMakler s.r.o., IČO: [DOPLNIT],
-              se sídlem [DOPLNIT ADRESA].
+              <strong>Provozovatel a prodávající:</strong> CAR makléř, s.r.o., IČO: 21957151,
+              se sídlem Školská 660/3, Nové Město (Praha 1), 110 00 Praha.
             </p>
             <p>
               Reklamační řád je vydaný v souladu se zákonem č. 89/2012 Sb., občanský zákoník (dále jen
@@ -124,7 +124,7 @@ export default function ReklamacniRadPage() {
                 Uveďte číslo objednávky a důvod vrácení.
               </li>
               <li>
-                Zboží zašlete zpět na adresu <strong>[DOPLNIT ADRESA PRO VRÁCENÍ]</strong> do 14 dní
+                Zboží zašlete zpět na adresu <strong>Školská 660/3, 110 00 Praha</strong> do 14 dní
                 od odstoupení. Náklady na zpětné zasílání nese kupující.
               </li>
               <li>
@@ -257,8 +257,8 @@ export default function ReklamacniRadPage() {
             <h2>9. Kontaktní údaje pro reklamace</h2>
             <ul>
               <li><strong>E-mail:</strong> <a href="mailto:reklamace@carmakler.cz">reklamace@carmakler.cz</a></li>
-              <li><strong>Telefon:</strong> [DOPLNIT]</li>
-              <li><strong>Adresa pro zasílání:</strong> [DOPLNIT ADRESA]</li>
+              <li><strong>Telefon:</strong> 733 179 199</li>
+              <li><strong>Adresa pro zasílání:</strong> Školská 660/3, 110 00 Praha</li>
             </ul>
           </section>
 

@@ -33,7 +33,7 @@ const jsonLd = {
    POZNAMKA PRO IMPLEMENTATORA:
    Texty nize jsou sablona odpovidajici ceske legislative.
    Pred launchem MUSI byt revidovany pravnikem.
-   Placeholder [DOPLNIT] oznacuje mista vyzadujici realne udaje.
+   Firemni udaje CAR makler, s.r.o.
    ============================================================ */
 
 export default function ObchodniPodminkyPage() {
@@ -55,7 +55,7 @@ export default function ObchodniPodminkyPage() {
           Obchodní podmínky
         </h1>
         <p className="text-sm text-gray-500 mb-10">
-          Platné od [DOPLNIT DATUM] | Poslední aktualizace: [DOPLNIT DATUM]
+          Platné od 01.04.2026 | Poslední aktualizace: 01.04.2026
         </p>
 
         <div className="prose prose-gray max-w-none prose-headings:text-gray-900 prose-p:text-gray-600 prose-p:leading-relaxed prose-a:text-orange-500 prose-a:no-underline hover:prose-a:underline">
@@ -68,11 +68,11 @@ export default function ObchodniPodminkyPage() {
               mezi provozovatelem platformy a jejími uživateli.
             </p>
             <p>
-              <strong>Provozovatel:</strong> CarMakler s.r.o., IČO: [DOPLNIT], se sídlem [DOPLNIT ADRESA],
-              zapsaná v obchodním rejstříku vedeném [DOPLNIT] soudem v [DOPLNIT], oddíl C, vložka [DOPLNIT].
+              <strong>Provozovatel:</strong> CAR makléř, s.r.o., IČO: 21957151, se sídlem Školská 660/3, Nové Město (Praha 1), 110 00 Praha,
+              zapsaná v obchodním rejstříku vedeném Městským soudem v Praze, oddíl C, vložka 408076.
             </p>
             <p>
-              <strong>Kontakt:</strong> e-mail info@carmakler.cz, telefon [DOPLNIT].
+              <strong>Kontakt:</strong> e-mail info@carmakler.cz, telefon 733 179 199.
             </p>
             <h3>Definice</h3>
             <ul>
@@ -154,7 +154,7 @@ export default function ObchodniPodminkyPage() {
             <h3>Postup</h3>
             <ol>
               <li>Kupující informuje prodávajícího o rozhodnutí odstoupit e-mailem na info@carmakler.cz nebo prostřednictvím formuláře na webu.</li>
-              <li>Kupující zašle zboží zpět na adresu [DOPLNIT] do 14 dní od odstoupení, na vlastní náklady.</li>
+              <li>Kupující zašle zboží zpět na adresu Školská 660/3, 110 00 Praha do 14 dní od odstoupení, na vlastní náklady.</li>
               <li>Zboží musí být nepoškozené, nepoužité (nemontované) a v původním obalu, je-li to možné.</li>
               <li>Prodávající vrátí kupujícímu všechny přijaté peněžní prostředky do 14 dní od obdržení vráceného zboží.</li>
             </ol>
