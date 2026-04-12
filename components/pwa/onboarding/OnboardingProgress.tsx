@@ -106,7 +106,7 @@ export function OnboardingProgress({ currentStep, completedSteps = [] }: Onboard
                 </div>
                 <span
                   className={cn(
-                    "text-[10px] font-medium whitespace-nowrap",
+                    "text-[11px] font-medium whitespace-nowrap",
                     state === "completed" && "text-success-600",
                     state === "active" && "text-orange-600 font-semibold",
                     state === "pending" && "text-gray-400"

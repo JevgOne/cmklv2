@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface SearchResult {
   id: string;
@@ -101,8 +102,8 @@ export function SearchOverlay({ isOpen, onClose, onSearch, placeholder = "Hledat
                             onClick={() => navigate(r.href)}
                             className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 text-left transition-colors bg-transparent border-none cursor-pointer"
                           >
-                            <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center shrink-0 overflow-hidden text-lg">
-                              {r.image ? <img src={r.image} alt="" className="w-full h-full object-cover" /> : cat.icon}
+                            <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center shrink-0 overflow-hidden text-lg relative">
+                              {r.image ? <Image src={r.image} alt="" fill className="object-cover" sizes="40px" /> : cat.icon}
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="text-sm font-semibold text-gray-900 truncate">{r.title}</div>

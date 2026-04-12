@@ -136,7 +136,7 @@ export function BottomNav() {
                 <div className="flex items-center justify-center w-14 h-14 rounded-full bg-orange-500 shadow-lg shadow-orange-500/30">
                   {item.icon(false)}
                 </div>
-                <span className="text-[10px] mt-0.5 text-gray-500">
+                <span className="text-[11px] mt-0.5 text-gray-500">
                   {item.label}
                 </span>
               </Link>
@@ -160,7 +160,7 @@ export function BottomNav() {
                 )}
               </span>
               <span
-                className={`text-[10px] mt-0.5 ${
+                className={`text-[11px] mt-0.5 ${
                   isActive ? "font-semibold" : ""
                 }`}
               >

@@ -325,7 +325,7 @@ export default async function StatsPage() {
         <div className="flex items-end gap-2 h-32">
           {monthlyStats.map((m, i) => (
             <div key={i} className="flex-1 flex flex-col items-center gap-1">
-              <span className="text-[10px] text-gray-500 font-bold">
+              <span className="text-[11px] text-gray-500 font-bold">
                 {m.sales}
               </span>
               <div
@@ -334,7 +334,7 @@ export default async function StatsPage() {
                   height: `${Math.max((m.sales / maxSales) * 100, 4)}%`,
                 }}
               />
-              <span className="text-[10px] text-gray-400">{m.label}</span>
+              <span className="text-[11px] text-gray-400">{m.label}</span>
             </div>
           ))}
         </div>
@@ -346,7 +346,7 @@ export default async function StatsPage() {
         <div className="flex items-end gap-2 h-32">
           {monthlyStats.map((m, i) => (
             <div key={i} className="flex-1 flex flex-col items-center gap-1">
-              <span className="text-[10px] text-gray-500 font-bold">
+              <span className="text-[11px] text-gray-500 font-bold">
                 {m.commission > 0 ? `${Math.round(m.commission / 1000)}k` : "0"}
               </span>
               <div
@@ -355,7 +355,7 @@ export default async function StatsPage() {
                   height: `${Math.max((m.commission / maxCommission) * 100, 4)}%`,
                 }}
               />
-              <span className="text-[10px] text-gray-400">{m.label}</span>
+              <span className="text-[11px] text-gray-400">{m.label}</span>
             </div>
           ))}
         </div>

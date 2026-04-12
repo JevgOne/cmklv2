@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Outfit } from "next/font/google";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { Analytics } from "@/components/web/Analytics";
@@ -12,6 +12,14 @@ const outfit = Outfit({
 });
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://carmakler.cz";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
+  themeColor: "#F97316",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),

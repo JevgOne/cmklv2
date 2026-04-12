@@ -30,7 +30,7 @@ export function SupplierTopBar() {
           <span className="text-lg font-bold text-gray-900">
             Car<span className="text-orange-500">Makléř</span>
           </span>
-          <span className="text-[10px] font-medium text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full">
+          <span className="text-[11px] font-medium text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full">
             Díly
           </span>
         </div>
