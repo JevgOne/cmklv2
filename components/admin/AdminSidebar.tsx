@@ -29,6 +29,7 @@ const navSections: NavSection[] = [
       { id: "inzerce", href: "/admin/inzerce", icon: "📋", label: "Inzerce" },
       { id: "brokers", href: "/admin/brokers", icon: "👥", label: "Makléři" },
       { id: "leads", href: "/admin/leads", icon: "📨", label: "Leady" },
+      { id: "users", href: "/admin/users", icon: "👤", label: "Uživatelé" },
     ],
     roles: ["ADMIN", "BACKOFFICE", "MANAGER", "REGIONAL_DIRECTOR"],
   },
@@ -55,6 +56,7 @@ const navSections: NavSection[] = [
     title: "ESHOP",
     items: [
       { id: "feeds", href: "/admin/feeds", icon: "📡", label: "Feed importy" },
+      { id: "orders", href: "/admin/orders", icon: "📦", label: "Objednávky" },
     ],
     roles: ["ADMIN", "BACKOFFICE", "MANAGER"],
   },
