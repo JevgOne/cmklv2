@@ -30,18 +30,17 @@ const navSections: NavSection[] = [
       { id: "brokers", href: "/admin/brokers", icon: "👥", label: "Makléři" },
       { id: "leads", href: "/admin/leads", icon: "📨", label: "Leady" },
     ],
-    roles: ["ADMIN", "BACKOFFICE"],
+    roles: ["ADMIN", "BACKOFFICE", "MANAGER", "REGIONAL_DIRECTOR"],
   },
   {
     title: "MANAŽER",
     items: [
-      { id: "manager-dashboard", href: "/admin/manager", icon: "📊", label: "Dashboard" },
+      { id: "manager-dashboard", href: "/admin/manager", icon: "📊", label: "Můj tým" },
       { id: "manager-brokers", href: "/admin/manager/brokers", icon: "👥", label: "Moji makléři" },
       { id: "manager-approvals", href: "/admin/manager/approvals", icon: "✅", label: "Schvalování" },
-      { id: "manager-leads", href: "/admin/leads", icon: "📨", label: "Leady" },
       { id: "manager-bonuses", href: "/admin/manager/bonuses", icon: "🎯", label: "Bonusy" },
     ],
-    roles: ["MANAGER"],
+    roles: ["MANAGER", "REGIONAL_DIRECTOR"],
   },
   {
     title: "PARTNEŘI",
@@ -50,14 +49,14 @@ const navSections: NavSection[] = [
       { id: "partners-bazar", href: "/admin/partners?type=AUTOBAZAR", icon: "🚗", label: "Autobazary" },
       { id: "partners-vrakov", href: "/admin/partners?type=VRAKOVISTE", icon: "🔧", label: "Vrakoviště" },
     ],
-    roles: ["ADMIN", "BACKOFFICE", "MANAGER"],
+    roles: ["ADMIN", "BACKOFFICE", "MANAGER", "REGIONAL_DIRECTOR"],
   },
   {
     title: "ESHOP",
     items: [
       { id: "feeds", href: "/admin/feeds", icon: "📡", label: "Feed importy" },
     ],
-    roles: ["ADMIN", "BACKOFFICE"],
+    roles: ["ADMIN", "BACKOFFICE", "MANAGER"],
   },
   {
     title: "FINANCE",
@@ -65,14 +64,14 @@ const navSections: NavSection[] = [
       { id: "payments", href: "/admin/payments", icon: "💳", label: "Platby" },
       { id: "payouts", href: "/admin/payouts", icon: "💰", label: "Výplaty" },
     ],
-    roles: ["ADMIN", "BACKOFFICE"],
+    roles: ["ADMIN", "BACKOFFICE", "MANAGER"],
   },
   {
     title: "MARKETPLACE",
     items: [
       { id: "marketplace", href: "/admin/marketplace", icon: "📈", label: "Marketplace" },
     ],
-    roles: ["ADMIN", "BACKOFFICE"],
+    roles: ["ADMIN", "BACKOFFICE", "MANAGER"],
   },
 ];
 
@@ -96,7 +95,13 @@ export function AdminSidebar({ open, onClose }: AdminSidebarProps) {
   const displayName = session?.user
     ? `${session.user.firstName || ""} ${session.user.lastName || ""}`.trim()
     : "Admin";
-  const roleLabel = userRole === "MANAGER" ? "Manažer" : "Administrátor";
+  const roleLabels: Record<string, string> = {
+    ADMIN: "Administrátor",
+    BACKOFFICE: "BackOffice",
+    MANAGER: "Manažer",
+    REGIONAL_DIRECTOR: "Regionální ředitel",
+  };
+  const roleLabel = roleLabels[userRole || ""] || "Administrátor";
 
   return (
     <>
@@ -121,7 +126,7 @@ export function AdminSidebar({ open, onClose }: AdminSidebarProps) {
           <div className="flex items-center gap-3">
             <Image src="/brand/logo-white.png" alt="CarMakléř" width={120} height={40} className="h-10 w-auto object-contain" priority />
             <span className="text-[10px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full ml-2">
-              {userRole === "MANAGER" ? "MANAŽER" : "ADMIN"}
+              {roleLabel.toUpperCase()}
             </span>
           </div>
         </div>
