@@ -167,11 +167,30 @@ export async function getSearchSuggestions(
   const cleaned = query.trim().replace(/[^\w\sáčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ-]/g, "");
   if (cleaned.length < 2) return [];
 
+  // Detekce OEM formátu: převážně alfanumerické znaky, min 4 chars
+  const looksLikeOem = /^[A-Z0-9\s\-.]{4,}$/i.test(cleaned);
+
+  const oemUnion = looksLikeOem
+    ? `UNION
+     (SELECT DISTINCT "oemNumber" AS suggestion FROM "Part"
+      WHERE "status" = 'ACTIVE' AND "oemNumber" IS NOT NULL
+        AND UPPER(REPLACE(REPLACE("oemNumber", ' ', ''), '-', ''))
+            LIKE '%' || UPPER(REPLACE(REPLACE($1, ' ', ''), '-', '')) || '%'
+      LIMIT $2)
+     UNION
+     (SELECT DISTINCT "partNumber" AS suggestion FROM "Part"
+      WHERE "status" = 'ACTIVE' AND "partNumber" IS NOT NULL
+        AND UPPER(REPLACE(REPLACE("partNumber", ' ', ''), '-', ''))
+            LIKE '%' || UPPER(REPLACE(REPLACE($1, ' ', ''), '-', '')) || '%'
+      LIMIT $2)`
+    : "";
+
   const suggestions = await prisma.$queryRawUnsafe<Array<{ suggestion: string }>>(
     `(SELECT DISTINCT "name" AS suggestion FROM "Part"
       WHERE "status" = 'ACTIVE' AND similarity("name", $1) > 0.15
       ORDER BY similarity("name", $1) DESC
       LIMIT $2)
+     ${oemUnion}
      UNION
      (SELECT DISTINCT "brand" || ' ' || "model" AS suggestion FROM "Listing"
       WHERE "status" = 'ACTIVE' AND similarity("brand" || ' ' || "model", $1) > 0.15

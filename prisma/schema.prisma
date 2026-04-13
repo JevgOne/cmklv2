@@ -957,6 +957,8 @@ model Part {
   @@index([feedConfigId])
   @@index([externalId])
   @@index([manufacturer])
+  @@index([oemNumber])
+  @@index([partNumber])
 }
 
 model PartImage {
