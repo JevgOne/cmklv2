@@ -3,6 +3,8 @@
     { "path": "/api/cron/daily-summary", "schedule": "0 5 * * *" },
     { "path": "/api/cron/stale-vehicles", "schedule": "0 6 * * *" },
     { "path": "/api/cron/quick-draft-expiry", "schedule": "0 7 * * *" },
-    { "path": "/api/cron/exclusive-expiry", "schedule": "0 6 * * *" }
+    { "path": "/api/cron/exclusive-expiry", "schedule": "0 6 * * *" },
+    { "path": "/api/cron/feed-import?frequency=DAILY", "schedule": "0 3 * * *" },
+    { "path": "/api/cron/feed-import?frequency=WEEKLY", "schedule": "0 4 * * 1" }
   ]
 }
