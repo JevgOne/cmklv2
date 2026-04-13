@@ -58,6 +58,7 @@ const navSections: NavSection[] = [
       { id: "feeds", href: "/admin/feeds", icon: "📡", label: "Feed importy" },
       { id: "orders", href: "/admin/orders", icon: "📦", label: "Objednávky" },
       { id: "returns", href: "/admin/returns", icon: "🔄", label: "Reklamace" },
+      { id: "suppliers", href: "/admin/suppliers", icon: "🏭", label: "Dodavatelé" },
     ],
     roles: ["ADMIN", "BACKOFFICE", "MANAGER"],
   },
