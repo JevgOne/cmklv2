@@ -49,7 +49,9 @@ export async function GET(request: NextRequest) {
           vinCache.set(normalized, decoded);
         } catch (err) {
           console.warn("VIN decode selhalo, fallback na universalFit:", err);
-          decoded = undefined;
+          // Cache failed decode as sentinel to avoid repeated API calls
+          vinCache.set(normalized, { cachedAt: Date.now() });
+          decoded = vinCache.get(normalized);
         }
       }
 

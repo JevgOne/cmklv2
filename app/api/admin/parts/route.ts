@@ -42,6 +42,7 @@ export async function GET(request: NextRequest) {
         where,
         select: {
           id: true,
+          slug: true,
           name: true,
           category: true,
           partType: true,

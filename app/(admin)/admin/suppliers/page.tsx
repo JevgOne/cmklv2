@@ -236,7 +236,7 @@ export default function AdminSuppliersPage() {
                       </td>
                       <td className="p-3">
                         <Link
-                          href={`/admin/users`}
+                          href={`/admin/partners/${supplier.id}`}
                           className="text-orange-600 hover:text-orange-700 font-medium text-xs no-underline"
                         >
                           Detail →

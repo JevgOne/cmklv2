@@ -5,9 +5,11 @@ import { useSession } from "next-auth/react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import Link from "next/link";
 
 interface PartRow {
   id: string;
+  slug: string;
   name: string;
   category: string;
   partType: string;
@@ -317,9 +319,13 @@ export default function AdminPartsPage() {
                         )}
                       </td>
                       <td className="p-3">
-                        <div className="font-medium text-gray-900 max-w-[200px] truncate">
+                        <Link
+                          href={`/dily/${part.slug}`}
+                          className="font-medium text-gray-900 hover:text-orange-600 max-w-[200px] truncate block no-underline"
+                          target="_blank"
+                        >
                           {part.name}
-                        </div>
+                        </Link>
                         {part.partNumber && (
                           <div className="text-xs text-gray-400 font-mono">{part.partNumber}</div>
                         )}
