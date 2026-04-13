@@ -117,7 +117,7 @@ export default function AdminPartsPage() {
   }, [fetchParts]);
 
   useEffect(() => {
-    fetch("/api/admin/feeds/suppliers")
+    fetch("/api/admin/suppliers?limit=100")
       .then((r) => r.json())
       .then((d) => { if (d.suppliers) setSuppliers(d.suppliers); })
       .catch(() => {});
