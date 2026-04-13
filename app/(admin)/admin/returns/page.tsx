@@ -4,9 +4,17 @@ import { useState, useEffect, useCallback } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import Link from "next/link";
+import {
+  RETURN_STATUSES,
+  RETURN_STATUS_MAP,
+  RETURN_TYPE_MAP,
+  RETURN_TYPES,
+  formatPriceCZK,
+} from "@/lib/returns-constants";
 
 interface ReturnRow {
   id: string;
+  rmaNumber: string | null;
   type: string;
   status: string;
   reason: string;
@@ -23,29 +31,6 @@ interface ReturnRow {
   };
 }
 
-const STATUSES = [
-  "NEW", "RECEIVED", "IN_REVIEW", "APPROVED",
-  "REFUNDED", "PARTIALLY_REFUNDED", "REJECTED", "CANCELLED",
-];
-
-const STATUS_MAP: Record<string, { label: string; variant: "success" | "pending" | "rejected" }> = {
-  NEW: { label: "Nová", variant: "pending" },
-  RECEIVED: { label: "Přijata", variant: "pending" },
-  IN_REVIEW: { label: "Posuzování", variant: "pending" },
-  APPROVED: { label: "Schválena", variant: "success" },
-  REFUNDED: { label: "Vráceno", variant: "success" },
-  PARTIALLY_REFUNDED: { label: "Částečně vráceno", variant: "success" },
-  REJECTED: { label: "Zamítnuta", variant: "rejected" },
-  CANCELLED: { label: "Zrušena", variant: "rejected" },
-};
-
-const TYPE_MAP: Record<string, string> = {
-  WITHDRAWAL: "Odstoupení",
-  WARRANTY: "Reklamace",
-};
-
-const TYPES = ["WITHDRAWAL", "WARRANTY"];
-
 export const dynamic = "force-dynamic";
 
 export default function AdminReturnsPage() {
@@ -54,6 +39,8 @@ export default function AdminReturnsPage() {
   const [statusFilter, setStatusFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [search, setSearch] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
@@ -64,6 +51,8 @@ export default function AdminReturnsPage() {
     if (statusFilter) params.set("status", statusFilter);
     if (typeFilter) params.set("type", typeFilter);
     if (search) params.set("search", search);
+    if (dateFrom) params.set("dateFrom", dateFrom);
+    if (dateTo) params.set("dateTo", dateTo);
     params.set("page", String(page));
 
     try {
@@ -79,7 +68,7 @@ export default function AdminReturnsPage() {
     } finally {
       setLoading(false);
     }
-  }, [statusFilter, typeFilter, search, page]);
+  }, [statusFilter, typeFilter, search, dateFrom, dateTo, page]);
 
   useEffect(() => {
     fetchReturns();
@@ -87,10 +76,7 @@ export default function AdminReturnsPage() {
 
   useEffect(() => {
     setPage(1);
-  }, [statusFilter, typeFilter, search]);
-
-  const formatPrice = (amount: number) =>
-    new Intl.NumberFormat("cs-CZ", { style: "currency", currency: "CZK", maximumFractionDigits: 0 }).format(amount);
+  }, [statusFilter, typeFilter, search, dateFrom, dateTo]);
 
   const isOverdue = (deadlineAt: string | null) => {
     if (!deadlineAt) return false;
@@ -114,34 +100,60 @@ export default function AdminReturnsPage() {
 
       {/* Filters */}
       <Card className="p-4 mb-6">
-        <div className="flex flex-col sm:flex-row gap-3">
-          <input
-            type="text"
-            placeholder="Hledat číslo objednávky, jméno nebo email..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
-          />
-          <select
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-            className="h-10 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20"
-          >
-            <option value="">Všechny typy</option>
-            {TYPES.map((t) => (
-              <option key={t} value={t}>{TYPE_MAP[t]}</option>
-            ))}
-          </select>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="h-10 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20"
-          >
-            <option value="">Všechny stavy</option>
-            {STATUSES.map((s) => (
-              <option key={s} value={s}>{STATUS_MAP[s]?.label || s}</option>
-            ))}
-          </select>
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <input
+              type="text"
+              placeholder="Hledat číslo objednávky, RMA, jméno nebo email..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="flex-1 h-10 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+            />
+            <select
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              className="h-10 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+            >
+              <option value="">Všechny typy</option>
+              {RETURN_TYPES.map((t) => (
+                <option key={t} value={t}>{RETURN_TYPE_MAP[t]}</option>
+              ))}
+            </select>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="h-10 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+            >
+              <option value="">Všechny stavy</option>
+              {RETURN_STATUSES.map((s) => (
+                <option key={s} value={s}>{RETURN_STATUS_MAP[s]?.label || s}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3 items-center">
+            <span className="text-xs text-gray-500 whitespace-nowrap">Období:</span>
+            <input
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+              className="h-10 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+            />
+            <span className="text-xs text-gray-400">—</span>
+            <input
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+              className="h-10 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+            />
+            {(dateFrom || dateTo) && (
+              <button
+                onClick={() => { setDateFrom(""); setDateTo(""); }}
+                className="text-xs text-orange-600 hover:text-orange-700 font-medium"
+              >
+                Zrušit
+              </button>
+            )}
+          </div>
         </div>
       </Card>
 
@@ -151,6 +163,7 @@ export default function AdminReturnsPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50">
+                <th className="text-left p-3 font-semibold text-gray-600">RMA</th>
                 <th className="text-left p-3 font-semibold text-gray-600">Objednávka</th>
                 <th className="text-left p-3 font-semibold text-gray-600">Zákazník</th>
                 <th className="text-left p-3 font-semibold text-gray-600">Typ</th>
@@ -164,23 +177,28 @@ export default function AdminReturnsPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="p-8 text-center text-gray-400">
+                  <td colSpan={9} className="p-8 text-center text-gray-400">
                     Načítám...
                   </td>
                 </tr>
               ) : returns.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="p-8 text-center text-gray-400">
+                  <td colSpan={9} className="p-8 text-center text-gray-400">
                     Žádné reklamace nenalezeny.
                   </td>
                 </tr>
               ) : (
                 returns.map((ret) => {
-                  const statusInfo = STATUS_MAP[ret.status] || { label: ret.status, variant: "pending" as const };
+                  const statusInfo = RETURN_STATUS_MAP[ret.status] || { label: ret.status, variant: "pending" as const };
                   const overdue = isOverdue(ret.deadlineAt);
 
                   return (
                     <tr key={ret.id} className="border-b border-gray-50 hover:bg-gray-50">
+                      <td className="p-3">
+                        <div className="font-mono text-xs text-gray-600">
+                          {ret.rmaNumber || "—"}
+                        </div>
+                      </td>
                       <td className="p-3">
                         <div className="font-medium text-gray-900">{ret.order.orderNumber}</div>
                       </td>
@@ -194,11 +212,11 @@ export default function AdminReturnsPage() {
                             ? "bg-red-50 text-red-700"
                             : "bg-blue-50 text-blue-700"
                         }`}>
-                          {TYPE_MAP[ret.type] || ret.type}
+                          {RETURN_TYPE_MAP[ret.type] || ret.type}
                         </span>
                       </td>
                       <td className="p-3 text-right font-semibold text-gray-900">
-                        {formatPrice(ret.requestedAmount)}
+                        {formatPriceCZK(ret.requestedAmount)}
                       </td>
                       <td className="p-3">
                         <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>

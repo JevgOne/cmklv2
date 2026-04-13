@@ -7,9 +7,16 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
+import {
+  RETURN_STATUSES,
+  RETURN_STATUS_MAP,
+  RETURN_TYPE_MAP,
+  formatPriceCZK,
+} from "@/lib/returns-constants";
 
 interface ReturnDetail {
   id: string;
+  rmaNumber: string | null;
   type: string;
   status: string;
   reason: string;
@@ -36,27 +43,6 @@ interface ReturnDetail {
     items: { id: string; quantity: number; unitPrice: number; part?: { name: string } }[];
   };
 }
-
-const STATUSES = [
-  "NEW", "RECEIVED", "IN_REVIEW", "APPROVED",
-  "REFUNDED", "PARTIALLY_REFUNDED", "REJECTED", "CANCELLED",
-];
-
-const STATUS_MAP: Record<string, { label: string; variant: "success" | "pending" | "rejected" }> = {
-  NEW: { label: "Nová", variant: "pending" },
-  RECEIVED: { label: "Přijata", variant: "pending" },
-  IN_REVIEW: { label: "Posuzování", variant: "pending" },
-  APPROVED: { label: "Schválena", variant: "success" },
-  REFUNDED: { label: "Vráceno", variant: "success" },
-  PARTIALLY_REFUNDED: { label: "Částečně vráceno", variant: "success" },
-  REJECTED: { label: "Zamítnuta", variant: "rejected" },
-  CANCELLED: { label: "Zrušena", variant: "rejected" },
-};
-
-const TYPE_MAP: Record<string, string> = {
-  WITHDRAWAL: "Odstoupení od smlouvy (14 dní)",
-  WARRANTY: "Záruční reklamace",
-};
 
 export default function AdminReturnDetailPage() {
   const params = useParams();
@@ -103,7 +89,7 @@ export default function AdminReturnDetailPage() {
     setError("");
     try {
       const body: Record<string, unknown> = { status };
-      if (approvedAmount) body.approvedAmount = parseInt(approvedAmount, 10);
+      if (approvedAmount) body.approvedAmount = parseFloat(approvedAmount);
       if (adminNotes) body.adminNotes = adminNotes;
       if (rejectionReason) body.rejectionReason = rejectionReason;
 
@@ -126,9 +112,6 @@ export default function AdminReturnDetailPage() {
       setSaving(false);
     }
   };
-
-  const formatPrice = (amount: number) =>
-    new Intl.NumberFormat("cs-CZ", { style: "currency", currency: "CZK", maximumFractionDigits: 0 }).format(amount);
 
   if (loading) {
     return (
@@ -155,7 +138,7 @@ export default function AdminReturnDetailPage() {
     );
   }
 
-  const statusInfo = STATUS_MAP[returnData.status] || { label: returnData.status, variant: "pending" as const };
+  const statusInfo = RETURN_STATUS_MAP[returnData.status] || { label: returnData.status, variant: "pending" as const };
   const isOverdue = returnData.deadlineAt && new Date(returnData.deadlineAt) < new Date();
 
   let parsedPhotos: string[] = [];
@@ -184,9 +167,9 @@ export default function AdminReturnDetailPage() {
             <span>/</span>
             <span className="text-gray-900">Detail</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <h1 className="text-[28px] font-extrabold text-gray-900">
-              {returnData.order.orderNumber}
+              {returnData.rmaNumber || returnData.order.orderNumber}
             </h1>
             <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
             {isOverdue && (
@@ -214,9 +197,15 @@ export default function AdminReturnDetailPage() {
           <Card className="p-6">
             <h2 className="font-bold text-gray-900 mb-4">Základní údaje</h2>
             <div className="space-y-3 text-sm">
+              {returnData.rmaNumber && (
+                <div className="flex justify-between">
+                  <span className="text-gray-500">RMA číslo:</span>
+                  <span className="font-mono font-medium">{returnData.rmaNumber}</span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span className="text-gray-500">Typ:</span>
-                <span className="font-medium">{TYPE_MAP[returnData.type] || returnData.type}</span>
+                <span className="font-medium">{RETURN_TYPE_MAP[returnData.type] || returnData.type}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Objednávka:</span>
@@ -226,12 +215,12 @@ export default function AdminReturnDetailPage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Požadovaná částka:</span>
-                <span className="font-semibold">{formatPrice(returnData.requestedAmount)}</span>
+                <span className="font-semibold">{formatPriceCZK(returnData.requestedAmount)}</span>
               </div>
               {returnData.approvedAmount !== null && (
                 <div className="flex justify-between">
                   <span className="text-gray-500">Schválená částka:</span>
-                  <span className="font-semibold text-green-600">{formatPrice(returnData.approvedAmount)}</span>
+                  <span className="font-semibold text-green-600">{formatPriceCZK(returnData.approvedAmount)}</span>
                 </div>
               )}
               <div className="flex justify-between">
@@ -343,8 +332,8 @@ export default function AdminReturnDetailPage() {
                   disabled={!canEdit}
                   className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 disabled:bg-gray-100"
                 >
-                  {STATUSES.map((s) => (
-                    <option key={s} value={s}>{STATUS_MAP[s]?.label || s}</option>
+                  {RETURN_STATUSES.map((s) => (
+                    <option key={s} value={s}>{RETURN_STATUS_MAP[s]?.label || s}</option>
                   ))}
                 </select>
               </div>
@@ -424,7 +413,7 @@ export default function AdminReturnDetailPage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Celkem:</span>
-                <span className="font-semibold">{formatPrice(returnData.order.totalPrice)}</span>
+                <span className="font-semibold">{formatPriceCZK(returnData.order.totalPrice)}</span>
               </div>
             </div>
           </Card>

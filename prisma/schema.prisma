@@ -1096,9 +1096,10 @@ model OrderItem {
 // ============================================
 
 model ReturnRequest {
-  id      String @id @default(cuid())
-  orderId String
-  order   Order  @relation(fields: [orderId], references: [id])
+  id        String  @id @default(cuid())
+  rmaNumber String? @unique // RMA-YYYYMMDD-XXXXX
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
 
   // Typ
   type String // WITHDRAWAL (14-den odstoupení), WARRANTY (záruční reklamace)
@@ -1126,7 +1127,7 @@ model ReturnRequest {
 
   // Stav
   status String @default("NEW")
-  // NEW, RECEIVED, IN_REVIEW, APPROVED, REFUNDED, PARTIALLY_REFUNDED, REJECTED, CANCELLED
+  // NEW, RECEIVED, SHIPPED_BACK, IN_REVIEW, APPROVED, REFUNDED, PARTIALLY_REFUNDED, REJECTED, CANCELLED
 
   rejectionReason String?
 

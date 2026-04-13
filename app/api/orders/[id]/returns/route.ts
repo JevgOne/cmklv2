@@ -72,9 +72,16 @@ export async function POST(
     const deadlineAt = new Date();
     deadlineAt.setDate(deadlineAt.getDate() + 30);
 
+    // Generate RMA number: RMA-YYYYMMDD-XXXXX
+    const now = new Date();
+    const datePart = now.toISOString().slice(0, 10).replace(/-/g, "");
+    const randomPart = Math.random().toString(36).substring(2, 7).toUpperCase();
+    const rmaNumber = `RMA-${datePart}-${randomPart}`;
+
     const returnRecord = await prisma.returnRequest.create({
       data: {
         orderId: order.id,
+        rmaNumber,
         type: data.type,
         items: JSON.stringify(data.items),
         reason: data.reason,

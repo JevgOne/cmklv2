@@ -16,6 +16,8 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status");
     const type = searchParams.get("type");
+    const dateFrom = searchParams.get("dateFrom");
+    const dateTo = searchParams.get("dateTo");
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "20", 10);
     const search = searchParams.get("search");
@@ -23,10 +25,21 @@ export async function GET(request: NextRequest) {
     const where: Record<string, unknown> = {};
     if (status) where.status = status;
     if (type) where.type = type;
+    if (dateFrom || dateTo) {
+      const createdAtFilter: Record<string, Date> = {};
+      if (dateFrom) createdAtFilter.gte = new Date(dateFrom);
+      if (dateTo) {
+        const end = new Date(dateTo);
+        end.setHours(23, 59, 59, 999);
+        createdAtFilter.lte = end;
+      }
+      where.createdAt = createdAtFilter;
+    }
     if (search) {
       where.OR = [
         { contactName: { contains: search, mode: "insensitive" } },
         { contactEmail: { contains: search, mode: "insensitive" } },
+        { rmaNumber: { contains: search, mode: "insensitive" } },
         { order: { orderNumber: { contains: search, mode: "insensitive" } } },
       ];
     }

@@ -6,11 +6,11 @@ import { z } from "zod";
 
 const updateReturnSchema = z.object({
   status: z.enum([
-    "NEW", "RECEIVED", "IN_REVIEW", "APPROVED",
+    "NEW", "RECEIVED", "SHIPPED_BACK", "IN_REVIEW", "APPROVED",
     "REFUNDED", "PARTIALLY_REFUNDED", "REJECTED", "CANCELLED",
   ]).optional(),
   rejectionReason: z.string().optional(),
-  approvedAmount: z.number().int().min(0).optional(),
+  approvedAmount: z.number().min(0).optional(),
   adminNotes: z.string().optional(),
 });
 
