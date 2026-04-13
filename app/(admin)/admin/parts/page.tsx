@@ -74,10 +74,14 @@ export default function AdminPartsPage() {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [supplierFilter, setSupplierFilter] = useState("");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
+
+  // Supplier list for filter dropdown
+  const [suppliers, setSuppliers] = useState<{ id: string; firstName: string; lastName: string; companyName: string | null }[]>([]);
 
   // Bulk selection
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -89,6 +93,7 @@ export default function AdminPartsPage() {
     if (categoryFilter) params.set("category", categoryFilter);
     if (typeFilter) params.set("partType", typeFilter);
     if (statusFilter) params.set("status", statusFilter);
+    if (supplierFilter) params.set("supplierId", supplierFilter);
     if (search) params.set("search", search);
     params.set("page", String(page));
 
@@ -105,16 +110,23 @@ export default function AdminPartsPage() {
     } finally {
       setLoading(false);
     }
-  }, [categoryFilter, typeFilter, statusFilter, search, page]);
+  }, [categoryFilter, typeFilter, statusFilter, supplierFilter, search, page]);
 
   useEffect(() => {
     fetchParts();
   }, [fetchParts]);
 
   useEffect(() => {
+    fetch("/api/admin/feeds/suppliers")
+      .then((r) => r.json())
+      .then((d) => { if (d.suppliers) setSuppliers(d.suppliers); })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
     setPage(1);
     setSelectedIds(new Set());
-  }, [categoryFilter, typeFilter, statusFilter, search]);
+  }, [categoryFilter, typeFilter, statusFilter, supplierFilter, search]);
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {
@@ -216,6 +228,18 @@ export default function AdminPartsPage() {
             <option value="">Všechny stavy</option>
             {STATUSES.map((s) => (
               <option key={s} value={s}>{STATUS_MAP[s]?.label || s}</option>
+            ))}
+          </select>
+          <select
+            value={supplierFilter}
+            onChange={(e) => setSupplierFilter(e.target.value)}
+            className="h-10 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+          >
+            <option value="">Všichni dodavatelé</option>
+            {suppliers.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.companyName || `${s.firstName} ${s.lastName}`}
+              </option>
             ))}
           </select>
         </div>
