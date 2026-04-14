@@ -26,7 +26,7 @@ interface OrderRow {
   id: string;
   orderNumber: string;
   status: string;
-  totalAmount: number;
+  totalPrice: number;
   deliveryName: string;
   deliveryEmail: string;
   createdAt: string;
@@ -221,7 +221,7 @@ export default function AdminOrdersPage() {
                         </div>
                       </td>
                       <td className="p-3 text-right font-semibold text-gray-900">
-                        {formatPrice(order.totalAmount)}
+                        {formatPrice(order.totalPrice)}
                       </td>
                       <td className="p-3">
                         <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>

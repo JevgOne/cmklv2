@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -55,12 +55,33 @@ function groupBySupplier(items: CartItem[]): SupplierGroup[] {
   return Array.from(map.values());
 }
 
+const RESERVATION_DURATION_MS = 30 * 60 * 1000; // 30 min
+
+function getSessionId(): string {
+  if (typeof window === "undefined") return "";
+  let id = sessionStorage.getItem("checkout_session");
+  if (!id) {
+    id = crypto.randomUUID();
+    sessionStorage.setItem("checkout_session", id);
+  }
+  return id;
+}
+
 export default function DilyObjednavkaPage() {
   const router = useRouter();
   const [step, setStep] = useState<Step>(1);
   const [items, setItems] = useState<CartItem[]>([]);
   const [total, setTotal] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // Reservation
+  const [sessionId] = useState(getSessionId);
+  const [reservationExpiry, setReservationExpiry] = useState<Date | null>(null);
+  const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const [reservationErrors, setReservationErrors] = useState<Record<string, string>>({});
+  const itemsRef = useRef(items);
+  itemsRef.current = items;
 
   const [delivery, setDelivery] = useState<DeliveryFormData>({
     firstName: "",
@@ -79,6 +100,11 @@ export default function DilyObjednavkaPage() {
   const [paymentMethod, setPaymentMethod] = useState("BANK_TRANSFER");
   const [errors, setErrors] = useState<Partial<Record<string, string>>>({});
 
+  // Shipping availability (weight/dimension limits)
+  const [shippingAvailability, setShippingAvailability] = useState<
+    Record<string, { available: boolean; reason?: string }>
+  >({});
+
   useEffect(() => {
     const refresh = () => {
       setItems(getCart());
@@ -87,6 +113,104 @@ export default function DilyObjednavkaPage() {
     refresh();
     return onCartChange(refresh);
   }, []);
+
+  // Fetch dostupné dopravní metody (weight/dimension limits)
+  useEffect(() => {
+    if (items.length === 0) return;
+    const fetchAvailability = async () => {
+      try {
+        const res = await fetch("/api/shipping/calculate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            items: items.map((i) => ({ partId: i.id, quantity: i.quantity })),
+          }),
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        const avail: Record<string, { available: boolean; reason?: string }> = {};
+        for (const m of data.methods) {
+          avail[m.method] = { available: m.available, reason: m.unavailableReason };
+        }
+        setShippingAvailability(avail);
+      } catch {
+        // fallback: all available
+      }
+    };
+    fetchAvailability();
+  }, [items]);
+
+  // Rezervace dílů při vstupu do checkoutu
+  const reserveItems = useCallback(async (cartItems: CartItem[]) => {
+    if (!sessionId || cartItems.length === 0) return;
+    const errs: Record<string, string> = {};
+    let latestExpiry: Date | null = null;
+
+    for (const item of cartItems) {
+      try {
+        const res = await fetch("/api/parts/reserve", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            partId: item.id,
+            quantity: item.quantity,
+            sessionId,
+          }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const exp = new Date(data.reservation.expiresAt);
+          if (!latestExpiry || exp > latestExpiry) latestExpiry = exp;
+        } else if (res.status === 409) {
+          errs[item.id] = `"${item.name}" je dočasně rezervován jiným zákazníkem.`;
+        }
+      } catch {
+        // network error — cron cleanup je primární mechanismus
+      }
+    }
+    setReservationErrors(errs);
+    if (latestExpiry) setReservationExpiry(latestExpiry);
+  }, [sessionId]);
+
+  useEffect(() => {
+    reserveItems(items);
+  }, [items, reserveItems]);
+
+  // Uvolnění rezervací při odchodu z checkoutu (best-effort, cron je primární fallback)
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      const current = itemsRef.current;
+      if (!sessionId || current.length === 0) return;
+      for (const item of current) {
+        // keepalive fetch s DELETE — funguje i při zavření stránky
+        fetch("/api/parts/reserve", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ partId: item.id, sessionId }),
+          keepalive: true,
+        }).catch(() => {});
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [sessionId]);
+
+  // Countdown timer
+  useEffect(() => {
+    if (!reservationExpiry) return;
+    const tick = () => {
+      const remaining = reservationExpiry.getTime() - Date.now();
+      if (remaining <= 0) {
+        setTimeLeft(0);
+        router.push("/dily/kosik?expired=1");
+        return;
+      }
+      setTimeLeft(remaining);
+    };
+    tick();
+    const interval = setInterval(tick, 1000);
+    return () => clearInterval(interval);
+  }, [reservationExpiry, router]);
 
   const supplierGroups = useMemo(() => groupBySupplier(items), [items]);
   const isSingleSupplier = supplierGroups.length <= 1;
@@ -190,6 +314,7 @@ export default function DilyObjednavkaPage() {
           // Multi supplier: new format
           ...(deliveries && { deliveries }),
           paymentMethod,
+          sessionId: sessionId || undefined,
           note: delivery.note || undefined,
         }),
       });
@@ -197,6 +322,7 @@ export default function DilyObjednavkaPage() {
       if (res.ok) {
         const data = await res.json();
         clearCart();
+        setSubmitError(null);
         if (data.checkoutUrl) {
           window.location.href = data.checkoutUrl;
           return;
@@ -204,12 +330,11 @@ export default function DilyObjednavkaPage() {
         const trackingParam = data.trackingUrl ? `&tracking=${encodeURIComponent(data.trackingUrl)}` : "";
         router.push(`/dily/objednavka/potvrzeni?id=${data.order?.orderNumber ?? data.order?.id ?? "demo"}${trackingParam}`);
       } else {
-        clearCart();
-        router.push("/dily/objednavka/potvrzeni?id=demo-" + Date.now());
+        const errData = await res.json().catch(() => null);
+        setSubmitError(errData?.error ?? "Objednávku se nepodařilo odeslat. Zkuste to prosím znovu.");
       }
     } catch {
-      clearCart();
-      router.push("/dily/objednavka/potvrzeni?id=demo-" + Date.now());
+      setSubmitError("Chyba připojení. Zkontrolujte internet a zkuste to znovu.");
     } finally {
       setSubmitting(false);
     }
@@ -265,12 +390,32 @@ export default function DilyObjednavkaPage() {
       </section>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Reservation timer + errors */}
+        {timeLeft !== null && timeLeft > 0 && (
+          <div className={cn(
+            "mb-4 rounded-lg px-4 py-3 text-sm font-medium flex items-center gap-2",
+            timeLeft <= 5 * 60 * 1000 ? "bg-yellow-50 text-yellow-800 border border-yellow-200" : "bg-blue-50 text-blue-800 border border-blue-200",
+          )}>
+            <span>Rezervace vyprší za:</span>
+            <span className="font-bold tabular-nums">
+              {Math.floor(timeLeft / 60000)}:{String(Math.floor((timeLeft % 60000) / 1000)).padStart(2, "0")}
+            </span>
+          </div>
+        )}
+        {Object.keys(reservationErrors).length > 0 && (
+          <div className="mb-4 rounded-lg px-4 py-3 bg-red-50 border border-red-200 text-sm text-red-800 space-y-1">
+            {Object.values(reservationErrors).map((msg, i) => (
+              <p key={i}>{msg}</p>
+            ))}
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <Card className="p-6">
               {step === 1 && (
                 <>
-                  <OrderForm data={delivery} onChange={setDelivery} errors={errors} hideDeliveryMethod={!isSingleSupplier} />
+                  <OrderForm data={delivery} onChange={setDelivery} errors={errors} hideDeliveryMethod={!isSingleSupplier} shippingAvailability={shippingAvailability} />
 
                   {/* Per-supplier delivery selection (multi-supplier only) */}
                   {!isSingleSupplier && (
@@ -293,20 +438,29 @@ export default function DilyObjednavkaPage() {
                             <div className="space-y-2">
                               {shippingMethods.map((m) => {
                                 const isSelected = del.deliveryMethod === m.method;
+                                const avail = shippingAvailability[m.method];
+                                const isDisabled = avail?.available === false;
                                 return (
                                   <label key={m.method} className={cn(
-                                    "flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all text-sm",
-                                    isSelected ? "border-orange-500 bg-orange-50" : "border-gray-200 hover:border-gray-300"
+                                    "flex items-center gap-3 p-3 rounded-lg border transition-all text-sm",
+                                    isDisabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
+                                    isSelected && !isDisabled ? "border-orange-500 bg-orange-50" : "border-gray-200 hover:border-gray-300"
                                   )}>
                                     <input
                                       type="radio"
                                       name={`delivery_${group.supplierId}`}
                                       value={m.method}
                                       checked={isSelected}
+                                      disabled={isDisabled}
                                       onChange={() => updateSupplierDelivery(group.supplierId, { deliveryMethod: m.method })}
                                       className="w-4 h-4 accent-orange-500 shrink-0"
                                     />
-                                    <span className="flex-1 font-medium text-gray-900">{m.label}</span>
+                                    <div className="flex-1">
+                                      <span className="font-medium text-gray-900">{m.label}</span>
+                                      {isDisabled && avail?.reason && (
+                                        <p className="text-xs text-red-500 mt-0.5">{avail.reason}</p>
+                                      )}
+                                    </div>
                                     <span className="font-bold text-gray-900">
                                       {m.price === 0 ? "Zdarma" : formatPrice(m.price)}
                                     </span>
@@ -391,6 +545,12 @@ export default function DilyObjednavkaPage() {
                       </div>
                     );
                   })}
+                </div>
+              )}
+
+              {submitError && (
+                <div className="mt-4 rounded-lg px-4 py-3 bg-red-50 border border-red-200 text-sm text-red-800">
+                  {submitError}
                 </div>
               )}
 

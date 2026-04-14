@@ -31,11 +31,13 @@ export function OrderForm({
   onChange,
   errors,
   hideDeliveryMethod,
+  shippingAvailability,
 }: {
   data: DeliveryFormData;
   onChange: (data: DeliveryFormData) => void;
   errors?: Partial<Record<string, string>>;
   hideDeliveryMethod?: boolean;
+  shippingAvailability?: Record<string, { available: boolean; reason?: string }>;
 }) {
   const update = (field: keyof DeliveryFormData, value: string) => {
     onChange({ ...data, [field]: value });
@@ -118,12 +120,15 @@ export function OrderForm({
 
         {shippingMethods.map((m) => {
           const isSelected = data.deliveryMethod === m.method;
+          const avail = shippingAvailability?.[m.method];
+          const isDisabled = avail?.available === false;
           return (
             <label
               key={m.method}
               className={cn(
-                "flex items-start gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all",
-                isSelected
+                "flex items-start gap-4 p-4 rounded-xl border-2 transition-all",
+                isDisabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
+                isSelected && !isDisabled
                   ? "border-orange-500 bg-orange-50"
                   : "border-gray-200 hover:border-gray-300",
               )}
@@ -133,6 +138,7 @@ export function OrderForm({
                 name="deliveryMethod"
                 value={m.method}
                 checked={isSelected}
+                disabled={isDisabled}
                 onChange={(e) => update("deliveryMethod", e.target.value)}
                 className="mt-1 w-5 h-5 accent-orange-500 shrink-0"
               />
@@ -146,6 +152,9 @@ export function OrderForm({
                     <div>
                       <div className="font-semibold text-gray-900">{m.label}</div>
                       <div className="text-sm text-gray-500">{m.description}</div>
+                      {isDisabled && avail?.reason && (
+                        <div className="text-xs text-red-500 mt-0.5">{avail.reason}</div>
+                      )}
                     </div>
                   </div>
                   <div className="text-right shrink-0">
