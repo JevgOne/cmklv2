@@ -1215,6 +1215,10 @@ model ReturnRequest {
   approvedAmount  Int?       // Schválená částka
   refundedAt      DateTime?
 
+  // Zpětné odeslání zákazníkem
+  returnTrackingNumber String? // Tracking číslo zásilky zpět
+  shippedBackAt        DateTime?
+
   // Stav
   status String @default("NEW")
   // NEW, RECEIVED, SHIPPED_BACK, IN_REVIEW, APPROVED, REFUNDED, PARTIALLY_REFUNDED, REJECTED, CANCELLED

@@ -13,6 +13,7 @@ const updateReturnSchema = z.object({
   rejectionReason: z.string().optional(),
   approvedAmount: z.number().min(0).optional(),
   adminNotes: z.string().optional(),
+  returnTrackingNumber: z.string().optional(),
 });
 
 export async function GET(
@@ -72,6 +73,10 @@ export async function PUT(
 
     if (data.status) {
       updateData.status = data.status;
+      // Automaticky nastavit shippedBackAt při SHIPPED_BACK
+      if (data.status === "SHIPPED_BACK") {
+        updateData.shippedBackAt = new Date();
+      }
       // Automaticky nastavit refundedAt při refundaci
       if (data.status === "REFUNDED" || data.status === "PARTIALLY_REFUNDED") {
         updateData.refundedAt = new Date();
@@ -103,6 +108,7 @@ export async function PUT(
     if (data.rejectionReason !== undefined) updateData.rejectionReason = data.rejectionReason;
     if (data.approvedAmount !== undefined) updateData.approvedAmount = data.approvedAmount;
     if (data.adminNotes !== undefined) updateData.adminNotes = data.adminNotes;
+    if (data.returnTrackingNumber !== undefined) updateData.returnTrackingNumber = data.returnTrackingNumber;
 
     const updated = await prisma.returnRequest.update({
       where: { id },
