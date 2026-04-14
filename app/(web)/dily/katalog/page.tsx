@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Tabs } from "@/components/ui/Tabs";
 import { ProductCard } from "@/components/web/ProductCard";
+import { PartRequestForm } from "@/components/web/PartRequestForm";
 
 interface PartImage {
   id: string;
@@ -258,13 +259,24 @@ export default function DilyKatalogPage() {
           </div>
         ) : (
           <div className="text-center py-16">
-            <span className="text-5xl block mb-4">🔍</span>
+            <span className="text-5xl block mb-4">&#128269;</span>
             <h3 className="text-xl font-bold text-gray-900">
               Žádné díly nenalezeny
             </h3>
-            <p className="text-gray-500 mt-2">
+            <p className="text-gray-500 mt-2 mb-6">
               Zkuste změnit filtry nebo hledejte v jiné kategorii.
             </p>
+            <div className="max-w-2xl mx-auto bg-white rounded-xl p-6 shadow-sm border border-orange-100">
+              <h4 className="text-lg font-bold text-gray-900 mb-1">
+                Nenašli jste? Poptejte u vrakovišť!
+              </h4>
+              <p className="text-gray-500 text-sm mb-4">
+                Popište jaký díl hledáte a ověřená vrakoviště vám pošlou nabídky.
+              </p>
+              <PartRequestForm
+                prefillQuery={searchParams.get("q") ?? undefined}
+              />
+            </div>
           </div>
         )}
 

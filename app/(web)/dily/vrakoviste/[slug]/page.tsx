@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { ProductCard } from "@/components/web/ProductCard";
 import { prisma } from "@/lib/prisma";
+import { SupplierReviews } from "@/components/web/SupplierReviews";
 import {
   generateBreadcrumbJsonLd,
   generateStoreJsonLd,
@@ -376,6 +377,13 @@ export default async function VrakovisteLandingPage({ params }: PageProps) {
           </div>
         )}
       </section>
+
+      {/* Customer reviews */}
+      {partner.userId && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14 border-t border-gray-100">
+          <SupplierReviews supplierId={partner.userId} />
+        </section>
+      )}
 
       {/* Trust strip */}
       <section className="bg-white border-t border-gray-200">

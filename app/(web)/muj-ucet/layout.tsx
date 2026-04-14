@@ -9,6 +9,8 @@ const navItems = [
   { href: "/muj-ucet/oblibene", label: "Oblíbené" },
   { href: "/muj-ucet/hlidaci-pes", label: "Hlídací pes" },
   { href: "/muj-ucet/dotazy", label: "Moje dotazy" },
+  { href: "/muj-ucet/garaz", label: "Moje garáž" },
+  { href: "/muj-ucet/poptavky", label: "Moje poptávky" },
 ];
 
 export default function MujUcetLayout({ children }: { children: React.ReactNode }) {
