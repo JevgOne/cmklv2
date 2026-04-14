@@ -199,11 +199,21 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      // 3. Snížit stock
+      // 3. Snížit stock + propojit rezervace
       for (const item of data.items) {
         await tx.part.update({
           where: { id: item.partId },
           data: { stock: { decrement: item.quantity } },
+        });
+
+        // Označit existující rezervace jako vyřízené (zamezí expiraci cronem)
+        await tx.partReservation.updateMany({
+          where: {
+            partId: item.partId,
+            orderId: null,
+            ...(data.sessionId ? { sessionId: data.sessionId } : {}),
+          },
+          data: { orderId: created.id },
         });
       }
 

@@ -88,6 +88,7 @@ export const createOrderSchema = z.object({
     zasilkovnaPointName: z.string().optional(),
   })).optional(),
   paymentMethod: z.enum(["BANK_TRANSFER", "COD", "CARD"]),
+  sessionId: z.string().optional(), // checkout session pro propojení rezervací
   note: z.string().optional(),
 }).refine(
   (data) => !!(data.deliveryMethod || (data.deliveries && data.deliveries.length > 0)),

@@ -943,8 +943,9 @@ model Part {
   externalId   String?  // ID dílu v externím feedu
 
   // Relace
-  images     PartImage[]
-  orderItems OrderItem[]
+  images       PartImage[]
+  orderItems   OrderItem[]
+  reservations PartReservation[]
 
   // Timestamps
   createdAt DateTime @default(now())
@@ -972,6 +973,21 @@ model PartImage {
 
   createdAt DateTime @default(now())
 
+  @@index([partId])
+}
+
+model PartReservation {
+  id        String   @id @default(cuid())
+  partId    String
+  part      Part     @relation(fields: [partId], references: [id], onDelete: Cascade)
+  sessionId String   // cookie/token identifikující checkout session
+  quantity  Int      @default(1)
+  expiresAt DateTime // now() + 30 min
+  orderId   String?  // vyplní se po úspěšném objednání
+  createdAt DateTime @default(now())
+
+  @@unique([partId, sessionId])
+  @@index([expiresAt])
   @@index([partId])
 }
 
