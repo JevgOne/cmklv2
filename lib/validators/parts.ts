@@ -59,6 +59,8 @@ export const partFilterSchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(18),
 });
 
+const deliveryMethods = ["ZASILKOVNA", "DPD", "PPL", "GLS", "CESKA_POSTA", "PICKUP"] as const;
+
 export const createOrderSchema = z.object({
   items: z
     .array(
@@ -74,14 +76,22 @@ export const createOrderSchema = z.object({
   deliveryAddress: z.string().min(1, "Adresa je povinná"),
   deliveryCity: z.string().min(1, "Město je povinné"),
   deliveryZip: z.string().min(3, "PSČ je povinné"),
-  deliveryMethod: z.enum(["ZASILKOVNA", "DPD", "PPL", "GLS", "CESKA_POSTA", "PICKUP"]),
+  // Starý formát (zpětná kompatibilita): 1 delivery pro celou objednávku
+  deliveryMethod: z.enum(deliveryMethods).optional(),
   zasilkovnaPointId: z.string().optional(),
   zasilkovnaPointName: z.string().optional(),
+  // Nový formát: delivery per dodavatel
+  deliveries: z.array(z.object({
+    supplierId: z.string().min(1),
+    deliveryMethod: z.enum(deliveryMethods),
+    zasilkovnaPointId: z.string().optional(),
+    zasilkovnaPointName: z.string().optional(),
+  })).optional(),
   paymentMethod: z.enum(["BANK_TRANSFER", "COD", "CARD"]),
   note: z.string().optional(),
 }).refine(
-  (data) => data.deliveryMethod !== "ZASILKOVNA" || !!data.zasilkovnaPointId,
-  { message: "Vyberte výdejní místo Zásilkovny", path: ["zasilkovnaPointId"] }
+  (data) => !!(data.deliveryMethod || (data.deliveries && data.deliveries.length > 0)),
+  { message: "Musíte zvolit způsob doručení", path: ["deliveryMethod"] },
 );
 
 export const orderStatusSchema = z.object({

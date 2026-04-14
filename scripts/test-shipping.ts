@@ -42,16 +42,18 @@ async function main() {
   console.log(`   - recipient: ${order.deliveryName}, ${order.deliveryCity}`);
   console.log(`   - totalPrice: ${order.totalPrice} Kč\n`);
 
-  const result = await createShipmentForOrder(order.id);
+  const results = await createShipmentForOrder(order.id);
 
-  if (!result) {
-    console.log("⏩ Skipped (PICKUP nebo jiný důvod)");
+  if (results.length === 0) {
+    console.log("⏩ Skipped (PICKUP nebo žádné SubOrders)");
     return;
   }
 
-  console.log("\n✅ Result:");
-  console.log(JSON.stringify(result, null, 2));
-  console.log(`\n🏷  Dry-run: ${result.dryRun ? "YES (žádné reálné volání)" : "NO (reálné API)"}`);
+  console.log(`\n✅ ${results.length} shipment(s) created:`);
+  for (const result of results) {
+    console.log(JSON.stringify(result, null, 2));
+    console.log(`   Dry-run: ${result.dryRun ? "YES (žádné reálné volání)" : "NO (reálné API)"}`);
+  }
 }
 
 main()

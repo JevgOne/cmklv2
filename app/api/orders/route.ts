@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { createOrderSchema } from "@/lib/validators/parts";
 import { getStripe } from "@/lib/stripe";
 import { getShippingPrice } from "@/lib/shipping/prices";
+import type { DeliveryMethod } from "@/lib/shipping/types";
 
 /* ------------------------------------------------------------------ */
 /*  POST /api/orders — Vytvoření objednávky z košíku                    */
@@ -19,6 +20,18 @@ function generateOrderNumber(): string {
   const d = String(now.getDate()).padStart(2, "0");
   const rand = Math.random().toString(36).slice(2, 7).toUpperCase();
   return `OBJ-${y}${m}${d}-${rand}`;
+}
+
+interface SupplierGroup {
+  supplierId: string;
+  items: { partId: string; supplierId: string; quantity: number; unitPrice: number; totalPrice: number }[];
+  subtotal: number;
+  delivery: {
+    deliveryMethod: DeliveryMethod;
+    zasilkovnaPointId?: string;
+    zasilkovnaPointName?: string;
+  };
+  shippingPrice: number;
 }
 
 export async function POST(request: NextRequest) {
@@ -55,12 +68,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Spočítat celkovou cenu
-    let totalPrice = 0;
+    // Spočítat items s cenami
     const orderItems = data.items.map((item) => {
       const part = parts.find((p) => p.id === item.partId)!;
       const itemTotal = part.price * item.quantity;
-      totalPrice += itemTotal;
       return {
         partId: item.partId,
         supplierId: part.supplierId,
@@ -70,17 +81,59 @@ export async function POST(request: NextRequest) {
       };
     });
 
-    // Dopravné dle metody doručení (single source of truth)
-    const deliveryPrice = getShippingPrice(data.deliveryMethod);
+    // Backward compat: starý formát (deliveryMethod na root) → vytvořit deliveries[]
+    let deliveries = data.deliveries;
+    if (!deliveries || deliveries.length === 0) {
+      if (!data.deliveryMethod) {
+        return NextResponse.json(
+          { error: "Musíte zvolit způsob doručení" },
+          { status: 400 }
+        );
+      }
+      const uniqueSupplierIds = [...new Set(parts.map((p) => p.supplierId))];
+      deliveries = uniqueSupplierIds.map((sid) => ({
+        supplierId: sid,
+        deliveryMethod: data.deliveryMethod!,
+        zasilkovnaPointId: data.zasilkovnaPointId,
+        zasilkovnaPointName: data.zasilkovnaPointName,
+      }));
+    }
+
+    // Seskupit items per supplierId + přiřadit delivery
+    const groupMap = new Map<string, SupplierGroup>();
+    for (const item of orderItems) {
+      let group = groupMap.get(item.supplierId);
+      if (!group) {
+        const del = deliveries.find((d) => d.supplierId === item.supplierId);
+        const method = (del?.deliveryMethod ?? data.deliveryMethod ?? "ZASILKOVNA") as DeliveryMethod;
+        group = {
+          supplierId: item.supplierId,
+          items: [],
+          subtotal: 0,
+          delivery: {
+            deliveryMethod: method,
+            zasilkovnaPointId: del?.zasilkovnaPointId ?? undefined,
+            zasilkovnaPointName: del?.zasilkovnaPointName ?? undefined,
+          },
+          shippingPrice: getShippingPrice(method),
+        };
+        groupMap.set(item.supplierId, group);
+      }
+      group.items.push(item);
+      group.subtotal += item.totalPrice;
+    }
+    const supplierGroups = Array.from(groupMap.values());
+
+    // Celková cena = sum subtotals + sum shipping + COD fee
     const codFee = data.paymentMethod === "COD" ? 39 : 0;
-    const shippingPrice = deliveryPrice + codFee;
-    totalPrice += shippingPrice;
+    const totalShippingPrice = supplierGroups.reduce((s, g) => s + g.shippingPrice, 0) + codFee;
+    const totalPrice = supplierGroups.reduce((s, g) => s + g.subtotal, 0) + totalShippingPrice;
 
     // Generovat guest token pokud neni prihlaseny
     const isGuest = !buyerId;
     const guestToken = isGuest ? crypto.randomBytes(32).toString("hex") : null;
 
-    // Vytvořit objednávku + snížit stock v transakci (prevence race condition)
+    // Vytvořit objednávku + SubOrders + snížit stock v transakci
     const order = await prisma.$transaction(async (tx) => {
       // Znovu ověřit stock uvnitř transakce
       for (const item of data.items) {
@@ -93,6 +146,7 @@ export async function POST(request: NextRequest) {
         }
       }
 
+      // 1. Vytvořit Order (bez nested items — ty přidáme přes SubOrders)
       const created = await tx.order.create({
         data: {
           orderNumber: generateOrderNumber(),
@@ -105,26 +159,47 @@ export async function POST(request: NextRequest) {
           deliveryAddress: data.deliveryAddress,
           deliveryCity: data.deliveryCity,
           deliveryZip: data.deliveryZip,
-          deliveryMethod: data.deliveryMethod,
-          zasilkovnaPointId: data.zasilkovnaPointId ?? null,
-          zasilkovnaPointName: data.zasilkovnaPointName ?? null,
+          deliveryMethod: supplierGroups[0].delivery.deliveryMethod, // primary pro zpětnou komp.
+          zasilkovnaPointId: supplierGroups[0].delivery.zasilkovnaPointId ?? null,
+          zasilkovnaPointName: supplierGroups[0].delivery.zasilkovnaPointName ?? null,
           paymentMethod: data.paymentMethod,
           paymentStatus: "PENDING",
           totalPrice,
-          shippingPrice,
+          shippingPrice: totalShippingPrice,
           note: data.note ?? null,
-          items: {
-            create: orderItems,
-          },
-        },
-        include: {
-          items: {
-            include: { part: { select: { name: true, slug: true } } },
-          },
         },
       });
 
-      // Snížit stock
+      // 2. Vytvořit SubOrders + OrderItems sekvenciálně (Prisma circular ref workaround)
+      for (const group of supplierGroups) {
+        const subOrder = await tx.subOrder.create({
+          data: {
+            orderId: created.id,
+            supplierId: group.supplierId,
+            status: "PENDING",
+            deliveryMethod: group.delivery.deliveryMethod,
+            deliveryPrice: group.shippingPrice,
+            zasilkovnaPointId: group.delivery.zasilkovnaPointId ?? null,
+            zasilkovnaPointName: group.delivery.zasilkovnaPointName ?? null,
+            subtotal: group.subtotal,
+            shippingPrice: group.shippingPrice,
+          },
+        });
+
+        await tx.orderItem.createMany({
+          data: group.items.map((item) => ({
+            orderId: created.id,
+            subOrderId: subOrder.id,
+            partId: item.partId,
+            supplierId: item.supplierId,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+            totalPrice: item.totalPrice,
+          })),
+        });
+      }
+
+      // 3. Snížit stock
       for (const item of data.items) {
         await tx.part.update({
           where: { id: item.partId },
@@ -132,7 +207,16 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      return created;
+      // 4. Načíst kompletní Order s relacemi
+      return tx.order.findUniqueOrThrow({
+        where: { id: created.id },
+        include: {
+          subOrders: { include: { items: true } },
+          items: {
+            include: { part: { select: { name: true, slug: true } } },
+          },
+        },
+      });
     });
 
     // Kartová platba — vytvořit Stripe Checkout Session
@@ -153,12 +237,12 @@ export async function POST(request: NextRequest) {
               quantity: item.quantity,
             };
           }),
-          ...(shippingPrice > 0 && {
+          ...(totalShippingPrice > 0 && {
             shipping_options: [{
               shipping_rate_data: {
                 display_name: `Doprava${codFee > 0 ? " + dobírka" : ""}`,
                 type: "fixed_amount" as const,
-                fixed_amount: { amount: shippingPrice * 100, currency: "czk" },
+                fixed_amount: { amount: totalShippingPrice * 100, currency: "czk" },
               },
             }],
           }),
@@ -175,7 +259,6 @@ export async function POST(request: NextRequest) {
         }, { status: 201 });
       } catch (stripeError) {
         console.error("Stripe checkout error:", stripeError);
-        // Order was created, but Stripe failed — return order without checkout URL
         return NextResponse.json({
           order,
           error: "Kartová platba není momentálně dostupná. Objednávka byla vytvořena — kontaktujte nás.",
@@ -217,25 +300,62 @@ export async function GET(request: NextRequest) {
     const limit = Math.min(50, parseInt(params.get("limit") || "20", 10));
     const skip = (page - 1) * limit;
 
-    let where: Record<string, unknown>;
-
     if (role === "supplier") {
-      // Dodavatel vidí objednávky s jeho díly
-      where = { items: { some: { supplierId: session.user.id } } };
-    } else {
-      // Kupující vidí své objednávky
-      where = { buyerId: session.user.id };
+      // Dodavatel vidí své SubOrders (ne celé Orders)
+      const subWhere: Record<string, unknown> = { supplierId: session.user.id };
+      const statusFilter = params.get("status");
+      if (statusFilter) subWhere.status = statusFilter;
+
+      const [subOrders, total] = await Promise.all([
+        prisma.subOrder.findMany({
+          where: subWhere,
+          include: {
+            order: {
+              select: {
+                orderNumber: true, deliveryName: true, deliveryEmail: true,
+                deliveryPhone: true, deliveryAddress: true, deliveryCity: true,
+                deliveryZip: true, paymentMethod: true, paymentStatus: true,
+              },
+            },
+            items: {
+              include: {
+                part: { select: { name: true, slug: true, images: { where: { isPrimary: true }, take: 1 } } },
+              },
+            },
+          },
+          orderBy: { createdAt: "desc" },
+          skip,
+          take: limit,
+        }),
+        prisma.subOrder.count({ where: subWhere }),
+      ]);
+
+      return NextResponse.json({
+        subOrders,
+        total,
+        page,
+        totalPages: Math.ceil(total / limit),
+      });
     }
 
+    // Kupující vidí své objednávky
+    const where: Record<string, unknown> = { buyerId: session.user.id };
     const statusFilter = params.get("status");
-    if (statusFilter) {
-      where.status = statusFilter;
-    }
+    if (statusFilter) where.status = statusFilter;
 
     const [orders, total] = await Promise.all([
       prisma.order.findMany({
         where,
         include: {
+          subOrders: {
+            include: {
+              items: {
+                include: {
+                  part: { select: { name: true, slug: true, images: { where: { isPrimary: true }, take: 1 } } },
+                },
+              },
+            },
+          },
           items: {
             include: {
               part: { select: { name: true, slug: true, images: { where: { isPrimary: true }, take: 1 } } },

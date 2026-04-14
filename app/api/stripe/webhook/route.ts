@@ -171,19 +171,19 @@ async function handleOrderPayment(orderId: string) {
     console.error(`[webhook] applyCommissionSplit failed for order ${orderId}:`, err);
   }
 
-  // 3) Vytvořit zásilku + odeslat emaily (errors nesmí shodit webhook)
+  // 3) Vytvořit zásilky per SubOrder + odeslat emaily (errors nesmí shodit webhook)
   //    Webhook musí vracet 200, jinak Stripe retryuje donekonečna.
   try {
-    const shipment = await createShipmentForOrder(orderId);
+    const shipments = await createShipmentForOrder(orderId);
 
-    // PICKUP → dispatcher vrátil null, nic neposíláme (zákazník si vyzvedává osobně)
-    if (!shipment) {
-      console.log(`[webhook] Order ${orderId}: PICKUP, shipment skipped`);
+    // Žádné zásilky (všechny SubOrders jsou PICKUP)
+    if (shipments.length === 0) {
+      console.log(`[webhook] Order ${orderId}: all PICKUP, shipments skipped`);
       return;
     }
 
-    // 3) Odeslat placeholder emaily (zákazník + vrakoviště)
-    await sendOrderNotificationEmails(orderId, shipment);
+    // Odeslat emaily s prvním shipmentem (zpětná kompatibilita)
+    await sendOrderNotificationEmails(orderId, shipments[0]);
   } catch (err) {
     // Error v shipment nebo email → pouze log, webhook pokračuje normálně
     console.error(`[webhook] Shipment/email pipeline failed for order ${orderId}:`, err);
