@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { getCart, getCartTotal, clearCart, onCartChange, type CartItem } from "@/lib/cart";
 import { OrderForm, type DeliveryFormData } from "@/components/web/OrderForm";
-import { getShippingPrice } from "@/lib/shipping/prices";
+import { getShippingMethods, getShippingPrice } from "@/lib/shipping/prices";
+import { ZasilkovnaWidget } from "@/components/web/ZasilkovnaWidget";
+import type { ZasilkovnaPoint } from "@/components/web/OrderForm";
 import type { DeliveryMethod } from "@/lib/shipping/types";
 import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -20,6 +22,38 @@ const paymentMethods = [
   { value: "COD", label: "Dobírka", desc: "Platba při převzetí (+39 Kč)" },
   { value: "CARD", label: "Platba kartou", desc: "Okamžitá platba přes Stripe" },
 ];
+
+interface SupplierDelivery {
+  deliveryMethod: DeliveryMethod | "";
+  zasilkovnaPoint?: ZasilkovnaPoint | null;
+}
+
+interface SupplierGroup {
+  supplierId: string;
+  supplierName: string;
+  items: CartItem[];
+  subtotal: number;
+}
+
+function groupBySupplier(items: CartItem[]): SupplierGroup[] {
+  const map = new Map<string, SupplierGroup>();
+  for (const item of items) {
+    const sid = item.supplierId ?? "unknown";
+    let group = map.get(sid);
+    if (!group) {
+      group = {
+        supplierId: sid,
+        supplierName: item.supplierName ?? "Dodavatel",
+        items: [],
+        subtotal: 0,
+      };
+      map.set(sid, group);
+    }
+    group.items.push(item);
+    group.subtotal += item.price * item.quantity;
+  }
+  return Array.from(map.values());
+}
 
 export default function DilyObjednavkaPage() {
   const router = useRouter();
@@ -40,8 +74,10 @@ export default function DilyObjednavkaPage() {
     deliveryMethod: "",
   });
 
+  // Per-supplier delivery selection
+  const [supplierDeliveries, setSupplierDeliveries] = useState<Record<string, SupplierDelivery>>({});
   const [paymentMethod, setPaymentMethod] = useState("BANK_TRANSFER");
-  const [errors, setErrors] = useState<Partial<Record<keyof DeliveryFormData, string>>>({});
+  const [errors, setErrors] = useState<Partial<Record<string, string>>>({});
 
   useEffect(() => {
     const refresh = () => {
@@ -52,14 +88,34 @@ export default function DilyObjednavkaPage() {
     return onCartChange(refresh);
   }, []);
 
-  const deliveryPrice = delivery.deliveryMethod
-    ? getShippingPrice(delivery.deliveryMethod as DeliveryMethod)
-    : 0;
+  const supplierGroups = useMemo(() => groupBySupplier(items), [items]);
+  const isSingleSupplier = supplierGroups.length <= 1;
+
+  // Total shipping = sum of per-supplier shipping
+  const totalShippingPrice = useMemo(() => {
+    if (isSingleSupplier) {
+      return delivery.deliveryMethod ? getShippingPrice(delivery.deliveryMethod as DeliveryMethod) : 0;
+    }
+    return supplierGroups.reduce((sum, g) => {
+      const del = supplierDeliveries[g.supplierId];
+      return sum + (del?.deliveryMethod ? getShippingPrice(del.deliveryMethod as DeliveryMethod) : 0);
+    }, 0);
+  }, [delivery.deliveryMethod, supplierDeliveries, supplierGroups, isSingleSupplier]);
+
   const codFee = paymentMethod === "COD" ? 39 : 0;
-  const grandTotal = total + deliveryPrice + codFee;
+  const grandTotal = total + totalShippingPrice + codFee;
+
+  const shippingMethods = getShippingMethods();
+
+  const updateSupplierDelivery = (supplierId: string, update: Partial<SupplierDelivery>) => {
+    setSupplierDeliveries((prev) => ({
+      ...prev,
+      [supplierId]: { ...prev[supplierId], ...update } as SupplierDelivery,
+    }));
+  };
 
   const validateStep1 = (): boolean => {
-    const newErrors: Partial<Record<keyof DeliveryFormData, string>> = {};
+    const newErrors: Record<string, string> = {};
     if (!delivery.firstName.trim()) newErrors.firstName = "Vyplňte jméno";
     if (!delivery.lastName.trim()) newErrors.lastName = "Vyplňte příjmení";
     if (!delivery.email.trim() || !delivery.email.includes("@")) newErrors.email = "Vyplňte platný email";
@@ -67,10 +123,24 @@ export default function DilyObjednavkaPage() {
     if (!delivery.street.trim()) newErrors.street = "Vyplňte ulici";
     if (!delivery.city.trim()) newErrors.city = "Vyplňte město";
     if (!delivery.zip.trim()) newErrors.zip = "Vyplňte PSČ";
-    if (!delivery.deliveryMethod) newErrors.deliveryMethod = "Vyberte způsob doručení";
-    if (delivery.deliveryMethod === "ZASILKOVNA" && !delivery.zasilkovnaPoint?.id) {
-      newErrors.deliveryMethod = "Vyberte výdejní místo Zásilkovny";
+
+    if (isSingleSupplier) {
+      if (!delivery.deliveryMethod) newErrors.deliveryMethod = "Vyberte způsob doručení";
+      if (delivery.deliveryMethod === "ZASILKOVNA" && !delivery.zasilkovnaPoint?.id) {
+        newErrors.deliveryMethod = "Vyberte výdejní místo Zásilkovny";
+      }
+    } else {
+      for (const group of supplierGroups) {
+        const del = supplierDeliveries[group.supplierId];
+        if (!del?.deliveryMethod) {
+          newErrors[`delivery_${group.supplierId}`] = "Vyberte způsob doručení";
+        }
+        if (del?.deliveryMethod === "ZASILKOVNA" && !del.zasilkovnaPoint?.id) {
+          newErrors[`delivery_${group.supplierId}`] = "Vyberte výdejní místo Zásilkovny";
+        }
+      }
     }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -87,6 +157,19 @@ export default function DilyObjednavkaPage() {
   const handleSubmit = async () => {
     setSubmitting(true);
     try {
+      // Build deliveries array for multi-supplier
+      const deliveries = isSingleSupplier
+        ? undefined
+        : supplierGroups.map((g) => {
+            const del = supplierDeliveries[g.supplierId];
+            return {
+              supplierId: g.supplierId,
+              deliveryMethod: del?.deliveryMethod || "ZASILKOVNA",
+              zasilkovnaPointId: del?.zasilkovnaPoint?.id,
+              zasilkovnaPointName: del?.zasilkovnaPoint?.name,
+            };
+          });
+
       const res = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -98,9 +181,14 @@ export default function DilyObjednavkaPage() {
           deliveryAddress: delivery.street,
           deliveryCity: delivery.city,
           deliveryZip: delivery.zip,
-          deliveryMethod: delivery.deliveryMethod,
-          zasilkovnaPointId: delivery.zasilkovnaPoint?.id ?? undefined,
-          zasilkovnaPointName: delivery.zasilkovnaPoint?.name ?? undefined,
+          // Single supplier: backward compat
+          ...(isSingleSupplier && {
+            deliveryMethod: delivery.deliveryMethod,
+            zasilkovnaPointId: delivery.zasilkovnaPoint?.id ?? undefined,
+            zasilkovnaPointName: delivery.zasilkovnaPoint?.name ?? undefined,
+          }),
+          // Multi supplier: new format
+          ...(deliveries && { deliveries }),
           paymentMethod,
           note: delivery.note || undefined,
         }),
@@ -109,7 +197,6 @@ export default function DilyObjednavkaPage() {
       if (res.ok) {
         const data = await res.json();
         clearCart();
-        // Kartová platba — redirect na Stripe Checkout
         if (data.checkoutUrl) {
           window.location.href = data.checkoutUrl;
           return;
@@ -181,7 +268,70 @@ export default function DilyObjednavkaPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <Card className="p-6">
-              {step === 1 && <OrderForm data={delivery} onChange={setDelivery} errors={errors} />}
+              {step === 1 && (
+                <>
+                  <OrderForm data={delivery} onChange={setDelivery} errors={errors} hideDeliveryMethod={!isSingleSupplier} />
+
+                  {/* Per-supplier delivery selection (multi-supplier only) */}
+                  {!isSingleSupplier && (
+                    <div className="mt-8 space-y-6">
+                      <h3 className="text-lg font-bold text-gray-900">Doručení per dodavatel</h3>
+                      {supplierGroups.map((group) => {
+                        const del = supplierDeliveries[group.supplierId] ?? { deliveryMethod: "" };
+                        const errKey = `delivery_${group.supplierId}`;
+                        return (
+                          <div key={group.supplierId} className="border border-gray-200 rounded-xl p-4 space-y-3">
+                            <div className="flex items-center justify-between">
+                              <span className="font-semibold text-gray-900">{group.supplierName}</span>
+                              <span className="text-sm text-gray-500">{formatPrice(group.subtotal)}</span>
+                            </div>
+                            <div className="text-sm text-gray-500 space-y-0.5">
+                              {group.items.map((item) => (
+                                <div key={item.id}>{item.name} x{item.quantity}</div>
+                              ))}
+                            </div>
+                            <div className="space-y-2">
+                              {shippingMethods.map((m) => {
+                                const isSelected = del.deliveryMethod === m.method;
+                                return (
+                                  <label key={m.method} className={cn(
+                                    "flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all text-sm",
+                                    isSelected ? "border-orange-500 bg-orange-50" : "border-gray-200 hover:border-gray-300"
+                                  )}>
+                                    <input
+                                      type="radio"
+                                      name={`delivery_${group.supplierId}`}
+                                      value={m.method}
+                                      checked={isSelected}
+                                      onChange={() => updateSupplierDelivery(group.supplierId, { deliveryMethod: m.method })}
+                                      className="w-4 h-4 accent-orange-500 shrink-0"
+                                    />
+                                    <span className="flex-1 font-medium text-gray-900">{m.label}</span>
+                                    <span className="font-bold text-gray-900">
+                                      {m.price === 0 ? "Zdarma" : formatPrice(m.price)}
+                                    </span>
+                                  </label>
+                                );
+                              })}
+                              {del.deliveryMethod === "ZASILKOVNA" && (
+                                <div className="mt-2">
+                                  <ZasilkovnaWidget
+                                    onSelect={(point) => updateSupplierDelivery(group.supplierId, { zasilkovnaPoint: point })}
+                                    selectedPoint={del.zasilkovnaPoint}
+                                  />
+                                </div>
+                              )}
+                            </div>
+                            {errors[errKey] && (
+                              <p className="text-sm text-red-500">{errors[errKey]}</p>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </>
+              )}
 
               {step === 2 && (
                 <div className="space-y-4">
@@ -218,15 +368,29 @@ export default function DilyObjednavkaPage() {
                     <div className="font-semibold text-gray-900 mb-2">Platba</div>
                     <p className="text-gray-600">{paymentMethods.find((m) => m.value === paymentMethod)?.label}</p>
                   </div>
-                  <div className="space-y-3">
-                    <div className="font-semibold text-gray-900">Položky</div>
-                    {items.map((item) => (
-                      <div key={item.id} className="flex justify-between text-sm">
-                        <span className="text-gray-600">{item.name} x {item.quantity}</span>
-                        <span className="font-medium">{formatPrice(item.price * item.quantity)}</span>
+                  {/* Per-supplier summary */}
+                  {supplierGroups.map((group) => {
+                    const del = isSingleSupplier
+                      ? { deliveryMethod: delivery.deliveryMethod }
+                      : supplierDeliveries[group.supplierId] ?? { deliveryMethod: "" };
+                    const shipPrice = del.deliveryMethod ? getShippingPrice(del.deliveryMethod as DeliveryMethod) : 0;
+                    const methodLabel = shippingMethods.find((m) => m.method === del.deliveryMethod)?.label ?? "";
+                    return (
+                      <div key={group.supplierId} className="bg-gray-50 rounded-xl p-4 text-sm space-y-2">
+                        <div className="font-semibold text-gray-900">{group.supplierName}</div>
+                        {group.items.map((item) => (
+                          <div key={item.id} className="flex justify-between">
+                            <span className="text-gray-600">{item.name} x {item.quantity}</span>
+                            <span className="font-medium">{formatPrice(item.price * item.quantity)}</span>
+                          </div>
+                        ))}
+                        <div className="flex justify-between text-gray-500">
+                          <span>Doprava: {methodLabel}</span>
+                          <span className="font-medium">{shipPrice === 0 ? "Zdarma" : formatPrice(shipPrice)}</span>
+                        </div>
                       </div>
-                    ))}
-                  </div>
+                    );
+                  })}
                 </div>
               )}
 
@@ -243,17 +407,41 @@ export default function DilyObjednavkaPage() {
             </Card>
           </div>
 
+          {/* Sidebar */}
           <div>
             <Card className="p-6 sticky top-24">
               <h3 className="font-bold text-gray-900 mb-4">Vaše objednávka</h3>
-              <div className="space-y-2 text-sm">
-                {items.map((item) => (
-                  <div key={item.id} className="flex justify-between">
-                    <span className="text-gray-600 truncate mr-2">{item.name} x{item.quantity}</span>
-                    <span className="font-medium shrink-0">{formatPrice(item.price * item.quantity)}</span>
+              {/* Per-supplier breakdown */}
+              {supplierGroups.map((group) => {
+                const del = isSingleSupplier
+                  ? { deliveryMethod: delivery.deliveryMethod }
+                  : supplierDeliveries[group.supplierId] ?? { deliveryMethod: "" };
+                const shipPrice = del.deliveryMethod ? getShippingPrice(del.deliveryMethod as DeliveryMethod) : 0;
+                const methodLabel = shippingMethods.find((m) => m.method === del.deliveryMethod)?.label;
+                return (
+                  <div key={group.supplierId} className="mb-3">
+                    {!isSingleSupplier && (
+                      <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                        {group.supplierName} {methodLabel ? `(${methodLabel})` : ""}
+                      </div>
+                    )}
+                    <div className="space-y-1 text-sm">
+                      {group.items.map((item) => (
+                        <div key={item.id} className="flex justify-between">
+                          <span className="text-gray-600 truncate mr-2">{item.name} x{item.quantity}</span>
+                          <span className="font-medium shrink-0">{formatPrice(item.price * item.quantity)}</span>
+                        </div>
+                      ))}
+                      {!isSingleSupplier && del.deliveryMethod && (
+                        <div className="flex justify-between text-gray-400">
+                          <span>Doprava</span>
+                          <span>{shipPrice === 0 ? "Zdarma" : formatPrice(shipPrice)}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                ))}
-              </div>
+                );
+              })}
               <hr className="my-3 border-gray-200" />
               <div className="space-y-1 text-sm">
                 <div className="flex justify-between">
@@ -262,7 +450,7 @@ export default function DilyObjednavkaPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-500">Doprava</span>
-                  <span className="font-medium">{delivery.deliveryMethod ? formatPrice(deliveryPrice) : "—"}</span>
+                  <span className="font-medium">{totalShippingPrice > 0 ? formatPrice(totalShippingPrice) : "—"}</span>
                 </div>
                 {codFee > 0 && (
                   <div className="flex justify-between">

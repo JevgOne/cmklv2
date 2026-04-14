@@ -18,6 +18,8 @@ export interface ProductCardProps {
   slug?: string;
   stock?: number;
   basePath?: string;
+  supplierId?: string;
+  supplierName?: string;
 }
 
 const badgeConfig = {
@@ -59,6 +61,8 @@ export const ProductCard = memo(function ProductCard({
   slug,
   stock,
   basePath = "/shop",
+  supplierId,
+  supplierName,
 }: ProductCardProps) {
   const [added, setAdded] = useState(false);
   const cfg = badgeConfig[badge];
@@ -135,6 +139,8 @@ export const ProductCard = memo(function ProductCard({
                 slug: slug ?? "",
                 image: image ?? undefined,
                 stock: stock ?? 1,
+                supplierId,
+                supplierName,
               });
             }
             setAdded(true);

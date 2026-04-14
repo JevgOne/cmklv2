@@ -11,6 +11,8 @@ interface AddToCartButtonProps {
   slug: string;
   image: string | null;
   stock: number;
+  supplierId?: string;
+  supplierName?: string;
 }
 
 export function AddToCartButton({
@@ -20,6 +22,8 @@ export function AddToCartButton({
   slug,
   image,
   stock,
+  supplierId,
+  supplierName,
 }: AddToCartButtonProps) {
   const [added, setAdded] = useState(false);
 
@@ -31,6 +35,8 @@ export function AddToCartButton({
       slug,
       image: image ?? undefined,
       stock,
+      supplierId,
+      supplierName,
     });
     setAdded(true);
     setTimeout(() => setAdded(false), 2500);

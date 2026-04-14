@@ -37,6 +37,20 @@ interface OrderItem {
   part: { name: string; slug: string; images?: { url: string }[] };
 }
 
+interface SubOrderInfo {
+  id: string;
+  status: string;
+  deliveryMethod: string;
+  zasilkovnaPointName: string | null;
+  trackingNumber: string | null;
+  shippedAt: string | null;
+  deliveredAt: string | null;
+  subtotal: number;
+  shippingPrice: number;
+  supplierName: string;
+  items: OrderItem[];
+}
+
 interface Order {
   id: string;
   orderNumber: string;
@@ -53,6 +67,7 @@ interface Order {
   shippedAt: string | null;
   deliveredAt: string | null;
   items: OrderItem[];
+  subOrders?: SubOrderInfo[];
 }
 
 export default function SledovaniPage({ params }: { params: Promise<{ token: string }> }) {
@@ -139,31 +154,77 @@ export default function SledovaniPage({ params }: { params: Promise<{ token: str
           )}
         </Card>
 
-        {/* Items */}
-        <Card className="p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">Položky objednávky</h2>
-          <div className="space-y-3">
-            {order.items.map((item) => (
-              <div key={item.id} className="flex justify-between text-sm">
-                <span className="text-gray-600">
-                  {item.part.name} x {item.quantity}
-                </span>
-                <span className="font-medium text-gray-900">{formatPrice(item.totalPrice)}</span>
+        {/* SubOrders per supplier (if multiple) */}
+        {order.subOrders && order.subOrders.length > 1 ? (
+          <>
+            {order.subOrders.map((so, idx) => {
+              const soBadge = statusBadge[so.status] ?? statusBadge.PENDING;
+              return (
+                <Card key={so.id} className="p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <h2 className="text-base font-bold text-gray-900">
+                      {so.supplierName}
+                    </h2>
+                    <Badge variant={soBadge.variant}>{soBadge.label}</Badge>
+                  </div>
+                  <div className="mb-3">
+                    <OrderTracker status={mapToTrackerStatus(so.status)} />
+                  </div>
+                  {so.trackingNumber && (
+                    <div className="text-sm text-orange-500 font-medium mb-3">
+                      Tracking: {so.trackingNumber}
+                    </div>
+                  )}
+                  <div className="space-y-2">
+                    {so.items.map((item) => (
+                      <div key={item.id} className="flex justify-between text-sm">
+                        <span className="text-gray-600">{item.part.name} x {item.quantity}</span>
+                        <span className="font-medium text-gray-900">{formatPrice(item.totalPrice)}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <hr className="my-3 border-gray-200" />
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Doprava</span>
+                    <span className="font-medium">{so.shippingPrice > 0 ? formatPrice(so.shippingPrice) : "Zdarma"}</span>
+                  </div>
+                </Card>
+              );
+            })}
+            {/* Total */}
+            <Card className="p-6">
+              <div className="flex justify-between">
+                <span className="font-bold text-gray-900">Celkem</span>
+                <span className="text-xl font-extrabold text-gray-900">{formatPrice(order.totalPrice)}</span>
               </div>
-            ))}
-          </div>
-          <hr className="my-3 border-gray-200" />
-          <div className="flex justify-between">
-            <span className="text-sm text-gray-500">Doprava</span>
-            <span className="text-sm font-medium text-gray-900">
-              {order.shippingPrice > 0 ? formatPrice(order.shippingPrice) : "Zdarma"}
-            </span>
-          </div>
-          <div className="flex justify-between mt-2">
-            <span className="font-bold text-gray-900">Celkem</span>
-            <span className="text-xl font-extrabold text-gray-900">{formatPrice(order.totalPrice)}</span>
-          </div>
-        </Card>
+            </Card>
+          </>
+        ) : (
+          <Card className="p-6">
+            <h2 className="text-lg font-bold text-gray-900 mb-4">Položky objednávky</h2>
+            <div className="space-y-3">
+              {order.items.map((item) => (
+                <div key={item.id} className="flex justify-between text-sm">
+                  <span className="text-gray-600">
+                    {item.part.name} x {item.quantity}
+                  </span>
+                  <span className="font-medium text-gray-900">{formatPrice(item.totalPrice)}</span>
+                </div>
+              ))}
+            </div>
+            <hr className="my-3 border-gray-200" />
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-500">Doprava</span>
+              <span className="text-sm font-medium text-gray-900">
+                {order.shippingPrice > 0 ? formatPrice(order.shippingPrice) : "Zdarma"}
+              </span>
+            </div>
+            <div className="flex justify-between mt-2">
+              <span className="font-bold text-gray-900">Celkem</span>
+              <span className="text-xl font-extrabold text-gray-900">{formatPrice(order.totalPrice)}</span>
+            </div>
+          </Card>
+        )}
 
         {/* Info */}
         <Card className="p-6">

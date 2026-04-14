@@ -309,6 +309,8 @@ export default async function ProductDetailPage({
               slug={part.slug}
               image={part.images[0]?.url ?? null}
               stock={part.stock}
+              supplierId={part.supplier.id}
+              supplierName={supplierName}
             />
 
             {/* Contact */}

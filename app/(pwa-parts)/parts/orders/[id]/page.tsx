@@ -38,22 +38,13 @@ const statusConfig: Record<OrderStatus, { label: string; variant: "new" | "pendi
   CANCELLED: { label: "Zrušena", variant: "rejected" },
 };
 
-interface OrderDetail {
+interface SubOrderDetail {
   id: string;
-  orderNumber: string;
   status: string;
-  deliveryName: string;
-  deliveryPhone: string;
-  deliveryEmail: string;
-  deliveryAddress: string;
-  deliveryCity: string;
-  deliveryZip: string;
   deliveryMethod: string;
   zasilkovnaPointName: string | null;
-  paymentMethod: string;
-  totalPrice: number;
+  subtotal: number;
   shippingPrice: number;
-  note: string | null;
   createdAt: string;
   trackingNumber: string | null;
   trackingCarrier: string | null;
@@ -61,30 +52,40 @@ interface OrderDetail {
   shippingLabelUrl: string | null;
   shippedAt: string | null;
   deliveredAt: string | null;
+  order: {
+    orderNumber: string;
+    deliveryName: string;
+    deliveryPhone: string;
+    deliveryEmail: string;
+    deliveryAddress: string;
+    deliveryCity: string;
+    deliveryZip: string;
+    paymentMethod: string;
+    note: string | null;
+    buyer: { id: string; firstName: string; lastName: string; email: string } | null;
+  };
   items: {
     id: string;
     quantity: number;
     unitPrice: number;
     totalPrice: number;
     part: { name: string; slug: string };
-    supplier: { id: string; firstName: string; lastName: string; companyName: string | null };
   }[];
-  buyer: { id: string; firstName: string; lastName: string; email: string } | null;
 }
 
 export default function OrderDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const [order, setOrder] = useState<OrderDetail | null>(null);
+  const [order, setOrder] = useState<SubOrderDetail | null>(null);
   const [status, setStatus] = useState<OrderStatus>("NEW");
   const [loading, setLoading] = useState(true);
 
   async function fetchOrder() {
     try {
-      const res = await fetch(`/api/orders/${id}`);
+      const res = await fetch(`/api/suborders/${id}`);
       if (res.ok) {
         const data = await res.json();
-        setOrder(data.order);
-        setStatus(mapStatus(data.order.status));
+        setOrder(data.subOrder);
+        setStatus(mapStatus(data.subOrder.status));
       }
     } catch {
       // Zůstane null
@@ -102,7 +103,7 @@ export default function OrderDetailPage() {
     if (!order) return;
     const apiStatus = mapToApiStatus(newStatus);
     try {
-      const res = await fetch(`/api/orders/${order.id}/status`, {
+      const res = await fetch(`/api/suborders/${order.id}/status`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: apiStatus }),
@@ -111,7 +112,6 @@ export default function OrderDetailPage() {
         setStatus(newStatus);
       }
     } catch {
-      // Tiché selhání — lokálně aktualizujeme
       setStatus(newStatus);
     }
   };
@@ -136,10 +136,10 @@ export default function OrderDetailPage() {
   }
 
   const cfg = statusConfig[status];
-  const buyerName = order.buyer
-    ? `${order.buyer.firstName} ${order.buyer.lastName}`
-    : order.deliveryName;
-  const buyerEmail = order.buyer?.email ?? order.deliveryEmail;
+  const buyerName = order.order.buyer
+    ? `${order.order.buyer.firstName} ${order.order.buyer.lastName}`
+    : order.order.deliveryName;
+  const buyerEmail = order.order.buyer?.email ?? order.order.deliveryEmail;
   const date = new Date(order.createdAt).toLocaleDateString("cs-CZ", {
     day: "numeric",
     month: "numeric",
@@ -147,7 +147,6 @@ export default function OrderDetailPage() {
     hour: "2-digit",
     minute: "2-digit",
   });
-  const supplierCount = new Set(order.items.map((i) => i.supplier.id)).size;
 
   return (
     <div className="px-4 py-6 max-w-lg mx-auto space-y-4">
@@ -158,7 +157,7 @@ export default function OrderDetailPage() {
             Objednávka
           </h1>
           <span className="text-sm text-gray-500 font-mono">
-            #{order.orderNumber}
+            #{order.order.orderNumber}
           </span>
         </div>
         <Badge variant={cfg.variant}>{cfg.label}</Badge>
@@ -172,7 +171,7 @@ export default function OrderDetailPage() {
         <div className="space-y-1.5 text-sm">
           <p className="font-semibold text-gray-900">{buyerName}</p>
           <p className="text-gray-600">{buyerEmail}</p>
-          <p className="text-gray-600">{order.deliveryPhone}</p>
+          <p className="text-gray-600">{order.order.deliveryPhone}</p>
         </div>
       </Card>
 
@@ -192,7 +191,7 @@ export default function OrderDetailPage() {
         <hr className="my-3 border-gray-200" />
         <div className="flex justify-between text-sm font-bold">
           <span>Celkem</span>
-          <span className="text-lg">{formatPrice(order.totalPrice)}</span>
+          <span className="text-lg">{formatPrice(order.subtotal)}</span>
         </div>
       </Card>
 
@@ -205,13 +204,13 @@ export default function OrderDetailPage() {
           <div className="flex justify-between">
             <span className="text-gray-500">Adresa</span>
             <span className="font-medium text-right max-w-[60%]">
-              {order.deliveryAddress}, {order.deliveryZip} {order.deliveryCity}
+              {order.order.deliveryAddress}, {order.order.deliveryZip} {order.order.deliveryCity}
             </span>
           </div>
           <div className="flex justify-between">
             <span className="text-gray-500">Platba</span>
             <span className="font-medium">
-              {order.paymentMethod === "BANK_TRANSFER" ? "Převod" : "Dobírka"}
+              {order.order.paymentMethod === "BANK_TRANSFER" ? "Převod" : "Dobírka"}
             </span>
           </div>
           <div className="flex justify-between">
@@ -222,12 +221,12 @@ export default function OrderDetailPage() {
       </Card>
 
       {/* Note */}
-      {order.note && (
+      {order.order.note && (
         <Card className="p-4">
           <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">
             Poznámka
           </h3>
-          <p className="text-sm text-gray-600">{order.note}</p>
+          <p className="text-sm text-gray-600">{order.order.note}</p>
         </Card>
       )}
 
@@ -235,7 +234,7 @@ export default function OrderDetailPage() {
       {status !== "NEW" && status !== "CANCELLED" && (
         <ShippingLabelCard
           orderId={order.id}
-          orderNumber={order.orderNumber}
+          orderNumber={order.order.orderNumber}
           deliveryMethod={order.deliveryMethod}
           trackingCarrier={order.trackingCarrier}
           trackingNumber={order.trackingNumber}
@@ -244,12 +243,12 @@ export default function OrderDetailPage() {
           shippedAt={order.shippedAt}
           zasilkovnaPointName={order.zasilkovnaPointName}
           deliveryAddress={{
-            street: order.deliveryAddress,
-            city: order.deliveryCity,
-            zip: order.deliveryZip,
-            name: order.deliveryName,
+            street: order.order.deliveryAddress,
+            city: order.order.deliveryCity,
+            zip: order.order.deliveryZip,
+            name: order.order.deliveryName,
           }}
-          supplierCount={supplierCount}
+          supplierCount={1}
           onShipped={fetchOrder}
           onDelivered={fetchOrder}
         />

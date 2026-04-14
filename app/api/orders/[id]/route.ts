@@ -19,6 +19,22 @@ export async function GET(
     const order = await prisma.order.findFirst({
       where: { OR: [{ id }, { orderNumber: id }] },
       include: {
+        subOrders: {
+          include: {
+            items: {
+              include: {
+                part: {
+                  select: {
+                    name: true,
+                    slug: true,
+                    images: { where: { isPrimary: true }, take: 1 },
+                  },
+                },
+              },
+            },
+          },
+          orderBy: { createdAt: "asc" },
+        },
         items: {
           include: {
             part: {

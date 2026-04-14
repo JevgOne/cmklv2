@@ -30,10 +30,12 @@ export function OrderForm({
   data,
   onChange,
   errors,
+  hideDeliveryMethod,
 }: {
   data: DeliveryFormData;
   onChange: (data: DeliveryFormData) => void;
-  errors?: Partial<Record<keyof DeliveryFormData, string>>;
+  errors?: Partial<Record<string, string>>;
+  hideDeliveryMethod?: boolean;
 }) {
   const update = (field: keyof DeliveryFormData, value: string) => {
     onChange({ ...data, [field]: value });
@@ -108,8 +110,8 @@ export function OrderForm({
         />
       </div>
 
-      {/* Způsob doručení — radio karty */}
-      <div className="space-y-3">
+      {/* Způsob doručení — radio karty (skryto když multi-supplier) */}
+      {!hideDeliveryMethod && <div className="space-y-3">
         <label className="block text-sm font-medium text-gray-700">
           Způsob doručení *
         </label>
@@ -181,7 +183,7 @@ export function OrderForm({
         {errors?.deliveryMethod && (
           <p className="text-sm text-red-500 mt-1">{errors.deliveryMethod}</p>
         )}
-      </div>
+      </div>}
 
       {/* Poznámka */}
       <Textarea

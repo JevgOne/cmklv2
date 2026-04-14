@@ -12,17 +12,19 @@ const tabs = [
   { value: "done", label: "Dokončené" },
 ];
 
-interface OrderResult {
+interface SubOrderResult {
   id: string;
-  orderNumber: string;
   status: string;
-  totalPrice: number;
-  createdAt: string;
-  deliveryName: string;
+  subtotal: number;
   deliveryMethod: string;
   trackingCarrier: string | null;
   shippingLabelUrl: string | null;
   shippedAt: string | null;
+  createdAt: string;
+  order: {
+    orderNumber: string;
+    deliveryName: string;
+  };
   items: {
     id: string;
     quantity: number;
@@ -42,9 +44,9 @@ function mapStatus(apiStatus: string): "NEW" | "CONFIRMED" | "SHIPPED" | "DELIVE
   }
 }
 
-function getShippingBadge(order: OrderResult): "label-ready" | "shipped" | null {
-  if (order.shippedAt) return "shipped";
-  if (order.shippingLabelUrl && !order.shippedAt && order.status !== "CANCELLED") {
+function getShippingBadge(so: SubOrderResult): "label-ready" | "shipped" | null {
+  if (so.shippedAt) return "shipped";
+  if (so.shippingLabelUrl && !so.shippedAt && so.status !== "CANCELLED") {
     return "label-ready";
   }
   return null;
@@ -52,7 +54,7 @@ function getShippingBadge(order: OrderResult): "label-ready" | "shipped" | null 
 
 export default function SupplierOrdersPage() {
   const [activeTab, setActiveTab] = useState("all");
-  const [orders, setOrders] = useState<OrderResult[]>([]);
+  const [orders, setOrders] = useState<SubOrderResult[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -61,7 +63,7 @@ export default function SupplierOrdersPage() {
         const res = await fetch("/api/orders?role=supplier");
         if (res.ok) {
           const data = await res.json();
-          setOrders(data.orders ?? []);
+          setOrders(data.subOrders ?? []);
         }
       } catch {
         // Zůstanou prázdné
@@ -77,7 +79,6 @@ export default function SupplierOrdersPage() {
       case "PENDING":
         return orders.filter((o) => o.status === "PENDING");
       case "to-ship":
-        // Štítek připraven, ale ještě neodesláno (a není zrušeno)
         return orders.filter(
           (o) =>
             o.shippingLabelUrl != null &&
@@ -109,9 +110,9 @@ export default function SupplierOrdersPage() {
         </div>
       ) : (
         <div className="space-y-3">
-          {filtered.map((order) => {
-            const firstItem = order.items[0];
-            const date = new Date(order.createdAt);
+          {filtered.map((so) => {
+            const firstItem = so.items[0];
+            const date = new Date(so.createdAt);
             const isToday = new Date().toDateString() === date.toDateString();
             const dateStr = isToday
               ? `Dnes ${date.toLocaleTimeString("cs-CZ", { hour: "2-digit", minute: "2-digit" })}`
@@ -119,16 +120,16 @@ export default function SupplierOrdersPage() {
 
             return (
               <OrderCard
-                key={order.id}
-                id={order.id}
-                buyerName={order.deliveryName}
+                key={so.id}
+                id={so.id}
+                buyerName={so.order.deliveryName}
                 itemName={firstItem?.part.name ?? "Díl"}
                 quantity={firstItem?.quantity ?? 1}
-                totalPrice={order.totalPrice}
-                status={mapStatus(order.status)}
+                totalPrice={so.subtotal}
+                status={mapStatus(so.status)}
                 date={dateStr}
-                deliveryMethod={order.deliveryMethod ?? ""}
-                shippingBadge={getShippingBadge(order)}
+                deliveryMethod={so.deliveryMethod ?? ""}
+                shippingBadge={getShippingBadge(so)}
               />
             );
           })}

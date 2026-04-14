@@ -19,6 +19,23 @@ export async function GET(
     const order = await prisma.order.findUnique({
       where: { guestToken: token },
       include: {
+        subOrders: {
+          include: {
+            supplier: { select: { companyName: true, firstName: true, lastName: true } },
+            items: {
+              include: {
+                part: {
+                  select: {
+                    name: true,
+                    slug: true,
+                    images: { where: { isPrimary: true }, take: 1 },
+                  },
+                },
+              },
+            },
+          },
+          orderBy: { createdAt: "asc" },
+        },
         items: {
           include: {
             part: {
@@ -60,6 +77,25 @@ export async function GET(
           unitPrice: i.unitPrice,
           totalPrice: i.totalPrice,
           part: i.part,
+        })),
+        subOrders: order.subOrders.map((so) => ({
+          id: so.id,
+          status: so.status,
+          deliveryMethod: so.deliveryMethod,
+          zasilkovnaPointName: so.zasilkovnaPointName,
+          trackingNumber: so.trackingNumber,
+          shippedAt: so.shippedAt,
+          deliveredAt: so.deliveredAt,
+          subtotal: so.subtotal,
+          shippingPrice: so.shippingPrice,
+          supplierName: so.supplier.companyName ?? `${so.supplier.firstName} ${so.supplier.lastName}`,
+          items: so.items.map((i) => ({
+            id: i.id,
+            quantity: i.quantity,
+            unitPrice: i.unitPrice,
+            totalPrice: i.totalPrice,
+            part: i.part,
+          })),
         })),
       },
     });
