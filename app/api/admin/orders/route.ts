@@ -31,6 +31,18 @@ export async function GET(request: NextRequest) {
       include: {
         items: { select: { id: true, quantity: true, unitPrice: true, part: { select: { name: true } } } },
         buyer: { select: { firstName: true, lastName: true, email: true } },
+        subOrders: {
+          select: {
+            id: true,
+            status: true,
+            deliveryMethod: true,
+            subtotal: true,
+            trackingNumber: true,
+            supplierId: true,
+            supplier: { select: { companyName: true, firstName: true, lastName: true } },
+          },
+          orderBy: { createdAt: "asc" },
+        },
       },
       orderBy: { createdAt: "desc" },
       take: 100,

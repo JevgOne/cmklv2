@@ -13,6 +13,15 @@ interface OrderItem {
   part: { name: string };
 }
 
+interface SubOrderRow {
+  id: string;
+  status: string;
+  deliveryMethod: string;
+  subtotal: number;
+  trackingNumber: string | null;
+  supplier: { companyName: string | null; firstName: string; lastName: string };
+}
+
 interface OrderRow {
   id: string;
   orderNumber: string;
@@ -23,6 +32,7 @@ interface OrderRow {
   createdAt: string;
   items: OrderItem[];
   buyer: { firstName: string; lastName: string; email: string } | null;
+  subOrders?: SubOrderRow[];
 }
 
 const STATUSES = ["PENDING", "CONFIRMED", "SHIPPED", "DELIVERED", "CANCELLED"];
@@ -53,6 +63,7 @@ export default function AdminOrdersPage() {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("");
   const [search, setSearch] = useState("");
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
@@ -160,11 +171,34 @@ export default function AdminOrdersPage() {
               ) : (
                 orders.map((order) => {
                   const statusInfo = STATUS_MAP[order.status] || { label: order.status, variant: "pending" as const };
+                  const hasSubOrders = order.subOrders && order.subOrders.length > 1;
+                  const isExpanded = expanded.has(order.id);
 
                   return (
-                    <tr key={order.id} className="border-b border-gray-50 hover:bg-gray-50">
+                    <><tr key={order.id} className="border-b border-gray-50 hover:bg-gray-50">
                       <td className="p-3">
-                        <div className="font-medium text-gray-900">{order.orderNumber}</div>
+                        <div className="flex items-center gap-1">
+                          {hasSubOrders && (
+                            <button
+                              onClick={() => {
+                                setExpanded((prev) => {
+                                  const next = new Set(prev);
+                                  next.has(order.id) ? next.delete(order.id) : next.add(order.id);
+                                  return next;
+                                });
+                              }}
+                              className="text-gray-400 hover:text-gray-600 text-xs mr-1"
+                            >
+                              {isExpanded ? "▼" : "▶"}
+                            </button>
+                          )}
+                          <div className="font-medium text-gray-900">{order.orderNumber}</div>
+                        </div>
+                        {hasSubOrders && (
+                          <div className="text-[10px] text-gray-400 ml-4">
+                            {order.subOrders!.length} dodavatelů
+                          </div>
+                        )}
                       </td>
                       <td className="p-3">
                         <div className="font-medium text-gray-900">{order.deliveryName}</div>
@@ -209,6 +243,30 @@ export default function AdminOrdersPage() {
                         </td>
                       )}
                     </tr>
+                    {/* SubOrder detail rows */}
+                    {isExpanded && hasSubOrders && order.subOrders!.map((so) => {
+                      const soStatus = STATUS_MAP[so.status] || { label: so.status, variant: "pending" as const };
+                      const soName = so.supplier.companyName ?? `${so.supplier.firstName} ${so.supplier.lastName}`;
+                      return (
+                        <tr key={so.id} className="bg-gray-50/50 border-b border-gray-50">
+                          <td className="p-3 pl-8 text-xs text-gray-500" colSpan={2}>
+                            <span className="font-medium text-gray-700">{soName}</span>
+                            <span className="text-gray-400 ml-2">{so.deliveryMethod}</span>
+                            {so.trackingNumber && <span className="text-orange-500 ml-2">{so.trackingNumber}</span>}
+                          </td>
+                          <td className="p-3 text-xs text-gray-500" />
+                          <td className="p-3 text-right text-xs font-medium text-gray-600">
+                            {formatPrice(so.subtotal)}
+                          </td>
+                          <td className="p-3">
+                            <Badge variant={soStatus.variant}>{soStatus.label}</Badge>
+                          </td>
+                          <td className="p-3" />
+                          {canChangeStatus && <td className="p-3" />}
+                        </tr>
+                      );
+                    })}
+                    </>
                   );
                 })
               )}
