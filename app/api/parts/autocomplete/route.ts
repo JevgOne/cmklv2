@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
                    MIN(price) AS "cheapestPrice"
             FROM "Part"
             WHERE status = 'ACTIVE' AND "oemNumber" IS NOT NULL
-              AND UPPER(REPLACE(REPLACE("oemNumber", ' ', ''), '-', ''))
+              AND UPPER(REPLACE(REPLACE(REPLACE("oemNumber", ' ', ''), '-', ''), '.', ''))
                   ILIKE ${`%${q.replace(/[\s\-.]/g, "").toUpperCase()}%`}
             GROUP BY "oemNumber"
             ORDER BY "partCount" DESC
