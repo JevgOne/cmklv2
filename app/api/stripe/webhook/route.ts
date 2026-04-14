@@ -244,6 +244,24 @@ async function applyCommissionSplit(orderId: string) {
     )
   );
 
+  // Aggregate payouts to SubOrders
+  const subOrderIds = [...new Set(items.map((i) => i.subOrderId).filter(Boolean))] as string[];
+  for (const soId of subOrderIds) {
+    const soItems = splits.filter((s) => s.item.subOrderId === soId);
+    if (soItems.length === 0) continue;
+    const totalFee = soItems.reduce((s, i) => s + i.carmaklerFee, 0);
+    const totalPayout = soItems.reduce((s, i) => s + i.supplierPayout, 0);
+    const avgRate = soItems.reduce((s, i) => s + i.commissionRate, 0) / soItems.length;
+    await prisma.subOrder.update({
+      where: { id: soId },
+      data: {
+        carmaklerFee: totalFee,
+        supplierPayout: totalPayout,
+        commissionRate: avgRate,
+      },
+    });
+  }
+
   // Transfery serializujeme — backpressure proti Stripe rate limitům + jasný
   // log při per-item failures. idempotencyKey chrání před duplicitou při replay.
   for (const { item, partner, commissionRate, supplierPayout } of splits) {

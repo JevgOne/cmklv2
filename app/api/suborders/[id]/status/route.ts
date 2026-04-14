@@ -2,25 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { aggregateOrderStatus } from "@/lib/orders/utils";
 import { z } from "zod";
 
 const statusSchema = z.object({
   status: z.enum(["CONFIRMED", "SHIPPED", "DELIVERED", "CANCELLED"]),
 });
-
-const STATUS_PRIORITY = ["PENDING", "CONFIRMED", "SHIPPED", "DELIVERED"];
-
-function aggregateOrderStatus(subOrders: { status: string }[]): string {
-  const active = subOrders.filter((s) => s.status !== "CANCELLED");
-  if (active.length === 0) return "CANCELLED";
-  const worst = Math.min(
-    ...active.map((s) => {
-      const idx = STATUS_PRIORITY.indexOf(s.status);
-      return idx === -1 ? 0 : idx;
-    }),
-  );
-  return STATUS_PRIORITY[worst] || "PENDING";
-}
 
 export async function PUT(
   request: NextRequest,
