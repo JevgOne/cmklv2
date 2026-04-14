@@ -1,0 +1,87 @@
+/**
+ * Czech automotive synonym dictionaries for NLP search.
+ * Used by search-parser.ts to expand and normalize search queries.
+ */
+
+/** Part name synonyms — canonical form → alternative forms */
+export const PART_SYNONYMS: Record<string, string[]> = {
+  "brzdové destičky": ["brzdové desky", "destičky", "brake pads", "brzdovky"],
+  "brzdové kotouče": ["brzdový kotouč", "brake disc", "brake rotor"],
+  "nárazník": ["naraznik", "bumper", "přední nárazník", "zadní nárazník"],
+  "světlo": ["světla", "přední světlo", "zadní světlo", "headlight", "lampa"],
+  "zrcátko": ["zpětné zrcátko", "zrcadlo", "mirror", "zpětňák"],
+  "alternátor": ["dynamo", "alternator"],
+  "startér": ["starter", "spouštěč"],
+  "chladič": ["radiátor", "radiator", "cooler"],
+  "tlumiče": ["tlumič", "shock absorber", "pérování"],
+  "spojka": ["lamela", "clutch", "spojkový set"],
+  "vodní pumpa": ["vodní čerpadlo", "water pump"],
+  "olejový filtr": ["filtr oleje", "oil filter"],
+  "vzduchový filtr": ["filtr vzduchu", "air filter"],
+  "palivový filtr": ["filtr paliva", "fuel filter"],
+  "rozvodový řemen": ["timing belt", "rozvodovka"],
+  "drátové řemeny": ["klínový řemen", "serpentine belt"],
+  "turbodmychadlo": ["turbo", "turbocharger"],
+  "katalyzátor": ["kat", "catalyst", "catalytic converter"],
+  "lambda sonda": ["kyslíkový senzor", "oxygen sensor"],
+  "zapalovací svíčka": ["svíčka", "spark plug"],
+  "pružina": ["spirálová pružina", "coil spring"],
+  "stabilizátor": ["příčný stabilizátor", "anti-roll bar", "sway bar"],
+  "těhlice": ["otočný čep", "steering knuckle"],
+  "řízení": ["hřeben řízení", "steering rack", "řídítka"],
+  "sedačka": ["sedadlo", "seat"],
+  "palubní deska": ["dashboard", "palubka"],
+  "stěrač": ["stěrače", "wiper", "stěračová lišta"],
+  "kapota": ["hood", "přední kapota"],
+  "blatník": ["fender", "přední blatník", "zadní blatník"],
+  "dveře": ["dveřní díl", "door"],
+  "okno": ["sklo", "boční okno", "čelní sklo", "windshield"],
+  "výfuk": ["výfukové potrubí", "exhaust pipe", "výfukovka"],
+};
+
+/** Brand synonyms → canonical brand name */
+export const BRAND_SYNONYMS: Record<string, string> = {
+  "škoda": "Skoda", "skoda": "Skoda", "škoďák": "Skoda",
+  "fabie": "Fabia", "fabia": "Fabia",
+  "okťávka": "Octavia", "octávka": "Octavia", "octavia": "Octavia",
+  "superb": "Superb",
+  "rapid": "Rapid",
+  "kamiq": "Kamiq", "karoq": "Karoq", "kodiaq": "Kodiaq",
+  "volkswagen": "Volkswagen", "vw": "Volkswagen", "volčák": "Volkswagen",
+  "golf": "Golf", "passat": "Passat", "polo": "Polo", "tiguan": "Tiguan",
+  "bmw": "BMW", "bavorák": "BMW",
+  "mercedes": "Mercedes-Benz", "merc": "Mercedes-Benz", "mercedes-benz": "Mercedes-Benz",
+  "audi": "Audi",
+  "ford": "Ford",
+  "opel": "Opel",
+  "peugeot": "Peugeot",
+  "renault": "Renault",
+  "citroen": "Citroen", "citroën": "Citroen",
+  "toyota": "Toyota",
+  "honda": "Honda",
+  "hyundai": "Hyundai",
+  "kia": "Kia",
+  "fiat": "Fiat",
+  "seat": "Seat",
+  "dacia": "Dacia",
+  "mazda": "Mazda",
+  "suzuki": "Suzuki",
+  "volvo": "Volvo",
+  "nissan": "Nissan",
+  "mitsubishi": "Mitsubishi",
+};
+
+/** Keyword → Part category mapping */
+export const CATEGORY_KEYWORDS: Record<string, string> = {
+  "brzdy": "BRAKES", "brzdový": "BRAKES", "brzdové": "BRAKES", "brzdová": "BRAKES",
+  "motor": "ENGINE", "motorový": "ENGINE", "motorová": "ENGINE",
+  "převodovka": "TRANSMISSION", "kvalt": "TRANSMISSION", "převodový": "TRANSMISSION",
+  "karoserie": "BODY", "karoserní": "BODY", "karosérie": "BODY",
+  "interiér": "INTERIOR", "sedačka": "INTERIOR", "sedadlo": "INTERIOR",
+  "elektro": "ELECTRICAL", "elektrický": "ELECTRICAL", "elektrická": "ELECTRICAL",
+  "podvozek": "SUSPENSION", "tlumič": "SUSPENSION", "tlumiče": "SUSPENSION",
+  "výfuk": "EXHAUST", "výfuková": "EXHAUST", "výfukový": "EXHAUST",
+  "kolo": "WHEELS", "pneumatika": "WHEELS", "pneu": "WHEELS", "kola": "WHEELS",
+  "chlazení": "COOLING", "chladič": "COOLING", "chladicí": "COOLING",
+  "palivo": "FUEL", "palivový": "FUEL", "palivová": "FUEL",
+};
