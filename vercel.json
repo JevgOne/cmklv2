@@ -7,6 +7,7 @@
     { "path": "/api/cron/feed-import?frequency=DAILY", "schedule": "0 3 * * *" },
     { "path": "/api/cron/feed-import?frequency=WEEKLY", "schedule": "0 4 * * 1" },
     { "path": "/api/cron/stock-alerts", "schedule": "0 7 * * *" },
-    { "path": "/api/cron/reservation-part-expiry", "schedule": "*/5 * * * *" }
+    { "path": "/api/cron/reservation-part-expiry", "schedule": "*/5 * * * *" },
+    { "path": "/api/cron/part-request-expiry", "schedule": "0 8 * * *" }
   ]
 }

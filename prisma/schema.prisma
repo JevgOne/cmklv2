@@ -120,6 +120,13 @@ model User {
   partnerActivities  PartnerActivity[]
   commissionChanges  PartnerCommissionLog[] @relation("PartnerCommissionChanger")
 
+  // Poptávky (PartRequest/burza dílů)
+  partRequests       PartRequest[]      @relation("BuyerPartRequests")
+  partRequestOffers  PartRequestOffer[] @relation("SupplierPartRequestOffers")
+
+  // Garáž (uložená auta zákazníka)
+  garage CustomerGarage[] @relation("UserGarage")
+
   // Platební systém relace
   confirmedPayments Payment[]      @relation("PaymentConfirmer")
   brokerPayouts     BrokerPayout[] @relation("BrokerPayouts")
@@ -943,9 +950,10 @@ model Part {
   externalId   String?  // ID dílu v externím feedu
 
   // Relace
-  images       PartImage[]
-  orderItems   OrderItem[]
-  reservations PartReservation[]
+  images          PartImage[]
+  orderItems      OrderItem[]
+  reservations    PartReservation[]
+  crossReferences PartCrossReference[]
 
   // Timestamps
   createdAt DateTime @default(now())
@@ -1873,4 +1881,89 @@ model EmailVerificationToken {
 
   @@index([email])
   @@index([token])
+}
+
+// ============================================
+// POPTÁVKY (BURZA DÍLŮ)
+// ============================================
+
+model PartRequest {
+  id           String   @id @default(cuid())
+  description  String   // "Přední nárazník"
+  vehicleBrand String?
+  vehicleModel String?
+  vehicleYear  Int?
+  vin          String?
+  buyerEmail   String
+  buyerPhone   String?
+  buyerName    String?
+  buyerId      String?
+  buyer        User?    @relation("BuyerPartRequests", fields: [buyerId], references: [id])
+
+  status    String   @default("OPEN") // OPEN, OFFERS_RECEIVED, ORDERED, CLOSED, EXPIRED
+  expiresAt DateTime // now() + 14 dní
+
+  offers PartRequestOffer[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([expiresAt])
+}
+
+model PartRequestOffer {
+  id          String       @id @default(cuid())
+  requestId   String
+  request     PartRequest  @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  supplierId  String
+  supplier    User         @relation("SupplierPartRequestOffers", fields: [supplierId], references: [id])
+  partName    String
+  price       Int
+  condition   String       // FUNCTIONAL, WITH_DEFECT
+  description String?
+  imageUrl    String?
+  status      String       @default("OFFERED") // OFFERED, ACCEPTED, REJECTED
+  createdAt   DateTime     @default(now())
+
+  @@index([requestId])
+  @@index([supplierId])
+}
+
+// ============================================
+// MOJE GARÁŽ (ULOŽENÁ AUTA ZÁKAZNÍKA)
+// ============================================
+
+model CustomerGarage {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation("UserGarage", fields: [userId], references: [id], onDelete: Cascade)
+  brand     String
+  model     String
+  year      Int?
+  vin       String?
+  nickname  String?
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@unique([userId, vin])
+}
+
+// ============================================
+// OEM CROSS-REFERENCE
+// ============================================
+
+model PartCrossReference {
+  id                String   @id @default(cuid())
+  oemNumber         String   // Originální OEM číslo (1K0615301AC)
+  aftermarketNumber String   // Aftermarket číslo (DF4276)
+  manufacturer      String   // Výrobce (TRW, Bosch, LUK...)
+  partId            String?
+  part              Part?    @relation(fields: [partId], references: [id])
+  createdAt         DateTime @default(now())
+
+  @@index([oemNumber])
+  @@index([aftermarketNumber])
+  @@index([partId])
 }
