@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getStripe } from "@/lib/stripe";
 import { z } from "zod";
 
 const updateReturnSchema = z.object({
@@ -55,7 +56,14 @@ export async function PUT(
     const body = await request.json();
     const data = updateReturnSchema.parse(body);
 
-    const existing = await prisma.returnRequest.findUnique({ where: { id } });
+    const existing = await prisma.returnRequest.findUnique({
+      where: { id },
+      select: {
+        id: true, orderId: true, status: true,
+        requestedAmount: true, approvedAmount: true,
+        adminNotes: true, rejectionReason: true,
+      },
+    });
     if (!existing) {
       return NextResponse.json({ error: "Reklamace nenalezena" }, { status: 404 });
     }
@@ -67,6 +75,29 @@ export async function PUT(
       // Automaticky nastavit refundedAt při refundaci
       if (data.status === "REFUNDED" || data.status === "PARTIALLY_REFUNDED") {
         updateData.refundedAt = new Date();
+
+        // Stripe refund — pokud platba byla kartou přes Stripe
+        const order = await prisma.order.findUnique({
+          where: { id: existing.orderId },
+          select: { paymentMethod: true, stripePaymentIntentId: true },
+        });
+
+        if (order?.paymentMethod === "CARD" && order.stripePaymentIntentId) {
+          const refundAmount = data.approvedAmount ?? existing.approvedAmount ?? existing.requestedAmount;
+          try {
+            const stripe = getStripe();
+            await stripe.refunds.create({
+              payment_intent: order.stripePaymentIntentId,
+              amount: refundAmount, // v haléřích (CZK minor units)
+            });
+          } catch (stripeErr) {
+            console.error(`Stripe refund failed for return ${id}:`, stripeErr);
+            // Graceful fallback — přidáme poznámku, ale pokračujeme
+            updateData.adminNotes =
+              (data.adminNotes ?? existing.adminNotes ?? "") +
+              `\n[AUTO] Stripe refund selhal — vyřešte manuálně.`;
+          }
+        }
       }
     }
     if (data.rejectionReason !== undefined) updateData.rejectionReason = data.rejectionReason;

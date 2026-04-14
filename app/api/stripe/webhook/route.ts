@@ -55,7 +55,10 @@ export async function POST(request: NextRequest) {
 
         // Zpracování podle typu
         if (metadata.orderId) {
-          await handleOrderPayment(metadata.orderId);
+          const paymentIntentId = typeof session.payment_intent === "string"
+            ? session.payment_intent
+            : undefined;
+          await handleOrderPayment(metadata.orderId, paymentIntentId);
         } else if (metadata.promoType) {
           await handlePromoPayment(metadata);
         } else if (metadata.reservationId) {
@@ -156,11 +159,14 @@ async function handlePromoPayment(metadata: Record<string, string>) {
   }
 }
 
-async function handleOrderPayment(orderId: string) {
-  // 1) Označit jako zaplaceno (musí se podařit vždy — kritický update)
+async function handleOrderPayment(orderId: string, stripePaymentIntentId?: string) {
+  // 1) Označit jako zaplaceno + uložit paymentIntentId pro budoucí refundy
   await prisma.order.update({
     where: { id: orderId },
-    data: { paymentStatus: "PAID" },
+    data: {
+      paymentStatus: "PAID",
+      ...(stripePaymentIntentId && { stripePaymentIntentId }),
+    },
   });
 
   // 2) Commission split — snapshot do OrderItem + Stripe Connect transfer.
