@@ -127,6 +127,12 @@ model User {
   // Garáž (uložená auta zákazníka)
   garage CustomerGarage[] @relation("UserGarage")
 
+  // Search history + Reviews + Stock notifications
+  searchHistory      SearchQuery[]      @relation("UserSearchHistory")
+  supplierReviews    SupplierReview[]   @relation("SupplierReviews")
+  buyerReviews       SupplierReview[]   @relation("BuyerReviews")
+  stockNotifications StockNotification[] @relation("UserStockNotifications")
+
   // Platební systém relace
   confirmedPayments Payment[]      @relation("PaymentConfirmer")
   brokerPayouts     BrokerPayout[] @relation("BrokerPayouts")
@@ -781,15 +787,18 @@ model Watchdog {
 }
 
 model Favorite {
-  id        String  @id @default(cuid())
+  id        String   @id @default(cuid())
   userId    String
-  user      User    @relation(fields: [userId], references: [id])
-  listingId String
-  listing   Listing @relation(fields: [listingId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  listingId String?
+  listing   Listing? @relation(fields: [listingId], references: [id])
+  partId    String?
+  part      Part?    @relation(fields: [partId], references: [id])
 
   createdAt DateTime @default(now())
 
   @@unique([userId, listingId])
+  @@unique([userId, partId])
   @@index([userId])
 }
 
@@ -950,10 +959,12 @@ model Part {
   externalId   String?  // ID dílu v externím feedu
 
   // Relace
-  images          PartImage[]
-  orderItems      OrderItem[]
-  reservations    PartReservation[]
-  crossReferences PartCrossReference[]
+  images             PartImage[]
+  orderItems         OrderItem[]
+  reservations       PartReservation[]
+  crossReferences    PartCrossReference[]
+  favorites          Favorite[]
+  stockNotifications StockNotification[] @relation("StockNotifications")
 
   // Timestamps
   createdAt DateTime @default(now())
@@ -1057,8 +1068,9 @@ model Order {
   zasilkovnaPointName String? // Název výdejního místa
 
   // Platba
-  paymentMethod String @default("BANK_TRANSFER") // BANK_TRANSFER, COD, CARD
-  paymentStatus String @default("PENDING")        // PENDING, PAID
+  paymentMethod         String  @default("BANK_TRANSFER") // BANK_TRANSFER, COD, CARD
+  paymentStatus         String  @default("PENDING")        // PENDING, PAID
+  stripePaymentIntentId String? // Pro Stripe refund
 
   // Ceny
   totalPrice    Int
@@ -1082,6 +1094,7 @@ model Order {
   items     OrderItem[]
   subOrders SubOrder[]
   returns   ReturnRequest[]
+  reviews   SupplierReview[]
 
   // Timestamps
   createdAt DateTime @default(now())
@@ -1966,4 +1979,60 @@ model PartCrossReference {
   @@index([oemNumber])
   @@index([aftermarketNumber])
   @@index([partId])
+}
+
+// ============================================
+// SEARCH HISTORY
+// ============================================
+
+model SearchQuery {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation("UserSearchHistory", fields: [userId], references: [id], onDelete: Cascade)
+  query       String
+  type        String   @default("PARTS") // PARTS, VEHICLES
+  resultCount Int?
+  createdAt   DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+// ============================================
+// HODNOCENÍ DODAVATELŮ
+// ============================================
+
+model SupplierReview {
+  id         String   @id @default(cuid())
+  supplierId String
+  supplier   User     @relation("SupplierReviews", fields: [supplierId], references: [id])
+  buyerId    String
+  buyer      User     @relation("BuyerReviews", fields: [buyerId], references: [id])
+  orderId    String
+  order      Order    @relation(fields: [orderId], references: [id])
+  rating     Int      // 1-5
+  text       String?
+  isPublic   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([buyerId, orderId])
+  @@index([supplierId])
+}
+
+// ============================================
+// STOCK NOTIFICATIONS ("OPĚT SKLADEM")
+// ============================================
+
+model StockNotification {
+  id       String   @id @default(cuid())
+  partId   String
+  part     Part     @relation("StockNotifications", fields: [partId], references: [id])
+  email    String
+  userId   String?
+  user     User?    @relation("UserStockNotifications", fields: [userId], references: [id])
+  notified Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@unique([partId, email])
+  @@index([partId, notified])
 }
