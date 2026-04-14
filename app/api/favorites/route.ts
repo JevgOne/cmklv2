@@ -14,20 +14,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
     }
 
-    const { listingId } = await request.json();
-    if (!listingId) {
-      return NextResponse.json({ error: "listingId je povinné" }, { status: 400 });
+    const { listingId, partId } = await request.json();
+    if (!listingId && !partId) {
+      return NextResponse.json({ error: "listingId nebo partId je povinné" }, { status: 400 });
     }
 
     // Toggle: pokud existuje → smazat, jinak → přidat
-    const existing = await prisma.favorite.findUnique({
-      where: {
-        userId_listingId: {
-          userId: session.user.id,
-          listingId,
-        },
-      },
-    });
+    const whereUnique = listingId
+      ? { userId_listingId: { userId: session.user.id, listingId } }
+      : { userId_partId: { userId: session.user.id, partId: partId! } };
+
+    const existing = await prisma.favorite.findUnique({ where: whereUnique });
 
     if (existing) {
       await prisma.favorite.delete({ where: { id: existing.id } });
@@ -37,7 +34,7 @@ export async function POST(request: NextRequest) {
     await prisma.favorite.create({
       data: {
         userId: session.user.id,
-        listingId,
+        ...(listingId ? { listingId } : { partId }),
       },
     });
 
@@ -68,6 +65,12 @@ export async function GET() {
         listing: {
           include: {
             images: { where: { isPrimary: true }, take: 1 },
+          },
+        },
+        part: {
+          select: {
+            id: true, name: true, slug: true, price: true, stock: true,
+            images: { where: { isPrimary: true }, take: 1, select: { url: true } },
           },
         },
       },
