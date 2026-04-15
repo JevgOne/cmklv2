@@ -82,6 +82,8 @@ const ROLE_TABS: Record<string, string[]> = {
   BUYER: ["liked"],
   ADMIN: ["vehicles", "listings", "parts", "liked"],
   BACKOFFICE: ["vehicles", "listings", "parts", "liked"],
+  MANAGER: ["liked"],
+  REGIONAL_DIRECTOR: ["liked"],
   INVESTOR: ["liked"],
   VERIFIED_DEALER: ["vehicles", "liked"],
   PARTNER_BAZAR: ["listings", "liked"],

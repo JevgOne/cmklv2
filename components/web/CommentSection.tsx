@@ -22,6 +22,7 @@ interface CommentSectionProps {
   listingId?: string;
   partId?: string;
   initialCount?: number;
+  itemOwnerId?: string;
 }
 
 function timeAgo(dateStr: string): string {
@@ -40,6 +41,7 @@ export function CommentSection({
   listingId,
   partId,
   initialCount = 0,
+  itemOwnerId,
 }: CommentSectionProps) {
   const { data: session } = useSession();
   const [expanded, setExpanded] = useState(false);
@@ -163,7 +165,8 @@ export function CommentSection({
             </div>
             {session?.user && (
               session.user.id === comment.userId ||
-              ["ADMIN", "BACKOFFICE"].includes(session.user.role)
+              ["ADMIN", "BACKOFFICE"].includes(session.user.role) ||
+              (itemOwnerId && session.user.id === itemOwnerId)
             ) && (
               <button
                 onClick={() => handleDelete(comment.id)}
