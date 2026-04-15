@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { LikeButton } from "@/components/web/LikeButton";
+import { CommentSection } from "@/components/web/CommentSection";
 import { BADGE_CATALOG } from "@/lib/badges";
 
 /* ------------------------------------------------------------------ */
@@ -31,6 +32,15 @@ interface ProfileUser {
   phone: string | null;
   email: string | null;
   createdAt: string;
+  yearsExperience: number | null;
+  website: string | null;
+  motto: string | null;
+  socialLinks: { instagram?: string; facebook?: string; youtube?: string } | null;
+  services: string[] | null;
+  languageSkills: string[] | null;
+  specializations: string | null;
+  warehouseAddress: string | null;
+  openingHours: Record<string, string> | null;
 }
 
 interface ProfileStats {
@@ -49,6 +59,7 @@ interface ProfileBadge {
 interface ProfileData {
   user: ProfileUser;
   stats: ProfileStats;
+  roleStats: Record<string, number>;
   badges: ProfileBadge[];
 }
 
@@ -84,8 +95,8 @@ const ROLE_TABS: Record<string, string[]> = {
   BACKOFFICE: ["vehicles", "listings", "parts", "liked"],
   MANAGER: ["liked"],
   REGIONAL_DIRECTOR: ["liked"],
-  INVESTOR: ["liked"],
-  VERIFIED_DEALER: ["vehicles", "liked"],
+  INVESTOR: ["investments", "liked"],
+  VERIFIED_DEALER: ["vehicles", "flips", "liked"],
   PARTNER_BAZAR: ["listings", "liked"],
 };
 
@@ -94,6 +105,8 @@ const TAB_LABELS: Record<string, string> = {
   listings: "Inzeráty",
   parts: "Díly",
   liked: "Oblíbené",
+  investments: "Investice",
+  flips: "Flipy",
 };
 
 const LEVEL_LABELS: Record<string, string> = {
@@ -224,10 +237,12 @@ export default function ProfilePage() {
     );
   }
 
-  const { user, stats, badges } = profile;
+  const { user, stats, roleStats, badges } = profile;
   const tabs = ROLE_TABS[user.role] || ["liked"];
   const favBrands: string[] = user.favoriteBrands ? JSON.parse(user.favoriteBrands) : [];
+  const specs: string[] = user.specializations ? (() => { try { return JSON.parse(user.specializations); } catch { return []; } })() : [];
   const memberSince = new Date(user.createdAt).toLocaleDateString("cs-CZ", { month: "long", year: "numeric" });
+  const dayLabels: Record<string, string> = { po: "Po", ut: "Út", st: "St", ct: "Čt", pa: "Pá", so: "So", ne: "Ne" };
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -319,6 +334,71 @@ export default function ProfilePage() {
             </div>
           )}
 
+          {/* Motto */}
+          {user.motto && (
+            <p className="text-sm italic text-gray-500 mt-3">&ldquo;{user.motto}&rdquo;</p>
+          )}
+
+          {/* Specializations (G8) */}
+          {specs.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mt-3">
+              {specs.map((s) => (
+                <span key={s} className="text-xs font-medium bg-orange-50 text-orange-700 px-2.5 py-1 rounded-full">{s}</span>
+              ))}
+            </div>
+          )}
+
+          {/* Services */}
+          {user.services && (user.services as string[]).length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {(user.services as string[]).map((s) => (
+                <span key={s} className="text-xs font-medium bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full">{s}</span>
+              ))}
+            </div>
+          )}
+
+          {/* Languages + Experience + Website */}
+          <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-gray-500">
+            {user.yearsExperience && <span>{user.yearsExperience} let zkušeností</span>}
+            {user.languageSkills && (user.languageSkills as string[]).length > 0 && (
+              <span>{(user.languageSkills as string[]).join(", ")}</span>
+            )}
+            {user.website && (
+              <a href={user.website} target="_blank" rel="noopener noreferrer" className="text-orange-500 no-underline hover:text-orange-600">
+                {user.website.replace(/^https?:\/\//, "")}
+              </a>
+            )}
+          </div>
+
+          {/* Social links */}
+          {user.socialLinks && (
+            <div className="flex gap-3 mt-2">
+              {user.socialLinks.instagram && (
+                <a href={user.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-pink-500 text-sm no-underline">Instagram</a>
+              )}
+              {user.socialLinks.facebook && (
+                <a href={user.socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-600 text-sm no-underline">Facebook</a>
+              )}
+              {user.socialLinks.youtube && (
+                <a href={user.socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-red-500 text-sm no-underline">YouTube</a>
+              )}
+            </div>
+          )}
+
+          {/* Warehouse info (PARTS_SUPPLIER only) */}
+          {user.warehouseAddress && (
+            <div className="mt-3 p-3 bg-gray-50 rounded-lg text-sm">
+              <p className="font-medium text-gray-700">Sklad: {user.warehouseAddress}</p>
+              {user.openingHours && (
+                <div className="mt-1 text-xs text-gray-500 flex flex-wrap gap-x-3">
+                  {Object.entries(user.openingHours).map(([day, hours]) => (
+                    <span key={day}>{dayLabels[day] || day}: {hours}</span>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           <p className="text-xs text-gray-400 mt-2">
             Člen od {memberSince} · {user.profileViews} zobrazení profilu
           </p>
@@ -352,6 +432,37 @@ export default function ProfilePage() {
             <div className="text-center">
               <div className="text-xl font-bold text-gray-900">{stats.totalSales}</div>
               <div className="text-xs text-gray-500">Prodeje</div>
+            </div>
+          )}
+          {/* Role-specific stats */}
+          {roleStats.completedFlips !== undefined && (
+            <div className="text-center">
+              <div className="text-xl font-bold text-gray-900">{roleStats.completedFlips}</div>
+              <div className="text-xs text-gray-500">Flipy</div>
+            </div>
+          )}
+          {roleStats.avgROI !== undefined && (
+            <div className="text-center">
+              <div className="text-xl font-bold text-green-600">{roleStats.avgROI}%</div>
+              <div className="text-xs text-gray-500">Prům. ROI</div>
+            </div>
+          )}
+          {roleStats.totalInvested !== undefined && (
+            <div className="text-center">
+              <div className="text-xl font-bold text-gray-900">{formatPrice(roleStats.totalInvested)}</div>
+              <div className="text-xs text-gray-500">Investováno</div>
+            </div>
+          )}
+          {roleStats.completedDeals !== undefined && (
+            <div className="text-center">
+              <div className="text-xl font-bold text-gray-900">{roleStats.completedDeals}</div>
+              <div className="text-xs text-gray-500">Dokončené</div>
+            </div>
+          )}
+          {roleStats.totalReturn !== undefined && roleStats.totalReturn > 0 && (
+            <div className="text-center">
+              <div className="text-xl font-bold text-green-600">{formatPrice(roleStats.totalReturn)}</div>
+              <div className="text-xs text-gray-500">Výnos</div>
             </div>
           )}
         </div>
@@ -440,6 +551,58 @@ export default function ProfilePage() {
 /* ------------------------------------------------------------------ */
 
 function ProfileItemCard({ item, type }: { item: ProfileItem; type: string }) {
+  if (type === "investment") {
+    const raw = item as unknown as { opportunity: { brand: string; model: string; year: number; status: string; photos: string | null; estimatedSalePrice: number } | null; amount: number };
+    const opp = raw.opportunity;
+    if (!opp) return null;
+    const photos: string[] = opp.photos ? (() => { try { return JSON.parse(opp.photos); } catch { return []; } })() : [];
+    const label = `${opp.brand} ${opp.model} (${opp.year})`;
+    const amount = raw.amount;
+    return (
+      <div>
+        <div className="relative aspect-square bg-gray-100 rounded-xl overflow-hidden">
+          {photos[0] ? (
+            <Image src={photos[0]} alt={label} fill className="object-cover" sizes="(max-width: 640px) 50vw, 25vw" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-3xl text-gray-300">&#128176;</div>
+          )}
+          <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent p-2.5">
+            <p className="text-white text-xs font-semibold truncate">{label}</p>
+            <p className="text-orange-300 text-xs font-bold">{formatPrice(amount)}</p>
+          </div>
+          <div className="absolute top-2 right-2">
+            <span className="text-[10px] font-bold bg-white/90 text-gray-700 px-2 py-0.5 rounded-full">{opp.status}</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (type === "flip") {
+    const raw = item as unknown as { photos: string | null; brand: string; model: string; price: number | null; status: string };
+    const photos: string[] = raw.photos ? (() => { try { return JSON.parse(raw.photos); } catch { return []; } })() : [];
+    const label = `${raw.brand} ${raw.model}`;
+    const status = raw.status;
+    return (
+      <div>
+        <div className="relative aspect-square bg-gray-100 rounded-xl overflow-hidden">
+          {photos[0] ? (
+            <Image src={photos[0]} alt={label} fill className="object-cover" sizes="(max-width: 640px) 50vw, 25vw" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-3xl text-gray-300">&#128663;</div>
+          )}
+          <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent p-2.5">
+            <p className="text-white text-xs font-semibold truncate">{label}</p>
+            {item.price && <p className="text-orange-300 text-xs font-bold">{formatPrice(item.price)}</p>}
+          </div>
+          <div className="absolute top-2 right-2">
+            <span className="text-[10px] font-bold bg-white/90 text-gray-700 px-2 py-0.5 rounded-full">{status}</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (type === "liked") {
     // Liked item — unwrap polymorphic target
     const target = item.vehicle || item.listing || item.part;
@@ -493,6 +656,12 @@ function ProfileItemCard({ item, type }: { item: ProfileItem; type: string }) {
       ? { listingId: item.id }
       : { partId: item.id };
 
+  const commentProps = type === "vehicle"
+    ? { vehicleId: item.id }
+    : type === "listing"
+      ? { listingId: item.id }
+      : { partId: item.id };
+
   return (
     <div className="group">
       <Link href={href} className="no-underline">
@@ -518,6 +687,7 @@ function ProfileItemCard({ item, type }: { item: ProfileItem; type: string }) {
           <span className="text-xs text-gray-400">&#128172; {commentCount}</span>
         )}
       </div>
+      <CommentSection {...commentProps} initialCount={commentCount} />
     </div>
   );
 }

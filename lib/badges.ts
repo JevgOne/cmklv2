@@ -131,5 +131,45 @@ export async function checkAndAwardBadges(userId: string): Promise<string[]> {
     });
   }
 
+  // Auto level-up check
+  await checkAndUpdateLevel(userId);
+
   return newBadges;
+}
+
+export async function checkAndUpdateLevel(userId: string): Promise<string | null> {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { totalSales: true, onboardingCompleted: true, level: true },
+  });
+
+  if (!user) return null;
+
+  // Get average supplier review rating
+  const reviewAgg = await prisma.supplierReview.aggregate({
+    where: { supplierId: userId, isPublic: true },
+    _avg: { rating: true },
+    _count: true,
+  });
+  const avgRating = reviewAgg._avg.rating ?? 0;
+
+  let newLevel = "JUNIOR";
+
+  if (user.totalSales >= 50 && avgRating >= 4.5) {
+    newLevel = "TOP";
+  } else if (user.totalSales >= 20 && avgRating >= 4.0) {
+    newLevel = "SENIOR";
+  } else if (user.totalSales >= 5 || user.onboardingCompleted) {
+    newLevel = "BROKER";
+  }
+
+  if (newLevel !== user.level) {
+    await prisma.user.update({
+      where: { id: userId },
+      data: { level: newLevel },
+    });
+    return newLevel;
+  }
+
+  return null;
 }

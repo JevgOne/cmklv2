@@ -19,6 +19,16 @@ interface ProfileEditData {
   showEmail: boolean;
   phone: string | null;
   email: string | null;
+  role: string;
+  yearsExperience: number | null;
+  website: string | null;
+  motto: string | null;
+  socialLinks: { instagram?: string; facebook?: string; youtube?: string } | null;
+  services: string[] | null;
+  languageSkills: string[] | null;
+  specializations: string | null;
+  warehouseAddress: string | null;
+  openingHours: Record<string, string> | null;
 }
 
 const BRAND_OPTIONS = [
@@ -27,6 +37,21 @@ const BRAND_OPTIONS = [
   "Citroën", "Renault", "Seat", "Kia", "Mazda",
   "Volvo", "Honda", "Nissan", "Suzuki", "Dacia",
 ];
+
+const SPECIALIZATION_OPTIONS = [
+  "SUV", "Veterány", "Elektro", "Užitkové", "Luxusní", "Sportovní",
+];
+
+const SERVICE_OPTIONS = [
+  "Dovoz", "Prověrka", "Financování", "Pojištění", "STK",
+];
+
+const LANGUAGE_OPTIONS = [
+  "Čeština", "Angličtina", "Němčina", "Slovenština", "Polština", "Ruština",
+];
+
+const DAY_KEYS = ["po", "ut", "st", "ct", "pa", "so", "ne"] as const;
+const DAY_LABELS: Record<string, string> = { po: "Po", ut: "Út", st: "St", ct: "Čt", pa: "Pá", so: "So", ne: "Ne" };
 
 export default function ProfileEditPage() {
   const [data, setData] = useState<ProfileEditData | null>(null);
@@ -46,6 +71,17 @@ export default function ProfileEditPage() {
   const [showPhone, setShowPhone] = useState(false);
   const [showEmail, setShowEmail] = useState(false);
   const [brandInput, setBrandInput] = useState("");
+  const [yearsExperience, setYearsExperience] = useState<number | "">("");
+  const [website, setWebsite] = useState("");
+  const [motto, setMotto] = useState("");
+  const [socialInstagram, setSocialInstagram] = useState("");
+  const [socialFacebook, setSocialFacebook] = useState("");
+  const [socialYoutube, setSocialYoutube] = useState("");
+  const [services, setServices] = useState<string[]>([]);
+  const [languageSkills, setLanguageSkills] = useState<string[]>([]);
+  const [specializations, setSpecializations] = useState<string[]>([]);
+  const [warehouseAddress, setWarehouseAddress] = useState("");
+  const [openingHours, setOpeningHours] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -66,6 +102,20 @@ export default function ProfileEditPage() {
             ? JSON.parse(user.favoriteBrands)
             : [];
           setFavBrands(brands);
+          setYearsExperience(user.yearsExperience ?? "");
+          setWebsite(user.website || "");
+          setMotto(user.motto || "");
+          setSocialInstagram(user.socialLinks?.instagram || "");
+          setSocialFacebook(user.socialLinks?.facebook || "");
+          setSocialYoutube(user.socialLinks?.youtube || "");
+          setServices(user.services || []);
+          setLanguageSkills(user.languageSkills || []);
+          const specs: string[] = user.specializations
+            ? (() => { try { return JSON.parse(user.specializations); } catch { return []; } })()
+            : [];
+          setSpecializations(specs);
+          setWarehouseAddress(user.warehouseAddress || "");
+          setOpeningHours(user.openingHours || {});
         }
       } catch {
         // silently fail
@@ -95,6 +145,17 @@ export default function ProfileEditPage() {
           favoriteBrands: favBrands,
           showPhone,
           showEmail,
+          yearsExperience: yearsExperience !== "" ? yearsExperience : null,
+          website: website || null,
+          motto: motto || null,
+          socialLinks: (socialInstagram || socialFacebook || socialYoutube)
+            ? { instagram: socialInstagram || undefined, facebook: socialFacebook || undefined, youtube: socialYoutube || undefined }
+            : null,
+          services,
+          languageSkills,
+          specializations,
+          warehouseAddress: warehouseAddress || null,
+          openingHours: Object.keys(openingHours).length > 0 ? openingHours : null,
         }),
       });
       if (!res.ok) {
@@ -213,6 +274,158 @@ export default function ProfileEditPage() {
             />
           </div>
         </Card>
+
+        {/* Motto + Experience + Website */}
+        <Card className="p-5">
+          <h3 className="font-semibold text-gray-900 mb-4">Profil detaily</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input
+              label="Motto"
+              placeholder="Vaše motto..."
+              value={motto}
+              onChange={(e) => setMotto(e.target.value)}
+            />
+            <Input
+              label="Roky zkušeností"
+              type="number"
+              placeholder="5"
+              value={yearsExperience === "" ? "" : String(yearsExperience)}
+              onChange={(e) => setYearsExperience(e.target.value ? parseInt(e.target.value) : "")}
+            />
+          </div>
+          <div className="mt-4">
+            <Input
+              label="Web"
+              placeholder="https://www.example.cz"
+              value={website}
+              onChange={(e) => setWebsite(e.target.value)}
+            />
+          </div>
+        </Card>
+
+        {/* Social links */}
+        <Card className="p-5">
+          <h3 className="font-semibold text-gray-900 mb-4">Sociální sítě</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <Input
+              label="Instagram"
+              placeholder="https://instagram.com/..."
+              value={socialInstagram}
+              onChange={(e) => setSocialInstagram(e.target.value)}
+            />
+            <Input
+              label="Facebook"
+              placeholder="https://facebook.com/..."
+              value={socialFacebook}
+              onChange={(e) => setSocialFacebook(e.target.value)}
+            />
+            <Input
+              label="YouTube"
+              placeholder="https://youtube.com/..."
+              value={socialYoutube}
+              onChange={(e) => setSocialYoutube(e.target.value)}
+            />
+          </div>
+        </Card>
+
+        {/* Specializations (G8) */}
+        <Card className="p-5">
+          <h3 className="font-semibold text-gray-900 mb-4">Specializace</h3>
+          <div className="flex flex-wrap gap-2">
+            {SPECIALIZATION_OPTIONS.map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => setSpecializations((prev) =>
+                  prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]
+                )}
+                className={`px-3 py-1.5 rounded-full text-sm font-medium border cursor-pointer transition-colors ${
+                  specializations.includes(s)
+                    ? "bg-orange-500 text-white border-orange-500"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-orange-300"
+                }`}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        </Card>
+
+        {/* Services */}
+        <Card className="p-5">
+          <h3 className="font-semibold text-gray-900 mb-4">Služby</h3>
+          <div className="flex flex-wrap gap-2">
+            {SERVICE_OPTIONS.map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => setServices((prev) =>
+                  prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]
+                )}
+                className={`px-3 py-1.5 rounded-full text-sm font-medium border cursor-pointer transition-colors ${
+                  services.includes(s)
+                    ? "bg-blue-500 text-white border-blue-500"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-blue-300"
+                }`}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        </Card>
+
+        {/* Languages */}
+        <Card className="p-5">
+          <h3 className="font-semibold text-gray-900 mb-4">Jazyky</h3>
+          <div className="flex flex-wrap gap-2">
+            {LANGUAGE_OPTIONS.map((l) => (
+              <button
+                key={l}
+                type="button"
+                onClick={() => setLanguageSkills((prev) =>
+                  prev.includes(l) ? prev.filter((x) => x !== l) : [...prev, l]
+                )}
+                className={`px-3 py-1.5 rounded-full text-sm font-medium border cursor-pointer transition-colors ${
+                  languageSkills.includes(l)
+                    ? "bg-green-500 text-white border-green-500"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-green-300"
+                }`}
+              >
+                {l}
+              </button>
+            ))}
+          </div>
+        </Card>
+
+        {/* Warehouse (PARTS_SUPPLIER only) */}
+        {data?.role && ["PARTS_SUPPLIER", "WHOLESALE_SUPPLIER", "PARTNER_VRAKOVISTE"].includes(data.role) && (
+          <Card className="p-5">
+            <h3 className="font-semibold text-gray-900 mb-4">Sklad</h3>
+            <Input
+              label="Adresa skladu"
+              placeholder="Průmyslová 123, Praha 5"
+              value={warehouseAddress}
+              onChange={(e) => setWarehouseAddress(e.target.value)}
+            />
+            <div className="mt-4">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Otevírací doba</label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {DAY_KEYS.map((day) => (
+                  <div key={day}>
+                    <label className="text-xs text-gray-500">{DAY_LABELS[day]}</label>
+                    <input
+                      type="text"
+                      placeholder="8:00-17:00"
+                      value={openingHours[day] || ""}
+                      onChange={(e) => setOpeningHours((prev) => ({ ...prev, [day]: e.target.value }))}
+                      className="w-full rounded-lg border border-gray-300 px-2 py-1.5 text-xs focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Card>
+        )}
 
         {/* Favorite brands */}
         <Card className="p-5">

@@ -32,6 +32,15 @@ export async function GET(
         phone: true,
         email: true,
         createdAt: true,
+        yearsExperience: true,
+        website: true,
+        motto: true,
+        socialLinks: true,
+        services: true,
+        languageSkills: true,
+        specializations: true,
+        warehouseAddress: true,
+        openingHours: true,
         profileBadges: {
           select: { badgeKey: true, awardedAt: true },
           orderBy: { awardedAt: "desc" },
@@ -72,6 +81,39 @@ export async function GET(
       }),
     ]);
 
+    // G5: Role-aware stats
+    let roleStats: Record<string, unknown> = {};
+
+    if (user.role === "VERIFIED_DEALER") {
+      const completedFlips = await prisma.flipOpportunity.count({
+        where: { dealerId: user.id, status: "COMPLETED" },
+      });
+      const flips = await prisma.flipOpportunity.findMany({
+        where: { dealerId: user.id, status: "COMPLETED", actualSalePrice: { not: null } },
+        select: { purchasePrice: true, repairCost: true, actualSalePrice: true },
+      });
+      const avgROI = flips.length > 0
+        ? flips.reduce((sum, f) => {
+            const cost = f.purchasePrice + f.repairCost;
+            return sum + (cost > 0 ? ((f.actualSalePrice! - cost) / cost) * 100 : 0);
+          }, 0) / flips.length
+        : 0;
+      roleStats = { completedFlips, avgROI: Math.round(avgROI * 10) / 10 };
+    }
+
+    if (user.role === "INVESTOR") {
+      const investments = await prisma.investment.findMany({
+        where: { investorId: user.id },
+        select: { amount: true, returnAmount: true, paymentStatus: true },
+      });
+      const totalInvested = investments
+        .filter((i) => i.paymentStatus === "CONFIRMED")
+        .reduce((sum, i) => sum + i.amount, 0);
+      const completedDeals = investments.filter((i) => i.returnAmount !== null).length;
+      const totalReturn = investments.reduce((sum, i) => sum + (i.returnAmount ?? 0), 0);
+      roleStats = { totalInvested, completedDeals, totalReturn };
+    }
+
     return NextResponse.json({
       user: {
         id: user.id,
@@ -90,6 +132,15 @@ export async function GET(
         phone: user.showPhone ? user.phone : null,
         email: user.showEmail ? user.email : null,
         createdAt: user.createdAt,
+        yearsExperience: user.yearsExperience,
+        website: user.website,
+        motto: user.motto,
+        socialLinks: user.socialLinks,
+        services: user.services,
+        languageSkills: user.languageSkills,
+        specializations: user.specializations,
+        warehouseAddress: user.warehouseAddress,
+        openingHours: user.openingHours,
       },
       stats: {
         vehicles: vehicleCount,
@@ -98,6 +149,7 @@ export async function GET(
         totalLikes,
         totalSales: user.totalSales,
       },
+      roleStats,
       badges: user.profileBadges,
       achievements: user.achievements,
     });

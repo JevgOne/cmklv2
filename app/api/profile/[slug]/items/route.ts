@@ -130,6 +130,60 @@ export async function GET(
         return NextResponse.json({ items, nextCursor, type: "liked" });
       }
 
+      case "investments": {
+        const items = await prisma.investment.findMany({
+          where: { investorId: user.id },
+          select: {
+            id: true,
+            amount: true,
+            returnAmount: true,
+            paymentStatus: true,
+            createdAt: true,
+            opportunity: {
+              select: {
+                id: true,
+                brand: true,
+                model: true,
+                year: true,
+                status: true,
+                photos: true,
+                estimatedSalePrice: true,
+              },
+            },
+          },
+          orderBy: { createdAt: "desc" },
+          take: limit,
+          skip,
+          cursor: cursorObj,
+        });
+        const nextCursor = items.length === limit ? items[items.length - 1].id : null;
+        return NextResponse.json({ items, nextCursor, type: "investment" });
+      }
+
+      case "flips": {
+        const items = await prisma.flipOpportunity.findMany({
+          where: { dealerId: user.id },
+          select: {
+            id: true,
+            brand: true,
+            model: true,
+            year: true,
+            status: true,
+            photos: true,
+            purchasePrice: true,
+            estimatedSalePrice: true,
+            actualSalePrice: true,
+            createdAt: true,
+          },
+          orderBy: { createdAt: "desc" },
+          take: limit,
+          skip,
+          cursor: cursorObj,
+        });
+        const nextCursor = items.length === limit ? items[items.length - 1].id : null;
+        return NextResponse.json({ items, nextCursor, type: "flip" });
+      }
+
       default:
         return NextResponse.json({ error: "Neplatný tab" }, { status: 400 });
     }

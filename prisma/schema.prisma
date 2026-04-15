@@ -45,6 +45,14 @@ model User {
   showPhone       Boolean   @default(false)
   showEmail       Boolean   @default(false)
   profileViews    Int       @default(0)
+  yearsExperience Int?
+  website         String?
+  motto           String?
+  socialLinks     Json?     // { instagram?: string, facebook?: string, youtube?: string }
+  services        Json?     // ["dovoz", "prověrka", "financování", "pojištění", "STK"]
+  languageSkills  Json?     // ["čeština", "angličtina", "němčina"]
+  warehouseAddress String?  // jen pro PARTS_SUPPLIER
+  openingHours    Json?     // jen pro PARTS_SUPPLIER: { po: "8:00-17:00", ... }
 
   // Onboarding makléře
   bankAccount         String?  // IBAN pro výplatu provizí

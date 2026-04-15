@@ -15,6 +15,19 @@ const editProfileSchema = z.object({
   favoriteBrands: z.array(z.string()).max(10).optional(),
   showPhone: z.boolean().optional(),
   showEmail: z.boolean().optional(),
+  yearsExperience: z.number().int().min(0).max(60).optional().nullable(),
+  website: z.string().max(200).optional().nullable(),
+  motto: z.string().max(200).optional().nullable(),
+  socialLinks: z.object({
+    instagram: z.string().max(200).optional(),
+    facebook: z.string().max(200).optional(),
+    youtube: z.string().max(200).optional(),
+  }).optional().nullable(),
+  services: z.array(z.string().max(50)).max(10).optional(),
+  languageSkills: z.array(z.string().max(30)).max(10).optional(),
+  specializations: z.array(z.string().max(50)).max(10).optional(),
+  warehouseAddress: z.string().max(300).optional().nullable(),
+  openingHours: z.record(z.string(), z.string().max(20)).optional().nullable(),
 });
 
 export async function GET() {
@@ -39,6 +52,16 @@ export async function GET() {
         showEmail: true,
         phone: true,
         email: true,
+        role: true,
+        yearsExperience: true,
+        website: true,
+        motto: true,
+        socialLinks: true,
+        services: true,
+        languageSkills: true,
+        specializations: true,
+        warehouseAddress: true,
+        openingHours: true,
       },
     });
 
@@ -85,6 +108,17 @@ export async function PUT(request: NextRequest) {
     }
     if (data.showPhone !== undefined) updateData.showPhone = data.showPhone;
     if (data.showEmail !== undefined) updateData.showEmail = data.showEmail;
+    if (data.yearsExperience !== undefined) updateData.yearsExperience = data.yearsExperience;
+    if (data.website !== undefined) updateData.website = data.website;
+    if (data.motto !== undefined) updateData.motto = data.motto;
+    if (data.socialLinks !== undefined) updateData.socialLinks = data.socialLinks;
+    if (data.services !== undefined) updateData.services = data.services;
+    if (data.languageSkills !== undefined) updateData.languageSkills = data.languageSkills;
+    if (data.specializations !== undefined) {
+      updateData.specializations = JSON.stringify(data.specializations);
+    }
+    if (data.warehouseAddress !== undefined) updateData.warehouseAddress = data.warehouseAddress;
+    if (data.openingHours !== undefined) updateData.openingHours = data.openingHours;
 
     const updated = await prisma.user.update({
       where: { id: session.user.id },
@@ -100,6 +134,16 @@ export async function PUT(request: NextRequest) {
         favoriteBrands: true,
         showPhone: true,
         showEmail: true,
+        role: true,
+        yearsExperience: true,
+        website: true,
+        motto: true,
+        socialLinks: true,
+        services: true,
+        languageSkills: true,
+        specializations: true,
+        warehouseAddress: true,
+        openingHours: true,
       },
     });
 
