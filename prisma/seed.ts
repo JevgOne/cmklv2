@@ -124,7 +124,7 @@ async function main() {
 
   await prisma.user.create({
     data: {
-      email: "jevgenij@carmakler.cz",
+      email: "zenuly3@gmail.com",
       firstName: "Jevgenij",
       lastName: "Onegin",
       passwordHash: jevgenijHash,
@@ -135,7 +135,7 @@ async function main() {
 
   await prisma.user.create({
     data: {
-      email: "radim@carmakler.cz",
+      email: "radim@wikiporadce.cz",
       firstName: "Radim",
       lastName: "Carmakler",
       passwordHash: radimHash,
@@ -146,7 +146,7 @@ async function main() {
 
   await prisma.user.create({
     data: {
-      email: "katerina@carmakler.cz",
+      email: "Fusslova.k@gmail.com",
       firstName: "Kateřina",
       lastName: "Carmakler",
       passwordHash: katerinaHash,
@@ -2874,9 +2874,9 @@ async function main() {
   console.log(`SMS Logs:        ${await prisma.smsLog.count()}`);
   console.log(`AI Conversations:${await prisma.aiConversation.count()}`);
   console.log("\n--- REAL ACCOUNTS ---");
-  console.log("Admin: jevgenij@carmakler.cz (ADMIN)");
-  console.log("Admin: radim@carmakler.cz (ADMIN)");
-  console.log("Manager: katerina@carmakler.cz (MANAGER)");
+  console.log("Admin: zenuly3@gmail.com (ADMIN)");
+  console.log("Admin: radim@wikiporadce.cz (ADMIN)");
+  console.log("Manager: Fusslova.k@gmail.com (MANAGER)");
   console.log("\n--- DEMO ACCOUNTS ---");
   console.log("Demo login: admin@carmakler.cz / heslo123");
   console.log("Advertiser login: prodejce@email.cz / heslo123");
