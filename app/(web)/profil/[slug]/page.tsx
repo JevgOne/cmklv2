@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { LikeButton } from "@/components/web/LikeButton";
 import { CommentSection } from "@/components/web/CommentSection";
-import { BADGE_CATALOG } from "@/lib/badges";
+import { BADGE_CATALOG } from "@/lib/badge-catalog";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
