@@ -93,6 +93,7 @@ export default async function MaklerProfilePage({
       where: { slug, role: "BROKER", status: "ACTIVE" },
       select: {
         id: true,
+        slug: true,
         firstName: true,
         lastName: true,
         avatar: true,
@@ -215,6 +216,12 @@ export default async function MaklerProfilePage({
                   </Badge>
                 ))}
               </div>
+              <a
+                href={`/profil/${broker.slug}`}
+                className="inline-block mt-4 text-sm font-semibold text-orange-400 hover:text-orange-300 no-underline transition-colors"
+              >
+                Zobrazit celý profil &rarr;
+              </a>
             </div>
           </div>
         </div>

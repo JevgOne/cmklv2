@@ -39,6 +39,12 @@ model User {
   cities          String? // JSON array: ["Praha", "Brno"]
   bio             String?
   slug            String? @unique
+  coverPhoto      String?   // URL cover image (Cloudinary)
+  favoriteBrands  String?   // JSON array: ["BMW", "Škoda", "VW"]
+  city            String?   // Hlavní město pro zobrazení na profilu
+  showPhone       Boolean   @default(false)
+  showEmail       Boolean   @default(false)
+  profileViews    Int       @default(0)
 
   // Onboarding makléře
   bankAccount         String?  // IBAN pro výplatu provizí
@@ -132,6 +138,11 @@ model User {
   supplierReviews    SupplierReview[]   @relation("SupplierReviews")
   buyerReviews       SupplierReview[]   @relation("BuyerReviews")
   stockNotifications StockNotification[] @relation("UserStockNotifications")
+
+  // Profil — lajky, komentáře, badže
+  profileLikes    ProfileLike[]    @relation("UserProfileLikes")
+  profileComments ProfileComment[] @relation("UserProfileComments")
+  profileBadges   ProfileBadge[]   @relation("UserBadges")
 
   // Platební systém relace
   confirmedPayments Payment[]      @relation("PaymentConfirmer")
@@ -316,6 +327,10 @@ model Vehicle {
   priceReductions PriceReduction[]
   escalations     Escalation[]
   partnerLeads    PartnerLead[]
+
+  // Profil lajky/komentáře
+  profileLikes    ProfileLike[]    @relation("VehicleLikes")
+  profileComments ProfileComment[] @relation("VehicleComments")
 
   // Timestamps
   createdAt   DateTime  @default(now())
@@ -707,6 +722,10 @@ model Listing {
   reservations Reservation[]
   cebiaReports CebiaReport[]
 
+  // Profil lajky/komentáře
+  profileLikes    ProfileLike[]    @relation("ListingLikes")
+  profileComments ProfileComment[] @relation("ListingComments")
+
   @@index([userId])
   @@index([status])
   @@index([brand, model])
@@ -965,6 +984,10 @@ model Part {
   crossReferences    PartCrossReference[]
   favorites          Favorite[]
   stockNotifications StockNotification[] @relation("StockNotifications")
+
+  // Profil lajky/komentáře
+  profileLikes    ProfileLike[]    @relation("PartLikes")
+  profileComments ProfileComment[] @relation("PartComments")
 
   // Timestamps
   createdAt DateTime @default(now())
@@ -2039,4 +2062,67 @@ model StockNotification {
 
   @@unique([partId, email])
   @@index([partId, notified])
+}
+
+// ============================================
+// PROFILE — LAJKY, KOMENTÁŘE, BADŽE
+// ============================================
+
+model ProfileLike {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation("UserProfileLikes", fields: [userId], references: [id], onDelete: Cascade)
+
+  // Polymorfní target — právě jeden musí být non-null
+  vehicleId  String?
+  vehicle    Vehicle?  @relation("VehicleLikes", fields: [vehicleId], references: [id], onDelete: Cascade)
+  listingId  String?
+  listing    Listing?  @relation("ListingLikes", fields: [listingId], references: [id], onDelete: Cascade)
+  partId     String?
+  part       Part?     @relation("PartLikes", fields: [partId], references: [id], onDelete: Cascade)
+
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, vehicleId])
+  @@unique([userId, listingId])
+  @@unique([userId, partId])
+  @@index([vehicleId])
+  @@index([listingId])
+  @@index([partId])
+}
+
+model ProfileComment {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation("UserProfileComments", fields: [userId], references: [id], onDelete: Cascade)
+
+  // Polymorfní target — právě jeden musí být non-null
+  vehicleId  String?
+  vehicle    Vehicle?  @relation("VehicleComments", fields: [vehicleId], references: [id], onDelete: Cascade)
+  listingId  String?
+  listing    Listing?  @relation("ListingComments", fields: [listingId], references: [id], onDelete: Cascade)
+  partId     String?
+  part       Part?     @relation("PartComments", fields: [partId], references: [id], onDelete: Cascade)
+
+  text       String
+  isHidden   Boolean   @default(false)
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([vehicleId])
+  @@index([listingId])
+  @@index([partId])
+  @@index([userId])
+}
+
+model ProfileBadge {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation("UserBadges", fields: [userId], references: [id], onDelete: Cascade)
+  badgeKey    String
+  awardedAt   DateTime @default(now())
+
+  @@unique([userId, badgeKey])
+  @@index([userId])
 }
