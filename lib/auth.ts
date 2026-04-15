@@ -46,18 +46,6 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   session: { strategy: "jwt" },
-  cookies: {
-    sessionToken: {
-      name: "next-auth.session-token",
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-        domain: process.env.NEXTAUTH_COOKIE_DOMAIN || undefined,
-      },
-    },
-  },
   pages: {
     signIn: "/login",
   },
