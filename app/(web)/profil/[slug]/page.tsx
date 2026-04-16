@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
@@ -136,6 +137,15 @@ function formatPrice(amount: number): string {
   }).format(amount);
 }
 
+function Stat({ value, label, valueClass }: { value: number | string; label: string; valueClass?: string }) {
+  return (
+    <div className="text-center">
+      <div className={`text-xl font-bold ${valueClass ?? "text-gray-900"}`}>{value}</div>
+      <div className="text-xs text-gray-500">{label}</div>
+    </div>
+  );
+}
+
 /* ------------------------------------------------------------------ */
 /*  Page                                                               */
 /* ------------------------------------------------------------------ */
@@ -143,6 +153,7 @@ function formatPrice(amount: number): string {
 export default function ProfilePage() {
   const params = useParams();
   const slug = params.slug as string;
+  const { data: session } = useSession();
 
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -238,6 +249,7 @@ export default function ProfilePage() {
   }
 
   const { user, stats, roleStats, badges } = profile;
+  const isOwner = !!session?.user?.id && session.user.id === user.id;
   const tabs = ROLE_TABS[user.role] || ["liked"];
   const favBrands: string[] = user.favoriteBrands ? JSON.parse(user.favoriteBrands) : [];
   const specs: string[] = user.specializations ? (() => { try { return JSON.parse(user.specializations); } catch { return []; } })() : [];
@@ -259,78 +271,56 @@ export default function ProfilePage() {
         )}
       </div>
 
-      {/* Profile Header */}
+      {/* Profile Header — Instagram-style full-center layout */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
-        <div className="relative -mt-16 sm:-mt-20 mb-6">
-          <div className="flex flex-col sm:flex-row sm:items-end gap-4">
-            {/* Avatar */}
-            <div className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-full border-4 border-white bg-gray-200 overflow-hidden flex-shrink-0 shadow-lg">
-              {user.avatar ? (
-                <Image src={user.avatar} alt={user.firstName} fill className="object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-4xl text-gray-400">
-                  {user.firstName[0]}{user.lastName[0]}
-                </div>
-              )}
-            </div>
-
-            {/* Info */}
-            <div className="flex-1 min-w-0 pb-2">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900">
-                {user.firstName} {user.lastName}
-              </h1>
-              <div className="flex flex-wrap items-center gap-2 mt-1">
-                <Badge variant="default">
-                  {ROLE_LABELS[user.role] || user.role}
-                </Badge>
-                {user.level !== "JUNIOR" && (
-                  <Badge variant="verified">
-                    {LEVEL_LABELS[user.level] || user.level}
-                  </Badge>
-                )}
-                {user.city && (
-                  <span className="text-sm text-gray-500">{user.city}</span>
-                )}
+        <div className="relative -mt-16 sm:-mt-20 mb-6 flex flex-col items-center text-center">
+          {/* Avatar — stand-alone, straddling cover */}
+          <div className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-full border-4 border-white bg-gray-200 overflow-hidden shadow-lg mb-4">
+            {user.avatar ? (
+              <Image src={user.avatar} alt={user.firstName} fill className="object-cover" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-4xl text-gray-400">
+                {user.firstName[0]}{user.lastName[0]}
               </div>
-            </div>
-
-            {/* Actions */}
-            <div className="flex gap-2 sm:pb-2">
-              {user.phone && (
-                <a
-                  href={`tel:${user.phone}`}
-                  className="inline-flex items-center gap-1.5 py-2 px-4 bg-orange-500 text-white font-semibold rounded-full text-sm no-underline hover:bg-orange-600 transition-colors"
-                >
-                  Kontaktovat
-                </a>
-              )}
-              <button
-                onClick={handleShare}
-                className="inline-flex items-center gap-1.5 py-2 px-4 bg-white border border-gray-200 text-gray-700 font-semibold rounded-full text-sm cursor-pointer hover:border-orange-300 transition-colors"
-              >
-                {copied ? "Zkopírováno!" : "Sdílet profil"}
-              </button>
-            </div>
+            )}
           </div>
 
-          {/* Bio + favorite brands */}
-          {(user.bio || favBrands.length > 0) && (
-            <div className="mt-4">
-              {user.bio && (
-                <p className="text-gray-600 max-w-2xl">{user.bio}</p>
-              )}
-              {favBrands.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 mt-2">
-                  {favBrands.map((brand) => (
-                    <span
-                      key={brand}
-                      className="text-xs font-medium bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full"
-                    >
-                      {brand}
-                    </span>
-                  ))}
-                </div>
-              )}
+          {/* Name */}
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900">
+            {user.firstName} {user.lastName}
+          </h1>
+
+          {/* Role + Level + City */}
+          <div className="flex flex-wrap items-center justify-center gap-2 mt-2">
+            <Badge variant="default">
+              {ROLE_LABELS[user.role] || user.role}
+            </Badge>
+            {user.level !== "JUNIOR" && (
+              <Badge variant="verified">
+                {LEVEL_LABELS[user.level] || user.level}
+              </Badge>
+            )}
+            {user.city && (
+              <span className="text-sm text-gray-500">{user.city}</span>
+            )}
+          </div>
+
+          {/* Bio */}
+          {user.bio && (
+            <p className="text-gray-600 max-w-xl mt-4">{user.bio}</p>
+          )}
+
+          {/* Favorite brands */}
+          {favBrands.length > 0 && (
+            <div className="flex flex-wrap justify-center gap-1.5 mt-3">
+              {favBrands.map((brand) => (
+                <span
+                  key={brand}
+                  className="text-xs font-medium bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full"
+                >
+                  {brand}
+                </span>
+              ))}
             </div>
           )}
 
@@ -341,7 +331,7 @@ export default function ProfilePage() {
 
           {/* Specializations (G8) */}
           {specs.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mt-3">
+            <div className="flex flex-wrap justify-center gap-1.5 mt-3">
               {specs.map((s) => (
                 <span key={s} className="text-xs font-medium bg-orange-50 text-orange-700 px-2.5 py-1 rounded-full">{s}</span>
               ))}
@@ -350,7 +340,7 @@ export default function ProfilePage() {
 
           {/* Services */}
           {user.services && (user.services as string[]).length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mt-2">
+            <div className="flex flex-wrap justify-center gap-1.5 mt-2">
               {(user.services as string[]).map((s) => (
                 <span key={s} className="text-xs font-medium bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full">{s}</span>
               ))}
@@ -358,7 +348,7 @@ export default function ProfilePage() {
           )}
 
           {/* Languages + Experience + Website */}
-          <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-gray-500">
+          <div className="flex flex-wrap items-center justify-center gap-3 mt-3 text-xs text-gray-500">
             {user.yearsExperience && <span>{user.yearsExperience} let zkušeností</span>}
             {user.languageSkills && (user.languageSkills as string[]).length > 0 && (
               <span>{(user.languageSkills as string[]).join(", ")}</span>
@@ -372,7 +362,7 @@ export default function ProfilePage() {
 
           {/* Social links */}
           {user.socialLinks && (
-            <div className="flex gap-3 mt-2">
+            <div className="flex justify-center gap-3 mt-2">
               {user.socialLinks.instagram && (
                 <a href={user.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-pink-500 text-sm no-underline">Instagram</a>
               )}
@@ -387,10 +377,10 @@ export default function ProfilePage() {
 
           {/* Warehouse info (PARTS_SUPPLIER only) */}
           {user.warehouseAddress && (
-            <div className="mt-3 p-3 bg-gray-50 rounded-lg text-sm">
+            <div className="mt-4 p-3 bg-gray-50 rounded-lg text-sm max-w-md">
               <p className="font-medium text-gray-700">Sklad: {user.warehouseAddress}</p>
               {user.openingHours && (
-                <div className="mt-1 text-xs text-gray-500 flex flex-wrap gap-x-3">
+                <div className="mt-1 text-xs text-gray-500 flex flex-wrap justify-center gap-x-3">
                   {Object.entries(user.openingHours).map(([day, hours]) => (
                     <span key={day}>{dayLabels[day] || day}: {hours}</span>
                   ))}
@@ -399,77 +389,56 @@ export default function ProfilePage() {
             </div>
           )}
 
-          <p className="text-xs text-gray-400 mt-2">
+          {/* Member since */}
+          <p className="text-xs text-gray-400 mt-3">
             Člen od {memberSince} · {user.profileViews} zobrazení profilu
           </p>
+
+          {/* Actions — owner-aware */}
+          <div className="flex gap-2 mt-4 justify-center">
+            {isOwner ? (
+              <Link
+                href="/muj-ucet/profil"
+                className="inline-flex items-center gap-1.5 py-2 px-4 bg-orange-500 text-white font-semibold rounded-full text-sm no-underline hover:bg-orange-600 transition-colors"
+              >
+                Upravit profil
+              </Link>
+            ) : (
+              user.phone && (
+                <a
+                  href={`tel:${user.phone}`}
+                  className="inline-flex items-center gap-1.5 py-2 px-4 bg-orange-500 text-white font-semibold rounded-full text-sm no-underline hover:bg-orange-600 transition-colors"
+                >
+                  Kontaktovat
+                </a>
+              )
+            )}
+            <button
+              onClick={handleShare}
+              className="inline-flex items-center gap-1.5 py-2 px-4 bg-white border border-gray-200 text-gray-700 font-semibold rounded-full text-sm cursor-pointer hover:border-orange-300 transition-colors"
+            >
+              {copied ? "Zkopírováno!" : "Sdílet profil"}
+            </button>
+          </div>
         </div>
 
-        {/* Stats Bar */}
-        <div className="grid grid-cols-3 sm:grid-cols-5 gap-4 mb-6">
-          {stats.vehicles > 0 && (
-            <div className="text-center">
-              <div className="text-xl font-bold text-gray-900">{stats.vehicles}</div>
-              <div className="text-xs text-gray-500">Vozidla</div>
-            </div>
-          )}
-          {stats.listings > 0 && (
-            <div className="text-center">
-              <div className="text-xl font-bold text-gray-900">{stats.listings}</div>
-              <div className="text-xs text-gray-500">Inzeráty</div>
-            </div>
-          )}
-          {stats.parts > 0 && (
-            <div className="text-center">
-              <div className="text-xl font-bold text-gray-900">{stats.parts}</div>
-              <div className="text-xs text-gray-500">Díly</div>
-            </div>
-          )}
-          <div className="text-center">
-            <div className="text-xl font-bold text-gray-900">{stats.totalLikes}</div>
-            <div className="text-xs text-gray-500">Lajky</div>
-          </div>
-          {stats.totalSales > 0 && (
-            <div className="text-center">
-              <div className="text-xl font-bold text-gray-900">{stats.totalSales}</div>
-              <div className="text-xs text-gray-500">Prodeje</div>
-            </div>
-          )}
-          {/* Role-specific stats */}
-          {roleStats.completedFlips !== undefined && (
-            <div className="text-center">
-              <div className="text-xl font-bold text-gray-900">{roleStats.completedFlips}</div>
-              <div className="text-xs text-gray-500">Flipy</div>
-            </div>
-          )}
-          {roleStats.avgROI !== undefined && (
-            <div className="text-center">
-              <div className="text-xl font-bold text-green-600">{roleStats.avgROI}%</div>
-              <div className="text-xs text-gray-500">Prům. ROI</div>
-            </div>
-          )}
-          {roleStats.totalInvested !== undefined && (
-            <div className="text-center">
-              <div className="text-xl font-bold text-gray-900">{formatPrice(roleStats.totalInvested)}</div>
-              <div className="text-xs text-gray-500">Investováno</div>
-            </div>
-          )}
-          {roleStats.completedDeals !== undefined && (
-            <div className="text-center">
-              <div className="text-xl font-bold text-gray-900">{roleStats.completedDeals}</div>
-              <div className="text-xs text-gray-500">Dokončené</div>
-            </div>
-          )}
-          {roleStats.totalReturn !== undefined && roleStats.totalReturn > 0 && (
-            <div className="text-center">
-              <div className="text-xl font-bold text-green-600">{formatPrice(roleStats.totalReturn)}</div>
-              <div className="text-xs text-gray-500">Výnos</div>
-            </div>
-          )}
+        {/* Stats Bar — flex justify-center s border-y divider */}
+        <div className="flex flex-wrap justify-center gap-8 sm:gap-12 mb-6 py-4 border-y border-gray-200">
+          {stats.vehicles > 0 && <Stat value={stats.vehicles} label="Vozidla" />}
+          {stats.listings > 0 && <Stat value={stats.listings} label="Inzeráty" />}
+          {stats.parts > 0 && <Stat value={stats.parts} label="Díly" />}
+          <Stat value={stats.totalLikes} label="Lajky" />
+          {stats.totalSales > 0 && <Stat value={stats.totalSales} label="Prodeje" />}
+          {roleStats.completedFlips !== undefined && <Stat value={roleStats.completedFlips} label="Flipy" />}
+          {roleStats.avgROI !== undefined && <Stat value={`${roleStats.avgROI}%`} label="Průměrné ROI" valueClass="text-green-600" />}
+          {roleStats.totalInvested !== undefined && <Stat value={formatPrice(roleStats.totalInvested)} label="Investováno" />}
+          {roleStats.completedDeals !== undefined && <Stat value={roleStats.completedDeals} label="Dokončené dealy" />}
+          {roleStats.totalReturn !== undefined && roleStats.totalReturn > 0 && <Stat value={formatPrice(roleStats.totalReturn)} label="Výnos" valueClass="text-green-600" />}
         </div>
 
         {/* Tabs */}
         <div className="border-b border-gray-200 mb-6 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-          <div className="flex gap-0">
+          <div className="flex justify-center gap-0">
             {tabs.map((tab) => (
               <button
                 key={tab}
@@ -521,9 +490,9 @@ export default function ProfilePage() {
 
         {/* Badges */}
         {badges.length > 0 && (
-          <section className="mb-10">
+          <section className="mb-10 text-center">
             <h2 className="text-lg font-bold text-gray-900 mb-4">Odznaky</h2>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap justify-center gap-3">
               {badges.map((badge) => {
                 const info = BADGE_CATALOG[badge.badgeKey];
                 if (!info) return null;
