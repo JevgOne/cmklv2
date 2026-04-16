@@ -8,7 +8,6 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { LikeButton } from "@/components/web/LikeButton";
-import { CommentSection } from "@/components/web/CommentSection";
 import { TagPill } from "@/components/web/TagPill";
 import { VehicleCard, type VehicleData } from "@/components/web/VehicleCard";
 import { BADGE_CATALOG } from "@/lib/badge-catalog";
@@ -828,13 +827,7 @@ function ProfileItemCard({
         <VehicleCard car={vehicleData} />
         <div className="flex items-center gap-3 mt-2 px-0.5">
           <LikeButton {...entityProps} initialCount={likeCount} size="sm" />
-          {commentCount > 0 && (
-            <span className="text-xs text-gray-400">
-              &#128172; {commentCount}
-            </span>
-          )}
         </div>
-        <CommentSection {...entityProps} initialCount={commentCount} />
       </div>
     );
   }
@@ -1025,13 +1018,7 @@ function ProfileItemCard({
       </Link>
       <div className="flex items-center gap-3 mt-2 px-0.5">
         <LikeButton {...entityProps} initialCount={likeCount} size="sm" />
-        {commentCount > 0 && (
-          <span className="text-xs text-gray-400">
-            &#128172; {commentCount}
-          </span>
-        )}
       </div>
-      <CommentSection {...entityProps} initialCount={commentCount} />
     </div>
   );
 }
