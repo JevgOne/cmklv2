@@ -11,6 +11,7 @@ import { LikeButton } from "@/components/web/LikeButton";
 import { CommentSection } from "@/components/web/CommentSection";
 import { TagPill } from "@/components/web/TagPill";
 import { BADGE_CATALOG } from "@/lib/badge-catalog";
+import { getDefaultCover } from "@/lib/profile/defaultCovers";
 import { formatPrice, getInitials, parseCities } from "@/lib/utils";
 import {
   ROLE_LABELS,
@@ -147,7 +148,10 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
   const [loadingItems, setLoadingItems] = useState(false);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [coverError, setCoverError] = useState(false);
   const viewFiredRef = useRef(false);
+
+  const coverSrc = user.coverPhoto || getDefaultCover(user.id);
 
   // Viewer-vs-owner check happens server-side in /api/profile/[slug].
   // Ref guard prevents React 18 StrictMode double-fire in dev.
@@ -241,14 +245,22 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
 
   return (
     <main className="min-h-screen bg-gray-50 pb-16">
-      <div className="relative h-56 sm:h-72 md:h-96 bg-gradient-to-br from-orange-400 via-orange-500 to-orange-600">
-        {user.coverPhoto && (
+      <div className="relative h-56 sm:h-72 md:h-96 bg-gradient-to-br from-orange-400 via-orange-500 to-orange-600 overflow-hidden">
+        {!coverError && (
           <Image
-            src={user.coverPhoto}
+            src={coverSrc}
             alt="Cover"
             fill
+            sizes="100vw"
             className="object-cover"
             priority
+            onError={() => setCoverError(true)}
+          />
+        )}
+        {!coverError && (
+          <div
+            className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/10 to-transparent pointer-events-none"
+            aria-hidden="true"
           />
         )}
       </div>
