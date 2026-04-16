@@ -271,48 +271,78 @@ export default function ProfilePage() {
         )}
       </div>
 
-      {/* Profile Header — Instagram-style full-center layout */}
+      {/* Profile Header — side-by-side layout */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
-        <div className="relative -mt-16 sm:-mt-20 mb-6 flex flex-col items-center text-center">
-          {/* Avatar — stand-alone, straddling cover */}
-          <div className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-full border-4 border-white bg-gray-200 overflow-hidden shadow-lg mb-4">
-            {user.avatar ? (
-              <Image src={user.avatar} alt={user.firstName} fill className="object-cover" />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-4xl text-gray-400">
-                {user.firstName[0]}{user.lastName[0]}
+        <div className="relative -mt-16 sm:-mt-20 mb-6">
+          {/* Avatar + Info + Actions — flex-row, vertikálně center */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-4">
+            {/* Avatar */}
+            <div className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-full border-4 border-white bg-gray-200 overflow-hidden shadow-lg flex-shrink-0">
+              {user.avatar ? (
+                <Image src={user.avatar} alt={user.firstName} fill className="object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-4xl text-gray-400">
+                  {user.firstName[0]}{user.lastName[0]}
+                </div>
+              )}
+            </div>
+
+            {/* Info — grows */}
+            <div className="flex-1 min-w-0">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900">
+                {user.firstName} {user.lastName}
+              </h1>
+              <div className="flex flex-wrap items-center gap-2 mt-1">
+                <Badge variant="default">
+                  {ROLE_LABELS[user.role] || user.role}
+                </Badge>
+                {user.level !== "JUNIOR" && (
+                  <Badge variant="verified">
+                    {LEVEL_LABELS[user.level] || user.level}
+                  </Badge>
+                )}
+                {user.city && (
+                  <span className="text-sm text-gray-500">{user.city}</span>
+                )}
               </div>
-            )}
-          </div>
+            </div>
 
-          {/* Name */}
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900">
-            {user.firstName} {user.lastName}
-          </h1>
-
-          {/* Role + Level + City */}
-          <div className="flex flex-wrap items-center justify-center gap-2 mt-2">
-            <Badge variant="default">
-              {ROLE_LABELS[user.role] || user.role}
-            </Badge>
-            {user.level !== "JUNIOR" && (
-              <Badge variant="verified">
-                {LEVEL_LABELS[user.level] || user.level}
-              </Badge>
-            )}
-            {user.city && (
-              <span className="text-sm text-gray-500">{user.city}</span>
-            )}
+            {/* Actions — owner-aware, vpravo od info */}
+            <div className="flex gap-2 flex-shrink-0">
+              {isOwner ? (
+                <Link
+                  href="/muj-ucet/profil"
+                  className="inline-flex items-center gap-1.5 py-2 px-4 bg-orange-500 text-white font-semibold rounded-full text-sm no-underline hover:bg-orange-600 transition-colors"
+                >
+                  Upravit profil
+                </Link>
+              ) : (
+                user.phone && (
+                  <a
+                    href={`tel:${user.phone}`}
+                    className="inline-flex items-center gap-1.5 py-2 px-4 bg-orange-500 text-white font-semibold rounded-full text-sm no-underline hover:bg-orange-600 transition-colors"
+                  >
+                    Kontaktovat
+                  </a>
+                )
+              )}
+              <button
+                onClick={handleShare}
+                className="inline-flex items-center gap-1.5 py-2 px-4 bg-white border border-gray-200 text-gray-700 font-semibold rounded-full text-sm cursor-pointer hover:border-orange-300 transition-colors"
+              >
+                {copied ? "Zkopírováno!" : "Sdílet profil"}
+              </button>
+            </div>
           </div>
 
           {/* Bio */}
           {user.bio && (
-            <p className="text-gray-600 max-w-xl mt-4">{user.bio}</p>
+            <p className="text-gray-600 max-w-2xl mt-4">{user.bio}</p>
           )}
 
           {/* Favorite brands */}
           {favBrands.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-1.5 mt-3">
+            <div className="flex flex-wrap gap-1.5 mt-3">
               {favBrands.map((brand) => (
                 <span
                   key={brand}
@@ -331,7 +361,7 @@ export default function ProfilePage() {
 
           {/* Specializations (G8) */}
           {specs.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-1.5 mt-3">
+            <div className="flex flex-wrap gap-1.5 mt-3">
               {specs.map((s) => (
                 <span key={s} className="text-xs font-medium bg-orange-50 text-orange-700 px-2.5 py-1 rounded-full">{s}</span>
               ))}
@@ -340,7 +370,7 @@ export default function ProfilePage() {
 
           {/* Services */}
           {user.services && (user.services as string[]).length > 0 && (
-            <div className="flex flex-wrap justify-center gap-1.5 mt-2">
+            <div className="flex flex-wrap gap-1.5 mt-2">
               {(user.services as string[]).map((s) => (
                 <span key={s} className="text-xs font-medium bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full">{s}</span>
               ))}
@@ -348,7 +378,7 @@ export default function ProfilePage() {
           )}
 
           {/* Languages + Experience + Website */}
-          <div className="flex flex-wrap items-center justify-center gap-3 mt-3 text-xs text-gray-500">
+          <div className="flex flex-wrap items-center gap-3 mt-3 text-xs text-gray-500">
             {user.yearsExperience && <span>{user.yearsExperience} let zkušeností</span>}
             {user.languageSkills && (user.languageSkills as string[]).length > 0 && (
               <span>{(user.languageSkills as string[]).join(", ")}</span>
@@ -362,7 +392,7 @@ export default function ProfilePage() {
 
           {/* Social links */}
           {user.socialLinks && (
-            <div className="flex justify-center gap-3 mt-2">
+            <div className="flex gap-3 mt-2">
               {user.socialLinks.instagram && (
                 <a href={user.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-pink-500 text-sm no-underline">Instagram</a>
               )}
@@ -380,7 +410,7 @@ export default function ProfilePage() {
             <div className="mt-4 p-3 bg-gray-50 rounded-lg text-sm max-w-md">
               <p className="font-medium text-gray-700">Sklad: {user.warehouseAddress}</p>
               {user.openingHours && (
-                <div className="mt-1 text-xs text-gray-500 flex flex-wrap justify-center gap-x-3">
+                <div className="mt-1 text-xs text-gray-500 flex flex-wrap gap-x-3">
                   {Object.entries(user.openingHours).map(([day, hours]) => (
                     <span key={day}>{dayLabels[day] || day}: {hours}</span>
                   ))}
@@ -393,37 +423,10 @@ export default function ProfilePage() {
           <p className="text-xs text-gray-400 mt-3">
             Člen od {memberSince} · {user.profileViews} zobrazení profilu
           </p>
-
-          {/* Actions — owner-aware */}
-          <div className="flex gap-2 mt-4 justify-center">
-            {isOwner ? (
-              <Link
-                href="/muj-ucet/profil"
-                className="inline-flex items-center gap-1.5 py-2 px-4 bg-orange-500 text-white font-semibold rounded-full text-sm no-underline hover:bg-orange-600 transition-colors"
-              >
-                Upravit profil
-              </Link>
-            ) : (
-              user.phone && (
-                <a
-                  href={`tel:${user.phone}`}
-                  className="inline-flex items-center gap-1.5 py-2 px-4 bg-orange-500 text-white font-semibold rounded-full text-sm no-underline hover:bg-orange-600 transition-colors"
-                >
-                  Kontaktovat
-                </a>
-              )
-            )}
-            <button
-              onClick={handleShare}
-              className="inline-flex items-center gap-1.5 py-2 px-4 bg-white border border-gray-200 text-gray-700 font-semibold rounded-full text-sm cursor-pointer hover:border-orange-300 transition-colors"
-            >
-              {copied ? "Zkopírováno!" : "Sdílet profil"}
-            </button>
-          </div>
         </div>
 
-        {/* Stats Bar — flex justify-center s border-y divider */}
-        <div className="flex flex-wrap justify-center gap-8 sm:gap-12 mb-6 py-4 border-y border-gray-200">
+        {/* Stats Bar — flex s border-y divider */}
+        <div className="flex flex-wrap gap-8 sm:gap-12 mb-6 py-4 border-y border-gray-200">
           {stats.vehicles > 0 && <Stat value={stats.vehicles} label="Vozidla" />}
           {stats.listings > 0 && <Stat value={stats.listings} label="Inzeráty" />}
           {stats.parts > 0 && <Stat value={stats.parts} label="Díly" />}
@@ -438,7 +441,7 @@ export default function ProfilePage() {
 
         {/* Tabs */}
         <div className="border-b border-gray-200 mb-6 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-          <div className="flex justify-center gap-0">
+          <div className="flex gap-0">
             {tabs.map((tab) => (
               <button
                 key={tab}
@@ -490,9 +493,9 @@ export default function ProfilePage() {
 
         {/* Badges */}
         {badges.length > 0 && (
-          <section className="mb-10 text-center">
+          <section className="mb-10">
             <h2 className="text-lg font-bold text-gray-900 mb-4">Odznaky</h2>
-            <div className="flex flex-wrap justify-center gap-3">
+            <div className="flex flex-wrap gap-3">
               {badges.map((badge) => {
                 const info = BADGE_CATALOG[badge.badgeKey];
                 if (!info) return null;
