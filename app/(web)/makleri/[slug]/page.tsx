@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
 import { BASE_URL } from "@/lib/seo-data";
-import { formatPrice, formatRelativeCz } from "@/lib/utils";
+import { formatPrice, formatRelativeCz, parseCities } from "@/lib/utils";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { LandingHero } from "@/components/web/LandingHero";
 import { BrokerGrid, type BrokerGridExtra } from "@/components/web/BrokerGrid";
@@ -22,6 +22,9 @@ import {
 import { getRelatedTagsByCoOccurrence } from "@/lib/tags";
 
 export const revalidate = 3600;
+
+/** Landing stránky s < tímto počtem makléřů dostanou `noindex,follow`. */
+const MIN_BROKERS_FOR_INDEX = 2;
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -58,7 +61,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: copy.h1,
       description: copy.subheadline,
     },
-    robots: count < 2 ? { index: false, follow: true } : undefined,
+    robots:
+      count < MIN_BROKERS_FOR_INDEX ? { index: false, follow: true } : undefined,
   };
 }
 
@@ -213,12 +217,6 @@ async function fetchLandingData(slug: string) {
       category: tag.category,
     },
     brokers: tag.users.map((u) => {
-      let citiesArr: string[] = [];
-      try {
-        citiesArr = u.cities ? (JSON.parse(u.cities) as string[]) : [];
-      } catch {
-        citiesArr = [];
-      }
       return {
         slug: u.slug!,
         firstName: u.firstName,
@@ -226,7 +224,7 @@ async function fetchLandingData(slug: string) {
         avatar: u.avatar,
         level: u.level,
         city: u.city,
-        cities: citiesArr,
+        cities: parseCities(u.cities),
         bio: u.bio,
         totalSales: u.totalSales,
         activeVehicles: activeByBroker.get(u.id) ?? 0,

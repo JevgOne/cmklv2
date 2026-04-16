@@ -22,10 +22,6 @@ const LEVEL_RANK: Record<string, number> = {
   JUNIOR: 1,
 };
 
-/**
- * Interaktivní broker grid pro /makleri/[slug] (sort + "Zobrazit více").
- * Featured = první broker po aktuálním sortu (lg:col-span-2).
- */
 export function BrokerGrid({ brokers, initialLimit = 12 }: BrokerGridProps) {
   const [sort, setSort] = useState<SortKey>("sales");
   const [limit, setLimit] = useState(initialLimit);

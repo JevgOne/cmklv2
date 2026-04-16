@@ -13,10 +13,6 @@ import { CommentSection } from "@/components/web/CommentSection";
 import { TagPill } from "@/components/web/TagPill";
 import { BADGE_CATALOG } from "@/lib/badge-catalog";
 
-/* ------------------------------------------------------------------ */
-/*  Types                                                              */
-/* ------------------------------------------------------------------ */
-
 interface ProfileUser {
   id: string;
   firstName: string;
@@ -83,10 +79,6 @@ interface ProfileItem {
   part?: { id: string; slug: string; name: string; price: number; images: { url: string }[] } | null;
 }
 
-/* ------------------------------------------------------------------ */
-/*  Role/tab config                                                    */
-/* ------------------------------------------------------------------ */
-
 const ROLE_TABS: Record<string, string[]> = {
   BROKER: ["vehicles", "liked"],
   ADVERTISER: ["listings", "liked"],
@@ -131,12 +123,32 @@ const ROLE_LABELS: Record<string, string> = {
   PARTNER_BAZAR: "Autobazar",
 };
 
+const DAY_LABELS: Record<string, string> = {
+  po: "Po",
+  ut: "Út",
+  st: "St",
+  ct: "Čt",
+  pa: "Pá",
+  so: "So",
+  ne: "Ne",
+};
+
 function formatPrice(amount: number): string {
   return new Intl.NumberFormat("cs-CZ", {
     style: "currency",
     currency: "CZK",
     maximumFractionDigits: 0,
   }).format(amount);
+}
+
+function safeJsonArray(raw: string | null | undefined): string[] {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
 }
 
 function Stat({ value, label, valueClass }: { value: number | string; label: string; valueClass?: string }) {
@@ -147,10 +159,6 @@ function Stat({ value, label, valueClass }: { value: number | string; label: str
     </div>
   );
 }
-
-/* ------------------------------------------------------------------ */
-/*  Page                                                               */
-/* ------------------------------------------------------------------ */
 
 export default function ProfilePage() {
   const params = useParams();
@@ -253,10 +261,9 @@ export default function ProfilePage() {
   const { user, stats, roleStats, badges } = profile;
   const isOwner = !!session?.user?.id && session.user.id === user.id;
   const tabs = ROLE_TABS[user.role] || ["liked"];
-  const favBrands: string[] = user.favoriteBrands ? JSON.parse(user.favoriteBrands) : [];
-  const specs: string[] = user.specializations ? (() => { try { return JSON.parse(user.specializations); } catch { return []; } })() : [];
+  const favBrands = safeJsonArray(user.favoriteBrands);
+  const specs = safeJsonArray(user.specializations);
   const memberSince = new Date(user.createdAt).toLocaleDateString("cs-CZ", { month: "long", year: "numeric" });
-  const dayLabels: Record<string, string> = { po: "Po", ut: "Út", st: "St", ct: "Čt", pa: "Pá", so: "So", ne: "Ne" };
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -400,7 +407,7 @@ export default function ProfilePage() {
                 {user.openingHours && (
                   <div className="mt-1 text-xs text-gray-500 flex flex-wrap gap-x-3">
                     {Object.entries(user.openingHours).map(([day, hours]) => (
-                      <span key={day}>{dayLabels[day] || day}: {hours}</span>
+                      <span key={day}>{DAY_LABELS[day] || day}: {hours}</span>
                     ))}
                   </div>
                 )}
@@ -534,16 +541,12 @@ export default function ProfilePage() {
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  ProfileItemCard — single grid cell                                 */
-/* ------------------------------------------------------------------ */
-
 function ProfileItemCard({ item, type }: { item: ProfileItem; type: string }) {
   if (type === "investment") {
     const raw = item as unknown as { opportunity: { brand: string; model: string; year: number; status: string; photos: string | null; estimatedSalePrice: number } | null; amount: number };
     const opp = raw.opportunity;
     if (!opp) return null;
-    const photos: string[] = opp.photos ? (() => { try { return JSON.parse(opp.photos); } catch { return []; } })() : [];
+    const photos = safeJsonArray(opp.photos);
     const label = `${opp.brand} ${opp.model} (${opp.year})`;
     const amount = raw.amount;
     return (
@@ -568,7 +571,7 @@ function ProfileItemCard({ item, type }: { item: ProfileItem; type: string }) {
 
   if (type === "flip") {
     const raw = item as unknown as { photos: string | null; brand: string; model: string; price: number | null; status: string };
-    const photos: string[] = raw.photos ? (() => { try { return JSON.parse(raw.photos); } catch { return []; } })() : [];
+    const photos = safeJsonArray(raw.photos);
     const label = `${raw.brand} ${raw.model}`;
     const status = raw.status;
     return (
@@ -592,7 +595,6 @@ function ProfileItemCard({ item, type }: { item: ProfileItem; type: string }) {
   }
 
   if (type === "liked") {
-    // Liked item — unwrap polymorphic target
     const target = item.vehicle || item.listing || item.part;
     if (!target) return null;
 
@@ -602,9 +604,7 @@ function ProfileItemCard({ item, type }: { item: ProfileItem; type: string }) {
       : `${(target as { brand: string }).brand} ${(target as { model: string }).model}`;
     const href = "name" in target
       ? `/dily/${target.slug}`
-      : item.vehicle
-        ? `/nabidka/${target.slug}`
-        : `/nabidka/${target.slug}`;
+      : `/nabidka/${target.slug}`;
 
     return (
       <Link href={href} className="no-underline group">
@@ -625,7 +625,6 @@ function ProfileItemCard({ item, type }: { item: ProfileItem; type: string }) {
     );
   }
 
-  // Regular items (vehicle, listing, part)
   const image = item.images?.[0]?.url;
   const likeCount = item._count?.profileLikes ?? 0;
   const commentCount = item._count?.profileComments ?? 0;
@@ -638,17 +637,16 @@ function ProfileItemCard({ item, type }: { item: ProfileItem; type: string }) {
     ? `/dily/${item.slug}`
     : `/nabidka/${item.slug}`;
 
-  const likeProps = type === "vehicle"
-    ? { vehicleId: item.id }
-    : type === "listing"
-      ? { listingId: item.id }
-      : { partId: item.id };
-
-  const commentProps = type === "vehicle"
-    ? { vehicleId: item.id }
-    : type === "listing"
-      ? { listingId: item.id }
-      : { partId: item.id };
+  const entityProps: {
+    vehicleId?: string;
+    listingId?: string;
+    partId?: string;
+  } =
+    type === "vehicle"
+      ? { vehicleId: item.id }
+      : type === "listing"
+        ? { listingId: item.id }
+        : { partId: item.id };
 
   return (
     <div className="group">
@@ -670,12 +668,12 @@ function ProfileItemCard({ item, type }: { item: ProfileItem; type: string }) {
         </div>
       </Link>
       <div className="flex items-center gap-3 mt-1.5 px-0.5">
-        <LikeButton {...likeProps} initialCount={likeCount} size="sm" />
+        <LikeButton {...entityProps} initialCount={likeCount} size="sm" />
         {commentCount > 0 && (
           <span className="text-xs text-gray-400">&#128172; {commentCount}</span>
         )}
       </div>
-      <CommentSection {...commentProps} initialCount={commentCount} />
+      <CommentSection {...entityProps} initialCount={commentCount} />
     </div>
   );
 }

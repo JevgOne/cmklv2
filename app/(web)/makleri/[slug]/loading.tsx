@@ -1,12 +1,10 @@
 export default function HashtagLandingLoading() {
   return (
     <main>
-      {/* Breadcrumb skeleton */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="h-4 w-48 bg-gray-100 rounded animate-pulse" />
       </div>
 
-      {/* Hero skeleton */}
       <section className="bg-gradient-to-br from-orange-500 via-orange-500 to-orange-600 py-14 sm:py-20 md:py-28">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="h-5 w-24 bg-white/20 rounded-full animate-pulse" />
@@ -23,7 +21,6 @@ export default function HashtagLandingLoading() {
         </div>
       </section>
 
-      {/* Grid skeleton */}
       <section className="py-12 md:py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-2 mb-6">

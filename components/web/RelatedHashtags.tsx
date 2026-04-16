@@ -11,9 +11,6 @@ export interface RelatedHashtagsProps {
   heading?: string;
 }
 
-/**
- * Section 4 — related hashtagy (co-occurrence). Skryté pokud empty.
- */
 export function RelatedHashtags({
   tags,
   heading = "Mohlo by vás zajímat",

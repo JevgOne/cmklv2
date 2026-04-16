@@ -7,10 +7,6 @@ export interface CTABlockProps {
   variant?: "mid" | "bottom";
 }
 
-/**
- * Mid/bottom CTA block pro /makleri/[slug].
- * `mid` = orange gradient card. `bottom` = decent gray card (final CTA před footerem).
- */
 export function CTABlock({ copy, variant = "mid" }: CTABlockProps) {
   const isMid = variant === "mid";
 

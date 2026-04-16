@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { LandingStats } from "@/lib/landing-copy";
+import { getInitials } from "@/lib/utils";
 
 export interface LandingHeroBroker {
   slug: string;
@@ -16,10 +17,6 @@ export interface LandingHeroProps {
   featuredBrokers: LandingHeroBroker[];
 }
 
-/**
- * Section 2 — full-bleed orange gradient hero pro /makleri/[slug].
- * Eyebrow + H1 + subheadline + 4 stats chips + 4 featured avatars + 2 CTAs.
- */
 export function LandingHero({
   eyebrow,
   h1,
@@ -78,9 +75,8 @@ export function LandingHero({
 
           {featuredBrokers.length > 0 && (
             <div className="flex items-center md:mt-2 shrink-0">
-              {featuredBrokers.slice(0, 4).map((b, i) => {
-                const initials =
-                  (b.firstName?.[0] ?? "") + (b.lastName?.[0] ?? "");
+              {featuredBrokers.map((b, i) => {
+                const initials = getInitials(b.firstName, b.lastName);
                 return (
                   <div
                     key={b.slug}

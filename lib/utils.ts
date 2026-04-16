@@ -39,6 +39,31 @@ export function formatRelativeCz(input: string | Date | null): string {
   }).format(date);
 }
 
+/**
+ * Dvoupísmenné iniciály z křestního a příjmení. Používáme na avatary
+ * (fallback, když chybí foto).
+ */
+export function getInitials(
+  firstName: string | null | undefined,
+  lastName: string | null | undefined
+): string {
+  return (firstName?.[0] ?? "") + (lastName?.[0] ?? "");
+}
+
+/**
+ * Parsuje JSON string pole měst z User.cities. Bezpečně vrací [] při chybě —
+ * pole je historicky JSON string, ne nativní pole.
+ */
+export function parseCities(raw: string | null | undefined): string[] {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as string[]) : [];
+  } catch {
+    return [];
+  }
+}
+
 export function slugify(text: string): string {
   return text
     .normalize("NFD")

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { TagPill } from "@/components/web/TagPill";
-import { cn } from "@/lib/utils";
+import { cn, getInitials } from "@/lib/utils";
 
 export interface BrokerCardBroker {
   slug: string;
@@ -31,14 +31,8 @@ const LEVEL_LABEL: Record<string, string> = {
   JUNIOR: "Ověřený",
 };
 
-/**
- * Karta makléře pro /makleri/[slug] broker grid.
- * Featured variant = `lg:col-span-2` + orange border + avatar 96px.
- * Regular variant = avatar 80px.
- */
 export function BrokerCard({ broker, featured = false }: BrokerCardProps) {
-  const initials =
-    (broker.firstName?.[0] ?? "") + (broker.lastName?.[0] ?? "");
+  const initials = getInitials(broker.firstName, broker.lastName);
   const primaryCity = broker.city || broker.cities[0] || null;
   const maxTags = 3;
   const visibleTags = broker.tags.slice(0, maxTags);

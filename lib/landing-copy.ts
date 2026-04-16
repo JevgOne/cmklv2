@@ -233,7 +233,7 @@ export function getFAQ(
         },
         {
           question: `Kolik stojí ${tag.label.toLowerCase()}?`,
-          answer: "Provize je 5 % z prodejní ceny, min. 25 000 Kč. V případě výkupu se provize strhává z ceny.",
+          answer: "Provize je 5 % z prodejní ceny, minimálně 25 000 Kč. V případě výkupu se provize strhává z ceny.",
         },
       ];
     default:
