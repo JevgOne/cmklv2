@@ -2826,6 +2826,123 @@ async function main() {
 
   console.log(`AI Conversations: ${await prisma.aiConversation.count()}`);
 
+  // ============================================
+  // TAGY / HASHTAGY (SEO landing pages)
+  // ============================================
+
+  console.log("Seeding additional brokers for tag vazby...");
+
+  const petrSvoboda = await prisma.user.create({
+    data: {
+      email: "petr.svoboda@carmakler.cz",
+      firstName: "Petr",
+      lastName: "Svoboda",
+      passwordHash,
+      role: "BROKER",
+      status: "ACTIVE",
+      slug: "petr-svoboda-praha",
+      managerId: manazer.id,
+      city: "Praha",
+      bio: "Broker zaměřený na rodinná auta a automatické převodovky. Klienti oceňují rychlý přístup a férové ceny.",
+    },
+  });
+
+  const marekDvorak = await prisma.user.create({
+    data: {
+      email: "marek.dvorak@carmakler.cz",
+      firstName: "Marek",
+      lastName: "Dvořák",
+      passwordHash,
+      role: "BROKER",
+      status: "ACTIVE",
+      slug: "marek-dvorak-brno",
+      managerId: manazer.id,
+      city: "Brno",
+      bio: "Specialista na luxusní vozy a veterány. 15 let zkušeností s prémiovým segmentem.",
+    },
+  });
+
+  const lucieCerna = await prisma.user.create({
+    data: {
+      email: "lucie.cerna@carmakler.cz",
+      firstName: "Lucie",
+      lastName: "Černá",
+      passwordHash,
+      role: "BROKER",
+      status: "ACTIVE",
+      slug: "lucie-cerna-ostrava",
+      managerId: manazer.id,
+      city: "Ostrava",
+      bio: "Pomáhám lidem s prvním autem a rychlým výkupem. Osobní přístup ke každému klientovi.",
+    },
+  });
+
+  console.log(
+    `Created 3 additional brokers: ${petrSvoboda.email}, ${marekDvorak.email}, ${lucieCerna.email}`
+  );
+
+  console.log("Seeding featured tags...");
+
+  const FEATURED_TAGS = [
+    // CITY
+    { slug: "praha", label: "Praha", category: "CITY" },
+    { slug: "brno", label: "Brno", category: "CITY" },
+    { slug: "ostrava", label: "Ostrava", category: "CITY" },
+    // BRAND
+    { slug: "bmw", label: "BMW", category: "BRAND" },
+    { slug: "skoda", label: "Škoda", category: "BRAND" },
+    // SPECIALIZATION
+    { slug: "elektromobily", label: "Elektromobily", category: "SPECIALIZATION" },
+    { slug: "luxusni-vozy", label: "Luxusní vozy", category: "SPECIALIZATION" },
+    { slug: "veterani", label: "Veterání", category: "SPECIALIZATION" },
+    { slug: "prvni-auto", label: "První auto", category: "SPECIALIZATION" },
+    { slug: "family-cars", label: "Rodinná auta", category: "SPECIALIZATION" },
+    { slug: "automat", label: "Automat", category: "SPECIALIZATION" },
+    // SERVICE
+    { slug: "vykup-do-24h", label: "Výkup do 24h", category: "SERVICE" },
+  ] as const;
+
+  const tagMap: Record<string, string> = {};
+  for (const t of FEATURED_TAGS) {
+    const tag = await prisma.tag.create({
+      data: {
+        slug: t.slug,
+        label: t.label,
+        category: t.category,
+        isFeatured: true,
+      },
+    });
+    tagMap[t.slug] = tag.id;
+  }
+  console.log(`Created ${FEATURED_TAGS.length} featured tags`);
+
+  // Broker → Tag vazby (plán §9)
+  const brokerTagLinks: Array<[string, string[]]> = [
+    [janNovak.id, ["praha", "bmw", "skoda", "elektromobily", "luxusni-vozy"]],
+    [petrSvoboda.id, ["praha", "skoda", "family-cars", "automat"]],
+    [marekDvorak.id, ["brno", "luxusni-vozy", "veterani", "prvni-auto"]],
+    [lucieCerna.id, ["ostrava", "prvni-auto", "vykup-do-24h", "automat"]],
+  ];
+
+  for (const [userId, tagSlugs] of brokerTagLinks) {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        tags: {
+          connect: tagSlugs.map((s) => ({ id: tagMap[s] })),
+        },
+      },
+    });
+  }
+
+  const brokerTagCount = brokerTagLinks.reduce(
+    (sum, [, tags]) => sum + tags.length,
+    0
+  );
+  console.log(
+    `Created ${brokerTagCount} broker-tag vazeb (5 tagů má ≥2 brokery: praha, skoda, luxusni-vozy, prvni-auto, automat)`
+  );
+
   const regionCount = await prisma.region.count();
   const userCount = await prisma.user.count();
   const vehicleCount = await prisma.vehicle.count();
