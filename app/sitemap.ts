@@ -235,7 +235,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     brokerPages = brokers
       .filter((b) => b.slug)
       .map((b) => ({
-        url: `${BASE_URL}/makler/${b.slug}`,
+        url: `${BASE_URL}/profil/${b.slug}`,
         lastModified: b.updatedAt,
         changeFrequency: "weekly" as const,
         priority: 0.6,

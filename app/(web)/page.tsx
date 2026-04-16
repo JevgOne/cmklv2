@@ -534,7 +534,7 @@ export default async function HomePage() {
           {/* Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {brokers.map((broker) => (
-              <Link key={broker.slug} href={`/makler/${broker.slug}`} className="no-underline block group">
+              <Link key={broker.slug} href={`/profil/${broker.slug}`} className="no-underline block group">
                 <Card hover className="overflow-hidden">
                   {/* Header s fotkou a gradient overlay */}
                   <div className="relative h-[200px] bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden">

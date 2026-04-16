@@ -10,7 +10,7 @@ export interface BrokerSignatureData {
 export function generateSignatureHtml(broker: BrokerSignatureData): string {
   const fullName = `${broker.firstName} ${broker.lastName}`;
   const profileUrl = broker.slug
-    ? `https://carmakler.cz/makler/${broker.slug}`
+    ? `https://carmakler.cz/profil/${broker.slug}`
     : "https://carmakler.cz";
 
   const avatarHtml = broker.avatar
@@ -37,7 +37,7 @@ export function generateSignatureHtml(broker: BrokerSignatureData): string {
 export function generateSignatureText(broker: BrokerSignatureData): string {
   const fullName = `${broker.firstName} ${broker.lastName}`;
   const profileUrl = broker.slug
-    ? `https://carmakler.cz/makler/${broker.slug}`
+    ? `https://carmakler.cz/profil/${broker.slug}`
     : "https://carmakler.cz";
 
   const lines = [

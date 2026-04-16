@@ -118,7 +118,7 @@ export function BrokerBox({
 
       {/* Profile link */}
       <Link
-        href={`/makler/${slug}`}
+        href={`/profil/${slug}`}
         className="text-sm text-orange-700 font-semibold hover:text-orange-600 transition-colors text-center no-underline"
       >
         Zobrazit profil makléře &rarr;

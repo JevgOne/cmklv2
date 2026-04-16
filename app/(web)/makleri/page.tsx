@@ -111,7 +111,7 @@ export default async function MakleriPage() {
                 return (
                   <Link
                     key={broker.slug}
-                    href={`/makler/${broker.slug}`}
+                    href={`/profil/${broker.slug}`}
                     className="no-underline text-inherit"
                   >
                     <Card
