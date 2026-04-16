@@ -8,14 +8,12 @@ import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Alert } from "@/components/ui/Alert";
+import { BROKER_SPECIALIZATIONS } from "@/lib/broker-specializations";
 
-const SPECIALIZATIONS = [
-  { value: "personal", label: "Osobní" },
-  { value: "suv", label: "SUV" },
-  { value: "van", label: "Dodávky" },
-  { value: "luxury", label: "Luxusní" },
-  { value: "electric", label: "Elektromobily" },
-];
+// Sjednoceno na shared catalog — CZ labels se ukládají přímo do
+// User.specializations (dřív se ukládaly lowercase values jako "personal",
+// "suv", …, což bylo v driftu s editorem v /muj-ucet/profil).
+const SPECIALIZATIONS = BROKER_SPECIALIZATIONS.vehicleTypes;
 
 export function ProfileForm() {
   const router = useRouter();
@@ -137,10 +135,10 @@ export function ProfileForm() {
         <div className="flex flex-wrap gap-3">
           {SPECIALIZATIONS.map((spec) => (
             <Checkbox
-              key={spec.value}
-              label={spec.label}
-              checked={specializations.includes(spec.value)}
-              onChange={() => toggleSpecialization(spec.value)}
+              key={spec}
+              label={spec}
+              checked={specializations.includes(spec)}
+              onChange={() => toggleSpecialization(spec)}
             />
           ))}
         </div>

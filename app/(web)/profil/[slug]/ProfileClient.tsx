@@ -12,6 +12,7 @@ import { CommentSection } from "@/components/web/CommentSection";
 import { TagPill } from "@/components/web/TagPill";
 import { BADGE_CATALOG } from "@/lib/badge-catalog";
 import { getDefaultCover } from "@/lib/profile/defaultCovers";
+import { categorizeSpecialization } from "@/lib/broker-specializations";
 import { formatPrice, getInitials, parseCities } from "@/lib/utils";
 import {
   ROLE_LABELS,
@@ -216,9 +217,34 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
   const isOwner = !!session?.user?.id && session.user.id === user.id;
   const tabs = ROLE_TABS[user.role] || ["liked"];
   const favBrands = parseCities(user.favoriteBrands);
-  const specs = parseCities(user.specializations);
-  const services = user.services ?? [];
+  const specsRaw = parseCities(user.specializations);
+  const servicesRaw = user.services ?? [];
   const languages = user.languageSkills ?? [];
+
+  // Rozdělit specializations + services do 2 skupin (typy vozidel / služby).
+  // Mergujeme z obou DB polí, protože hodnoty mohou být historicky zapsané
+  // v opačném poli (backward compat). categorizeSpecialization je case-insensitive.
+  const { vehicleTypeTags, serviceTags } = (() => {
+    const allRaw = [...specsRaw, ...servicesRaw];
+    const seen = new Set<string>();
+    const vTypes: string[] = [];
+    const svcs: string[] = [];
+    for (const item of allRaw) {
+      const key = item.trim().toLowerCase();
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
+      const cat = categorizeSpecialization(item);
+      if (cat === "type") {
+        vTypes.push(item);
+      } else if (cat === "service") {
+        svcs.push(item);
+      } else {
+        // Unknown / starý formát — fallback do typů (zachová viditelnost).
+        vTypes.push(item);
+      }
+    }
+    return { vehicleTypeTags: vTypes, serviceTags: svcs };
+  })();
   const memberSince = new Date(user.createdAt).toLocaleDateString("cs-CZ", {
     month: "long",
     year: "numeric",
@@ -230,8 +256,8 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
   const fullName = `${user.firstName} ${user.lastName}`;
   const hasAboutCard = !!(user.bio || user.motto || favBrands.length > 0);
   const hasSpecCard =
-    specs.length > 0 ||
-    services.length > 0 ||
+    vehicleTypeTags.length > 0 ||
+    serviceTags.length > 0 ||
     languages.length > 0 ||
     !!user.yearsExperience;
   const hasContactCard = !!(
@@ -327,9 +353,9 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
                     <Stat value={stats.parts} label="Díly" />
                   )}
                   <Stat value={stats.totalLikes} label="Lajky" />
-                  {stats.totalSales > 0 && (
-                    <Stat value={stats.totalSales} label="Prodeje" />
-                  )}
+                  {["BROKER", "MANAGER", "REGIONAL_DIRECTOR"].includes(
+                    user.role,
+                  ) && <Stat value={stats.totalSales} label="Prodáno" />}
                   {roleStats.completedFlips !== undefined && (
                     <Stat value={roleStats.completedFlips} label="Flipy" />
                   )}
@@ -434,48 +460,67 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
               Specializace
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              {services.length > 0 && (
-                <div>
-                  <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">
-                    Služby
-                  </h3>
-                  <div className="flex flex-wrap gap-1.5">
-                    {services.map((s) => (
-                      <span
-                        key={s}
-                        className="text-xs font-medium bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full"
-                      >
-                        {s}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {specs.length > 0 && (
-                <div>
-                  <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">
-                    Specializace
-                  </h3>
-                  <div className="flex flex-wrap gap-1.5">
-                    {specs.map((s) => (
-                      <span
-                        key={s}
-                        className="text-xs font-medium bg-orange-50 text-orange-700 px-2.5 py-1 rounded-full"
-                      >
-                        {s}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {(() => {
+                const hasBothGroups =
+                  vehicleTypeTags.length > 0 && serviceTags.length > 0;
+                return (
+                  <>
+                    {vehicleTypeTags.length > 0 && (
+                      <div>
+                        {hasBothGroups && (
+                          <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">
+                            Typy vozidel
+                          </h3>
+                        )}
+                        <div className="flex flex-wrap gap-1.5">
+                          {vehicleTypeTags.map((s) => (
+                            <span
+                              key={s}
+                              className="text-xs font-medium bg-orange-50 text-orange-700 px-2.5 py-1 rounded-full"
+                            >
+                              {s}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {serviceTags.length > 0 && (
+                      <div>
+                        {hasBothGroups && (
+                          <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">
+                            Služby
+                          </h3>
+                        )}
+                        <div className="flex flex-wrap gap-1.5">
+                          {serviceTags.map((s) => (
+                            <span
+                              key={s}
+                              className="text-xs font-medium bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full"
+                            >
+                              {s}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
               {languages.length > 0 && (
                 <div>
                   <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">
                     Jazyky
                   </h3>
-                  <p className="text-sm text-gray-700">
-                    {languages.join(", ")}
-                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {languages.map((lang) => (
+                      <span
+                        key={lang}
+                        className="text-xs font-medium bg-orange-50 text-orange-700 px-2.5 py-1 rounded-full"
+                      >
+                        {lang}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               )}
               {user.yearsExperience !== null &&

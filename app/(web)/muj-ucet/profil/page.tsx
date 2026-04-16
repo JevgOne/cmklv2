@@ -7,6 +7,10 @@ import { Input } from "@/components/ui/Input";
 import { TagInput, type TagInputValue } from "@/components/web/TagInput";
 import Link from "next/link";
 import { DAY_KEYS, DAY_LABELS } from "@/lib/role-labels";
+import {
+  BROKER_SPECIALIZATIONS,
+  SERVICE_GROUPS,
+} from "@/lib/broker-specializations";
 
 interface ProfileEditData {
   firstName: string;
@@ -40,13 +44,7 @@ const BRAND_OPTIONS = [
   "Volvo", "Honda", "Nissan", "Suzuki", "Dacia",
 ];
 
-const SPECIALIZATION_OPTIONS = [
-  "SUV", "Veterány", "Elektro", "Užitkové", "Luxusní", "Sportovní",
-];
-
-const SERVICE_OPTIONS = [
-  "Dovoz", "Prověrka", "Financování", "Pojištění", "STK",
-];
+const SPECIALIZATION_OPTIONS = BROKER_SPECIALIZATIONS.vehicleTypes;
 
 const LANGUAGE_OPTIONS = [
   "Čeština", "Angličtina", "Němčina", "Slovenština", "Polština", "Ruština",
@@ -387,25 +385,34 @@ export default function ProfileEditPage() {
           </Card>
         </div>
 
-        {/* Services */}
+        {/* Services — rozděleno do skupin dle SERVICE_GROUPS */}
         <Card className="p-5">
           <h3 className="font-semibold text-gray-900 mb-4">Služby</h3>
-          <div className="flex flex-wrap gap-2">
-            {SERVICE_OPTIONS.map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => setServices((prev) =>
-                  prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]
-                )}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium border cursor-pointer transition-colors ${
-                  services.includes(s)
-                    ? "bg-blue-500 text-white border-blue-500"
-                    : "bg-white text-gray-600 border-gray-200 hover:border-blue-300"
-                }`}
-              >
-                {s}
-              </button>
+          <div className="space-y-4">
+            {Object.entries(SERVICE_GROUPS).map(([group, items]) => (
+              <div key={group}>
+                <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">
+                  {group}
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {items.map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => setServices((prev) =>
+                        prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]
+                      )}
+                      className={`px-3 py-1.5 rounded-full text-sm font-medium border cursor-pointer transition-colors ${
+                        services.includes(s)
+                          ? "bg-blue-500 text-white border-blue-500"
+                          : "bg-white text-gray-600 border-gray-200 hover:border-blue-300"
+                      }`}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </Card>

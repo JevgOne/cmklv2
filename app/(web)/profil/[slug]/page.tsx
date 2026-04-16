@@ -62,6 +62,8 @@ const getProfileData = cache(
       listingCount,
       partCount,
       totalLikes,
+      vehicleSoldCount,
+      listingSoldCount,
       dealerFlips,
       investorInvestments,
     ] = await Promise.all([
@@ -83,6 +85,12 @@ const getProfileData = cache(
           ],
         },
       }),
+      prisma.vehicle.count({
+        where: { brokerId: user.id, status: "SOLD" },
+      }),
+      prisma.listing.count({
+        where: { userId: user.id, status: "SOLD" },
+      }),
       isDealer
         ? prisma.flipOpportunity.findMany({
             where: { dealerId: user.id, status: "COMPLETED" },
@@ -100,6 +108,12 @@ const getProfileData = cache(
           })
         : Promise.resolve([]),
     ]);
+
+    // Authoritative sold count z DB (real-time), fallback na user.totalSales
+    // pokud oba dotazy 0 a gamifikace držela hodnotu.
+    const authoritativeSold = vehicleSoldCount + listingSoldCount;
+    const soldCount =
+      authoritativeSold > 0 ? authoritativeSold : user.totalSales;
 
     let roleStats: Record<string, number> = {};
 
@@ -167,7 +181,7 @@ const getProfileData = cache(
         listings: listingCount,
         parts: partCount,
         totalLikes,
-        totalSales: user.totalSales,
+        totalSales: soldCount,
       },
       roleStats,
       badges: user.profileBadges.map((b) => ({
