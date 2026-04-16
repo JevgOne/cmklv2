@@ -1,5 +1,8 @@
+import { Prisma, PrismaClient } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/seo/slugify";
+
+type PrismaLike = PrismaClient | Prisma.TransactionClient;
 
 /**
  * Normalizuje user input pro nový tag.
@@ -23,13 +26,15 @@ export function normalizeTagInput(input: { slug?: string; label: string }): {
 /**
  * Upsert tag by slug. Při existujícím zachová původní label (nepřepisuje).
  * Nové tagy zaznamenají createdById pro audit.
+ * Optional `client` parametr umožňuje volání uvnitř `$transaction`.
  */
 export async function upsertTag(
   slug: string,
   label: string,
-  createdById?: string
+  createdById?: string,
+  client: PrismaLike = prisma
 ) {
-  return prisma.tag.upsert({
+  return client.tag.upsert({
     where: { slug },
     create: { slug, label, createdById: createdById ?? null },
     update: {},

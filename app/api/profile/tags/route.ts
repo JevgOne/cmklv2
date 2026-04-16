@@ -62,21 +62,25 @@ export async function PUT(req: NextRequest) {
       );
     }
 
-    const normalized = parsed.data.tags.map(normalizeTagInput);
-
-    // Upsert all tags and collect IDs
-    const tagIds: string[] = [];
-    for (const t of normalized) {
-      const tag = await upsertTag(t.slug, t.label, session.user.id);
-      tagIds.push(tag.id);
+    // Dedupe by slug — user může omylem poslat 2× stejný tag
+    const normalizedMap = new Map<string, { slug: string; label: string }>();
+    for (const t of parsed.data.tags) {
+      const n = normalizeTagInput(t);
+      if (!normalizedMap.has(n.slug)) normalizedMap.set(n.slug, n);
     }
+    const normalized = [...normalizedMap.values()];
 
-    // Replace user's tag set atomicky
-    await prisma.user.update({
-      where: { id: session.user.id },
-      data: {
-        tags: { set: tagIds.map((id) => ({ id })) },
-      },
+    // Atomická transakce: upsert všech tagů + replace user's tag set
+    await prisma.$transaction(async (tx) => {
+      const tags = await Promise.all(
+        normalized.map((t) => upsertTag(t.slug, t.label, session.user.id, tx))
+      );
+      await tx.user.update({
+        where: { id: session.user.id },
+        data: {
+          tags: { set: tags.map((t) => ({ id: t.id })) },
+        },
+      });
     });
 
     return NextResponse.json({
