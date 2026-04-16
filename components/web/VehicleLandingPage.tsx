@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { FaqSection } from "./FaqSection";
-import type { FaqSectionItem } from "./FaqSection";
+import { FAQ, type FAQItem } from "./FAQ";
 
 interface BreadcrumbItem {
   name: string;
@@ -20,7 +19,7 @@ interface VehicleLandingPageProps {
   aiSnippet?: string;
   quickFacts?: string[];
   seoText: React.ReactNode;
-  faqItems: FaqSectionItem[];
+  faqItems: FAQItem[];
   breadcrumbs: BreadcrumbItem[];
   jsonLdScripts: string[];
   ctaText?: string;
@@ -164,7 +163,7 @@ export function VehicleLandingPage({
 
       {/* FAQ section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <FaqSection items={faqItems} />
+        <FAQ items={faqItems} variant="divider" title="Často kladené otázky" />
       </section>
 
       {/* CTA section */}

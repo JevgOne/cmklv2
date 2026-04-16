@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { FaqSection } from "@/components/web/FaqSection";
+import { FAQ } from "@/components/web/FAQ";
 import { pageCanonical } from "@/lib/canonical";
 import {
   generateBreadcrumbJsonLd,
@@ -226,7 +226,7 @@ export default function JakProdatAutoPage() {
 
       {/* FAQ */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <FaqSection items={faqItems} />
+        <FAQ items={faqItems} variant="divider" title="Často kladené otázky" />
       </div>
 
       {/* CTA */}

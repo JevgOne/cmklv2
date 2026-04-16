@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { FaqSection } from "@/components/web/FaqSection";
+import { FAQ } from "@/components/web/FAQ";
 import { generateBreadcrumbJsonLd, generateFaqJsonLd } from "@/lib/seo";
 import { PARTS_CATEGORIES, PARTS_BRANDS, BASE_URL } from "@/lib/seo-data";
 import { pageCanonical } from "@/lib/canonical";
@@ -119,7 +119,7 @@ export default async function PartsCategoryPage({
 
       {/* FAQ */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <FaqSection items={category.faqItems} />
+        <FAQ items={category.faqItems} variant="divider" title="Často kladené otázky" />
       </div>
 
       {/* Related categories */}

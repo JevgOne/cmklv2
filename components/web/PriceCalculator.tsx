@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { FaqSection } from "@/components/web/FaqSection";
+import { FAQ } from "@/components/web/FAQ";
 import { BRANDS } from "@/lib/seo-data";
 
 const faqItems = [
@@ -217,7 +217,7 @@ export function PriceCalculator() {
 
       {/* FAQ */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <FaqSection items={faqItems} />
+        <FAQ items={faqItems} variant="divider" title="Často kladené otázky" />
       </div>
     </>
   );

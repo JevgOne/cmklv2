@@ -10,28 +10,41 @@ export interface FAQItem {
 
 export interface FAQProps {
   items: FAQItem[];
+  title?: string;
+  variant?: "card" | "divider";
 }
 
-export function FAQ({ items }: FAQProps) {
+export function FAQ({ items, title, variant = "card" }: FAQProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggle = (index: number) => {
     setOpenIndex((prev) => (prev === index ? null : index));
   };
 
-  return (
-    <div className="flex flex-col gap-3">
+  if (items.length === 0) return null;
+
+  const isDivider = variant === "divider";
+
+  const list = (
+    <div className={cn(!isDivider && "flex flex-col gap-3")}>
       {items.map((item, index) => {
         const isOpen = openIndex === index;
         return (
           <div
             key={index}
-            className="bg-white rounded-xl border border-gray-200 overflow-hidden transition-all duration-200"
+            className={cn(
+              isDivider
+                ? "border-b border-gray-200"
+                : "bg-white rounded-xl border border-gray-200 overflow-hidden transition-all duration-200"
+            )}
           >
             <button
               type="button"
               onClick={() => toggle(index)}
-              className="w-full flex items-center justify-between gap-3 sm:gap-4 px-4 sm:px-6 py-4 sm:py-5 text-left cursor-pointer bg-transparent border-none min-h-[44px]"
+              className={cn(
+                "w-full flex items-center justify-between gap-3 sm:gap-4 text-left cursor-pointer bg-transparent border-none min-h-[44px]",
+                isDivider ? "py-5" : "px-4 sm:px-6 py-4 sm:py-5"
+              )}
             >
               <span className="text-[16px] font-semibold text-gray-900">
                 {item.question}
@@ -60,7 +73,12 @@ export function FAQ({ items }: FAQProps) {
               )}
             >
               <div className="overflow-hidden">
-                <div className="px-4 sm:px-6 pb-4 sm:pb-5 text-[15px] text-gray-600 leading-relaxed">
+                <div
+                  className={cn(
+                    "text-[15px] text-gray-600 leading-relaxed",
+                    isDivider ? "pb-5" : "px-4 sm:px-6 pb-4 sm:pb-5"
+                  )}
+                >
                   {item.answer}
                 </div>
               </div>
@@ -70,4 +88,19 @@ export function FAQ({ items }: FAQProps) {
       })}
     </div>
   );
+
+  if (title) {
+    return (
+      <section className="py-12 md:py-16">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8 text-center">
+            {title}
+          </h2>
+          {list}
+        </div>
+      </section>
+    );
+  }
+
+  return list;
 }
