@@ -52,11 +52,11 @@ export const TAB_LABELS: Record<string, string> = {
 export const DAY_KEYS = ["po", "ut", "st", "ct", "pa", "so", "ne"] as const;
 
 export const DAY_LABELS: Record<string, string> = {
-  po: "Po",
-  ut: "Út",
-  st: "St",
-  ct: "Čt",
-  pa: "Pá",
-  so: "So",
-  ne: "Ne",
+  po: "Pondělí",
+  ut: "Úterý",
+  st: "Středa",
+  ct: "Čtvrtek",
+  pa: "Pátek",
+  so: "Sobota",
+  ne: "Neděle",
 };
