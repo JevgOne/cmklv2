@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,7 +11,14 @@ import { LikeButton } from "@/components/web/LikeButton";
 import { CommentSection } from "@/components/web/CommentSection";
 import { TagPill } from "@/components/web/TagPill";
 import { BADGE_CATALOG } from "@/lib/badge-catalog";
-import { formatPrice, getInitials } from "@/lib/utils";
+import { formatPrice, getInitials, parseCities } from "@/lib/utils";
+import {
+  ROLE_LABELS,
+  LEVEL_LABELS,
+  ROLE_TABS,
+  TAB_LABELS,
+  DAY_LABELS,
+} from "@/lib/role-labels";
 
 export interface ProfileUser {
   id: string;
@@ -104,70 +111,6 @@ interface ProfileItem {
   } | null;
 }
 
-const ROLE_TABS: Record<string, string[]> = {
-  BROKER: ["vehicles", "liked"],
-  ADVERTISER: ["listings", "liked"],
-  PARTS_SUPPLIER: ["parts", "liked"],
-  WHOLESALE_SUPPLIER: ["parts", "liked"],
-  PARTNER_VRAKOVISTE: ["parts", "liked"],
-  BUYER: ["liked"],
-  ADMIN: ["vehicles", "listings", "parts", "liked"],
-  BACKOFFICE: ["vehicles", "listings", "parts", "liked"],
-  MANAGER: ["liked"],
-  REGIONAL_DIRECTOR: ["liked"],
-  INVESTOR: ["investments", "liked"],
-  VERIFIED_DEALER: ["vehicles", "flips", "liked"],
-  PARTNER_BAZAR: ["listings", "liked"],
-};
-
-const TAB_LABELS: Record<string, string> = {
-  vehicles: "Vozidla",
-  listings: "Inzeráty",
-  parts: "Díly",
-  liked: "Oblíbené",
-  investments: "Investice",
-  flips: "Flipy",
-};
-
-const LEVEL_LABELS: Record<string, string> = {
-  JUNIOR: "Nováček",
-  BROKER: "Makléř",
-  SENIOR: "Senior",
-  TOP: "TOP Makléř",
-};
-
-const ROLE_LABELS: Record<string, string> = {
-  BROKER: "Certifikovaný makléř",
-  ADVERTISER: "Inzerent",
-  PARTS_SUPPLIER: "Dodavatel dílů",
-  WHOLESALE_SUPPLIER: "Velkoobchod",
-  PARTNER_VRAKOVISTE: "Vrakoviště",
-  BUYER: "Zákazník",
-  INVESTOR: "Ověřený investor",
-  VERIFIED_DEALER: "Ověřený dealer",
-  PARTNER_BAZAR: "Autobazar",
-};
-
-const DAY_LABELS: Record<string, string> = {
-  po: "Po",
-  ut: "Út",
-  st: "St",
-  ct: "Čt",
-  pa: "Pá",
-  so: "So",
-  ne: "Ne",
-};
-
-function safeJsonArray(raw: string | null | undefined): string[] {
-  if (!raw) return [];
-  try {
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
 function Stat({
   value,
   label,
@@ -204,22 +147,24 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
   const [loadingItems, setLoadingItems] = useState(false);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const viewFiredRef = useRef(false);
 
-  // Fire profileViews increment (viewer !== owner handled server-side in /api/profile/[slug]).
+  // Viewer-vs-owner check happens server-side in /api/profile/[slug].
+  // Ref guard prevents React 18 StrictMode double-fire in dev.
   useEffect(() => {
-    fetch(`/api/profile/${slug}`).catch(() => {
-      // silently fail
-    });
+    if (viewFiredRef.current) return;
+    viewFiredRef.current = true;
+    fetch(`/api/profile/${slug}`).catch(() => {});
   }, [slug]);
 
   const fetchItems = useCallback(
-    async (cursor?: string) => {
+    async (cursor: string | undefined, signal: AbortSignal) => {
       setLoadingItems(true);
       try {
         const url = `/api/profile/${slug}/items?tab=${activeTab}&limit=12${
           cursor ? `&cursor=${cursor}` : ""
         }`;
-        const res = await fetch(url);
+        const res = await fetch(url, { signal });
         if (res.ok) {
           const data = await res.json();
           if (cursor) {
@@ -230,21 +175,22 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
           setNextCursor(data.nextCursor);
           setItemType(data.type);
         }
-      } catch {
-        // silently fail
+      } catch (err) {
+        if ((err as { name?: string }).name === "AbortError") return;
       } finally {
-        setLoadingItems(false);
+        if (!signal.aborted) setLoadingItems(false);
       }
     },
     [slug, activeTab],
   );
 
   useEffect(() => {
-    if (activeTab) {
-      setItems([]);
-      setNextCursor(null);
-      fetchItems();
-    }
+    if (!activeTab) return;
+    const ctrl = new AbortController();
+    setItems([]);
+    setNextCursor(null);
+    fetchItems(undefined, ctrl.signal);
+    return () => ctrl.abort();
   }, [activeTab, fetchItems]);
 
   const handleShare = async () => {
@@ -255,9 +201,7 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
           url,
           title: `Profil — ${user.firstName} ${user.lastName}`,
         });
-      } catch {
-        /* cancelled */
-      }
+      } catch {}
     } else {
       await navigator.clipboard.writeText(url);
       setCopied(true);
@@ -267,8 +211,8 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
 
   const isOwner = !!session?.user?.id && session.user.id === user.id;
   const tabs = ROLE_TABS[user.role] || ["liked"];
-  const favBrands = safeJsonArray(user.favoriteBrands);
-  const specs = safeJsonArray(user.specializations);
+  const favBrands = parseCities(user.favoriteBrands);
+  const specs = parseCities(user.specializations);
   const services = user.services ?? [];
   const languages = user.languageSkills ?? [];
   const memberSince = new Date(user.createdAt).toLocaleDateString("cs-CZ", {
@@ -297,7 +241,6 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
 
   return (
     <main className="min-h-screen bg-gray-50 pb-16">
-      {/* (1) Cover */}
       <div className="relative h-56 sm:h-72 md:h-96 bg-gradient-to-br from-orange-400 via-orange-500 to-orange-600">
         {user.coverPhoto && (
           <Image
@@ -311,11 +254,9 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
-        {/* (2) Hero Card */}
         <section className="-mt-20 sm:-mt-24 relative z-10">
           <div className="bg-white rounded-2xl shadow-card p-6 sm:p-8">
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-              {/* Avatar — straddles cover */}
               <div className="relative w-28 h-28 sm:w-36 sm:h-36 -mt-16 sm:-mt-20 rounded-full border-4 border-white bg-gray-200 overflow-hidden shadow-lg shrink-0 mx-auto sm:mx-0">
                 {user.avatar ? (
                   <Image
@@ -350,7 +291,6 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
                   )}
                 </div>
 
-                {/* Hashtag pills */}
                 {user.tags && user.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 mt-4">
                     {user.tags.map((tag) => (
@@ -441,7 +381,6 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
           </div>
         </section>
 
-        {/* (3) O makléři */}
         {hasAboutCard && (
           <Card className="p-6 sm:p-8">
             <h2 className="text-xl font-bold text-gray-900 mb-4">
@@ -477,7 +416,6 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
           </Card>
         )}
 
-        {/* (4) Specializace */}
         {hasSpecCard && (
           <Card className="p-6 sm:p-8">
             <h2 className="text-xl font-bold text-gray-900 mb-5">
@@ -543,7 +481,6 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
           </Card>
         )}
 
-        {/* (5) Kontakt */}
         {hasContactCard && (
           <Card className="p-6 sm:p-8">
             <h2 className="text-xl font-bold text-gray-900 mb-5">Kontakt</h2>
@@ -640,7 +577,6 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
           </Card>
         )}
 
-        {/* (6) Tabs + Items */}
         <Card className="p-6 sm:p-8">
           <div className="border-b border-gray-200 mb-6 overflow-x-auto -mx-6 sm:-mx-8 px-6 sm:px-8">
             <div className="flex gap-0">
@@ -688,7 +624,7 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
                 <div className="text-center mt-6">
                   <Button
                     variant="ghost"
-                    onClick={() => fetchItems(nextCursor)}
+                    onClick={() => fetchItems(nextCursor, new AbortController().signal)}
                     disabled={loadingItems}
                   >
                     {loadingItems ? "Načítám..." : "Načíst další"}
@@ -699,7 +635,6 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
           )}
         </Card>
 
-        {/* (7) Badges */}
         {badges.length > 0 && (
           <Card className="p-6 sm:p-8">
             <h2 className="text-xl font-bold text-gray-900 mb-4">
@@ -751,7 +686,7 @@ function ProfileItemCard({
     };
     const opp = raw.opportunity;
     if (!opp) return null;
-    const photos = safeJsonArray(opp.photos);
+    const photos = parseCities(opp.photos);
     const label = `${opp.brand} ${opp.model} (${opp.year})`;
     const amount = raw.amount;
     return (
@@ -796,7 +731,7 @@ function ProfileItemCard({
       price: number | null;
       status: string;
     };
-    const photos = safeJsonArray(raw.photos);
+    const photos = parseCities(raw.photos);
     const label = `${raw.brand} ${raw.model}`;
     const status = raw.status;
     return (

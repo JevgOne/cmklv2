@@ -4,21 +4,10 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
 import { BASE_URL } from "@/lib/seo-data";
+import { ROLE_LABELS } from "@/lib/role-labels";
 import { ProfileClient, type ProfileData } from "./ProfileClient";
 
 export const revalidate = 300;
-
-const ROLE_LABELS: Record<string, string> = {
-  BROKER: "Certifikovaný makléř",
-  ADVERTISER: "Inzerent",
-  PARTS_SUPPLIER: "Dodavatel dílů",
-  WHOLESALE_SUPPLIER: "Velkoobchod",
-  PARTNER_VRAKOVISTE: "Vrakoviště",
-  BUYER: "Zákazník",
-  INVESTOR: "Ověřený investor",
-  VERIFIED_DEALER: "Ověřený dealer",
-  PARTNER_BAZAR: "Autobazar",
-};
 
 const getProfileData = cache(
   async (slug: string): Promise<ProfileData | null> => {
@@ -65,71 +54,79 @@ const getProfileData = cache(
 
     if (!user) return null;
 
-    const [vehicleCount, listingCount, partCount, totalLikes] =
-      await Promise.all([
-        prisma.vehicle.count({
-          where: { brokerId: user.id, status: "ACTIVE" },
-        }),
-        prisma.listing.count({
-          where: { userId: user.id, status: "ACTIVE" },
-        }),
-        prisma.part.count({
-          where: { supplierId: user.id, status: "ACTIVE" },
-        }),
-        prisma.profileLike.count({
-          where: {
-            OR: [
-              { vehicle: { brokerId: user.id } },
-              { listing: { userId: user.id } },
-              { part: { supplierId: user.id } },
-            ],
-          },
-        }),
-      ]);
+    const isDealer = user.role === "VERIFIED_DEALER";
+    const isInvestor = user.role === "INVESTOR";
+
+    const [
+      vehicleCount,
+      listingCount,
+      partCount,
+      totalLikes,
+      dealerFlips,
+      investorInvestments,
+    ] = await Promise.all([
+      prisma.vehicle.count({
+        where: { brokerId: user.id, status: "ACTIVE" },
+      }),
+      prisma.listing.count({
+        where: { userId: user.id, status: "ACTIVE" },
+      }),
+      prisma.part.count({
+        where: { supplierId: user.id, status: "ACTIVE" },
+      }),
+      prisma.profileLike.count({
+        where: {
+          OR: [
+            { vehicle: { brokerId: user.id } },
+            { listing: { userId: user.id } },
+            { part: { supplierId: user.id } },
+          ],
+        },
+      }),
+      isDealer
+        ? prisma.flipOpportunity.findMany({
+            where: { dealerId: user.id, status: "COMPLETED" },
+            select: {
+              purchasePrice: true,
+              repairCost: true,
+              actualSalePrice: true,
+            },
+          })
+        : Promise.resolve([]),
+      isInvestor
+        ? prisma.investment.findMany({
+            where: { investorId: user.id },
+            select: { amount: true, returnAmount: true, paymentStatus: true },
+          })
+        : Promise.resolve([]),
+    ]);
 
     let roleStats: Record<string, number> = {};
 
-    if (user.role === "VERIFIED_DEALER") {
-      const completedFlips = await prisma.flipOpportunity.count({
-        where: { dealerId: user.id, status: "COMPLETED" },
-      });
-      const flips = await prisma.flipOpportunity.findMany({
-        where: {
-          dealerId: user.id,
-          status: "COMPLETED",
-          actualSalePrice: { not: null },
-        },
-        select: {
-          purchasePrice: true,
-          repairCost: true,
-          actualSalePrice: true,
-        },
-      });
+    if (isDealer) {
+      const completedFlips = dealerFlips.length;
+      const flipsWithSale = dealerFlips.filter((f) => f.actualSalePrice !== null);
       const avgROI =
-        flips.length > 0
-          ? flips.reduce((sum, f) => {
+        flipsWithSale.length > 0
+          ? flipsWithSale.reduce((sum, f) => {
               const cost = f.purchasePrice + f.repairCost;
               return (
                 sum +
                 (cost > 0 ? ((f.actualSalePrice! - cost) / cost) * 100 : 0)
               );
-            }, 0) / flips.length
+            }, 0) / flipsWithSale.length
           : 0;
       roleStats = { completedFlips, avgROI: Math.round(avgROI * 10) / 10 };
     }
 
-    if (user.role === "INVESTOR") {
-      const investments = await prisma.investment.findMany({
-        where: { investorId: user.id },
-        select: { amount: true, returnAmount: true, paymentStatus: true },
-      });
-      const totalInvested = investments
+    if (isInvestor) {
+      const totalInvested = investorInvestments
         .filter((i) => i.paymentStatus === "CONFIRMED")
         .reduce((sum, i) => sum + i.amount, 0);
-      const completedDeals = investments.filter(
+      const completedDeals = investorInvestments.filter(
         (i) => i.returnAmount !== null,
       ).length;
-      const totalReturn = investments.reduce(
+      const totalReturn = investorInvestments.reduce(
         (sum, i) => sum + (i.returnAmount ?? 0),
         0,
       );

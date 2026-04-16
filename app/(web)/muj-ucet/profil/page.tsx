@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { TagInput, type TagInputValue } from "@/components/web/TagInput";
 import Link from "next/link";
+import { DAY_KEYS, DAY_LABELS } from "@/lib/role-labels";
 
 interface ProfileEditData {
   firstName: string;
@@ -50,9 +51,6 @@ const SERVICE_OPTIONS = [
 const LANGUAGE_OPTIONS = [
   "Čeština", "Angličtina", "Němčina", "Slovenština", "Polština", "Ruština",
 ];
-
-const DAY_KEYS = ["po", "ut", "st", "ct", "pa", "so", "ne"] as const;
-const DAY_LABELS: Record<string, string> = { po: "Po", ut: "Út", st: "St", ct: "Čt", pa: "Pá", so: "So", ne: "Ne" };
 
 export default function ProfileEditPage() {
   const [data, setData] = useState<ProfileEditData | null>(null);
