@@ -244,6 +244,34 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // DB nedostupná
   }
 
+  // Dynamické stránky — hashtag landing pages (>= 2 aktivní brokeři)
+  let tagPages: MetadataRoute.Sitemap = [];
+  try {
+    const tags = await prisma.tag.findMany({
+      where: { users: { some: { role: "BROKER", status: "ACTIVE" } } },
+      select: {
+        slug: true,
+        updatedAt: true,
+        _count: {
+          select: {
+            users: { where: { role: "BROKER", status: "ACTIVE" } },
+          },
+        },
+      },
+    });
+
+    tagPages = tags
+      .filter((t) => t._count.users >= 2)
+      .map((t) => ({
+        url: `${BASE_URL}/makleri/${t.slug}`,
+        lastModified: t.updatedAt,
+        changeFrequency: "weekly" as const,
+        priority: 0.6,
+      }));
+  } catch {
+    // DB nedostupná
+  }
+
   // Dynamické stránky — vrakoviště (partner landing pages, #87a SEO MVP)
   let partnerPages: MetadataRoute.Sitemap = [];
   try {
@@ -275,6 +303,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...partsModelYearPages,
     ...vehiclePages,
     ...brokerPages,
+    ...tagPages,
     ...partnerPages,
   ];
 }

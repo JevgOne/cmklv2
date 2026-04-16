@@ -78,6 +78,13 @@ const navSections: NavSection[] = [
     ],
     roles: ["ADMIN", "BACKOFFICE", "MANAGER"],
   },
+  {
+    title: "OBSAH",
+    items: [
+      { id: "tags", href: "/admin/tagy", icon: "🏷️", label: "Tagy" },
+    ],
+    roles: ["ADMIN"],
+  },
 ];
 
 interface AdminSidebarProps {

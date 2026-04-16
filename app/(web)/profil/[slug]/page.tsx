@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { LikeButton } from "@/components/web/LikeButton";
 import { CommentSection } from "@/components/web/CommentSection";
+import { TagPill } from "@/components/web/TagPill";
 import { BADGE_CATALOG } from "@/lib/badge-catalog";
 
 /* ------------------------------------------------------------------ */
@@ -42,6 +43,7 @@ interface ProfileUser {
   specializations: string | null;
   warehouseAddress: string | null;
   openingHours: Record<string, string> | null;
+  tags: { slug: string; label: string }[] | null;
 }
 
 interface ProfileStats {
@@ -310,6 +312,20 @@ export default function ProfilePage() {
             {/* Bio */}
             {user.bio && (
               <p className="text-gray-600 max-w-2xl mt-4">{user.bio}</p>
+            )}
+
+            {/* Hashtags — klikatelné → /makleri/[slug] */}
+            {user.tags && user.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-3">
+                {user.tags.map((tag) => (
+                  <TagPill
+                    key={tag.slug}
+                    slug={tag.slug}
+                    label={tag.label}
+                    size="sm"
+                  />
+                ))}
+              </div>
             )}
 
             {/* Favorite brands */}

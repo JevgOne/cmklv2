@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { TagInput, type TagInputValue } from "@/components/web/TagInput";
 import Link from "next/link";
 
 interface ProfileEditData {
@@ -82,6 +83,7 @@ export default function ProfileEditPage() {
   const [specializations, setSpecializations] = useState<string[]>([]);
   const [warehouseAddress, setWarehouseAddress] = useState("");
   const [openingHours, setOpeningHours] = useState<Record<string, string>>({});
+  const [tags, setTags] = useState<TagInputValue[]>([]);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -117,6 +119,12 @@ export default function ProfileEditPage() {
           setWarehouseAddress(user.warehouseAddress || "");
           setOpeningHours(user.openingHours || {});
         }
+        // Hashtags — separátní endpoint
+        const tagsRes = await fetch("/api/profile/tags");
+        if (tagsRes.ok) {
+          const { tags: userTags } = await tagsRes.json();
+          setTags(userTags ?? []);
+        }
       } catch {
         // silently fail
       } finally {
@@ -132,37 +140,54 @@ export default function ProfileEditPage() {
     setSuccess(false);
     setSaving(true);
     try {
-      const res = await fetch("/api/profile/edit", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          bio: bio || null,
-          avatar: avatar || null,
-          coverPhoto: coverPhoto || null,
-          city: city || null,
-          favoriteBrands: favBrands,
-          showPhone,
-          showEmail,
-          yearsExperience: yearsExperience !== "" ? yearsExperience : null,
-          website: website || null,
-          motto: motto || null,
-          socialLinks: (socialInstagram || socialFacebook || socialYoutube)
-            ? { instagram: socialInstagram || undefined, facebook: socialFacebook || undefined, youtube: socialYoutube || undefined }
-            : null,
-          services,
-          languageSkills,
-          specializations,
-          warehouseAddress: warehouseAddress || null,
-          openingHours: Object.keys(openingHours).length > 0 ? openingHours : null,
+      const [profileRes, tagsRes] = await Promise.all([
+        fetch("/api/profile/edit", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            firstName,
+            lastName,
+            bio: bio || null,
+            avatar: avatar || null,
+            coverPhoto: coverPhoto || null,
+            city: city || null,
+            favoriteBrands: favBrands,
+            showPhone,
+            showEmail,
+            yearsExperience: yearsExperience !== "" ? yearsExperience : null,
+            website: website || null,
+            motto: motto || null,
+            socialLinks:
+              socialInstagram || socialFacebook || socialYoutube
+                ? {
+                    instagram: socialInstagram || undefined,
+                    facebook: socialFacebook || undefined,
+                    youtube: socialYoutube || undefined,
+                  }
+                : null,
+            services,
+            languageSkills,
+            specializations,
+            warehouseAddress: warehouseAddress || null,
+            openingHours:
+              Object.keys(openingHours).length > 0 ? openingHours : null,
+          }),
         }),
-      });
-      if (!res.ok) {
-        const d = await res.json();
-        throw new Error(d.error || "Chyba při ukládání");
+        fetch("/api/profile/tags", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ tags }),
+        }),
+      ]);
+      if (!profileRes.ok) {
+        const d = await profileRes.json();
+        throw new Error(d.error || "Chyba při ukládání profilu");
       }
-      const { user } = await res.json();
+      if (!tagsRes.ok) {
+        const d = await tagsRes.json();
+        throw new Error(d.error || "Chyba při ukládání hashtagů");
+      }
+      const { user } = await profileRes.json();
       setData(user);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
@@ -350,6 +375,19 @@ export default function ProfileEditPage() {
             ))}
           </div>
         </Card>
+
+        {/* Hashtags (max 10) */}
+        <div id="hashtags">
+          <Card className="p-5">
+            <h3 className="font-semibold text-gray-900 mb-1">
+              Hashtagy (max 10)
+            </h3>
+            <p className="text-sm text-gray-500 mb-4">
+              Lokality, značky, specializace, služby. Ukáží se na vašem profilu a v landing stránkách.
+            </p>
+            <TagInput value={tags} onChange={setTags} />
+          </Card>
+        </div>
 
         {/* Services */}
         <Card className="p-5">
