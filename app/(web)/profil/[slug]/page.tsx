@@ -1,115 +1,12 @@
-"use client";
+import type { Metadata } from "next";
+import { cache } from "react";
+import { notFound } from "next/navigation";
+import { prisma } from "@/lib/prisma";
+import { pageCanonical } from "@/lib/canonical";
+import { BASE_URL } from "@/lib/seo-data";
+import { ProfileClient, type ProfileData } from "./ProfileClient";
 
-import { useState, useEffect, useCallback } from "react";
-import { useParams } from "next/navigation";
-import { useSession } from "next-auth/react";
-import Image from "next/image";
-import Link from "next/link";
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
-import { LikeButton } from "@/components/web/LikeButton";
-import { CommentSection } from "@/components/web/CommentSection";
-import { TagPill } from "@/components/web/TagPill";
-import { BADGE_CATALOG } from "@/lib/badge-catalog";
-
-interface ProfileUser {
-  id: string;
-  firstName: string;
-  lastName: string;
-  avatar: string | null;
-  coverPhoto: string | null;
-  bio: string | null;
-  city: string | null;
-  slug: string;
-  role: string;
-  level: string;
-  totalSales: number;
-  profileViews: number;
-  favoriteBrands: string | null;
-  phone: string | null;
-  email: string | null;
-  createdAt: string;
-  yearsExperience: number | null;
-  website: string | null;
-  motto: string | null;
-  socialLinks: { instagram?: string; facebook?: string; youtube?: string } | null;
-  services: string[] | null;
-  languageSkills: string[] | null;
-  specializations: string | null;
-  warehouseAddress: string | null;
-  openingHours: Record<string, string> | null;
-  tags: { slug: string; label: string }[] | null;
-}
-
-interface ProfileStats {
-  vehicles: number;
-  listings: number;
-  parts: number;
-  totalLikes: number;
-  totalSales: number;
-}
-
-interface ProfileBadge {
-  badgeKey: string;
-  awardedAt: string;
-}
-
-interface ProfileData {
-  user: ProfileUser;
-  stats: ProfileStats;
-  roleStats: Record<string, number>;
-  badges: ProfileBadge[];
-}
-
-interface ProfileItem {
-  id: string;
-  slug?: string;
-  brand?: string;
-  model?: string;
-  name?: string;
-  year?: number;
-  price?: number;
-  category?: string;
-  images?: { url: string }[];
-  _count?: { profileLikes: number; profileComments: number };
-  // liked items
-  vehicle?: { id: string; slug: string; brand: string; model: string; year: number; price: number; images: { url: string }[] } | null;
-  listing?: { id: string; slug: string; brand: string; model: string; year: number; price: number; images: { url: string }[] } | null;
-  part?: { id: string; slug: string; name: string; price: number; images: { url: string }[] } | null;
-}
-
-const ROLE_TABS: Record<string, string[]> = {
-  BROKER: ["vehicles", "liked"],
-  ADVERTISER: ["listings", "liked"],
-  PARTS_SUPPLIER: ["parts", "liked"],
-  WHOLESALE_SUPPLIER: ["parts", "liked"],
-  PARTNER_VRAKOVISTE: ["parts", "liked"],
-  BUYER: ["liked"],
-  ADMIN: ["vehicles", "listings", "parts", "liked"],
-  BACKOFFICE: ["vehicles", "listings", "parts", "liked"],
-  MANAGER: ["liked"],
-  REGIONAL_DIRECTOR: ["liked"],
-  INVESTOR: ["investments", "liked"],
-  VERIFIED_DEALER: ["vehicles", "flips", "liked"],
-  PARTNER_BAZAR: ["listings", "liked"],
-};
-
-const TAB_LABELS: Record<string, string> = {
-  vehicles: "Vozidla",
-  listings: "Inzeráty",
-  parts: "Díly",
-  liked: "Oblíbené",
-  investments: "Investice",
-  flips: "Flipy",
-};
-
-const LEVEL_LABELS: Record<string, string> = {
-  JUNIOR: "Nováček",
-  BROKER: "Makléř",
-  SENIOR: "Senior",
-  TOP: "TOP Makléř",
-};
+export const revalidate = 300;
 
 const ROLE_LABELS: Record<string, string> = {
   BROKER: "Certifikovaný makléř",
@@ -118,562 +15,253 @@ const ROLE_LABELS: Record<string, string> = {
   WHOLESALE_SUPPLIER: "Velkoobchod",
   PARTNER_VRAKOVISTE: "Vrakoviště",
   BUYER: "Zákazník",
-  INVESTOR: "Investor",
+  INVESTOR: "Ověřený investor",
   VERIFIED_DEALER: "Ověřený dealer",
   PARTNER_BAZAR: "Autobazar",
 };
 
-const DAY_LABELS: Record<string, string> = {
-  po: "Po",
-  ut: "Út",
-  st: "St",
-  ct: "Čt",
-  pa: "Pá",
-  so: "So",
-  ne: "Ne",
-};
+const getProfileData = cache(
+  async (slug: string): Promise<ProfileData | null> => {
+    const user = await prisma.user.findFirst({
+      where: { slug, status: "ACTIVE" },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        avatar: true,
+        coverPhoto: true,
+        bio: true,
+        city: true,
+        slug: true,
+        role: true,
+        level: true,
+        totalSales: true,
+        profileViews: true,
+        favoriteBrands: true,
+        showPhone: true,
+        showEmail: true,
+        phone: true,
+        email: true,
+        createdAt: true,
+        yearsExperience: true,
+        website: true,
+        motto: true,
+        socialLinks: true,
+        services: true,
+        languageSkills: true,
+        specializations: true,
+        warehouseAddress: true,
+        openingHours: true,
+        profileBadges: {
+          select: { badgeKey: true, awardedAt: true },
+          orderBy: { awardedAt: "desc" },
+        },
+        tags: {
+          select: { slug: true, label: true },
+          orderBy: { label: "asc" },
+        },
+      },
+    });
 
-function formatPrice(amount: number): string {
-  return new Intl.NumberFormat("cs-CZ", {
-    style: "currency",
-    currency: "CZK",
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
+    if (!user) return null;
 
-function safeJsonArray(raw: string | null | undefined): string[] {
-  if (!raw) return [];
-  try {
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
+    const [vehicleCount, listingCount, partCount, totalLikes] =
+      await Promise.all([
+        prisma.vehicle.count({
+          where: { brokerId: user.id, status: "ACTIVE" },
+        }),
+        prisma.listing.count({
+          where: { userId: user.id, status: "ACTIVE" },
+        }),
+        prisma.part.count({
+          where: { supplierId: user.id, status: "ACTIVE" },
+        }),
+        prisma.profileLike.count({
+          where: {
+            OR: [
+              { vehicle: { brokerId: user.id } },
+              { listing: { userId: user.id } },
+              { part: { supplierId: user.id } },
+            ],
+          },
+        }),
+      ]);
 
-function Stat({ value, label, valueClass }: { value: number | string; label: string; valueClass?: string }) {
-  return (
-    <div className="text-center">
-      <div className={`text-xl font-bold ${valueClass ?? "text-gray-900"}`}>{value}</div>
-      <div className="text-xs text-gray-500">{label}</div>
-    </div>
-  );
-}
+    let roleStats: Record<string, number> = {};
 
-export default function ProfilePage() {
-  const params = useParams();
-  const slug = params.slug as string;
-  const { data: session } = useSession();
+    if (user.role === "VERIFIED_DEALER") {
+      const completedFlips = await prisma.flipOpportunity.count({
+        where: { dealerId: user.id, status: "COMPLETED" },
+      });
+      const flips = await prisma.flipOpportunity.findMany({
+        where: {
+          dealerId: user.id,
+          status: "COMPLETED",
+          actualSalePrice: { not: null },
+        },
+        select: {
+          purchasePrice: true,
+          repairCost: true,
+          actualSalePrice: true,
+        },
+      });
+      const avgROI =
+        flips.length > 0
+          ? flips.reduce((sum, f) => {
+              const cost = f.purchasePrice + f.repairCost;
+              return (
+                sum +
+                (cost > 0 ? ((f.actualSalePrice! - cost) / cost) * 100 : 0)
+              );
+            }, 0) / flips.length
+          : 0;
+      roleStats = { completedFlips, avgROI: Math.round(avgROI * 10) / 10 };
+    }
 
-  const [profile, setProfile] = useState<ProfileData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("");
-  const [items, setItems] = useState<ProfileItem[]>([]);
-  const [itemType, setItemType] = useState("");
-  const [loadingItems, setLoadingItems] = useState(false);
-  const [nextCursor, setNextCursor] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
+    if (user.role === "INVESTOR") {
+      const investments = await prisma.investment.findMany({
+        where: { investorId: user.id },
+        select: { amount: true, returnAmount: true, paymentStatus: true },
+      });
+      const totalInvested = investments
+        .filter((i) => i.paymentStatus === "CONFIRMED")
+        .reduce((sum, i) => sum + i.amount, 0);
+      const completedDeals = investments.filter(
+        (i) => i.returnAmount !== null,
+      ).length;
+      const totalReturn = investments.reduce(
+        (sum, i) => sum + (i.returnAmount ?? 0),
+        0,
+      );
+      roleStats = { totalInvested, completedDeals, totalReturn };
+    }
 
-  // Fetch profile
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await fetch(`/api/profile/${slug}`);
-        if (res.ok) {
-          const data = await res.json();
-          setProfile(data);
-          const tabs = ROLE_TABS[data.user.role] || ["liked"];
-          setActiveTab(tabs[0]);
-        }
-      } catch {
-        // silently fail
-      } finally {
-        setLoading(false);
-      }
+    return {
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        avatar: user.avatar,
+        coverPhoto: user.coverPhoto,
+        bio: user.bio,
+        city: user.city,
+        slug: user.slug ?? slug,
+        role: user.role,
+        level: user.level,
+        totalSales: user.totalSales,
+        profileViews: user.profileViews,
+        favoriteBrands: user.favoriteBrands,
+        phone: user.showPhone ? user.phone : null,
+        email: user.showEmail ? user.email : null,
+        createdAt: user.createdAt.toISOString(),
+        yearsExperience: user.yearsExperience,
+        website: user.website,
+        motto: user.motto,
+        socialLinks: user.socialLinks as ProfileData["user"]["socialLinks"],
+        services: user.services as string[] | null,
+        languageSkills: user.languageSkills as string[] | null,
+        specializations: user.specializations,
+        warehouseAddress: user.warehouseAddress,
+        openingHours: user.openingHours as Record<string, string> | null,
+        tags: user.tags,
+      },
+      stats: {
+        vehicles: vehicleCount,
+        listings: listingCount,
+        parts: partCount,
+        totalLikes,
+        totalSales: user.totalSales,
+      },
+      roleStats,
+      badges: user.profileBadges.map((b) => ({
+        badgeKey: b.badgeKey,
+        awardedAt: b.awardedAt.toISOString(),
+      })),
     };
-    fetchProfile();
-  }, [slug]);
+  },
+);
 
-  // Fetch items for active tab
-  const fetchItems = useCallback(async (cursor?: string) => {
-    if (!profile) return;
-    setLoadingItems(true);
-    try {
-      const url = `/api/profile/${slug}/items?tab=${activeTab}&limit=12${cursor ? `&cursor=${cursor}` : ""}`;
-      const res = await fetch(url);
-      if (res.ok) {
-        const data = await res.json();
-        if (cursor) {
-          setItems((prev) => [...prev, ...(data.items ?? [])]);
-        } else {
-          setItems(data.items ?? []);
-        }
-        setNextCursor(data.nextCursor);
-        setItemType(data.type);
-      }
-    } catch {
-      // silently fail
-    } finally {
-      setLoadingItems(false);
-    }
-  }, [profile, slug, activeTab]);
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const data = await getProfileData(slug);
 
-  useEffect(() => {
-    if (activeTab && profile) {
-      setItems([]);
-      setNextCursor(null);
-      fetchItems();
-    }
-  }, [activeTab, profile, fetchItems]);
+  if (!data) {
+    return {
+      title: "Profil nenalezen — CarMakléř",
+      alternates: pageCanonical(`/profil/${slug}`),
+      robots: { index: false, follow: false },
+    };
+  }
 
-  const handleShare = async () => {
-    const url = window.location.href;
-    if (navigator.share) {
-      try {
-        await navigator.share({ url, title: `Profil — ${profile?.user.firstName} ${profile?.user.lastName}` });
-      } catch { /* cancelled */ }
-    } else {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
+  const { user } = data;
+  const roleLabel = ROLE_LABELS[user.role] ?? "Profil";
+  const fullName = `${user.firstName} ${user.lastName}`;
+  const description =
+    user.bio?.slice(0, 155) ||
+    `Profil ${roleLabel.toLowerCase()} ${fullName}${user.city ? " z " + user.city : ""}. Aktivní vozidla, recenze a kontakt.`;
+
+  return {
+    title: `${fullName} — ${roleLabel} CarMakléř`,
+    description,
+    alternates: pageCanonical(`/profil/${slug}`),
+    openGraph: {
+      title: `${fullName} — CarMakléř`,
+      description,
+      url: `${BASE_URL}/profil/${slug}`,
+      images: user.avatar ? [{ url: user.avatar }] : undefined,
+      type: "profile",
+    },
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin" />
-      </div>
-    );
-  }
-
-  if (!profile) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Profil nenalezen</h1>
-          <p className="text-gray-500">Tento profil neexistuje nebo není aktivní.</p>
-        </div>
-      </div>
-    );
-  }
-
-  const { user, stats, roleStats, badges } = profile;
-  const isOwner = !!session?.user?.id && session.user.id === user.id;
-  const tabs = ROLE_TABS[user.role] || ["liked"];
-  const favBrands = safeJsonArray(user.favoriteBrands);
-  const specs = safeJsonArray(user.specializations);
-  const memberSince = new Date(user.createdAt).toLocaleDateString("cs-CZ", { month: "long", year: "numeric" });
-
-  return (
-    <main className="min-h-screen bg-gray-50">
-      {/* Cover Photo */}
-      <div className="relative h-48 sm:h-64 md:h-80 bg-gradient-to-br from-orange-400 via-orange-500 to-orange-600">
-        {user.coverPhoto && (
-          <Image
-            src={user.coverPhoto}
-            alt="Cover"
-            fill
-            className="object-cover"
-            priority
-          />
-        )}
-      </div>
-
-      {/* Profile Header — side-by-side layout */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6">
-        <div className="relative -mt-16 sm:-mt-20 mb-6 flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6">
-          {/* Avatar */}
-          <div className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-full border-4 border-white bg-gray-200 overflow-hidden shadow-lg shrink-0 mx-auto sm:mx-0">
-            {user.avatar ? (
-              <Image src={user.avatar} alt={user.firstName} fill className="object-cover" />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-4xl text-gray-400">
-                {user.firstName[0]}{user.lastName[0]}
-              </div>
-            )}
-          </div>
-
-          {/* Info column — grows */}
-          <div className="flex-1 min-w-0">
-            {/* Name */}
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900">
-              {user.firstName} {user.lastName}
-            </h1>
-
-            {/* Role + Level + City */}
-            <div className="flex flex-wrap items-center gap-2 mt-2">
-              <Badge variant="default">
-                {ROLE_LABELS[user.role] || user.role}
-              </Badge>
-              {user.level !== "JUNIOR" && (
-                <Badge variant="verified">
-                  {LEVEL_LABELS[user.level] || user.level}
-                </Badge>
-              )}
-              {user.city && (
-                <span className="text-sm text-gray-500">{user.city}</span>
-              )}
-            </div>
-
-            {/* Bio */}
-            {user.bio && (
-              <p className="text-gray-600 max-w-2xl mt-4">{user.bio}</p>
-            )}
-
-            {/* Hashtags — klikatelné → /makleri/[slug] */}
-            {user.tags && user.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 mt-3">
-                {user.tags.map((tag) => (
-                  <TagPill
-                    key={tag.slug}
-                    slug={tag.slug}
-                    label={tag.label}
-                    size="sm"
-                  />
-                ))}
-              </div>
-            )}
-
-            {/* Favorite brands */}
-            {favBrands.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 mt-3">
-                {favBrands.map((brand) => (
-                  <span
-                    key={brand}
-                    className="text-xs font-medium bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full"
-                  >
-                    {brand}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            {/* Motto */}
-            {user.motto && (
-              <p className="text-sm italic text-gray-500 mt-3">&ldquo;{user.motto}&rdquo;</p>
-            )}
-
-            {/* Specializations (G8) */}
-            {specs.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 mt-3">
-                {specs.map((s) => (
-                  <span key={s} className="text-xs font-medium bg-orange-50 text-orange-700 px-2.5 py-1 rounded-full">{s}</span>
-                ))}
-              </div>
-            )}
-
-            {/* Services */}
-            {user.services && (user.services as string[]).length > 0 && (
-              <div className="flex flex-wrap gap-1.5 mt-2">
-                {(user.services as string[]).map((s) => (
-                  <span key={s} className="text-xs font-medium bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full">{s}</span>
-                ))}
-              </div>
-            )}
-
-            {/* Languages + Experience + Website */}
-            <div className="flex flex-wrap items-center gap-3 mt-3 text-xs text-gray-500">
-              {user.yearsExperience && <span>{user.yearsExperience} let zkušeností</span>}
-              {user.languageSkills && (user.languageSkills as string[]).length > 0 && (
-                <span>{(user.languageSkills as string[]).join(", ")}</span>
-              )}
-              {user.website && (
-                <a href={user.website} target="_blank" rel="noopener noreferrer" className="text-orange-500 no-underline hover:text-orange-600">
-                  {user.website.replace(/^https?:\/\//, "")}
-                </a>
-              )}
-            </div>
-
-            {/* Social links */}
-            {user.socialLinks && (
-              <div className="flex gap-3 mt-2">
-                {user.socialLinks.instagram && (
-                  <a href={user.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-pink-500 text-sm no-underline">Instagram</a>
-                )}
-                {user.socialLinks.facebook && (
-                  <a href={user.socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-600 text-sm no-underline">Facebook</a>
-                )}
-                {user.socialLinks.youtube && (
-                  <a href={user.socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-red-500 text-sm no-underline">YouTube</a>
-                )}
-              </div>
-            )}
-
-            {/* Warehouse info (PARTS_SUPPLIER only) */}
-            {user.warehouseAddress && (
-              <div className="mt-4 p-3 bg-gray-50 rounded-lg text-sm max-w-md">
-                <p className="font-medium text-gray-700">Sklad: {user.warehouseAddress}</p>
-                {user.openingHours && (
-                  <div className="mt-1 text-xs text-gray-500 flex flex-wrap gap-x-3">
-                    {Object.entries(user.openingHours).map(([day, hours]) => (
-                      <span key={day}>{DAY_LABELS[day] || day}: {hours}</span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Member since */}
-            <p className="text-xs text-gray-400 mt-3">
-              Člen od {memberSince} · {user.profileViews} zobrazení profilu
-            </p>
-
-            {/* Actions — owner-aware */}
-            <div className="flex gap-2 mt-4">
-              {isOwner ? (
-                <Link
-                  href="/muj-ucet/profil"
-                  className="inline-flex items-center gap-1.5 py-2 px-4 bg-orange-500 text-white font-semibold rounded-full text-sm no-underline hover:bg-orange-600 transition-colors"
-                >
-                  Upravit profil
-                </Link>
-              ) : (
-                user.phone && (
-                  <a
-                    href={`tel:${user.phone}`}
-                    className="inline-flex items-center gap-1.5 py-2 px-4 bg-orange-500 text-white font-semibold rounded-full text-sm no-underline hover:bg-orange-600 transition-colors"
-                  >
-                    Kontaktovat
-                  </a>
-                )
-              )}
-              <button
-                onClick={handleShare}
-                className="inline-flex items-center gap-1.5 py-2 px-4 bg-white border border-gray-200 text-gray-700 font-semibold rounded-full text-sm cursor-pointer hover:border-orange-300 transition-colors"
-              >
-                {copied ? "Zkopírováno!" : "Sdílet profil"}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Stats Bar — flex s border-y divider */}
-        <div className="flex flex-wrap gap-8 sm:gap-12 mb-6 py-4 border-y border-gray-200">
-          {stats.vehicles > 0 && <Stat value={stats.vehicles} label="Vozidla" />}
-          {stats.listings > 0 && <Stat value={stats.listings} label="Inzeráty" />}
-          {stats.parts > 0 && <Stat value={stats.parts} label="Díly" />}
-          <Stat value={stats.totalLikes} label="Lajky" />
-          {stats.totalSales > 0 && <Stat value={stats.totalSales} label="Prodeje" />}
-          {roleStats.completedFlips !== undefined && <Stat value={roleStats.completedFlips} label="Flipy" />}
-          {roleStats.avgROI !== undefined && <Stat value={`${roleStats.avgROI}%`} label="Průměrné ROI" valueClass="text-green-600" />}
-          {roleStats.totalInvested !== undefined && <Stat value={formatPrice(roleStats.totalInvested)} label="Investováno" />}
-          {roleStats.completedDeals !== undefined && <Stat value={roleStats.completedDeals} label="Dokončené dealy" />}
-          {roleStats.totalReturn !== undefined && roleStats.totalReturn > 0 && <Stat value={formatPrice(roleStats.totalReturn)} label="Výnos" valueClass="text-green-600" />}
-        </div>
-
-        {/* Tabs */}
-        <div className="border-b border-gray-200 mb-6 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-          <div className="flex gap-0">
-            {tabs.map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-4 py-3 text-sm font-semibold border-b-2 transition-colors cursor-pointer bg-transparent whitespace-nowrap ${
-                  activeTab === tab
-                    ? "border-orange-500 text-orange-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                {TAB_LABELS[tab]}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Item Grid */}
-        {loadingItems && items.length === 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="aspect-square bg-gray-200 rounded-xl animate-pulse" />
-            ))}
-          </div>
-        ) : items.length === 0 ? (
-          <Card className="p-8 text-center mb-8">
-            <p className="text-gray-500">Žádné položky v této kategorii.</p>
-          </Card>
-        ) : (
-          <>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-6">
-              {items.map((item) => (
-                <ProfileItemCard key={item.id} item={item} type={itemType} />
-              ))}
-            </div>
-
-            {nextCursor && (
-              <div className="text-center mb-8">
-                <Button
-                  variant="ghost"
-                  onClick={() => fetchItems(nextCursor)}
-                  disabled={loadingItems}
-                >
-                  {loadingItems ? "Načítám..." : "Načíst další"}
-                </Button>
-              </div>
-            )}
-          </>
-        )}
-
-        {/* Badges */}
-        {badges.length > 0 && (
-          <section className="mb-10">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Odznaky</h2>
-            <div className="flex flex-wrap gap-3">
-              {badges.map((badge) => {
-                const info = BADGE_CATALOG[badge.badgeKey];
-                if (!info) return null;
-                return (
-                  <div
-                    key={badge.badgeKey}
-                    className="flex items-center gap-2 bg-white border border-gray-100 rounded-full px-4 py-2 shadow-sm"
-                    title={info.description}
-                  >
-                    <span className="text-lg">{info.icon}</span>
-                    <span className="text-sm font-medium text-gray-700">{info.name}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-        )}
-      </div>
-    </main>
-  );
 }
 
-function ProfileItemCard({ item, type }: { item: ProfileItem; type: string }) {
-  if (type === "investment") {
-    const raw = item as unknown as { opportunity: { brand: string; model: string; year: number; status: string; photos: string | null; estimatedSalePrice: number } | null; amount: number };
-    const opp = raw.opportunity;
-    if (!opp) return null;
-    const photos = safeJsonArray(opp.photos);
-    const label = `${opp.brand} ${opp.model} (${opp.year})`;
-    const amount = raw.amount;
-    return (
-      <div>
-        <div className="relative aspect-square bg-gray-100 rounded-xl overflow-hidden">
-          {photos[0] ? (
-            <Image src={photos[0]} alt={label} fill className="object-cover" sizes="(max-width: 640px) 50vw, 25vw" />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-3xl text-gray-300">&#128176;</div>
-          )}
-          <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent p-2.5">
-            <p className="text-white text-xs font-semibold truncate">{label}</p>
-            <p className="text-orange-300 text-xs font-bold">{formatPrice(amount)}</p>
-          </div>
-          <div className="absolute top-2 right-2">
-            <span className="text-[10px] font-bold bg-white/90 text-gray-700 px-2 py-0.5 rounded-full">{opp.status}</span>
-          </div>
-        </div>
-      </div>
-    );
+export default async function ProfilePage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const data = await getProfileData(slug);
+
+  if (!data) notFound();
+
+  const { user } = data;
+  const fullName = `${user.firstName} ${user.lastName}`;
+  const roleLabel = ROLE_LABELS[user.role] ?? "Profil";
+  const sameAs = user.socialLinks
+    ? Object.values(user.socialLinks).filter(
+        (v): v is string => typeof v === "string" && v.length > 0,
+      )
+    : [];
+
+  const jsonLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: fullName,
+    url: `${BASE_URL}/profil/${slug}`,
+    jobTitle: roleLabel,
+    worksFor: { "@type": "Organization", name: "CarMakléř" },
+  };
+  if (user.city) {
+    jsonLd.address = {
+      "@type": "PostalAddress",
+      addressLocality: user.city,
+      addressCountry: "CZ",
+    };
   }
-
-  if (type === "flip") {
-    const raw = item as unknown as { photos: string | null; brand: string; model: string; price: number | null; status: string };
-    const photos = safeJsonArray(raw.photos);
-    const label = `${raw.brand} ${raw.model}`;
-    const status = raw.status;
-    return (
-      <div>
-        <div className="relative aspect-square bg-gray-100 rounded-xl overflow-hidden">
-          {photos[0] ? (
-            <Image src={photos[0]} alt={label} fill className="object-cover" sizes="(max-width: 640px) 50vw, 25vw" />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-3xl text-gray-300">&#128663;</div>
-          )}
-          <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent p-2.5">
-            <p className="text-white text-xs font-semibold truncate">{label}</p>
-            {item.price && <p className="text-orange-300 text-xs font-bold">{formatPrice(item.price)}</p>}
-          </div>
-          <div className="absolute top-2 right-2">
-            <span className="text-[10px] font-bold bg-white/90 text-gray-700 px-2 py-0.5 rounded-full">{status}</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (type === "liked") {
-    const target = item.vehicle || item.listing || item.part;
-    if (!target) return null;
-
-    const image = target.images?.[0]?.url;
-    const label = "name" in target
-      ? target.name
-      : `${(target as { brand: string }).brand} ${(target as { model: string }).model}`;
-    const href = "name" in target
-      ? `/dily/${target.slug}`
-      : `/nabidka/${target.slug}`;
-
-    return (
-      <Link href={href} className="no-underline group">
-        <div className="relative aspect-square bg-gray-100 rounded-xl overflow-hidden">
-          {image ? (
-            <Image src={image} alt={label} fill className="object-cover group-hover:scale-105 transition-transform" sizes="(max-width: 640px) 50vw, 25vw" />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-3xl text-gray-300">&#128663;</div>
-          )}
-          <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent p-2.5">
-            <p className="text-white text-xs font-semibold truncate">{label}</p>
-            {"price" in target && target.price && (
-              <p className="text-orange-300 text-xs font-bold">{formatPrice(target.price as number)}</p>
-            )}
-          </div>
-        </div>
-      </Link>
-    );
-  }
-
-  const image = item.images?.[0]?.url;
-  const likeCount = item._count?.profileLikes ?? 0;
-  const commentCount = item._count?.profileComments ?? 0;
-
-  const label = item.name
-    ? item.name
-    : `${item.brand} ${item.model}`;
-
-  const href = type === "part"
-    ? `/dily/${item.slug}`
-    : `/nabidka/${item.slug}`;
-
-  const entityProps: {
-    vehicleId?: string;
-    listingId?: string;
-    partId?: string;
-  } =
-    type === "vehicle"
-      ? { vehicleId: item.id }
-      : type === "listing"
-        ? { listingId: item.id }
-        : { partId: item.id };
+  if (user.avatar) jsonLd.image = user.avatar;
+  if (sameAs.length > 0) jsonLd.sameAs = sameAs;
 
   return (
-    <div className="group">
-      <Link href={href} className="no-underline">
-        <div className="relative aspect-square bg-gray-100 rounded-xl overflow-hidden">
-          {image ? (
-            <Image src={image} alt={label} fill className="object-cover group-hover:scale-105 transition-transform" sizes="(max-width: 640px) 50vw, 25vw" />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-3xl text-gray-300">
-              {type === "part" ? "&#9881;" : "&#128663;"}
-            </div>
-          )}
-          <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent p-2.5">
-            <p className="text-white text-xs font-semibold truncate">{label}</p>
-            {item.price && (
-              <p className="text-orange-300 text-xs font-bold">{formatPrice(item.price)}</p>
-            )}
-          </div>
-        </div>
-      </Link>
-      <div className="flex items-center gap-3 mt-1.5 px-0.5">
-        <LikeButton {...entityProps} initialCount={likeCount} size="sm" />
-        {commentCount > 0 && (
-          <span className="text-xs text-gray-400">&#128172; {commentCount}</span>
-        )}
-      </div>
-      <CommentSection {...entityProps} initialCount={commentCount} />
-    </div>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <ProfileClient initialData={data} slug={slug} />
+    </>
   );
 }
