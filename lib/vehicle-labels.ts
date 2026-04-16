@@ -3,7 +3,8 @@
 // ============================================
 // Centrální zdroj pravdy pro lidsky čitelné labely kódů z DB.
 // Používá se v /nabidka, /profil, /inzerce, PWA vehicle card atd.
-// lib/listings.ts re-exportuje tyto mapy kvůli backward-compat.
+// lib/listings.ts re-exportuje fuelLabels / transmissionLabels / bodyTypeLabels
+// z tohoto modulu — single source of truth, no drift risk.
 
 /** Palivo — DB kód → CZ label */
 export const fuelLabels: Record<string, string> = {

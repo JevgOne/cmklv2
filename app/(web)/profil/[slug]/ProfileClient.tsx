@@ -982,25 +982,17 @@ function ProfileItemCard({
     );
   }
 
+  // Tail render: only `part` type reaches here (vehicle/listing handled by
+  // early return at L819, investment/flip/liked handled above).
   const image = item.images?.[0]?.url;
   const likeCount = item._count?.profileLikes ?? 0;
   const commentCount = item._count?.profileComments ?? 0;
 
   const label = item.name ? item.name : `${item.brand} ${item.model}`;
 
-  const href =
-    type === "part" ? `/dily/${item.slug}` : `/nabidka/${item.slug}`;
+  const href = `/dily/${item.slug}`;
 
-  const entityProps: {
-    vehicleId?: string;
-    listingId?: string;
-    partId?: string;
-  } =
-    type === "vehicle"
-      ? { vehicleId: item.id }
-      : type === "listing"
-        ? { listingId: item.id }
-        : { partId: item.id };
+  const entityProps: { partId?: string } = { partId: item.id };
 
   return (
     <div className="group">
@@ -1016,7 +1008,7 @@ function ProfileItemCard({
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-3xl text-gray-300">
-              {type === "part" ? "\u2699" : "\u{1F697}"}
+              {"\u2699"}
             </div>
           )}
           <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent p-2.5">

@@ -24,41 +24,14 @@ export function formatPrice(price: number): string {
 }
 
 /**
- * Labely pro fuel type
+ * Labely pro fuel / transmission / body type
+ * Re-export z lib/vehicle-labels.ts (single source of truth, no drift risk)
  */
-export const fuelLabels: Record<string, string> = {
-  PETROL: "Benzín",
-  DIESEL: "Diesel",
-  ELECTRIC: "Elektro",
-  HYBRID: "Hybrid",
-  PLUGIN_HYBRID: "Plug-in Hybrid",
-  LPG: "LPG",
-  CNG: "CNG",
-};
-
-/**
- * Labely pro transmission
- */
-export const transmissionLabels: Record<string, string> = {
-  MANUAL: "Manuál",
-  AUTOMATIC: "Automat",
-  DSG: "DSG",
-  CVT: "CVT",
-};
-
-/**
- * Labely pro body type
- */
-export const bodyTypeLabels: Record<string, string> = {
-  SEDAN: "Sedan",
-  HATCHBACK: "Hatchback",
-  COMBI: "Combi",
-  SUV: "SUV",
-  COUPE: "Coupé",
-  CABRIO: "Kabriolet",
-  VAN: "MPV/Van",
-  PICKUP: "Pickup",
-};
+export {
+  fuelLabels,
+  transmissionLabels,
+  bodyTypeLabels,
+} from "./vehicle-labels";
 
 /**
  * Labely pro listing type
