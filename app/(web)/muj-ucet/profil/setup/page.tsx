@@ -32,11 +32,13 @@ interface WizardData {
   city: string;
   website: string;
   motto: string;
+  bio: string;
   yearsExperience: number | "";
   socialInstagram: string;
   socialFacebook: string;
   socialYoutube: string;
   slug: string | null;
+  userId: string | null;
 }
 
 const LANGUAGE_PRESETS = [
@@ -65,11 +67,13 @@ const INITIAL: WizardData = {
   city: "",
   website: "",
   motto: "",
+  bio: "",
   yearsExperience: "",
   socialInstagram: "",
   socialFacebook: "",
   socialYoutube: "",
   slug: null,
+  userId: null,
 };
 
 export default function ProfileSetupWizard() {
@@ -104,11 +108,13 @@ export default function ProfileSetupWizard() {
               city: user.city || "",
               website: user.website || "",
               motto: user.motto || "",
+              bio: user.bio || "",
               yearsExperience: user.yearsExperience ?? "",
               socialInstagram: user.socialLinks?.instagram || "",
               socialFacebook: user.socialLinks?.facebook || "",
               socialYoutube: user.socialLinks?.youtube || "",
               slug: user.slug ?? null,
+              userId: user.id ?? null,
             });
           }
         }
@@ -166,6 +172,7 @@ export default function ProfileSetupWizard() {
           city: data.city || null,
           website: data.website || null,
           motto: data.motto || null,
+          bio: data.bio || null,
           yearsExperience: data.yearsExperience !== "" ? data.yearsExperience : null,
           socialLinks:
             data.socialInstagram || data.socialFacebook || data.socialYoutube
@@ -343,6 +350,7 @@ function StepPhotos({ data, setData }: StepProps) {
         <ImageUpload
           label="Cover fotka"
           preset="cover"
+          subfolder={data.userId ?? undefined}
           value={data.coverPhoto || null}
           onChange={(url) => setData((p) => ({ ...p, coverPhoto: url ?? "" }))}
           shape="rect"
@@ -352,6 +360,7 @@ function StepPhotos({ data, setData }: StepProps) {
         <ImageUpload
           label="Profilová fotka"
           preset="avatar"
+          subfolder={data.userId ?? undefined}
           value={data.avatar || null}
           onChange={(url) => setData((p) => ({ ...p, avatar: url ?? "" }))}
           shape="circle"
@@ -595,6 +604,27 @@ function StepContacts({ data, setData }: StepProps) {
         onChange={(e) => setData((p) => ({ ...p, motto: e.target.value }))}
       />
 
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-1">
+          O mně (max 500 znaků)
+        </label>
+        <textarea
+          value={data.bio}
+          onChange={(e) => setData((p) => ({ ...p, bio: e.target.value }))}
+          maxLength={500}
+          rows={4}
+          placeholder="Napište krátce o sobě (aspoň 50 znaků pro 100% profil)"
+          className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 resize-y"
+        />
+        <p
+          className={`text-xs mt-1 ${
+            data.bio.length >= 50 ? "text-green-600" : "text-gray-400"
+          }`}
+        >
+          {data.bio.length}/500 {data.bio.length >= 50 ? "✓" : "(min 50)"}
+        </p>
+      </div>
+
       <Input
         label="Web"
         placeholder="https://www.example.cz"
@@ -641,7 +671,7 @@ function StepReview({ data }: { data: WizardData }) {
   const completeness = calculateProfileCompleteness({
     avatar: data.avatar || null,
     coverPhoto: data.coverPhoto || null,
-    bio: null,
+    bio: data.bio || null,
     city: data.city || null,
     motto: data.motto || null,
     yearsExperience: data.yearsExperience === "" ? null : data.yearsExperience,
@@ -703,6 +733,14 @@ function StepReview({ data }: { data: WizardData }) {
         />
         <ReviewField label="Město" value={data.city || "—"} />
         <ReviewField label="Motto" value={data.motto || "—"} />
+        <ReviewField
+          label="O mně"
+          value={
+            data.bio
+              ? `${data.bio.slice(0, 80)}${data.bio.length > 80 ? "…" : ""} (${data.bio.length} znaků)`
+              : "—"
+          }
+        />
         <ReviewField
           label="Zkušenosti"
           value={

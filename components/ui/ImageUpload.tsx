@@ -43,6 +43,15 @@ export function ImageUpload({
 
   const handleFile = async (file: File) => {
     setError(null);
+
+    // Client-side size guard — avoids unnecessary upload attempts.
+    const MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
+    if (file.size > MAX_SIZE_BYTES) {
+      setError("Soubor je větší než 10 MB");
+      if (inputRef.current) inputRef.current.value = "";
+      return;
+    }
+
     setUploading(true);
     try {
       const fd = new FormData();

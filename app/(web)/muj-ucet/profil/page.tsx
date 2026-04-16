@@ -14,6 +14,7 @@ import {
 } from "@/lib/broker-specializations";
 
 interface ProfileEditData {
+  id: string;
   firstName: string;
   lastName: string;
   bio: string | null;
@@ -249,6 +250,7 @@ export default function ProfileEditPage() {
             <ImageUpload
               label="Cover fotka"
               preset="cover"
+              subfolder={data?.id}
               value={coverPhoto || null}
               onChange={(url) => setCoverPhoto(url ?? "")}
               shape="rect"
@@ -258,6 +260,7 @@ export default function ProfileEditPage() {
             <ImageUpload
               label="Profilová fotka"
               preset="avatar"
+              subfolder={data?.id}
               value={avatar || null}
               onChange={(url) => setAvatar(url ?? "")}
               shape="circle"
