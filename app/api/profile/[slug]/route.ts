@@ -50,6 +50,10 @@ export async function GET(
           orderBy: { unlockedAt: "desc" },
           take: 10,
         },
+        tags: {
+          select: { slug: true, label: true },
+          orderBy: { label: "asc" },
+        },
       },
     });
 
@@ -141,6 +145,7 @@ export async function GET(
         specializations: user.specializations,
         warehouseAddress: user.warehouseAddress,
         openingHours: user.openingHours,
+        tags: user.tags,
       },
       stats: {
         vehicles: vehicleCount,
