@@ -220,7 +220,7 @@ async function main() {
       status: "ACTIVE",
       slug: "jan-novak-praha",
       managerId: manazer.id,
-      specializations: JSON.stringify(["osobn\u00ED", "SUV"]),
+      specializations: JSON.stringify(["Osobn\u00ED", "SUV"]),
       cities: JSON.stringify(["Praha"]),
       bio: "Certifikovan\u00FD makl\u00E9\u0159 s 5 lety zku\u0161enost\u00ED v prodeji osobn\u00EDch a SUV voz\u016F. Specializuji se na komplexn\u00ED servis od v\u00FDb\u011Bru po p\u0159epis vozu.",
     },

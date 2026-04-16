@@ -65,8 +65,14 @@ export const metadata: Metadata = {
     images: ["/brand/og-image.png"],
   },
   icons: {
-    icon: "/brand/favicon.ico",
-    apple: "/brand/apple-touch-icon.png",
+    icon: [
+      { url: "/brand/favicon.ico", sizes: "48x48" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [
+      { url: "/brand/apple-touch-icon.png", sizes: "180x180" },
+    ],
   },
   // POZN: `alternates.canonical` SE NEEXPORTUJE v root layoutu — způsobovalo
   // bug #127 (všechny child stránky dědily homepage URL místo svého). Každá
