@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { StatCard } from "@/components/ui/StatCard";
 import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { ProfileCompletenessBar } from "@/components/profile/ProfileCompletenessBar";
+import type { ProfileCompletenessInput } from "@/lib/profile-completeness";
 
 interface DashboardStats {
   favorites: number;
@@ -15,6 +16,7 @@ interface DashboardStats {
 export default function MujUcetPage() {
   const [stats, setStats] = useState<DashboardStats>({ favorites: 0, watchdogs: 0, inquiries: 0 });
   const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState<ProfileCompletenessInput | null>(null);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -30,7 +32,33 @@ export default function MujUcetPage() {
         setLoading(false);
       }
     };
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch("/api/profile/edit");
+        if (res.ok) {
+          const { user } = await res.json();
+          if (user) {
+            setProfile({
+              avatar: user.avatar ?? null,
+              coverPhoto: user.coverPhoto ?? null,
+              bio: user.bio ?? null,
+              city: user.city ?? null,
+              motto: user.motto ?? null,
+              yearsExperience: user.yearsExperience ?? null,
+              website: user.website ?? null,
+              specializations: user.specializations ?? null,
+              services: user.services ?? null,
+              languageSkills: user.languageSkills ?? null,
+              socialLinks: user.socialLinks ?? null,
+            });
+          }
+        }
+      } catch {
+        // silently fail
+      }
+    };
     fetchStats();
+    fetchProfile();
   }, []);
 
   if (loading) {
@@ -43,6 +71,9 @@ export default function MujUcetPage() {
 
   return (
     <div className="space-y-6">
+      {/* Profile completeness banner (TASK-060) */}
+      {profile && <ProfileCompletenessBar user={profile} />}
+
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <StatCard

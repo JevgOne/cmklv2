@@ -6,7 +6,8 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/muj-ucet", label: "Přehled", exact: true },
-  { href: "/muj-ucet/profil", label: "Můj profil" },
+  { href: "/muj-ucet/profil", label: "Můj profil", exact: true },
+  { href: "/muj-ucet/profil/setup", label: "Nastavit profil" },
   { href: "/muj-ucet/oblibene", label: "Oblíbené" },
   { href: "/muj-ucet/hlidaci-pes", label: "Hlídací pes" },
   { href: "/muj-ucet/dotazy", label: "Moje dotazy" },

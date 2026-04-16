@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { ImageUpload } from "@/components/ui/ImageUpload";
 import { TagInput, type TagInputValue } from "@/components/web/TagInput";
 import Link from "next/link";
 import { DAY_KEYS, DAY_LABELS } from "@/lib/role-labels";
@@ -222,37 +223,48 @@ export default function ProfileEditPage() {
             Upravte si veřejný profil viditelný ostatním uživatelům
           </p>
         </div>
-        {data?.slug && (
+        <div className="flex items-center gap-4 flex-wrap">
           <Link
-            href={`/profil/${data.slug}`}
+            href="/muj-ucet/profil/setup"
             className="text-sm font-semibold text-orange-500 hover:text-orange-600 no-underline"
           >
-            Zobrazit veřejný profil &rarr;
+            Spustit průvodce profilem &rarr;
           </Link>
-        )}
+          {data?.slug && (
+            <Link
+              href={`/profil/${data.slug}`}
+              className="text-sm font-semibold text-orange-500 hover:text-orange-600 no-underline"
+            >
+              Zobrazit veřejný profil &rarr;
+            </Link>
+          )}
+        </div>
       </div>
 
       <form onSubmit={handleSave} className="space-y-6">
         {/* Cover + Avatar */}
         <Card className="p-5">
           <h3 className="font-semibold text-gray-900 mb-4">Fotografie</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Input
-              label="Cover photo URL"
-              placeholder="https://res.cloudinary.com/..."
-              value={coverPhoto}
-              onChange={(e) => setCoverPhoto(e.target.value)}
+          <div className="grid grid-cols-1 sm:grid-cols-[2fr,1fr] gap-4">
+            <ImageUpload
+              label="Cover fotka"
+              preset="cover"
+              value={coverPhoto || null}
+              onChange={(url) => setCoverPhoto(url ?? "")}
+              shape="rect"
+              aspectRatio="16 / 5"
+              hint="Doporučený rozměr 1200×400 px."
             />
-            <Input
-              label="Avatar URL"
-              placeholder="https://res.cloudinary.com/..."
-              value={avatar}
-              onChange={(e) => setAvatar(e.target.value)}
+            <ImageUpload
+              label="Profilová fotka"
+              preset="avatar"
+              value={avatar || null}
+              onChange={(url) => setAvatar(url ?? "")}
+              shape="circle"
+              aspectRatio="1 / 1"
+              hint="Doporučený rozměr 400×400 px."
             />
           </div>
-          <p className="text-xs text-gray-400 mt-2">
-            Nahrajte obrázky přes Cloudinary a vložte URL. Doporučený rozměr cover: 1200x400px, avatar: 400x400px.
-          </p>
         </Card>
 
         {/* Personal info */}

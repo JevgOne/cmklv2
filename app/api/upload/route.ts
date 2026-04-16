@@ -15,6 +15,9 @@ const PRESETS: Record<string, { folder: string; allowedTypes: string[]; watermar
   invoices: { folder: "carmakler/invoices", allowedTypes: ALLOWED_DOC_TYPES, skipProcessing: true },
   contracts: { folder: "carmakler/contracts", allowedTypes: ALLOWED_DOC_TYPES, skipProcessing: true },
   damages: { folder: "carmakler/damages", allowedTypes: ALLOWED_IMAGE_TYPES, watermark: true },
+  // NEW (TASK-060) — profile avatar + cover, no watermark
+  avatar: { folder: "carmakler/avatars", allowedTypes: ALLOWED_IMAGE_TYPES },
+  cover: { folder: "carmakler/covers", allowedTypes: ALLOWED_IMAGE_TYPES },
 };
 
 /**
