@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { prisma } from "@/lib/prisma";
 import type { VehicleData } from "@/components/web/VehicleCard";
 import { pageCanonical } from "@/lib/canonical";
+import { fuelLabels, transmissionLabels } from "@/lib/vehicle-labels";
 
 export const revalidate = 300; // ISR: 5 minut
 
@@ -21,27 +22,6 @@ export const metadata: Metadata = {
       "Prověřená ojetá vozidla od makléřů i soukromých prodejců. Snadné vyhledávání s filtry.",
   },
   alternates: pageCanonical("/nabidka"),
-};
-
-/* ------------------------------------------------------------------ */
-/*  Fuel / Transmission label mapování                                 */
-/* ------------------------------------------------------------------ */
-
-const fuelLabels: Record<string, string> = {
-  PETROL: "Benzín",
-  DIESEL: "Diesel",
-  ELECTRIC: "Elektro",
-  HYBRID: "Hybrid",
-  PLUGIN_HYBRID: "Plug-in Hybrid",
-  LPG: "LPG",
-  CNG: "CNG",
-};
-
-const transmissionLabels: Record<string, string> = {
-  MANUAL: "Manuál",
-  AUTOMATIC: "Automat",
-  DSG: "DSG",
-  CVT: "CVT",
 };
 
 /* ------------------------------------------------------------------ */

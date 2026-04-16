@@ -10,9 +10,11 @@ import { Button } from "@/components/ui/Button";
 import { LikeButton } from "@/components/web/LikeButton";
 import { CommentSection } from "@/components/web/CommentSection";
 import { TagPill } from "@/components/web/TagPill";
+import { VehicleCard, type VehicleData } from "@/components/web/VehicleCard";
 import { BADGE_CATALOG } from "@/lib/badge-catalog";
 import { getDefaultCover } from "@/lib/profile/defaultCovers";
 import { categorizeSpecialization } from "@/lib/broker-specializations";
+import { fuelLabels, transmissionLabels } from "@/lib/vehicle-labels";
 import { formatPrice, getInitials, parseCities } from "@/lib/utils";
 import {
   ROLE_LABELS,
@@ -80,11 +82,34 @@ interface ProfileItem {
   slug?: string;
   brand?: string;
   model?: string;
+  variant?: string | null;
   name?: string;
   year?: number;
   price?: number;
+  mileage?: number;
+  fuelType?: string;
+  transmission?: string;
+  enginePower?: number | null;
+  city?: string;
+  trustScore?: number;
+  stkValidUntil?: string | null;
+  sellerType?: string;
+  listingType?: string;
+  isPremium?: boolean;
   category?: string;
   images?: { url: string }[];
+  broker?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    slug?: string | null;
+  } | null;
+  user?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    companyName?: string | null;
+  } | null;
   _count?: { profileLikes: number; profileComments: number };
   vehicle?: {
     id: string;
@@ -722,6 +747,68 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
   );
 }
 
+function mapVehicleItemToCard(item: ProfileItem, type: string): VehicleData {
+  const brand = item.brand ?? "";
+  const model = item.model ?? "";
+  const variant = item.variant ?? "";
+  const name = `${brand} ${model}${variant ? " " + variant : ""}`.trim();
+  const km = item.mileage
+    ? new Intl.NumberFormat("cs-CZ").format(item.mileage) + " km"
+    : "";
+  const fuel = item.fuelType ? fuelLabels[item.fuelType] ?? item.fuelType : "";
+  const transmission = item.transmission
+    ? transmissionLabels[item.transmission] ?? item.transmission
+    : "";
+  const hp = item.enginePower ? `${item.enginePower} HP` : "";
+  const priceStr = item.price
+    ? new Intl.NumberFormat("cs-CZ").format(item.price)
+    : "0";
+  const photo = item.images?.[0]?.url || "/images/placeholder-car.jpg";
+  const trust = item.trustScore ?? 0;
+
+  let badge: "verified" | "top" | "default" = "default";
+  if (type === "listing") {
+    badge = item.isPremium ? "top" : "default";
+  } else {
+    if (trust >= 95) badge = "top";
+    else if (trust >= 80) badge = "verified";
+  }
+
+  const brokerName =
+    type === "vehicle" && item.broker
+      ? `${item.broker.firstName} ${item.broker.lastName}`
+      : type === "listing" && item.listingType === "DEALER" && item.user
+        ? item.user.companyName ||
+          `${item.user.firstName} ${item.user.lastName}`
+        : undefined;
+
+  return {
+    id: item.id,
+    name,
+    year: item.year ?? 0,
+    km,
+    fuel,
+    transmission,
+    city: item.city ?? "",
+    hp,
+    price: priceStr,
+    trust,
+    badge,
+    photo,
+    slug: item.slug,
+    sellerType:
+      type === "listing"
+        ? "listing"
+        : (item.sellerType as "broker" | "private" | undefined) ?? "broker",
+    brokerName,
+    listingType: item.listingType as "BROKER" | "DEALER" | "PRIVATE" | undefined,
+    isPremium: item.isPremium,
+    source: type === "listing" ? "listing" : "vehicle",
+    priceNum: item.price,
+    stkValidUntil: item.stkValidUntil ?? undefined,
+  };
+}
+
 function ProfileItemCard({
   item,
   type,
@@ -729,6 +816,29 @@ function ProfileItemCard({
   item: ProfileItem;
   type: string;
 }) {
+  if (type === "vehicle" || type === "listing") {
+    const vehicleData = mapVehicleItemToCard(item, type);
+    const likeCount = item._count?.profileLikes ?? 0;
+    const commentCount = item._count?.profileComments ?? 0;
+    const entityProps: { vehicleId?: string; listingId?: string } =
+      type === "vehicle" ? { vehicleId: item.id } : { listingId: item.id };
+
+    return (
+      <div className="group">
+        <VehicleCard car={vehicleData} />
+        <div className="flex items-center gap-3 mt-2 px-0.5">
+          <LikeButton {...entityProps} initialCount={likeCount} size="sm" />
+          {commentCount > 0 && (
+            <span className="text-xs text-gray-400">
+              &#128172; {commentCount}
+            </span>
+          )}
+        </div>
+        <CommentSection {...entityProps} initialCount={commentCount} />
+      </div>
+    );
+  }
+
   if (type === "investment") {
     const raw = item as unknown as {
       opportunity: {
