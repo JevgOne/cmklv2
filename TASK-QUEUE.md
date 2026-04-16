@@ -1739,7 +1739,7 @@ Kompletní specifikace je v sekci "Očekávaný výsledek" níže. Detailní zad
 
 ## TASK-020: Eshop autodíly — e-shop s použitými a aftermarket díly
 Priorita: 3
-Stav: zpracovává se
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:
@@ -6204,7 +6204,7 @@ Octavia, Fabia, Superb, Kodiaq, Golf, Passat, 3 Series, A4, Focus, Yaris, i30, C
 
 ## TASK-042: PDF šablony a prezentace — vizuální design pro všechny materiály
 Priorita: 2
-Stav: čeká
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:
