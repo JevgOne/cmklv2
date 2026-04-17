@@ -181,7 +181,7 @@ export function Step5PriceContact({ data, updateData, onNext, onPrev }: Step5Pro
           onChange={(e) => update("wantsBrokerHelp", e.target.checked)}
         />
         <p className="text-xs text-gray-500 mt-2 ml-8">
-          Certifikovaný makléř vám pomůže s prodejem vozu. Bez závazku, pouze provize z úspěšného prodeje.
+          Ověřený makléř vám pomůže s prodejem vozu. Bez závazku, pouze provize z úspěšného prodeje.
         </p>
       </div>
 

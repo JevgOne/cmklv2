@@ -46,7 +46,7 @@ const faqItems = [
   {
     question: "Je bezpečné prodávat auto přes makléře?",
     answer:
-      "Ano, prodej přes certifikovaného makléře CarMakler je bezpečný. Makléř zajistí kupní smlouvu, ověří kupujícího a dohlédne na bezpečnou platbu.",
+      "Ano, prodej přes ověřeného makléře CarMakler je bezpečný. Makléř zajistí kupní smlouvu, ověří kupujícího a dohlédne na bezpečnou platbu.",
   },
 ];
 
@@ -162,7 +162,7 @@ export default function JakProdatAutoPage() {
                 <p>
                   Správná cena je klíčová pro rychlý prodej. Příliš vysoká cena odradí zájemce,
                   příliš nízká znamená ztrátu peněz. Na CarMakler nabízíme bezplatné ocenění vozu
-                  certifikovaným makléřem, který zná aktuální tržní ceny ve vašem regionu.
+                  ověřeným makléřem, který zná aktuální tržní ceny ve vašem regionu.
                   Makléř zohlední značku, model, rok, nájezd, výbavu a celkový stav vozu.
                 </p>
               )}
@@ -170,7 +170,7 @@ export default function JakProdatAutoPage() {
                 <p>
                   Kvalitní inzerát obsahuje: kompletní specifikace vozu, historii servisu a oprav,
                   informaci o STK a emisích, výbavu a příslušenství, a samozřejmě kvalitní fotografie.
-                  Na CarMakler můžete vložit inzerát zdarma nebo využít služeb certifikovaného makléře,
+                  Na CarMakler můžete vložit inzerát zdarma nebo využít služeb ověřeného makléře,
                   který vytvoří profesionální prezentaci a zajistí propagaci vašeho vozu.
                 </p>
               )}
@@ -187,7 +187,7 @@ export default function JakProdatAutoPage() {
                   Při prohlídkách buďte profesionální a upřímní. Přiznání drobných nedostatků buduje
                   důvěru. Připravte si odpovědi na časté otázky: důvod prodeje, historie oprav,
                   spotřeba paliva. Umožněte zkušební jízdu — je to standard a odmítnutí budí podezření.
-                  Pro maximální bezpečnost doporučujeme prohlídky přes certifikovaného makléře.
+                  Pro maximální bezpečnost doporučujeme prohlídky přes ověřeného makléře.
                 </p>
               )}
               {index === 5 && (
@@ -195,7 +195,7 @@ export default function JakProdatAutoPage() {
                   Kupní smlouva musí obsahovat: identifikaci prodávajícího a kupujícího (jméno, adresa,
                   rodné číslo/IČO), identifikaci vozidla (VIN, SPZ, značka, model, rok), kupní cenu
                   slovem i číslem, stav tachometru, prohlášení o známých vadách a podpisy obou stran.
-                  Certifikovaný makléř CarMakler připraví právně bezchybnou smlouvu.
+                  Ověřený makléř CarMakler připraví právně bezchybnou smlouvu.
                 </p>
               )}
               {index === 6 && (
@@ -237,7 +237,7 @@ export default function JakProdatAutoPage() {
               Nechcete se o nic starat?
             </h2>
             <p className="text-orange-100 mb-8 text-lg">
-              Certifikovaný makléř CarMakler prodá vaše auto za vás. Kompletní servis od ocenění po přepis.
+              Ověřený makléř CarMakler prodá vaše auto za vás. Kompletní servis od ocenění po přepis.
             </p>
             <Link
               href="/chci-prodat"

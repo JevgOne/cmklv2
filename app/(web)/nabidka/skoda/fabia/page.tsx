@@ -8,8 +8,8 @@ const model = TOP_MODELS.find((m) => m.brandSlug === "skoda" && m.slug === "fabi
 
 export const metadata: Metadata = model ? {
   title: `${model.fullName} bazar | Ojeté ${model.name} — CarMakler`,
-  description: `Prověřené ojeté ${model.fullName} od certifikovaných makléřů. Varianty ${model.variants.join(", ")}. Bezpečný nákup s garancí.`,
-  openGraph: { title: `${model.fullName} | CarMakler`, description: `Ojeté ${model.fullName} v nabídce. Prověřené vozy od certifikovaných makléřů.` },
+  description: `Prověřené ojeté ${model.fullName} od ověřených makléřů. Varianty ${model.variants.join(", ")}. Bezpečný nákup s garancí.`,
+  openGraph: { title: `${model.fullName} | CarMakler`, description: `Ojeté ${model.fullName} v nabídce. Prověřené vozy od ověřených makléřů.` },
   alternates: pageCanonical("/nabidka/skoda/fabia"),
 } : {};
 

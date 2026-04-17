@@ -9,7 +9,7 @@ const city = CITIES.find((c) => c.slug === "brno");
 
 export const metadata: Metadata = city ? {
   title: `Autobazar ${city.name} | Ojeté vozy ${city.inLocative} — CarMakler`,
-  description: `Prověřené ojeté vozy ${city.inLocative} od certifikovaných makléřů. Osobní prohlídka, prověrka CEBIA, bezpečný nákup.`,
+  description: `Prověřené ojeté vozy ${city.inLocative} od ověřených makléřů. Osobní prohlídka, prověrka CEBIA, bezpečný nákup.`,
   openGraph: {
     title: `Ojeté vozy ${city.inLocative} | CarMakler`,
     description: `Prověřené ojeté vozy ${city.inLocative}. Bezpečný nákup od makléřů.`,
@@ -51,7 +51,7 @@ export default function Page() {
       title={`Autobazar ${city.name} | Ojeté vozy ${city.inLocative} — CarMakler`}
       description={city.description}
       h1={`Ojeté vozy ${city.inLocative}`}
-      filterDescription={`Prověřené ojeté vozy od certifikovaných makléřů ${city.inLocative} a okolí.`}
+      filterDescription={`Prověřené ojeté vozy od ověřených makléřů ${city.inLocative} a okolí.`}
       aiSnippet={city.aiSnippet}
       quickFacts={city.quickFacts}
       seoText={
@@ -60,14 +60,14 @@ export default function Page() {
           <p>{city.description}</p>
           <h3>Proč kupovat přes CarMakler {city.inLocative}?</h3>
           <p>
-            CarMakler nabízí síť certifikovaných makléřů přímo {city.inLocative}. Makléř vám osobně
+            CarMakler nabízí síť ověřených makléřů přímo {city.inLocative}. Makléř vám osobně
             ukáže vybraný vůz, provede důkladnou prohlídku a prověří historii přes CEBIA. Celý
             proces nákupu probíhá lokálně — od výběru přes prohlídku až po přepis na registru vozidel.
             Nemusíte nikam cestovat, vše vyřídíme {city.inLocative}.
           </p>
           <h3>Makléři {city.inLocative}</h3>
           <p>
-            Naši certifikovaní makléři {city.inLocative} znají lokální trh a pomohou vám najít
+            Naši makléři {city.inLocative} znají lokální trh a pomohou vám najít
             ideální vůz. Zajistí kompletní servis — od vyhledání vozu přes prověrku, financování
             až po pojištění a přepis. Služby makléře jsou pro kupujícího zdarma.
           </p>

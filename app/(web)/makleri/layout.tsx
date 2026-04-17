@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Certifikovaní makléři",
+  title: "Ověření makléři",
   description:
-    "Najděte certifikovaného automakléře ve vašem regionu. 186 makléřů po celé ČR — Praha, Brno, Ostrava a další.",
+    "Najděte ověřeného automakléře ve vašem regionu. 186 makléřů po celé ČR — Praha, Brno, Ostrava a další.",
   openGraph: {
-    title: "Certifikovaní makléři | CarMakléř",
+    title: "Ověření makléři | CarMakléř",
     description:
       "186 ověřených automakléřů po celé ČR. Najděte makléře ve svém městě.",
   },

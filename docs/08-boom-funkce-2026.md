@@ -728,7 +728,7 @@ Martin K. • ✅ Ověřená prohlídka • 15.1.2026
 ┌──────────────────────────────────────────────────────────────────┐
 │                                                                  │
 │  ┌──────┐  Jan Novák                                            │
-│  │      │  Certifikovaný automakléř                             │
+│  │      │  Senior makléř                                         │
 │  │ FOTO │                                                        │
 │  │      │  🏆 TOP 10 Makléř 2025                                │
 │  └──────┘  ⚡ Odpovídá do 1.5 hodiny                            │

@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
+import { LevelProgressBar } from "@/components/ui/LevelProgressBar";
+import { LEVEL_LABELS } from "@/lib/role-labels";
 
 export interface BrokerBoxProps {
   name: string;
@@ -13,6 +15,8 @@ export interface BrokerBoxProps {
   avgDays: number;
   phone: string;
   slug: string;
+  level?: string;
+  totalSales?: number;
   className?: string;
 }
 
@@ -25,6 +29,8 @@ export function BrokerBox({
   avgDays,
   phone,
   slug,
+  level,
+  totalSales,
   className,
 }: BrokerBoxProps) {
   return (
@@ -39,11 +45,14 @@ export function BrokerBox({
         <div className="w-[60px] h-[60px] bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center text-[22px] font-extrabold text-white shrink-0">
           {initials}
         </div>
-        <div>
+        <div className="min-w-0 flex-1">
           <h4 className="text-lg font-bold text-gray-900">{name}</h4>
           <p className="text-sm text-orange-700 font-semibold">
-            Certifikovaný makléř
+            {level ? (LEVEL_LABELS[level] || "Makléř") : "Makléř"}
           </p>
+          {level && typeof totalSales === "number" && (
+            <LevelProgressBar level={level} totalSales={totalSales} size="sm" />
+          )}
         </div>
       </div>
 

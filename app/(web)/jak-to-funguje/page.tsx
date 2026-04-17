@@ -45,7 +45,7 @@ const sellingSteps = [
     icon: "📞",
     title: "Makléř vás kontaktuje",
     description:
-      "Do 30 minut se vám ozve certifikovaný makléř a dohodne si prohlídku.",
+      "Do 30 minut se vám ozve ověřený makléř a dohodne si prohlídku.",
   },
   {
     number: 3,
@@ -141,7 +141,7 @@ export default function JakToFungujePage() {
             Prodej auta přes makléře
           </h2>
           <p className="text-gray-500 mb-8">
-            Svěřte prodej certifikovanému makléři. Vy nemusíte řešit nic — makléř zajistí vše od
+            Svěřte prodej ověřenému makléři. Vy nemusíte řešit nic — makléř zajistí vše od
             fotek po přepis. Provize jen 5 % z prodejní ceny.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

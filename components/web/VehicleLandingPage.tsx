@@ -174,7 +174,7 @@ export function VehicleLandingPage({
               {ctaHeading}
             </h2>
             <p className="text-orange-100 mb-8 text-lg">
-              Nechte to na nás. Certifikovaný makléř prodá vaše auto rychle, bezpečně a za nejlepší cenu.
+              Nechte to na nás. Ověřený makléř prodá vaše auto rychle, bezpečně a za nejlepší cenu.
             </p>
             <Link
               href={ctaHref}

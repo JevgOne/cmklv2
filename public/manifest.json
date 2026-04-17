@@ -1,7 +1,7 @@
 {
   "name": "CarMakléř Pro",
   "short_name": "CarMakléř",
-  "description": "Profesionální aplikace pro certifikované auto makléře",
+  "description": "Profesionální aplikace pro makléře",
   "start_url": "/makler/dashboard",
   "display": "standalone",
   "background_color": "#F9FAFB",

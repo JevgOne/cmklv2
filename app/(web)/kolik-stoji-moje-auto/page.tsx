@@ -84,12 +84,12 @@ export default function KolikStojiMojeAutoPage() {
             hodnotu lépe), rok výroby a stáří vozu, celkový nájezd kilometrů, technický stav a vzhled
             karoserie, kompletnost servisní historie, typ paliva a převodovky, úroveň výbavy a aktuální
             tržní nabídka a poptávka. Kalkulačka zohledňuje hlavní faktory, ale pro přesné ocenění
-            doporučujeme kontaktovat certifikovaného makléře.
+            doporučujeme kontaktovat ověřeného makléře.
           </p>
 
           <h3>Proč nechat auto ocenit makléřem?</h3>
           <p>
-            Certifikovaný makléř CarMakler přijede přímo k vám, prohlédne vůz osobně a stanoví
+            Ověřený makléř CarMakler přijede přímo k vám, prohlédne vůz osobně a stanoví
             reálnou tržní cenu na základě aktuálních dat z trhu. Služba je zcela zdarma a nezávazná.
             Makléř zohlední faktory, které online kalkulačka nemůže posoudit — celkový stav laku,
             kvalitu interiéru, stav techniky a specifickou výbavu vašeho vozu.

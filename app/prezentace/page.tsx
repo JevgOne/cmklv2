@@ -65,7 +65,7 @@ function PrezentaceContent() {
             className="h-20 mx-auto mb-8 brightness-0 invert"
           />
           <h1 className="text-4xl sm:text-6xl font-extrabold mb-6">
-            Sit certifikovanych
+            Sit overenych
             <br />
             <span className="text-orange-500">automakleru</span>
           </h1>

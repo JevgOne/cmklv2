@@ -207,10 +207,10 @@ export default function RecenzePage() {
                   Najděte svého makléře
                 </h2>
                 <p className="text-sm text-gray-500">
-                  Vyberte si z naší sítě certifikovaných makléřů po celé ČR.
+                  Vyberte si z naší sítě ověřených makléřů po celé ČR.
                 </p>
                 <span className="inline-block mt-4 text-orange-500 font-semibold text-sm">
-                  Zobrazit certifikované makléře &rarr;
+                  Zobrazit ověřené makléře &rarr;
                 </span>
               </Card>
             </Link>

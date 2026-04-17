@@ -24,7 +24,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "CarMakléř | Prodej aut přes certifikované makléře",
+    default: "CarMakléř | Prodej aut přes ověřené makléře",
     template: "%s | CarMakléř",
   },
   description:
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "cs_CZ",
     siteName: "CarMakléř",
-    title: "CarMakléř | Prodej aut přes certifikované makléře",
+    title: "CarMakléř | Prodej aut přes ověřené makléře",
     description:
       "Prodejte nebo kupte auto bezpečně přes síť ověřených makléřů. Rychle, transparentně a bez starostí.",
     url: BASE_URL,
@@ -53,13 +53,13 @@ export const metadata: Metadata = {
         url: "/brand/og-image.png",
         width: 1200,
         height: 630,
-        alt: "CarMakléř — prodej aut přes certifikované makléře",
+        alt: "CarMakléř — prodej aut přes ověřené makléře",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "CarMakléř | Prodej aut přes certifikované makléře",
+    title: "CarMakléř | Prodej aut přes ověřené makléře",
     description:
       "Prodejte nebo kupte auto bezpečně přes síť ověřených makléřů.",
     images: ["/brand/og-image.png"],

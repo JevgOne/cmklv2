@@ -68,7 +68,7 @@ export function getHeroCopy(
       return {
         eyebrow: "Značka",
         h1: `Specialisté na ${tag.label}`,
-        subheadline: `Prodejte své ${tag.label} přes certifikovaného specialistu. ${stats.count} makléřů s expertízou na značku.`,
+        subheadline: `Prodejte své ${tag.label} přes ověřeného specialistu. ${stats.count} makléřů s expertízou na značku.`,
       };
     case "SPECIALIZATION":
       return {
@@ -86,7 +86,7 @@ export function getHeroCopy(
       return {
         eyebrow: "Hashtag",
         h1: `Makléři #${tag.label}`,
-        subheadline: `Certifikovaní makléři označení hashtagem #${tag.label}.`,
+        subheadline: `Naši makléři označení hashtagem #${tag.label}.`,
       };
   }
 }
@@ -118,21 +118,21 @@ export function getCTACopy(
     case "CITY":
       return {
         heading: `Také byste rádi prodali auto v ${inLocative(tag.slug, tag.label)}?`,
-        body: "Vyberte si z certifikovaných makléřů.",
+        body: "Vyberte si z ověřených makléřů.",
         primary: { text: "Najít makléře", href: "#broker-grid" },
         secondary: { text: "Chci se stát makléřem", href: "/registrace" },
       };
     case "BRAND":
       return {
         heading: `Chcete prodat ${tag.label}?`,
-        body: "Využijte certifikovaného specialistu na tuto značku.",
+        body: "Využijte ověřeného specialistu na tuto značku.",
         primary: { text: "Najít specialistu", href: "#broker-grid" },
         secondary: { text: "Jsem specialista", href: "/registrace" },
       };
     case "SPECIALIZATION":
       return {
         heading: `Hledáte specialistu: ${tag.label}?`,
-        body: `Prohlédněte si certifikované makléře se specializací ${tag.label.toLowerCase()}.`,
+        body: `Prohlédněte si ověřené makléře se specializací ${tag.label.toLowerCase()}.`,
         primary: { text: "Najít specialistu", href: "#broker-grid" },
         secondary: { text: "Chci se stát makléřem", href: "/registrace" },
       };
@@ -210,7 +210,7 @@ export function getFAQ(
         },
         {
           question: "Kolik makléřů tuto specializaci nabízí?",
-          answer: `Aktuálně ${stats.count} certifikovaných makléřů se specializuje na ${tag.label.toLowerCase()}.`,
+          answer: `Aktuálně ${stats.count} ověřených makléřů se specializuje na ${tag.label.toLowerCase()}.`,
         },
         {
           question: "Jak najít toho pravého?",
@@ -240,7 +240,7 @@ export function getFAQ(
       return [
         {
           question: `Co znamená #${tag.label}?`,
-          answer: `Hashtag #${tag.label} používají certifikovaní makléři pro označení své specializace nebo servisní oblasti.`,
+          answer: `Hashtag #${tag.label} používají ověření makléři pro označení své specializace nebo servisní oblasti.`,
         },
         {
           question: "Kolik makléřů tento hashtag používá?",

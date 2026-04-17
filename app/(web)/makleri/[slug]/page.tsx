@@ -20,6 +20,7 @@ import {
   type LandingStats,
 } from "@/lib/landing-copy";
 import { getRelatedTagsByCoOccurrence } from "@/lib/tags";
+import { LEVEL_LABELS } from "@/lib/role-labels";
 
 export const revalidate = 3600;
 
@@ -307,7 +308,7 @@ export default async function HashtagLandingPage({ params }: PageProps) {
         "@type": "Person",
         name: `${b.firstName} ${b.lastName}`,
         url: `${BASE_URL}/profil/${b.slug}`,
-        jobTitle: "Certifikovaný makléř",
+        jobTitle: b.level === "TOP" ? "TOP Automakléř" : b.level === "SENIOR" ? "Senior automakléř" : "Automakléř",
         ...(b.city && {
           address: {
             "@type": "PostalAddress",
@@ -467,7 +468,7 @@ export default async function HashtagLandingPage({ params }: PageProps) {
         variant="bottom"
         copy={{
           heading: "Nenašli jste to co hledáte?",
-          body: "Prohlédněte si všechny naše certifikované makléře.",
+          body: "Prohlédněte si všechny naše ověřené makléře.",
           primary: { text: "Všichni makléři", href: "/makleri" },
         }}
       />

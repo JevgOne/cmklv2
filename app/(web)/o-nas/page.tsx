@@ -9,11 +9,11 @@ import { pageCanonical } from "@/lib/canonical";
 export const metadata: Metadata = {
   title: "O nás",
   description:
-    "CarMakléř — nová éra prodeje aut v Česku. Certifikovaní makléři, prověřená vozidla, spokojení klienti.",
+    "CarMakléř — nová éra prodeje aut v Česku. Ověření makléři, prověřená vozidla, spokojení klienti.",
   openGraph: {
     title: "O nás | CarMakléř",
     description:
-      "Certifikovaní makléři, prověřená vozidla, spokojení klienti. Poznejte náš příběh.",
+      "Ověření makléři, prověřená vozidla, spokojení klienti. Poznejte náš příběh.",
   },
   alternates: pageCanonical("/o-nas"),
 };
@@ -85,7 +85,7 @@ const values = [
   {
     icon: "🎯",
     title: "Profesionalita",
-    desc: "Certifikovaní makléři s pravidelnými školeními. Každý klient dostane prémiový servis.",
+    desc: "Ověření makléři s pravidelnými školeními. Každý klient dostane prémiový servis.",
   },
 ];
 
@@ -100,7 +100,7 @@ const orgJsonLd = {
   url: companyInfo.web.url,
   logo: companyInfo.web.logo,
   description:
-    "CarMakléř je moderní platforma pro prodej a nákup vozidel přes síť certifikovaných makléřů v celé České republice.",
+    "CarMakléř je moderní platforma pro prodej a nákup vozidel přes síť ověřených makléřů v celé České republice.",
   foundingDate: "2024",
   address: {
     "@type": "PostalAddress",
@@ -140,7 +140,7 @@ export default async function ONasPage() {
             Nová éra prodeje aut v Česku
           </h1>
           <p className="text-white/60 mt-5 text-lg max-w-2xl mx-auto">
-            Spojujeme technologie s osobním přístupem certifikovaných makléřů po celé České republice.
+            Spojujeme technologie s osobním přístupem ověřených makléřů po celé České republice.
           </p>
         </div>
       </section>
@@ -157,7 +157,7 @@ export default async function ONasPage() {
             platformu, která spojuje ty nejlepší makléře s klienty, kteří si zaslouží prémiový servis.
           </p>
           <p className="text-gray-600 leading-relaxed">
-            Dnes máme síť certifikovaných makléřů po celé ČR, kteří každý den pomáhají lidem prodávat a kupovat
+            Dnes máme síť ověřených makléřů po celé ČR, kteří každý den pomáhají lidem prodávat a kupovat
             auta bez stresu. Naše technologie — od prověrky vozidel po mobilní aplikaci pro makléře — zajišťují,
             že celý proces je transparentní, rychlý a bezpečný.
           </p>
@@ -251,7 +251,7 @@ export default async function ONasPage() {
               Prodat auto přes makléře
             </Link>
             <Link href="/makleri" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
-              Najít certifikovaného makléře
+              Najít ověřeného makléře
             </Link>
             <Link href="/recenze" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
               Přečíst recenze klientů

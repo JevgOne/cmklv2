@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
             <p style="color: #6b7280; font-size: 12px; word-break: break-all;">Pokud tlacitko nefunguje, zkopirujte tento odkaz: ${resetUrl}</p>
           </div>
           <div style="padding: 16px 32px; background-color: #f9fafb; border-top: 1px solid #e5e7eb; text-align: center; border-radius: 0 0 12px 12px;">
-            <p style="margin: 0; font-size: 12px; color: #9ca3af;">Carmakler — prodej aut pres certifikovane maklere</p>
+            <p style="margin: 0; font-size: 12px; color: #9ca3af;">Carmakler — prodej aut pres overene maklere</p>
           </div>
         </div>
       `,

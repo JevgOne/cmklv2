@@ -15,7 +15,7 @@ export const revalidate = 300; // ISR: 5 minut
 export const metadata: Metadata = {
   title: "Nabídka vozidel",
   description:
-    "Prohlédněte si nabídku prověřených ojetých vozidel od certifikovaných makléřů i soukromých prodejců. Filtry, řazení a snadné vyhledávání.",
+    "Prohlédněte si nabídku prověřených ojetých vozidel od ověřených makléřů i soukromých prodejců. Filtry, řazení a snadné vyhledávání.",
   openGraph: {
     title: "Nabídka vozidel | CarMakléř",
     description:
@@ -196,7 +196,7 @@ export default async function NabidkaPage({
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: "Nabídka vozidel — CarMakléř",
-    description: "Prověřená ojetá vozidla od certifikovaných makléřů i soukromých prodejců.",
+    description: "Prověřená ojetá vozidla od ověřených makléřů i soukromých prodejců.",
     numberOfItems: total,
     itemListElement: vehicles.slice(0, 10).map((car, i) => ({
       "@type": "ListItem",
@@ -329,7 +329,7 @@ export default async function NabidkaPage({
               Pojištění vozidla online
             </Link>
             <Link href="/makleri" className="text-orange-500 hover:text-orange-600 no-underline font-medium">
-              Najít certifikovaného makléře
+              Najít ověřeného makléře
             </Link>
             <Link href="/nabidka/porovnani" className="text-orange-500 hover:text-orange-600 no-underline font-medium">
               Porovnání vozidel

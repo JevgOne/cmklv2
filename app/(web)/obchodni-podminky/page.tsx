@@ -204,7 +204,7 @@ export default function ObchodniPodminkyPage() {
           <section id="maklerske-sluzby">
             <h2>8. Makléřské služby</h2>
             <p>
-              CarMakler zprostředkovává prodej vozidel prostřednictvím sítě certifikovaných makléřů.
+              CarMakler zprostředkovává prodej vozidel prostřednictvím sítě ověřených makléřů.
             </p>
             <ul>
               <li><strong>Provize:</strong> 5 % z prodejní ceny, minimálně 25 000 Kč včetně DPH.</li>

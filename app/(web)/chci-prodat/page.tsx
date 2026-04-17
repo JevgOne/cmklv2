@@ -9,11 +9,11 @@ import { pageCanonical } from "@/lib/canonical";
 export const metadata: Metadata = {
   title: "Chci prodat auto",
   description:
-    "Prodáme vaše auto rychleji a za lepší cenu. Nechte to na certifikovaném makléři CarMakléř.",
+    "Prodáme vaše auto rychleji a za lepší cenu. Nechte to na ověřeném makléři CarMakléř.",
   openGraph: {
     title: "Prodejte auto přes makléře | CarMakléř",
     description:
-      "Prodáme vaše auto rychleji a za lepší cenu. Nechte to na certifikovaném makléři CarMakléř.",
+      "Prodáme vaše auto rychleji a za lepší cenu. Nechte to na ověřeném makléři CarMakléř.",
   },
   alternates: pageCanonical("/chci-prodat"),
 };
@@ -29,7 +29,7 @@ const steps = [
     number: 2,
     icon: "📞",
     title: "Makléř vás kontaktuje",
-    description: "Do 30 minut se vám ozve certifikovaný makléř",
+    description: "Do 30 minut se vám ozve ověřený makléř",
   },
   {
     number: 3,

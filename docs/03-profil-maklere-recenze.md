@@ -53,7 +53,7 @@ model Certificate {
   userId      String
   user        User     @relation(fields: [userId], references: [id])
   
-  name        String   // "Certifikovaný odhadce vozidel"
+  name        String   // "Odhadce vozidel"
   issuer      String?  // "Asociace prodejců vozidel"
   issuedAt    DateTime?
   expiresAt   DateTime?
@@ -138,7 +138,7 @@ enum ReviewStatus {
 ┌──────────────────────────────────────────────────────────────────┐
 │                                                                  │
 │  ┌──────┐  Jan Novák                              ⭐ 4.8 (47)   │
-│  │      │  Certifikovaný automakléř                              │
+│  │      │  Senior makléř                                          │
 │  │ FOTO │  Praha a okolí                                         │
 │  │      │                                                        │
 │  └──────┘  📞 +420 777 123 456                                  │
@@ -171,7 +171,7 @@ enum ReviewStatus {
 │                                                                  │
 │  CERTIFIKÁTY                                                     │
 │  ──────────                                                      │
-│  ✓ Certifikovaný odhadce vozidel (APOV, 2023)                   │
+│  ✓ Odhadce vozidel (APOV, 2023)                                 │
 │  ✓ Specialista na prémiové vozy (BMW Academy, 2022)             │
 │                                                                  │
 ├──────────────────────────────────────────────────────────────────┤
@@ -372,7 +372,7 @@ export async function generateMetadata({ params }): Promise<Metadata> {
   
   return {
     title: `${broker.fullName} - Automakléř ${broker.city} | Carmakler`,
-    description: `${broker.fullName} - certifikovaný automakléř v ${broker.city}. ⭐ ${broker.averageRating} (${broker.totalReviews} recenzí). ${broker.totalSales} prodaných vozů.`,
+    description: `${broker.fullName} - ověřený automakléř v ${broker.city}. ⭐ ${broker.averageRating} (${broker.totalReviews} recenzí). ${broker.totalSales} prodaných vozů.`,
     openGraph: {
       images: [broker.avatar],
     },

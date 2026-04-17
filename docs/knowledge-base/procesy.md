@@ -3,7 +3,7 @@
 ## Jak funguje Carmakler
 
 ### Princip
-Carmakler je platforma pro zprostředkování prodeje vozidel přes síť certifikovaných makléřů. Makléři nabírají vozidla od prodejců, profesionálně je prezentují a zprostředkují prodej. Za úspěšný prodej dostávají provizi.
+Carmakler je platforma pro zprostředkování prodeje vozidel přes síť ověřených makléřů. Makléři nabírají vozidla od prodejců, profesionálně je prezentují a zprostředkují prodej. Za úspěšný prodej dostávají provizi.
 
 ### Flow prodeje
 1. **Kontakt s prodejcem** — makléř osloví prodejce nebo prodejce kontaktuje Carmakler

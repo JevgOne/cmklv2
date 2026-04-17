@@ -6,7 +6,7 @@
  */
 
 export const ROLE_LABELS: Record<string, string> = {
-  BROKER: "Certifikovaný makléř",
+  BROKER: "Makléř",
   ADVERTISER: "Inzerent",
   PARTS_SUPPLIER: "Dodavatel dílů",
   WHOLESALE_SUPPLIER: "Velkoobchod",

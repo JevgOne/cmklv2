@@ -11,9 +11,9 @@ export const revalidate = 3600; // ISR: 1 hodina
 export const metadata: Metadata = {
   title: "Naši makléři — CarMakléř",
   description:
-    "Certifikovaní automakléři po celé ČR. Najděte svého makléře a prodejte auto rychle a bezpečně.",
+    "Ověření automakléři po celé ČR. Najděte svého makléře a prodejte auto rychle a bezpečně.",
   openGraph: {
-    title: "Certifikovaní automakléři | CarMakléř",
+    title: "Ověření automakléři | CarMakléř",
     description:
       "Najděte svého makléře a prodejte auto rychle a bezpečně. Síť ověřených makléřů po celé ČR.",
   },
@@ -86,7 +86,7 @@ export default async function MakleriPage() {
       <section className="bg-gradient-to-br from-gray-900 to-gray-950 py-10 sm:py-16 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight">
-            Naši certifikovaní makléři
+            Naši makléři
           </h1>
           <p className="text-white/60 mt-4 text-lg">
             {brokerCount} makléřů po celé ČR
@@ -187,7 +187,7 @@ export default async function MakleriPage() {
                 Zatím nejsou k dispozici žádní makléři
               </h3>
               <p className="text-gray-500 mt-2">
-                Brzy zde najdete naše certifikované makléře.
+                Brzy zde najdete naše ověřené makléře.
               </p>
             </div>
           )}
@@ -217,7 +217,7 @@ export default async function MakleriPage() {
                   Chcete se stát makléřem?
                 </h2>
                 <p className="text-sm text-gray-500">
-                  Přidejte se k naší síti certifikovaných makléřů. Flexibilní úvazek, neomezený výdělek.
+                  Přidejte se k naší síti ověřených makléřů. Flexibilní úvazek, neomezený výdělek.
                 </p>
                 <span className="inline-block mt-4 text-orange-500 font-semibold text-sm">
                   Zjistit více o kariéře &rarr;

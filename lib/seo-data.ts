@@ -42,11 +42,11 @@ export const BRANDS: BrandData[] = [
       "Zůstatková hodnota po 5 letech: 45–55 % pořizovací ceny",
     ],
     avgPriceRange: "80 000 – 900 000 Kč",
-    description: "Škoda je nejprodávanější automobilová značka v České republice s bohatou tradicí sahající do roku 1895. Vozy Škoda nabízejí výjimečný poměr ceny a výkonu, spolehlivost a praktičnost. Na CarMakler najdete prověřené ojeté vozy Škoda od certifikovaných makléřů, kteří garantují kvalitu a bezpečný nákup. Ať už hledáte rodinné kombi Octavia, městský hatchback Fabia, luxusní Superb nebo prostorné SUV Kodiaq — všechny vozy procházejí důkladnou kontrolou historie a technického stavu. Naši makléři vám pomohou vybrat ideální ojetou Škodu, prověří její historii přes CEBIA a zajistí bezproblémový převod.",
+    description: "Škoda je nejprodávanější automobilová značka v České republice s bohatou tradicí sahající do roku 1895. Vozy Škoda nabízejí výjimečný poměr ceny a výkonu, spolehlivost a praktičnost. Na CarMakler najdete prověřené ojeté vozy Škoda od ověřených makléřů, kteří garantují kvalitu a bezpečný nákup. Ať už hledáte rodinné kombi Octavia, městský hatchback Fabia, luxusní Superb nebo prostorné SUV Kodiaq — všechny vozy procházejí důkladnou kontrolou historie a technického stavu. Naši makléři vám pomohou vybrat ideální ojetou Škodu, prověří její historii přes CEBIA a zajistí bezproblémový převod.",
     faqItems: [
-      { question: "Jsou ojeté vozy Škoda na CarMakler prověřené?", answer: "Ano, všechna vozidla procházejí kontrolou historie přes CEBIA, ověřením stavu tachometru a kontrolou původu. Certifikovaní makléři navíc provádějí fyzickou prohlídku vozu." },
+      { question: "Jsou ojeté vozy Škoda na CarMakler prověřené?", answer: "Ano, všechna vozidla procházejí kontrolou historie přes CEBIA, ověřením stavu tachometru a kontrolou původu. Ověření makléři navíc provádějí fyzickou prohlídku vozu." },
       { question: "Jaká je nejprodávanější ojetá Škoda?", answer: "Nejprodávanějším ojetým modelem Škoda je Octavia, následovaná Fabií a Superbem. Octavia nabízí výborný poměr ceny, prostoru a spolehlivosti." },
-      { question: "Jak zjistím reálnou cenu ojeté Škody?", answer: "Na CarMakler můžete využít naši kalkulačku ceny vozidla nebo nechat auto ocenit zdarma naším certifikovaným makléřem, který zná aktuální tržní ceny." },
+      { question: "Jak zjistím reálnou cenu ojeté Škody?", answer: "Na CarMakler můžete využít naši kalkulačku ceny vozidla nebo nechat auto ocenit zdarma naším ověřeným makléřem, který zná aktuální tržní ceny." },
       { question: "Nabízíte financování nákupu ojeté Škody?", answer: "Ano, spolupracujeme s předními bankami a leasingovými společnostmi. Financování můžete vyřídit přímo přes CarMakler s výhodnou úrokovou sazbou." },
     ],
   },
@@ -70,7 +70,7 @@ export const BRANDS: BrandData[] = [
       "VW sdílí platformu MQB se Škodou a SEATem",
     ],
     avgPriceRange: "100 000 – 1 000 000 Kč",
-    description: "Volkswagen patří mezi nejoblíbenější značky na českém trhu ojetých vozidel. Vozy VW jsou synonymem německé kvality, spolehlivosti a pokročilých technologií. Na CarMakler nabízíme široký výběr prověřených ojetých Volkswagenů — od sportovního Golfu přes elegantní Passat až po rodinný Tiguan. Každý vůz prochází důkladnou kontrolou historie a technického stavu. Naši certifikovaní makléři vám pomohou najít ideální ojetý Volkswagen a zajistí bezpečný průběh celé transakce včetně převodu vlastnictví.",
+    description: "Volkswagen patří mezi nejoblíbenější značky na českém trhu ojetých vozidel. Vozy VW jsou synonymem německé kvality, spolehlivosti a pokročilých technologií. Na CarMakler nabízíme široký výběr prověřených ojetých Volkswagenů — od sportovního Golfu přes elegantní Passat až po rodinný Tiguan. Každý vůz prochází důkladnou kontrolou historie a technického stavu. Naši makléři vám pomohou najít ideální ojetý Volkswagen a zajistí bezpečný průběh celé transakce včetně převodu vlastnictví.",
     faqItems: [
       { question: "Jaké modely Volkswagen najdu na CarMakler?", answer: "V nabídce máme nejpopulárnější modely jako Golf, Passat, Tiguan, Touran, T-Roc, Polo a další. Nabídka se denně aktualizuje." },
       { question: "Jak probíhá kontrola ojetého Volkswagenu?", answer: "Každý vůz prochází kontrolou CEBIA (historie havárie, stočení tachometru, zástavy), fyzickou prohlídkou makléřem a ověřením servisní historie." },
@@ -97,7 +97,7 @@ export const BRANDS: BrandData[] = [
       "Průměrná roční údržba: 25 000 – 45 000 Kč",
     ],
     avgPriceRange: "150 000 – 1 500 000 Kč",
-    description: "BMW představuje špičku v segmentu prémiových vozidel. Na CarMakler najdete prověřené ojeté vozy BMW od certifikovaných makléřů, kteří garantují transparentnost a bezpečnost nákupu. Ať už toužíte po dynamickém sedanu řady 3, luxusním cestovním voze řady 5 nebo sportovním SUV X3 či X5 — všechny vozy procházejí pečlivou kontrolou. BMW si drží vysokou zůstatkovou hodnotu a nabízí prémiový zážitek z jízdy i po letech provozu. Naši makléři vám pomohou vybrat ideální BMW podle vašich požadavků a rozpočtu.",
+    description: "BMW představuje špičku v segmentu prémiových vozidel. Na CarMakler najdete prověřené ojeté vozy BMW od ověřených makléřů, kteří garantují transparentnost a bezpečnost nákupu. Ať už toužíte po dynamickém sedanu řady 3, luxusním cestovním voze řady 5 nebo sportovním SUV X3 či X5 — všechny vozy procházejí pečlivou kontrolou. BMW si drží vysokou zůstatkovou hodnotu a nabízí prémiový zážitek z jízdy i po letech provozu. Naši makléři vám pomohou vybrat ideální BMW podle vašich požadavků a rozpočtu.",
     faqItems: [
       { question: "Vyplatí se koupit ojeté BMW?", answer: "Ojeté BMW nabízí prémiový zážitek za zlomek ceny nového vozu. Důležitá je kontrola servisní historie — dobře udržované BMW je spolehlivé i po 200 000 km." },
       { question: "Na co si dát pozor při koupi ojetého BMW?", answer: "Klíčové je ověřit kompletní servisní historii, zkontrolovat stav pohonu (timing chain u starších motorů), stav podvozku a elektroniky. Naši makléři toto vše ověří za vás." },
@@ -124,7 +124,7 @@ export const BRANDS: BrandData[] = [
       "Servisní náklady: 20 000 – 40 000 Kč ročně",
     ],
     avgPriceRange: "150 000 – 1 200 000 Kč",
-    description: "Audi je synonymem pokročilých technologií a prémiové kvality. Na CarMakler nabízíme prověřené ojeté vozy Audi od certifikovaných makléřů. Model A4 patří mezi nejoblíbenější ojeté sedany, A6 nabízí luxus pro náročné cestování a Q5 je ideální prémiové SUV pro rodinu. Každé Audi v naší nabídce prochází důkladnou kontrolou historie — ověřujeme původ, stav tachometru, historii havárií i servisní záznamy. S CarMakler koupíte prémiové vozidlo bezpečně a transparentně.",
+    description: "Audi je synonymem pokročilých technologií a prémiové kvality. Na CarMakler nabízíme prověřené ojeté vozy Audi od ověřených makléřů. Model A4 patří mezi nejoblíbenější ojeté sedany, A6 nabízí luxus pro náročné cestování a Q5 je ideální prémiové SUV pro rodinu. Každé Audi v naší nabídce prochází důkladnou kontrolou historie — ověřujeme původ, stav tachometru, historii havárií i servisní záznamy. S CarMakler koupíte prémiové vozidlo bezpečně a transparentně.",
     faqItems: [
       { question: "Jaké Audi modely jsou nejlepší koupí z druhé ruky?", answer: "Audi A4 a A6 s motory 2.0 TDI patří mezi nejspolehlivější volby. SUV Q5 si drží vysokou hodnotu a nabízí skvělou kombinaci komfortu a praktičnosti." },
       { question: "Jak poznám kvalitní ojeté Audi?", answer: "Důležitá je kompletní servisní historie u autorizovaného servisu, reálný stav tachometru ověřený přes CEBIA a absence havárií. Naši makléři toto ověří za vás." },
@@ -151,7 +151,7 @@ export const BRANDS: BrandData[] = [
       "Servisní náklady: 12 000 – 22 000 Kč ročně",
     ],
     avgPriceRange: "80 000 – 600 000 Kč",
-    description: "Ford nabízí spolehlivé a dynamické vozy za rozumnou cenu. Na CarMakler najdete prověřené ojeté Fordy — od oblíbeného Focusu přes praktické Mondeo až po moderní SUV Kuga a Puma. Ford Focus je jedním z nejprodávanějších hatchbacků v Evropě a ojetý nabízí výjimečnou hodnotu za peníze. Naši certifikovaní makléři ověří každý vůz Ford a pomohou vám s bezpečným nákupem včetně financování a pojištění.",
+    description: "Ford nabízí spolehlivé a dynamické vozy za rozumnou cenu. Na CarMakler najdete prověřené ojeté Fordy — od oblíbeného Focusu přes praktické Mondeo až po moderní SUV Kuga a Puma. Ford Focus je jedním z nejprodávanějších hatchbacků v Evropě a ojetý nabízí výjimečnou hodnotu za peníze. Naši makléři ověří každý vůz Ford a pomohou vám s bezpečným nákupem včetně financování a pojištění.",
     faqItems: [
       { question: "Je ojetý Ford Focus dobrá volba?", answer: "Ford Focus patří mezi nejoblíbenější ojeté hatchbacky. Nabízí sportovní jízdní vlastnosti, prostorný interiér a nízké provozní náklady. Motory EcoBoost jsou úsporné a spolehlivé." },
       { question: "Jaké jsou typické problémy ojetých Fordů?", answer: "U starších Focus se vyskytují problémy s převodovkou PowerShift (DCT). U novějších modelů s motory EcoBoost jde o spolehlivé vozy. Naši makléři vám poradí." },
@@ -178,7 +178,7 @@ export const BRANDS: BrandData[] = [
       "Průměrná roční údržba: 8 000 – 15 000 Kč",
     ],
     avgPriceRange: "80 000 – 800 000 Kč",
-    description: "Toyota je světovým symbolem spolehlivosti a nízké poruchovosti. Na CarMakler nabízíme prověřené ojeté vozy Toyota od certifikovaných makléřů. Toyota Yaris je ideální městské auto, Corolla nabízí komfortní cestování a RAV4 patří mezi nejspolehlivější SUV na trhu. Toyota jako průkopník hybridní technologie nabízí úsporné motory s minimálními emisemi. Ojetá Toyota je investice do bezproblémového vlastnictví — vozy této značky pravidelně obsazují přední příčky v žebříčcích spolehlivosti.",
+    description: "Toyota je světovým symbolem spolehlivosti a nízké poruchovosti. Na CarMakler nabízíme prověřené ojeté vozy Toyota od ověřených makléřů. Toyota Yaris je ideální městské auto, Corolla nabízí komfortní cestování a RAV4 patří mezi nejspolehlivější SUV na trhu. Toyota jako průkopník hybridní technologie nabízí úsporné motory s minimálními emisemi. Ojetá Toyota je investice do bezproblémového vlastnictví — vozy této značky pravidelně obsazují přední příčky v žebříčcích spolehlivosti.",
     faqItems: [
       { question: "Jsou ojeté Toyoty opravdu tak spolehlivé?", answer: "Ano, Toyota pravidelně vítězí v testech spolehlivosti. Hybridní pohony Toyota jsou prověřené miliony ujetých kilometrů a nevyžadují výměnu baterie ani po 300 000 km." },
       { question: "Vyplatí se ojetá Toyota hybrid?", answer: "Rozhodně ano. Hybridní Toyota spotřebuje ve městě 4-5 l/100 km a baterie je extrémně odolná. Údržba hybridního pohonu je minimální díky absenci spojky a startéru." },
@@ -205,7 +205,7 @@ export const BRANDS: BrandData[] = [
       "Kona Electric: dojezd až 450 km, nabíjení 800V",
     ],
     avgPriceRange: "80 000 – 700 000 Kč",
-    description: "Hyundai se za poslední dekádu vypracoval mezi nejkvalitnější značky na trhu. Na CarMakler najdete prověřené ojeté vozy Hyundai s výjimečnou 5letou zárukou od výrobce. Model i30 konkuruje Golfu za výrazně nižší cenu, Tucson patří mezi nejprodávanější SUV v Evropě a Kona nabízí moderní design i v elektrické verzi. Ojeté Hyundai nabízejí špičkový poměr ceny a výbavy. Naši certifikovaní makléři ověří každý vůz a zajistí bezpečný nákup.",
+    description: "Hyundai se za poslední dekádu vypracoval mezi nejkvalitnější značky na trhu. Na CarMakler najdete prověřené ojeté vozy Hyundai s výjimečnou 5letou zárukou od výrobce. Model i30 konkuruje Golfu za výrazně nižší cenu, Tucson patří mezi nejprodávanější SUV v Evropě a Kona nabízí moderní design i v elektrické verzi. Ojeté Hyundai nabízejí špičkový poměr ceny a výbavy. Naši makléři ověří každý vůz a zajistí bezpečný nákup.",
     faqItems: [
       { question: "Jak je na tom Hyundai se spolehlivostí?", answer: "Hyundai patří do první desítky nejspolehlivějších značek. Pětiletá tovární záruka pokrývá i druhého majitele, pokud vůz nebyl přeregistrován mimo ČR." },
       { question: "Je ojetý Hyundai i30 dobrá alternativa ke Golfu?", answer: "Ano, Hyundai i30 nabízí srovnatelnou kvalitu zpracování, prostornější interiér a výrazně lepší výbavu za nižší cenu. Po ojetém trhu je o něj stabilní zájem." },
@@ -232,7 +232,7 @@ export const BRANDS: BrandData[] = [
       "EV6: dojezd 510 km, nabíjení 10–80 % za 18 minut",
     ],
     avgPriceRange: "80 000 – 700 000 Kč",
-    description: "Kia nabízí moderní vozy s agresivním designem a 7letou zárukou. Na CarMakler najdete prověřené ojeté vozy Kia od certifikovaných makléřů. Kia Ceed je oblíbený hatchback s výbornou výbavou, Sportage patří mezi nejprodávanější SUV a Niro nabízí hybridní i plně elektrický pohon. Ojeté vozy Kia si drží solidní zůstatkovou hodnotu díky dlouhé záruce a nízké poruchovosti. S CarMakler koupíte prověřenou Kiu bezpečně.",
+    description: "Kia nabízí moderní vozy s agresivním designem a 7letou zárukou. Na CarMakler najdete prověřené ojeté vozy Kia od ověřených makléřů. Kia Ceed je oblíbený hatchback s výbornou výbavou, Sportage patří mezi nejprodávanější SUV a Niro nabízí hybridní i plně elektrický pohon. Ojeté vozy Kia si drží solidní zůstatkovou hodnotu díky dlouhé záruce a nízké poruchovosti. S CarMakler koupíte prověřenou Kiu bezpečně.",
     faqItems: [
       { question: "Platí 7letá záruka Kia i na ojeté vozy?", answer: "Ano, 7letá záruka Kia (nebo 150 000 km) je převoditelná na dalšího majitele. Stačí doložit pravidelný servis v autorizované síti." },
       { question: "Jaká ojetá Kia je nejlepší pro rodinu?", answer: "Pro rodinu doporučujeme Kia Ceed SW (kombi) nebo Sportage. Oba nabízejí prostorný interiér, velký kufr a moderní bezpečnostní systémy." },
@@ -286,7 +286,7 @@ export const BRANDS: BrandData[] = [
       "Pozor na rozvodový řetěz u PureTech před rokem 2018",
     ],
     avgPriceRange: "70 000 – 600 000 Kč",
-    description: "Peugeot se díky inovativnímu designu a technologiím i-Cockpit stal jednou z nejžádanějších francouzských značek. Na CarMakler najdete prověřené ojeté vozy Peugeot — moderní 308, stylové SUV 3008, městský 208 i prostorný 7místný 5008. Peugeot kombinuje elegantní design s praktičností a nabízí jedny z nejlepších interiérů ve své třídě. Naši certifikovaní makléři každý vůz důkladně prověří a pomohou vám s bezpečným nákupem.",
+    description: "Peugeot se díky inovativnímu designu a technologiím i-Cockpit stal jednou z nejžádanějších francouzských značek. Na CarMakler najdete prověřené ojeté vozy Peugeot — moderní 308, stylové SUV 3008, městský 208 i prostorný 7místný 5008. Peugeot kombinuje elegantní design s praktičností a nabízí jedny z nejlepších interiérů ve své třídě. Naši makléři každý vůz důkladně prověří a pomohou vám s bezpečným nákupem.",
     faqItems: [
       { question: "Jak je na tom ojetý Peugeot se spolehlivostí?", answer: "Peugeoty od roku 2016 s motory PureTech (benzín) a BlueHDi (diesel) patří mezi spolehlivé vozy. U starších PureTech 1.2 doporučujeme kontrolu řetězu." },
       { question: "Vyplatí se ojetý Peugeot 3008?", answer: "Peugeot 3008 je jedním z nejatraktivnějších SUV na ojetém trhu. Nabízí prémiový interiér, prostorný kufr a moderní technologie za výrazně nižší cenu než konkurence." },
@@ -340,7 +340,7 @@ export const BRANDS: BrandData[] = [
       "MBUX infotainment systém od 2018 modelů",
     ],
     avgPriceRange: "200 000 – 2 000 000 Kč",
-    description: "Mercedes-Benz je synonymem luxusu, komfortu a prémiové kvality. Na CarMakler nabízíme prověřené ojeté Mercedesy od certifikovaných makléřů. Třída C nabízí sportovní eleganci, třída E cestovní komfort nejvyšší úrovně a GLC je ideální prémiové SUV. Ojetý Mercedes-Benz je investice do prestiže a pohodlí — vozy si drží vysokou hodnotu a nabízejí nejmodernější technologie. S CarMakler koupíte prověřený Mercedes bezpečně a transparentně.",
+    description: "Mercedes-Benz je synonymem luxusu, komfortu a prémiové kvality. Na CarMakler nabízíme prověřené ojeté Mercedesy od ověřených makléřů. Třída C nabízí sportovní eleganci, třída E cestovní komfort nejvyšší úrovně a GLC je ideální prémiové SUV. Ojetý Mercedes-Benz je investice do prestiže a pohodlí — vozy si drží vysokou hodnotu a nabízejí nejmodernější technologie. S CarMakler koupíte prověřený Mercedes bezpečně a transparentně.",
     faqItems: [
       { question: "Vyplatí se koupit ojetý Mercedes?", answer: "Ojetý Mercedes nabízí prémiový komfort a technologie za zlomek ceny nového vozu. Klíčová je kompletní servisní historie a kontrola u odborníka." },
       { question: "Na co si dát pozor u ojetého Mercedesu?", answer: "Důležitá je servisní historie u autorizovaného servisu, kontrola vzduchového podvozku (u E/S třídy), stav elektroniky a automatické převodovky." },
@@ -394,7 +394,7 @@ export const BRANDS: BrandData[] = [
       "Berlingo: nejpraktičtější rodinné auto s kufrem 775 l",
     ],
     avgPriceRange: "60 000 – 500 000 Kč",
-    description: "Citroën je značka, která si zakládá na komfortu a originálním designu. Na CarMakler nabízíme prověřené ojeté Citroëny — stylový C3, moderní C4, komfortní SUV C5 Aircross a praktický Berlingo. Citroën vyniká odpružením Comfort, které je jedním z nejlepších v segmentu. Ojeté Citroëny nabízejí atraktivní ceny, originální design a vysokou praktičnost. Naši certifikovaní makléři každý vůz důkladně prověří.",
+    description: "Citroën je značka, která si zakládá na komfortu a originálním designu. Na CarMakler nabízíme prověřené ojeté Citroëny — stylový C3, moderní C4, komfortní SUV C5 Aircross a praktický Berlingo. Citroën vyniká odpružením Comfort, které je jedním z nejlepších v segmentu. Ojeté Citroëny nabízejí atraktivní ceny, originální design a vysokou praktičnost. Naši makléři každý vůz důkladně prověří.",
     faqItems: [
       { question: "Jsou ojeté Citroëny spolehlivé?", answer: "Citroëny od roku 2015 s motory PureTech a BlueHDi jsou spolehlivé. Značka výrazně zapracovala na kvalitě. U starších modelů doporučujeme důkladnou kontrolu." },
       { question: "Který ojetý Citroën je nejlepší pro rodinu?", answer: "Pro rodinu doporučujeme Citroën C5 Aircross (prostorné SUV) nebo Berlingo (maximální praktičnost a prostor). Oba modely nabízejí skvělý komfort." },
@@ -448,7 +448,7 @@ export const BRANDS: BrandData[] = [
       "Průměrná roční údržba: 10 000 – 18 000 Kč (nízká)",
     ],
     avgPriceRange: "100 000 – 700 000 Kč",
-    description: "Mazda nabízí vozy s prémiovým pocitem za cenu mainstreamové značky. Na CarMakler najdete prověřené ojeté Mazdy — sportovní Mazdu 3, elegantní Mazdu 6 a populární SUV CX-5 a CX-30. Mazda je známá technologií SkyActiv, která optimalizuje výkon i spotřebu, a filozofií Kodo designu. Ojeté Mazdy patří mezi nejspolehlivější vozy na trhu a nabízejí výjimečné jízdní vlastnosti. Naši certifikovaní makléři prověří každý vůz.",
+    description: "Mazda nabízí vozy s prémiovým pocitem za cenu mainstreamové značky. Na CarMakler najdete prověřené ojeté Mazdy — sportovní Mazdu 3, elegantní Mazdu 6 a populární SUV CX-5 a CX-30. Mazda je známá technologií SkyActiv, která optimalizuje výkon i spotřebu, a filozofií Kodo designu. Ojeté Mazdy patří mezi nejspolehlivější vozy na trhu a nabízejí výjimečné jízdní vlastnosti. Naši makléři prověří každý vůz.",
     faqItems: [
       { question: "Jsou ojeté Mazdy spolehlivé?", answer: "Mazda patří mezi nejspolehlivější značky na světě. Motory SkyActiv jsou konstrukčně jednoduché a odolné. Mazda pravidelně obsazuje přední příčky v testech spolehlivosti." },
       { question: "Jaký motor zvolit u ojeté Mazdy?", answer: "Benzínové motory SkyActiv-G 2.0 a 2.5 jsou extrémně spolehlivé. Dieselový SkyActiv-D 2.2 nabízí skvělý výkon a spotřebu. Všechny motory jsou bez turba (kromě dieselu)." },
@@ -472,7 +472,7 @@ export const BODY_TYPES: BodyTypeData[] = [
     slug: "suv",
     name: "SUV",
     filterValue: "SUV",
-    description: "SUV vozy kombinují prostornost, zvýšenou světlou výšku a všestrannost pro každodenní i outdoorové použití. Na CarMakler nabízíme široký výběr prověřených ojetých SUV od certifikovaných makléřů. Ať už hledáte kompaktní SUV do města nebo velké rodinné SUV pro cestování — u nás najdete ověřené vozy s historií bez rizika. SUV jsou aktuálně nejpopulárnějším segmentem na trhu ojetých aut v České republice.",
+    description: "SUV vozy kombinují prostornost, zvýšenou světlou výšku a všestrannost pro každodenní i outdoorové použití. Na CarMakler nabízíme široký výběr prověřených ojetých SUV od ověřených makléřů. Ať už hledáte kompaktní SUV do města nebo velké rodinné SUV pro cestování — u nás najdete ověřené vozy s historií bez rizika. SUV jsou aktuálně nejpopulárnějším segmentem na trhu ojetých aut v České republice.",
     faqItems: [
       { question: "Jaké ojeté SUV je nejlepší pro rodinu?", answer: "Pro rodinu doporučujeme Škoda Kodiaq, Hyundai Tucson, Kia Sportage nebo Toyota RAV4. Všechny nabízejí prostorný interiér, velký kufr a moderní bezpečnostní systémy." },
       { question: "Kolik stojí slušné ojeté SUV?", answer: "Kvalitní ojeté SUV s nájezdem do 100 000 km seženete od 300 000 Kč (Dacia Duster, Hyundai Tucson) do 600 000 Kč (BMW X3, Audi Q5)." },
@@ -491,7 +491,7 @@ export const BODY_TYPES: BodyTypeData[] = [
     slug: "kombi",
     name: "Kombi",
     filterValue: "COMBI",
-    description: "Kombi vozy jsou ideální pro rodiny a všechny, kdo potřebují maximální prostor pro zavazadla. Na CarMakler nabízíme prověřené ojeté kombi vozy od certifikovaných makléřů. Česká republika je tradičně jedním z největších trhů s kombi vozy v Evropě — modely jako Škoda Octavia Combi, VW Passat Variant nebo Ford Focus Combi patří mezi nejoblíbenější ojetá auta. Kombi kombinují praktičnost velkého kufru s elegancí sedanu.",
+    description: "Kombi vozy jsou ideální pro rodiny a všechny, kdo potřebují maximální prostor pro zavazadla. Na CarMakler nabízíme prověřené ojeté kombi vozy od ověřených makléřů. Česká republika je tradičně jedním z největších trhů s kombi vozy v Evropě — modely jako Škoda Octavia Combi, VW Passat Variant nebo Ford Focus Combi patří mezi nejoblíbenější ojetá auta. Kombi kombinují praktičnost velkého kufru s elegancí sedanu.",
     faqItems: [
       { question: "Jaké ojeté kombi je nejprodávanější?", answer: "Nejprodávanějším ojetým kombi v ČR je Škoda Octavia Combi, následovaná VW Passat Variant a Škoda Superb Combi. Oblíbené jsou i Ford Focus a Kia Ceed SW." },
       { question: "Jaký objem kufru mají ojetá kombi?", answer: "Typické kombi nabízí 550-700 litrů objemu kufru. Škoda Superb Combi má až 660 l, VW Passat Variant 650 l, Škoda Octavia Combi 640 l." },
@@ -510,7 +510,7 @@ export const BODY_TYPES: BodyTypeData[] = [
     slug: "sedan",
     name: "Sedan",
     filterValue: "SEDAN",
-    description: "Sedan je klasická karoserie nabízející eleganci, komfort a aerodynamiku. Na CarMakler najdete prověřené ojeté sedany od certifikovaných makléřů. Od kompaktních modelů jako Škoda Octavia sedan přes střední třídu jako VW Passat až po prémiové sedany BMW řady 3 nebo Mercedes C-třídy. Ojetý sedan nabízí výborné jízdní vlastnosti, nízkou spotřebu a nadčasový design. V České republice zůstávají sedany oblíbenou volbou pro reprezentativní i osobní účely.",
+    description: "Sedan je klasická karoserie nabízející eleganci, komfort a aerodynamiku. Na CarMakler najdete prověřené ojeté sedany od ověřených makléřů. Od kompaktních modelů jako Škoda Octavia sedan přes střední třídu jako VW Passat až po prémiové sedany BMW řady 3 nebo Mercedes C-třídy. Ojetý sedan nabízí výborné jízdní vlastnosti, nízkou spotřebu a nadčasový design. V České republice zůstávají sedany oblíbenou volbou pro reprezentativní i osobní účely.",
     faqItems: [
       { question: "Který ojetý sedan je nejlepší volbou?", answer: "Záleží na rozpočtu: Škoda Octavia (od 150 000 Kč), VW Passat (od 200 000 Kč), BMW 3 (od 300 000 Kč) nebo Mercedes C (od 350 000 Kč)." },
       { question: "Je sedan vhodný pro rodinu?", answer: "Sedan je vhodný pro menší rodinu. Pro větší rodinu nebo časté přepravy rozměrnějších věcí doporučujeme kombi nebo SUV variantu." },
@@ -529,7 +529,7 @@ export const BODY_TYPES: BodyTypeData[] = [
     slug: "hatchback",
     name: "Hatchback",
     filterValue: "HATCHBACK",
-    description: "Hatchback je nejrozšířenější karoserie v Evropě díky kompaktním rozměrům a praktičnosti. Na CarMakler nabízíme prověřené ojeté hatchbacky od certifikovaných makléřů. VW Golf, Škoda Fabia, Ford Focus, Hyundai i30 — to jsou jedny z nejprodávanějších ojetých hatchbacků v ČR. Hatchback nabízí ideální kompromis mezi velikostí, spotřebou a praktičností. Sklopná zadní sedadla umožňují flexibilní využití prostoru. Ojeté hatchbacky jsou cenově nejdostupnější segment.",
+    description: "Hatchback je nejrozšířenější karoserie v Evropě díky kompaktním rozměrům a praktičnosti. Na CarMakler nabízíme prověřené ojeté hatchbacky od ověřených makléřů. VW Golf, Škoda Fabia, Ford Focus, Hyundai i30 — to jsou jedny z nejprodávanějších ojetých hatchbacků v ČR. Hatchback nabízí ideální kompromis mezi velikostí, spotřebou a praktičností. Sklopná zadní sedadla umožňují flexibilní využití prostoru. Ojeté hatchbacky jsou cenově nejdostupnější segment.",
     faqItems: [
       { question: "Jaký ojetý hatchback je nejspolehlivější?", answer: "Mezi nejspolehlivější ojeté hatchbacky patří Toyota Yaris, Mazda 3, Honda Civic a Hyundai i30. Z českých značek vede Škoda Fabia." },
       { question: "Kolik stojí kvalitní ojetý hatchback?", answer: "Kvalitní ojetý hatchback s nájezdem do 100 000 km seženete od 150 000 Kč (Škoda Fabia) do 400 000 Kč (VW Golf 8, BMW 1)." },
@@ -548,7 +548,7 @@ export const BODY_TYPES: BodyTypeData[] = [
     slug: "elektromobily",
     name: "Elektromobily",
     filterValue: "ELECTRIC",
-    description: "Elektromobily představují budoucnost automobilové dopravy a na ojetém trhu nabízejí stále atraktivnější ceny. Na CarMakler najdete prověřené ojeté elektromobily od certifikovaných makléřů — od cenově dostupných modelů jako Renault Zoe a Dacia Spring přes populární VW ID.3 až po prémiové Tesla Model 3 a Hyundai Ioniq 5. Ojetý elektromobil nabízí nulové emise, minimální provozní náklady a vysoký komfort jízdy. Naši makléři ověří stav baterie a celkový technický stav.",
+    description: "Elektromobily představují budoucnost automobilové dopravy a na ojetém trhu nabízejí stále atraktivnější ceny. Na CarMakler najdete prověřené ojeté elektromobily od ověřených makléřů — od cenově dostupných modelů jako Renault Zoe a Dacia Spring přes populární VW ID.3 až po prémiové Tesla Model 3 a Hyundai Ioniq 5. Ojetý elektromobil nabízí nulové emise, minimální provozní náklady a vysoký komfort jízdy. Naši makléři ověří stav baterie a celkový technický stav.",
     faqItems: [
       { question: "Vyplatí se ojetý elektromobil?", answer: "Ojetý elektromobil se vyplatí zejména pro denní dojíždění a městský provoz. Provozní náklady jsou 3-5x nižší než u spalovacího motoru. Cena nabíjení doma je cca 1 Kč/km." },
       { question: "Jak zkontrolovat stav baterie u ojetého elektromobilu?", answer: "Naši makléři provedou diagnostiku baterie a zjistí její aktuální kapacitu (SOH). Kvalitní baterie by měla mít po 100 000 km stále 90 %+ kapacity." },
@@ -567,7 +567,7 @@ export const BODY_TYPES: BodyTypeData[] = [
     slug: "hybrid",
     name: "Hybrid",
     filterValue: "HYBRID",
-    description: "Hybridní vozy kombinují spalovací motor s elektrickým pohonem pro nižší spotřebu a emise. Na CarMakler najdete prověřené ojeté hybridy od certifikovaných makléřů. Toyota je průkopníkem hybridní technologie — modely Yaris Hybrid, Corolla Hybrid a RAV4 Hybrid patří mezi nejspolehlivější. Rostoucí nabídka plug-in hybridů (PHEV) umožňuje čistě elektrickou jízdu ve městě. Ojetý hybrid nabízí nižší spotřebu, osvobození od některých poplatků a plynulý komfort jízdy.",
+    description: "Hybridní vozy kombinují spalovací motor s elektrickým pohonem pro nižší spotřebu a emise. Na CarMakler najdete prověřené ojeté hybridy od ověřených makléřů. Toyota je průkopníkem hybridní technologie — modely Yaris Hybrid, Corolla Hybrid a RAV4 Hybrid patří mezi nejspolehlivější. Rostoucí nabídka plug-in hybridů (PHEV) umožňuje čistě elektrickou jízdu ve městě. Ojetý hybrid nabízí nižší spotřebu, osvobození od některých poplatků a plynulý komfort jízdy.",
     faqItems: [
       { question: "Je ojetý hybrid spolehlivý?", answer: "Hybridní vozy Toyota a Lexus mají prokázanou spolehlivost i po 300 000 km. Baterie vydrží celou životnost vozu. Plug-in hybridy jsou novější technologie, ale rovněž spolehlivá." },
       { question: "Kolik ušetřím s ojetým hybridem na palivu?", answer: "Hybrid spotřebuje ve městě o 30-50 % méně paliva. Toyota Yaris Hybrid spotřebuje 4 l/100 km, RAV4 Hybrid 5,5 l/100 km. PHEV umí jezdit čistě na elektřinu." },
@@ -586,7 +586,7 @@ export const BODY_TYPES: BodyTypeData[] = [
     slug: "kabriolet",
     name: "Kabriolet",
     filterValue: "CABRIO",
-    description: "Kabriolet je synonymem svobody a požitku z jízdy. Na CarMakler nabízíme prověřené ojeté kabriolety od certifikovaných makléřů — od cenově dostupných modelů jako MINI Cabrio a Fiat 500C přes sportovní Mazdu MX-5 až po prémiové BMW řady 4 Cabrio a Mercedes C Cabrio. Ojetý kabriolet nabízí nezapomenutelný zážitek z jízdy za zlomek ceny nového vozu. Naši makléři zkontrolují stav střechy, těsnění a celkový technický stav.",
+    description: "Kabriolet je synonymem svobody a požitku z jízdy. Na CarMakler nabízíme prověřené ojeté kabriolety od ověřených makléřů — od cenově dostupných modelů jako MINI Cabrio a Fiat 500C přes sportovní Mazdu MX-5 až po prémiové BMW řady 4 Cabrio a Mercedes C Cabrio. Ojetý kabriolet nabízí nezapomenutelný zážitek z jízdy za zlomek ceny nového vozu. Naši makléři zkontrolují stav střechy, těsnění a celkový technický stav.",
     faqItems: [
       { question: "Na co si dát pozor u ojetého kabrioletu?", answer: "Klíčový je stav střechy (plátěné nebo kovové), těsnění, funkčnost mechanismu otevírání, stav interiéru (vyblednutí od slunce) a kontrola koroze." },
       { question: "Který ojetý kabriolet je nejspolehlivější?", answer: "Mazda MX-5 je legendární spolehlivý kabriolet. BMW řady 2/4 Cabrio nabízí prémiový zážitek. MINI Cabrio je ideální městský kabriolet." },
@@ -618,7 +618,7 @@ export const PRICE_RANGES: PriceRangeData[] = [
     slug: "do-100000",
     maxPrice: 100000,
     label: "do 100 000 Kč",
-    description: "Hledáte ojeté auto do 100 000 Kč? Na CarMakler najdete prověřené vozy za dostupné ceny od certifikovaných makléřů. V tomto cenovém rozpětí nabízíme starší, ale funkční vozy ideální jako první auto, městské vozy pro dojíždění nebo spolehlivý druhý vůz do rodiny. Každý vůz prochází kontrolou historie — ověřujeme stav tachometru, původ a historii havárií. I za 100 000 Kč můžete koupit prověřený vůz bez rizika.",
+    description: "Hledáte ojeté auto do 100 000 Kč? Na CarMakler najdete prověřené vozy za dostupné ceny od ověřených makléřů. V tomto cenovém rozpětí nabízíme starší, ale funkční vozy ideální jako první auto, městské vozy pro dojíždění nebo spolehlivý druhý vůz do rodiny. Každý vůz prochází kontrolou historie — ověřujeme stav tachometru, původ a historii havárií. I za 100 000 Kč můžete koupit prověřený vůz bez rizika.",
     faqItems: [
       { question: "Dá se koupit dobré auto do 100 000 Kč?", answer: "Ano, za 100 000 Kč seženete spolehlivé auto — Škoda Fabia (2008-2012), Ford Fiesta, Hyundai i20 nebo Opel Corsa. Důležitá je servisní historie a technická kontrola." },
       { question: "Na co si dát pozor u auta do 100 000 Kč?", answer: "Zkontrolujte STK, servisní historii, stav tachometru (přes CEBIA), stav karoserie (koroze) a motor. Náš makléř to vše prověří za vás." },
@@ -675,7 +675,7 @@ export const PRICE_RANGES: PriceRangeData[] = [
     slug: "do-500000",
     maxPrice: 500000,
     label: "do 500 000 Kč",
-    description: "S rozpočtem do 500 000 Kč vstupujete do segmentu novějších a lépe vybavených ojetých vozidel. Na CarMakler najdete prověřené vozy od certifikovaných makléřů — Škoda Octavia IV, VW Golf 8, Škoda Kodiaq, Hyundai Tucson nové generace, BMW řady 3 (F30/G20), Audi A4 (B9) nebo Mercedes C-třídy (W205). V tomto segmentu najdete vozy s nájezdem pod 80 000 km, kompletní výbavou a často i zůstatkovou tovární zárukou.",
+    description: "S rozpočtem do 500 000 Kč vstupujete do segmentu novějších a lépe vybavených ojetých vozidel. Na CarMakler najdete prověřené vozy od ověřených makléřů — Škoda Octavia IV, VW Golf 8, Škoda Kodiaq, Hyundai Tucson nové generace, BMW řady 3 (F30/G20), Audi A4 (B9) nebo Mercedes C-třídy (W205). V tomto segmentu najdete vozy s nájezdem pod 80 000 km, kompletní výbavou a často i zůstatkovou tovární zárukou.",
     faqItems: [
       { question: "Jaké prémiové auto koupím do 500 000 Kč?", answer: "Za 500 000 Kč koupíte BMW 3 (F30, 2016-2018), Audi A4 (B9, 2016-2018), Mercedes C (W205, 2016-2018) nebo Volvo S60 (2019-2020) v dobré výbavě." },
       { question: "Je lepší nová Fabia nebo ojetá Octavia za 500 000 Kč?", answer: "Ojetá Octavia IV (2021) za 500 000 Kč nabídne výrazně více prostoru, výkonu a výbavy než nová Fabia. Navíc na CarMakler je každý ojetý vůz prověřený." },
@@ -726,13 +726,13 @@ export const CITIES: CityData[] = [
     slug: "praha",
     name: "Praha",
     inLocative: "v Praze",
-    description: "Praha je největší trh s ojetými vozy v České republice. Na CarMakler najdete prověřené vozy od certifikovaných makléřů přímo v Praze a okolí. Naši pražští makléři znají lokální trh a pomohou vám najít ideální vůz. Praha nabízí nejširší výběr značek a modelů — od ekonomických aut pro městský provoz přes rodinná SUV až po prémiové vozy. Nakupte bezpečně s CarMakler v Praze.",
+    description: "Praha je největší trh s ojetými vozy v České republice. Na CarMakler najdete prověřené vozy od ověřených makléřů přímo v Praze a okolí. Naši pražští makléři znají lokální trh a pomohou vám najít ideální vůz. Praha nabízí nejširší výběr značek a modelů — od ekonomických aut pro městský provoz přes rodinná SUV až po prémiové vozy. Nakupte bezpečně s CarMakler v Praze.",
     faqItems: [
-      { question: "Kolik ojetých aut nabízíte v Praze?", answer: "V Praze a okolí máme desítky prověřených vozidel od certifikovaných makléřů. Nabídka se denně aktualizuje — nová vozidla přibývají každý den." },
+      { question: "Kolik ojetých aut nabízíte v Praze?", answer: "V Praze a okolí máme desítky prověřených vozidel od ověřených makléřů. Nabídka se denně aktualizuje — nová vozidla přibývají každý den." },
       { question: "Mohu si auto prohlédnout osobně v Praze?", answer: "Samozřejmě. Náš makléř vám domluví osobní prohlídku na místě dle vašich časových možností. Prohlídka je zdarma a nezávazná." },
       { question: "Zajišťujete převod vozidla v Praze?", answer: "Ano, naši makléři zajistí kompletní převod včetně smlouvy, přepisu na registru vozidel a předání všech dokumentů." },
     ],
-    aiSnippet: "Praha je největší trh s ojetými vozy v ČR s nejširším výběrem značek a modelů. Průměrná cena ojetého auta v Praze je o 5–10 % vyšší než v regionech (2026). CarMakler má v Praze a okolí síť certifikovaných makléřů, kteří zajistí prohlídku, prověrku CEBIA a kompletní administrativu nákupu.",
+    aiSnippet: "Praha je největší trh s ojetými vozy v ČR s nejširším výběrem značek a modelů. Průměrná cena ojetého auta v Praze je o 5–10 % vyšší než v regionech (2026). CarMakler má v Praze a okolí síť ověřených makléřů, kteří zajistí prohlídku, prověrku CEBIA a kompletní administrativu nákupu.",
     quickFacts: [
       "Největší trh s ojetými vozy v ČR",
       "Ceny o 5–10 % vyšší než v regionech",
@@ -745,17 +745,17 @@ export const CITIES: CityData[] = [
     slug: "brno",
     name: "Brno",
     inLocative: "v Brně",
-    description: "Brno je druhý největší trh s ojetými vozy v České republice. Na CarMakler nabízíme prověřené ojeté vozy od certifikovaných makléřů v Brně a Jihomoravském kraji. Brněnský automobilový trh je živý a nabízí široký výběr značek — od populárních Škod a Volkswagenů přes korejské značky až po prémiové vozy. S CarMakler v Brně koupíte bezpečně a transparentně.",
+    description: "Brno je druhý největší trh s ojetými vozy v České republice. Na CarMakler nabízíme prověřené ojeté vozy od ověřených makléřů v Brně a Jihomoravském kraji. Brněnský automobilový trh je živý a nabízí široký výběr značek — od populárních Škod a Volkswagenů přes korejské značky až po prémiové vozy. S CarMakler v Brně koupíte bezpečně a transparentně.",
     faqItems: [
-      { question: "Máte makléře přímo v Brně?", answer: "Ano, v Brně a okolí máme certifikované makléře, kteří znají lokální trh a pomohou vám s výběrem i prohlídkou vozidla." },
+      { question: "Máte makléře přímo v Brně?", answer: "Ano, v Brně a okolí máme ověřené makléře, kteří znají lokální trh a pomohou vám s výběrem i prohlídkou vozidla." },
       { question: "Jaká auta se nejčastěji prodávají v Brně?", answer: "V Brně jsou nejpopulárnější Škoda Octavia, VW Golf, Hyundai Tucson a Kia Sportage. Rostoucí zájem je i o elektromobily." },
       { question: "Nabízíte doručení auta v rámci Brna?", answer: "Ano, po dohodě s makléřem je možné doručení vozidla na vámi zvolenou adresu v Brně a okolí." },
     ],
-    aiSnippet: "Brno je druhý největší trh s ojetými vozy v ČR. Nejpopulárnější ojeté vozy v Brně: Škoda Octavia, VW Golf, Hyundai Tucson a Kia Sportage. Ceny jsou srovnatelné s celorepublikovým průměrem. CarMakler má v Brně a Jihomoravském kraji certifikované makléře s doručením na adresu.",
+    aiSnippet: "Brno je druhý největší trh s ojetými vozy v ČR. Nejpopulárnější ojeté vozy v Brně: Škoda Octavia, VW Golf, Hyundai Tucson a Kia Sportage. Ceny jsou srovnatelné s celorepublikovým průměrem. CarMakler má v Brně a Jihomoravském kraji ověřené makléře s doručením na adresu.",
     quickFacts: [
       "Druhý největší trh s ojetými vozy v ČR",
       "Nejprodávanější: Škoda Octavia, VW Golf",
-      "Certifikovaní makléři v Brně a okolí",
+      "Ověření makléři v Brně a okolí",
       "Doručení vozidla na adresu v Brně",
       "Proces koupě: 3–7 dní od výběru po předání",
     ],
@@ -764,11 +764,11 @@ export const CITIES: CityData[] = [
     slug: "ostrava",
     name: "Ostrava",
     inLocative: "v Ostravě",
-    description: "Ostrava nabízí dynamický trh s ojetými vozy s výhodnými cenami. Na CarMakler najdete prověřené ojeté vozy od certifikovaných makléřů v Ostravě a Moravskoslezském kraji. Blízkost Polska přináší specifika trhu — naši makléři důkladně ověřují původ každého vozu. Ostravský trh nabízí atraktivní ceny zejména u SUV a užitkových vozidel.",
+    description: "Ostrava nabízí dynamický trh s ojetými vozy s výhodnými cenami. Na CarMakler najdete prověřené ojeté vozy od ověřených makléřů v Ostravě a Moravskoslezském kraji. Blízkost Polska přináší specifika trhu — naši makléři důkladně ověřují původ každého vozu. Ostravský trh nabízí atraktivní ceny zejména u SUV a užitkových vozidel.",
     faqItems: [
       { question: "Jsou auta v Ostravě levnější než v Praze?", answer: "Ceny ojetých aut v Ostravě bývají o 5-10 % nižší než v Praze. Záleží na značce a modelu, ale obecně je ostravský trh cenově výhodnější." },
       { question: "Jak ověřujete původ aut v Ostravě?", answer: "Každý vůz prochází kontrolou CEBIA, ověřením v registru vozidel a kontrolou, zda nebyl dovezen z ciziny bez řádného proclení." },
-      { question: "Máte makléře v Ostravě a okolí?", answer: "Ano, naši certifikovaní makléři působí v Ostravě, Opavě, Frýdku-Místku a dalších městech Moravskoslezského kraje." },
+      { question: "Máte makléře v Ostravě a okolí?", answer: "Ano, naši makléři působí v Ostravě, Opavě, Frýdku-Místku a dalších městech Moravskoslezského kraje." },
     ],
     aiSnippet: "Ceny ojetých aut v Ostravě jsou o 5–10 % nižší než v Praze (2026). Blízkost Polska přináší specifika trhu — důkladné ověřování původu vozu je klíčové. CarMakler má makléře v Ostravě, Opavě a Frýdku-Místku. Ostravský trh nabízí atraktivní ceny u SUV a užitkových vozidel.",
     quickFacts: [
@@ -783,7 +783,7 @@ export const CITIES: CityData[] = [
     slug: "plzen",
     name: "Plzeň",
     inLocative: "v Plzni",
-    description: "Plzeň je čtvrtým největším městem ČR s aktivním trhem ojetých vozidel. Na CarMakler nabízíme prověřené ojeté vozy od certifikovaných makléřů v Plzni a Plzeňském kraji. Blízkost Německa přináší zajímavé příležitosti — kvalitní německé ojetiny za výhodné ceny. Naši plzeňští makléři znají lokální trh a pomohou vám s bezpečným nákupem.",
+    description: "Plzeň je čtvrtým největším městem ČR s aktivním trhem ojetých vozidel. Na CarMakler nabízíme prověřené ojeté vozy od ověřených makléřů v Plzni a Plzeňském kraji. Blízkost Německa přináší zajímavé příležitosti — kvalitní německé ojetiny za výhodné ceny. Naši plzeňští makléři znají lokální trh a pomohou vám s bezpečným nákupem.",
     faqItems: [
       { question: "Nabízíte v Plzni i vozy dovezené z Německa?", answer: "Ano, v nabídce máme i kvalitní vozy dovezené z Německa s ověřenou historií. Každý dovozový vůz prochází stejně důkladnou kontrolou jako tuzemský." },
       { question: "Kolik stojí prověřené ojeté auto v Plzni?", answer: "Ceny jsou srovnatelné s celorepublikovým průměrem. Kvalitní ojetý vůz seženete od 150 000 Kč (kompakt) do 500 000 Kč (SUV/prémiový)." },
@@ -802,18 +802,18 @@ export const CITIES: CityData[] = [
     slug: "liberec",
     name: "Liberec",
     inLocative: "v Liberci",
-    description: "Liberec a Liberecký kraj nabízejí specifický trh ojetých vozidel s důrazem na vozy vhodné do horského terénu. Na CarMakler najdete prověřené ojeté vozy od certifikovaných makléřů v Liberci a okolí. V Libereckém kraji je zvýšená poptávka po SUV a vozech s pohonem 4x4 díky blízkosti Jizerských hor a Krkonoš. Naši makléři vám pomohou vybrat ideální vůz pro liberecké podmínky.",
+    description: "Liberec a Liberecký kraj nabízejí specifický trh ojetých vozidel s důrazem na vozy vhodné do horského terénu. Na CarMakler najdete prověřené ojeté vozy od ověřených makléřů v Liberci a okolí. V Libereckém kraji je zvýšená poptávka po SUV a vozech s pohonem 4x4 díky blízkosti Jizerských hor a Krkonoš. Naši makléři vám pomohou vybrat ideální vůz pro liberecké podmínky.",
     faqItems: [
       { question: "Jaké auto je vhodné pro Liberecko?", answer: "Pro Liberecko doporučujeme SUV s pohonem 4x4 nebo vozy s vyšší světlou výškou. Oblíbené jsou Škoda Kodiaq/Karoq, Hyundai Tucson a Subaru." },
-      { question: "Máte makléře v Liberci?", answer: "Ano, v Liberci a okolí působí naši certifikovaní makléři, kteří znají specifika lokálního trhu a pomohou s výběrem." },
+      { question: "Máte makléře v Liberci?", answer: "Ano, v Liberci a okolí působí naši makléři, kteří znají specifika lokálního trhu a pomohou s výběrem." },
       { question: "Zajišťujete zimní přípravu vozu?", answer: "Naši makléři vám poradí s výběrem vozu vhodného do zimních podmínek a doporučí zimní pneumatiky a příslušenství." },
     ],
-    aiSnippet: "V Libereckém kraji je zvýšená poptávka po SUV a vozech s pohonem 4x4 díky blízkosti Jizerských hor a Krkonoš. Doporučené vozy pro Liberecko: Škoda Kodiaq/Karoq, Hyundai Tucson nebo Subaru s AWD. CarMakler má certifikované makléře v Liberci a okolí, kteří znají specifika lokálního trhu.",
+    aiSnippet: "V Libereckém kraji je zvýšená poptávka po SUV a vozech s pohonem 4x4 díky blízkosti Jizerských hor a Krkonoš. Doporučené vozy pro Liberecko: Škoda Kodiaq/Karoq, Hyundai Tucson nebo Subaru s AWD. CarMakler má ověřené makléře v Liberci a okolí, kteří znají specifika lokálního trhu.",
     quickFacts: [
       "Zvýšená poptávka po SUV a 4x4",
       "Blízkost Jizerských hor a Krkonoš",
       "Doporučené: Škoda Kodiaq, Hyundai Tucson, Subaru",
-      "Certifikovaní makléři v Liberci a okolí",
+      "Ověření makléři v Liberci a okolí",
       "Poradenství k zimní přípravě vozu",
     ],
   },
@@ -821,7 +821,7 @@ export const CITIES: CityData[] = [
     slug: "olomouc",
     name: "Olomouc",
     inLocative: "v Olomouci",
-    description: "Olomouc nabízí příjemný trh s ojetými vozy v srdci Moravy. Na CarMakler najdete prověřené ojeté vozy od certifikovaných makléřů v Olomouci a Olomouckém kraji. Olomoucký trh se vyznačuje stabilními cenami a dobrou dostupností oblíbených značek. Naši makléři v Olomouci vám pomohou s kompletním procesem nákupu od výběru přes prověrku až po přepis.",
+    description: "Olomouc nabízí příjemný trh s ojetými vozy v srdci Moravy. Na CarMakler najdete prověřené ojeté vozy od ověřených makléřů v Olomouci a Olomouckém kraji. Olomoucký trh se vyznačuje stabilními cenami a dobrou dostupností oblíbených značek. Naši makléři v Olomouci vám pomohou s kompletním procesem nákupu od výběru přes prověrku až po přepis.",
     faqItems: [
       { question: "Jaká je nabídka ojetých aut v Olomouci?", answer: "V Olomouci nabízíme prověřené vozy všech populárních značek. Nejprodávanější jsou Škoda, VW, Hyundai a Kia. Nabídka se denně aktualizuje." },
       { question: "Nabízíte dopravu vozu z jiného města do Olomouce?", answer: "Ano, pokud vás zaujme vůz z jiného města, můžeme zajistit jeho převoz do Olomouce pro osobní prohlídku." },
@@ -840,9 +840,9 @@ export const CITIES: CityData[] = [
     slug: "ceske-budejovice",
     name: "České Budějovice",
     inLocative: "v Českých Budějovicích",
-    description: "České Budějovice jsou centrem jihočeského trhu s ojetými vozidly. Na CarMakler nabízíme prověřené ojeté vozy od certifikovaných makléřů v Českých Budějovicích a Jihočeském kraji. Blízkost Rakouska přináší možnost kvalitních dovozových vozidel. Naši budějovičtí makléři znají lokální trh a pomohou vám s bezpečným nákupem za férovou cenu.",
+    description: "České Budějovice jsou centrem jihočeského trhu s ojetými vozidly. Na CarMakler nabízíme prověřené ojeté vozy od ověřených makléřů v Českých Budějovicích a Jihočeském kraji. Blízkost Rakouska přináší možnost kvalitních dovozových vozidel. Naši budějovičtí makléři znají lokální trh a pomohou vám s bezpečným nákupem za férovou cenu.",
     faqItems: [
-      { question: "Máte makléře v Českých Budějovicích?", answer: "Ano, v Českých Budějovicích a okolí působí naši certifikovaní makléři. Kontaktujte nás a domluríme osobní schůzku." },
+      { question: "Máte makléře v Českých Budějovicích?", answer: "Ano, v Českých Budějovicích a okolí působí naši makléři. Kontaktujte nás a domluríme osobní schůzku." },
       { question: "Jsou v jižních Čechách výhodné ceny ojetých aut?", answer: "Ceny v Českých Budějovicích jsou srovnatelné s celorepublikovým průměrem. Blízkost Rakouska může přinést zajímavé dovozové příležitosti." },
       { question: "Zajišťujete financování v Českých Budějovicích?", answer: "Ano, financování je dostupné po celé ČR. V Českých Budějovicích vyřídíme vše na místě — od žádosti po podpis smlouvy." },
     ],
@@ -852,14 +852,14 @@ export const CITIES: CityData[] = [
       "Blízkost Rakouska: kvalitní dovozové vozy",
       "Ceny srovnatelné s celorepublikovým průměrem",
       "Financování na místě v Českých Budějovicích",
-      "Certifikovaní makléři v Jihočeském kraji",
+      "Ověření makléři v Jihočeském kraji",
     ],
   },
   {
     slug: "hradec-kralove",
     name: "Hradec Králové",
     inLocative: "v Hradci Králové",
-    description: "Hradec Králové je důležitým centrem automobilového trhu ve východních Čechách. Na CarMakler nabízíme prověřené ojeté vozy od certifikovaných makléřů v Hradci Králové a Královéhradeckém kraji. Město je strategicky umístěné na křižovatce hlavních dopravních tahů, což přináší dobrou dostupnost vozidel z celé ČR. Naši makléři v Hradci vám pomohou najít ideální vůz.",
+    description: "Hradec Králové je důležitým centrem automobilového trhu ve východních Čechách. Na CarMakler nabízíme prověřené ojeté vozy od ověřených makléřů v Hradci Králové a Královéhradeckém kraji. Město je strategicky umístěné na křižovatce hlavních dopravních tahů, což přináší dobrou dostupnost vozidel z celé ČR. Naši makléři v Hradci vám pomohou najít ideální vůz.",
     faqItems: [
       { question: "Jaká je nabídka ojetých aut v Hradci Králové?", answer: "V Hradci a okolí nabízíme desítky prověřených vozidel. Populární jsou Škoda, VW, Hyundai a Ford. Nabídka se pravidelně rozšiřuje." },
       { question: "Mohu si auto v Hradci prohlédnout o víkendu?", answer: "Ano, naši makléři jsou flexibilní a prohlídku je možné domluvit i o víkendu dle vašich časových možností." },
@@ -902,7 +902,7 @@ export const TOP_MODELS: ModelData[] = [
     slug: "octavia",
     name: "Octavia",
     fullName: "Škoda Octavia",
-    description: "Škoda Octavia je nejprodávanější ojeté auto v České republice a jeden z nejpopulárnějších modelů v celé Evropě. Na CarMakler najdete prověřené ojeté Octavie od certifikovaných makléřů — od starších spolehlivých generací (Octavia II, III) po nejnovější Octavii IV. Octavia nabízí výjimečný poměr ceny, prostoru a spolehlivosti. K dispozici je jako liftback i kombi (Combi), s benzínovými i dieselovými motory a ve verzích od základní Active po sportovní RS. Octavia je ideální rodinné auto, služební vůz i ekonomická volba pro dojíždění.",
+    description: "Škoda Octavia je nejprodávanější ojeté auto v České republice a jeden z nejpopulárnějších modelů v celé Evropě. Na CarMakler najdete prověřené ojeté Octavie od ověřených makléřů — od starších spolehlivých generací (Octavia II, III) po nejnovější Octavii IV. Octavia nabízí výjimečný poměr ceny, prostoru a spolehlivosti. K dispozici je jako liftback i kombi (Combi), s benzínovými i dieselovými motory a ve verzích od základní Active po sportovní RS. Octavia je ideální rodinné auto, služební vůz i ekonomická volba pro dojíždění.",
     variants: ["Liftback", "Combi", "Scout", "RS", "L&K"],
     competitors: ["VW Golf", "Hyundai i30", "Ford Focus", "Kia Ceed"],
     faqItems: [
@@ -928,7 +928,7 @@ export const TOP_MODELS: ModelData[] = [
     slug: "fabia",
     name: "Fabia",
     fullName: "Škoda Fabia",
-    description: "Škoda Fabia je jedním z nejprodávanějších malých aut v Evropě a skvělá volba jako ojeté auto. Na CarMakler nabízíme prověřené ojeté Fabie od certifikovaných makléřů. Fabia nabízí překvapivý prostor v kompaktních rozměrech, nízké provozní náklady a českou spolehlivost. K dispozici jako hatchback i kombi, s úspornými motory MPI a TSI. Fabia je ideální městské auto, první vůz pro začátečníky a ekonomická volba pro dojíždění.",
+    description: "Škoda Fabia je jedním z nejprodávanějších malých aut v Evropě a skvělá volba jako ojeté auto. Na CarMakler nabízíme prověřené ojeté Fabie od ověřených makléřů. Fabia nabízí překvapivý prostor v kompaktních rozměrech, nízké provozní náklady a českou spolehlivost. K dispozici jako hatchback i kombi, s úspornými motory MPI a TSI. Fabia je ideální městské auto, první vůz pro začátečníky a ekonomická volba pro dojíždění.",
     variants: ["Hatchback", "Combi", "Monte Carlo", "Style"],
     competitors: ["VW Polo", "Hyundai i20", "Kia Rio", "Toyota Yaris"],
     faqItems: [
@@ -953,7 +953,7 @@ export const TOP_MODELS: ModelData[] = [
     slug: "superb",
     name: "Superb",
     fullName: "Škoda Superb",
-    description: "Škoda Superb je vlajková loď značky Škoda a nabízí prostor a komfort vyšší třídy za cenu střední třídy. Na CarMakler najdete prověřené ojeté Superby od certifikovaných makléřů. Superb je jedním z nejprostornějších aut ve své třídě — s kufrem 660 litrů (Combi) a prostorem pro zadní cestující jako v limuzínách. K dispozici jako liftback i Combi, s benzinovými i dieselovými motory od 150 do 280 PS.",
+    description: "Škoda Superb je vlajková loď značky Škoda a nabízí prostor a komfort vyšší třídy za cenu střední třídy. Na CarMakler najdete prověřené ojeté Superby od ověřených makléřů. Superb je jedním z nejprostornějších aut ve své třídě — s kufrem 660 litrů (Combi) a prostorem pro zadní cestující jako v limuzínách. K dispozici jako liftback i Combi, s benzinovými i dieselovými motory od 150 do 280 PS.",
     variants: ["Liftback", "Combi", "L&K", "Sportline"],
     competitors: ["VW Passat", "Ford Mondeo", "Mazda 6", "Kia Optima"],
     faqItems: [
@@ -978,7 +978,7 @@ export const TOP_MODELS: ModelData[] = [
     slug: "kodiaq",
     name: "Kodiaq",
     fullName: "Škoda Kodiaq",
-    description: "Škoda Kodiaq je velké 7místné SUV, které kombinuje praktičnost Škody s robustními rozměry. Na CarMakler nabízíme prověřené ojeté Kodiaqy od certifikovaných makléřů. Kodiaq nabízí až 7 míst, velkorysý kufr (835 l s 5 sedadly), pohon všech kol a moderní technologie. Je ideální pro velké rodiny, milovníky outdoorových aktivit i jako reprezentativní služební vůz. Ojetý Kodiaq nabízí prémiovou výbavu za rozumnou cenu.",
+    description: "Škoda Kodiaq je velké 7místné SUV, které kombinuje praktičnost Škody s robustními rozměry. Na CarMakler nabízíme prověřené ojeté Kodiaqy od ověřených makléřů. Kodiaq nabízí až 7 míst, velkorysý kufr (835 l s 5 sedadly), pohon všech kol a moderní technologie. Je ideální pro velké rodiny, milovníky outdoorových aktivit i jako reprezentativní služební vůz. Ojetý Kodiaq nabízí prémiovou výbavu za rozumnou cenu.",
     variants: ["Ambition", "Style", "L&K", "Sportline", "RS"],
     competitors: ["VW Tiguan Allspace", "Hyundai Santa Fe", "Kia Sorento", "Ford Edge"],
     faqItems: [
@@ -1003,7 +1003,7 @@ export const TOP_MODELS: ModelData[] = [
     slug: "golf",
     name: "Golf",
     fullName: "Volkswagen Golf",
-    description: "Volkswagen Golf je legenda mezi hatchbacky a měřítko kvality v kompaktním segmentu. Na CarMakler najdete prověřené ojeté Golfy od certifikovaných makléřů. Golf 7 a Golf 8 nabízejí vynikající zpracování, moderní technologie a příjemné jízdní vlastnosti. K dispozici jako hatchback i Variant (kombi), s motory od úsporného 1.0 TSI po sportovní GTI a R. Golf je auto pro ty, kdo chtějí německou kvalitu bez kompromisů.",
+    description: "Volkswagen Golf je legenda mezi hatchbacky a měřítko kvality v kompaktním segmentu. Na CarMakler najdete prověřené ojeté Golfy od ověřených makléřů. Golf 7 a Golf 8 nabízejí vynikající zpracování, moderní technologie a příjemné jízdní vlastnosti. K dispozici jako hatchback i Variant (kombi), s motory od úsporného 1.0 TSI po sportovní GTI a R. Golf je auto pro ty, kdo chtějí německou kvalitu bez kompromisů.",
     variants: ["Hatchback", "Variant", "GTI", "R", "GTE"],
     competitors: ["Škoda Octavia", "Ford Focus", "Hyundai i30", "Mazda 3"],
     faqItems: [
@@ -1029,7 +1029,7 @@ export const TOP_MODELS: ModelData[] = [
     slug: "passat",
     name: "Passat",
     fullName: "Volkswagen Passat",
-    description: "Volkswagen Passat je synonymem komfortního cestovního vozu střední třídy. Na CarMakler nabízíme prověřené ojeté Passaty od certifikovaných makléřů. Passat B8 nabízí prémiovou kvalitu interiéru, pokročilé asistenty řízení a prostorný interiér. Verze Variant (kombi) s kufrem 650 litrů je jedním z nejpraktičtějších cestovních aut. Passat je oblíbený jako služební vůz i rodinné auto pro náročné.",
+    description: "Volkswagen Passat je synonymem komfortního cestovního vozu střední třídy. Na CarMakler nabízíme prověřené ojeté Passaty od ověřených makléřů. Passat B8 nabízí prémiovou kvalitu interiéru, pokročilé asistenty řízení a prostorný interiér. Verze Variant (kombi) s kufrem 650 litrů je jedním z nejpraktičtějších cestovních aut. Passat je oblíbený jako služební vůz i rodinné auto pro náročné.",
     variants: ["Sedan", "Variant", "Alltrack", "GTE", "R-Line"],
     competitors: ["Škoda Superb", "Ford Mondeo", "Mazda 6", "Toyota Camry"],
     faqItems: [
@@ -1054,7 +1054,7 @@ export const TOP_MODELS: ModelData[] = [
     slug: "3-series",
     name: "3 Series",
     fullName: "BMW 3 Series",
-    description: "BMW řady 3 je ikona sportovních sedanů a nejprodávanější prémiový model na světě. Na CarMakler najdete prověřené ojeté BMW řady 3 od certifikovaných makléřů. Řada 3 nabízí sportovní jízdní vlastnosti, prémiový interiér a pokročilé technologie. K dispozici jako sedan (G20) i Touring (kombi), s motory od úsporného 318d po výkonné M340i. Ojeté BMW 3 je vstupní branou do světa prémiových vozidel.",
+    description: "BMW řady 3 je ikona sportovních sedanů a nejprodávanější prémiový model na světě. Na CarMakler najdete prověřené ojeté BMW řady 3 od ověřených makléřů. Řada 3 nabízí sportovní jízdní vlastnosti, prémiový interiér a pokročilé technologie. K dispozici jako sedan (G20) i Touring (kombi), s motory od úsporného 318d po výkonné M340i. Ojeté BMW 3 je vstupní branou do světa prémiových vozidel.",
     variants: ["Sedan", "Touring", "Sport Line", "Luxury Line", "M Sport"],
     competitors: ["Mercedes C-Třída", "Audi A4", "Volvo S60", "Alfa Romeo Giulia"],
     faqItems: [
@@ -1079,7 +1079,7 @@ export const TOP_MODELS: ModelData[] = [
     slug: "a4",
     name: "A4",
     fullName: "Audi A4",
-    description: "Audi A4 je sofistikovaný prémiový sedan s pokročilou technologií a vynikajícím zpracováním. Na CarMakler nabízíme prověřené ojeté Audi A4 od certifikovaných makléřů. A4 generace B9 přinesla moderní digitální kokpit Virtual Cockpit, quattro pohon všech kol a komfortní jízdní vlastnosti. K dispozici jako sedan i Avant (kombi). A4 je ideální volba pro ty, kdo hledají prémiové auto s technologickým náskokem.",
+    description: "Audi A4 je sofistikovaný prémiový sedan s pokročilou technologií a vynikajícím zpracováním. Na CarMakler nabízíme prověřené ojeté Audi A4 od ověřených makléřů. A4 generace B9 přinesla moderní digitální kokpit Virtual Cockpit, quattro pohon všech kol a komfortní jízdní vlastnosti. K dispozici jako sedan i Avant (kombi). A4 je ideální volba pro ty, kdo hledají prémiové auto s technologickým náskokem.",
     variants: ["Sedan", "Avant", "Allroad", "S-Line", "Design"],
     competitors: ["BMW 3 Series", "Mercedes C-Třída", "Volvo S60", "Lexus IS"],
     faqItems: [
@@ -1104,7 +1104,7 @@ export const TOP_MODELS: ModelData[] = [
     slug: "focus",
     name: "Focus",
     fullName: "Ford Focus",
-    description: "Ford Focus je jedním z nejpopulárnějších hatchbacků v Evropě díky sportovním jízdním vlastnostem a dynamickému designu. Na CarMakler nabízíme prověřené ojeté Fordy Focus od certifikovaných makléřů. Focus MK4 (2018+) nabízí moderní technologie, prostorný interiér a vynikající podvozek. K dispozici jako hatchback, Combi a Active (crossover). Motory EcoBoost jsou úsporné a dynamické.",
+    description: "Ford Focus je jedním z nejpopulárnějších hatchbacků v Evropě díky sportovním jízdním vlastnostem a dynamickému designu. Na CarMakler nabízíme prověřené ojeté Fordy Focus od ověřených makléřů. Focus MK4 (2018+) nabízí moderní technologie, prostorný interiér a vynikající podvozek. K dispozici jako hatchback, Combi a Active (crossover). Motory EcoBoost jsou úsporné a dynamické.",
     variants: ["Hatchback", "Combi", "Active", "ST", "ST-Line"],
     competitors: ["VW Golf", "Škoda Octavia", "Mazda 3", "Kia Ceed"],
     faqItems: [
@@ -1129,7 +1129,7 @@ export const TOP_MODELS: ModelData[] = [
     slug: "yaris",
     name: "Yaris",
     fullName: "Toyota Yaris",
-    description: "Toyota Yaris je synonymem spolehlivosti v segmentu malých aut. Na CarMakler nabízíme prověřené ojeté Toyoty Yaris od certifikovaných makléřů. Yaris nabízí kompaktní rozměry ideální pro město, extrémně nízkou spotřebu (hybridní verze od 3,5 l/100 km) a legendární spolehlivost Toyoty. Nová generace (2020+) získala titul Auto roku 2021 v Evropě. Ojetý Yaris Hybrid je jedním z nejúspornějších a nejspolehlivějších malých aut na trhu.",
+    description: "Toyota Yaris je synonymem spolehlivosti v segmentu malých aut. Na CarMakler nabízíme prověřené ojeté Toyoty Yaris od ověřených makléřů. Yaris nabízí kompaktní rozměry ideální pro město, extrémně nízkou spotřebu (hybridní verze od 3,5 l/100 km) a legendární spolehlivost Toyoty. Nová generace (2020+) získala titul Auto roku 2021 v Evropě. Ojetý Yaris Hybrid je jedním z nejúspornějších a nejspolehlivějších malých aut na trhu.",
     variants: ["Hatchback", "Hybrid", "GR Sport", "Cross"],
     competitors: ["Škoda Fabia", "VW Polo", "Hyundai i20", "Honda Jazz"],
     faqItems: [
@@ -1154,7 +1154,7 @@ export const TOP_MODELS: ModelData[] = [
     slug: "i30",
     name: "i30",
     fullName: "Hyundai i30",
-    description: "Hyundai i30 je přímý konkurent VW Golf a nabízí skvělý poměr ceny a výbavy. Na CarMakler nabízíme prověřené ojeté Hyundai i30 od certifikovaných makléřů. Třetí generace (2017+) přinesla výrazně kvalitnější interiér, moderní designový jazyk a 5letou záruku. K dispozici jako hatchback, Fastback a Wagon (kombi). I30 nabízí jednu z nejlepších výbav v segmentu za nejnižší cenu.",
+    description: "Hyundai i30 je přímý konkurent VW Golf a nabízí skvělý poměr ceny a výbavy. Na CarMakler nabízíme prověřené ojeté Hyundai i30 od ověřených makléřů. Třetí generace (2017+) přinesla výrazně kvalitnější interiér, moderní designový jazyk a 5letou záruku. K dispozici jako hatchback, Fastback a Wagon (kombi). I30 nabízí jednu z nejlepších výbav v segmentu za nejnižší cenu.",
     variants: ["Hatchback", "Fastback", "Wagon", "N", "N-Line"],
     competitors: ["VW Golf", "Škoda Octavia", "Ford Focus", "Kia Ceed"],
     faqItems: [
@@ -1179,7 +1179,7 @@ export const TOP_MODELS: ModelData[] = [
     slug: "ceed",
     name: "Ceed",
     fullName: "Kia Ceed",
-    description: "Kia Ceed je moderní hatchback navržený a vyráběný v Evropě s 7letou zárukou. Na CarMakler nabízíme prověřené ojeté Kia Ceed od certifikovaných makléřů. Třetí generace (2018+) přinesla atraktivní design, kvalitní interiér a bohatou výbavu. K dispozici jako hatchback, Sportswagon (kombi) a ProCeed (shooting brake). Ceed sdílí platformu s Hyundai i30, ale nabízí odlišný design a 7letou záruku.",
+    description: "Kia Ceed je moderní hatchback navržený a vyráběný v Evropě s 7letou zárukou. Na CarMakler nabízíme prověřené ojeté Kia Ceed od ověřených makléřů. Třetí generace (2018+) přinesla atraktivní design, kvalitní interiér a bohatou výbavu. K dispozici jako hatchback, Sportswagon (kombi) a ProCeed (shooting brake). Ceed sdílí platformu s Hyundai i30, ale nabízí odlišný design a 7letou záruku.",
     variants: ["Hatchback", "Sportswagon", "GT", "GT-Line"],
     competitors: ["VW Golf", "Škoda Octavia", "Ford Focus", "Hyundai i30"],
     faqItems: [

@@ -1,4 +1,15 @@
 import { prisma } from "./prisma";
+import { calculateLevel } from "./gamification-levels";
+
+// Re-export client-safe level helpers so existing server imports still work
+export {
+  LEVELS,
+  calculateLevel,
+  getLevelByKey,
+  calculateLevelProgress,
+  type LevelKey,
+  type LevelProgress,
+} from "./gamification-levels";
 
 // ============================================
 // ACHIEVEMENTS
@@ -62,32 +73,6 @@ export const ACHIEVEMENTS = {
 } as const;
 
 export type AchievementKey = keyof typeof ACHIEVEMENTS;
-
-// ============================================
-// LEVELS
-// ============================================
-
-export const LEVELS = [
-  { key: "JUNIOR", name: "Junior makler", minSales: 0, maxSales: 4, badge: "bronze" },
-  { key: "BROKER", name: "Makler", minSales: 5, maxSales: 19, badge: "silver" },
-  { key: "SENIOR", name: "Senior makler", minSales: 20, maxSales: 49, badge: "gold" },
-  { key: "TOP", name: "Top makler", minSales: 50, maxSales: Infinity, badge: "diamond" },
-] as const;
-
-export type LevelKey = "JUNIOR" | "BROKER" | "SENIOR" | "TOP";
-
-export function calculateLevel(totalSales: number): (typeof LEVELS)[number] {
-  for (let i = LEVELS.length - 1; i >= 0; i--) {
-    if (totalSales >= LEVELS[i].minSales) {
-      return LEVELS[i];
-    }
-  }
-  return LEVELS[0];
-}
-
-export function getLevelByKey(key: string) {
-  return LEVELS.find((l) => l.key === key) ?? LEVELS[0];
-}
 
 // ============================================
 // CHECK AND UNLOCK ACHIEVEMENTS

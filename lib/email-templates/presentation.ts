@@ -13,7 +13,7 @@ export function presentationHtml(data: PresentationData): string {
       Dobrý den, ${escapeHtml(data.recipientName)},
     </p>
     <p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">
-      jmenuji se ${escapeHtml(data.broker.firstName)} ${escapeHtml(data.broker.lastName)} a jsem certifikovaný makléř Carmakler.
+      jmenuji se ${escapeHtml(data.broker.firstName)} ${escapeHtml(data.broker.lastName)} a jsem makléř Carmakler.
       Rád bych Vám představil, jak Vám můžeme pomoci s prodejem Vašeho vozidla.
     </p>
     ${data.customText ? `<p style="margin: 0 0 16px; font-size: 15px; color: #374151; line-height: 1.6;">${escapeHtml(data.customText)}</p>` : ""}
@@ -26,7 +26,7 @@ export function presentationHtml(data: PresentationData): string {
     </table>
     <h3 style="margin: 24px 0 12px; font-size: 16px; color: #111827;">Proč Carmakler:</h3>
     <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom: 20px;">
-      <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#8226; Síť certifikovaných makléřů po celé ČR</td></tr>
+      <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#8226; Síť ověřených makléřů po celé ČR</td></tr>
       <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#8226; Profesionální fotografie a popis vozidla</td></tr>
       <tr><td style="padding: 8px 0; font-size: 14px; color: #374151;">&#8226; Kompletní servis od nacenění po předání</td></tr>
     </table>
@@ -41,7 +41,7 @@ export function presentationText(data: PresentationData): string {
   return [
     `Dobrý den, ${data.recipientName},`,
     "",
-    `jmenuji se ${data.broker.firstName} ${data.broker.lastName} a jsem certifikovaný makléř Carmakler.`,
+    `jmenuji se ${data.broker.firstName} ${data.broker.lastName} a jsem makléř Carmakler.`,
     "Rád bych Vám představil, jak Vám můžeme pomoci s prodejem Vašeho vozidla.",
     "",
     data.customText || "",
@@ -53,7 +53,7 @@ export function presentationText(data: PresentationData): string {
     "- Platíte pouze provizi z úspěšného prodeje",
     "",
     "Proč Carmakler:",
-    "- Síť certifikovaných makléřů po celé ČR",
+    "- Síť ověřených makléřů po celé ČR",
     "- Profesionální fotografie a popis vozidla",
     "- Kompletní servis od nacenění po předání",
     "",

@@ -10,7 +10,7 @@ export default function HashtagNotFound() {
         </h1>
         <p className="text-gray-600 mt-3">
           Možná jsme ho přejmenovali nebo ještě čeká na svého prvního makléře.
-          Zkuste procházet všechny naše certifikované makléře.
+          Zkuste procházet všechny naše ověřené makléře.
         </p>
         <div className="mt-6 flex flex-wrap gap-3 justify-center">
           <Link

@@ -9,7 +9,7 @@ const priceRange = PRICE_RANGES.find((p) => p.slug === "do-300000");
 
 export const metadata: Metadata = priceRange ? {
   title: `Auta ${priceRange.label} | Ojeté vozy — CarMakler`,
-  description: `Prověřené ojeté vozy ${priceRange.label} od certifikovaných makléřů. Široký výběr značek a modelů za rozumné ceny. Bezpečný nákup.`,
+  description: `Prověřené ojeté vozy ${priceRange.label} od ověřených makléřů. Široký výběr značek a modelů za rozumné ceny. Bezpečný nákup.`,
   openGraph: {
     title: `Ojeté vozy ${priceRange.label} | CarMakler`,
     description: `Prověřené ojeté vozy ${priceRange.label}. Bezpečný nákup od makléřů.`,
@@ -54,7 +54,7 @@ export default function Page() {
       title={`Auta ${priceRange.label} | Ojeté vozy — CarMakler`}
       description={priceRange.description}
       h1={`Ojeté vozy ${priceRange.label}`}
-      filterDescription={`Prověřené ojeté vozy v cenové kategorii ${priceRange.label} od certifikovaných makléřů.`}
+      filterDescription={`Prověřené ojeté vozy v cenové kategorii ${priceRange.label} od ověřených makléřů.`}
       aiSnippet={priceRange.aiSnippet}
       quickFacts={priceRange.quickFacts}
       seoText={
@@ -64,14 +64,14 @@ export default function Page() {
           <h3>Jak vybrat ojeté auto v tomto rozpočtu?</h3>
           <p>
             Při výběru ojetého auta {priceRange.label} je důležité zvážit stáří vozu, nájezd,
-            značku a celkový technický stav. Naši certifikovaní makléři vám pomohou vybrat
+            značku a celkový technický stav. Naši makléři vám pomohou vybrat
             nejlepší vůz v tomto cenovém segmentu. Každý vůz prochází kontrolou historie
             přes CEBIA a fyzickou prohlídkou.
           </p>
           <h3>Bezpečný nákup s CarMakler</h3>
           <p>
             I v nižších cenových kategoriích garantujeme kvalitu a bezpečnost nákupu.
-            Certifikovaný makléř prověří historii vozu, zkontroluje technický stav
+            Ověřený makléř prověří historii vozu, zkontroluje technický stav
             a zajistí kompletní administrativu. Nabízíme také financování a pojištění.
           </p>
         </div>

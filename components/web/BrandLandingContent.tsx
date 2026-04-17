@@ -24,7 +24,7 @@ export function BrandLandingContent({ brand }: BrandLandingContentProps) {
 
   const webPageJsonLd = generateWebPageJsonLd({
     name: `Ojeté vozy ${brand.displayName}`,
-    description: `Prověřené ojeté vozy ${brand.displayName} od certifikovaných makléřů. Bezpečný nákup s garancí.`,
+    description: `Prověřené ojeté vozy ${brand.displayName} od ověřených makléřů. Bezpečný nákup s garancí.`,
     url: `${BASE_URL}/nabidka/${brand.slug}`,
     about: [
       { name: brand.displayName, type: "Brand" },
@@ -68,9 +68,9 @@ export function BrandLandingContent({ brand }: BrandLandingContentProps) {
   return (
     <VehicleLandingPage
       title={`${brand.displayName} bazar | Ojeté vozy ${brand.displayName} — CarMakler`}
-      description={`Prověřené ojeté vozy ${brand.displayName} od certifikovaných makléřů. ${brand.topModels.map((m) => m.name).join(", ")} a další. Bezpečný nákup s garancí.`}
+      description={`Prověřené ojeté vozy ${brand.displayName} od ověřených makléřů. ${brand.topModels.map((m) => m.name).join(", ")} a další. Bezpečný nákup s garancí.`}
       h1={`Ojeté vozy ${brand.displayName}`}
-      filterDescription={`Prověřené vozy ${brand.displayName} od certifikovaných makléřů. ${brand.topModels.map((m) => m.name).join(", ")} a další modely v nabídce.`}
+      filterDescription={`Prověřené vozy ${brand.displayName} od ověřených makléřů. ${brand.topModels.map((m) => m.name).join(", ")} a další modely v nabídce.`}
       aiSnippet={brand.aiSnippet}
       quickFacts={brand.quickFacts}
       seoText={<BrandSeoText brand={brand} />}
@@ -125,7 +125,7 @@ function BrandSeoText({ brand }: { brand: BrandData }) {
       <h3>Jak funguje nákup ojetého {brand.displayName} přes CarMakler?</h3>
       <p>
         Proces je jednoduchý a bezpečný. Vyberte si vůz {brand.displayName} z naší nabídky,
-        kontaktujte certifikovaného makléře a domluvte si prohlídku. Makléř za vás prověří
+        kontaktujte ověřeného makléře a domluvte si prohlídku. Makléř za vás prověří
         historii vozu přes CEBIA, zkontroluje technický stav a ověří původ. Pokud je vše v pořádku,
         makléř zajistí kompletní administrativu — kupní smlouvu, přepis na registru vozidel
         a předání vozidla. Celý proces trvá obvykle 3-7 dní.
@@ -143,7 +143,7 @@ function BrandSeoText({ brand }: { brand: BrandData }) {
       <p>
         Každý ojetý vůz {brand.displayName} na CarMakler prochází důkladnou kontrolou.
         Ověřujeme historii havárií, stav tachometru, zástavy a exekuce přes systém CEBIA.
-        Certifikovaný makléř provede fyzickou prohlídku vozu a zkontroluje technický stav.
+        Ověřený makléř provede fyzickou prohlídku vozu a zkontroluje technický stav.
         Díky tomu kupujete s jistotou a bez rizika. Navíc vám makléř pomůže
         s financováním, pojištěním a kompletní administrativou.
       </p>

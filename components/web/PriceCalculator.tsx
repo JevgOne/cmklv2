@@ -8,11 +8,11 @@ import { BRANDS } from "@/lib/seo-data";
 const faqItems = [
   {
     question: "Jak přesná je online kalkulačka ceny?",
-    answer: "Online kalkulačka poskytuje orientační cenové rozpětí na základě statistik trhu. Pro přesné ocenění doporučujeme kontaktovat certifikovaného makléře CarMakler, který zohlední konkrétní stav a výbavu vozu.",
+    answer: "Online kalkulačka poskytuje orientační cenové rozpětí na základě statistik trhu. Pro přesné ocenění doporučujeme kontaktovat ověřeného makléře CarMakler, který zohlední konkrétní stav a výbavu vozu.",
   },
   {
     question: "Kolik stojí profesionální ocenění auta?",
-    answer: "Ocenění vozu certifikovaným makléřem CarMakler je zcela zdarma a nezávazné. Makléř přijede k vám, prohlédne auto a sdělí reálnou tržní cenu.",
+    answer: "Ocenění vozu ověřeným makléřem CarMakler je zcela zdarma a nezávazné. Makléř přijede k vám, prohlédne auto a sdělí reálnou tržní cenu.",
   },
   {
     question: "Co ovlivňuje cenu ojetého auta nejvíce?",

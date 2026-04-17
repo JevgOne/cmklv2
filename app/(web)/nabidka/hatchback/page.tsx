@@ -9,7 +9,7 @@ const bodyType = BODY_TYPES.find((b) => b.slug === "hatchback");
 
 export const metadata: Metadata = bodyType ? {
   title: `${bodyType.name} bazar | Ojeté ${bodyType.name.toLowerCase()} vozy — CarMakler`,
-  description: `Prověřené ojeté ${bodyType.name.toLowerCase()} vozy od certifikovaných makléřů. Široký výběr značek a modelů. Bezpečný nákup s garancí.`,
+  description: `Prověřené ojeté ${bodyType.name.toLowerCase()} vozy od ověřených makléřů. Široký výběr značek a modelů. Bezpečný nákup s garancí.`,
   openGraph: {
     title: `Ojeté ${bodyType.name} vozy | CarMakler`,
     description: `Prověřené ojeté ${bodyType.name.toLowerCase()} vozy. Bezpečný nákup od makléřů.`,
@@ -60,7 +60,7 @@ export default function Page() {
       title={`${bodyType.name} bazar | Ojeté ${bodyType.name.toLowerCase()} vozy — CarMakler`}
       description={bodyType.description}
       h1={`Ojeté ${bodyType.name.toLowerCase()} vozy`}
-      filterDescription={`Prověřené ojeté ${bodyType.name.toLowerCase()} vozy od certifikovaných makléřů. Široký výběr značek a modelů.`}
+      filterDescription={`Prověřené ojeté ${bodyType.name.toLowerCase()} vozy od ověřených makléřů. Široký výběr značek a modelů.`}
       aiSnippet={bodyType.aiSnippet}
       quickFacts={bodyType.quickFacts}
       seoText={
@@ -70,7 +70,7 @@ export default function Page() {
           <h3>Bezpečný nákup s garancí</h3>
           <p>
             Každý ojetý vůz na CarMakler prochází důkladnou kontrolou. Ověřujeme historii přes CEBIA,
-            kontrolujeme stav tachometru a původ vozu. Certifikovaný makléř provede fyzickou prohlídku
+            kontrolujeme stav tachometru a původ vozu. Ověřený makléř provede fyzickou prohlídku
             a zajistí kompletní administrativu nákupu včetně financování a pojištění.
           </p>
         </div>

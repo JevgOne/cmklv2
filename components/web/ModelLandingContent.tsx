@@ -24,7 +24,7 @@ export function ModelLandingContent({ model }: ModelLandingContentProps) {
 
   const webPageJsonLd = generateWebPageJsonLd({
     name: `Ojeté ${model.fullName}`,
-    description: `Prověřené ojeté ${model.fullName} od certifikovaných makléřů. Bezpečný nákup s garancí.`,
+    description: `Prověřené ojeté ${model.fullName} od ověřených makléřů. Bezpečný nákup s garancí.`,
     url: `${BASE_URL}/nabidka/${model.brandSlug}/${model.slug}`,
     about: [
       { name: model.brandName, type: "Brand" },
@@ -67,7 +67,7 @@ export function ModelLandingContent({ model }: ModelLandingContentProps) {
   return (
     <VehicleLandingPage
       title={`${model.fullName} bazar | Ojeté ${model.name} — CarMakler`}
-      description={`Prověřené ojeté ${model.fullName} od certifikovaných makléřů. Varianty ${model.variants.join(", ")}. Bezpečný nákup s garancí.`}
+      description={`Prověřené ojeté ${model.fullName} od ověřených makléřů. Varianty ${model.variants.join(", ")}. Bezpečný nákup s garancí.`}
       h1={`${model.fullName} — ojeté vozy v nabídce`}
       filterDescription={`Prověřené ojeté vozy ${model.fullName} v různých variantách a cenových kategoriích.`}
       aiSnippet={model.aiSnippet}
@@ -133,7 +133,7 @@ function ModelSeoText({ model }: { model: ModelData }) {
       <h3>Bezpečný nákup přes CarMakler</h3>
       <p>
         Koupě ojetého {model.fullName} přes CarMakler je bezpečná a transparentní.
-        Certifikovaný makléř prověří historii vozu přes CEBIA, zkontroluje technický stav,
+        Ověřený makléř prověří historii vozu přes CEBIA, zkontroluje technický stav,
         ověří stav tachometru a zajistí kompletní administrativu. Nabízíme také
         financování, pojištění a rozšířenou záruku pro maximální klid při nákupu.
       </p>

@@ -9,11 +9,11 @@ import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
-  title: "CarMakléř | Prodej aut přes certifikované makléře",
+  title: "CarMakléř | Prodej aut přes ověřené makléře",
   description:
     "Prodejte nebo kupte auto bezpečně přes síť ověřených makléřů. Rychle, transparentně a bez starostí. Průměrná doba prodeje 20 dní.",
   openGraph: {
-    title: "CarMakléř | Prodej aut přes certifikované makléře",
+    title: "CarMakléř | Prodej aut přes ověřené makléře",
     description:
       "Prodejte nebo kupte auto bezpečně přes síť ověřených makléřů. Rychle, transparentně a bez starostí.",
     type: "website",
@@ -106,7 +106,7 @@ async function getFeaturedBrokers() {
           slug: b.slug || "makler",
           region: (cities as string[])[0] || "Česká republika",
           photo: b.avatar || "",
-          bio: b.bio || `Certifikovaný makléř CarMakléř`,
+          bio: b.bio || `Ověřený makléř CarMakléř`,
           badges: ["verified"] as const,
           badgeLabels: ["✓ Ověřený"],
           rating: "—",
@@ -180,7 +180,7 @@ const benefits = [
   {
     icon: "🤝",
     title: "Síť makléřů",
-    desc: "Síť certifikovaných makléřů po celé ČR, vždy blízko vás",
+    desc: "Síť ověřených makléřů po celé ČR, vždy blízko vás",
   },
 ];
 
@@ -293,7 +293,7 @@ export default async function HomePage() {
               <div className="relative aspect-video bg-gray-200 rounded-2xl overflow-hidden flex items-center justify-center">
                 <img
                   src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&q=80"
-                  alt="Prodej ojetých vozidel přes certifikované makléře CarMakléř"
+                  alt="Prodej ojetých vozidel přes ověřené makléře CarMakléř"
                   className="w-full h-full object-cover"
                 />
                 {/* Overlay gradient */}

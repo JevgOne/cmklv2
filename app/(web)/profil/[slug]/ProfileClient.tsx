@@ -22,6 +22,7 @@ import {
   TAB_LABELS,
   DAY_LABELS,
 } from "@/lib/role-labels";
+import { LevelProgressBar } from "@/components/ui/LevelProgressBar";
 
 export interface ProfileUser {
   id: string;
@@ -347,9 +348,14 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
                     </p>
                   </div>
                   {levelLabel && (
-                    <Badge variant="top" className="shrink-0">
-                      {levelLabel}
-                    </Badge>
+                    <div className="shrink-0 flex flex-col items-end gap-1">
+                      <Badge variant="top">
+                        {levelLabel}
+                      </Badge>
+                      {user.role === "BROKER" && (
+                        <LevelProgressBar level={user.level} totalSales={user.totalSales} size="md" />
+                      )}
+                    </div>
                   )}
                 </div>
 
