@@ -6,25 +6,25 @@
 
 */
 -- DropForeignKey
-ALTER TABLE "Favorite" DROP CONSTRAINT "Favorite_listingId_fkey";
+ALTER TABLE "Favorite" DROP CONSTRAINT IF EXISTS "Favorite_listingId_fkey";
 
 -- DropIndex
-DROP INDEX "Listing_searchVector_idx";
+DROP INDEX IF EXISTS "Listing_searchVector_idx";
 
 -- DropIndex
-DROP INDEX "Part_name_trgm_idx";
+DROP INDEX IF EXISTS "Part_name_trgm_idx";
 
 -- DropIndex
-DROP INDEX "Part_searchVector_idx";
+DROP INDEX IF EXISTS "Part_searchVector_idx";
 
 -- DropIndex
-DROP INDEX "Vehicle_brand_trgm_idx";
+DROP INDEX IF EXISTS "Vehicle_brand_trgm_idx";
 
 -- DropIndex
-DROP INDEX "Vehicle_model_trgm_idx";
+DROP INDEX IF EXISTS "Vehicle_model_trgm_idx";
 
 -- DropIndex
-DROP INDEX "Vehicle_searchVector_idx";
+DROP INDEX IF EXISTS "Vehicle_searchVector_idx";
 
 -- AlterTable
 ALTER TABLE "Favorite" ADD COLUMN     "partId" TEXT,
