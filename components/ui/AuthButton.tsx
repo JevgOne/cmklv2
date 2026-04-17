@@ -185,7 +185,7 @@ export function MobileAuthSection({ onNavigate }: { onNavigate?: () => void }) {
         onClick={onNavigate}
         className="flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-orange-500 text-white text-sm font-semibold hover:bg-orange-600 transition-colors no-underline min-h-[44px]"
       >
-        Muj dashboard
+        Můj dashboard
       </Link>
 
       {/* Sign out */}
@@ -197,7 +197,7 @@ export function MobileAuthSection({ onNavigate }: { onNavigate?: () => void }) {
         }}
         className="flex items-center justify-center gap-2 w-full py-3 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors bg-transparent cursor-pointer min-h-[44px]"
       >
-        Odhlasit se
+        Odhlásit se
       </button>
     </div>
   );

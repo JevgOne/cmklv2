@@ -10,11 +10,11 @@ import { PART_CATEGORIES } from "@/lib/parts-categories";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
-  title: "Autodíly — použité i nové náhradní díly | CarMakléř",
+  title: "Autodíly — použité i nové náhradní díly",
   description:
     "Použité autodíly z vrakovišť, aftermarket díly a autokosmetika. Garantovaná kvalita, rychlé doručení, 6 měsíců záruka.",
   openGraph: {
-    title: "Autodíly a příslušenství | CarMakléř",
+    title: "Autodíly a příslušenství",
     description:
       "Největší výběr dílů z vrakovišť. Garantovaná kvalita, expedice do 24h.",
   },
