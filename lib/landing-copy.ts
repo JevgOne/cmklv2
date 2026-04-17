@@ -62,7 +62,7 @@ export function getHeroCopy(
         subheadline: `Najděte ověřeného makléře v ${inLocative(
           tag.slug,
           tag.label
-        )} — ${stats.count} specialistů, ${stats.totalSoldVehicles} úspěšných prodejů.`,
+        )} — ${stats.count} specialistů${stats.totalSoldVehicles > 0 ? `, ${stats.totalSoldVehicles} úspěšných prodejů` : ""}.`,
       };
     case "BRAND":
       return {
