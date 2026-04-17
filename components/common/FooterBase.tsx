@@ -54,19 +54,19 @@ export function FooterBase({
   const badgeLabel = PLATFORM_BADGE_LABEL[platformKey];
 
   return (
-    <footer className="bg-gray-950 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+    <footer className="bg-gray-950 text-white border-t-4 border-orange-500">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
         {/* === 4-SLOUPCOVÝ GRID === */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
           {/* Sloupec 1 — O nás + social */}
           <div>
-            <Link href="/" className="flex items-center gap-2 no-underline mb-4">
+            <Link href="/" className="flex items-center gap-2 no-underline mb-8">
               <Image
                 src="/brand/logo-white.png"
                 alt="CarMakléř"
-                width={120}
-                height={40}
-                className="h-10 w-auto object-contain"
+                width={144}
+                height={48}
+                className="h-12 w-auto object-contain"
               />
               {badgeLabel && (
                 <span className="text-sm font-semibold text-orange-400">
@@ -74,21 +74,21 @@ export function FooterBase({
                 </span>
               )}
             </Link>
-            <p className="text-sm text-gray-500 leading-relaxed mb-6">
+            <p className="text-sm text-gray-400 leading-relaxed mb-6">
               {tagline}
             </p>
 
             {/* Social */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               {companyInfo.social.facebook && (
                 <a
                   href={companyInfo.social.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Facebook"
-                  className="text-gray-500 hover:text-orange-400 transition-colors"
+                  className="text-gray-400 hover:text-orange-400 hover:bg-orange-400/10 rounded-full p-2 transition-all duration-200"
                 >
-                  <FacebookIcon className="w-5 h-5" />
+                  <FacebookIcon className="w-6 h-6" />
                 </a>
               )}
               {companyInfo.social.instagram && (
@@ -97,9 +97,9 @@ export function FooterBase({
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"
-                  className="text-gray-500 hover:text-orange-400 transition-colors"
+                  className="text-gray-400 hover:text-orange-400 hover:bg-orange-400/10 rounded-full p-2 transition-all duration-200"
                 >
-                  <InstagramIcon className="w-5 h-5" />
+                  <InstagramIcon className="w-6 h-6" />
                 </a>
               )}
               {companyInfo.social.youtube && (
@@ -108,9 +108,9 @@ export function FooterBase({
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="YouTube"
-                  className="text-gray-500 hover:text-orange-400 transition-colors"
+                  className="text-gray-400 hover:text-orange-400 hover:bg-orange-400/10 rounded-full p-2 transition-all duration-200"
                 >
-                  <YoutubeIcon className="w-5 h-5" />
+                  <YoutubeIcon className="w-6 h-6" />
                 </a>
               )}
             </div>
@@ -118,7 +118,7 @@ export function FooterBase({
 
           {/* Sloupec 2 — Produkt (per-platform) */}
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wide text-gray-400 mb-4">
+            <h3 className="text-xs font-bold uppercase tracking-widest text-orange-400/80 mb-5">
               {productColumn.title}
             </h3>
             <ul className="list-none p-0 m-0 flex flex-col gap-3">
@@ -146,7 +146,7 @@ export function FooterBase({
 
           {/* Sloupec 3 — Podpora (shared) */}
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wide text-gray-400 mb-4">
+            <h3 className="text-xs font-bold uppercase tracking-widest text-orange-400/80 mb-5">
               Podpora
             </h3>
             <ul className="list-none p-0 m-0 flex flex-col gap-3 text-sm text-gray-500">
@@ -198,7 +198,7 @@ export function FooterBase({
 
           {/* Sloupec 4 — Firma (shared) */}
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wide text-gray-400 mb-4">
+            <h3 className="text-xs font-bold uppercase tracking-widest text-orange-400/80 mb-5">
               Firma
             </h3>
             <ul className="list-none p-0 m-0 flex flex-col gap-3 text-sm text-gray-500">
@@ -231,8 +231,8 @@ export function FooterBase({
         </div>
 
         {/* === PLATFORM SWITCHER === */}
-        <div className="mt-10 pt-6 border-t border-white/10">
-          <h4 className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-3">
+        <div className="mt-12 pt-8 border-t border-gray-700/50">
+          <h4 className="text-xs font-bold uppercase tracking-widest text-orange-400/80 mb-4">
             Platformy CarMakléř
           </h4>
           <PlatformSwitcher current={platformKey} variant="footer" />
@@ -242,8 +242,8 @@ export function FooterBase({
         {trustBar}
 
         {/* === BOTTOM BAR === */}
-        <div className="mt-8 pt-6 border-t border-white/10">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-xs text-gray-500">
+        <div className="mt-8 pt-6 border-t border-gray-700/50">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-xs text-gray-600">
             <div>
               &copy; {currentYear} {companyInfo.legalName}
               {!isPlaceholder(companyInfo.ico) && (
@@ -259,19 +259,19 @@ export function FooterBase({
             >
               <a
                 href={urls.main("/ochrana-osobnich-udaju")}
-                className="hover:text-white transition-colors no-underline"
+                className="hover:text-orange-400 transition-colors no-underline"
               >
                 Ochrana OÚ
               </a>
               <a
                 href={urls.main("/obchodni-podminky")}
-                className="hover:text-white transition-colors no-underline"
+                className="hover:text-orange-400 transition-colors no-underline"
               >
                 Obchodní podmínky
               </a>
               <a
                 href={urls.main("/zasady-cookies")}
-                className="hover:text-white transition-colors no-underline"
+                className="hover:text-orange-400 transition-colors no-underline"
               >
                 Cookies
               </a>

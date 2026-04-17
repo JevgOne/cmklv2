@@ -119,27 +119,26 @@ export function PlatformSwitcher({
     );
   }
 
-  // variant === "footer"
+  // variant === "footer" — horizontal badge strip
   return (
-    <ul className={`list-none p-0 m-0 flex flex-col gap-3 ${className}`}>
+    <div className={`flex flex-wrap items-center gap-3 ${className}`}>
       {items.map((p) => {
         const isCurrent = p.key === current;
         return (
-          <li key={p.key}>
-            <a
-              href={p.href}
-              aria-current={isCurrent ? "page" : undefined}
-              className={`text-sm transition-colors no-underline ${
-                isCurrent
-                  ? "text-orange-400 font-semibold"
-                  : "text-gray-500 hover:text-white"
-              }`}
-            >
-              {p.label}
-            </a>
-          </li>
+          <a
+            key={p.key}
+            href={p.href}
+            aria-current={isCurrent ? "page" : undefined}
+            className={`inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200 no-underline ${
+              isCurrent
+                ? "bg-orange-500/15 text-orange-400 border border-orange-500/30"
+                : "bg-gray-800/50 text-gray-400 hover:text-white hover:bg-gray-800"
+            }`}
+          >
+            {p.label}
+          </a>
         );
       })}
-    </ul>
+    </div>
   );
 }
