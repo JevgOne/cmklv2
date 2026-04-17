@@ -5,6 +5,7 @@ import Image from "next/image";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { Button, PlatformSwitcher } from "@/components/ui";
+import { MobileAuthSection } from "@/components/ui/AuthButton";
 
 const serviceItems = [
   { href: "/sluzby/proverka", title: "Prověrka vozidla" },
@@ -158,6 +159,7 @@ export function MainMobileMenu() {
       </nav>
 
       <div className="flex flex-col gap-3 px-6 pb-8 pt-4 border-t border-gray-100 shrink-0">
+        <MobileAuthSection onNavigate={closeMenu} />
         <Link href="/chci-prodat" className="no-underline" onClick={closeMenu}>
           <Button variant="outline" size="lg" className="w-full">
             Chci prodat auto

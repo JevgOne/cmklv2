@@ -3,6 +3,7 @@ import Image from "next/image";
 import { MainMobileMenu } from "./MobileMenu";
 import { CartIcon } from "@/components/web/CartIcon";
 import { PlatformSwitcher } from "@/components/ui/PlatformSwitcher";
+import { AuthButton } from "@/components/ui/AuthButton";
 
 const dropdownItems = {
   sluzby: [
@@ -176,6 +177,7 @@ export function MainNavbar() {
 
         <div className="hidden lg:flex items-center gap-3 shrink-0">
           <CartIcon />
+          <AuthButton />
           <Link
             href="/chci-prodat"
             className="inline-flex items-center justify-center gap-2 font-semibold rounded-full border-none cursor-pointer transition-all duration-200 whitespace-nowrap py-2 px-4 text-[13px] bg-white text-gray-800 shadow-[inset_0_0_0_2px_var(--gray-200)] hover:bg-gray-50 hover:shadow-[inset_0_0_0_2px_var(--gray-300)] no-underline"
