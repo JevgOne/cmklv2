@@ -30,6 +30,17 @@ const LEVEL_LABEL: Record<string, string> = {
   JUNIOR: "Ověřený",
 };
 
+function StatCell({ value, label }: { value: number; label: string }) {
+  return (
+    <div className="flex flex-col items-center">
+      <span className="text-base font-bold text-gray-900">
+        {value > 0 ? value : "—"}
+      </span>
+      <span className="text-[11px] text-gray-500 mt-0.5">{label}</span>
+    </div>
+  );
+}
+
 export function BrokerCard({ broker }: BrokerCardProps) {
   const initials = getInitials(broker.firstName, broker.lastName);
   const primaryCity = broker.city || broker.cities[0] || null;
@@ -38,41 +49,56 @@ export function BrokerCard({ broker }: BrokerCardProps) {
   const hiddenCount = Math.max(0, broker.tags.length - maxTags);
 
   return (
-    <article
-      className="rounded-xl p-5 transition-all flex flex-col h-full bg-white border border-gray-200 hover:border-orange-300 hover:shadow-md group"
-    >
+    <article className="rounded-2xl bg-white shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 flex flex-col h-full overflow-hidden group">
 
-      <div className="flex items-start gap-4">
-        {broker.avatar ? (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img
-            src={broker.avatar}
-            alt={`${broker.firstName} ${broker.lastName}`}
-            className="w-20 h-20 rounded-full object-cover shrink-0 border border-gray-200"
-          />
-        ) : (
-          <div
-            className="w-20 h-20 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center text-white font-extrabold text-xl shrink-0"
-          >
-            {initials}
-          </div>
-        )}
+      <div className="flex flex-col items-center pt-6 px-5">
+        {/* Gradient ring wrapper */}
+        <div className="p-[3px] rounded-full bg-gradient-to-br from-orange-400 via-orange-500 to-orange-600 shadow-sm">
+          {broker.avatar ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={broker.avatar}
+              alt={`${broker.firstName} ${broker.lastName}`}
+              className="w-20 h-20 rounded-full object-cover border-[3px] border-white"
+            />
+          ) : (
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 border-[3px] border-white flex items-center justify-center text-orange-500 font-extrabold text-xl">
+              {initials}
+            </div>
+          )}
+        </div>
 
-        <div className="min-w-0 flex-1">
-          <h3 className="text-lg font-bold text-gray-900 truncate">
-            {broker.firstName} {broker.lastName}
-          </h3>
-          <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
-            <Badge variant={broker.level === "TOP" || broker.level === "SENIOR" ? "top" : "verified"}>
-              {LEVEL_LABEL[broker.level] ?? "Makléř"}
-            </Badge>
-            {primaryCity && <span>{primaryCity}</span>}
-          </div>
+        <h3 className="mt-3 text-lg font-bold text-gray-900 truncate max-w-full text-center">
+          {broker.firstName} {broker.lastName}
+        </h3>
+
+        <div className="flex items-center gap-1.5 mt-1">
+          <Badge variant={broker.level === "TOP" || broker.level === "SENIOR" ? "top" : "verified"}>
+            {LEVEL_LABEL[broker.level] ?? "Makléř"}
+          </Badge>
+          {primaryCity && (
+            <>
+              <span className="text-gray-300">·</span>
+              <span className="text-xs text-gray-500">{primaryCity}</span>
+            </>
+          )}
         </div>
       </div>
 
+      <div className="grid grid-cols-3 divide-x divide-gray-100 mt-4 py-3 mx-5 border-y border-gray-100">
+        <StatCell value={broker.totalSales} label="Prodejů" />
+        <StatCell value={broker.activeVehicles} label="Vozidel" />
+        <StatCell value={broker.tags.length} label="Specializací" />
+      </div>
+
+      {broker.bio && (
+        <p className="text-sm text-gray-500 line-clamp-2 mt-3 px-5 text-center">
+          {broker.bio}
+        </p>
+      )}
+
       {visibleTags.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 mt-4">
+        <div className="flex flex-wrap justify-center gap-1.5 mt-3 px-5">
           {visibleTags.map((t) => (
             <TagPill
               key={t.slug}
@@ -83,43 +109,24 @@ export function BrokerCard({ broker }: BrokerCardProps) {
             />
           ))}
           {hiddenCount > 0 && (
-            <span className="inline-flex items-center px-2.5 py-0.5 text-xs text-gray-500 rounded-full bg-gray-50">
+            <span className="inline-flex items-center px-2.5 py-0.5 text-xs text-gray-400 rounded-full bg-gray-50">
               +{hiddenCount}
             </span>
           )}
         </div>
       )}
 
-      {broker.bio && (
-        <p className="text-sm text-gray-600 line-clamp-2 mt-3">{broker.bio}</p>
-      )}
-
-      <div className="flex gap-4 mt-4 pt-4 border-t border-gray-100 text-sm text-gray-600">
-        <div>
-          <span className="font-bold text-gray-900">{broker.totalSales}</span>{" "}
-          prodejů
-        </div>
-        {broker.activeVehicles > 0 && (
-          <div>
-            <span className="font-bold text-gray-900">
-              {broker.activeVehicles}
-            </span>{" "}
-            aktivních vozidel
-          </div>
-        )}
-      </div>
-
-      <div className="mt-4 flex gap-2">
+      <div className="mt-auto pt-4 px-5 pb-5 flex flex-col gap-2">
         <Link
           href={`/profil/${broker.slug}`}
-          className="flex-1 inline-flex items-center justify-center bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded-full text-sm no-underline transition-colors"
+          className="w-full inline-flex items-center justify-center bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2.5 rounded-xl text-sm no-underline transition-colors"
         >
           Zobrazit profil
         </Link>
         {broker.phone && broker.showPhone && (
           <a
             href={`tel:${broker.phone}`}
-            className="inline-flex items-center justify-center border border-gray-300 hover:border-orange-300 text-gray-700 font-semibold px-4 py-2 rounded-full text-sm no-underline transition-colors"
+            className="w-full inline-flex items-center justify-center border border-gray-200 hover:border-orange-300 hover:text-orange-600 text-gray-600 font-medium py-2.5 rounded-xl text-sm no-underline transition-colors"
             aria-label={`Zavolat ${broker.firstName} ${broker.lastName}`}
           >
             Kontaktovat

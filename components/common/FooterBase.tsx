@@ -66,7 +66,7 @@ export function FooterBase({
                 alt="CarMakléř"
                 width={144}
                 height={48}
-                className="h-12 w-auto object-contain"
+                className="h-8 w-auto object-contain"
               />
               {badgeLabel && (
                 <span className="text-sm font-semibold text-orange-400">
