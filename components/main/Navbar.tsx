@@ -95,7 +95,7 @@ export function MainNavbar() {
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/80">
       <nav aria-label="Hlavni navigace" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between">
         <Link href="/" className="flex items-center no-underline shrink-0">
-          <Image src="/brand/logo-dark.png" alt="CarMakléř" width={120} height={48} className="h-10 sm:h-12 w-auto object-contain" priority />
+          <Image src="/brand/logo-dark.png" alt="CarMakléř" width={120} height={48} className="h-8 sm:h-10 w-auto object-contain" priority />
         </Link>
 
         <div className="hidden lg:flex items-center gap-1">

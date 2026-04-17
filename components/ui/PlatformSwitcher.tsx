@@ -121,7 +121,7 @@ export function PlatformSwitcher({
 
   // variant === "footer" — horizontal badge strip
   return (
-    <div className={`flex flex-wrap items-center gap-3 ${className}`}>
+    <div className={`flex flex-wrap items-center justify-center gap-3 ${className}`}>
       {items.map((p) => {
         const isCurrent = p.key === current;
         return (

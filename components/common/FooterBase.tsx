@@ -231,7 +231,7 @@ export function FooterBase({
         </div>
 
         {/* === PLATFORM SWITCHER === */}
-        <div className="mt-12 pt-8 border-t border-gray-700/50">
+        <div className="mt-12 pt-8 border-t border-gray-700/50 text-center">
           <h4 className="text-xs font-bold uppercase tracking-widest text-orange-400/80 mb-4">
             Platformy CarMakléř
           </h4>
@@ -276,6 +276,12 @@ export function FooterBase({
                 Cookies
               </a>
             </nav>
+          </div>
+          <div className="text-center mt-4 text-xs text-gray-700">
+            Web vytvořil{" "}
+            <a href="https://weblyx.cz" target="_blank" rel="noopener noreferrer" className="hover:text-orange-400 transition-colors no-underline">
+              weblyx.cz
+            </a>
           </div>
         </div>
       </div>
