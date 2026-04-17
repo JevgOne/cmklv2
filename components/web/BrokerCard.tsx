@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { TagPill } from "@/components/web/TagPill";
-import { cn, getInitials } from "@/lib/utils";
+import { getInitials } from "@/lib/utils";
 
 export interface BrokerCardBroker {
   slug: string;
@@ -21,7 +21,6 @@ export interface BrokerCardBroker {
 
 export interface BrokerCardProps {
   broker: BrokerCardBroker;
-  featured?: boolean;
 }
 
 const LEVEL_LABEL: Record<string, string> = {
@@ -31,30 +30,17 @@ const LEVEL_LABEL: Record<string, string> = {
   JUNIOR: "Ověřený",
 };
 
-export function BrokerCard({ broker, featured = false }: BrokerCardProps) {
+export function BrokerCard({ broker }: BrokerCardProps) {
   const initials = getInitials(broker.firstName, broker.lastName);
   const primaryCity = broker.city || broker.cities[0] || null;
   const maxTags = 3;
   const visibleTags = broker.tags.slice(0, maxTags);
   const hiddenCount = Math.max(0, broker.tags.length - maxTags);
 
-  const avatarSize = featured ? "w-24 h-24" : "w-20 h-20";
-  const nameSize = featured ? "text-xl" : "text-lg";
-
   return (
     <article
-      className={cn(
-        "rounded-xl p-5 transition-all flex flex-col h-full",
-        featured
-          ? "lg:col-span-2 border-2 border-orange-500 bg-gradient-to-br from-orange-50 to-white shadow-sm"
-          : "bg-white border border-gray-200 hover:border-orange-300 hover:shadow-lg"
-      )}
+      className="rounded-xl p-5 transition-all flex flex-col h-full bg-white border border-gray-200 hover:border-orange-300 hover:shadow-md group"
     >
-      {featured && (
-        <div className="mb-3">
-          <Badge variant="top">Doporučený</Badge>
-        </div>
-      )}
 
       <div className="flex items-start gap-4">
         {broker.avatar ? (
@@ -62,24 +48,18 @@ export function BrokerCard({ broker, featured = false }: BrokerCardProps) {
           <img
             src={broker.avatar}
             alt={`${broker.firstName} ${broker.lastName}`}
-            className={cn(
-              avatarSize,
-              "rounded-full object-cover shrink-0 border border-gray-200"
-            )}
+            className="w-20 h-20 rounded-full object-cover shrink-0 border border-gray-200"
           />
         ) : (
           <div
-            className={cn(
-              avatarSize,
-              "rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center text-white font-extrabold text-xl shrink-0"
-            )}
+            className="w-20 h-20 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center text-white font-extrabold text-xl shrink-0"
           >
             {initials}
           </div>
         )}
 
         <div className="min-w-0 flex-1">
-          <h3 className={cn(nameSize, "font-bold text-gray-900 truncate")}>
+          <h3 className="text-lg font-bold text-gray-900 truncate">
             {broker.firstName} {broker.lastName}
           </h3>
           <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
@@ -119,7 +99,7 @@ export function BrokerCard({ broker, featured = false }: BrokerCardProps) {
           <span className="font-bold text-gray-900">{broker.totalSales}</span>{" "}
           prodejů
         </div>
-        {featured && (
+        {broker.activeVehicles > 0 && (
           <div>
             <span className="font-bold text-gray-900">
               {broker.activeVehicles}

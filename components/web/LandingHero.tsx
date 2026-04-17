@@ -24,16 +24,18 @@ export function LandingHero({
   stats,
   featuredBrokers,
 }: LandingHeroProps) {
-  const chips = [
-    `${stats.count} makléřů`,
-    `${stats.totalSoldVehicles} úspěšných prodejů`,
-    `${stats.topLevelCount} TOP makléřů`,
-    `${stats.activeVehicles} aktivních vozidel`,
-  ];
+  const chips: string[] = [];
+  if (stats.count > 0) chips.push(`${stats.count} makléřů`);
+  if (stats.totalSoldVehicles > 0) chips.push(`${stats.totalSoldVehicles} úspěšných prodejů`);
+  if (stats.topLevelCount > 0) chips.push(`${stats.topLevelCount} TOP makléřů`);
+  if (stats.activeVehicles > 0) chips.push(`${stats.activeVehicles} aktivních vozidel`);
 
   return (
-    <section className="bg-gradient-to-br from-orange-500 via-orange-500 to-orange-600 py-14 sm:py-20 md:py-28">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-12 sm:py-16 md:py-20 relative overflow-hidden">
+      {/* Decorative gradient accent */}
+      <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-transparent to-orange-500/5 pointer-events-none" aria-hidden="true" />
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 via-orange-400 to-amber-400" aria-hidden="true" />
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
           <div className="flex-1 min-w-0">
             <span className="inline-block text-xs font-semibold uppercase tracking-wider text-white/80 bg-white/10 px-3 py-1 rounded-full">
@@ -50,7 +52,7 @@ export function LandingHero({
               {chips.map((chip) => (
                 <span
                   key={chip}
-                  className="bg-white/15 backdrop-blur-sm px-4 py-2 rounded-full text-white text-sm font-medium"
+                  className="bg-white/10 border border-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-white text-sm font-medium"
                 >
                   {chip}
                 </span>
@@ -60,7 +62,7 @@ export function LandingHero({
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
               <Link
                 href="#broker-grid"
-                className="inline-flex items-center justify-center bg-white text-orange-600 hover:bg-orange-50 font-semibold px-6 py-3 rounded-full no-underline transition-colors"
+                className="inline-flex items-center justify-center bg-orange-500 text-white hover:bg-orange-600 font-semibold px-6 py-3 rounded-full no-underline transition-colors"
               >
                 Najít makléře ↓
               </Link>
@@ -80,7 +82,7 @@ export function LandingHero({
                 return (
                   <div
                     key={b.slug}
-                    className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full ring-2 ring-white overflow-hidden bg-white/20 flex items-center justify-center text-white font-bold ${
+                    className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full ring-2 ring-white/80 overflow-hidden bg-white/20 flex items-center justify-center text-white font-bold ${
                       i > 0 ? "-ml-3" : ""
                     }`}
                     style={{ zIndex: 10 - i }}

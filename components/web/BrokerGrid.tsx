@@ -56,10 +56,10 @@ export function BrokerGrid({ brokers, initialLimit = 12 }: BrokerGridProps) {
       type="button"
       onClick={() => setSort(key)}
       className={cn(
-        "px-4 py-2 rounded-full text-sm font-semibold transition-colors border",
+        "px-4 py-2 text-sm font-semibold transition-colors border-b-2",
         sort === key
-          ? "bg-orange-500 text-white border-orange-500"
-          : "bg-white text-gray-700 border-gray-200 hover:border-orange-300"
+          ? "text-orange-600 border-orange-500"
+          : "text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300"
       )}
       aria-pressed={sort === key}
     >
@@ -69,7 +69,7 @@ export function BrokerGrid({ brokers, initialLimit = 12 }: BrokerGridProps) {
 
   return (
     <div>
-      <div className="flex flex-wrap gap-2 mb-6" role="group" aria-label="Řazení makléřů">
+      <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-200 pb-0" role="group" aria-label="Řazení makléřů">
         {sortButton("sales", "Podle prodejů")}
         {sortButton("level", "Úroveň")}
         {sortButton("newest", "Nejnovější")}
@@ -80,7 +80,6 @@ export function BrokerGrid({ brokers, initialLimit = 12 }: BrokerGridProps) {
           <BrokerCard
             key={broker.slug}
             broker={broker}
-            featured={idx === 0}
           />
         ))}
       </div>
