@@ -7,6 +7,7 @@ import { TrustScore } from "@/components/ui/TrustScore";
 import { Card } from "@/components/ui/Card";
 import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
+import { BrokerCard, type BrokerCardBroker } from "@/components/web/BrokerCard";
 
 export const metadata: Metadata = {
   title: "CarMakléř | Prodej aut přes ověřené makléře",
@@ -77,44 +78,47 @@ async function getFeaturedCars() {
   return [];
 }
 
-async function getFeaturedBrokers() {
+async function getFeaturedBrokers(): Promise<BrokerCardBroker[]> {
   try {
     const dbBrokers = await prisma.user.findMany({
       where: { role: "BROKER", status: "ACTIVE" },
       select: {
+        slug: true,
         firstName: true,
         lastName: true,
-        slug: true,
         avatar: true,
+        level: true,
+        city: true,
         cities: true,
         bio: true,
         totalSales: true,
+        phone: true,
+        showPhone: true,
+        tags: { select: { slug: true, label: true } },
         _count: { select: { vehicles: { where: { status: "ACTIVE" } } } },
       },
       take: 3,
-      orderBy: { vehicles: { _count: "desc" } },
+      orderBy: { totalSales: "desc" },
     });
 
     if (dbBrokers.length > 0) {
-      return dbBrokers.map((b) => {
-        const name = `${b.firstName} ${b.lastName}`;
-        const initials = `${(b.firstName || "")[0] || ""}${(b.lastName || "")[0] || ""}`;
-        const cities = b.cities ? (typeof b.cities === "string" ? JSON.parse(b.cities) : b.cities) : [];
-        return {
-          name,
-          initials,
-          slug: b.slug || "makler",
-          region: (cities as string[])[0] || "Česká republika",
-          photo: b.avatar || "",
-          bio: b.bio || `Ověřený makléř CarMakléř`,
-          badges: ["verified"] as const,
-          badgeLabels: ["✓ Ověřený"],
-          rating: "—",
-          sales: String(b.totalSales),
-          avgDays: "—",
-          activeVehicles: b._count.vehicles,
-        };
-      });
+      return dbBrokers.map((b) => ({
+        slug: b.slug || "makler",
+        firstName: b.firstName,
+        lastName: b.lastName,
+        avatar: b.avatar,
+        level: b.level,
+        city: b.city,
+        cities: b.cities
+          ? (() => { try { return JSON.parse(b.cities); } catch { return []; } })()
+          : [],
+        bio: b.bio,
+        totalSales: b.totalSales,
+        activeVehicles: b._count.vehicles,
+        phone: b.phone,
+        showPhone: b.showPhone,
+        tags: b.tags,
+      }));
     }
   } catch {
     /* DB unavailable — fall back to empty */
@@ -534,95 +538,7 @@ export default async function HomePage() {
           {/* Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {brokers.map((broker) => (
-              <Link key={broker.slug} href={`/profil/${broker.slug}`} className="no-underline block group">
-                <Card hover className="overflow-hidden">
-                  {/* Header s fotkou a gradient overlay */}
-                  <div className="relative h-[200px] bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden">
-                    {broker.photo && (
-                    <img
-                      src={broker.photo}
-                      alt={broker.name}
-                      className="w-full h-full object-cover opacity-40 group-hover:opacity-50 group-hover:scale-105 transition-all duration-500"
-                    />
-                    )}
-                    {/* Badges */}
-                    <div className="absolute top-4 left-4 flex gap-2">
-                      {broker.badges.map((variant, i) => (
-                        <Badge key={i} variant={variant}>
-                          {broker.badgeLabels[i]}
-                        </Badge>
-                      ))}
-                    </div>
-                    {/* Avatar + jméno overlay */}
-                    <div className="absolute bottom-0 left-0 right-0 p-5">
-                      <div className="flex items-end gap-4">
-                        <div className="w-[72px] h-[72px] bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center text-[26px] font-extrabold text-white shrink-0 shadow-lg border-4 border-white/20">
-                          {broker.initials}
-                        </div>
-                        <div className="mb-1">
-                          <h3 className="text-xl font-extrabold text-white">
-                            {broker.name}
-                          </h3>
-                          <p className="text-sm text-white/70">
-                            📍 {broker.region}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-5">
-                    {/* Bio */}
-                    <p className="text-sm text-gray-500 leading-relaxed mb-5 line-clamp-2">
-                      {broker.bio}
-                    </p>
-
-                    {/* Stats */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-gray-100">
-                      <div className="text-center">
-                        <div className="text-xl font-extrabold bg-gradient-to-br from-orange-500 to-orange-600 bg-clip-text text-transparent">
-                          {broker.rating}
-                        </div>
-                        <div className="text-[10px] font-semibold text-gray-500 mt-0.5 uppercase tracking-wide">
-                          Hodnocení
-                        </div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-xl font-extrabold text-gray-900">
-                          {broker.sales}
-                        </div>
-                        <div className="text-[10px] font-semibold text-gray-500 mt-0.5 uppercase tracking-wide">
-                          Prodejů
-                        </div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-xl font-extrabold text-gray-900">
-                          {broker.avgDays}
-                        </div>
-                        <div className="text-[10px] font-semibold text-gray-500 mt-0.5 uppercase tracking-wide">
-                          Dní
-                        </div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-xl font-extrabold text-gray-900">
-                          {broker.activeVehicles}
-                        </div>
-                        <div className="text-[10px] font-semibold text-gray-500 mt-0.5 uppercase tracking-wide">
-                          Vozidel
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* CTA */}
-                    <div className="mt-5">
-                      <Button variant="outline" size="sm" className="w-full">
-                        Zobrazit profil
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-              </Link>
+              <BrokerCard key={broker.slug} broker={broker} />
             ))}
           </div>
         </div>
