@@ -220,10 +220,28 @@ async function main() {
       status: "ACTIVE",
       slug: "jan-novak-praha",
       managerId: manazer.id,
-      specializations: JSON.stringify(["Osobn\u00ED", "SUV"]),
+      specializations: JSON.stringify(["Osobní", "SUV"]),
       cities: JSON.stringify(["Praha"]),
-      bio: "Makl\u00E9\u0159 s 5 lety zku\u0161enost\u00ED v prodeji osobn\u00EDch a SUV voz\u016F. Specializuji se na komplexn\u00ED servis od v\u00FDb\u011Bru po p\u0159epis vozu.",
+      bio: "Makléř s 5 lety zkušeností v prodeji osobních a SUV vozů. Specializuji se na komplexní servis od výběru po přepis vozu.",
+      phone: "+420 777 123 456",
+      showPhone: true,
+      showEmail: true,
+      socialLinks: {
+        instagram: "https://instagram.com/jannovak",
+        facebook: "https://facebook.com/jannovak.makler",
+        youtube: "https://youtube.com/@jannovak",
+      },
     },
+  });
+
+  // Badges pro Jana Nováka
+  await prisma.profileBadge.createMany({
+    data: [
+      { userId: janNovak.id, badgeKey: "FIRST_SALE" },
+      { userId: janNovak.id, badgeKey: "FIVE_SALES" },
+      { userId: janNovak.id, badgeKey: "FAST_RESPONDER" },
+    ],
+    skipDuplicates: true,
   });
 
   // 6. Broker 2 - Petra Mal\u00E1
