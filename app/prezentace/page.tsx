@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback, Suspense } from "react";
+import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -88,6 +89,12 @@ function PrezentaceContent() {
   const searchParams = useSearchParams();
   const managerSlug = searchParams.get("manager");
   const [activeSection, setActiveSection] = useState<string>("who");
+  const [manager, setManager] = useState<{
+    firstName: string;
+    lastName: string;
+    phone: string | null;
+    email: string | null;
+  } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleScroll = useCallback(() => {
@@ -108,6 +115,16 @@ function PrezentaceContent() {
     return () => container.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
 
+  useEffect(() => {
+    if (!managerSlug) return;
+    fetch(`/api/profile/${managerSlug}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.user) setManager(data.user);
+      })
+      .catch(() => {});
+  }, [managerSlug]);
+
   return (
     <div
       ref={containerRef}
@@ -116,10 +133,13 @@ function PrezentaceContent() {
       {/* 1. Kdo jsme */}
       <AnimatedSection id="who" className="bg-gray-900">
         <div className="text-center text-white">
-          <img
+          <Image
             src="/brand/logo-color.png"
             alt="CarMakléř"
-            className="h-20 mx-auto mb-8 brightness-0 invert"
+            width={5517}
+            height={1172}
+            className="h-20 w-auto mx-auto mb-8 brightness-0 invert"
+            priority
           />
           <h1 className="text-4xl sm:text-6xl font-extrabold mb-6">
             Síť ověřených
@@ -393,10 +413,30 @@ function PrezentaceContent() {
                 Váš kontaktní manažer
               </div>
               <div className="text-xl font-bold text-orange-500">
-                {managerSlug
-                  .replace(/-/g, " ")
-                  .replace(/\b\w/g, (c) => c.toUpperCase())}
+                {manager
+                  ? `${manager.firstName} ${manager.lastName}`
+                  : managerSlug
+                      .replace(/-/g, " ")
+                      .replace(/\b\w/g, (c) => c.toUpperCase())}
               </div>
+              {manager?.phone && (
+                <a
+                  href={`tel:${manager.phone}`}
+                  className="flex gap-2 items-center justify-center mt-3 text-gray-300 hover:text-orange-400 transition-colors no-underline"
+                >
+                  <span>📞</span>
+                  <span>{manager.phone}</span>
+                </a>
+              )}
+              {manager?.email && (
+                <a
+                  href={`mailto:${manager.email}`}
+                  className="flex gap-2 items-center justify-center mt-2 text-gray-300 hover:text-orange-400 transition-colors no-underline"
+                >
+                  <span>✉️</span>
+                  <span>{manager.email}</span>
+                </a>
+              )}
             </div>
           )}
 
@@ -428,6 +468,13 @@ function PrezentaceContent() {
               </div>
             </div>
           </div>
+
+          <a
+            href="/kontakt"
+            className="inline-flex items-center gap-2 mt-8 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-xl transition-colors no-underline"
+          >
+            Registrovat se jako partner &rarr;
+          </a>
 
           <p className="text-sm text-gray-600 mt-8">
             &copy; {new Date().getFullYear()} {companyInfo.legalName} Všechna
