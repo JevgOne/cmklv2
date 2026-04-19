@@ -4,6 +4,7 @@ import { useRef, useState, useEffect, useCallback, Suspense } from "react";
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import { useSearchParams } from "next/navigation";
+import QRCode from "qrcode";
 import { cn } from "@/lib/utils";
 import { companyInfo } from "@/lib/company-info";
 
@@ -85,6 +86,63 @@ function DotNav({ activeSection }: { activeSection: string }) {
   );
 }
 
+const czRegions = [
+  { name: "Praha", partners: 12, cx: 248, cy: 152 },
+  { name: "Středočeský", partners: 8, cx: 225, cy: 175 },
+  { name: "Jihočeský", partners: 3, cx: 195, cy: 250 },
+  { name: "Plzeňský", partners: 4, cx: 120, cy: 195 },
+  { name: "Karlovarský", partners: 2, cx: 65, cy: 130 },
+  { name: "Ústecký", partners: 3, cx: 165, cy: 100 },
+  { name: "Liberecký", partners: 2, cx: 275, cy: 80 },
+  { name: "Královéhradecký", partners: 3, cx: 340, cy: 105 },
+  { name: "Pardubický", partners: 2, cx: 340, cy: 155 },
+  { name: "Vysočina", partners: 3, cx: 300, cy: 220 },
+  { name: "Jihomoravský", partners: 5, cx: 385, cy: 265 },
+  { name: "Olomoucký", partners: 3, cx: 395, cy: 170 },
+  { name: "Zlínský", partners: 2, cx: 435, cy: 225 },
+  { name: "Moravskoslezský", partners: 4, cx: 455, cy: 135 },
+];
+
+function CzechMap() {
+  return (
+    <div className="relative max-w-2xl mx-auto mb-10">
+      <svg viewBox="0 0 520 330" className="w-full" role="img" aria-label="Mapa partnerů v České republice">
+        {/* Zjednodušený obrys ČR */}
+        <path
+          d="M52,128 L68,108 L85,82 L105,68 L130,58 L155,62 L175,55 L200,62 L218,58 L240,65 L260,58 L278,62 L300,55 L318,65 L338,58 L358,68 L378,62 L400,72 L425,78 L448,88 L468,105 L480,125 L485,148 L478,170 L468,188 L458,210 L448,228 L435,248 L418,262 L398,278 L378,285 L355,282 L335,275 L315,268 L298,258 L280,248 L262,242 L245,238 L228,242 L210,252 L195,262 L178,268 L160,265 L142,258 L125,248 L110,238 L95,225 L82,210 L68,195 L58,178 L48,158 L45,142 Z"
+          fill="#e5e7eb"
+          stroke="#d1d5db"
+          strokeWidth="2"
+        />
+        {/* Piny partnerů */}
+        {czRegions.map((r) => (
+          <g key={r.name}>
+            <circle
+              cx={r.cx}
+              cy={r.cy}
+              r={r.partners > 5 ? 14 : r.partners > 3 ? 11 : 9}
+              fill="#F97316"
+              opacity={0.9}
+            />
+            <text
+              x={r.cx}
+              y={r.cy + 4}
+              textAnchor="middle"
+              fill="white"
+              fontSize="11"
+              fontWeight="bold"
+              style={{ pointerEvents: "none" }}
+            >
+              {r.partners}
+            </text>
+            <title>{`${r.name}: ${r.partners} partnerů`}</title>
+          </g>
+        ))}
+      </svg>
+    </div>
+  );
+}
+
 function PrezentaceContent() {
   const searchParams = useSearchParams();
   const managerSlug = searchParams.get("manager");
@@ -95,6 +153,7 @@ function PrezentaceContent() {
     phone: string | null;
     email: string | null;
   } | null>(null);
+  const [qrDataUrl, setQrDataUrl] = useState<string>("");
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleScroll = useCallback(() => {
@@ -125,6 +184,17 @@ function PrezentaceContent() {
       .catch(() => {});
   }, [managerSlug]);
 
+  useEffect(() => {
+    const url = managerSlug
+      ? `https://carmakler.cz/kontakt?ref=${managerSlug}`
+      : "https://carmakler.cz/kontakt";
+    QRCode.toDataURL(url, {
+      width: 150,
+      margin: 1,
+      color: { dark: "#ffffff", light: "#00000000" },
+    }).then(setQrDataUrl);
+  }, [managerSlug]);
+
   return (
     <div
       ref={containerRef}
@@ -142,7 +212,7 @@ function PrezentaceContent() {
             priority
           />
           <h1 className="text-4xl sm:text-6xl font-extrabold mb-6">
-            Síť ověřených
+            Síť certifikovaných
             <br />
             <span className="text-orange-500">automakléřů</span>
           </h1>
@@ -323,28 +393,24 @@ function PrezentaceContent() {
           <h2 className="text-3xl sm:text-5xl font-extrabold text-gray-900 mb-4">
             Naši partneři
           </h2>
-          <p className="text-lg text-gray-500 mb-12">
+          <p className="text-lg text-gray-500 mb-8">
             Partneři po celé České republice
           </p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 max-w-2xl mx-auto">
+
+          <CzechMap />
+
+          <div className="flex flex-wrap justify-center gap-8 sm:gap-16">
             {[
-              { value: "50+", label: "Autobazarů" },
-              { value: "20+", label: "Vrakovišť" },
+              { value: "70+", label: "Partnerů celkem" },
               { value: "14", label: "Krajů" },
-              { value: "150+", label: "Makléřů v síti" },
-              { value: "2 500+", label: "Prodaných vozů" },
               { value: "98 %", label: "Spokojenost" },
             ].map((stat) => (
-              <motion.div
-                key={stat.label}
-                whileHover={{ scale: 1.05 }}
-                className="bg-white rounded-2xl p-6 shadow-sm"
-              >
+              <div key={stat.label}>
                 <div className="text-3xl sm:text-4xl font-extrabold text-orange-500">
                   {stat.value}
                 </div>
                 <div className="text-sm text-gray-500 mt-1">{stat.label}</div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -475,6 +541,14 @@ function PrezentaceContent() {
           >
             Registrovat se jako partner &rarr;
           </a>
+
+          {qrDataUrl && (
+            <div className="mt-6 flex flex-col items-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={qrDataUrl} alt="QR kód pro kontakt" className="w-32 h-32" />
+              <p className="text-xs text-gray-500 mt-2">Naskenujte pro kontakt</p>
+            </div>
+          )}
 
           <p className="text-sm text-gray-600 mt-8">
             &copy; {new Date().getFullYear()} {companyInfo.legalName} Všechna
