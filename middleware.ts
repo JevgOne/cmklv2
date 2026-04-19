@@ -163,6 +163,11 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // inzerce.carmakler.cz/nabidka → /katalog (nabidka neexistuje)
+  if (subdomain === "inzerce" && pathname === "/nabidka") {
+    return NextResponse.redirect(new URL("/katalog", request.url));
+  }
+
   // Subdomain rewrite
   const rewriteUrl = getRewriteUrl(subdomain, pathname, request);
   if (rewriteUrl) {

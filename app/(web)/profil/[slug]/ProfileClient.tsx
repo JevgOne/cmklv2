@@ -138,6 +138,10 @@ interface ProfileItem {
   } | null;
 }
 
+function safeHref(url: string): string {
+  return /^https?:\/\//i.test(url) ? url : '#';
+}
+
 function Stat({
   value,
   label,
@@ -364,19 +368,23 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
                           Ověřený telefon
                         </span>
                       )}
-                      <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                        Ověřený e-mail
-                      </span>
+                      {user.email && (
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                          Ověřený e-mail
+                        </span>
+                      )}
                     </div>
                   </div>
-                  {levelLabel && (
+                  {(levelLabel || ["BROKER", "MANAGER", "REGIONAL_DIRECTOR"].includes(user.role)) && (
                     <div className="shrink-0 flex flex-col items-end gap-1">
-                      <Badge variant="top">
-                        {levelLabel}
-                      </Badge>
+                      {levelLabel && (
+                        <Badge variant="top">
+                          {levelLabel}
+                        </Badge>
+                      )}
                       {user.role === "BROKER" && (
                         <LevelProgressBar level={user.level} totalSales={user.totalSales} size="md" />
                       )}
@@ -662,7 +670,7 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
               )}
               {user.website && (
                 <a
-                  href={user.website}
+                  href={safeHref(user.website)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 text-gray-700 hover:text-orange-600 no-underline transition-colors"
@@ -707,7 +715,7 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
                   <div className="flex gap-3 pt-2">
                     {user.socialLinks.instagram && (
                       <a
-                        href={user.socialLinks.instagram}
+                        href={safeHref(user.socialLinks.instagram)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gradient-to-tr hover:from-purple-500 hover:to-pink-500 hover:text-white transition-all duration-200"
@@ -720,7 +728,7 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
                     )}
                     {user.socialLinks.facebook && (
                       <a
-                        href={user.socialLinks.facebook}
+                        href={safeHref(user.socialLinks.facebook)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-blue-600 hover:text-white transition-all duration-200"
@@ -733,7 +741,7 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
                     )}
                     {user.socialLinks.youtube && (
                       <a
-                        href={user.socialLinks.youtube}
+                        href={safeHref(user.socialLinks.youtube)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-red-600 hover:text-white transition-all duration-200"
