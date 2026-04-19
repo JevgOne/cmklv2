@@ -41,10 +41,6 @@ const getProfileData = cache(
         specializations: true,
         warehouseAddress: true,
         openingHours: true,
-        profileBadges: {
-          select: { badgeKey: true, awardedAt: true },
-          orderBy: { awardedAt: "desc" },
-        },
         tags: {
           select: { slug: true, label: true },
           orderBy: { label: "asc" },
@@ -184,10 +180,6 @@ const getProfileData = cache(
         totalSales: soldCount,
       },
       roleStats,
-      badges: user.profileBadges.map((b) => ({
-        badgeKey: b.badgeKey,
-        awardedAt: b.awardedAt.toISOString(),
-      })),
     };
   },
 );
