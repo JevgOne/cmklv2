@@ -1,10 +1,32 @@
 "use client";
 
-import { useRef, Suspense } from "react";
+import { useRef, useState, useEffect, useCallback, Suspense } from "react";
 import { motion, useInView } from "framer-motion";
 import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { companyInfo } from "@/lib/company-info";
+
+const sectionIds = [
+  "who",
+  "how",
+  "bazar",
+  "vrakov",
+  "commission",
+  "partners",
+  "steps",
+  "contact",
+] as const;
+
+const sectionLabels: Record<(typeof sectionIds)[number], string> = {
+  who: "Kdo jsme",
+  how: "Jak to funguje",
+  bazar: "Pro autobazary",
+  vrakov: "Pro vrakoviště",
+  commission: "Provizní model",
+  partners: "Naši partneři",
+  steps: "Další kroky",
+  contact: "Kontakt",
+};
 
 function AnimatedSection({
   id,
@@ -39,46 +61,81 @@ function AnimatedSection({
   );
 }
 
-const sectionIds = [
-  "who",
-  "how",
-  "bazar",
-  "vrakov",
-  "commission",
-  "partners",
-  "steps",
-  "contact",
-];
+function DotNav({ activeSection }: { activeSection: string }) {
+  return (
+    <nav
+      className="fixed right-4 top-1/2 -translate-y-1/2 flex flex-col gap-2 z-50"
+      aria-label="Navigace sekcí"
+    >
+      {sectionIds.map((id) => (
+        <a
+          key={id}
+          href={`#${id}`}
+          title={sectionLabels[id]}
+          className={cn(
+            "w-3 h-3 rounded-full transition-all block",
+            activeSection === id
+              ? "bg-orange-500 scale-125"
+              : "bg-white/30 hover:bg-white/60"
+          )}
+        />
+      ))}
+    </nav>
+  );
+}
 
 function PrezentaceContent() {
   const searchParams = useSearchParams();
   const managerSlug = searchParams.get("manager");
+  const [activeSection, setActiveSection] = useState<string>("who");
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const scrollTop = container.scrollTop;
+    const sectionHeight = container.clientHeight;
+    const idx = Math.round(scrollTop / sectionHeight);
+    const clamped = Math.max(0, Math.min(idx, sectionIds.length - 1));
+    setActiveSection(sectionIds[clamped]);
+  }, []);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    container.addEventListener("scroll", handleScroll, { passive: true });
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
 
   return (
-    <div className="h-screen overflow-y-auto snap-y snap-mandatory scroll-smooth">
+    <div
+      ref={containerRef}
+      className="h-screen overflow-y-auto snap-y snap-mandatory scroll-smooth"
+    >
       {/* 1. Kdo jsme */}
       <AnimatedSection id="who" className="bg-gray-900">
         <div className="text-center text-white">
           <img
             src="/brand/logo-color.png"
-            alt="Carmakler"
+            alt="CarMakléř"
             className="h-20 mx-auto mb-8 brightness-0 invert"
           />
           <h1 className="text-4xl sm:text-6xl font-extrabold mb-6">
-            Sit overenych
+            Síť ověřených
             <br />
-            <span className="text-orange-500">automakleru</span>
+            <span className="text-orange-500">automakléřů</span>
           </h1>
           <p className="text-lg text-gray-400 max-w-2xl mx-auto mb-12">
-            Propojujeme prodejce, autobazary a vrakoviste s tisici zajemcu o
-            koupi vozidel a autodilu.
+            Propojujeme prodejce, autobazary a vrakoviště s tisíci zájemců o
+            koupi vozidel a autodílů.
           </p>
           <div className="flex flex-wrap justify-center gap-8 sm:gap-16 mt-12">
             {[
-              { value: "150+", label: "Makleru" },
-              { value: "2 500+", label: "Prodanych aut" },
-              { value: "50+", label: "Partneru" },
-              { value: "14", label: "Kraju" },
+              { value: "150+", label: "Makléřů" },
+              { value: "2 500+", label: "Prodaných aut" },
+              { value: "50+", label: "Partnerů" },
+              { value: "14", label: "Krajů" },
             ].map((stat) => (
               <div key={stat.label}>
                 <div className="text-4xl sm:text-5xl font-extrabold text-orange-500">
@@ -101,18 +158,18 @@ function PrezentaceContent() {
             {[
               {
                 icon: "📋",
-                title: "Nabirani",
-                desc: "Makler nabere vuz, provede inspekci a fotodokumentaci",
+                title: "Nabírání",
+                desc: "Makléř nabere vůz, provede inspekci a fotodokumentaci",
               },
               {
                 icon: "🌐",
                 title: "Inzerce",
-                desc: "Vuz se publikuje na Carmakler i dalsi portaly",
+                desc: "Vůz se publikuje na CarMakléř i další portály",
               },
               {
                 icon: "🤝",
                 title: "Prodej",
-                desc: "Makler domlvi prodej, Carmakler zajisti platbu",
+                desc: "Makléř domluví prodej, CarMakléř zajistí platbu",
               },
             ].map((step) => (
               <motion.div
@@ -141,12 +198,12 @@ function PrezentaceContent() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto text-left">
             {[
-              "Leads od kupujicich z cele CR",
-              "Vetsi viditelnost vaseho sortimentu",
-              "Badge 'Overeny partner Carmakler'",
-              "Zadne naklady na start",
-              "Provize jen z uspesneho prodeje",
-              "Bonus za zprostredkovani financovani",
+              "Leads od kupujících z celé ČR",
+              "Větší viditelnost vašeho sortimentu",
+              "Badge \u201EOvěřený partner CarMakléř\u201C",
+              "Žádné náklady na start",
+              "Provize jen z úspěšného prodeje",
+              "Bonus za zprostředkování financování",
             ].map((item) => (
               <motion.div
                 key={item}
@@ -161,20 +218,20 @@ function PrezentaceContent() {
         </div>
       </AnimatedSection>
 
-      {/* 4. Pro vrakoviste */}
+      {/* 4. Pro vrakoviště */}
       <AnimatedSection id="vrakov" className="bg-gray-900">
         <div className="text-center text-white">
           <h2 className="text-3xl sm:text-5xl font-extrabold mb-8">
-            Pro vrakoviste
+            Pro vrakoviště
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto text-left">
             {[
-              "Online prodej dilu bez vlastniho eshopu",
-              "Objednavkovy system s trackingem",
-              "Platby zajistene — penize na vas ucet",
-              "Jednoduche pridavani dilu z mobilu",
-              "85% z kazdeho prodeje pro vas",
-              "Profesionalni profil na webu",
+              "Online prodej dílů bez vlastního eshopu",
+              "Objednávkový systém s trackingem",
+              "Platby zajištěné — peníze na váš účet",
+              "Jednoduché přidávání dílů z mobilu",
+              "85 % z každého prodeje pro vás",
+              "Profesionální profil na webu",
             ].map((item) => (
               <motion.div
                 key={item}
@@ -189,11 +246,11 @@ function PrezentaceContent() {
         </div>
       </AnimatedSection>
 
-      {/* 5. Provizni model */}
+      {/* 5. Provizní model */}
       <AnimatedSection id="commission" className="bg-white">
         <div className="text-center">
           <h2 className="text-3xl sm:text-5xl font-extrabold text-gray-900 mb-12">
-            Provizni model
+            Provizní model
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <motion.div
@@ -205,16 +262,16 @@ function PrezentaceContent() {
                 Autobazary
               </h3>
               <div className="text-3xl font-extrabold text-orange-500 mb-4">
-                0 Kc nakladu
+                0 Kč nákladů
               </div>
               <ul className="text-left space-y-3 text-gray-600">
                 <li>
-                  Provizi z prodeje plati <strong>kupujici</strong>
+                  Provizi z prodeje platí <strong>kupující</strong>
                 </li>
                 <li>
-                  Pro bazar: <strong>0 Kc naklady</strong>
+                  Pro bazar: <strong>0 Kč náklady</strong>
                 </li>
-                <li>Bonus za zprostredkovani financovani</li>
+                <li>Bonus za zprostředkování financování</li>
               </ul>
             </motion.div>
             <motion.div
@@ -222,40 +279,40 @@ function PrezentaceContent() {
               className="bg-gray-900 rounded-2xl p-8 text-white"
             >
               <div className="text-3xl mb-4">🔧</div>
-              <h3 className="text-xl font-bold mb-4">Vrakoviste</h3>
+              <h3 className="text-xl font-bold mb-4">Vrakoviště</h3>
               <div className="text-3xl font-extrabold text-orange-500 mb-4">
-                85 % pro vas
+                85 % pro vás
               </div>
               <ul className="text-left space-y-3 text-gray-300">
                 <li>
-                  Provize Carmakler: <strong>15 %</strong> z prodeje
+                  Provize CarMakléř: <strong>15 %</strong> z prodeje
                 </li>
                 <li>
-                  Pro vrakoviste: <strong>85 %</strong> z kazdeho prodeje
+                  Pro vrakoviště: <strong>85 %</strong> z každého prodeje
                 </li>
-                <li>Mesicni vyuctovani</li>
+                <li>Měsíční vyúčtování</li>
               </ul>
             </motion.div>
           </div>
         </div>
       </AnimatedSection>
 
-      {/* 6. Nasi partneri */}
+      {/* 6. Naši partneři */}
       <AnimatedSection id="partners" className="bg-gray-50">
         <div className="text-center">
           <h2 className="text-3xl sm:text-5xl font-extrabold text-gray-900 mb-4">
-            Nasi partneri
+            Naši partneři
           </h2>
           <p className="text-lg text-gray-500 mb-12">
-            Partneri po cele Ceske republice
+            Partneři po celé České republice
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 max-w-2xl mx-auto">
             {[
-              { value: "50+", label: "Autobazaru" },
-              { value: "20+", label: "Vrakovist" },
-              { value: "14", label: "Kraju" },
-              { value: "150+", label: "Makleru v siti" },
-              { value: "2 500+", label: "Prodanych vozu" },
+              { value: "50+", label: "Autobazarů" },
+              { value: "20+", label: "Vrakovišť" },
+              { value: "14", label: "Krajů" },
+              { value: "150+", label: "Makléřů v síti" },
+              { value: "2 500+", label: "Prodaných vozů" },
               { value: "98 %", label: "Spokojenost" },
             ].map((stat) => (
               <motion.div
@@ -273,28 +330,28 @@ function PrezentaceContent() {
         </div>
       </AnimatedSection>
 
-      {/* 7. Dalsi kroky */}
+      {/* 7. Další kroky */}
       <AnimatedSection id="steps" className="bg-white">
         <div className="text-center">
           <h2 className="text-3xl sm:text-5xl font-extrabold text-gray-900 mb-12">
-            Dalsi kroky
+            Další kroky
           </h2>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 max-w-3xl mx-auto">
             {[
               {
                 num: "1",
-                label: "Podpiseme smlouvu",
-                desc: "Jednoducha partnerska smlouva bez skrytych zavazku.",
+                label: "Podepíšeme smlouvu",
+                desc: "Jednoduchá partnerská smlouva bez skrytých závazků.",
               },
               {
                 num: "2",
-                label: "Nastavime profil",
-                desc: "Pomuzeme vam vytvorit profil a nahrat prvni vozidla ci dily.",
+                label: "Nastavíme profil",
+                desc: "Pomůžeme vám vytvořit profil a nahrát první vozidla či díly.",
               },
               {
                 num: "3",
-                label: "Do tydne jste online",
-                desc: "Vase nabidka bude viditelna tisicum zajemcu.",
+                label: "Do týdne jste online",
+                desc: "Vaše nabídka bude viditelná tisícům zájemců.",
               },
             ].map((step, i) => (
               <div key={step.num} className="flex items-center gap-4">
@@ -327,13 +384,13 @@ function PrezentaceContent() {
       <AnimatedSection id="contact" className="bg-gray-900">
         <div className="text-center text-white">
           <h2 className="text-3xl sm:text-5xl font-extrabold mb-8">
-            Pojdte do toho s nami
+            Pojďte do toho s námi
           </h2>
 
           {managerSlug && (
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 max-w-md mx-auto">
               <div className="text-sm text-gray-400 mb-1">
-                Vas kontaktni manazer
+                Váš kontaktní manažer
               </div>
               <div className="text-xl font-bold text-orange-500">
                 {managerSlug
@@ -346,7 +403,7 @@ function PrezentaceContent() {
           <div className="max-w-md mx-auto bg-white/10 rounded-2xl p-8">
             <div className="text-5xl mb-4">🤝</div>
             <p className="text-lg mb-6">
-              Kontaktujte nas a zacneme spolupracovat
+              Kontaktujte nás a začneme spolupracovat
             </p>
             <div className="space-y-3 text-left">
               <a
@@ -361,7 +418,9 @@ function PrezentaceContent() {
                 className="flex gap-3 items-center hover:text-orange-400 transition-colors no-underline text-white"
               >
                 <span>📞</span>
-                <span className="font-semibold">{companyInfo.contact.phone}</span>
+                <span className="font-semibold">
+                  {companyInfo.contact.phone}
+                </span>
               </a>
               <div className="flex gap-3 items-center">
                 <span>🌐</span>
@@ -371,22 +430,14 @@ function PrezentaceContent() {
           </div>
 
           <p className="text-sm text-gray-600 mt-8">
-            &copy; {new Date().getFullYear()} Carmakler s.r.o. Vsechna prava
-            vyhrazena.
+            &copy; {new Date().getFullYear()} {companyInfo.legalName} Všechna
+            práva vyhrazena.
           </p>
         </div>
       </AnimatedSection>
 
       {/* Progress dots */}
-      <div className="fixed right-4 top-1/2 -translate-y-1/2 flex flex-col gap-2 z-50">
-        {sectionIds.map((id) => (
-          <a
-            key={id}
-            href={`#${id}`}
-            className="w-3 h-3 rounded-full bg-white/30 hover:bg-white/60 transition-all block"
-          />
-        ))}
-      </div>
+      <DotNav activeSection={activeSection} />
     </div>
   );
 }
@@ -396,7 +447,7 @@ export default function PrezentacePage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center bg-gray-900">
-          <div className="animate-pulse text-white text-xl">Nacitam...</div>
+          <div className="animate-pulse text-white text-xl">Načítám...</div>
         </div>
       }
     >

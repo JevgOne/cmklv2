@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Prezentace | Carmakler — Partnersky program",
+  title: "CarMakléř — Partnerská prezentace",
   description:
-    "Stante se partnerem Carmakler. Nabizime spolupraci pro autobazary a vrakoviste.",
+    "Staňte se partnerem CarMakléř. Nabízíme spolupráci pro autobazary a vrakoviště.",
+  robots: { index: false, follow: false },
 };
 
 export default function PrezentaceLayout({
