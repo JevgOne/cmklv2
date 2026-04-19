@@ -45,7 +45,8 @@ export function PojisteniForm() {
   };
 
   return (
-    <Card className="p-5 sm:p-8 md:p-10">
+    <Card className="p-5 sm:p-8 md:p-10 shadow-lg">
+      <div className="text-4xl text-center mb-3">🛡️</div>
       <h2 className="text-2xl font-extrabold text-gray-900 mb-2 text-center">
         Chci nabídku pojištění
       </h2>

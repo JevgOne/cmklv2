@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 
 export function FinancovaniCalc() {
   const [price, setPrice] = useState("");
+  const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -28,7 +29,7 @@ export function FinancovaniCalc() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: "Žádost o financování",
+          name: name || "Žádost o financování",
           phone,
           message: `[Financování] Cena vozidla: ${price} Kč, orientační splátka: ${formatNumber(monthlyPayment)} Kč/měs.`,
         }),
@@ -50,7 +51,8 @@ export function FinancovaniCalc() {
   };
 
   return (
-    <Card className="p-5 sm:p-8 md:p-10">
+    <Card className="p-5 sm:p-8 md:p-10 shadow-lg">
+      <div className="text-4xl text-center mb-3">🧮</div>
       <h2 className="text-2xl font-extrabold text-gray-900 mb-2 text-center">
         Kalkulačka splátek
       </h2>
@@ -86,7 +88,7 @@ export function FinancovaniCalc() {
           />
 
           {monthlyPayment > 0 && (
-            <div className="bg-orange-50 rounded-xl p-6 text-center">
+            <div className="bg-orange-50 border border-orange-100 rounded-xl p-6 text-center">
               <p className="text-sm text-gray-500 mb-1">
                 Orientační měsíční splátka (48 měsíců)
               </p>
@@ -99,14 +101,23 @@ export function FinancovaniCalc() {
             </div>
           )}
 
-          <Input
-            label="Váš telefon"
-            type="tel"
-            placeholder="+420 777 123 456"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            required
-          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <Input
+              label="Vaše jméno"
+              placeholder="Jan Novák"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+            <Input
+              label="Telefon"
+              type="tel"
+              placeholder="+420 777 123 456"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              required
+            />
+          </div>
 
           <Button variant="primary" size="lg" className="w-full" type="submit" disabled={submitting}>
             {submitting ? "Odesílám..." : "Chci financování"}

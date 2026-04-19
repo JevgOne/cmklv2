@@ -44,7 +44,8 @@ export function ProverkaForm() {
   };
 
   return (
-    <Card className="p-5 sm:p-8 md:p-10">
+    <Card className="p-5 sm:p-8 md:p-10 shadow-lg">
+      <div className="text-4xl text-center mb-3">🔍</div>
       <h2 className="text-2xl font-extrabold text-gray-900 mb-2 text-center">
         Prověřte si vozidlo
       </h2>
@@ -96,6 +97,21 @@ export function ProverkaForm() {
             <span className="font-semibold text-orange-500">od 490 Kč</span>
             {" "}za kompletní report
           </p>
+
+          <div className="grid grid-cols-2 gap-2 mt-4 text-[13px] text-gray-500">
+            <span className="flex items-center gap-1.5">
+              <span className="text-orange-500">●</span> Původ vozidla
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="text-orange-500">●</span> Historie havárií
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="text-orange-500">●</span> Servisní záznamy
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="text-orange-500">●</span> Stav tachometru
+            </span>
+          </div>
         </form>
       )}
     </Card>
