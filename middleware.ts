@@ -163,9 +163,12 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // inzerce.carmakler.cz/nabidka → /katalog (nabidka neexistuje)
+  // inzerce.carmakler.cz/nabidka → serve main /nabidka page directly
+  // (redirect to /katalog caused infinite loop: /katalog→redirect /nabidka→redirect /katalog)
   if (subdomain === "inzerce" && pathname === "/nabidka") {
-    return NextResponse.redirect(new URL("/katalog", request.url));
+    const response = NextResponse.rewrite(new URL("/nabidka", request.url));
+    response.headers.set("x-subdomain", subdomain);
+    return response;
   }
 
   // Subdomain rewrite

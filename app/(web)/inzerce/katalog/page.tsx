@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 
-// /inzerce/katalog → permanentni redirect na /nabidka
-// Puvodni thin-content stranka nahrazena redirectem pro SEO
+// /inzerce/katalog → redirect to /nabidka
+// On main domain: direct redirect. On inzerce subdomain: middleware rewrites
+// /nabidka to serve main catalog page (avoiding redirect loop).
 export default function InzerceKatalogPage() {
   redirect("/nabidka");
 }
