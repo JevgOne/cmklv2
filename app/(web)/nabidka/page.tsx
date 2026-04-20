@@ -87,6 +87,20 @@ export default async function NabidkaPage({
   // Pagination
   const page = Math.max(1, parseInt(params.page || "1", 10));
   const limit = 18;
+  const sortKey = params.sort || "newest";
+
+  // DB-level orderBy based on sort parameter
+  const vehicleOrderBy = sortKey === "cheapest" ? { price: "asc" as const }
+    : sortKey === "expensive" ? { price: "desc" as const }
+    : { createdAt: "desc" as const };
+  const listingOrderBy = sortKey === "cheapest"
+    ? [{ isPremium: "desc" as const }, { price: "asc" as const }]
+    : sortKey === "expensive"
+    ? [{ isPremium: "desc" as const }, { price: "desc" as const }]
+    : [{ isPremium: "desc" as const }, { createdAt: "desc" as const }];
+
+  // Fetch enough records for current page (DB-level cap instead of unlimited)
+  const fetchLimit = (page * limit) + limit;
 
   // Fetch both Vehicle and Listing counts
   const [dbVehicles, vehicleTotal, dbListings, listingTotal] = await Promise.all([
@@ -98,7 +112,8 @@ export default async function NabidkaPage({
           select: { id: true, firstName: true, lastName: true, slug: true },
         },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: vehicleOrderBy,
+      take: fetchLimit,
     }),
     prisma.vehicle.count({ where: vehicleWhere }),
     prisma.listing.findMany({
@@ -109,7 +124,8 @@ export default async function NabidkaPage({
           select: { id: true, firstName: true, lastName: true, companyName: true },
         },
       },
-      orderBy: [{ isPremium: "desc" }, { createdAt: "desc" }],
+      orderBy: listingOrderBy,
+      take: fetchLimit,
     }),
     prisma.listing.count({ where: listingWhere }),
   ]);
@@ -174,18 +190,15 @@ export default async function NabidkaPage({
     };
   });
 
-  // Merge and sort
+  // Merge: premium listings first, then vehicles, then regular listings
   let allCards = [...listingCards.filter((c) => c.isPremium), ...vehicleCards, ...listingCards.filter((c) => !c.isPremium)];
 
-  // Apply sort
-  type SortOrder = "asc" | "desc";
-  const sortKey = params.sort || "newest";
+  // Re-sort merged results for price-based sorting (DB sorted per-table, need cross-table sort)
   if (sortKey === "cheapest") {
     allCards.sort((a, b) => parseInt(a.price.replace(/\s/g, ""), 10) - parseInt(b.price.replace(/\s/g, ""), 10));
   } else if (sortKey === "expensive") {
     allCards.sort((a, b) => parseInt(b.price.replace(/\s/g, ""), 10) - parseInt(a.price.replace(/\s/g, ""), 10));
   }
-  // newest and lowestkm are already ordered from DB queries
 
   // Paginate the merged results
   const skip = (page - 1) * limit;

@@ -37,6 +37,7 @@ const SKIP_REWRITE_PREFIXES = [
   "/moje-inzeraty",
   "/muj-ucet",
   "/notifikace",
+  "/gate",
 ];
 
 function shouldSkipRewrite(pathname: string): boolean {
@@ -163,9 +164,9 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // inzerce.carmakler.cz/nabidka → serve main /nabidka page directly
-  // (redirect to /katalog caused infinite loop: /katalog→redirect /nabidka→redirect /katalog)
-  if (subdomain === "inzerce" && pathname === "/nabidka") {
+  // inzerce.carmakler.cz: /katalog and /nabidka both serve main /nabidka page
+  // Rewrite in middleware avoids loading.tsx spinner flash from page-level redirect
+  if (subdomain === "inzerce" && (pathname === "/nabidka" || pathname === "/katalog")) {
     const response = NextResponse.rewrite(new URL("/nabidka", request.url));
     response.headers.set("x-subdomain", subdomain);
     return response;
