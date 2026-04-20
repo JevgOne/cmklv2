@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { SellCarForm } from "@/components/web/SellCarForm";
 import { FAQ } from "@/components/web/FAQ";
@@ -252,6 +253,29 @@ export default async function ChciProdatPage() {
           Odpovědi na nejčastější otázky o prodeji přes CarMakléř
         </p>
         <FAQ items={faqItems} />
+      </section>
+
+      {/* SECTION 7: Nejste si jistí? — alternativy */}
+      <section className="max-w-4xl mx-auto w-full px-4">
+        <div className="text-center mb-6">
+          <h2 className="text-xl font-extrabold text-gray-900">
+            Nejste si jistí?
+          </h2>
+          <p className="text-gray-500 mt-2 text-sm">
+            Prohlédněte si více informací, než se rozhodnete
+          </p>
+        </div>
+        <div className="flex flex-wrap justify-center gap-4">
+          <Link href="/jak-to-funguje" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+            Jak prodej funguje
+          </Link>
+          <Link href="/recenze" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+            Recenze klientů
+          </Link>
+          <Link href="/makleri" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+            Najít makléře v okolí
+          </Link>
+        </div>
       </section>
     </div>
   );

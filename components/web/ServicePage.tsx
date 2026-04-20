@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { FAQ } from "@/components/web/FAQ";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
@@ -24,6 +25,7 @@ export interface ServicePageProps {
     answer: string;
   }[];
   breadcrumbLabel?: string;
+  currentService?: "proverka" | "financovani" | "pojisteni";
 }
 
 export function ServicePage({
@@ -33,6 +35,7 @@ export function ServicePage({
   cta,
   faq,
   breadcrumbLabel,
+  currentService,
 }: ServicePageProps) {
   // Split title around highlight if provided
   const renderTitle = () => {
@@ -148,6 +151,53 @@ export function ServicePage({
           Odpovědi na nejčastější otázky
         </p>
         <FAQ items={faq} />
+      </section>
+
+      {/* Cross-linking — další služby + navigace */}
+      <section className="max-w-6xl mx-auto w-full px-4">
+        <h2 className="text-xl font-extrabold text-gray-900 text-center mb-6">
+          Další služby CarMakléř
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {currentService !== "proverka" && (
+            <Link href="/sluzby/proverka" className="no-underline block">
+              <Card hover className="p-5 text-center h-full">
+                <div className="text-2xl mb-2">🔍</div>
+                <h3 className="font-bold text-gray-900 text-sm">Prověrka vozidla</h3>
+                <p className="text-xs text-gray-500 mt-1">Ověřte historii před koupí</p>
+              </Card>
+            </Link>
+          )}
+          {currentService !== "financovani" && (
+            <Link href="/sluzby/financovani" className="no-underline block">
+              <Card hover className="p-5 text-center h-full">
+                <div className="text-2xl mb-2">🧮</div>
+                <h3 className="font-bold text-gray-900 text-sm">Financování</h3>
+                <p className="text-xs text-gray-500 mt-1">Auto na splátky od 3,9 %</p>
+              </Card>
+            </Link>
+          )}
+          {currentService !== "pojisteni" && (
+            <Link href="/sluzby/pojisteni" className="no-underline block">
+              <Card hover className="p-5 text-center h-full">
+                <div className="text-2xl mb-2">🛡️</div>
+                <h3 className="font-bold text-gray-900 text-sm">Pojištění</h3>
+                <p className="text-xs text-gray-500 mt-1">Srovnání pojišťoven online</p>
+              </Card>
+            </Link>
+          )}
+        </div>
+        <div className="flex flex-wrap justify-center gap-4 mt-8">
+          <Link href="/nabidka" className="text-orange-500 hover:text-orange-600 font-semibold text-sm no-underline">
+            Prohlédnout nabídku vozidel →
+          </Link>
+          <Link href="/chci-prodat" className="text-orange-500 hover:text-orange-600 font-semibold text-sm no-underline">
+            Prodat auto přes makléře →
+          </Link>
+          <Link href="/makleri" className="text-orange-500 hover:text-orange-600 font-semibold text-sm no-underline">
+            Najít makléře →
+          </Link>
+        </div>
       </section>
     </div>
   );

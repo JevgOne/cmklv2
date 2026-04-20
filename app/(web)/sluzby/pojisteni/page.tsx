@@ -95,6 +95,7 @@ export default function PojisteniPage() {
       cta={<PojisteniForm />}
       faq={faq}
       breadcrumbLabel="Pojištění"
+      currentService="pojisteni"
     />
   );
 }

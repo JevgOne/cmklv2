@@ -95,6 +95,7 @@ export default function FinancovaniPage() {
       cta={<FinancovaniCalc />}
       faq={faq}
       breadcrumbLabel="Financování"
+      currentService="financovani"
     />
   );
 }

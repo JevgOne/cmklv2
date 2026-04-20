@@ -486,6 +486,31 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
                     {copied ? "Zkopírováno!" : "Sdílet profil"}
                   </button>
                 </div>
+
+                {/* CTA — Prodat auto s tímto makléřem */}
+                {!isOwner && (user.role === "BROKER" || user.role === "MANAGER") && (
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <Link
+                      href="/chci-prodat"
+                      className="flex items-center gap-3 p-4 bg-orange-50 rounded-xl no-underline hover:bg-orange-100 transition-colors group"
+                    >
+                      <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                        🚗
+                      </div>
+                      <div>
+                        <div className="font-bold text-gray-900 text-sm">
+                          Chcete prodat auto?
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          Vyplňte formulář a makléř vás kontaktuje
+                        </div>
+                      </div>
+                      <span className="ml-auto text-orange-500 font-semibold text-sm">
+                        →
+                      </span>
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
           </div>

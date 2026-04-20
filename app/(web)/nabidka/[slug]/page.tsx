@@ -718,6 +718,59 @@ export default async function VehicleDetailPage({
       </section>
 
       {/* ============================================================ */}
+      {/* Doplňkové služby — cross-linking                             */}
+      {/* ============================================================ */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <h2 className="text-[22px] font-extrabold text-gray-900 mb-6">
+          Doplňkové služby
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <Link href="/sluzby/proverka" className="no-underline block">
+            <Card hover className="p-6 text-center h-full">
+              <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center text-2xl mx-auto">
+                🔍
+              </div>
+              <h3 className="font-bold text-gray-900 mt-3">Prověrka vozidla</h3>
+              <p className="text-sm text-gray-500 mt-1">
+                Ověřte historii a technický stav před koupí
+              </p>
+              <span className="inline-block mt-3 text-orange-500 font-semibold text-sm">
+                Prověřit →
+              </span>
+            </Card>
+          </Link>
+          <Link href="/sluzby/financovani" className="no-underline block">
+            <Card hover className="p-6 text-center h-full">
+              <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center text-2xl mx-auto">
+                🧮
+              </div>
+              <h3 className="font-bold text-gray-900 mt-3">Financování</h3>
+              <p className="text-sm text-gray-500 mt-1">
+                Auto na splátky od 3,9 %, schválení do 30 min
+              </p>
+              <span className="inline-block mt-3 text-orange-500 font-semibold text-sm">
+                Spočítat splátky →
+              </span>
+            </Card>
+          </Link>
+          <Link href="/sluzby/pojisteni" className="no-underline block">
+            <Card hover className="p-6 text-center h-full">
+              <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center text-2xl mx-auto">
+                🛡️
+              </div>
+              <h3 className="font-bold text-gray-900 mt-3">Pojištění</h3>
+              <p className="text-sm text-gray-500 mt-1">
+                Porovnání pojišťoven, sjednání online zdarma
+              </p>
+              <span className="inline-block mt-3 text-orange-500 font-semibold text-sm">
+                Pojistit →
+              </span>
+            </Card>
+          </Link>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
       {/* Price History + Timeline                                      */}
       {/* ============================================================ */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
@@ -1069,6 +1122,59 @@ function renderListingDetail(listing: ListingWithRelations, slug: string) {
             vehiclePrice={listing.price}
             vehicleName={name}
           />
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* Doplňkové služby — cross-linking                             */}
+      {/* ============================================================ */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <h2 className="text-[22px] font-extrabold text-gray-900 mb-6">
+          Doplňkové služby
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <Link href="/sluzby/proverka" className="no-underline block">
+            <Card hover className="p-6 text-center h-full">
+              <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center text-2xl mx-auto">
+                🔍
+              </div>
+              <h3 className="font-bold text-gray-900 mt-3">Prověrka vozidla</h3>
+              <p className="text-sm text-gray-500 mt-1">
+                Ověřte historii a technický stav před koupí
+              </p>
+              <span className="inline-block mt-3 text-orange-500 font-semibold text-sm">
+                Prověřit →
+              </span>
+            </Card>
+          </Link>
+          <Link href="/sluzby/financovani" className="no-underline block">
+            <Card hover className="p-6 text-center h-full">
+              <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center text-2xl mx-auto">
+                🧮
+              </div>
+              <h3 className="font-bold text-gray-900 mt-3">Financování</h3>
+              <p className="text-sm text-gray-500 mt-1">
+                Auto na splátky od 3,9 %, schválení do 30 min
+              </p>
+              <span className="inline-block mt-3 text-orange-500 font-semibold text-sm">
+                Spočítat splátky →
+              </span>
+            </Card>
+          </Link>
+          <Link href="/sluzby/pojisteni" className="no-underline block">
+            <Card hover className="p-6 text-center h-full">
+              <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center text-2xl mx-auto">
+                🛡️
+              </div>
+              <h3 className="font-bold text-gray-900 mt-3">Pojištění</h3>
+              <p className="text-sm text-gray-500 mt-1">
+                Porovnání pojišťoven, sjednání online zdarma
+              </p>
+              <span className="inline-block mt-3 text-orange-500 font-semibold text-sm">
+                Pojistit →
+              </span>
+            </Card>
+          </Link>
         </div>
       </section>
 

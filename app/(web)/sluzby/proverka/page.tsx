@@ -94,6 +94,7 @@ export default function ProverkaPage() {
       cta={<ProverkaForm />}
       faq={faq}
       breadcrumbLabel="Prověrka vozidla"
+      currentService="proverka"
     />
   );
 }
