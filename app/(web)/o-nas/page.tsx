@@ -70,22 +70,22 @@ const values = [
   {
     icon: "🔍",
     title: "Transparentnost",
-    desc: "Každý krok procesu je přehledný a srozumitelný. Žádné skryté poplatky, žádná překvapení.",
+    desc: "Víte přesně, co se děje, kolik to stojí a proč. Žádné skryté poplatky, žádná překvapení.",
   },
   {
     icon: "🛡️",
-    title: "Bezpečnost",
-    desc: "Každé vozidlo prochází důkladnou prověrkou. Chráníme prodejce i kupující před podvody.",
+    title: "Bezpečnost na prvním místě",
+    desc: "Prověřujeme historii každého vozidla. Chráníme prodejce i kupující před podvody a nepříjemnostmi.",
   },
   {
-    icon: "⚡",
-    title: "Rychlost",
-    desc: "Průměrná doba prodeje 14 dní. Díky technologiím a síti makléřů prodáváme rychleji než kdokoliv jiný.",
+    icon: "💰",
+    title: "Férové podmínky",
+    desc: "Provizi platíte jen z úspěšného prodeje. Makléř prodá za tržní cenu, ne za výkupní. Rozdíl jde vám.",
   },
   {
-    icon: "🎯",
-    title: "Profesionalita",
-    desc: "Ověření makléři s pravidelnými školeními. Každý klient dostane prémiový servis.",
+    icon: "🤝",
+    title: "Osobní přístup",
+    desc: "Žádné call centrum. Váš makléř vás zná jménem, přijede k vám a provede vás celým procesem.",
   },
 ];
 
@@ -137,10 +137,10 @@ export default async function ONasPage() {
       <section className="bg-gradient-to-br from-gray-900 to-gray-950 py-12 sm:py-16 md:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight">
-            Nová éra prodeje aut v Česku
+            Pomáháme lidem prodat auto za nejvíc a koupit bezpečně
           </h1>
           <p className="text-white/60 mt-5 text-lg max-w-2xl mx-auto">
-            Spojujeme technologie s osobním přístupem ověřených makléřů po celé České republice.
+            Jsme síť certifikovaných automakléřů po celé ČR. Každý den pomáháme desítkám lidí, kteří nechtějí řešit inzeráty, podvodníky a papírování.
           </p>
         </div>
       </section>
@@ -149,17 +149,16 @@ export default async function ONasPage() {
       <section className="py-12 sm:py-16 lg:py-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl sm:text-[28px] font-extrabold text-gray-900 mb-6">
-            Náš příběh
+            Proč CarMakléř existuje
           </h2>
           <p className="text-gray-600 leading-relaxed mb-4">
-            CarMakléř vznikl z jednoduché myšlenky — prodej i nákup auta by měl být jednoduchý, bezpečný a férový.
-            Viděli jsme, jak se lidé trápí s inzeráty, podvodníky a nekonečným papírováním. Proto jsme vytvořili
-            platformu, která spojuje ty nejlepší makléře s klienty, kteří si zaslouží prémiový servis.
+            Prodej auta v Česku je noční můra. Focení na parkovišti, desítky zpráv od spekulantů, nekonečné jednání o ceně a pak ještě běhání po úřadech s přepisem. A nákup? Stočené tachometry, zatajené nehody, nejistota na každém kroku.
+          </p>
+          <p className="text-gray-600 leading-relaxed mb-4">
+            Proto jsme vytvořili CarMakléř — síť certifikovaných makléřů, kteří se o vše postarají za vás. Prodejcům zajistíme profesionální prezentaci a prodej za nejvyšší možnou cenu. Kupujícím nabídneme prověřená vozidla s kompletní historií.
           </p>
           <p className="text-gray-600 leading-relaxed">
-            Dnes máme síť ověřených makléřů po celé ČR, kteří každý den pomáhají lidem prodávat a kupovat
-            auta bez stresu. Naše technologie — od prověrky vozidel po mobilní aplikaci pro makléře — zajišťují,
-            že celý proces je transparentní, rychlý a bezpečný.
+            Nejsme autobazar — nic nevykupujeme ani neprodáváme za sebe. Jsme na vaší straně. Makléř zastupuje vaše zájmy, ne svoje.
           </p>
         </div>
       </section>

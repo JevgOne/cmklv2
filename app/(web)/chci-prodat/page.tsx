@@ -8,13 +8,13 @@ import { getBrokerStats } from "@/lib/stats";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
-  title: "Chci prodat auto",
+  title: "Prodat auto za nejvyšší cenu | CarMakléř",
   description:
-    "Prodáme vaše auto rychleji a za lepší cenu. Nechte to na ověřeném makléři CarMakléř.",
+    "Váš makléř zajistí fotky, inzerci na všech portálech, prohlídky i smlouvu. Vy jen inkasujete. Průměrně za 20 dní, provize 5 %.",
   openGraph: {
-    title: "Prodejte auto přes makléře | CarMakléř",
+    title: "Prodat auto za nejvyšší cenu | CarMakléř",
     description:
-      "Prodáme vaše auto rychleji a za lepší cenu. Nechte to na ověřeném makléři CarMakléř.",
+      "Váš makléř se postará o kompletní prodej — od fotek po přepis. Průměrně za 20 dní.",
   },
   alternates: pageCanonical("/chci-prodat"),
 };
@@ -23,47 +23,47 @@ const steps = [
   {
     number: 1,
     icon: "📝",
-    title: "Vyplňte formulář",
-    description: "Stačí pár základních údajů o vašem voze",
+    title: "Řeknete nám o autě",
+    description: "Vyplňte krátký formulář — značka, model, rok, stav. Trvá to minutu.",
   },
   {
     number: 2,
     icon: "📞",
-    title: "Makléř vás kontaktuje",
-    description: "Do 30 minut se vám ozve ověřený makléř",
+    title: "Makléř se ozve do 30 minut",
+    description: "Přiřadíme vám makléře ve vašem okolí. Dohodne si prohlídku vozu.",
   },
   {
     number: 3,
     icon: "🎉",
-    title: "Auto je prodané",
-    description: "Makléř zajistí vše — od fotek po převod",
+    title: "Vy jen podepíšete a inkasujete",
+    description: "Makléř zajistí fotky, inzerci, prohlídky, smlouvu i přepis na úřadě.",
   },
 ];
 
 const benefits = [
   {
     icon: "⏱️",
-    title: "Průměrná doba prodeje 20 dní",
+    title: "Prodáno průměrně za 20 dní",
     description:
-      "Auto prodáme rychleji díky kvalitní inzerci na všech portálech v ČR",
+      "Kvalitní fotky a profesionální inzerce na všech portálech v ČR znamenají víc zájemců a rychlejší prodej.",
   },
   {
     icon: "💰",
-    title: "Férová tržní cena",
+    title: "Vyšší cena než v bazaru",
     description:
-      "Žádné podbízení. Náš makléř prodá auto za maximální reálnou cenu",
+      "Bazar vám nabídne výkupní cenu. Makléř prodá za tržní cenu koncovému kupujícímu. Rozdíl bývá desítky tisíc.",
   },
   {
     icon: "📸",
-    title: "Profesionální inzerce",
+    title: "Profesionální prezentace vozu",
     description:
-      "Profesionální fotky, popis i umístění na Sauto, TipCars a dalších portálech",
+      "Makléř nafotí auto, napíše atraktivní popis a zveřejní na Sauto, TipCars, Facebook Marketplace a dalších.",
   },
   {
     icon: "🛡️",
-    title: "Kompletní servis",
+    title: "Papíry? To je na nás.",
     description:
-      "Smlouvy, převod, STK, pojištění — o nic se nemusíte starat",
+      "Kupní smlouva, přepis na úřadě, odhlášení pojištění, protokol o předání — vše zajistí makléř.",
   },
 ];
 
@@ -129,13 +129,14 @@ export default async function ChciProdatPage() {
         <div className="bg-orange-50 rounded-2xl p-5 sm:p-8 md:p-12 lg:p-16 flex flex-col lg:flex-row items-center gap-6 sm:gap-8 lg:gap-16">
           <div className="flex-1">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight mb-4">
-              Prodáme vaše auto{" "}
+              Prodejte auto{" "}
               <span className="text-orange-500">
-                rychleji a za lepší cenu
-              </span>
+                za nejvyšší cenu
+              </span>{" "}
+              bez jediné starosti
             </h1>
             <p className="text-lg md:text-xl text-gray-600 mb-8">
-              Nechte to na našem makléři. Vy se nemusíte o nic starat.
+              Váš makléř zajistí vše — od profesionálních fotek po přepis na úřadě. Vy jen podepíšete a inkasujete.
             </p>
             <div className="flex flex-wrap gap-6 md:gap-10">
               <div>
@@ -169,10 +170,10 @@ export default async function ChciProdatPage() {
       {/* SECTION 2: Jak to funguje — 3 kroky */}
       <section className="max-w-6xl mx-auto w-full px-4">
         <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 text-center mb-4">
-          Jak to funguje
+          3 kroky a máte prodáno
         </h2>
         <p className="text-gray-500 text-center mb-10 max-w-xl mx-auto">
-          Prodej auta přes CarMakléř je jednoduchý — stačí 3 kroky
+          Žádné shánění zájemců, focení, odpovídání na dotazy ani běhání po úřadech
         </p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {steps.map((step) => (
@@ -200,10 +201,10 @@ export default async function ChciProdatPage() {
       {/* SECTION 4: Proč prodat přes CarMakléř */}
       <section className="max-w-6xl mx-auto w-full px-4">
         <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 text-center mb-4">
-          Proč prodat přes CarMakléř
+          Proč prodat přes makléře, ne přes bazar
         </h2>
         <p className="text-gray-500 text-center mb-10 max-w-xl mx-auto">
-          S námi prodáte auto rychleji, za lepší cenu a bez starostí
+          Bazar vám nabídne výkupní cenu. Makléř prodá za tržní cenu přímo kupujícímu — rozdíl je v desítkách tisíc.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {benefits.map((benefit) => (
@@ -259,21 +260,30 @@ export default async function ChciProdatPage() {
       <section className="max-w-4xl mx-auto w-full px-4">
         <div className="text-center mb-6">
           <h2 className="text-xl font-extrabold text-gray-900">
-            Nejste si jistí?
+            Chcete vědět víc?
           </h2>
           <p className="text-gray-500 mt-2 text-sm">
-            Prohlédněte si více informací, než se rozhodnete
+            Přečtěte si, jak přesně prodej funguje, nebo se podívejte na zkušenosti ostatních
           </p>
         </div>
         <div className="flex flex-wrap justify-center gap-4">
           <Link href="/jak-to-funguje" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
-            Jak prodej funguje
+            Jak prodej přes makléře funguje
+          </Link>
+          <Link href="/jak-prodat-auto" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+            Kompletní průvodce prodejem
           </Link>
           <Link href="/recenze" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
-            Recenze klientů
+            Co říkají naši klienti
           </Link>
           <Link href="/makleri" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
-            Najít makléře v okolí
+            Najít makléře ve vašem městě
+          </Link>
+          <Link href="/sluzby/proverka" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+            Prověrka vozidla před prodejem
+          </Link>
+          <Link href="/nabidka" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+            Chci naopak koupit auto
           </Link>
         </div>
       </section>

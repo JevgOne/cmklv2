@@ -37,29 +37,29 @@ const sellingSteps = [
   {
     number: 1,
     icon: "📝",
-    title: "Vyplňte formulář",
-    description: "Zadejte základní údaje o voze — značku, model, rok a stav.",
+    title: "Řeknete nám o autě",
+    description: "Vyplníte krátký formulář — značka, model, rok výroby, stav. Trvá to minutu.",
   },
   {
     number: 2,
     icon: "📞",
-    title: "Makléř vás kontaktuje",
+    title: "Makléř se ozve do 30 minut",
     description:
-      "Do 30 minut se vám ozve ověřený makléř a dohodne si prohlídku.",
+      "Přiřadíme vám certifikovaného makléře ve vašem okolí. Dohodne si prohlídku vozu.",
   },
   {
     number: 3,
     icon: "📸",
-    title: "Profesionální prezentace",
+    title: "Makléř zajistí vše",
     description:
-      "Makléř nafotí auto, vytvoří inzerát a zveřejní ho na všech portálech.",
+      "Profesionální fotky, atraktivní popis, inzerce na Sauto, TipCars, Facebook a dalších portálech.",
   },
   {
     number: 4,
     icon: "🎉",
-    title: "Auto je prodané",
+    title: "Vy jen podepíšete a inkasujete",
     description:
-      "Makléř zajistí prohlídky, kupní smlouvu i přepis na dopravním úřadě.",
+      "Makléř domluví prohlídky, připraví kupní smlouvu a zajistí přepis na úřadě. Hotovo.",
   },
 ];
 
@@ -67,22 +67,22 @@ const buyingSteps = [
   {
     number: 1,
     icon: "🔍",
-    title: "Prohlédněte si nabídku",
-    description: "V katalogu najdete prověřená vozidla od makléřů i soukromých prodejců.",
+    title: "Vyberte si z prověřených aut",
+    description: "V katalogu najdete vozidla s kompletní historií — nehody, stočení km, zástavy, servis.",
   },
   {
     number: 2,
     icon: "✅",
-    title: "Prověřené auto",
+    title: "Zkontrolujeme ho za vás",
     description:
-      "Každé auto od makléře má prověřenou historii, VIN kontrolu a hodnocení důvěryhodnosti.",
+      "Každé auto od makléře prochází prověrkou VIN, technického stavu a právní čistoty.",
   },
   {
     number: 3,
     icon: "🤝",
-    title: "Bezpečný nákup",
+    title: "Makléř vás provede celým nákupem",
     description:
-      "Makléř vás provede celým procesem — od prohlídky po převod vlastnictví.",
+      "Od prohlídky přes financování a pojištění až po kupní smlouvu a přepis na úřadě.",
   },
 ];
 
@@ -130,19 +130,17 @@ export default function JakToFungujePage() {
             Jak to funguje
           </h1>
           <p className="text-lg text-gray-500 max-w-2xl mx-auto">
-            CarMakléř je ekosystém pro prodej a nákup vozidel i autodílů.
-            Vyberte si službu, která vás zajímá.
+            Pomáháme lidem prodat auto za nejvyšší cenu a koupit bezpečně. Váš makléř se postará o všechno — vy nemusíte řešit nic.
           </p>
         </div>
 
         {/* Sekce 1: Prodej auta přes makléře */}
         <section className="mb-16">
           <h2 className="text-2xl font-extrabold text-gray-900 mb-2">
-            Prodej auta přes makléře
+            Chci prodat auto
           </h2>
           <p className="text-gray-500 mb-8">
-            Svěřte prodej ověřenému makléři. Vy nemusíte řešit nic — makléř zajistí vše od
-            fotek po přepis. Provize jen 5 % z prodejní ceny.
+            Proč se trápit s inzerováním, odpovídáním na dotazy a běháním po úřadech? Váš makléř zajistí profesionální fotky, inzerci na všech portálech, prohlídky se zájemci, kupní smlouvu i přepis. Vy jen podepíšete a inkasujete. Provize 5 % z prodejní ceny — a to jen při úspěšném prodeji.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {sellingSteps.map((step) => (
@@ -170,11 +168,10 @@ export default function JakToFungujePage() {
         {/* Sekce 2: Nákup prověřeného auta */}
         <section className="mb-16">
           <h2 className="text-2xl font-extrabold text-gray-900 mb-2">
-            Nákup prověřeného auta
+            Chci koupit auto bezpečně
           </h2>
           <p className="text-gray-500 mb-8">
-            V naší nabídce najdete vozidla prověřená makléři i inzeráty od soukromých prodejců
-            a autobazarů. Každé auto od makléře má hodnocení důvěryhodnosti.
+            Kupovat ojeté auto naslepo je risk. U nás má každé vozidlo prověřenou historii — nehody, stočení km, zástavy, servisní záznamy. Makléř vás provede od výběru po přepis.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {buyingSteps.map((step) => (
@@ -231,20 +228,46 @@ export default function JakToFungujePage() {
           </div>
         </section>
 
+        {/* Related links */}
+        <section className="mb-16">
+          <h2 className="text-xl font-extrabold text-gray-900 mb-6 text-center">
+            Další užitečné stránky
+          </h2>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link href="/makleri" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+              Najít makléře ve vašem městě
+            </Link>
+            <Link href="/sluzby/proverka" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+              Prověrka vozidla
+            </Link>
+            <Link href="/sluzby/financovani" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+              Financování na míru
+            </Link>
+            <Link href="/sluzby/pojisteni" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+              Pojištění vozidla
+            </Link>
+            <Link href="/jak-prodat-auto" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+              Kompletní průvodce prodejem
+            </Link>
+            <Link href="/recenze" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+              Recenze klientů
+            </Link>
+          </div>
+        </section>
+
         {/* CTA */}
         <section className="bg-orange-50 border border-orange-200 rounded-2xl p-8 md:p-10 text-center">
           <h2 className="text-2xl font-extrabold text-gray-900 mb-3">
-            Máte otázky?
+            Máte otázky? Ozvěte se nám.
           </h2>
           <p className="text-gray-600 mb-6 max-w-lg mx-auto">
-            Rádi vám poradíme. Napište nám nebo zavolejte a pomůžeme s prodejem, nákupem
-            nebo výběrem dílů.
+            Rádi vám poradíme s prodejem, nákupem nebo čímkoliv kolem auta. Volejte, pište, nebo vyplňte formulář.
           </p>
           <Link
             href="/kontakt"
             className="inline-block bg-orange-500 text-white font-semibold px-6 py-3 rounded-lg hover:bg-orange-600 transition-colors no-underline"
           >
-            Kontaktujte nás
+            Kontaktovat nás
           </Link>
         </section>
       </div>

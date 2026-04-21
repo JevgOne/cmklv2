@@ -9,23 +9,23 @@ import { CareerForm } from "@/components/web/CareerForm";
 const benefits = [
   {
     icon: "🕐",
-    title: "Flexibilní úvazek",
-    desc: "Pracujte kdy chcete a odkud chcete. Jako makléř si řídíte svůj čas sami.",
+    title: "Pracujte kdy a kde chcete",
+    desc: "Jste svým vlastním šéfem. Řídíte si čas, klienty i pracovní tempo. Žádná kancelář, žádné směny.",
   },
   {
     icon: "💰",
-    title: "Neomezený výdělek",
-    desc: "Provizní systém bez stropu. Čím více prodáte, tím více vyděláte.",
+    title: "Výdělek bez stropu",
+    desc: "Provize 5 % z každého prodeje. Čím víc prodáte, tím víc vyděláte. Průměrný makléř vydělá 40–80 000 Kč měsíčně.",
   },
   {
     icon: "📱",
-    title: "Moderní nástroje (PWA)",
-    desc: "Mobilní aplikace pro správu vozidel, komunikaci s klienty a sledování provizí.",
+    title: "Technologie, která vám usnadní práci",
+    desc: "Mobilní aplikace pro správu vozidel, komunikaci s klienty, smlouvy a sledování provizí — vše v telefonu.",
   },
   {
     icon: "🎓",
-    title: "Školení a podpora",
-    desc: "Pravidelná školení, mentoring od zkušených makléřů a nepřetržitá podpora týmu.",
+    title: "Naučíme vás vše, co potřebujete",
+    desc: "Vstupní školení, mentoring od zkušených makléřů a průběžná podpora. Předchozí zkušenosti nejsou nutné.",
   },
 ];
 
@@ -67,10 +67,10 @@ export default function KarieraPage() {
       <section className="bg-gradient-to-br from-gray-900 to-gray-950 py-12 sm:py-16 md:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight">
-            Přidejte se k nám
+            Staňte se automakléřem
           </h1>
           <p className="text-white/60 mt-5 text-lg max-w-2xl mx-auto">
-            Staňte se součástí nejmodernější platformy pro prodej aut v Česku
+            Pomáhejte lidem prodat auto za nejvyšší cenu. Pracujte flexibilně, vydělejte bez stropu a buďte součástí rostoucí sítě.
           </p>
         </div>
       </section>

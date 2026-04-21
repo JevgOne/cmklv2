@@ -10,13 +10,13 @@ import { pageCanonical } from "@/lib/canonical";
 import { BrokerCard, type BrokerCardBroker } from "@/components/web/BrokerCard";
 
 export const metadata: Metadata = {
-  title: "CarMakléř | Prodej aut přes ověřené makléře",
+  title: "CarMakléř | Prodejte auto za nejlepší cenu, kupte bezpečně",
   description:
-    "Prodejte nebo kupte auto bezpečně přes síť ověřených makléřů. Rychle, transparentně a bez starostí. Průměrná doba prodeje 20 dní.",
+    "Pomáháme lidem prodat auto za nejvyšší cenu a koupit bezpečně. Váš makléř se postará o fotky, inzerci, prohlídky i papíry. Průměrně do 20 dní.",
   openGraph: {
-    title: "CarMakléř | Prodej aut přes ověřené makléře",
+    title: "CarMakléř | Prodejte auto za nejlepší cenu, kupte bezpečně",
     description:
-      "Prodejte nebo kupte auto bezpečně přes síť ověřených makléřů. Rychle, transparentně a bez starostí.",
+      "Pomáháme lidem prodat auto za nejvyšší cenu a koupit bezpečně. Váš makléř zajistí vše od A do Z.",
     type: "website",
     url: "https://carmakler.cz",
   },
@@ -129,81 +129,81 @@ async function getFeaturedBrokers(): Promise<BrokerCardBroker[]> {
 const services = [
   {
     icon: "🚗",
-    title: "Prodej vozidla",
-    desc: "Prodáme vaše auto rychleji za férovou tržní cenu",
+    title: "Chci prodat auto",
+    desc: "Váš makléř zajistí fotky, inzerci na všech portálech, prohlídky se zájemci i smlouvu. Vy nemusíte řešit nic.",
     href: "/chci-prodat",
   },
   {
-    icon: "🛒",
-    title: "Koupě vozidla",
-    desc: "Najděte si z naší nabídky prověřených vozidel",
+    icon: "🔍",
+    title: "Chci koupit auto",
+    desc: "Prověřená vozidla s kompletní historií. Makléř vás provede celým nákupem od výběru po přepis.",
     href: "/nabidka",
   },
   {
-    icon: "🔍",
+    icon: "🛡️",
     title: "Prověrka vozidla",
-    desc: "Kupujeme a prodáváme jen kvalitní a prověřená vozidla",
+    desc: "Kompletní kontrola historie, stočení tachometru, zástavy a technického stavu. Kupujte s jistotou.",
     href: "/sluzby/proverka",
   },
   {
     icon: "💰",
-    title: "Financování",
-    desc: "Získejte financování do 30 minut bez zbytečného papírování",
+    title: "Financování na míru",
+    desc: "Schválení do 30 minut, bez zbytečného papírování. Pro zaměstnance, živnostníky i firmy.",
     href: "/sluzby/financovani",
   },
   {
     icon: "📋",
-    title: "Inzerce",
-    desc: "Inzerujte své vozidlo a oslovte tisíce kupujících",
+    title: "Inzerce zdarma",
+    desc: "Podejte inzerát zdarma a oslovte tisíce kupujících. Pro soukromé prodejce i autobazary.",
     href: "/inzerce",
   },
   {
-    icon: "🛍️",
-    title: "Shop",
-    desc: "Autodíly z vrakovišť, příslušenství a autokosmetika",
-    href: "/shop",
+    icon: "🔧",
+    title: "Autodíly",
+    desc: "Originální díly z vrakovišť i nové aftermarket. Hledejte podle vozu nebo VIN.",
+    href: "/dily",
   },
 ];
 
 const benefits = [
   {
     icon: "⏱️",
-    title: "Šetříme váš čas",
-    desc: "Auto prodáme rychleji díky kvalitní inzerci na všech portálech",
+    title: "Prodáno průměrně za 20 dní",
+    desc: "Díky profesionální inzerci na všech portálech v ČR prodáváme výrazně rychleji než soukromí prodejci.",
   },
   {
     icon: "📄",
-    title: "Vyřídíme vše za vás",
-    desc: "Smlouvy, financování, pojištění, prověrka — my to zařídíme",
+    title: "Od fotek po přepis — zařídíme vše",
+    desc: "Fotky, popis, inzerce, prohlídky, smlouva, přepis na úřadě, odhlášení pojištění. Vy jenom podepíšete.",
   },
   {
     icon: "🛡️",
-    title: "Bezpečnost",
-    desc: "Každé vozidlo prochází důkladnou prověrkou historie i technického stavu",
+    title: "Každé auto prověříme",
+    desc: "Kontrola VIN, historie nehod, zástavy, stočení km, servisní kniha. Kupujete s jistotou, ne naslepo.",
   },
   {
     icon: "🤝",
-    title: "Síť makléřů",
-    desc: "Síť ověřených makléřů po celé ČR, vždy blízko vás",
+    title: "Makléř vždy blízko vás",
+    desc: "Síť certifikovaných makléřů po celé ČR. Osobní přístup, ne call centrum.",
   },
 ];
 
 const testimonials = [
   {
     quote:
-      "Prodej proběhl hladce a rychle. Auto bylo prodané za 12 dní za cenu, která mě příjemně překvapila.",
+      "Auto prodané za 12 dní, za cenu o 40 000 Kč vyšší, než mi nabízel bazar. Makléř se postaral o všechno — od fotek po přepis na úřadě.",
     name: "Jana K.",
     city: "Praha",
   },
   {
     quote:
-      "Konečně někdo, kdo se o všechno postará. Nemusel jsem řešit nic — od fotek po převod.",
+      "Nemusel jsem řešit vůbec nic. Makléř nafotil auto, napsal inzerát, domluvil prohlídky i kupní smlouvu. Já jen dostal peníze.",
     name: "Martin D.",
     city: "Brno",
   },
   {
     quote:
-      "Makléř byl profesionální, vždy dostupný. Auto jsem koupil s jistotou, že je prověřené.",
+      "Díky prověrce jsem zjistil, že auto mělo stočený tachometr. Ušetřil jsem si 200 000 Kč a problém. Skvělá služba.",
     name: "Tomáš H.",
     city: "Ostrava",
   },
@@ -265,15 +265,16 @@ export default async function HomePage() {
               {/* Left — text */}
               <div>
                 <span className="inline-block bg-orange-100 text-orange-600 text-sm font-semibold px-4 py-1.5 rounded-full mb-6">
-                  Nová éra prodeje aut
+                  Síť certifikovaných automakléřů v ČR
                 </span>
                 <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
-                  Vaše auto prodáme v průměru{" "}
-                  <span className="text-orange-500">do 20 dní</span>
+                  Prodejte auto za{" "}
+                  <span className="text-orange-500">nejvyšší cenu</span>.
+                  {" "}Kupte s jistotou.
                 </h1>
                 <p className="text-lg text-gray-500 mt-5 leading-relaxed max-w-lg">
-                  Nechte to na nás. Prodej, koupě, financování i prověrka —
-                  vše na jednom místě.
+                  Váš makléř se postará o fotky, inzerci, prohlídky, smlouvu i přepis.
+                  Vy jen podepíšete a inkasujete.
                 </p>
                 <div className="mt-8 flex flex-wrap gap-4">
                   <Link href="/nabidka" className="no-underline">
@@ -311,7 +312,7 @@ export default async function HomePage() {
         <div className="bg-orange-50 md:rounded-b-2xl pb-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <p className="text-center text-orange-500 font-semibold text-lg mb-6">
-              Auto u nás dostane každý.
+              Pomáháme všem — bez ohledu na příjem nebo zaměstnání.
             </p>
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-10">
               {proKoho.map((item) => (
@@ -344,9 +345,9 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-[28px] font-extrabold text-gray-900">
-              Co vám nabízíme
+              Vše kolem auta na jednom místě
             </h2>
-            <p className="text-gray-500 mt-2">Kompletní servis od A do Z</p>
+            <p className="text-gray-500 mt-2">Od prodeje přes financování až po autodíly — postaráme se o vás</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -552,21 +553,21 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-gradient-to-br from-gray-900 to-gray-950 rounded-2xl py-12 sm:py-16 lg:py-20 px-4 sm:px-6 text-center">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white">
-              Chcete prodávat s námi?
+              Jste autobazar nebo vrakoviště?
             </h2>
             <p className="text-white/60 mt-4 max-w-2xl mx-auto text-base sm:text-lg">
-              Získejte přístup k širokému zázemí a moderním nástrojům pro
-              správu vozidel
+              Zaregistrujte se jako partner a získejte přístup k tisícům kupujících.
+              Žádné poplatky za start — platíte jen z úspěšného prodeje.
             </p>
             <div className="mt-8 flex justify-center gap-4 flex-wrap">
-              <Link href="/kariera" className="no-underline">
+              <Link href="/registrace/partner" className="no-underline">
                 <Button variant="primary" size="lg">
-                  Registrace makléře
+                  Registrovat se jako partner
                 </Button>
               </Link>
-              <Link href="/o-nas" className="no-underline">
+              <Link href="/kariera" className="no-underline">
                 <Button variant="outline" size="lg" className="!border-2 !border-white/30 !text-white !bg-transparent !shadow-none hover:!bg-white/10 hover:!border-white/50">
-                  Zjistit více o CarMakléři
+                  Chci být makléřem
                 </Button>
               </Link>
             </div>
