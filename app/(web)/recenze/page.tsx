@@ -124,6 +124,15 @@ export default function RecenzePage() {
 
   return (
     <main>
+      {/* Breadcrumb */}
+      <nav aria-label="Breadcrumb" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <ol className="flex items-center gap-2 text-sm text-gray-500">
+          <li><Link href="/" className="hover:text-orange-500 transition-colors no-underline">Domů</Link></li>
+          <li>/</li>
+          <li className="text-gray-900 font-medium">Recenze</li>
+        </ol>
+      </nav>
+
       {/* Header */}
       <section className="py-10 sm:py-16 md:py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -187,31 +196,33 @@ export default function RecenzePage() {
       {/* Cross-linking */}
       <section className="py-12 sm:py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid sm:grid-cols-2 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <Link href="/chci-prodat" className="no-underline block">
-              <Card hover className="p-8 text-center h-full">
-                <h2 className="text-xl font-extrabold text-gray-900 mb-2">
-                  Chcete prodat auto?
-                </h2>
-                <p className="text-sm text-gray-500">
-                  Přidejte se ke spokojeným klientům. Průměrná doba prodeje 20 dní, férová cena.
-                </p>
-                <span className="inline-block mt-4 text-orange-500 font-semibold text-sm">
-                  Prodat auto přes makléře &rarr;
-                </span>
+              <Card hover className="p-6 text-center h-full">
+                <h3 className="font-bold text-gray-900 mb-2">Chcete prodat auto?</h3>
+                <p className="text-sm text-gray-500">Průměrná doba prodeje 20 dní</p>
+                <span className="inline-block mt-3 text-orange-500 font-semibold text-sm">Prodat auto &rarr;</span>
               </Card>
             </Link>
             <Link href="/makleri" className="no-underline block">
-              <Card hover className="p-8 text-center h-full">
-                <h2 className="text-xl font-extrabold text-gray-900 mb-2">
-                  Najděte svého makléře
-                </h2>
-                <p className="text-sm text-gray-500">
-                  Vyberte si z naší sítě ověřených makléřů po celé ČR.
-                </p>
-                <span className="inline-block mt-4 text-orange-500 font-semibold text-sm">
-                  Zobrazit ověřené makléře &rarr;
-                </span>
+              <Card hover className="p-6 text-center h-full">
+                <h3 className="font-bold text-gray-900 mb-2">Naši makléři</h3>
+                <p className="text-sm text-gray-500">Ověření makléři po celé ČR</p>
+                <span className="inline-block mt-3 text-orange-500 font-semibold text-sm">Zobrazit makléře &rarr;</span>
+              </Card>
+            </Link>
+            <Link href="/nabidka" className="no-underline block">
+              <Card hover className="p-6 text-center h-full">
+                <h3 className="font-bold text-gray-900 mb-2">Nabídka vozidel</h3>
+                <p className="text-sm text-gray-500">Prověřená auta od makléřů</p>
+                <span className="inline-block mt-3 text-orange-500 font-semibold text-sm">Zobrazit nabídku &rarr;</span>
+              </Card>
+            </Link>
+            <Link href="/jak-to-funguje" className="no-underline block">
+              <Card hover className="p-6 text-center h-full">
+                <h3 className="font-bold text-gray-900 mb-2">Jak to funguje</h3>
+                <p className="text-sm text-gray-500">Prodej i nákup krok za krokem</p>
+                <span className="inline-block mt-3 text-orange-500 font-semibold text-sm">Zjistit více &rarr;</span>
               </Card>
             </Link>
           </div>

@@ -434,26 +434,41 @@ export default function RegistracePage() {
         </div>
 
         {/* Alternativní typy registrace */}
-        <div className="mt-6">
+        <div className="mt-6 space-y-3">
           <p className="mb-3 text-center text-xs font-medium uppercase tracking-wide text-gray-500">
             Jiný typ účtu
           </p>
+          <Link
+            href="/registrace/partner"
+            className="group block rounded-2xl border border-gray-200 bg-white p-5 shadow-card transition-colors hover:border-orange-300 hover:bg-orange-50"
+          >
+            <div className="flex items-start gap-4">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-orange-100 text-orange-600">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                  <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-gray-900 group-hover:text-orange-700">
+                  Partner (autobazar / vrakoviště)
+                </h3>
+                <p className="mt-1 text-xs text-gray-500">
+                  Provozujete autobazar nebo vrakoviště? Zaregistrujte se jako partner a získejte přístup k celé platformě.
+                </p>
+              </div>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 shrink-0 text-gray-400 group-hover:text-orange-500">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </div>
+          </Link>
           <Link
             href="/registrace/dodavatel"
             className="group block rounded-2xl border border-gray-200 bg-white p-5 shadow-card transition-colors hover:border-orange-300 hover:bg-orange-50"
           >
             <div className="flex items-start gap-4">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-orange-100 text-orange-600">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-5 w-5"
-                >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
                   <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
                 </svg>
               </div>
@@ -462,20 +477,10 @@ export default function RegistracePage() {
                   Dodavatel dílů (vrakoviště)
                 </h3>
                 <p className="mt-1 text-xs text-gray-500">
-                  Prodáváte použité díly z vrakoviště nebo nové aftermarket
-                  díly? Registrujte se jako dodavatel a spravujte nabídku v PWA.
+                  Prodáváte použité díly z vrakoviště nebo nové aftermarket díly? Registrujte se jako dodavatel.
                 </p>
               </div>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-4 w-4 shrink-0 text-gray-400 group-hover:text-orange-500"
-              >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 shrink-0 text-gray-400 group-hover:text-orange-500">
                 <path d="M9 18l6-6-6-6" />
               </svg>
             </div>

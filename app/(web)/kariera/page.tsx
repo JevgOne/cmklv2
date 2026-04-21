@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -53,6 +54,15 @@ const positions = [
 export default function KarieraPage() {
   return (
     <main>
+      {/* Breadcrumb */}
+      <nav aria-label="Breadcrumb" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <ol className="flex items-center gap-2 text-sm text-gray-500">
+          <li><Link href="/" className="hover:text-orange-500 transition-colors no-underline">Domů</Link></li>
+          <li>/</li>
+          <li className="text-gray-900 font-medium">Kariéra</li>
+        </ol>
+      </nav>
+
       {/* Hero */}
       <section className="bg-gradient-to-br from-gray-900 to-gray-950 py-12 sm:py-16 md:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -142,6 +152,38 @@ export default function KarieraPage() {
 
           <div id="kariera-form">
             <CareerForm />
+          </div>
+        </div>
+      </section>
+
+      {/* Cross-linking */}
+      <section className="py-12 sm:py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-xl font-extrabold text-gray-900 mb-6 text-center">
+            Zjistěte více o CarMakléři
+          </h2>
+          <div className="grid sm:grid-cols-3 gap-6">
+            <Link href="/o-nas" className="no-underline block">
+              <Card hover className="p-6 text-center h-full">
+                <h3 className="font-bold text-gray-900 mb-2">O nás</h3>
+                <p className="text-sm text-gray-500">Kdo jsme a jak fungujeme</p>
+                <span className="inline-block mt-3 text-orange-500 font-semibold text-sm">Více o firmě &rarr;</span>
+              </Card>
+            </Link>
+            <Link href="/makleri" className="no-underline block">
+              <Card hover className="p-6 text-center h-full">
+                <h3 className="font-bold text-gray-900 mb-2">Naši makléři</h3>
+                <p className="text-sm text-gray-500">Seznamte se s týmem</p>
+                <span className="inline-block mt-3 text-orange-500 font-semibold text-sm">Zobrazit makléře &rarr;</span>
+              </Card>
+            </Link>
+            <Link href="/kontakt" className="no-underline block">
+              <Card hover className="p-6 text-center h-full">
+                <h3 className="font-bold text-gray-900 mb-2">Kontakt</h3>
+                <p className="text-sm text-gray-500">Máte dotaz? Ozvěte se nám</p>
+                <span className="inline-block mt-3 text-orange-500 font-semibold text-sm">Kontaktovat nás &rarr;</span>
+              </Card>
+            </Link>
           </div>
         </div>
       </section>

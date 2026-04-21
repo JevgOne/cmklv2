@@ -11,13 +11,17 @@ const serviceItems = [
   { href: "/sluzby/proverka", title: "Prověrka vozidla" },
   { href: "/sluzby/financovani", title: "Financování" },
   { href: "/sluzby/pojisteni", title: "Pojištění" },
+  { href: "/jak-prodat-auto", title: "Jak prodat auto" },
 ];
 
 const aboutItems = [
   { href: "/o-nas", title: "O CarMakléři" },
-  { href: "/o-nas", title: "Náš tým" },
-  { href: "/kariera", title: "Kariéra" },
+  { href: "/makleri", title: "Naši makléři" },
+  { href: "/jak-to-funguje", title: "Jak to funguje" },
   { href: "/recenze", title: "Recenze" },
+  { href: "/kariera", title: "Kariéra" },
+  { href: "/kontakt", title: "Kontakt" },
+  { href: "/registrace/partner", title: "Registrace pro partnery" },
 ];
 
 export function MainMobileMenu() {
@@ -77,11 +81,11 @@ export function MainMobileMenu() {
         </Link>
 
         <Link
-          href="/kontakt"
+          href="/makleri"
           className="flex items-center text-lg font-semibold text-gray-900 hover:text-orange-500 transition-colors py-4 border-b border-gray-100 no-underline min-h-[44px]"
           onClick={closeMenu}
         >
-          Kontakt
+          Naši makléři
         </Link>
 
         <PlatformSwitcher
