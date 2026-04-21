@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { FAQ, type FAQItem } from "./FAQ";
+import { SERVICE_CROSS_LINKS } from "@/lib/seo-crosslinks";
 
 interface BreadcrumbItem {
   name: string;
@@ -26,6 +27,7 @@ interface VehicleLandingPageProps {
   ctaHref?: string;
   ctaHeading?: string;
   relatedLinks?: RelatedLink[];
+  crossLinks?: RelatedLink[];
   filterHref?: string;
   children?: React.ReactNode;
 }
@@ -43,9 +45,11 @@ export function VehicleLandingPage({
   ctaHref = "/chci-prodat",
   ctaHeading = "Chcete prodat auto?",
   relatedLinks,
+  crossLinks,
   filterHref,
   children,
 }: VehicleLandingPageProps) {
+  const allCrossLinks = [...(crossLinks || []), ...SERVICE_CROSS_LINKS];
   return (
     <main className="min-h-screen bg-gray-50">
       {/* JSON-LD structured data */}
@@ -188,6 +192,28 @@ export function VehicleLandingPage({
           </div>
         </div>
       </section>
+
+      {/* Cross-ecosystem links (parts bridge + services) */}
+      {allCrossLinks.length > 0 && (
+        <section className="bg-gray-50 py-10 md:py-14">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">
+              Mohlo by vás zajímat
+            </h2>
+            <div className="flex flex-wrap gap-3">
+              {allCrossLinks.map((link, i) => (
+                <Link
+                  key={i}
+                  href={link.href}
+                  className="inline-flex items-center py-2 px-4 bg-white border border-gray-200 text-gray-700 rounded-full text-sm font-medium hover:border-orange-300 hover:text-orange-600 transition-colors no-underline"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Related links */}
       {relatedLinks && relatedLinks.length > 0 && (

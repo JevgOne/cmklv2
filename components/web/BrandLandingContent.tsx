@@ -8,6 +8,7 @@ import {
 } from "@/lib/seo";
 import type { BrandData } from "@/lib/seo-data";
 import { BASE_URL, BRANDS, BODY_TYPES, PRICE_RANGES, TOP_MODELS } from "@/lib/seo-data";
+import { getVehicleToPartsBridge } from "@/lib/seo-crosslinks";
 
 interface BrandLandingContentProps {
   brand: BrandData;
@@ -65,6 +66,11 @@ export function BrandLandingContent({ brand }: BrandLandingContentProps) {
     })),
   ];
 
+  const crossLinks = getVehicleToPartsBridge({
+    brandSlug: brand.slug,
+    brandName: brand.displayName,
+  });
+
   return (
     <VehicleLandingPage
       title={`${brand.displayName} bazar | Ojeté vozy ${brand.displayName} — CarMakler`}
@@ -84,6 +90,7 @@ export function BrandLandingContent({ brand }: BrandLandingContentProps) {
       ctaText={`Prodat ${brand.displayName} s makléřem`}
       ctaHeading={`Chcete prodat ${brand.displayName}?`}
       relatedLinks={relatedLinks}
+      crossLinks={crossLinks}
       filterHref={`/nabidka?brand=${encodeURIComponent(brand.name)}`}
     >
       {/* Top models grid */}

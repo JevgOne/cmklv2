@@ -7,6 +7,7 @@ import {
 } from "@/lib/seo";
 import type { ModelData } from "@/lib/seo-data";
 import { BASE_URL, BRANDS, TOP_MODELS } from "@/lib/seo-data";
+import { getVehicleToPartsBridge } from "@/lib/seo-crosslinks";
 
 interface ModelLandingContentProps {
   model: ModelData;
@@ -64,6 +65,13 @@ export function ModelLandingContent({ model }: ModelLandingContentProps) {
     })),
   ];
 
+  const crossLinks = getVehicleToPartsBridge({
+    brandSlug: model.brandSlug,
+    brandName: model.brandName,
+    modelSlug: model.slug,
+    modelName: model.name,
+  });
+
   return (
     <VehicleLandingPage
       title={`${model.fullName} bazar | Ojeté ${model.name} — CarMakler`}
@@ -84,6 +92,7 @@ export function ModelLandingContent({ model }: ModelLandingContentProps) {
       ctaText={`Prodat ${model.fullName}`}
       ctaHeading={`Chcete prodat ${model.fullName}?`}
       relatedLinks={relatedLinks}
+      crossLinks={crossLinks}
       filterHref={`/nabidka?brand=${encodeURIComponent(model.brandName)}&model=${encodeURIComponent(model.name)}`}
     >
       {/* Variants grid */}

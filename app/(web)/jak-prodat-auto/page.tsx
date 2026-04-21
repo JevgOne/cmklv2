@@ -229,6 +229,33 @@ export default function JakProdatAutoPage() {
         <FAQ items={faqItems} variant="divider" title="Často kladené otázky" />
       </div>
 
+      {/* Související články a nástroje */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          Související články a nástroje
+        </h2>
+        <div className="flex flex-wrap gap-3">
+          <Link href="/kolik-stoji-moje-auto" className="inline-flex items-center py-2.5 px-5 bg-gray-100 text-gray-700 rounded-full text-sm font-medium hover:bg-orange-50 hover:text-orange-600 transition-colors no-underline">
+            Ocenění vozidla
+          </Link>
+          <Link href="/sluzby/proverka" className="inline-flex items-center py-2.5 px-5 bg-gray-100 text-gray-700 rounded-full text-sm font-medium hover:bg-orange-50 hover:text-orange-600 transition-colors no-underline">
+            Prověrka vozidla
+          </Link>
+          <Link href="/sluzby/financovani" className="inline-flex items-center py-2.5 px-5 bg-gray-100 text-gray-700 rounded-full text-sm font-medium hover:bg-orange-50 hover:text-orange-600 transition-colors no-underline">
+            Financování
+          </Link>
+          <Link href="/nabidka" className="inline-flex items-center py-2.5 px-5 bg-gray-100 text-gray-700 rounded-full text-sm font-medium hover:bg-orange-50 hover:text-orange-600 transition-colors no-underline">
+            Katalog ojetých vozidel
+          </Link>
+          <Link href="/makleri" className="inline-flex items-center py-2.5 px-5 bg-gray-100 text-gray-700 rounded-full text-sm font-medium hover:bg-orange-50 hover:text-orange-600 transition-colors no-underline">
+            Najít makléře
+          </Link>
+          <Link href="/sluzby/pojisteni" className="inline-flex items-center py-2.5 px-5 bg-gray-100 text-gray-700 rounded-full text-sm font-medium hover:bg-orange-50 hover:text-orange-600 transition-colors no-underline">
+            Pojištění vozidla
+          </Link>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="mt-10">
         <div className="bg-gradient-to-br from-orange-500 to-orange-600 py-14 md:py-20">

@@ -97,6 +97,33 @@ export default function KolikStojiMojeAutoPage() {
         </div>
       </section>
 
+      {/* Cross-links */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <h2 className="text-xl font-bold text-gray-900 mb-4">
+          Související články a nástroje
+        </h2>
+        <div className="flex flex-wrap gap-3">
+          <Link href="/jak-prodat-auto" className="inline-flex items-center py-2 px-4 bg-white border border-gray-200 text-gray-700 rounded-full text-sm font-medium hover:border-orange-300 hover:text-orange-600 transition-colors no-underline">
+            Jak prodat auto
+          </Link>
+          <Link href="/sluzby/proverka" className="inline-flex items-center py-2 px-4 bg-white border border-gray-200 text-gray-700 rounded-full text-sm font-medium hover:border-orange-300 hover:text-orange-600 transition-colors no-underline">
+            Prověrka vozidla
+          </Link>
+          <Link href="/sluzby/financovani" className="inline-flex items-center py-2 px-4 bg-white border border-gray-200 text-gray-700 rounded-full text-sm font-medium hover:border-orange-300 hover:text-orange-600 transition-colors no-underline">
+            Financování
+          </Link>
+          <Link href="/nabidka" className="inline-flex items-center py-2 px-4 bg-white border border-gray-200 text-gray-700 rounded-full text-sm font-medium hover:border-orange-300 hover:text-orange-600 transition-colors no-underline">
+            Katalog vozidel
+          </Link>
+          <Link href="/makleri" className="inline-flex items-center py-2 px-4 bg-white border border-gray-200 text-gray-700 rounded-full text-sm font-medium hover:border-orange-300 hover:text-orange-600 transition-colors no-underline">
+            Ověření makléři
+          </Link>
+          <Link href="/sluzby/pojisteni" className="inline-flex items-center py-2 px-4 bg-white border border-gray-200 text-gray-700 rounded-full text-sm font-medium hover:border-orange-300 hover:text-orange-600 transition-colors no-underline">
+            Pojištění vozidla
+          </Link>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="mt-10">
         <div className="bg-gradient-to-br from-orange-500 to-orange-600 py-14 md:py-20">

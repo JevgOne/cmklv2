@@ -12,6 +12,7 @@ import {
   PARTS_MODELS_BY_BRAND,
   BASE_URL,
 } from "@/lib/seo-data";
+import { getPartsToVehicleBridge } from "@/lib/seo-crosslinks";
 import { getTopPartsForBrand } from "@/lib/seo/partsItemList";
 import { loadPartsBrandContent } from "@/lib/seo/loadPartsContent";
 import { PartsBreadcrumbs } from "@/components/web/dily/PartsBreadcrumbs";
@@ -273,6 +274,30 @@ export default async function PartsBrandPage({
               {b.name}
             </Link>
           ))}
+        </div>
+      </section>
+
+      {/* Vehicle bridge links */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <h2 className="text-xl font-bold text-gray-900 mb-4">
+          Mohlo by vás zajímat
+        </h2>
+        <div className="flex flex-wrap gap-3">
+          {getPartsToVehicleBridge({ brandSlug: brand, brandName: brandData.name }).map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="inline-flex items-center py-2 px-4 bg-white border border-gray-200 text-gray-700 rounded-full text-sm font-medium hover:border-orange-300 hover:text-orange-600 transition-colors no-underline"
+            >
+              {link.label}
+            </Link>
+          ))}
+          <Link
+            href="/nabidka"
+            className="inline-flex items-center py-2 px-4 bg-white border border-gray-200 text-gray-700 rounded-full text-sm font-medium hover:border-orange-300 hover:text-orange-600 transition-colors no-underline"
+          >
+            Katalog ojetých vozidel
+          </Link>
         </div>
       </section>
 
