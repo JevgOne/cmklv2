@@ -60,16 +60,16 @@ export function FooterBase({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
           {/* Sloupec 1 — O nás + social */}
           <div>
-            <Link href="/" className="flex items-center gap-3 no-underline mb-8">
+            <Link href="/" className="inline-block no-underline mb-8">
               <Image
-                src="/brand/logo-white.png"
+                src="/brand/logo-white-vertical.png"
                 alt="CarMakléř"
-                width={240}
-                height={114}
-                className="h-14 w-auto object-contain"
+                width={170}
+                height={204}
+                className="h-24 w-auto object-contain"
               />
               {badgeLabel && (
-                <span className="text-sm font-semibold text-orange-400">
+                <span className="block text-center text-sm font-semibold text-orange-400 mt-1">
                   {badgeLabel}
                 </span>
               )}
