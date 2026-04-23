@@ -56,8 +56,12 @@ export function MainMobileMenu() {
   const menuOverlay = isOpen ? (
     <div className="fixed inset-0 z-[9999] bg-white flex flex-col" style={{ height: '100dvh' }}>
       <div className="flex items-center justify-between px-4 sm:px-6 h-[72px] border-b border-gray-200 shrink-0">
-        <Link href="/" className="flex items-center no-underline" onClick={closeMenu}>
-          <Image src="/brand/logo-dark.png" alt="CarMakléř" width={180} height={86} className="h-10 sm:h-12 w-auto object-contain" priority />
+        <Link href="/" className="flex items-center gap-2.5 no-underline" onClick={closeMenu}>
+          <Image src="/brand/logo-symbol-dark.png" alt="" width={40} height={40} className="h-10 w-auto" priority />
+          <span className="text-2xl font-extrabold tracking-tight">
+            <span className="text-orange-500">Car</span>
+            <span className="text-gray-900">Makléř</span>
+          </span>
         </Link>
         <button
           type="button"

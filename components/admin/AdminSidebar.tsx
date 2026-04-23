@@ -136,7 +136,11 @@ export function AdminSidebar({ open, onClose }: AdminSidebarProps) {
         {/* Header */}
         <div className="p-6 border-b border-white/[0.08]">
           <div className="flex items-center gap-3">
-            <Image src="/brand/logo-white.png" alt="CarMakléř" width={180} height={86} className="h-10 w-auto object-contain" sizes="180px" priority />
+            <Image src="/brand/logo-symbol-white.png" alt="" width={40} height={40} className="h-9 w-auto" priority />
+            <span className="text-xl font-extrabold tracking-tight">
+              <span className="text-orange-400">Car</span>
+              <span className="text-white">Makléř</span>
+            </span>
             <span className="text-[10px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full ml-2">
               {roleLabel.toUpperCase()}
             </span>

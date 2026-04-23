@@ -95,10 +95,14 @@ export function PartnerLayout({ children }: { children: React.ReactNode }) {
         <div className="p-5 border-b border-gray-100">
           <div className="flex items-center gap-3">
             <img
-              src="/brand/logo-dark.png"
-              alt="CarMakléř"
-              className="h-10"
+              src="/brand/logo-symbol-dark.png"
+              alt=""
+              className="h-9"
             />
+            <span className="text-xl font-extrabold tracking-tight">
+              <span className="text-orange-500">Car</span>
+              <span className="text-gray-900">Makléř</span>
+            </span>
             <span className="text-[10px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full">
               PARTNER
             </span>
@@ -151,13 +155,17 @@ export function PartnerLayout({ children }: { children: React.ReactNode }) {
         <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="w-8" />
-            <div className="flex items-center">
+            <div className="flex items-center gap-2">
               <img
-                src="/brand/logo-dark.png"
-                alt="CarMakléř"
-                className="h-9"
+                src="/brand/logo-symbol-dark.png"
+                alt=""
+                className="h-7"
               />
-              <span className="ml-2 text-[10px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full">
+              <span className="text-lg font-extrabold tracking-tight">
+                <span className="text-orange-500">Car</span>
+                <span className="text-gray-900">Makléř</span>
+              </span>
+              <span className="text-[10px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full">
                 PARTNER
               </span>
             </div>

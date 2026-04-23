@@ -124,8 +124,12 @@ export function MainNavbar() {
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/80">
       <nav aria-label="Hlavni navigace" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between">
-        <Link href="/" className="flex items-center no-underline shrink-0">
-          <Image src="/brand/logo-dark.png" alt="CarMakléř" width={180} height={86} className="h-9 sm:h-11 w-auto object-contain" priority />
+        <Link href="/" className="flex items-center gap-2.5 no-underline shrink-0">
+          <Image src="/brand/logo-symbol-dark.png" alt="" width={40} height={40} className="h-9 sm:h-10 w-auto" priority />
+          <span className="text-xl sm:text-2xl font-extrabold tracking-tight">
+            <span className="text-orange-500">Car</span>
+            <span className="text-gray-900">Makléř</span>
+          </span>
         </Link>
 
         <div className="hidden lg:flex items-center gap-1">

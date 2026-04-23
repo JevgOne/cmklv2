@@ -14,7 +14,11 @@ export function MarketplaceNavbar() {
       <nav aria-label="Hlavni navigace" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 no-underline shrink-0">
-          <Image src="/brand/logo-white.png" alt="CarMakléř" width={180} height={86} className="h-10 sm:h-12 w-auto object-contain" sizes="180px" priority />
+          <Image src="/brand/logo-symbol-white.png" alt="" width={40} height={40} className="h-9 sm:h-10 w-auto" priority />
+          <span className="text-xl sm:text-2xl font-extrabold tracking-tight">
+            <span className="text-orange-400">Car</span>
+            <span className="text-white">Makléř</span>
+          </span>
           <span className="text-sm font-semibold text-orange-400 border border-orange-800 rounded-full px-2 py-0.5">
             Marketplace
           </span>
