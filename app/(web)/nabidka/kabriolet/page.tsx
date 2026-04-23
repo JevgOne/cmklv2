@@ -8,7 +8,7 @@ import { pageCanonical } from "@/lib/canonical";
 const bodyType = BODY_TYPES.find((b) => b.slug === "kabriolet");
 
 export const metadata: Metadata = bodyType ? {
-  title: `${bodyType.name} bazar | Ojeté ${bodyType.name.toLowerCase()} vozy`,
+  title: `Kabriolet bazar | Ojeté kabriolety`,
   description: `Prověřené ojeté kabriolety od ověřených makléřů. Široký výběr značek a modelů. Bezpečný nákup s garancí.`,
   openGraph: {
     title: `Ojeté kabriolety`,

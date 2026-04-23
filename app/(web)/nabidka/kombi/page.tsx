@@ -8,7 +8,7 @@ import { pageCanonical } from "@/lib/canonical";
 const bodyType = BODY_TYPES.find((b) => b.slug === "kombi");
 
 export const metadata: Metadata = bodyType ? {
-  title: `${bodyType.name} bazar | Ojeté ${bodyType.name.toLowerCase()} vozy`,
+  title: `Kombi bazar | Ojeté vozy kombi`,
   description: `Prověřené ojeté vozy kombi od ověřených makléřů. Široký výběr značek a modelů. Bezpečný nákup s garancí.`,
   openGraph: {
     title: `Ojeté vozy kombi`,
