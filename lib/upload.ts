@@ -19,7 +19,7 @@ const MAX_IMAGE_WIDTH = 1920;
 const WEBP_QUALITY = 85;
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
-const WATERMARK_PATH = join(process.cwd(), "public/brand/logo-white.png");
+const WATERMARK_PATH = join(process.cwd(), "public/brand/logo-symbol-white.png");
 
 const IMAGE_EXTENSIONS = new Set(["image/jpeg", "image/png", "image/webp"]);
 
