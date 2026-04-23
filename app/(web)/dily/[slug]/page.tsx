@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -9,6 +10,26 @@ import { AddToCartButton } from "@/app/(web)/shop/produkt/[slug]/AddToCartButton
 import { prisma } from "@/lib/prisma";
 import { getCategoryLabel, getConditionLabel } from "@/lib/parts-categories";
 import type { PartCategory, PartCondition } from "@/types/parts";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const part = await prisma.part.findFirst({
+    where: { OR: [{ slug }, { id: slug }] },
+    select: { name: true, description: true, price: true, category: true },
+  });
+  if (!part) return { title: "Díl nenalezen" };
+  const price = new Intl.NumberFormat("cs-CZ").format(part.price);
+  return {
+    title: `${part.name} — ${price} Kč | Díly CarMakléř`,
+    description:
+      part.description?.slice(0, 155) ||
+      `Kupte ${part.name} za ${price} Kč na CarMakléř. Kategorie: ${getCategoryLabel(part.category as PartCategory)}.`,
+  };
+}
 
 function Stars({ count }: { count: number }) {
   return (

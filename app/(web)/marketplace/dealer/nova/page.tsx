@@ -5,7 +5,10 @@ import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
   title: "Nová příležitost | Realizátor | Marketplace",
+  description:
+    "Vytvořte novou investiční příležitost na CarMakléř Marketplace. Zadejte detaily vozu, kalkulaci nákladů a očekávaný zisk.",
   alternates: pageCanonical("/marketplace/dealer/nova"),
+  robots: { index: false, follow: true },
 };
 
 export default function NewOpportunityPage() {

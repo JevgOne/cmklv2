@@ -2,7 +2,11 @@ import { redirect } from "next/navigation";
 import { verifyEmailToken } from "@/lib/email-verification";
 import Link from "next/link";
 
-export const metadata = { title: "Ověření emailu" };
+export const metadata = {
+  title: "Ověření emailu",
+  description: "Ověřte svůj email pro aktivaci účtu na CarMakléř.",
+  robots: { index: false, follow: false },
+};
 
 export default async function VerifyEmailPage({
   params,
