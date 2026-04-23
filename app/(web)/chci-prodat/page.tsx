@@ -267,6 +267,9 @@ export default async function ChciProdatPage() {
           </p>
         </div>
         <div className="flex flex-wrap justify-center gap-4">
+          <Link href="/kolik-stoji-moje-auto" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+            Kolik stojí moje auto?
+          </Link>
           <Link href="/jak-to-funguje" className="no-underline px-5 py-3 bg-gray-100 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
             Jak prodej přes makléře funguje
           </Link>
