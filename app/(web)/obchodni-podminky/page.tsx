@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description:
     "Obchodní podmínky platformy CarMakler. Podmínky pro nákup autodílů, inzertní služby, makléřské služby a investiční marketplace.",
   openGraph: {
-    title: "Obchodní podmínky | CarMakler",
+    title: "Obchodní podmínky",
     description:
       "Obchodní podmínky platformy CarMakler — e-shop s autodíly, inzerce vozidel, makléřské služby.",
   },
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  name: "Obchodní podmínky — CarMakler",
+  name: "Obchodní podmínky",
   url: `${BASE_URL}/obchodni-podminky`,
   description: "Obchodní podmínky platformy CarMakler",
   isPartOf: {

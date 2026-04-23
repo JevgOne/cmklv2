@@ -8,10 +8,10 @@ import { pageCanonical } from "@/lib/canonical";
 const city = CITIES.find((c) => c.slug === "ceske-budejovice");
 
 export const metadata: Metadata = city ? {
-  title: `Autobazar ${city.name} | Ojeté vozy ${city.inLocative} — CarMakler`,
+  title: `Autobazar ${city.name} | Ojeté vozy ${city.inLocative}`,
   description: `Prověřené ojeté vozy ${city.inLocative} od ověřených makléřů. Osobní prohlídka, prověrka CEBIA, bezpečný nákup.`,
   openGraph: {
-    title: `Ojeté vozy ${city.inLocative} | CarMakler`,
+    title: `Ojeté vozy ${city.inLocative}`,
     description: `Prověřené ojeté vozy ${city.inLocative}. Bezpečný nákup od makléřů.`,
   },
   alternates: pageCanonical("/nabidka/ceske-budejovice"),
@@ -48,7 +48,7 @@ export default function Page() {
 
   return (
     <VehicleLandingPage
-      title={`Autobazar ${city.name} | Ojeté vozy ${city.inLocative} — CarMakler`}
+      title={`Autobazar ${city.name} | Ojeté vozy ${city.inLocative}`}
       description={city.description}
       h1={`Ojeté vozy ${city.inLocative}`}
       filterDescription={`Prověřené ojeté vozy od ověřených makléřů ${city.inLocative} a okolí.`}

@@ -11,7 +11,7 @@ import {
 import { BASE_URL } from "@/lib/seo-data";
 
 export const metadata: Metadata = {
-  title: "Jak prodat auto v roce 2026 | Kompletní průvodce — CarMakler",
+  title: "Jak prodat auto v roce 2026 | Kompletní průvodce",
   description:
     "Kompletní průvodce prodejem auta v roce 2026. Příprava vozu, stanovení ceny, inzerce, fotografie, prohlídky, smlouva a daňové povinnosti.",
   openGraph: {

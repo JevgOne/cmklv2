@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description:
     "Informace o zpracování osobních údajů na platformě CarMakler dle GDPR a zákona 110/2019 Sb.",
   openGraph: {
-    title: "Ochrana osobních údajů | CarMakler",
+    title: "Ochrana osobních údajů",
     description:
       "Zásady ochrany osobních údajů platformy CarMakler — správce, účely zpracování, práva subjektů.",
   },
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  name: "Ochrana osobních údajů — CarMakler",
+  name: "Ochrana osobních údajů",
   url: `${BASE_URL}/ochrana-osobnich-udaju`,
   description: "Zásady ochrany osobních údajů platformy CarMakler dle GDPR",
   isPartOf: {

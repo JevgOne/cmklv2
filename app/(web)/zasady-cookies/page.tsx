@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: "Zásady cookies",
   description: "Informace o používání cookies na platformě CarMakler. Přehled cookies, účely a způsob správy.",
   openGraph: {
-    title: "Zásady cookies | CarMakler",
+    title: "Zásady cookies",
     description: "Informace o používání cookies na platformě CarMakler.",
   },
   alternates: pageCanonical("/zasady-cookies"),

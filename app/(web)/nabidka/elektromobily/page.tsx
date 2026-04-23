@@ -57,7 +57,7 @@ export default function Page() {
 
   return (
     <VehicleLandingPage
-      title={`${bodyType.name} bazar | Ojeté ${bodyType.name.toLowerCase()} vozy — CarMakler`}
+      title={`${bodyType.name} bazar | Ojeté ${bodyType.name.toLowerCase()} vozy`}
       description={bodyType.description}
       h1="Ojeté elektromobily"
       filterDescription="Prověřené ojeté elektromobily od ověřených makléřů. Široký výběr značek a modelů."

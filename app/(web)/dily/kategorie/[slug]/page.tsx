@@ -20,7 +20,7 @@ export async function generateMetadata({
   if (!category) return {};
 
   return {
-    title: `${category.name} | Náhradní díly — CarMakler`,
+    title: `${category.name} | Náhradní díly`,
     description: `Náhradní díly — ${category.name.toLowerCase()}. Použité i nové díly od ověřených dodavatelů za výhodné ceny s garancí funkčnosti.`,
     alternates: pageCanonical(`/dily/kategorie/${slug}`),
     openGraph: {

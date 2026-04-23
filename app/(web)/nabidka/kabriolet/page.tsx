@@ -8,11 +8,11 @@ import { pageCanonical } from "@/lib/canonical";
 const bodyType = BODY_TYPES.find((b) => b.slug === "kabriolet");
 
 export const metadata: Metadata = bodyType ? {
-  title: `${bodyType.name} bazar | Ojeté ${bodyType.name.toLowerCase()} vozy — CarMakler`,
-  description: `Prověřené ojeté ${bodyType.name.toLowerCase()} vozy od ověřených makléřů. Široký výběr značek a modelů. Bezpečný nákup s garancí.`,
+  title: `${bodyType.name} bazar | Ojeté ${bodyType.name.toLowerCase()} vozy`,
+  description: `Prověřené ojeté kabriolety od ověřených makléřů. Široký výběr značek a modelů. Bezpečný nákup s garancí.`,
   openGraph: {
-    title: `Ojeté ${bodyType.name} vozy | CarMakler`,
-    description: `Prověřené ojeté ${bodyType.name.toLowerCase()} vozy. Bezpečný nákup od makléřů.`,
+    title: `Ojeté kabriolety`,
+    description: `Prověřené ojeté kabriolety. Bezpečný nákup od makléřů.`,
   },
   alternates: pageCanonical("/nabidka/kabriolet"),
 } : {};
@@ -27,7 +27,7 @@ export default function Page() {
   ]);
   const faqJsonLd = generateFaqJsonLd(bodyType.faqItems);
   const webPageJsonLd = generateWebPageJsonLd({
-    name: `Ojeté ${bodyType.name} vozy`,
+    name: `Ojeté kabriolety`,
     description: bodyType.description,
     url: `${BASE_URL}/nabidka/${bodyType.slug}`,
     about: [{ name: bodyType.name, type: "Thing" }, { name: "Ojeté automobily", type: "Thing" }],
@@ -57,10 +57,10 @@ export default function Page() {
 
   return (
     <VehicleLandingPage
-      title={`${bodyType.name} bazar | Ojeté ${bodyType.name.toLowerCase()} vozy — CarMakler`}
+      title={`${bodyType.name} bazar | Ojeté ${bodyType.name.toLowerCase()} vozy`}
       description={bodyType.description}
-      h1={`Ojeté ${bodyType.name.toLowerCase()} vozy`}
-      filterDescription={`Prověřené ojeté ${bodyType.name.toLowerCase()} vozy od ověřených makléřů. Široký výběr značek a modelů.`}
+      h1={`Ojeté kabriolety`}
+      filterDescription={`Prověřené ojeté kabriolety od ověřených makléřů. Široký výběr značek a modelů.`}
       aiSnippet={bodyType.aiSnippet}
       quickFacts={bodyType.quickFacts}
       seoText={

@@ -7,9 +7,9 @@ import { pageCanonical } from "@/lib/canonical";
 const model = TOP_MODELS.find((m) => m.brandSlug === "volkswagen" && m.slug === "passat");
 
 export const metadata: Metadata = model ? {
-  title: `${model.fullName} bazar | Ojeté ${model.name} — CarMakler`,
+  title: `${model.fullName} bazar | Ojeté ${model.name}`,
   description: `Prověřené ojeté ${model.fullName} od ověřených makléřů. Varianty ${model.variants.join(", ")}. Bezpečný nákup s garancí.`,
-  openGraph: { title: `${model.fullName} | CarMakler`, description: `Ojeté ${model.fullName} v nabídce. Prověřené vozy od ověřených makléřů.` },
+  openGraph: { title: `${model.fullName}`, description: `Ojeté ${model.fullName} v nabídce. Prověřené vozy od ověřených makléřů.` },
   alternates: pageCanonical("/nabidka/volkswagen/passat"),
 } : {};
 

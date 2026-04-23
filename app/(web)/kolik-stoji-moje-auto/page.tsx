@@ -6,7 +6,7 @@ import { BASE_URL } from "@/lib/seo-data";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
-  title: "Kolik stojí moje auto? | Kalkulačka ceny vozidla — CarMakler",
+  title: "Kolik stojí moje auto? | Kalkulačka ceny vozidla",
   description:
     "Zjistěte orientační cenu vašeho ojetého auta online. Kalkulačka ceny vozidla na základě značky, modelu, roku výroby a stavu. Profesionální ocenění makléřem zdarma.",
   openGraph: {

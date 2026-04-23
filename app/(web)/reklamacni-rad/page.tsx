@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description:
     "Reklamační řád e-shopu CarMakler. Záruční doby, uplatnění reklamace, odstoupení od smlouvy, mimosoudní řešení sporů.",
   openGraph: {
-    title: "Reklamační řád | CarMakler",
+    title: "Reklamační řád",
     description:
       "Reklamační řád e-shopu s autodíly CarMakler — záruční doby, postup reklamace, práva spotřebitele.",
   },
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  name: "Reklamační řád — CarMakler",
+  name: "Reklamační řád",
   url: `${BASE_URL}/reklamacni-rad`,
   description: "Reklamační řád e-shopu CarMakler",
   isPartOf: {

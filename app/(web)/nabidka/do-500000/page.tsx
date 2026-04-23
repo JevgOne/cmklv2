@@ -8,10 +8,10 @@ import { pageCanonical } from "@/lib/canonical";
 const priceRange = PRICE_RANGES.find((p) => p.slug === "do-500000");
 
 export const metadata: Metadata = priceRange ? {
-  title: `Auta ${priceRange.label} | Ojeté vozy — CarMakler`,
+  title: `Auta ${priceRange.label} | Ojeté vozy`,
   description: `Prověřené ojeté vozy ${priceRange.label} od ověřených makléřů. Široký výběr značek a modelů za rozumné ceny. Bezpečný nákup.`,
   openGraph: {
-    title: `Ojeté vozy ${priceRange.label} | CarMakler`,
+    title: `Ojeté vozy ${priceRange.label}`,
     description: `Prověřené ojeté vozy ${priceRange.label}. Bezpečný nákup od makléřů.`,
   },
   alternates: pageCanonical("/nabidka/do-500000"),
@@ -51,7 +51,7 @@ export default function Page() {
 
   return (
     <VehicleLandingPage
-      title={`Auta ${priceRange.label} | Ojeté vozy — CarMakler`}
+      title={`Auta ${priceRange.label} | Ojeté vozy`}
       description={priceRange.description}
       h1={`Ojeté vozy ${priceRange.label}`}
       filterDescription={`Prověřené ojeté vozy v cenové kategorii ${priceRange.label} od ověřených makléřů.`}
