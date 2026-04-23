@@ -10,11 +10,11 @@ import { pageCanonical } from "@/lib/canonical";
 import { BrokerCard, type BrokerCardBroker } from "@/components/web/BrokerCard";
 
 export const metadata: Metadata = {
-  title: "CarMakléř | Prodejte auto za nejlepší cenu, kupte bezpečně",
+  title: "Prodejte auto za nejlepší cenu, kupte bezpečně",
   description:
     "Pomáháme lidem prodat auto za nejvyšší cenu a koupit bezpečně. Váš makléř se postará o fotky, inzerci, prohlídky i papíry. Průměrně do 20 dní.",
   openGraph: {
-    title: "CarMakléř | Prodejte auto za nejlepší cenu, kupte bezpečně",
+    title: "Prodejte auto za nejlepší cenu, kupte bezpečně | CarMakléř",
     description:
       "Pomáháme lidem prodat auto za nejvyšší cenu a koupit bezpečně. Váš makléř zajistí vše od A do Z.",
     type: "website",
