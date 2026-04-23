@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { PaymentPageContent } from "./PaymentPageContent";
 
 export const metadata: Metadata = {
-  title: "Platba za vozidlo — CarMakléř",
+  title: "Platba za vozidlo",
   description: "Bezpečná platba za vozidlo přes CarMakléř",
   // Transactional/private page — not indexable. Žádný canonical, místo toho
   // robots noindex.

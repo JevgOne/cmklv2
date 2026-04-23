@@ -6,7 +6,7 @@ import { BASE_URL } from "@/lib/seo-data";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
-  title: "Vrácení zboží | CarMakléř Shop",
+  title: "Vrácení zboží | Shop",
   description:
     "Máte 14 dní na vrácení zakoupených dílů bez udání důvodu. Postup krok-za-krokem a kontakt na podporu.",
   openGraph: {

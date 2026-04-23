@@ -6,7 +6,7 @@ import { BASE_URL } from "@/lib/seo-data";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
-  title: "Reklamace | CarMakléř Shop",
+  title: "Reklamace | Shop",
   description:
     "Zjistili jste vadu na zakoupeném dílu? Uplatněte reklamaci online za pár minut. Záruka 24 měsíců na nové díly, 12 měsíců na použité.",
   openGraph: {

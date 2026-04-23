@@ -7,7 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
-  title: "Realizátor Dashboard | Marketplace | CarMakléř",
+  title: "Realizátor Dashboard | Marketplace",
   alternates: pageCanonical("/marketplace/dealer"),
 };
 

@@ -4,7 +4,7 @@ import { OpportunityWizard } from "@/components/web/marketplace/OpportunityWizar
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
-  title: "Nová příležitost | Realizátor | Marketplace | CarMakléř",
+  title: "Nová příležitost | Realizátor | Marketplace",
   alternates: pageCanonical("/marketplace/dealer/nova"),
 };
 

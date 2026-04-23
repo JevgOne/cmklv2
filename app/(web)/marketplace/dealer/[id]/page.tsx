@@ -12,7 +12,7 @@ import { formatPrice } from "@/lib/utils";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
-  title: "Detail flipu | Realizátor | Marketplace | CarMakléř",
+  title: "Detail flipu | Realizátor | Marketplace",
   // Gated marketplace VIP content — not indexable. Žádný canonical, místo
   // toho robots noindex.
   robots: { index: false, follow: false },

@@ -3,7 +3,7 @@ import { CompareTable } from "./CompareTable";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
-  title: "Porovnání vozidel — CarMakléř",
+  title: "Porovnání vozidel",
   description: "Porovnejte až 3 vozidla vedle sebe. Srovnání ceny, parametrů, výbavy a stavu.",
   alternates: pageCanonical("/nabidka/porovnani"),
 };
