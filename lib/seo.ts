@@ -350,7 +350,7 @@ export function generateOrganizationJsonLd(): string {
     "@type": "Organization",
     name: "Carmakler",
     url: "https://carmakler.cz",
-    logo: "https://carmakler.cz/logo.png",
+    logo: "https://carmakler.cz/brand/logo-color.png",
     description:
       "Česká marketplace platforma pro použité autodíly z vrakovišť. Spojuje vrakoviště s kupujícími přes katalogizovanou nabídku s detailními popisy, fotkami a kompatibilitou podle VIN.",
     foundingDate: "2025",
