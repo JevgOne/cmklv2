@@ -8,11 +8,11 @@ import { pageCanonical } from "@/lib/canonical";
 const bodyType = BODY_TYPES.find((b) => b.slug === "suv");
 
 export const metadata: Metadata = bodyType ? {
-  title: `${bodyType.name} bazar | Ojeté ${bodyType.name.toLowerCase()} vozy — CarMakler`,
-  description: `Prověřené ojeté ${bodyType.name.toLowerCase()} vozy od ověřených makléřů. Široký výběr značek a modelů. Bezpečný nákup s garancí.`,
+  title: `SUV bazar | Ojeté vozy SUV`,
+  description: `Prověřené ojeté SUV od ověřených makléřů. Široký výběr značek a modelů. Bezpečný nákup s garancí.`,
   openGraph: {
-    title: `Ojeté ${bodyType.name} vozy | CarMakler`,
-    description: `Prověřené ojeté ${bodyType.name.toLowerCase()} vozy. Bezpečný nákup od makléřů.`,
+    title: `Ojeté vozy SUV`,
+    description: `Prověřené ojeté SUV. Bezpečný nákup od makléřů.`,
   },
   alternates: pageCanonical("/nabidka/suv"),
 } : {};
@@ -27,7 +27,7 @@ export default function Page() {
   ]);
   const faqJsonLd = generateFaqJsonLd(bodyType.faqItems);
   const webPageJsonLd = generateWebPageJsonLd({
-    name: `Ojeté ${bodyType.name} vozy`,
+    name: `Ojeté vozy SUV`,
     description: bodyType.description,
     url: `${BASE_URL}/nabidka/${bodyType.slug}`,
     about: [{ name: bodyType.name, type: "Thing" }, { name: "Ojeté automobily", type: "Thing" }],
@@ -59,8 +59,8 @@ export default function Page() {
     <VehicleLandingPage
       title={`${bodyType.name} bazar | Ojeté ${bodyType.name.toLowerCase()} vozy — CarMakler`}
       description={bodyType.description}
-      h1={`Ojeté ${bodyType.name.toLowerCase()} vozy`}
-      filterDescription={`Prověřené ojeté ${bodyType.name.toLowerCase()} vozy od ověřených makléřů. Široký výběr značek a modelů.`}
+      h1="Ojeté vozy SUV"
+      filterDescription="Prověřené ojeté SUV od ověřených makléřů. Široký výběr značek a modelů."
       aiSnippet={bodyType.aiSnippet}
       quickFacts={bodyType.quickFacts}
       seoText={

@@ -222,7 +222,6 @@ export async function middleware(request: NextRequest) {
     "/makler/vehicles",
     "/makler/commissions",
     "/makler/profile",
-    "/makler/offline",
     "/makler/assistant",
     "/makler/contracts",
     "/makler/leads",

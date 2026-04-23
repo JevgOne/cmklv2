@@ -208,7 +208,7 @@ export async function generateMetadata({
     `Profil ${roleLabel.toLowerCase()} ${fullName}${user.city ? " z " + user.city : ""}. Aktivní vozidla, recenze a kontakt.`;
 
   return {
-    title: `${fullName} — ${roleLabel} CarMakléř`,
+    title: `${fullName} — ${roleLabel}`,
     description,
     alternates: pageCanonical(`/profil/${slug}`),
     openGraph: {
