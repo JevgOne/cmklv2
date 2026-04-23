@@ -212,7 +212,7 @@ function PrezentaceContent() {
             priority
           />
           <h1 className="text-4xl sm:text-6xl font-extrabold mb-6">
-            Síť certifikovaných
+            Síť certifikovaných{" "}
             <br />
             <span className="text-orange-500">automakléřů</span>
           </h1>

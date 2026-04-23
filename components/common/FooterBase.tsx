@@ -278,10 +278,7 @@ export function FooterBase({
             </nav>
           </div>
           <div className="text-center mt-4 text-xs text-gray-700">
-            Web vytvořil{" "}
-            <a href="https://weblyx.cz" target="_blank" rel="noopener noreferrer" className="hover:text-orange-400 transition-colors no-underline">
-              weblyx.cz
-            </a>
+            © {new Date().getFullYear()} CarMakléř
           </div>
         </div>
       </div>

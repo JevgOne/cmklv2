@@ -8,7 +8,7 @@ import { getBrokerStats } from "@/lib/stats";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
-  title: "Prodat auto za nejvyšší cenu | CarMakléř",
+  title: "Prodat auto za nejvyšší cenu",
   description:
     "Váš makléř zajistí fotky, inzerci na všech portálech, prohlídky i smlouvu. Vy jen inkasujete. Průměrně za 20 dní, provize 5 %.",
   openGraph: {
