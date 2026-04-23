@@ -86,11 +86,11 @@ export default function KontaktPage() {
             {/* Left — info */}
             <div>
               <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-6">
-                Kontaktujte nás
+                Ozvěte se nám
               </h1>
               <p className="text-gray-500 leading-relaxed mb-8">
-                Máte otázku, potřebujete poradit nebo chcete spolupracovat?
-                Napište nám nebo zavolejte — rádi vám pomůžeme.
+                Chcete prodat auto, hledáte makléře nebo máte dotaz k našim službám?
+                Zavolejte, napište nebo vyplňte formulář — odpovídáme do 30 minut v pracovní dny.
               </p>
 
               <div className="flex flex-col gap-5">

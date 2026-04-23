@@ -4,9 +4,9 @@ import { FinancovaniCalc } from "@/components/web/FinancovaniCalc";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
-  title: "Financování",
+  title: "Financování auta — schválení do 30 minut",
   description:
-    "Výhodné financování auta na splátky do 30 minut. Bez zálohy, nízký úrok od 3,9 %, schválení online.",
+    "Auto na splátky bez zálohy, úrok od 3,9 %. Online schválení do 30 minut, bez návštěvy pobočky.",
   openGraph: {
     title: "Financování auta | CarMakléř",
     description:
@@ -20,19 +20,19 @@ const steps = [
     icon: "🚗",
     title: "Vyberte auto",
     description:
-      "Vyberte si vůz z naší nabídky nebo přineste vlastní — financujeme obojí",
+      "Z naší nabídky nebo vlastní výběr — financujeme nová i ojetá vozidla do 10 let",
   },
   {
     icon: "🧮",
-    title: "Spočítáme splátky",
+    title: "Spočítáme nejlepší splátku",
     description:
-      "Připravíme vám nabídku s nejlepším úrokem od našich partnerských bank",
+      "Porovnáme nabídky od partnerských bank a leasingových společností. Vy si vyberete tu nejlepší",
   },
   {
     icon: "⚡",
-    title: "Schválení do 30 min",
+    title: "Schválení do 30 minut",
     description:
-      "Online schválení bez návštěvy pobočky. Peníze na účtu ještě dnes",
+      "Online, bez papírování, bez návštěvy pobočky. Peníze na účtu ještě tentýž den",
   },
 ];
 
@@ -41,25 +41,25 @@ const benefits = [
     icon: "🚀",
     title: "Bez zálohy",
     description:
-      "Financování až 100 % ceny vozidla bez nutnosti skládat zálohu",
+      "Financování až 100 % ceny vozidla. Nemusíte mít peníze dopředu — auto můžete mít hned",
   },
   {
     icon: "📉",
-    title: "Nízký úrok od 3,9 %",
+    title: "Úrok od 3,9 %",
     description:
-      "Spolupracujeme s předními bankami a leasingovými společnostmi pro nejlepší sazby",
+      "Díky spolupráci s předními bankami vám zajistíme sazby, které sami na pobočce nedostanete",
   },
   {
     icon: "💻",
-    title: "Schválení online",
+    title: "Vše online",
     description:
-      "Celý proces proběhne online. Žádné papírování ani návštěvy poboček",
+      "Žádost, schválení i podpis smlouvy — vše z pohodlí domova. Na pobočku nemusíte",
   },
   {
     icon: "🛡️",
-    title: "Pojištění v ceně",
+    title: "Pojištění rovnou v ceně",
     description:
-      "K financování získáte výhodné pojištění vozidla přímo v jedné splátce",
+      "K financování přidáme výhodné pojištění. Jedna splátka, žádné starosti navíc",
   },
 ];
 
@@ -88,7 +88,7 @@ export default function FinancovaniPage() {
         title: "Auto na splátky do 30 minut",
         highlight: "do 30 minut",
         subtitle:
-          "Výhodné financování bez zbytečného papírování",
+          "Bez zálohy, úrok od 3,9 %, schválení online. Porovnáme nabídky bank za vás.",
       }}
       steps={steps}
       benefits={benefits}

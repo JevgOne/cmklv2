@@ -4,9 +4,9 @@ import { PojisteniForm } from "@/components/web/PojisteniForm";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
-  title: "Pojištění",
+  title: "Pojištění auta — srovnání všech pojišťoven",
   description:
-    "Povinné ručení i havarijní pojištění online. Srovnání nabídek všech pojišťoven, nejlepší cena, sjednání bez papírování.",
+    "Porovnáme povinné ručení i havarijní pojištění od všech pojišťoven. Najdeme nejlepší cenu, sjednáte online za 3 minuty.",
   openGraph: {
     title: "Pojištění auta online | CarMakléř",
     description:
@@ -20,46 +20,46 @@ const steps = [
     icon: "🔢",
     title: "Zadejte SPZ",
     description:
-      "Stačí zadat registrační značku a my dohledáme údaje o vozidle",
+      "Údaje o vozu doplníme automaticky — nemusíte nic vyplňovat ručně",
   },
   {
     icon: "📊",
-    title: "Porovnáme nabídky",
+    title: "Porovnáme všechny pojišťovny",
     description:
-      "Srovnáme nabídky všech pojišťoven na trhu a najdeme tu nejvýhodnější",
+      "Za pár sekund vidíte nabídky od všech pojišťoven v ČR seřazené od nejlevnější",
   },
   {
     icon: "✅",
-    title: "Sjednáte online",
+    title: "Sjednáte za 3 minuty",
     description:
-      "Pojištění sjednáte kompletně online. Smlouvu obdržíte na email",
+      "Kliknete, podepíšete online, zelenou kartu máte na emailu. Hotovo",
   },
 ];
 
 const benefits = [
   {
     icon: "🏦",
-    title: "Srovnání pojišťoven",
+    title: "Všechny pojišťovny na jednom místě",
     description:
-      "Porovnáváme nabídky od všech pojišťoven v ČR — najdeme tu nejlepší pro vás",
+      "Nemusíte obcházet weby pojišťoven — porovnáme za vás a ukážeme tu nejlepší nabídku",
   },
   {
     icon: "💻",
-    title: "Online sjednání",
+    title: "Kompletně online",
     description:
-      "Celý proces proběhne online. Žádné návštěvy poboček ani papírování",
+      "Od srovnání po podpis smlouvy. Žádné pobočky, žádné papíry, žádné čekání",
   },
   {
     icon: "💰",
-    title: "Nejlepší cena",
+    title: "Garantovaně nejlepší cena",
     description:
-      "Garantujeme nejnižší cenu na trhu. Pokud najdete levnější, dorovnáme ji",
+      "Najdete levnější? Dorovnáme. Díky objemu vyjednáme ceny, které na pobočce nedostanete",
   },
   {
     icon: "🚫",
-    title: "Bez poplatků",
+    title: "Služba je zdarma",
     description:
-      "Za srovnání a sjednání pojištění neplatíte žádné poplatky. Služba je zdarma",
+      "Za srovnání a sjednání neplatíte ani korunu. Provizi platí pojišťovna, ne vy",
   },
 ];
 
@@ -88,7 +88,7 @@ export default function PojisteniPage() {
         title: "Povinné ručení i havarijní online",
         highlight: "online",
         subtitle:
-          "Porovnáme nabídky a najdeme tu nejlepší pro vás",
+          "Porovnáme všechny pojišťovny v ČR a najdeme tu nejlevnější. Sjednáte za 3 minuty, zdarma.",
       }}
       steps={steps}
       benefits={benefits}

@@ -7,9 +7,9 @@ import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
-  title: "Inzerce — vložte inzerát zdarma",
+  title: "Inzerce aut zdarma — vložte inzerát za minutu",
   description:
-    "Vložte inzerát na prodej auta zdarma za minutu. Bez registrace, bez poplatků. Vaše auto uvidí tisíce kupujících denně.",
+    "Prodejte auto bez poplatků. Inzerát za minutu, bez registrace. Tisíce kupujících denně, detailní statistiky, zvýraznění TOP.",
   openGraph: {
     title: "Inzerce zdarma | CarMakléř",
     description:
@@ -26,17 +26,17 @@ const steps = [
   {
     icon: "📸",
     title: "Nafoťte auto",
-    desc: "Stačí pár fotek z mobilu",
+    desc: "Stačí pár fotek z mobilu — čím lepší fotky, tím rychlejší prodej",
   },
   {
     icon: "📝",
     title: "Vyplňte údaje",
-    desc: "Značka, model, cena — to je vše",
+    desc: "Značka, model, rok, cena. Vyplníte za minutu, VIN doplní detaily automaticky",
   },
   {
     icon: "✅",
-    title: "Inzerát je online",
-    desc: "Během minuty viditelný pro tisíce lidí",
+    title: "Prodáváte",
+    desc: "Inzerát je online ihned. Zájemci vás kontaktují přímo přes platformu",
   },
 ];
 
@@ -44,22 +44,22 @@ const benefits = [
   {
     icon: "💰",
     title: "Zcela zdarma",
-    desc: "Žádné poplatky, žádné skryté náklady",
+    desc: "Žádné poplatky za vložení ani zobrazení. Platíte jen pokud chcete zvýraznění TOP",
   },
   {
     icon: "👁",
-    title: "Tisíce kupujících",
-    desc: "Vaše auto uvidí tisíce lidí denně",
+    title: "Tisíce kupujících denně",
+    desc: "Vaše auto uvidí lidé, kteří aktivně hledají. Ne náhodní kolemjdoucí",
   },
   {
     icon: "⚡",
-    title: "Za minutu online",
-    desc: "Žádné zdlouhavé formuláře",
+    title: "Online za 60 sekund",
+    desc: "Žádné zdlouhavé formuláře. Značka, model, cena, fotky — hotovo",
   },
   {
     icon: "📱",
-    title: "Jednoduše z mobilu",
-    desc: "Nafoťte a vložte odkudkoliv",
+    title: "Z mobilu i z počítače",
+    desc: "Nafoťte auto na parkovišti a inzerát je online ještě dřív, než nasednete",
   },
 ];
 

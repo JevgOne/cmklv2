@@ -4,9 +4,9 @@ import { ProverkaForm } from "@/components/web/ProverkaForm";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
-  title: "Prověrka vozidla",
+  title: "Prověrka vozidla — kupte auto bez rizika",
   description:
-    "Kompletní prověrka historie a technického stavu vozidla. Kontrola původu, havárií, servisní historie a stočení tachometru.",
+    "Zjistěte pravdu o autě, než ho koupíte. Kontrola havárií, stočení km, zástav a servisní historie. Report do 30 minut.",
   openGraph: {
     title: "Prověrka vozidla | CarMakléř",
     description:
@@ -18,47 +18,47 @@ export const metadata: Metadata = {
 const steps = [
   {
     icon: "🔍",
-    title: "Zadejte VIN",
-    description: "Stačí zadat 17místný VIN kód vozidla, které chcete prověřit",
+    title: "Zadejte VIN kód",
+    description: "Stačí 17místný VIN — najdete ho v technickém průkazu nebo na sloupku dveří",
   },
   {
     icon: "📋",
-    title: "Prověříme historii",
+    title: "Prověříme historii v EU databázích",
     description:
-      "Zkontrolujeme původ, havárie, servisní historii, zástavy i odcizení",
+      "Havárie, stočení km, zástavy, odcizení, servisní záznamy — vše za pár minut",
   },
   {
     icon: "✅",
-    title: "Dostanete report",
+    title: "Dostanete jasný verdikt",
     description:
-      "Obdržíte přehledný report s kompletní historií a doporučením",
+      "Přehledný report s doporučením: kupovat / nekupovat. Žádné odborné hádanky",
   },
 ];
 
 const benefits = [
   {
     icon: "🌍",
-    title: "Kontrola původu",
+    title: "Původ a majitelé",
     description:
-      "Ověříme zemi původu, počet předchozích majitelů a historii registrací v celé EU",
+      "Zjistíme, odkud auto pochází, kolik mělo majitelů a zda nebylo dovezeno po havárii ze zahraničí",
   },
   {
     icon: "💥",
-    title: "Kontrola havárií",
+    title: "Havárie a poškození",
     description:
-      "Zjistíme, zda bylo vozidlo účastníkem nehody a jaký byl rozsah poškození",
+      "Odhalíme, zda auto bouralo — a jak moc. Neopravené škody mohou snížit hodnotu o desítky tisíc",
   },
   {
     icon: "🔧",
-    title: "Servisní historie",
+    title: "Servisní záznamy",
     description:
-      "Prověříme záznamy z autorizovaných servisů a pravidelnost údržby",
+      "Prověříme, zda auto chodilo do servisu pravidelně. Zanedbaná údržba = drahé opravy",
   },
   {
     icon: "⏱️",
-    title: "Stav tachometru",
+    title: "Stočení tachometru",
     description:
-      "Zkontrolujeme historii nájezdu a odhalíme případné stočení tachometru",
+      "Každé třetí ojeté auto v ČR má stočený tachometr. Odhalíme to z historie nájezdů",
   },
 ];
 
@@ -87,7 +87,7 @@ export default function ProverkaPage() {
         title: "Kupte auto s jistotou",
         highlight: "s jistotou",
         subtitle:
-          "Kompletní prověrka historie a technického stavu vozidla",
+          "Zjistěte pravdu o autě, než za něj zaplatíte. Report do 30 minut.",
       }}
       steps={steps}
       benefits={benefits}

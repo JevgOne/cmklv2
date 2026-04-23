@@ -9,13 +9,13 @@ import { pageCanonical } from "@/lib/canonical";
 export const revalidate = 3600; // ISR: 1 hodina
 
 export const metadata: Metadata = {
-  title: "Naši makléři",
+  title: "Ověření automakléři po celé ČR",
   description:
-    "Ověření automakléři po celé ČR. Najděte svého makléře a prodejte auto rychle a bezpečně.",
+    "Najděte makléře ve vašem městě. Každý prošel školením, má reálné prodeje a hodnocení od klientů. Prodej auta bez starostí.",
   openGraph: {
-    title: "Ověření automakléři",
+    title: "Ověření automakléři po celé ČR | CarMakléř",
     description:
-      "Najděte svého makléře a prodejte auto rychle a bezpečně. Síť ověřených makléřů po celé ČR.",
+      "Najděte makléře ve vašem městě. Reálné prodeje, hodnocení od klientů, školení. Prodej auta bez starostí.",
   },
   alternates: pageCanonical("/makleri"),
 };
@@ -86,10 +86,10 @@ export default async function MakleriPage() {
       <section className="bg-gradient-to-br from-gray-900 to-gray-950 py-10 sm:py-16 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight">
-            Naši makléři
+            Najděte makléře ve vašem městě
           </h1>
-          <p className="text-white/60 mt-4 text-lg">
-            {brokerCount} makléřů po celé ČR
+          <p className="text-white/60 mt-4 text-lg max-w-2xl mx-auto">
+            {brokerCount} ověřených makléřů po celé ČR. Každý prošel školením, má reálné prodeje a hodnocení od klientů.
           </p>
         </div>
       </section>
@@ -204,7 +204,7 @@ export default async function MakleriPage() {
                   Chcete prodat auto?
                 </h2>
                 <p className="text-sm text-gray-500">
-                  Vyplňte formulář a makléř vás kontaktuje do 30 minut. Průměrná doba prodeje 20 dní.
+                  Makléř zajistí fotky, inzerci, prohlídky i smlouvu. Vy jen podepíšete a inkasujete.
                 </p>
                 <span className="inline-block mt-4 text-orange-500 font-semibold text-sm">
                   Prodat auto přes makléře &rarr;
@@ -217,7 +217,7 @@ export default async function MakleriPage() {
                   Chcete se stát makléřem?
                 </h2>
                 <p className="text-sm text-gray-500">
-                  Přidejte se k naší síti ověřených makléřů. Flexibilní úvazek, neomezený výdělek.
+                  Flexibilní úvazek, vlastní tempo, výdělek bez stropu. Průměrný makléř vydělá 40–80 000 Kč měsíčně.
                 </p>
                 <span className="inline-block mt-4 text-orange-500 font-semibold text-sm">
                   Zjistit více o kariéře &rarr;

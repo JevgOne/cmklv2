@@ -10,9 +10,9 @@ import { PART_CATEGORIES } from "@/lib/parts-categories";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
-  title: "Autodíly — použité i nové náhradní díly",
+  title: "Autodíly — levnější než nové, s zárukou",
   description:
-    "Použité autodíly z vrakovišť, aftermarket díly a autokosmetika. Garantovaná kvalita, rychlé doručení, 6 měsíců záruka.",
+    "Použité originální díly z vrakovišť i nové aftermarket díly. Hledejte podle VIN nebo vozu. Záruka 6 měsíců, doručení do 24h.",
   openGraph: {
     title: "Autodíly a příslušenství",
     description:
@@ -24,23 +24,23 @@ export const metadata: Metadata = {
 const benefits = [
   {
     icon: "🏭",
-    title: "Přímý dovoz z vrakovišť",
-    desc: "Spolupracujeme s ověřenými vrakovišti po celé ČR",
+    title: "Přímo z vrakovišť",
+    desc: "Originální díly za zlomek ceny nových. Síť ověřených vrakovišť po celé ČR",
   },
   {
     icon: "✅",
-    title: "Garantovaná kvalita",
-    desc: "Každý díl kontrolujeme a hodnotíme",
+    title: "Ověřená kvalita",
+    desc: "Každý díl zkontrolován a ohodnocen. Víte přesně, v jakém je stavu",
   },
   {
     icon: "🚚",
-    title: "Rychlé doručení",
-    desc: "Expedice do 24h, doprava od 69 Kč",
+    title: "Doručení do 24 hodin",
+    desc: "Zásilkovna, PPL nebo Česká pošta. Doprava od 69 Kč",
   },
   {
     icon: "🔄",
-    title: "6 měsíců záruka",
-    desc: "Na funkčnost použitých dílů",
+    title: "Záruka 6 měsíců",
+    desc: "Na funkčnost každého použitého dílu. Nefunguje? Vrátíme peníze",
   },
 ];
 
@@ -101,10 +101,10 @@ export default async function DilyPage() {
             Největší výběr dílů z vrakovišť
           </span>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
-            Autodíly a příslušenství
+            Autodíly levněji, s zárukou
           </h1>
           <p className="text-lg text-gray-500 mt-4 max-w-2xl mx-auto">
-            Použité díly z vrakovišť, nové aftermarket díly a autokosmetika
+            Originální díly z vrakovišť za zlomek ceny nových. Aftermarket díly a autokosmetika. Vše s zárukou.
           </p>
           <div className="mt-8">
             <a href="#search" className="no-underline">
@@ -220,7 +220,7 @@ export default async function DilyPage() {
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl sm:text-[28px] font-extrabold text-gray-900 text-center mb-6 sm:mb-10">
-            Proč nakupovat u CarMakléře?
+            Proč kupovat díly přes CarMakléř?
           </h2>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -247,8 +247,8 @@ export default async function DilyPage() {
               Nenašli jste, co hledáte?
             </h2>
             <p className="text-white/60 mt-4 max-w-xl mx-auto">
-              Napište nám, jaký díl potřebujete. Prohledáme naši síť vrakovišť
-              a ozveme se vám do 24 hodin.
+              Řekněte nám, jaký díl potřebujete. Prohledáme síť vrakovišť po celé ČR
+              a ozveme se do 24 hodin s nabídkou a cenou.
             </p>
             <div className="mt-8">
               <Link href="/kontakt" className="no-underline">
