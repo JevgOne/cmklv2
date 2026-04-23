@@ -96,8 +96,8 @@ export function PartnerLayout({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-3">
             <img
               src="/brand/logo-dark.png"
-              alt="CarMakler"
-              className="h-8"
+              alt="CarMakléř"
+              className="h-10"
             />
             <span className="text-[10px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full">
               PARTNER
@@ -154,8 +154,8 @@ export function PartnerLayout({ children }: { children: React.ReactNode }) {
             <div className="flex items-center">
               <img
                 src="/brand/logo-dark.png"
-                alt="CarMakler"
-                className="h-7"
+                alt="CarMakléř"
+                className="h-9"
               />
               <span className="ml-2 text-[10px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full">
                 PARTNER

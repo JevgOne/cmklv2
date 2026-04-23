@@ -64,9 +64,9 @@ export function FooterBase({
               <Image
                 src="/brand/logo-white.png"
                 alt="CarMakléř"
-                width={144}
-                height={48}
-                className="h-8 w-auto object-contain"
+                width={180}
+                height={86}
+                className="h-10 w-auto object-contain"
               />
               {badgeLabel && (
                 <span className="text-sm font-semibold text-orange-400">

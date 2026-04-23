@@ -204,11 +204,11 @@ function PrezentaceContent() {
         <div className="absolute w-96 h-96 bg-orange-500/10 rounded-full blur-[100px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
         <div className="text-center text-white relative">
           <Image
-            src="/brand/logo-color.png"
+            src="/brand/logo-white.png"
             alt="CarMakléř"
-            width={5517}
-            height={1172}
-            className="h-24 sm:h-28 w-auto mx-auto mb-8 brightness-0 invert"
+            width={180}
+            height={86}
+            className="h-20 sm:h-24 w-auto mx-auto mb-8"
             priority
           />
           <h1 className="text-4xl sm:text-6xl font-extrabold mb-6">
