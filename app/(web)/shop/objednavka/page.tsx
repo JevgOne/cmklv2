@@ -27,6 +27,7 @@ export default function ObjednavkaPage() {
   const [items, setItems] = useState<CartItem[]>([]);
   const [total, setTotal] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const [delivery, setDelivery] = useState<DeliveryFormData>({
     firstName: "",
@@ -86,6 +87,7 @@ export default function ObjednavkaPage() {
 
   const handleSubmit = async () => {
     setSubmitting(true);
+    setSubmitError(null);
     try {
       const res = await fetch("/api/orders", {
         method: "POST",
@@ -115,18 +117,15 @@ export default function ObjednavkaPage() {
           return;
         }
         const trackingParam = data.trackingUrl ? `&tracking=${encodeURIComponent(data.trackingUrl)}` : "";
-        router.push(`/shop/objednavka/potvrzeni?id=${data.order?.orderNumber ?? data.order?.id ?? "demo"}${trackingParam}`);
+        router.push(`/shop/objednavka/potvrzeni?id=${data.order?.orderNumber ?? data.order?.id}${trackingParam}`);
       } else {
         const errData = await res.json().catch(() => null);
-        console.error("Order error:", errData);
-        // Fallback: demo mode
-        clearCart();
-        router.push("/shop/objednavka/potvrzeni?id=demo-" + Date.now());
+        setSubmitError(
+          errData?.error || "Objednávku se nepodařilo odeslat. Zkuste to prosím znovu."
+        );
       }
     } catch {
-      // Fallback: demo mode
-      clearCart();
-      router.push("/shop/objednavka/potvrzeni?id=demo-" + Date.now());
+      setSubmitError("Chyba spojení. Zkontrolujte připojení k internetu a zkuste to znovu.");
     } finally {
       setSubmitting(false);
     }
@@ -272,6 +271,13 @@ export default function ObjednavkaPage() {
                       </div>
                     ))}
                   </div>
+                </div>
+              )}
+
+              {/* Error message */}
+              {submitError && (
+                <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+                  <p className="text-sm font-semibold text-red-700">{submitError}</p>
                 </div>
               )}
 

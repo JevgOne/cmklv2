@@ -19,9 +19,10 @@ export async function POST(request: NextRequest) {
     if (!anthropicKey) {
       return NextResponse.json({
         recognized: false,
-        message: "Vizuální vyhledávání je ve vývoji. Zkuste popsat díl textově.",
+        message: "Vizuální vyhledávání je momentálně nedostupné. Zkuste popsat díl textově.",
         suggestions: [],
-      });
+        status: "unavailable",
+      }, { status: 503 });
     }
 
     // Claude Vision rozpoznání

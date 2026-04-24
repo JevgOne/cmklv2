@@ -244,14 +244,14 @@ export function ShippingLabelCard({
           </div>
         </div>
 
-        <Button
-          variant="outline"
-          size="lg"
-          className="w-full mt-4"
-          disabled
-        >
-          🖨️ Stáhnout štítek (nedostupné)
-        </Button>
+        <div className="mt-4 space-y-2">
+          <Button variant="outline" size="lg" className="w-full" disabled>
+            🖨️ Čekáme na vygenerování štítku
+          </Button>
+          <p className="text-xs text-center text-gray-400">
+            Štítek se automaticky vygeneruje po přijetí platby.
+          </p>
+        </div>
       </Card>
     );
   }
