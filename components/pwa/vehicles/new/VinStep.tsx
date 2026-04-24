@@ -42,6 +42,7 @@ export function VinStep() {
   const [offlineNote, setOfflineNote] = useState(false);
   const [scanModalOpen, setScanModalOpen] = useState(false);
   const [hasCamera, setHasCamera] = useState(false);
+  const [autoDecodeQueued, setAutoDecodeQueued] = useState(false);
 
   const duplicateCheckRef = useRef<AbortController | null>(null);
 
@@ -193,6 +194,14 @@ export function VinStep() {
     }
   }, [vin, isOnline, updateSection]);
 
+  // Auto-decode po kamerovém skenu (čeká na duplikát check)
+  useEffect(() => {
+    if (autoDecodeQueued && duplicateChecked && !duplicate && VIN_FULL_REGEX.test(vin)) {
+      setAutoDecodeQueued(false);
+      handleDecode();
+    }
+  }, [autoDecodeQueued, duplicateChecked, duplicate, vin, handleDecode]);
+
   // Pokračovat na další krok
   const handleNext = useCallback(async () => {
     if (!VIN_FULL_REGEX.test(vin)) return;
@@ -343,6 +352,10 @@ export function VinStep() {
           onVinScanned={(scannedVin) => {
             setVin(scannedVin);
             setVinValid(true);
+            setDuplicate(null);
+            setDuplicateChecked(false);
+            setDecoded(null);
+            setAutoDecodeQueued(true);
             setScanModalOpen(false);
           }}
         />
