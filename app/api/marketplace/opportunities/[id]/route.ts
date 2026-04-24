@@ -135,7 +135,8 @@ export async function PUT(
       return NextResponse.json({ error: "Nemáte oprávnění" }, { status: 403 });
     }
 
-    if (!isAdmin && opportunity.status !== "PENDING_APPROVAL") {
+    const DEALER_EDITABLE_STATUSES = ["PENDING_APPROVAL", "IN_REPAIR", "FOR_SALE"];
+    if (!isAdmin && !DEALER_EDITABLE_STATUSES.includes(opportunity.status)) {
       return NextResponse.json(
         { error: "Příležitost nelze upravit v tomto stavu" },
         { status: 400 }
@@ -144,6 +145,19 @@ export async function PUT(
 
     const body = await request.json();
     const data = updateOpportunitySchema.parse(body);
+
+    // V IN_REPAIR/FOR_SALE dealer smí měnit jen repair data
+    if (!isAdmin && opportunity.status !== "PENDING_APPROVAL") {
+      const allowedFields = ["repairPhotos", "repairDescription", "status"];
+      const bodyKeys = Object.keys(data).filter(k => data[k as keyof typeof data] !== undefined);
+      const forbidden = bodyKeys.filter(k => !allowedFields.includes(k));
+      if (forbidden.length > 0) {
+        return NextResponse.json(
+          { error: `V tomto stavu nelze měnit: ${forbidden.join(", ")}` },
+          { status: 400 }
+        );
+      }
+    }
 
     const updateData: Record<string, unknown> = {};
     if (data.brand !== undefined) updateData.brand = data.brand;
@@ -168,6 +182,18 @@ export async function PUT(
     if (isAdmin && data.status !== undefined) updateData.status = data.status;
     if (isAdmin && data.adminNotes !== undefined)
       updateData.adminNotes = data.adminNotes;
+
+    // Dealer může posunout status: IN_REPAIR → FOR_SALE (oprava dokončena)
+    if (!isAdmin && data.status !== undefined) {
+      if (opportunity.status === "IN_REPAIR" && data.status === "FOR_SALE") {
+        updateData.status = data.status;
+      } else {
+        return NextResponse.json(
+          { error: "Nemáte oprávnění měnit stav" },
+          { status: 403 }
+        );
+      }
+    }
 
     const updated = await prisma.flipOpportunity.update({
       where: { id },

@@ -18,6 +18,7 @@ const PRESETS: Record<string, { folder: string; allowedTypes: string[]; watermar
   // NEW (TASK-060) — profile avatar + cover, no watermark
   avatar: { folder: "carmakler/avatars", allowedTypes: ALLOWED_IMAGE_TYPES },
   cover: { folder: "carmakler/covers", allowedTypes: ALLOWED_IMAGE_TYPES },
+  marketplace: { folder: "carmakler/marketplace", allowedTypes: ALLOWED_IMAGE_TYPES, watermark: true },
 };
 
 /**
