@@ -13,6 +13,8 @@ interface VehicleEditFormProps {
     equipment: string;
     condition: string;
   };
+  apiUrl?: string;
+  redirectUrl?: string;
 }
 
 const conditionLabels: Record<string, string> = {
@@ -24,7 +26,7 @@ const conditionLabels: Record<string, string> = {
   DAMAGED: "Poškozené",
 };
 
-export function VehicleEditForm({ vehicleId, initialData }: VehicleEditFormProps) {
+export function VehicleEditForm({ vehicleId, initialData, apiUrl, redirectUrl }: VehicleEditFormProps) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -47,8 +49,8 @@ export function VehicleEditForm({ vehicleId, initialData }: VehicleEditFormProps
 
     setSaving(true);
     try {
-      const res = await fetch(`/api/manager/vehicles/${vehicleId}`, {
-        method: "PUT",
+      const res = await fetch(apiUrl || `/api/manager/vehicles/${vehicleId}`, {
+        method: apiUrl ? "PATCH" : "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           price,
@@ -65,7 +67,7 @@ export function VehicleEditForm({ vehicleId, initialData }: VehicleEditFormProps
         return;
       }
 
-      router.push("/admin/manager/approvals");
+      router.push(redirectUrl || "/admin/manager/approvals");
       router.refresh();
     } catch {
       setError("Nepodařilo se uložit změny");

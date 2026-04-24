@@ -189,7 +189,7 @@ export function VehiclesPageContent() {
             <Button variant="outline" size="sm" disabled>
               Filtrovat
             </Button>
-            <Button variant="primary" size="sm" disabled>
+            <Button variant="primary" size="sm" disabled title="Vozidla přidávají makléři přes PWA aplikaci">
               Přidat vozidlo
             </Button>
           </div>
