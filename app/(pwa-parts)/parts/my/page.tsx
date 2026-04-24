@@ -19,17 +19,19 @@ interface PartResult {
 export default function MyPartsPage() {
   const [activeTab, setActiveTab] = useState("all");
   const [parts, setParts] = useState<PartResult[]>([]);
+  const [counts, setCounts] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchParts() {
+      setLoading(true);
       try {
-        // Získáme všechny díly a filtrujeme na klientu
-        // API vrací jen ACTIVE díly, ale supplier potřebuje vidět i ostatní
-        const res = await fetch("/api/parts?limit=100");
+        const statusParam = activeTab !== "all" ? `?status=${activeTab}` : "";
+        const res = await fetch(`/api/parts/my${statusParam}`);
         if (res.ok) {
           const data = await res.json();
           setParts(data.parts ?? []);
+          setCounts(data.counts ?? {});
         }
       } catch {
         // Zůstanou prázdné
@@ -38,11 +40,7 @@ export default function MyPartsPage() {
       }
     }
     fetchParts();
-  }, []);
-
-  const filtered = activeTab === "all"
-    ? parts
-    : parts.filter((p) => p.status === activeTab);
+  }, [activeTab]);
 
   return (
     <div className="px-4 py-6 max-w-lg mx-auto space-y-4">
@@ -55,7 +53,7 @@ export default function MyPartsPage() {
         </Link>
       </div>
 
-      <PartFilters activeTab={activeTab} onTabChange={setActiveTab} />
+      <PartFilters activeTab={activeTab} onTabChange={setActiveTab} counts={counts} />
 
       {loading ? (
         <div className="space-y-3">
@@ -65,7 +63,7 @@ export default function MyPartsPage() {
         </div>
       ) : (
         <div className="space-y-3">
-          {filtered.map((part) => (
+          {parts.map((part) => (
             <PartCard
               key={part.id}
               id={part.id}
@@ -80,7 +78,7 @@ export default function MyPartsPage() {
         </div>
       )}
 
-      {!loading && filtered.length === 0 && (
+      {!loading && parts.length === 0 && (
         <div className="text-center py-12">
           <div className="text-4xl mb-3">📦</div>
           <p className="text-gray-500 font-medium">Žádné díly v této kategorii</p>
