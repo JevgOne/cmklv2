@@ -3,6 +3,8 @@
  * Jeden zdroj pravdy pro celý vizuální styl Carmakler.
  */
 
+const BRAND_PHONE = process.env.BRAND_PHONE || "+420 123 456 789";
+
 export const brand = {
   colors: {
     orange: "#F97316",
@@ -27,10 +29,10 @@ export const brand = {
     web: "carmakler.cz",
     email: "info@carmakler.cz",
     emailPartners: "partneri@carmakler.cz",
-    phone: "+420 123 456 789",
+    phone: BRAND_PHONE,
     address: "Praha, Česká republika",
   },
-} as const;
+};
 
 /** CSS pro tisk dokumentů (smlouvy, protokoly) — A4 portrait */
 export function documentCSS(): string {
