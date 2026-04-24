@@ -61,6 +61,8 @@ async function main() {
   await prisma.vehicleChangeLog.deleteMany();
   await prisma.vehicleImage.deleteMany();
   await prisma.vehicle.deleteMany();
+  // Tags
+  await prisma.tag.deleteMany();
   // Core
   await prisma.user.deleteMany();
   await prisma.region.deleteMany();
@@ -1509,6 +1511,178 @@ async function main() {
   console.log("Created 5 listings");
 
   // ============================================
+  // 9b. BAZAAR USER + ADDITIONAL LISTINGS
+  // ============================================
+
+  console.log("Seeding BAZAAR advertiser + additional listings...");
+
+  const advertiser3 = await prisma.user.create({
+    data: {
+      email: "bazaar@email.cz",
+      firstName: "Martin",
+      lastName: "Bazarový",
+      passwordHash,
+      role: "BROKER",
+      accountType: "BAZAAR",
+      companyName: "Auto Martin",
+      ico: "55667788",
+      icoVerified: true,
+      status: "ACTIVE",
+    },
+  });
+
+  // BAZAAR listing 1
+  const listing6 = await prisma.listing.create({
+    data: {
+      slug: "hyundai-tucson-2020-bazaar",
+      listingType: "DEALER",
+      userId: advertiser3.id,
+      brand: "Hyundai",
+      model: "Tucson",
+      variant: "Style",
+      year: 2020,
+      mileage: 62000,
+      fuelType: "PETROL",
+      transmission: "AUTOMATIC",
+      enginePower: 177,
+      engineCapacity: 1591,
+      bodyType: "SUV",
+      color: "Šedá",
+      doorsCount: 5,
+      seatsCount: 5,
+      condition: "GOOD",
+      serviceBook: true,
+      stkValidUntil: new Date("2026-12-01"),
+      ownerCount: 2,
+      originCountry: "CZ",
+      price: 520000,
+      priceNegotiable: true,
+      contactName: "Auto Martin",
+      contactPhone: "+420607444555",
+      contactEmail: "bazaar@email.cz",
+      city: "Plzeň",
+      description: "Prodám Hyundai Tucson 1.6 T-GDI v lince Style. Vůz po prvním majiteli, kompletní servisní historie u ASD. Nový rozvod, brzdy přední čerstvé. Nepotřebuje nic, stačí nasednout a jet.",
+      equipment: JSON.stringify(["Klimatizace", "Navigace", "Parkovací kamera", "Vyhřívaná sedadla", "Tempomat", "LED světlomety"]),
+      highlights: JSON.stringify(["Kompletní servis ASD", "Nový rozvod", "Záruka do 2027"]),
+      status: "ACTIVE",
+      publishedAt: now,
+      expiresAt: new Date("2026-06-15"),
+    },
+  });
+
+  // BAZAAR listing 2
+  const listing7 = await prisma.listing.create({
+    data: {
+      slug: "toyota-corolla-2021-bazaar",
+      listingType: "DEALER",
+      userId: advertiser3.id,
+      brand: "Toyota",
+      model: "Corolla",
+      variant: "Comfort",
+      year: 2021,
+      mileage: 38000,
+      fuelType: "HYBRID",
+      transmission: "CVT",
+      enginePower: 122,
+      engineCapacity: 1798,
+      bodyType: "SEDAN",
+      color: "Bílá",
+      doorsCount: 4,
+      seatsCount: 5,
+      condition: "EXCELLENT",
+      serviceBook: true,
+      stkValidUntil: new Date("2027-06-20"),
+      ownerCount: 1,
+      originCountry: "CZ",
+      price: 435000,
+      priceNegotiable: true,
+      contactName: "Auto Martin",
+      contactPhone: "+420607444555",
+      city: "Plzeň",
+      description: "Toyota Corolla 1.8 Hybrid, 1 majitel, servisováno výhradně u Toyota dealera. Spotřeba 4.2l/100km ve městě. Nehavarovaná, nekuřácký vůz.",
+      equipment: JSON.stringify(["Klimatizace", "Toyota Safety Sense", "Adaptivní tempomat", "Parkovací senzory"]),
+      highlights: JSON.stringify(["1 majitel", "Toyota servis", "Hybrid — úspora"]),
+      status: "ACTIVE",
+      publishedAt: now,
+      expiresAt: new Date("2026-07-01"),
+    },
+  });
+
+  // SOLD listing
+  const listing8 = await prisma.listing.create({
+    data: {
+      slug: "vw-polo-2018-sold",
+      listingType: "PRIVATE",
+      userId: advertiser1.id,
+      brand: "Volkswagen",
+      model: "Polo",
+      variant: "Comfortline",
+      year: 2018,
+      mileage: 89000,
+      fuelType: "PETROL",
+      transmission: "MANUAL",
+      enginePower: 95,
+      engineCapacity: 999,
+      bodyType: "HATCHBACK",
+      color: "Červená",
+      doorsCount: 5,
+      seatsCount: 5,
+      condition: "GOOD",
+      serviceBook: true,
+      ownerCount: 1,
+      originCountry: "CZ",
+      price: 245000,
+      priceNegotiable: false,
+      contactName: "Tomáš Prodejce",
+      contactPhone: "+420607111222",
+      city: "Praha",
+      district: "Praha 5",
+      description: "VW Polo 1.0 TSI, pravidelný servis u VW. Nekuřácké, garáž. PRODÁNO přes CarMakléř.",
+      equipment: JSON.stringify(["Klimatizace", "Tempomat", "Bluetooth"]),
+      status: "SOLD",
+      publishedAt: new Date("2026-02-01"),
+      expiresAt: new Date("2026-04-01"),
+    },
+  });
+
+  // EXPIRED listing
+  const listing9 = await prisma.listing.create({
+    data: {
+      slug: "citroen-c4-2019-expired",
+      listingType: "PRIVATE",
+      userId: advertiser1.id,
+      brand: "Citroën",
+      model: "C4",
+      variant: "Feel",
+      year: 2019,
+      mileage: 72000,
+      fuelType: "DIESEL",
+      transmission: "AUTOMATIC",
+      enginePower: 130,
+      engineCapacity: 1499,
+      bodyType: "HATCHBACK",
+      color: "Modrá",
+      doorsCount: 5,
+      seatsCount: 5,
+      condition: "GOOD",
+      ownerCount: 2,
+      originCountry: "FR",
+      price: 310000,
+      priceNegotiable: true,
+      contactName: "Tomáš Prodejce",
+      contactPhone: "+420607111222",
+      city: "Praha",
+      description: "Citroën C4 1.5 BlueHDI, automat, dovoz z Francie. Servisní historie z FR dealera.",
+      equipment: JSON.stringify(["Klimatizace", "Navigace", "Parkovací senzory", "Head-up displej"]),
+      status: "EXPIRED",
+      publishedAt: new Date("2025-12-01"),
+      expiresAt: new Date("2026-02-28"),
+    },
+  });
+
+  console.log("Created 4 additional listings (2 BAZAAR, 1 SOLD, 1 EXPIRED)");
+
+  // ============================================
   // 10. LISTING IMAGES
   // ============================================
 
@@ -1525,10 +1699,19 @@ async function main() {
       { listingId: listing4.id, url: "https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800&q=80", order: 0, isPrimary: true },
       { listingId: listing4.id, url: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&q=80", order: 1, isPrimary: false },
       { listingId: listing4.id, url: "https://images.unsplash.com/photo-1542362567-b07e54358753?w=800&q=80", order: 2, isPrimary: false },
+      // New listing images
+      { listingId: listing6.id, url: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&q=80", order: 0, isPrimary: true },
+      { listingId: listing6.id, url: "https://images.unsplash.com/photo-1542362567-b07e54358753?w=800&q=80", order: 1, isPrimary: false },
+      { listingId: listing7.id, url: "https://images.unsplash.com/photo-1549317661-bd32c8ce0afe?w=800&q=80", order: 0, isPrimary: true },
+      { listingId: listing7.id, url: "https://images.unsplash.com/photo-1502877338535-766e1452684a?w=800&q=80", order: 1, isPrimary: false },
+      { listingId: listing8.id, url: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=800&q=80", order: 0, isPrimary: true },
+      { listingId: listing8.id, url: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&q=80", order: 1, isPrimary: false },
+      { listingId: listing9.id, url: "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?w=800&q=80", order: 0, isPrimary: true },
+      { listingId: listing9.id, url: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&q=80", order: 1, isPrimary: false },
     ],
   });
 
-  console.log("Created 9 listing images");
+  console.log("Created 17 listing images");
 
   // ============================================
   // 11. INQUIRIES
@@ -1907,6 +2090,415 @@ async function main() {
     },
   });
 
+  // ============================================
+  // PART IMAGES — pro existující díly
+  // ============================================
+
+  console.log("Seeding part images for existing parts...");
+
+  await prisma.partImage.createMany({
+    data: [
+      { partId: part1.id, url: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&q=80", order: 0, isPrimary: true },
+      { partId: part2.id, url: "https://images.unsplash.com/photo-1615906655593-ad0386982a0f?w=600&q=80", order: 0, isPrimary: true },
+      { partId: part3.id, url: "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=600&q=80", order: 0, isPrimary: true },
+      { partId: part4.id, url: "https://images.unsplash.com/photo-1530281700549-e82e7bf110d6?w=600&q=80", order: 0, isPrimary: true },
+      { partId: part5.id, url: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&q=80", order: 0, isPrimary: true },
+      { partId: part6.id, url: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600&q=80", order: 0, isPrimary: true },
+      { partId: part7.id, url: "https://images.unsplash.com/photo-1600712242805-5f78671b24da?w=600&q=80", order: 0, isPrimary: true },
+      { partId: part8.id, url: "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=600&q=80", order: 0, isPrimary: true },
+    ],
+  });
+
+  // ============================================
+  // NOVÉ DÍLY — pokrytí chybějících kategorií
+  // ============================================
+
+  console.log("Seeding additional parts (missing categories)...");
+
+  // TRANSMISSION (2)
+  const partTrans1 = await prisma.part.create({
+    data: {
+      slug: "prevodovka-dsg-dq200-7st",
+      supplierId: supplier1.id,
+      name: "Převodovka DSG DQ200 7st.",
+      category: "TRANSMISSION",
+      description: "Převodovka DSG DQ200 7stupňová z vozu Škoda Octavia III, 72 000 km. Plně funkční, bez rázů a vibrací. Demontováno z nehavarijního vozu.",
+      oemNumber: "0AM 300 049 S",
+      condition: "USED_GOOD",
+      price: 28000,
+      stock: 1,
+      weight: 70,
+      compatibleBrands: JSON.stringify(["Škoda", "Volkswagen"]),
+      compatibleModels: JSON.stringify(["Octavia", "Golf", "Rapid"]),
+      compatibleYearFrom: 2013,
+      compatibleYearTo: 2020,
+      status: "ACTIVE",
+      viewCount: 34,
+    },
+  });
+
+  const partTrans2 = await prisma.part.create({
+    data: {
+      slug: "spojkovy-set-luk-repset",
+      supplierId: supplier2.id,
+      name: "Spojkový set LUK RepSet",
+      category: "TRANSMISSION",
+      description: "Nový kompletní spojkový set LUK RepSet pro DSG DQ200. Obsahuje přítlačný kotouč, lamelu a ložisko. Certifikace OE kvality.",
+      partNumber: "602 0002 00",
+      manufacturer: "LUK",
+      warranty: "24 měsíců",
+      partType: "AFTERMARKET",
+      condition: "NEW",
+      price: 4890,
+      stock: 6,
+      compatibleBrands: JSON.stringify(["Škoda", "Volkswagen", "Audi"]),
+      compatibleModels: JSON.stringify(["Octavia", "Golf", "A3"]),
+      compatibleYearFrom: 2012,
+      compatibleYearTo: 2020,
+      status: "ACTIVE",
+      viewCount: 78,
+    },
+  });
+
+  // WHEELS (2)
+  const partWheel1 = await prisma.part.create({
+    data: {
+      slug: "alu-kolo-r18-skoda-superb",
+      supplierId: supplier1.id,
+      name: "Alu kolo R18 Škoda Superb",
+      category: "WHEELS",
+      description: "Originální alu disk R18 5x112 ET44 ze Škody Superb III. Bez poškození, minimální kosmetické stopy. Bez pneumatiky.",
+      oemNumber: "3V0 601 025 G",
+      condition: "USED_GOOD",
+      price: 3200,
+      stock: 4,
+      weight: 10.5,
+      compatibleBrands: JSON.stringify(["Škoda"]),
+      compatibleModels: JSON.stringify(["Superb", "Octavia"]),
+      compatibleYearFrom: 2015,
+      compatibleYearTo: 2024,
+      status: "ACTIVE",
+      viewCount: 52,
+    },
+  });
+
+  const partWheel2 = await prisma.part.create({
+    data: {
+      slug: "zimni-sada-r16-vw-golf",
+      supplierId: supplier2.id,
+      name: "Zimní sada R16 VW Golf",
+      category: "WHEELS",
+      description: "Kompletní zimní sada 4× plech R16 5x112 ET50 s pneu Continental WinterContact TS 870 205/55 R16, vzorek 5 mm. Z VW Golf VII.",
+      condition: "USED_FAIR",
+      price: 8900,
+      stock: 1,
+      weight: 52,
+      compatibleBrands: JSON.stringify(["Volkswagen", "Škoda"]),
+      compatibleModels: JSON.stringify(["Golf", "Octavia"]),
+      compatibleYearFrom: 2013,
+      compatibleYearTo: 2020,
+      status: "ACTIVE",
+      viewCount: 23,
+    },
+  });
+
+  // EXHAUST (2)
+  const partExh1 = await prisma.part.create({
+    data: {
+      slug: "katalyzator-1-6-tdi",
+      supplierId: supplier1.id,
+      name: "Katalyzátor 1.6 TDI",
+      category: "EXHAUST",
+      description: "Originální katalyzátor z vozu Škoda Octavia III 1.6 TDI (CLHA). Funkční, bez závad, 95 000 km. S lambda sondou.",
+      oemNumber: "04L 131 765 BJ",
+      condition: "USED_GOOD",
+      price: 5500,
+      stock: 1,
+      weight: 6.5,
+      compatibleBrands: JSON.stringify(["Škoda", "Volkswagen"]),
+      compatibleModels: JSON.stringify(["Octavia", "Golf"]),
+      compatibleYearFrom: 2013,
+      compatibleYearTo: 2020,
+      status: "ACTIVE",
+      viewCount: 19,
+    },
+  });
+
+  const partExh2 = await prisma.part.create({
+    data: {
+      slug: "vyfukove-potrubi-stredni-octavia",
+      supplierId: supplier2.id,
+      name: "Výfukové potrubí střední",
+      category: "EXHAUST",
+      description: "Střední díl výfuku ze Škody Octavia III 2.0 TDI. Mírná povrchová koroze, funkčně v pořádku.",
+      condition: "USED_FAIR",
+      price: 1800,
+      stock: 1,
+      weight: 4.2,
+      compatibleBrands: JSON.stringify(["Škoda"]),
+      compatibleModels: JSON.stringify(["Octavia"]),
+      compatibleYearFrom: 2013,
+      compatibleYearTo: 2020,
+      status: "ACTIVE",
+      viewCount: 8,
+    },
+  });
+
+  // COOLING (2)
+  const partCool1 = await prisma.part.create({
+    data: {
+      slug: "chladic-vody-octavia-iii",
+      supplierId: supplier1.id,
+      name: "Chladič vody Octavia III",
+      category: "COOLING",
+      description: "Originální chladič vody ze Škody Octavia III 2.0 TDI. Netekoucí, žebra nepoškozená. 78 000 km.",
+      oemNumber: "5Q0 121 251 ES",
+      condition: "USED_GOOD",
+      price: 2400,
+      stock: 1,
+      weight: 3.8,
+      compatibleBrands: JSON.stringify(["Škoda", "Volkswagen"]),
+      compatibleModels: JSON.stringify(["Octavia", "Golf"]),
+      compatibleYearFrom: 2013,
+      compatibleYearTo: 2020,
+      status: "ACTIVE",
+      viewCount: 15,
+    },
+  });
+
+  const partCool2 = await prisma.part.create({
+    data: {
+      slug: "vodni-pumpa-2-0-tdi-ina",
+      supplierId: supplier2.id,
+      name: "Vodní pumpa 2.0 TDI INA",
+      category: "COOLING",
+      description: "Nová vodní pumpa INA pro motory EA288 2.0 TDI. OE kvalita, včetně těsnění.",
+      partNumber: "538 0653 10",
+      manufacturer: "INA",
+      warranty: "24 měsíců",
+      partType: "AFTERMARKET",
+      condition: "NEW",
+      price: 1690,
+      stock: 10,
+      compatibleBrands: JSON.stringify(["Škoda", "Volkswagen", "Audi"]),
+      compatibleModels: JSON.stringify(["Octavia", "Passat", "Golf", "A4"]),
+      compatibleYearFrom: 2013,
+      compatibleYearTo: 2024,
+      status: "ACTIVE",
+      viewCount: 45,
+    },
+  });
+
+  // FUEL (2)
+  const partFuel1 = await prisma.part.create({
+    data: {
+      slug: "palivove-cerpadlo-2-0-tdi",
+      supplierId: supplier1.id,
+      name: "Palivové čerpadlo 2.0 TDI",
+      category: "FUEL",
+      description: "Vysokotlaké palivové čerpadlo z motoru 2.0 TDI (CRLB). Funkční, testováno. 88 000 km.",
+      oemNumber: "04L 130 755 D",
+      condition: "USED_GOOD",
+      price: 3800,
+      stock: 1,
+      weight: 2.5,
+      compatibleBrands: JSON.stringify(["Škoda", "Volkswagen"]),
+      compatibleModels: JSON.stringify(["Octavia", "Passat"]),
+      compatibleYearFrom: 2015,
+      compatibleYearTo: 2020,
+      status: "ACTIVE",
+      viewCount: 27,
+    },
+  });
+
+  const partFuel2 = await prisma.part.create({
+    data: {
+      slug: "vstrikovaci-ventil-bosch-tdi",
+      supplierId: supplier2.id,
+      name: "Vstřikovací ventil Bosch",
+      category: "FUEL",
+      description: "Nový vstřikovací ventil Bosch pro motory 2.0 TDI EA288. Piezo technologie, baleno jednotlivě.",
+      partNumber: "0 445 110 469",
+      manufacturer: "Bosch",
+      warranty: "zákonná",
+      partType: "NEW",
+      condition: "NEW",
+      price: 2290,
+      stock: 8,
+      compatibleBrands: JSON.stringify(["Volkswagen", "Audi", "Škoda"]),
+      compatibleModels: JSON.stringify(["Passat", "A4", "Superb"]),
+      compatibleYearFrom: 2015,
+      compatibleYearTo: 2023,
+      status: "ACTIVE",
+      viewCount: 36,
+    },
+  });
+
+  // OTHER (2)
+  const partOther1 = await prisma.part.create({
+    data: {
+      slug: "autoradio-rcd-330-plus",
+      supplierId: supplier1.id,
+      name: "Autorádio RCD 330 Plus",
+      category: "OTHER",
+      description: "Originální multimediální jednotka RCD 330 Plus s dotykovou obrazovkou 6.5\", Bluetooth, USB, Apple CarPlay. Z VW Golf VII.",
+      oemNumber: "5G6 919 605",
+      condition: "USED_GOOD",
+      price: 4500,
+      stock: 1,
+      weight: 1.8,
+      compatibleBrands: JSON.stringify(["Volkswagen", "Škoda"]),
+      compatibleModels: JSON.stringify(["Golf", "Octavia", "Passat"]),
+      compatibleYearFrom: 2013,
+      compatibleYearTo: 2020,
+      status: "ACTIVE",
+      viewCount: 63,
+    },
+  });
+
+  const partOther2 = await prisma.part.create({
+    data: {
+      slug: "sada-klicu-s-ridici-jednotkou-octavia",
+      supplierId: supplier2.id,
+      name: "Sada klíčů s řídící jedn.",
+      category: "OTHER",
+      description: "Kompletní sada 2× klíč + řídící jednotka motoru (imobilizér) ze Škody Octavia III. Funkční, nutné spárování.",
+      condition: "USED_GOOD",
+      price: 6800,
+      stock: 1,
+      weight: 0.8,
+      compatibleBrands: JSON.stringify(["Škoda"]),
+      compatibleModels: JSON.stringify(["Octavia"]),
+      compatibleYearFrom: 2013,
+      compatibleYearTo: 2020,
+      status: "ACTIVE",
+      viewCount: 18,
+    },
+  });
+
+  // BODY extra
+  const partBody2 = await prisma.part.create({
+    data: {
+      slug: "kapota-predni-octavia-iii",
+      supplierId: supplier1.id,
+      name: "Kapota přední Octavia III",
+      category: "BODY",
+      description: "Originální přední kapota ze Škody Octavia III facelift. Bez koroze, drobné škrábance na spodní straně. Barva: bílá (B4/B4).",
+      oemNumber: "5E0 823 031",
+      condition: "USED_GOOD",
+      price: 3800,
+      stock: 1,
+      weight: 12,
+      compatibleBrands: JSON.stringify(["Škoda"]),
+      compatibleModels: JSON.stringify(["Octavia"]),
+      compatibleYearFrom: 2017,
+      compatibleYearTo: 2020,
+      status: "ACTIVE",
+      viewCount: 31,
+    },
+  });
+
+  // INTERIOR extra
+  const partInt2 = await prisma.part.create({
+    data: {
+      slug: "palubni-deska-komplet-golf-vii",
+      supplierId: supplier2.id,
+      name: "Palubní deska komplet Golf VII",
+      category: "INTERIOR",
+      description: "Kompletní palubní deska z VW Golf VII včetně airbagů (neodstřelené), kabeláže a ovládacího panelu klimatizace. Barva: černá.",
+      condition: "USED_FAIR",
+      price: 5200,
+      stock: 1,
+      weight: 15,
+      compatibleBrands: JSON.stringify(["Volkswagen"]),
+      compatibleModels: JSON.stringify(["Golf"]),
+      compatibleYearFrom: 2013,
+      compatibleYearTo: 2020,
+      status: "ACTIVE",
+      viewCount: 14,
+    },
+  });
+
+  // INACTIVE díl — dodavatel deaktivoval
+  const partInactive = await prisma.part.create({
+    data: {
+      slug: "naraznik-zadni-octavia-iii-neaktivni",
+      supplierId: supplier1.id,
+      name: "Nárazník zadní Octavia III",
+      category: "BODY",
+      description: "Zadní nárazník ze Škody Octavia III liftback. Mírné odření na spodní hraně, jinak v dobrém stavu.",
+      condition: "USED_FAIR",
+      price: 2800,
+      stock: 1,
+      compatibleBrands: JSON.stringify(["Škoda"]),
+      compatibleModels: JSON.stringify(["Octavia"]),
+      compatibleYearFrom: 2013,
+      compatibleYearTo: 2017,
+      status: "INACTIVE",
+      viewCount: 5,
+    },
+  });
+
+  // SOLD díl
+  const partSold = await prisma.part.create({
+    data: {
+      slug: "turbo-1-9-tdi-prodano",
+      supplierId: supplier1.id,
+      name: "Turbodmychadlo 1.9 TDI",
+      category: "ENGINE",
+      description: "Funkční turbodmychadlo z motoru 1.9 TDI (ASZ). Testováno, bez axiální vůle. 130 000 km.",
+      oemNumber: "038 253 019 N",
+      condition: "USED_GOOD",
+      price: 8500,
+      stock: 0,
+      weight: 5.5,
+      compatibleBrands: JSON.stringify(["Škoda", "Volkswagen"]),
+      compatibleModels: JSON.stringify(["Octavia", "Golf", "Passat"]),
+      compatibleYearFrom: 2001,
+      compatibleYearTo: 2010,
+      status: "SOLD",
+      viewCount: 92,
+    },
+  });
+
+  // Part images pro nové díly
+  await prisma.partImage.createMany({
+    data: [
+      { partId: partTrans1.id, url: "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=600&q=80", order: 0, isPrimary: true },
+      { partId: partTrans2.id, url: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600&q=80", order: 0, isPrimary: true },
+      { partId: partWheel1.id, url: "https://images.unsplash.com/photo-1600712242805-5f78671b24da?w=600&q=80", order: 0, isPrimary: true },
+      { partId: partWheel2.id, url: "https://images.unsplash.com/photo-1600712242805-5f78671b24da?w=600&q=80", order: 0, isPrimary: true },
+      { partId: partExh1.id, url: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&q=80", order: 0, isPrimary: true },
+      { partId: partExh2.id, url: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&q=80", order: 0, isPrimary: true },
+      { partId: partCool1.id, url: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600&q=80", order: 0, isPrimary: true },
+      { partId: partCool2.id, url: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600&q=80", order: 0, isPrimary: true },
+      { partId: partFuel1.id, url: "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=600&q=80", order: 0, isPrimary: true },
+      { partId: partFuel2.id, url: "https://images.unsplash.com/photo-1615906655593-ad0386982a0f?w=600&q=80", order: 0, isPrimary: true },
+      { partId: partOther1.id, url: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&q=80", order: 0, isPrimary: true },
+      { partId: partOther2.id, url: "https://images.unsplash.com/photo-1530281700549-e82e7bf110d6?w=600&q=80", order: 0, isPrimary: true },
+      { partId: partBody2.id, url: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&q=80", order: 0, isPrimary: true },
+      { partId: partInt2.id, url: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&q=80", order: 0, isPrimary: true },
+      { partId: partInactive.id, url: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&q=80", order: 0, isPrimary: true },
+      { partId: partSold.id, url: "https://images.unsplash.com/photo-1615906655593-ad0386982a0f?w=600&q=80", order: 0, isPrimary: true },
+    ],
+  });
+
+  // Also add images for wholesale parts (they don't have variable refs, use query)
+  const wholesaleParts = await prisma.part.findMany({
+    where: { supplierId: wholesale1.id },
+    select: { id: true },
+  });
+  if (wholesaleParts.length > 0) {
+    await prisma.partImage.createMany({
+      data: wholesaleParts.map((p, i) => ({
+        partId: p.id,
+        url: `https://images.unsplash.com/photo-${i === 0 ? "1558618666-fcd25c85f82e" : i === 1 ? "1530281700549-e82e7bf110d6" : "1600712242805-5f78671b24da"}?w=600&q=80`,
+        order: 0,
+        isPrimary: true,
+      })),
+    });
+  }
+
   console.log("Seeding orders...");
 
   const order1 = await prisma.order.create({
@@ -2098,8 +2690,8 @@ async function main() {
       vin: "TMBAH7NP5J0123456",
       condition: "GOOD",
       photos: JSON.stringify([
-        "https://placehold.co/800x600/f97316/white?text=Octavia+1",
-        "https://placehold.co/800x600/f97316/white?text=Octavia+2",
+        "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&q=80",
+        "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?w=800&q=80",
       ]),
       purchasePrice: 250000,
       repairCost: 45000,
@@ -2120,7 +2712,7 @@ async function main() {
       mileage: 120000,
       condition: "FAIR",
       photos: JSON.stringify([
-        "https://placehold.co/800x600/f97316/white?text=Passat+1",
+        "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=800&q=80",
       ]),
       purchasePrice: 180000,
       repairCost: 60000,
@@ -2143,7 +2735,7 @@ async function main() {
       mileage: 145000,
       condition: "FAIR",
       photos: JSON.stringify([
-        "https://placehold.co/800x600/f97316/white?text=BMW+320d",
+        "https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&q=80",
       ]),
       purchasePrice: 320000,
       repairCost: 80000,
@@ -2163,7 +2755,7 @@ async function main() {
       mileage: 72000,
       condition: "GOOD",
       photos: JSON.stringify([
-        "https://placehold.co/800x600/f97316/white?text=Audi+A4",
+        "https://images.unsplash.com/photo-1542362567-b07e54358753?w=800&q=80",
       ]),
       purchasePrice: 420000,
       repairCost: 35000,
@@ -2237,6 +2829,52 @@ async function main() {
       amount: 250000,
       paymentStatus: "CONFIRMED",
       paymentReference: "VS2026005",
+    },
+  });
+
+  // Příležitost 5: FOR_SALE — auto opraveno, čeká na kupce
+  const flip5 = await prisma.flipOpportunity.create({
+    data: {
+      dealerId: dealer1.id,
+      brand: "Škoda",
+      model: "Superb",
+      year: 2017,
+      mileage: 110000,
+      condition: "GOOD",
+      photos: JSON.stringify([
+        "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&q=80",
+        "https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800&q=80",
+      ]),
+      purchasePrice: 280000,
+      repairCost: 55000,
+      estimatedSalePrice: 430000,
+      repairDescription: "Kompletní rozvodový set, nové brzdy, lakování 2 dílů, kompletní detailing interiéru",
+      repairPhotos: JSON.stringify([
+        "https://images.unsplash.com/photo-1615906655593-ad0386982a0f?w=800&q=80",
+      ]),
+      status: "FOR_SALE",
+      fundedAmount: 335000,
+    },
+  });
+
+  // Investice pro flip5 (FOR_SALE)
+  await prisma.investment.create({
+    data: {
+      investorId: investor1.id,
+      opportunityId: flip5.id,
+      amount: 200000,
+      paymentStatus: "CONFIRMED",
+      paymentReference: "VS2026010",
+    },
+  });
+
+  await prisma.investment.create({
+    data: {
+      investorId: investor3.id,
+      opportunityId: flip5.id,
+      amount: 135000,
+      paymentStatus: "CONFIRMED",
+      paymentReference: "VS2026011",
     },
   });
 
@@ -2974,6 +3612,7 @@ async function main() {
   const watchdogCount = await prisma.watchdog.count();
 
   const partCount = await prisma.part.count();
+  const partImageCount = await prisma.partImage.count();
   const orderCount = await prisma.order.count();
   const orderItemCount = await prisma.orderItem.count();
 
@@ -2990,6 +3629,7 @@ async function main() {
   console.log(`Inquiries:      ${inquiryCount}`);
   console.log(`Watchdogs:      ${watchdogCount}`);
   console.log(`Parts:          ${partCount}`);
+  console.log(`Part Images:    ${partImageCount}`);
   console.log(`Orders:         ${orderCount}`);
   console.log(`Order Items:    ${orderItemCount}`);
   console.log(`Invitations:    ${await prisma.invitation.count()}`);
@@ -3018,6 +3658,7 @@ async function main() {
   console.log("Buyer login: kupujici@email.cz / heslo123");
   console.log("Supplier login: dodavatel@vrakoviste.cz / heslo123");
   console.log("Wholesale login: velkoobchod@carmakler.cz / heslo123");
+  console.log("Bazaar login: bazaar@email.cz / heslo123");
   console.log("Dealer login: dealer1@carmakler.cz / heslo123");
   console.log("Investor login: investor1@carmakler.cz / heslo123");
   console.log("Onboarding broker: onboarding@carmakler.cz / heslo123");
