@@ -72,6 +72,7 @@ export default function MojeInzeratyPage() {
   const [activeTab, setActiveTab] = useState("all");
   const [deleteModal, setDeleteModal] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
+  const [maxListings, setMaxListings] = useState<number | null>(10);
 
   useEffect(() => {
     fetchListings();
@@ -84,6 +85,7 @@ export default function MojeInzeratyPage() {
       if (res.ok) {
         const data = await res.json();
         setListings(data.listings || []);
+        if (data.maxListings !== undefined) setMaxListings(data.maxListings);
       }
     } catch {
       // silently fail
@@ -137,9 +139,6 @@ export default function MojeInzeratyPage() {
   }
 
   const activeCount = listings.filter((l) => l.status === "ACTIVE").length;
-  // Limit dle typu účtu: PRIVATE=1, BAZAAR=10, DEALER=neomezeno
-  // Zatím zobrazujeme jako counter bez API check
-  const maxListings = 10; // Placeholder, API by mělo vracet skutečný limit
 
   return (
     <div>
@@ -151,17 +150,21 @@ export default function MojeInzeratyPage() {
           </div>
           <div>
             <p className="text-sm font-semibold text-gray-900">
-              {activeCount}/{maxListings} aktivních inzerátů
+              {maxListings === null
+                ? `${activeCount} aktivních inzerátů`
+                : `${activeCount}/${maxListings} aktivních inzerátů`}
             </p>
-            <div className="w-32 h-1.5 bg-gray-200 rounded-full mt-1">
-              <div
-                className="h-full bg-orange-500 rounded-full transition-all"
-                style={{ width: `${Math.min((activeCount / maxListings) * 100, 100)}%` }}
-              />
-            </div>
+            {maxListings !== null && (
+              <div className="w-32 h-1.5 bg-gray-200 rounded-full mt-1">
+                <div
+                  className="h-full bg-orange-500 rounded-full transition-all"
+                  style={{ width: `${Math.min((activeCount / maxListings) * 100, 100)}%` }}
+                />
+              </div>
+            )}
           </div>
         </div>
-        {activeCount >= maxListings && (
+        {maxListings !== null && activeCount >= maxListings && (
           <span className="text-xs text-red-500 font-semibold">Limit dosažen</span>
         )}
       </div>
@@ -169,7 +172,7 @@ export default function MojeInzeratyPage() {
       <div className="flex items-center justify-between mb-6">
         <Tabs tabs={statusTabs} activeTab={activeTab} onTabChange={setActiveTab} />
         <Link href="/inzerce/pridat" className="no-underline hidden sm:block">
-          <Button variant="primary" disabled={activeCount >= maxListings}>
+          <Button variant="primary" disabled={maxListings !== null && activeCount >= maxListings}>
             + Nový inzerát
           </Button>
         </Link>

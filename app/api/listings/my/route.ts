@@ -14,15 +14,30 @@ export async function GET() {
       return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
     }
 
-    const listings = await prisma.listing.findMany({
-      where: { userId: session.user.id },
-      include: {
-        images: { orderBy: { order: "asc" } },
-      },
-      orderBy: { createdAt: "desc" },
-    });
+    const [listings, user] = await Promise.all([
+      prisma.listing.findMany({
+        where: { userId: session.user.id },
+        include: {
+          images: { orderBy: { order: "asc" } },
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { accountType: true, listingCredits: true },
+      }),
+    ]);
 
-    return NextResponse.json({ listings });
+    const accountType = user?.accountType || "PRIVATE";
+    const baseLimits: Record<string, number | null> = {
+      PRIVATE: 1,
+      BAZAAR: 10,
+      DEALER: null,
+    };
+    const base = baseLimits[accountType] ?? 1;
+    const maxListings = base === null ? null : base + (user?.listingCredits ?? 0);
+
+    return NextResponse.json({ listings, accountType, maxListings });
   } catch (error) {
     console.error("GET /api/listings/my error:", error);
     return NextResponse.json(
