@@ -3,26 +3,32 @@
 **Datum:** 2026-04-24
 **Status:** HOTOVO
 **Build:** OK
+**Commity:** `272da54`, `8b49a45`, `62de9fd`
 
-## 1. VIN kamerový sken (Claude Vision OCR)
+## 1. VIN kamerový sken (Tesseract.js — client-side OCR)
 
 ### Nové soubory
-- `app/api/vin/scan/route.ts` — API endpoint: přijme image via FormData, pošle do Claude Vision (Sonnet 4.6), regex extract VIN 17-char, vrátí `{ found, vin }` nebo `{ found: false, message }`
 - `components/pwa/vehicles/new/VinScanModal.tsx` — Fullscreen modal: spustí kameru (useCamera hook, facingMode: environment), viewfinder overlay s corner marks, tlačítko "Vyfotit", scanning spinner, error handling, po 3 neúspěšných pokusech nabídne ruční zadání
 
 ### Editované soubory
 - `components/pwa/vehicles/new/VinStep.tsx`:
   - Import VinScanModal
-  - Přidán state `scanModalOpen`, `hasCamera`
+  - Přidán state `scanModalOpen`, `hasCamera`, `autoDecodeQueued`
   - Detekce kamery via `navigator.mediaDevices.enumerateDevices()`
   - Stub "Již brzy" nahrazen funkčním "Skenovat" tlačítkem (skryté na zařízeních bez kamery)
-  - Disabled když offline (s tooltipem)
-  - VinScanModal → onVinScanned prefillne VIN a nastaví vinValid
+  - VinScanModal → onVinScanned prefillne VIN, nastaví vinValid, spustí auto-decode
+  - Auto-decode: po úspěšném skenu se automaticky spustí duplicate check → decode (bez manuálního kliknutí)
+- `package.json` — přidán `tesseract.js` (^7.0.0)
 
 ### Architektura
-- Využívá existující `lib/hooks/useCamera.ts` (getUserMedia, captureFrame → Blob)
-- Claude Vision OCR prompt v angličtině (lepší přesnost dle CLAUDE.md pravidel)
-- ~$0.01/scan, online-only (makléř stejně potřebuje internet pro VIN decode)
+- **Tesseract.js** (client-side OCR) — běží v prohlížeči, zdarma, funguje offline
+- Lazy-load Tesseract worker při prvním capture (`import("tesseract.js")`)
+- `tessedit_char_whitelist` omezeno na VIN znaky (A-Z bez I,O,Q + 0-9)
+- Worker reuse mezi pokusy, cleanup na unmount
+- Regex match `/[A-HJ-NPR-Z0-9]{17}/` na rozpoznaný text
+
+### Odstraněno
+- `app/api/vin/scan/route.ts` (Claude Vision endpoint) — nahrazeno client-side Tesseract.js
 
 ## 2. AI cenový odhad (Claude API + tool_use)
 
@@ -55,6 +61,7 @@
 - Root layout metadata už referuje `/brand/favicon.ico` — teď je konzistentní i fallback
 
 ## Celkový souhrn
-- **Nové soubory:** 3 (VIN scan API, VinScanModal, Price estimate API)
+- **Nové soubory:** 2 (VinScanModal, Price estimate API)
 - **Editované soubory:** 3 (VinStep, PricingStep, app/favicon.ico)
+- **Odstraněné soubory:** 1 (app/api/vin/scan/route.ts)
 - **Build:** PASS
