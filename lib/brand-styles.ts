@@ -3,7 +3,7 @@
  * Jeden zdroj pravdy pro celý vizuální styl Carmakler.
  */
 
-const BRAND_PHONE = process.env.BRAND_PHONE || "+420 123 456 789";
+const BRAND_PHONE = process.env.BRAND_PHONE || "+420 776 888 999";
 
 export const brand = {
   colors: {
