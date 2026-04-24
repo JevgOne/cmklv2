@@ -45,6 +45,15 @@ function formatCurrency(value: number): string {
 // TYPES
 // ============================================
 
+interface PriceEstimate {
+  min: number;
+  max: number;
+  suggested: number;
+  confidence: "high" | "medium" | "low";
+  reasoning: string;
+  comparablesCount: number;
+}
+
 type DphOption = "with_dph" | "without_dph" | "non_payer";
 type VehicleSource = "private" | "dealer" | "import";
 
@@ -66,6 +75,8 @@ export function PricingStep() {
   const [description, setDescription] = useState("");
   const [source, setSource] = useState<VehicleSource>("private");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [estimating, setEstimating] = useState(false);
+  const [estimate, setEstimate] = useState<PriceEstimate | null>(null);
 
   // Load from draft
   useEffect(() => {
@@ -175,6 +186,52 @@ export function PricingStep() {
     }
   }, [draft?.details]);
 
+  const canEstimate = !!(
+    draft?.details?.brand &&
+    draft?.details?.model &&
+    draft?.details?.year &&
+    draft?.details?.mileage &&
+    draft?.details?.condition
+  );
+
+  const handleEstimatePrice = useCallback(async () => {
+    if (!draft?.details) return;
+    const d = draft.details;
+    if (!d.brand || !d.model || !d.year || !d.mileage || !d.condition) return;
+
+    setEstimating(true);
+    try {
+      const res = await fetch("/api/assistant/price-estimate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          brand: d.brand,
+          model: d.model,
+          year: d.year,
+          mileage: d.mileage,
+          condition: d.condition,
+          fuelType: d.fuelType,
+          transmission: d.transmission,
+          enginePower: d.enginePower,
+          bodyType: d.bodyType,
+          equipment: d.equipment ?? [],
+        }),
+      });
+
+      if (!res.ok) throw new Error("Chyba při odhadu ceny");
+
+      const data = await res.json();
+      setEstimate(data);
+      if (data.suggested) {
+        setPriceFormatted(formatPriceInput(String(data.suggested)));
+      }
+    } catch (err) {
+      console.error("AI price estimate error:", err);
+    } finally {
+      setEstimating(false);
+    }
+  }, [draft?.details]);
+
   const handleContinue = useCallback(() => {
     handleSave();
     router.push(`/makler/vehicles/new/review?draft=${draft?.id}`);
@@ -212,6 +269,64 @@ export function PricingStep() {
               onChange={(e) => setNegotiable(e.target.checked)}
             />
           </div>
+        </div>
+
+        {/* AI Price Estimate */}
+        <div>
+          <button
+            onClick={handleEstimatePrice}
+            disabled={estimating || !canEstimate}
+            className="flex items-center gap-2 px-4 py-2.5 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {estimating ? (
+              <>
+                <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                Odhaduji cenu...
+              </>
+            ) : (
+              <>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-4 h-4">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+                </svg>
+                Odhadnout cenu AI
+              </>
+            )}
+          </button>
+
+          {estimate && (
+            <div className="mt-3 bg-blue-50 border border-blue-200 rounded-xl p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-sm font-bold text-blue-700">AI cenový odhad</span>
+                <ConfidenceBadge level={estimate.confidence} />
+              </div>
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm text-blue-600">Rozmezí:</span>
+                <span className="font-bold text-blue-700">
+                  {formatCurrency(estimate.min)} – {formatCurrency(estimate.max)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-blue-600">Doporučená cena:</span>
+                <span className="text-lg font-bold text-blue-800">
+                  {formatCurrency(estimate.suggested)}
+                </span>
+              </div>
+              <p className="text-xs text-blue-600 mt-2">{estimate.reasoning}</p>
+              <p className="text-[10px] text-blue-400 mt-1 italic">
+                Orientační odhad — skutečná cena závisí na individuálním stavu vozu.
+              </p>
+              <button
+                type="button"
+                onClick={() => setPriceFormatted(formatPriceInput(String(estimate.suggested)))}
+                className="mt-2 text-sm text-blue-700 font-medium hover:text-blue-800 bg-transparent border-none cursor-pointer p-0"
+              >
+                Použít doporučenou cenu
+              </button>
+            </div>
+          )}
         </div>
 
         {/* DPH */}
@@ -398,5 +513,19 @@ export function PricingStep() {
         </Button>
       </div>
     </StepLayout>
+  );
+}
+
+function ConfidenceBadge({ level }: { level: "high" | "medium" | "low" }) {
+  const config = {
+    high: { label: "Vysoká přesnost", color: "bg-green-100 text-green-700" },
+    medium: { label: "Střední přesnost", color: "bg-yellow-100 text-yellow-700" },
+    low: { label: "Orientační", color: "bg-gray-100 text-gray-600" },
+  };
+  const c = config[level];
+  return (
+    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${c.color}`}>
+      {c.label}
+    </span>
   );
 }
