@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 const ALLOWED_ROLES = ["ADMIN", "BACKOFFICE", "MANAGER"];
+const DELETE_ROLES = ["ADMIN", "BACKOFFICE"];
 
 export async function GET(
   _request: NextRequest,
@@ -111,6 +112,60 @@ export async function PATCH(
       );
     }
     console.error("PATCH /api/admin/vehicles/[id] error:", error);
+    return NextResponse.json({ error: "Interní chyba serveru" }, { status: 500 });
+  }
+}
+
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user || !DELETE_ROLES.includes(session.user.role)) {
+      return NextResponse.json({ error: "Nemáte oprávnění" }, { status: 403 });
+    }
+
+    const { id } = await params;
+
+    const vehicle = await prisma.vehicle.findUnique({
+      where: { id },
+      include: { _count: { select: { contracts: true } } },
+    });
+
+    if (!vehicle) {
+      return NextResponse.json({ error: "Vozidlo nenalezeno" }, { status: 404 });
+    }
+
+    if (vehicle._count.contracts > 0) {
+      return NextResponse.json(
+        { error: "Vozidlo má aktivní smlouvy a nelze smazat" },
+        { status: 400 }
+      );
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.vehicleChangeLog.create({
+        data: {
+          vehicleId: id,
+          userId: session.user.id,
+          field: "status",
+          oldValue: vehicle.status,
+          newValue: "DELETED",
+          reason: "Smazáno adminem",
+          flagged: false,
+          flagReason: null,
+        },
+      });
+      await tx.vehicle.update({
+        where: { id },
+        data: { status: "DELETED" },
+      });
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("DELETE /api/admin/vehicles/[id] error:", error);
     return NextResponse.json({ error: "Interní chyba serveru" }, { status: 500 });
   }
 }

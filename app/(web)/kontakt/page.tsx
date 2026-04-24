@@ -66,17 +66,17 @@ export default function KontaktPage() {
           { label: "Kontakt" },
         ]}
       />
-      {/* Map placeholder */}
-      <section className="bg-gray-200 flex items-center justify-center h-[250px] sm:h-[300px] md:h-[400px]">
-        <div className="text-center">
-          <span className="text-5xl">📍</span>
-          <p className="text-gray-600 font-semibold mt-3 text-lg">
-            CarMakléř — Praha
-          </p>
-          <p className="text-gray-500 text-sm mt-1">
-            {companyInfo.address.full}
-          </p>
-        </div>
+      {/* Map */}
+      <section className="h-[250px] sm:h-[300px] md:h-[400px]">
+        <iframe
+          src="https://frame.mapy.cz/zakladni?x=14.4244&y=50.0793&z=16&source=addr&id=8942598"
+          width="100%"
+          height="100%"
+          style={{ border: 0 }}
+          loading="lazy"
+          title="Mapa — CarMakléř Praha, Školská 660/3"
+          allowFullScreen
+        />
       </section>
 
       {/* Contact info + form */}

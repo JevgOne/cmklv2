@@ -42,7 +42,27 @@ const statusLabels: Record<Broker["status"], string> = {
   rejected: "Zamítnutý",
 };
 
-function TableActions({ brokerId }: { brokerId: string }) {
+function TableActions({ brokerId, onDeactivate }: { brokerId: string; onDeactivate: (id: string) => void }) {
+  const [deactivating, setDeactivating] = useState(false);
+
+  async function handleDeactivate() {
+    if (!window.confirm("Opravdu deaktivovat tohoto makléře?")) return;
+    setDeactivating(true);
+    try {
+      const res = await fetch(`/api/admin/brokers/${brokerId}/reject`, { method: "POST" });
+      if (res.ok) {
+        onDeactivate(brokerId);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Nepodařilo se deaktivovat makléře");
+      }
+    } catch {
+      alert("Chyba spojení");
+    } finally {
+      setDeactivating(false);
+    }
+  }
+
   return (
     <div className="flex items-center gap-1.5">
       <a
@@ -61,54 +81,15 @@ function TableActions({ brokerId }: { brokerId: string }) {
       </a>
       <button
         className="w-9 h-9 flex items-center justify-center bg-gray-100 rounded-[10px] text-sm cursor-pointer transition-colors hover:bg-error-50 hover:text-error-500 border-none"
-        title="Smazat"
-        disabled
+        title="Deaktivovat"
+        onClick={handleDeactivate}
+        disabled={deactivating}
       >
         🗑
       </button>
     </div>
   );
 }
-
-const columns = [
-  {
-    key: "broker",
-    header: "Makléř",
-    render: (item: Broker) => (
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0">
-          {item.initials}
-        </div>
-        <div>
-          <div className="font-semibold text-gray-900">{item.name}</div>
-          <div className="text-xs text-gray-500">{item.email}</div>
-        </div>
-      </div>
-    ),
-  },
-  {
-    key: "region",
-    header: "Region",
-    render: (item: Broker) => item.region,
-  },
-  {
-    key: "vehicles",
-    header: "Vozidla",
-    render: (item: Broker) => item.vehicles,
-  },
-  {
-    key: "status",
-    header: "Status",
-    render: (item: Broker) => (
-      <StatusPill variant={item.status}>{statusLabels[item.status]}</StatusPill>
-    ),
-  },
-  {
-    key: "actions",
-    header: "Akce",
-    render: (item: Broker) => <TableActions brokerId={item.id} />,
-  },
-];
 
 export function BrokersPageContent() {
   const [activeTab, setActiveTab] = useState("all");
@@ -117,6 +98,64 @@ export function BrokersPageContent() {
   const [onboardingBrokers, setOnboardingBrokers] = useState<OnboardingBroker[]>([]);
   const [loading, setLoading] = useState(true);
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
+
+  function handleBrokerDeactivated(id: string) {
+    setBrokers(prev => prev.map(b => b.id === id ? { ...b, status: "rejected" as const } : b));
+  }
+
+  function handleExport() {
+    const header = "Jméno,Email,Region,Vozidla,Status\n";
+    const rows = brokers.map(b =>
+      `"${b.name}","${b.email}","${b.region}",${b.vehicles},"${statusLabels[b.status]}"`
+    ).join("\n");
+    const blob = new Blob(["\uFEFF" + header + rows], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `makleri-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  const columns = [
+    {
+      key: "broker",
+      header: "Makléř",
+      render: (item: Broker) => (
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0">
+            {item.initials}
+          </div>
+          <div>
+            <div className="font-semibold text-gray-900">{item.name}</div>
+            <div className="text-xs text-gray-500">{item.email}</div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: "region",
+      header: "Region",
+      render: (item: Broker) => item.region,
+    },
+    {
+      key: "vehicles",
+      header: "Vozidla",
+      render: (item: Broker) => item.vehicles,
+    },
+    {
+      key: "status",
+      header: "Status",
+      render: (item: Broker) => (
+        <StatusPill variant={item.status}>{statusLabels[item.status]}</StatusPill>
+      ),
+    },
+    {
+      key: "actions",
+      header: "Akce",
+      render: (item: Broker) => <TableActions brokerId={item.id} onDeactivate={handleBrokerDeactivated} />,
+    },
+  ];
 
   const fetchBrokers = useCallback(async () => {
     setLoading(true);
@@ -182,7 +221,7 @@ export function BrokersPageContent() {
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-900">Makléři</h1>
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" disabled>
+            <Button variant="outline" size="sm" onClick={handleExport}>
               Exportovat
             </Button>
             <Button variant="primary" size="sm" onClick={() => setInviteModalOpen(true)}>

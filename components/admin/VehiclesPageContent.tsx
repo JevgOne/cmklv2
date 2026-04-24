@@ -25,7 +25,27 @@ const statusLabels: Record<Vehicle["status"], string> = {
   draft: "Koncept",
 };
 
-function TableActions({ vehicleId }: { vehicleId: string }) {
+function TableActions({ vehicleId, onDelete }: { vehicleId: string; onDelete: (id: string) => void }) {
+  const [deleting, setDeleting] = useState(false);
+
+  async function handleDelete() {
+    if (!window.confirm("Opravdu smazat toto vozidlo? Akci nelze vrátit.")) return;
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/admin/vehicles/${vehicleId}`, { method: "DELETE" });
+      if (res.ok) {
+        onDelete(vehicleId);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Nepodařilo se smazat vozidlo");
+      }
+    } catch {
+      alert("Chyba spojení");
+    } finally {
+      setDeleting(false);
+    }
+  }
+
   return (
     <div className="flex items-center gap-1.5">
       <a
@@ -45,7 +65,8 @@ function TableActions({ vehicleId }: { vehicleId: string }) {
       <button
         className="w-9 h-9 flex items-center justify-center bg-gray-100 rounded-[10px] text-sm cursor-pointer transition-colors hover:bg-error-50 hover:text-error-500 border-none"
         title="Smazat"
-        disabled
+        onClick={handleDelete}
+        disabled={deleting}
       >
         🗑
       </button>
@@ -53,87 +74,92 @@ function TableActions({ vehicleId }: { vehicleId: string }) {
   );
 }
 
-const columns = [
-  {
-    key: "vehicle",
-    header: "Vozidlo",
-    render: (item: Vehicle) => (
-      <div className="flex items-center gap-3">
-        <div className="w-[60px] h-[45px] bg-gray-100 rounded-md flex items-center justify-center text-lg shrink-0 overflow-hidden">
-          {item.imageUrl ? (
-            <img
-              src={item.imageUrl}
-              alt={item.name}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            "🚗"
-          )}
-        </div>
-        <div>
-          <div className="font-semibold text-gray-900">{item.name}</div>
-          <div className="text-xs text-gray-500 font-mono">{item.vin}</div>
-        </div>
-      </div>
-    ),
-  },
-  {
-    key: "broker",
-    header: "Makléř",
-    render: (item: Vehicle) => (
-      <div className="flex items-center gap-2">
-        <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center text-white text-[10px] font-bold shrink-0">
-          {item.brokerInitials}
-        </div>
-        <span className="text-sm">{item.brokerName}</span>
-      </div>
-    ),
-  },
-  {
-    key: "price",
-    header: "Cena",
-    render: (item: Vehicle) => (
-      <span className="font-bold">{item.price}</span>
-    ),
-  },
-  {
-    key: "status",
-    header: "Stav",
-    render: (item: Vehicle) => {
-      const variant = item.status === "draft" ? "draft" : item.status;
-      return (
-        <StatusPill variant={variant}>
-          {statusLabels[item.status] || item.status}
-        </StatusPill>
-      );
-    },
-  },
-  {
-    key: "trustScore",
-    header: "Skóre důvěry",
-    render: (item: Vehicle) => (
-      <TrustScore value={item.trustScore} className="!shadow-none !p-0 !bg-transparent" />
-    ),
-  },
-  {
-    key: "date",
-    header: "Datum",
-    render: (item: Vehicle) => (
-      <span className="text-sm text-gray-500">{item.date}</span>
-    ),
-  },
-  {
-    key: "actions",
-    header: "Akce",
-    render: (item: Vehicle) => <TableActions vehicleId={item.id} />,
-  },
-];
-
 export function VehiclesPageContent() {
   const [activeTab, setActiveTab] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filterOpen, setFilterOpen] = useState(false);
+
+  function handleVehicleDeleted(id: string) {
+    setVehicles(prev => prev.filter(v => v.id !== id));
+  }
+
+  const columns = [
+    {
+      key: "vehicle",
+      header: "Vozidlo",
+      render: (item: Vehicle) => (
+        <div className="flex items-center gap-3">
+          <div className="w-[60px] h-[45px] bg-gray-100 rounded-md flex items-center justify-center text-lg shrink-0 overflow-hidden">
+            {item.imageUrl ? (
+              <img
+                src={item.imageUrl}
+                alt={item.name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              "🚗"
+            )}
+          </div>
+          <div>
+            <div className="font-semibold text-gray-900">{item.name}</div>
+            <div className="text-xs text-gray-500 font-mono">{item.vin}</div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: "broker",
+      header: "Makléř",
+      render: (item: Vehicle) => (
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+            {item.brokerInitials}
+          </div>
+          <span className="text-sm">{item.brokerName}</span>
+        </div>
+      ),
+    },
+    {
+      key: "price",
+      header: "Cena",
+      render: (item: Vehicle) => (
+        <span className="font-bold">{item.price}</span>
+      ),
+    },
+    {
+      key: "status",
+      header: "Stav",
+      render: (item: Vehicle) => {
+        const variant = item.status === "draft" ? "draft" : item.status;
+        return (
+          <StatusPill variant={variant}>
+            {statusLabels[item.status] || item.status}
+          </StatusPill>
+        );
+      },
+    },
+    {
+      key: "trustScore",
+      header: "Skóre důvěry",
+      render: (item: Vehicle) => (
+        <TrustScore value={item.trustScore} className="!shadow-none !p-0 !bg-transparent" />
+      ),
+    },
+    {
+      key: "date",
+      header: "Datum",
+      render: (item: Vehicle) => (
+        <span className="text-sm text-gray-500">{item.date}</span>
+      ),
+    },
+    {
+      key: "actions",
+      header: "Akce",
+      render: (item: Vehicle) => <TableActions vehicleId={item.id} onDelete={handleVehicleDeleted} />,
+    },
+  ];
 
   useEffect(() => {
     async function fetchVehicles() {
@@ -186,9 +212,23 @@ export function VehiclesPageContent() {
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-900">Vozidla</h1>
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" disabled>
-              Filtrovat
-            </Button>
+            <div className="relative">
+              <Button variant="outline" size="sm" onClick={() => setFilterOpen(!filterOpen)}>
+                Filtrovat
+              </Button>
+              {filterOpen && (
+                <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-200 p-4 z-50">
+                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Status</label>
+                  <select
+                    value={activeTab}
+                    onChange={e => { setActiveTab(e.target.value); setCurrentPage(1); setFilterOpen(false); }}
+                    className="w-full mt-1 border border-gray-200 rounded-lg px-3 py-2 text-sm"
+                  >
+                    {tabs.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                  </select>
+                </div>
+              )}
+            </div>
             <Button variant="primary" size="sm" disabled title="Vozidla přidávají makléři přes PWA aplikaci">
               Přidat vozidlo
             </Button>
