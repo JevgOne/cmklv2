@@ -22,20 +22,23 @@ export default function PartnerDashboardPage() {
   const { data: session } = useSession();
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetch("/api/partner/dashboard");
-        if (res.ok) setData(await res.json());
-      } catch (err) {
-        console.error("Dashboard load failed:", err);
-      } finally {
-        setLoading(false);
-      }
+  const loadData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/partner/dashboard");
+      if (res.ok) setData(await res.json());
+      else setError("Nepodařilo se načíst dashboard");
+    } catch {
+      setError("Chyba připojení k serveru");
+    } finally {
+      setLoading(false);
     }
-    load();
-  }, []);
+  };
+
+  useEffect(() => { loadData(); }, []);
 
   if (loading) {
     return (
@@ -46,6 +49,16 @@ export default function PartnerDashboardPage() {
             <div key={i} className="bg-white rounded-2xl p-6 shadow-sm h-32" />
           ))}
         </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <span className="text-4xl mb-4">⚠️</span>
+        <p className="text-gray-900 font-semibold mb-2">{error}</p>
+        <Button variant="outline" onClick={loadData}>Zkusit znovu</Button>
       </div>
     );
   }

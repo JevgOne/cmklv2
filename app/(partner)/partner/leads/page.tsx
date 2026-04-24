@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Tabs } from "@/components/ui/Tabs";
 import { Pagination } from "@/components/ui/Pagination";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { Button } from "@/components/ui/Button";
 
 interface PartnerLead {
   id: string;
@@ -41,34 +42,39 @@ export default function PartnerLeadsPage() {
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [updateError, setUpdateError] = useState<string | null>(null);
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    async function load() {
-      setLoading(true);
-      const params = new URLSearchParams();
-      if (status) params.set("status", status);
-      params.set("page", String(page));
+  const loadLeads = async () => {
+    setLoading(true);
+    setError(null);
+    const params = new URLSearchParams();
+    if (status) params.set("status", status);
+    params.set("page", String(page));
 
-      try {
-        const res = await fetch(`/api/partner/leads?${params}`);
-        if (res.ok) {
-          const data = await res.json();
-          setLeads(data.leads);
-          setTotal(data.total);
-          setTotalPages(data.totalPages);
-        }
-      } catch (err) {
-        console.error("Failed to load leads:", err);
-      } finally {
-        setLoading(false);
+    try {
+      const res = await fetch(`/api/partner/leads?${params}`);
+      if (res.ok) {
+        const data = await res.json();
+        setLeads(data.leads);
+        setTotal(data.total);
+        setTotalPages(data.totalPages);
+      } else {
+        setError("Nepodařilo se načíst zájemce");
       }
+    } catch {
+      setError("Chyba připojení k serveru");
+    } finally {
+      setLoading(false);
     }
-    load();
-  }, [status, page]);
+  };
+
+  useEffect(() => { loadLeads(); }, [status, page]);
 
   async function updateLeadStatus(leadId: string, newStatus: string) {
+    setUpdateError(null);
     try {
       const res = await fetch(`/api/partner/leads/${leadId}`, {
         method: "PATCH",
@@ -79,15 +85,31 @@ export default function PartnerLeadsPage() {
         setLeads((prev) =>
           prev.map((l) => (l.id === leadId ? { ...l, status: newStatus } : l))
         );
+      } else {
+        setUpdateError("Nepodařilo se aktualizovat stav zájemce");
       }
-    } catch (err) {
-      console.error("Failed to update lead:", err);
+    } catch {
+      setUpdateError("Chyba připojení k serveru");
     }
   }
 
   return (
     <div>
       <h1 className="text-2xl font-extrabold text-gray-900 mb-6">Zajemci</h1>
+
+      {updateError && (
+        <div className="bg-red-50 text-red-700 text-sm px-4 py-2 rounded-lg mb-4">
+          {updateError}
+        </div>
+      )}
+
+      {error && (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <span className="text-4xl mb-4">⚠️</span>
+          <p className="text-gray-900 font-semibold mb-2">{error}</p>
+          <Button variant="outline" onClick={loadLeads}>Zkusit znovu</Button>
+        </div>
+      )}
 
       <Tabs
         tabs={statusTabs}

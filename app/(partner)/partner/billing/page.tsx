@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { StatCard } from "@/components/ui/StatCard";
+import { Button } from "@/components/ui/Button";
 import { formatPrice } from "@/lib/utils";
 
 interface BillingData {
@@ -22,20 +23,23 @@ interface BillingData {
 export default function PartnerBillingPage() {
   const [data, setData] = useState<BillingData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetch("/api/partner/billing");
-        if (res.ok) setData(await res.json());
-      } catch (err) {
-        console.error("Failed to load billing:", err);
-      } finally {
-        setLoading(false);
-      }
+  const loadData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/partner/billing");
+      if (res.ok) setData(await res.json());
+      else setError("Nepodařilo se načíst vyúčtování");
+    } catch {
+      setError("Chyba připojení k serveru");
+    } finally {
+      setLoading(false);
     }
-    load();
-  }, []);
+  };
+
+  useEffect(() => { loadData(); }, []);
 
   if (loading) {
     return (
@@ -46,6 +50,16 @@ export default function PartnerBillingPage() {
             <div key={i} className="bg-white rounded-2xl p-6 shadow-sm h-32" />
           ))}
         </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <span className="text-4xl mb-4">⚠️</span>
+        <p className="text-gray-900 font-semibold mb-2">{error}</p>
+        <Button variant="outline" onClick={loadData}>Zkusit znovu</Button>
       </div>
     );
   }

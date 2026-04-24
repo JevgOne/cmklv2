@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { Card } from "@/components/ui/Card";
 import { StatCard } from "@/components/ui/StatCard";
+import { Button } from "@/components/ui/Button";
 import { RevenueChart } from "@/components/ui/charts/RevenueChart";
 import { OrdersChart } from "@/components/ui/charts/OrdersChart";
 
@@ -22,6 +23,7 @@ export default function PartnerStatsPage() {
   const { data: session } = useSession();
   const [stats, setStats] = useState<StatsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   interface ChartMonth {
     label: string;
@@ -33,19 +35,21 @@ export default function PartnerStatsPage() {
   const [chartData, setChartData] = useState<ChartMonth[]>([]);
   const [chartLoading, setChartLoading] = useState(true);
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetch("/api/partner/stats");
-        if (res.ok) setStats(await res.json());
-      } catch (err) {
-        console.error("Failed to load stats:", err);
-      } finally {
-        setLoading(false);
-      }
+  const loadStats = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/partner/stats");
+      if (res.ok) setStats(await res.json());
+      else setError("Nepodařilo se na��íst statistiky");
+    } catch {
+      setError("Chyba připojení k serveru");
+    } finally {
+      setLoading(false);
     }
-    load();
-  }, []);
+  };
+
+  useEffect(() => { loadStats(); }, []);
 
   useEffect(() => {
     async function loadCharts() {
@@ -70,6 +74,16 @@ export default function PartnerStatsPage() {
             <div key={i} className="bg-white rounded-2xl p-6 shadow-sm h-32" />
           ))}
         </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <span className="text-4xl mb-4">⚠️</span>
+        <p className="text-gray-900 font-semibold mb-2">{error}</p>
+        <Button variant="outline" onClick={loadStats}>Zkusit znovu</Button>
       </div>
     );
   }

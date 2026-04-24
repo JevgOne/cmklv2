@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Pagination } from "@/components/ui/Pagination";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { Button } from "@/components/ui/Button";
 import { formatPrice } from "@/lib/utils";
 
 interface OrderItem {
@@ -37,29 +38,32 @@ const statusBadge: Record<string, { label: string; variant: "new" | "pending" | 
 export default function PartnerOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    async function load() {
-      setLoading(true);
-      try {
-        const res = await fetch(`/api/orders?role=supplier&page=${page}`);
-        if (res.ok) {
-          const data = await res.json();
-          setOrders(data.orders ?? []);
-          setTotal(data.total ?? 0);
-          setTotalPages(data.totalPages ?? 1);
-        }
-      } catch (err) {
-        console.error("Failed to load orders:", err);
-      } finally {
-        setLoading(false);
+  const loadOrders = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/orders?role=supplier&page=${page}`);
+      if (res.ok) {
+        const data = await res.json();
+        setOrders(data.orders ?? []);
+        setTotal(data.total ?? 0);
+        setTotalPages(data.totalPages ?? 1);
+      } else {
+        setError("Nepodařilo se načíst objednávky");
       }
+    } catch {
+      setError("Chyba připojení k serveru");
+    } finally {
+      setLoading(false);
     }
-    load();
-  }, [page]);
+  };
+
+  useEffect(() => { loadOrders(); }, [page]);
 
   return (
     <div>
@@ -67,7 +71,13 @@ export default function PartnerOrdersPage() {
         Objednavky
       </h1>
 
-      {loading ? (
+      {error ? (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <span className="text-4xl mb-4">⚠️</span>
+          <p className="text-gray-900 font-semibold mb-2">{error}</p>
+          <Button variant="outline" onClick={loadOrders}>Zkusit znovu</Button>
+        </div>
+      ) : loading ? (
         <div className="space-y-3">
           {Array.from({ length: 3 }).map((_, i) => (
             <div key={i} className="bg-white rounded-2xl shadow-sm h-24 animate-pulse" />
