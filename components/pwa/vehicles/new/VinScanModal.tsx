@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useCamera } from "@/lib/hooks/useCamera";
 import { Button } from "@/components/ui/Button";
+
+const VIN_REGEX = /[A-HJ-NPR-Z0-9]{17}/;
 
 interface VinScanModalProps {
   open: boolean;
@@ -15,6 +17,7 @@ export function VinScanModal({ open, onClose, onVinScanned }: VinScanModalProps)
   const [scanning, setScanning] = useState(false);
   const [scanError, setScanError] = useState<string | null>(null);
   const [attempts, setAttempts] = useState(0);
+  const workerRef = useRef<import("tesseract.js").Worker | null>(null);
 
   // Start/stop camera when modal opens/closes
   useEffect(() => {
@@ -27,6 +30,29 @@ export function VinScanModal({ open, onClose, onVinScanned }: VinScanModalProps)
     }
   }, [open, startCamera, stopCamera]);
 
+  // Cleanup Tesseract worker on unmount
+  useEffect(() => {
+    return () => {
+      if (workerRef.current) {
+        workerRef.current.terminate();
+        workerRef.current = null;
+      }
+    };
+  }, []);
+
+  const getWorker = useCallback(async () => {
+    if (workerRef.current) return workerRef.current;
+    const Tesseract = await import("tesseract.js");
+    const worker = await Tesseract.createWorker("eng", undefined, {
+      logger: () => {},
+    });
+    await worker.setParameters({
+      tessedit_char_whitelist: "ABCDEFGHJKLMNPRSTUVWXYZ0123456789",
+    });
+    workerRef.current = worker;
+    return worker;
+  }, []);
+
   const handleCapture = useCallback(async () => {
     const frame = captureFrame();
     if (!frame) return;
@@ -34,30 +60,27 @@ export function VinScanModal({ open, onClose, onVinScanned }: VinScanModalProps)
     setScanning(true);
     setScanError(null);
 
-    const formData = new FormData();
-    formData.append("image", frame, "vin-scan.jpg");
-
     try {
-      const res = await fetch("/api/vin/scan", {
-        method: "POST",
-        body: formData,
-      });
-      const data = await res.json();
+      const worker = await getWorker();
+      const { data } = await worker.recognize(frame);
+      const text = data.text.replace(/\s/g, "").toUpperCase();
 
-      if (data.found) {
-        onVinScanned(data.vin);
+      const match = text.match(VIN_REGEX);
+
+      if (match) {
+        onVinScanned(match[0]);
         stopCamera();
         onClose();
       } else {
         setAttempts((prev) => prev + 1);
-        setScanError(data.message || "VIN nebyl rozpoznán");
+        setScanError("VIN nebyl rozpoznán. Zkuste lépe zaostřit na VIN kód.");
       }
     } catch {
-      setScanError("Chyba při skenování. Zkuste to znovu.");
+      setScanError("Chyba při rozpoznávání. Zkuste to znovu.");
     } finally {
       setScanning(false);
     }
-  }, [captureFrame, onVinScanned, stopCamera, onClose]);
+  }, [captureFrame, getWorker, onVinScanned, stopCamera, onClose]);
 
   const handleClose = useCallback(() => {
     stopCamera();
@@ -105,18 +128,14 @@ export function VinScanModal({ open, onClose, onVinScanned }: VinScanModalProps)
 
             {/* Viewfinder overlay */}
             <div className="absolute inset-0 pointer-events-none">
-              {/* Dark overlay with transparent center */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="relative w-[85%] max-w-[400px]">
-                  {/* Viewfinder rectangle */}
                   <div className="h-16 border-2 border-white/80 rounded-lg relative">
-                    {/* Corner marks */}
                     <div className="absolute -top-0.5 -left-0.5 w-5 h-5 border-t-3 border-l-3 border-orange-500 rounded-tl" />
                     <div className="absolute -top-0.5 -right-0.5 w-5 h-5 border-t-3 border-r-3 border-orange-500 rounded-tr" />
                     <div className="absolute -bottom-0.5 -left-0.5 w-5 h-5 border-b-3 border-l-3 border-orange-500 rounded-bl" />
                     <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 border-b-3 border-r-3 border-orange-500 rounded-br" />
 
-                    {/* Scanning line animation */}
                     {scanning && (
                       <div className="absolute inset-x-0 top-0 h-full overflow-hidden">
                         <div className="w-full h-0.5 bg-orange-500 animate-[scan_1.5s_ease-in-out_infinite]" />
@@ -132,21 +151,18 @@ export function VinScanModal({ open, onClose, onVinScanned }: VinScanModalProps)
 
       {/* Bottom controls */}
       <div className="bg-black/80 px-4 py-5 space-y-3">
-        {/* Tip */}
         <p className="text-center text-gray-400 text-xs">
           {attempts >= 3
             ? "VIN se nedaří rozpoznat. Zkuste zadat ručně."
             : "Zamiřte na VIN kód na dveřním sloupku nebo palubní desce"}
         </p>
 
-        {/* Error */}
         {scanError && (
           <div className="bg-red-500/20 text-red-300 text-sm px-4 py-2 rounded-lg text-center">
             {scanError}
           </div>
         )}
 
-        {/* Actions */}
         <div className="flex gap-3">
           {attempts >= 3 ? (
             <Button
