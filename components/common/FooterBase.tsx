@@ -150,31 +150,24 @@ export function FooterBase({
               Podpora
             </h3>
             <ul className="list-none p-0 m-0 flex flex-col gap-3 text-sm text-gray-500">
-              {!isPlaceholder(companyInfo.contact.phone) && (
-                <li>
-                  <a
-                    href={companyInfo.contact.phoneHref}
-                    className="hover:text-white transition-colors no-underline"
-                  >
-                    {companyInfo.contact.phone}
-                  </a>
-                </li>
-              )}
               <li>
                 <a
                   href={companyInfo.contact.emailHref}
-                  className="hover:text-white transition-colors no-underline"
+                  className="hover:text-white transition-colors no-underline flex items-center gap-2"
                 >
+                  <svg className="w-4 h-4 text-orange-400/60" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                  </svg>
                   {companyInfo.contact.email}
                 </a>
               </li>
-              <li className="text-gray-600">{companyInfo.hours}</li>
+              <li className="text-gray-600 text-xs">{companyInfo.hours}</li>
               <li>
                 <a
                   href={urls.main("/jak-to-funguje")}
                   className="hover:text-white transition-colors no-underline"
                 >
-                  FAQ
+                  Jak to funguje
                 </a>
               </li>
               <li>
