@@ -32,6 +32,13 @@ export const brand = {
     phone: BRAND_PHONE,
     address: "Praha, Česká republika",
   },
+  logo: {
+    dark: "/brand/logo-dark.png",
+    white: "/brand/logo-white.png",
+    color: "/brand/logo-color.png",
+    symbol: "/brand/logo-symbol-dark.png",
+  },
+  baseUrl: process.env.NEXT_PUBLIC_APP_URL || "https://carmakler.cz",
 };
 
 /** CSS pro tisk dokumentů (smlouvy, protokoly) — A4 portrait */
@@ -204,7 +211,7 @@ export function documentHTML(opts: {
         <div class="doc-subtitle">${opts.contractNumber ? `Č. smlouvy: ${opts.contractNumber} | ` : ""}${opts.date}</div>
       </div>
       <div class="meta">
-        <strong style="color: ${brand.colors.orange}; font-size: 14pt;">CarMakléř</strong><br />
+        <img src="${brand.baseUrl}${brand.logo.dark}" alt="CarMakléř" class="logo" style="height: 40px; margin-bottom: 4px;" /><br />
         ${brand.company.web}<br />
         ${brand.company.email}
       </div>
@@ -238,9 +245,7 @@ export function emailLayoutHTML(content: string, signatureHtml: string): string 
           <!-- Header -->
           <tr>
             <td style="background: ${brand.colors.dark}; padding: 24px 32px; text-align: center;">
-              <h1 style="margin: 0; font-size: 22px; font-weight: 700; color: #ffffff; letter-spacing: -0.5px;">
-                Car<span style="color: ${brand.colors.orange};">Makléř</span>
-              </h1>
+              <img src="${brand.baseUrl}${brand.logo.white}" alt="CarMakléř" style="height: 40px; display: block; margin: 0 auto;" />
             </td>
           </tr>
           <!-- Orange accent line -->

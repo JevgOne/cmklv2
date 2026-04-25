@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import type { ContractContent } from "@/lib/contract-templates";
+import { getLogoBase64 } from "@/lib/pdf/logo";
 
 /* ------------------------------------------------------------------ */
 /*  POST /api/contracts/[id]/pdf — Generování PDF                      */
@@ -104,9 +105,12 @@ export async function POST(
       }
     };
 
-    // Header
-    addText("CARMAKLER", 10, true);
-    y += 2;
+    // Header — logo
+    const logoData = getLogoBase64();
+    const logoHeight = 12;
+    const logoWidth = 25;
+    doc.addImage(logoData, "PNG", margin, y, logoWidth, logoHeight);
+    y += logoHeight + 2;
     addText(content.title || "Smlouva", 18, true, 8);
     y += 2;
     addText(`Číslo smlouvy: ${content.contractNumber}`, 10, false);

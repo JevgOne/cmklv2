@@ -1,4 +1,5 @@
 import { jsPDF } from "jspdf";
+import { getLogoBase64 } from "@/lib/pdf/logo";
 
 /* ── types ── */
 
@@ -97,8 +98,11 @@ const PAYMENT_LABELS: Record<string, string> = {
 /* ── header ── */
 
 function addHeader(ctx: PdfContext, title: string, orderNumber: string, date: string) {
-  addText(ctx, "CARMAKLER", 10, true);
-  ctx.y += 2;
+  const logoData = getLogoBase64();
+  const logoHeight = 10;
+  const logoWidth = 21;
+  ctx.doc.addImage(logoData, "PNG", ctx.margin, ctx.y, logoWidth, logoHeight);
+  ctx.y += logoHeight + 2;
   addText(ctx, title, 16, true, 8);
   ctx.y += 2;
   addText(ctx, `Cislo objednavky: ${orderNumber}`, 10);
