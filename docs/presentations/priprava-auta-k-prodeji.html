@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CarMakler - Jak připravit auto k prodeji</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    color: #1a1a2e;
+    background: #f5f5f5;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+
+  .slide {
+    width: 297mm;
+    height: 210mm;
+    padding: 40px 60px;
+    page-break-after: always;
+    page-break-inside: avoid;
+    position: relative;
+    overflow: hidden;
+    background: white;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .slide:last-child { page-break-after: auto; }
+
+  .slide-title {
+    background: linear-gradient(145deg, rgba(8,8,24,0.88) 0%, rgba(26,26,46,0.85) 30%, rgba(22,33,62,0.82) 65%, rgba(15,52,96,0.80) 100%),
+                url('https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?w=1920&q=80') center/cover no-repeat;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .slide-title::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(249, 115, 22, 0.15) 0%, transparent 70%);
+  }
+  .slide-title::after {
+    content: '';
+    position: absolute;
+    bottom: -100px;
+    left: -100px;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(249, 115, 22, 0.10) 0%, transparent 70%);
+  }
+  .slide-title .logo { height: 90px; margin-bottom: 30px; position: relative; z-index: 1; filter: drop-shadow(0 0 24px rgba(249,115,22,0.25)); }
+  .slide-title h1 { font-size: 42px; font-weight: 800; line-height: 1.2; margin-bottom: 16px; position: relative; z-index: 1; }
+  .slide-title h1 span { color: #F97316; }
+  .slide-title .subtitle { font-size: 18px; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.8); position: relative; z-index: 1; }
+  .slide-title .date { position: absolute; bottom: 40px; right: 60px; font-size: 14px; color: rgba(255,255,255,0.5); }
+  .slide-title .web { position: absolute; bottom: 40px; left: 60px; font-size: 14px; color: rgba(255,255,255,0.5); }
+  .slide-title .accent-line { width: 60px; height: 4px; background: #F97316; border-radius: 2px; margin: 20px auto 0; position: relative; z-index: 1; }
+
+  .slide-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    padding-bottom: 16px;
+    border-bottom: 3px solid #F97316;
+  }
+  .slide-header h2 { font-size: 32px; font-weight: 700; color: #1a1a2e; }
+  .slide-header .logo-small { height: 36px; opacity: 0.6; }
+
+  .orange { color: #F97316; }
+  .green { color: #22c55e; }
+  .red { color: #ef4444; }
+  .highlight { background: linear-gradient(135deg, #FFF7ED, #FFEDD5); border-radius: 16px; padding: 24px; }
+  .dark-box { background: #1a1a2e; color: white; border-radius: 16px; padding: 24px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; flex: 1; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; flex: 1; }
+
+  .feature-card {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #e2e8f0;
+  }
+  .feature-card .icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #F97316, #ea580c);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 14px;
+    color: white;
+  }
+  .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #1a1a2e; }
+  .feature-card p { font-size: 13px; line-height: 1.5; color: #64748b; }
+  .feature-card ul { font-size: 13px; line-height: 1.8; color: #64748b; list-style: none; }
+  .feature-card ul li::before { content: "✓ "; color: #F97316; font-weight: 700; }
+
+  /* Before/After comparison */
+  .compare-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    flex: 1;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 2px solid #e2e8f0;
+  }
+  .compare-bad {
+    position: relative;
+    overflow: hidden;
+  }
+  .compare-bad img, .compare-good img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .compare-bad .overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(239,68,68,0.9));
+    padding: 20px;
+    color: white;
+  }
+  .compare-good {
+    position: relative;
+    overflow: hidden;
+  }
+  .compare-good .overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(34,197,94,0.9));
+    padding: 20px;
+    color: white;
+  }
+  .compare-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+  .compare-text {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  /* Listing comparison */
+  .listing-card {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 2px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+  }
+  .listing-card.bad { border-color: #fca5a5; }
+  .listing-card.good { border-color: #86efac; }
+  .listing-card .listing-img {
+    height: 180px;
+    overflow: hidden;
+    position: relative;
+  }
+  .listing-card .listing-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .listing-card .listing-body {
+    padding: 16px;
+    flex: 1;
+  }
+  .listing-card .listing-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .listing-card .listing-price {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .listing-card .listing-desc {
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.5;
+  }
+  .listing-card .listing-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+  }
+  .listing-card.bad .listing-badge { background: #fef2f2; color: #dc2626; }
+  .listing-card.bad .listing-price { color: #64748b; }
+  .listing-card.good .listing-badge { background: #f0fdf4; color: #16a34a; }
+  .listing-card.good .listing-price { color: #F97316; }
+
+  .listing-mistakes {
+    list-style: none;
+    font-size: 12px;
+    line-height: 1.8;
+    color: #64748b;
+  }
+  .listing-mistakes li::before { content: "✗ "; color: #ef4444; font-weight: 700; }
+  .listing-wins {
+    list-style: none;
+    font-size: 12px;
+    line-height: 1.8;
+    color: #64748b;
+  }
+  .listing-wins li::before { content: "✓ "; color: #22c55e; font-weight: 700; }
+
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .step-num {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    background: #F97316;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .step h4 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .step p { font-size: 13px; color: #64748b; line-height: 1.5; }
+
+  .stat-box {
+    text-align: center;
+    padding: 24px;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+  }
+  .stat-box .number { font-size: 42px; font-weight: 800; color: #F97316; display: block; }
+  .stat-box .label { font-size: 14px; color: #64748b; margin-top: 4px; }
+
+  .checklist {
+    list-style: none;
+    font-size: 14px;
+    line-height: 2.2;
+  }
+  .checklist li {
+    padding: 4px 0;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .checklist .check-icon {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    background: #f0fdf4;
+    border: 2px solid #86efac;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #22c55e;
+  }
+
+  .tip-box {
+    background: linear-gradient(135deg, #FFF7ED, #FFEDD5);
+    border-left: 4px solid #F97316;
+    border-radius: 0 12px 12px 0;
+    padding: 16px 20px;
+    margin-top: 16px;
+  }
+  .tip-box .tip-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #F97316;
+    margin-bottom: 4px;
+  }
+  .tip-box p { font-size: 13px; color: #92400e; line-height: 1.5; }
+
+  .slide-cta {
+    background: linear-gradient(145deg, rgba(8,8,24,0.90) 0%, rgba(26,26,46,0.88) 50%, rgba(15,52,96,0.85) 100%),
+                url('https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=1920&q=80') center/cover no-repeat;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .slide-cta::before {
+    content: '';
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(249, 115, 22, 0.18) 0%, transparent 70%);
+  }
+  .slide-cta .logo { height: 70px; margin-bottom: 30px; filter: drop-shadow(0 0 20px rgba(249,115,22,0.3)); position: relative; z-index: 1; }
+  .slide-cta h2 { font-size: 38px; font-weight: 800; margin-bottom: 16px; position: relative; z-index: 1; }
+  .slide-cta h2 span { color: #F97316; }
+  .slide-cta p { font-size: 18px; color: rgba(255,255,255,0.8); margin-bottom: 10px; position: relative; z-index: 1; }
+  .slide-cta .cta-contact { font-size: 20px; font-weight: 700; color: #F97316; margin-top: 20px; position: relative; z-index: 1; }
+  .slide-cta .web { position: absolute; bottom: 40px; left: 60px; font-size: 14px; color: rgba(255,255,255,0.5); }
+  .slide-cta .date { position: absolute; bottom: 40px; right: 60px; font-size: 14px; color: rgba(255,255,255,0.5); }
+
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 1fr 1fr;
+    gap: 8px;
+    flex: 1;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .photo-grid .photo {
+    overflow: hidden;
+    position: relative;
+    border-radius: 8px;
+  }
+  .photo-grid .photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .photo-grid .photo .photo-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.7));
+    padding: 8px 12px;
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .photo-grid .photo-main {
+    grid-column: 1 / 3;
+    grid-row: 1 / 3;
+  }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1: Title -->
+<div class="slide slide-title">
+  <img src="../../public/brand/logo-white.png" alt="CarMakler" class="logo" style="height: 60px; margin-bottom: 30px;">
+  <h1>Jak připravit auto<br><span>k úspěšnému prodeji</span></h1>
+  <p class="subtitle">Kompletní průvodce pro maximální prodejní cenu</p>
+  <div class="accent-line"></div>
+  <span class="web">www.carmakler.cz</span>
+  <span class="date">2026</span>
+</div>
+
+<!-- SLIDE 2: Proč na přípravě záleží -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Proč na <span class="orange">přípravě záleží</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+
+  <div class="grid-3" style="margin-bottom: 24px;">
+    <div class="stat-box">
+      <span class="number">+15%</span>
+      <span class="label">Vyšší prodejní cena<br>u připraveného auta</span>
+    </div>
+    <div class="stat-box">
+      <span class="number">3x</span>
+      <span class="label">Rychlejší prodej<br>oproti nepřipravenému</span>
+    </div>
+    <div class="stat-box">
+      <span class="number">80%</span>
+      <span class="label">Kupujících rozhoduje<br>první dojem</span>
+    </div>
+  </div>
+
+  <div class="dark-box" style="text-align: center;">
+    <p style="font-size: 18px; font-weight: 600;">
+      Investice <span style="color: #F97316; font-size: 24px; font-weight: 800;">2-3 hodiny</span> přípravy = rozdíl <span style="color: #F97316; font-size: 24px; font-weight: 800;">desítek tisíc</span> v prodejní ceně
+    </p>
+  </div>
+</div>
+
+<!-- SLIDE 3: Před a po — exteriér -->
+<div class="slide">
+  <div class="slide-header">
+    <h2><span class="orange">Před a po:</span> Exteriér</h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <img src="https://images.unsplash.com/photo-1600712242805-5f78671b24da?w=800&q=80" alt="Špinavé auto">
+      <div class="overlay">
+        <div class="compare-label">Před</div>
+        <div class="compare-text">Špinavé auto = nízká cena</div>
+        <ul class="listing-mistakes" style="margin-top: 8px;">
+          <li style="color: white;">Viditelný prach a nečistoty</li>
+          <li style="color: white;">Poškrábaný lak</li>
+          <li style="color: white;">Špinavá kola</li>
+        </ul>
+      </div>
+    </div>
+    <div class="compare-good">
+      <img src="https://images.unsplash.com/photo-1507136566006-cfc505b114fc?w=800&q=80" alt="Čisté auto">
+      <div class="overlay">
+        <div class="compare-label">Po</div>
+        <div class="compare-text">Čisté auto = vyšší cena</div>
+        <ul class="listing-wins" style="margin-top: 8px;">
+          <li style="color: white;">Leskne se jako nové</li>
+          <li style="color: white;">Drobné škrábance zamaskované</li>
+          <li style="color: white;">Profesionální dojem</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: Před a po — interiér -->
+<div class="slide">
+  <div class="slide-header">
+    <h2><span class="orange">Před a po:</span> Interiér</h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=800&q=80" alt="Špinavý interiér">
+      <div class="overlay">
+        <div class="compare-label">Před</div>
+        <div class="compare-text">Nepořádek = nedůvěra</div>
+        <ul class="listing-mistakes" style="margin-top: 8px;">
+          <li style="color: white;">Odpadky a osobní věci</li>
+          <li style="color: white;">Zápach z kouření</li>
+          <li style="color: white;">Špinavé sedačky a koberce</li>
+        </ul>
+      </div>
+    </div>
+    <div class="compare-good">
+      <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80" alt="Čistý interiér">
+      <div class="overlay">
+        <div class="compare-label">Po</div>
+        <div class="compare-text">Čistý interiér = důvěra</div>
+        <ul class="listing-wins" style="margin-top: 8px;">
+          <li style="color: white;">Vysáto a vytřeno</li>
+          <li style="color: white;">Příjemná vůně</li>
+          <li style="color: white;">Ošetřené plasty a kůže</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5: Checklist přípravy -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Checklist <span class="orange">přípravy auta</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">Exteriér</h3>
+      <ul class="checklist">
+        <li><span class="check-icon">✓</span> Důkladné mytí karoserie + kola</li>
+        <li><span class="check-icon">✓</span> Leštění laku (vosková ochrana)</li>
+        <li><span class="check-icon">✓</span> Oprava drobných škrábanců (korekční tužka)</li>
+        <li><span class="check-icon">✓</span> Kontrola a čištění světel</li>
+        <li><span class="check-icon">✓</span> Výměna stěračů (pokud opotřebené)</li>
+        <li><span class="check-icon">✓</span> Kontrola pneumatik a hloubky dezénu</li>
+        <li><span class="check-icon">✓</span> Ošetření plastových lišt (černidlo)</li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">Interiér</h3>
+      <ul class="checklist">
+        <li><span class="check-icon">✓</span> Vysát koberce a sedačky</li>
+        <li><span class="check-icon">✓</span> Vytřít palubní desku a plasty</li>
+        <li><span class="check-icon">✓</span> Vyčistit sedačky (textil/kůže)</li>
+        <li><span class="check-icon">✓</span> Umýt okna zevnitř</li>
+        <li><span class="check-icon">✓</span> Vyčistit kufr</li>
+        <li><span class="check-icon">✓</span> Neutralizovat pachy (ozón/vůně)</li>
+        <li><span class="check-icon">✓</span> Odstranit všechny osobní věci</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <div class="tip-label">Tip od makléře</div>
+    <p>Profesionální čištění interiéru stojí 1 500 - 3 000 Kč, ale může zvýšit prodejní cenu o 10 000 - 30 000 Kč. Nejlepší investice před prodejem.</p>
+  </div>
+</div>
+
+<!-- SLIDE 6: Jak fotit auto -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Jak <span class="orange">správně fotit</span> auto</h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <div class="feature-card" style="margin-bottom: 16px;">
+        <div class="icon">📸</div>
+        <h3>Pravidla focení</h3>
+        <ul>
+          <li>Foťte za denního světla (ne v garáži)</li>
+          <li>Čisté pozadí (ne bordel na dvoře)</li>
+          <li>Telefon na šířku, ne na výšku</li>
+          <li>Minimálně 15 fotek z každého úhlu</li>
+          <li>Detaily: motor, nájezd km, interiér</li>
+          <li>Fotky poškození — buďte upřímní</li>
+        </ul>
+      </div>
+      <div class="tip-box" style="margin-top: 0;">
+        <div class="tip-label">Důležité</div>
+        <p>Auto s 20+ kvalitními fotkami se prodává 2x rychleji než auto s 5 špatnými fotkami z garáže.</p>
+      </div>
+    </div>
+    <div class="photo-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+      <div class="photo">
+        <img src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=400&q=80" alt="Přední 3/4">
+        <div class="photo-label">Přední 3/4 pohled</div>
+      </div>
+      <div class="photo">
+        <img src="https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=400&q=80" alt="Zadní 3/4">
+        <div class="photo-label">Zadní 3/4 pohled</div>
+      </div>
+      <div class="photo">
+        <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400&q=80" alt="Interiér">
+        <div class="photo-label">Interiér + palubka</div>
+      </div>
+      <div class="photo">
+        <img src="https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400&q=80" alt="Motor">
+        <div class="photo-label">Motorový prostor</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: Špatný vs dobrý inzerát -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Inzerát který <span class="red">neprodává</span> vs <span class="green">prodává</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+
+  <div class="grid-2">
+    <!-- BAD LISTING -->
+    <div>
+      <div class="listing-card bad">
+        <div class="listing-img">
+          <img src="https://images.unsplash.com/photo-1600712242805-5f78671b24da?w=600&q=80" alt="Špatný inzerát">
+        </div>
+        <div class="listing-body">
+          <span class="listing-badge">Tak to nedělejte</span>
+          <div class="listing-title">Prodám škodovku</div>
+          <div class="listing-price" style="color: #94a3b8;">200 000 Kč</div>
+          <div class="listing-desc">
+            "prodám škodovku, jezdí dobře, stk platný, víc info volejte"
+          </div>
+          <ul class="listing-mistakes" style="margin-top: 12px;">
+            <li>Žádné detaily (rok, najeto, motor)</li>
+            <li>Špatná fotka z garáže, tmavá</li>
+            <li>Nepopsaná výbava</li>
+            <li>Žádná historie servisu</li>
+            <li>Cena bez zdůvodnění</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- GOOD LISTING -->
+    <div>
+      <div class="listing-card good">
+        <div class="listing-img">
+          <img src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=600&q=80" alt="Dobrý inzerát">
+        </div>
+        <div class="listing-body">
+          <span class="listing-badge">Takhle to děláme my</span>
+          <div class="listing-title">Škoda Octavia Combi 2.0 TDI Style</div>
+          <div class="listing-price">389 000 Kč</div>
+          <div class="listing-desc">
+            Rok 2019 · 87 000 km · 110 kW · DSG · 1. majitel
+          </div>
+          <ul class="listing-wins" style="margin-top: 12px;">
+            <li>Kompletní specifikace v názvu</li>
+            <li>20+ profesionálních fotek</li>
+            <li>Detailní popis výbavy</li>
+            <li>Servisní historie přiložena</li>
+            <li>Cena odpovídá trhu + zdůvodněná</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8: Dokumenty k prodeji -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Dokumenty <span class="orange">k prodeji</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">Povinné dokumenty</h3>
+      <ul class="checklist">
+        <li><span class="check-icon">✓</span> Velký technický průkaz (ORV)</li>
+        <li><span class="check-icon">✓</span> Malý technický průkaz (osvědčení)</li>
+        <li><span class="check-icon">✓</span> Platná STK + emise</li>
+        <li><span class="check-icon">✓</span> Zelená karta (pojištění)</li>
+        <li><span class="check-icon">✓</span> Doklad o nabytí (kupní smlouva)</li>
+      </ul>
+
+      <h3 style="font-size: 20px; font-weight: 700; margin: 24px 0 16px;">Doporučené</h3>
+      <ul class="checklist">
+        <li><span class="check-icon">✓</span> Servisní knížka / historie</li>
+        <li><span class="check-icon">✓</span> Klíče (oba sady)</li>
+        <li><span class="check-icon">✓</span> Návod k obsluze</li>
+      </ul>
+    </div>
+    <div>
+      <div class="highlight" style="margin-bottom: 16px;">
+        <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">Co řeší makléř za vás</h3>
+        <ul style="list-style: none; font-size: 14px; line-height: 2;">
+          <li>✓ Kupní smlouva — právně ošetřená</li>
+          <li>✓ Přepis na novém majiteli</li>
+          <li>✓ Kontrola solventnosti kupujícího</li>
+          <li>✓ Předávací protokol</li>
+          <li>✓ Pojištění přepisu</li>
+        </ul>
+      </div>
+
+      <div class="dark-box">
+        <p style="font-size: 14px; text-align: center;">
+          S makléřem CarMakler nemusíte řešit papírování. <strong style="color: #F97316;">Postaráme se o vše.</strong>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9: Jak stanovit cenu -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Jak stanovit <span class="orange">správnou cenu</span></h2>
+    <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div>
+          <h4>Zjistěte tržní hodnotu</h4>
+          <p>Porovnejte podobná auta na inzertních portálech. Sledujte za kolik se skutečně prodávají, ne za kolik jsou inzerována.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div>
+          <h4>Zohledněte stav a výbavu</h4>
+          <p>Nadstandardní výbava, servisní historie a nízký nájezd = oprávněně vyšší cena. Poškození a nedostatky = nižší cena.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div>
+          <h4>Nechte si udělat odhad od makléře</h4>
+          <p>Profesionální makléř zná lokální trh, ví co se prodává a za kolik. Náš odhad je zdarma a nezávazný.</p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="feature-card" style="margin-bottom: 16px;">
+        <div class="icon">💡</div>
+        <h3>Co zvyšuje cenu</h3>
+        <ul>
+          <li>Kompletní servisní historie</li>
+          <li>Jeden majitel</li>
+          <li>Nízký nájezd</li>
+          <li>Nadstandardní výbava (kůže, panorama)</li>
+          <li>Zimní sada kol</li>
+          <li>Čerstvá STK</li>
+        </ul>
+      </div>
+      <div class="feature-card">
+        <div class="icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);">⚠</div>
+        <h3>Co snižuje cenu</h3>
+        <ul>
+          <li>Havarované / přelakované</li>
+          <li>Více majitelů</li>
+          <li>Chybějící servisní knížka</li>
+          <li>Neoriginální díly</li>
+          <li>Neprůhledný původ</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10: CTA -->
+<div class="slide slide-cta">
+  <img src="../../public/brand/logo-white.png" alt="CarMakler" class="logo">
+  <h2>Nechte prodej <span>na nás</span></h2>
+  <p>Připravíme auto, nafotíme, vytvoříme inzerát a prodáme za nejlepší cenu.</p>
+  <p style="font-size: 16px; color: rgba(255,255,255,0.6);">Provize pouze 5% z prodejní ceny · Minimálně 25 000 Kč</p>
+  <div class="cta-contact">
+    www.carmakler.cz · info@carmakler.cz
+  </div>
+  <span class="web">www.carmakler.cz</span>
+  <span class="date">2026</span>
+</div>
+
+</body>
+</html>
