@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
 import { BASE_URL } from "@/lib/seo-data";
 import { ROLE_LABELS } from "@/lib/role-labels";
+import { getSkillTagCounts } from "@/lib/reputation/skill-tags";
 import { ProfileClient, type ProfileData } from "./ProfileClient";
 
 export const revalidate = 300;
@@ -107,6 +108,24 @@ const getProfileData = cache(
         : Promise.resolve([]),
     ]);
 
+    // Reputation data
+    const contextMap: Record<string, string> = {
+      BROKER: "BROKER", MANAGER: "BROKER", REGIONAL_DIRECTOR: "BROKER",
+      PARTS_SUPPLIER: "SUPPLIER", VERIFIED_DEALER: "DEALER",
+      INVESTOR: "INVESTOR", ADVERTISER: "SELLER",
+    };
+    const reputationContext = contextMap[user.role] ?? "BROKER";
+
+    const [trustScore, autoBadges, skillTags] = await Promise.all([
+      prisma.trustScore.findUnique({ where: { userId: user.id } }),
+      prisma.autoBadge.findMany({
+        where: { userId: user.id },
+        orderBy: { unlockedAt: "desc" },
+        select: { badge: true, context: true, unlockedAt: true },
+      }),
+      getSkillTagCounts(user.id, reputationContext),
+    ]);
+
     // Authoritative sold count z DB (real-time), fallback na user.totalSales
     // pokud oba dotazy 0 a gamifikace držela hodnotu.
     const authoritativeSold = vehicleSoldCount + listingSoldCount;
@@ -184,6 +203,35 @@ const getProfileData = cache(
         totalSales: soldCount,
       },
       roleStats,
+      reputation: trustScore
+        ? {
+            score: trustScore.score,
+            tier: trustScore.tier,
+            avgResponseMinutes: trustScore.avgResponseMinutes,
+            responseRate: trustScore.responseRate,
+            lastActiveAt: trustScore.lastActiveAt?.toISOString() ?? null,
+            badges: autoBadges.map((b) => ({
+              badge: b.badge,
+              context: b.context,
+              unlockedAt: b.unlockedAt.toISOString(),
+            })),
+            skillTags,
+            context: reputationContext,
+          }
+        : {
+            score: 0,
+            tier: "NEW",
+            avgResponseMinutes: null,
+            responseRate: null,
+            lastActiveAt: null,
+            badges: autoBadges.map((b) => ({
+              badge: b.badge,
+              context: b.context,
+              unlockedAt: b.unlockedAt.toISOString(),
+            })),
+            skillTags,
+            context: reputationContext,
+          },
     };
   },
 );

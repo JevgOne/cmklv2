@@ -48,6 +48,7 @@ export default async function MakleriPage() {
     cities: string | null;
     level: string;
     totalSales: number;
+    trustScore: { score: number; tier: string } | null;
   }[] = [];
   let brokerCount = 0;
 
@@ -64,6 +65,7 @@ export default async function MakleriPage() {
           cities: true,
           level: true,
           totalSales: true,
+          trustScore: { select: { score: true, tier: true } },
         },
         orderBy: { totalSales: "desc" },
       }),
@@ -152,7 +154,7 @@ export default async function MakleriPage() {
                         ))}
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4 pt-5 border-t border-gray-100">
+                      <div className={`grid ${broker.trustScore && broker.trustScore.score > 0 ? "grid-cols-3" : "grid-cols-2"} gap-4 pt-5 border-t border-gray-100`}>
                         <div className="text-center">
                           <div className="text-2xl font-extrabold text-gray-900">
                             {broker.totalSales}
@@ -169,6 +171,20 @@ export default async function MakleriPage() {
                             Úroveň
                           </div>
                         </div>
+                        {broker.trustScore && broker.trustScore.score > 0 && (
+                          <div className="text-center">
+                            <div className={`text-2xl font-extrabold ${
+                              broker.trustScore.score >= 75 ? "text-yellow-600" :
+                              broker.trustScore.score >= 50 ? "text-slate-600" :
+                              broker.trustScore.score >= 25 ? "text-amber-600" : "text-gray-500"
+                            }`}>
+                              {broker.trustScore.score}
+                            </div>
+                            <div className="text-[11px] font-semibold text-gray-500 mt-1">
+                              Trust Score
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </Card>
                   </Link>

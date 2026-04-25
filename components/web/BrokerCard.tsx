@@ -17,6 +17,9 @@ export interface BrokerCardBroker {
   phone: string | null;
   showPhone: boolean;
   tags: { slug: string; label: string }[];
+  trustScore?: number | null;
+  trustTier?: string | null;
+  topSkillTags?: { tag: string; emoji: string; count: number }[];
 }
 
 export interface BrokerCardProps {
@@ -73,6 +76,18 @@ export function BrokerCard({ broker }: BrokerCardProps) {
           <Badge variant={["STAR_4", "STAR_5"].includes(broker.level) ? "top" : "verified"}>
             {LEVEL_LABEL[broker.level] ?? "⭐"}
           </Badge>
+          {broker.trustScore != null && broker.trustScore > 0 && (
+            <>
+              <span className="text-gray-300">·</span>
+              <span className={`text-xs font-semibold ${
+                (broker.trustScore ?? 0) >= 75 ? "text-yellow-600" :
+                (broker.trustScore ?? 0) >= 50 ? "text-slate-600" :
+                (broker.trustScore ?? 0) >= 25 ? "text-amber-600" : "text-gray-500"
+              }`}>
+                {broker.trustScore}
+              </span>
+            </>
+          )}
           {primaryCity && (
             <>
               <span className="text-gray-300">·</span>
@@ -87,6 +102,21 @@ export function BrokerCard({ broker }: BrokerCardProps) {
         <StatCell value={broker.activeVehicles} label="Vozidel" />
         <StatCell value={broker.tags.length} label="Specializací" />
       </div>
+
+      {broker.topSkillTags && broker.topSkillTags.length > 0 && (
+        <div className="flex justify-center gap-2 mt-3 px-5">
+          {broker.topSkillTags.slice(0, 3).map((t) => (
+            <span
+              key={t.tag}
+              title={t.tag}
+              className="inline-flex items-center gap-0.5 text-sm"
+            >
+              <span>{t.emoji}</span>
+              <span className="text-xs text-gray-500">{t.count}</span>
+            </span>
+          ))}
+        </div>
+      )}
 
       <div className="mt-auto pt-4 px-5 pb-5 flex flex-col gap-2">
         <Link

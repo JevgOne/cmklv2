@@ -9,6 +9,10 @@ import { Button } from "@/components/ui/Button";
 import { LikeButton } from "@/components/web/LikeButton";
 import { TagPill } from "@/components/web/TagPill";
 import { LevelBadge } from "@/components/pwa/gamification/LevelBadge";
+import { TrustScoreBadge } from "@/components/ui/TrustScoreBadge";
+import { SkillTags } from "@/components/ui/SkillTags";
+import { AutoBadges } from "@/components/ui/AutoBadges";
+import { ActivitySignal } from "@/components/ui/ActivitySignal";
 import { VehicleCard, type VehicleData } from "@/components/web/VehicleCard";
 import { getDefaultCover } from "@/lib/profile/defaultCovers";
 import { categorizeSpecialization } from "@/lib/broker-specializations";
@@ -65,10 +69,22 @@ export interface ProfileStats {
   totalSales: number;
 }
 
+export interface ReputationData {
+  score: number;
+  tier: string;
+  avgResponseMinutes: number | null;
+  responseRate: number | null;
+  lastActiveAt: string | null;
+  badges: { badge: string; context: string; unlockedAt: string }[];
+  skillTags: { tag: string; count: number }[];
+  context: string;
+}
+
 export interface ProfileData {
   user: ProfileUser;
   stats: ProfileStats;
   roleStats: Record<string, number>;
+  reputation: ReputationData | null;
 }
 
 interface ProfileItem {
@@ -163,7 +179,7 @@ interface ProfileClientProps {
 export function ProfileClient({ initialData, slug }: ProfileClientProps) {
   const { data: session } = useSession();
 
-  const { user, stats, roleStats } = initialData;
+  const { user, stats, roleStats, reputation } = initialData;
   const [activeTab, setActiveTab] = useState<string>(
     (ROLE_TABS[user.role] || ["liked"])[0],
   );
@@ -341,40 +357,45 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
                 {memberSince}
               </p>
 
-              {/* Star badge */}
-              {["BROKER", "MANAGER", "REGIONAL_DIRECTOR"].includes(user.role) && (
-                <div className="mt-3">
+              {/* Star badge + Trust Score */}
+              <div className="flex items-center gap-4 mt-4">
+                {["BROKER", "MANAGER", "REGIONAL_DIRECTOR"].includes(user.role) && (
                   <LevelBadge level={user.level} size="lg" />
+                )}
+                {reputation && reputation.score > 0 && (
+                  <TrustScoreBadge score={reputation.score} tier={reputation.tier} size="md" />
+                )}
+              </div>
+
+              {/* Auto-badges */}
+              {reputation && reputation.badges.length > 0 && (
+                <div className="mt-3">
+                  <AutoBadges badges={reputation.badges} />
                 </div>
               )}
 
-              {/* Verification badges */}
-              <div className="flex flex-wrap justify-center gap-2 mt-3">
-                {["STAR_2", "STAR_3", "STAR_4", "STAR_5"].includes(user.level) && (
-                  <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                    Ověřená identita
-                  </span>
-                )}
-                {user.phone && (
-                  <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                    Ověřený telefon
-                  </span>
-                )}
-                {user.email && (
-                  <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                    Ověřený e-mail
-                  </span>
-                )}
-              </div>
+              {/* Activity signals */}
+              {reputation && (
+                <div className="mt-2">
+                  <ActivitySignal
+                    avgResponseMinutes={reputation.avgResponseMinutes}
+                    responseRate={reputation.responseRate}
+                    lastActiveAt={reputation.lastActiveAt}
+                  />
+                </div>
+              )}
+
+              {/* Skill Tagy */}
+              {reputation && (
+                <div className="mt-3">
+                  <SkillTags
+                    tags={reputation.skillTags}
+                    targetId={user.id}
+                    context={reputation.context}
+                    interactive={!isOwner}
+                  />
+                </div>
+              )}
 
               {user.tags && user.tags.length > 0 && (
                 <div className="flex flex-wrap justify-center gap-1.5 mt-4">

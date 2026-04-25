@@ -7,6 +7,7 @@ import { handoverVehicleSchema } from "@/lib/validators/sales";
 import { calculateCommission } from "@/lib/commission-calculator";
 import { addBrokerRevenue, type StarLevelKey } from "@/lib/broker-points";
 import { createNotification } from "@/lib/notifications";
+import { recalculateBrokerScore } from "@/lib/reputation/recalculate";
 
 /* ------------------------------------------------------------------ */
 /*  POST /api/vehicles/[id]/handover — Předání vozidla kupujícímu      */
@@ -206,6 +207,13 @@ export async function POST(
         })
       )
     );
+
+    // --- Recalculate broker Trust Score ---
+    if (vehicle.brokerId) {
+      recalculateBrokerScore(vehicle.brokerId).catch((err) =>
+        console.error("Trust score recalculation failed:", err),
+      );
+    }
 
     // --- Follow-up (FÁZE 4) ---
     // TODO: TASK-026 — automatický email kupujícímu po 7 dnech (follow-up systém)

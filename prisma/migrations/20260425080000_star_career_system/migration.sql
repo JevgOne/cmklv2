@@ -14,8 +14,8 @@ UPDATE "Region" SET "tier" = 'OSTRAVA_PLZEN' WHERE "name" = 'Plzeňský';
 -- 3. Add totalRevenue to User (Int, default 0)
 ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "totalRevenue" INTEGER NOT NULL DEFAULT 0;
 
--- 4. Convert level values (TIPAR→STAR_1, JUNIOR→STAR_2, SENIOR→STAR_3, EXPERT→STAR_4)
-UPDATE "User" SET "level" = 'STAR_1' WHERE "level" = 'TIPAR';
+-- 4. Convert level values (MAKLER/TIPAR→STAR_1, JUNIOR→STAR_2, SENIOR→STAR_3, EXPERT→STAR_4)
+UPDATE "User" SET "level" = 'STAR_1' WHERE "level" IN ('TIPAR', 'MAKLER');
 UPDATE "User" SET "level" = 'STAR_2' WHERE "level" = 'JUNIOR';
 UPDATE "User" SET "level" = 'STAR_3' WHERE "level" = 'SENIOR';
 UPDATE "User" SET "level" = 'STAR_4' WHERE "level" = 'EXPERT';
@@ -31,13 +31,13 @@ UPDATE "User" u SET "totalRevenue" = COALESCE((
 -- 7. Remove old totalPoints column (if exists)
 ALTER TABLE "User" DROP COLUMN IF EXISTS "totalPoints";
 
--- 8. BrokerPointTransaction: add amount + revenueAtTime, migrate data
-ALTER TABLE "BrokerPointTransaction" ADD COLUMN IF NOT EXISTS "amount" INTEGER NOT NULL DEFAULT 0;
-ALTER TABLE "BrokerPointTransaction" ADD COLUMN IF NOT EXISTS "revenueAtTime" INTEGER;
+-- 8. BrokerSalesRecord: add amount + revenueAtTime, migrate data
+ALTER TABLE "BrokerSalesRecord" ADD COLUMN IF NOT EXISTS "amount" INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE "BrokerSalesRecord" ADD COLUMN IF NOT EXISTS "revenueAtTime" INTEGER;
 
 -- Migrate old points data: amount = sourceAmount (actual sale amount)
-UPDATE "BrokerPointTransaction" SET "amount" = COALESCE("sourceAmount", 0) WHERE "amount" = 0;
+UPDATE "BrokerSalesRecord" SET "amount" = COALESCE("sourceAmount", 0) WHERE "amount" = 0;
 
--- 9. Drop old columns from BrokerPointTransaction
-ALTER TABLE "BrokerPointTransaction" DROP COLUMN IF EXISTS "points";
-ALTER TABLE "BrokerPointTransaction" DROP COLUMN IF EXISTS "sourceAmount";
+-- 9. Drop old columns from BrokerSalesRecord
+ALTER TABLE "BrokerSalesRecord" DROP COLUMN IF EXISTS "points";
+ALTER TABLE "BrokerSalesRecord" DROP COLUMN IF EXISTS "sourceAmount";

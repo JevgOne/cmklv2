@@ -154,6 +154,12 @@ model User {
   profileComments ProfileComment[] @relation("UserProfileComments")
   profileBadges   ProfileBadge[]   @relation("UserBadges")
 
+  // Reputační systém
+  trustScore        TrustScore?
+  skillTagsReceived SkillTag[]     @relation("SkillTagTarget")
+  skillTagsGiven    SkillTag[]     @relation("SkillTagGiver")
+  autoBadges        AutoBadge[]
+
   // Profilové tagy / hashtagy (M2M)
   tags            Tag[]            @relation("UserTags")
 
@@ -2182,4 +2188,73 @@ model Tag {
 
   @@index([isFeatured])
   @@index([category])
+}
+
+// ============================================
+// REPUTAČNÍ SYSTÉM (sdílený základ)
+// ============================================
+
+model TrustScore {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Unified Trust Score (0-100)
+  score     Int    @default(0)
+  tier      String @default("NEW") // NEW, BRONZE, SILVER, GOLD, PLATINUM
+
+  // Per-product scores (0-100 each, null = N/A for this user)
+  brokerScore   Int?
+  supplierScore Int?
+  dealerScore   Int?
+  investorScore Int?
+  sellerScore   Int?
+
+  // Activity signals
+  lastActiveAt       DateTime?
+  avgResponseMinutes Int?
+  responseRate       Int?
+
+  // Cached metrics (JSON: per-product breakdown)
+  metricsJson String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([score])
+  @@index([tier])
+}
+
+model SkillTag {
+  id       String @id @default(cuid())
+
+  targetId String
+  target   User   @relation("SkillTagTarget", fields: [targetId], references: [id], onDelete: Cascade)
+
+  giverId  String?
+  giver    User?  @relation("SkillTagGiver", fields: [giverId], references: [id], onDelete: SetNull)
+
+  tag      String // PROFESSIONAL, FAST, FAIR, COMMUNICATIVE, PRECISE, FRIENDLY, etc.
+  context  String // BROKER, SUPPLIER, DEALER, SELLER
+
+  ipHash   String?
+
+  createdAt DateTime @default(now())
+
+  @@unique([targetId, giverId, tag])
+  @@index([targetId, context])
+  @@index([tag])
+}
+
+model AutoBadge {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  badge      String // Badge key (e.g. FAST_RESPONDER, TOP_SELLER)
+  context    String // BROKER, SUPPLIER, DEALER, INVESTOR, SELLER
+  unlockedAt DateTime @default(now())
+
+  @@unique([userId, badge])
+  @@index([userId])
 }
