@@ -22,7 +22,7 @@ export function NotificationBell() {
 
   const fetchNotifications = useCallback(async () => {
     try {
-      const res = await fetch("/api/broker/notifications");
+      const res = await fetch("/api/admin/notifications");
       if (res.ok) {
         const data = await res.json();
         setNotifications(data.notifications || []);
@@ -53,7 +53,7 @@ export function NotificationBell() {
   const handleNotificationClick = async (notification: Notification) => {
     if (!notification.read) {
       try {
-        await fetch("/api/broker/notifications", {
+        await fetch("/api/admin/notifications", {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ids: [notification.id] }),

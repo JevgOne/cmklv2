@@ -33,7 +33,7 @@ export function NotificationsPageContent({ notifications: initial }: { notificat
     if (unreadIds.length === 0) return;
     setMarkingAll(true);
     try {
-      const res = await fetch("/api/broker/notifications", {
+      const res = await fetch("/api/admin/notifications", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ids: unreadIds }),
@@ -51,7 +51,7 @@ export function NotificationsPageContent({ notifications: initial }: { notificat
   const handleClick = async (n: Notification) => {
     if (!n.read) {
       try {
-        await fetch("/api/broker/notifications", {
+        await fetch("/api/admin/notifications", {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ids: [n.id] }),
