@@ -152,10 +152,10 @@ export function PartnersTable({ initialType }: PartnersTableProps) {
                 <tr className="border-b border-gray-100">
                   <th className="text-left py-3 px-4 font-semibold text-gray-600">Název</th>
                   <th className="text-left py-3 px-4 font-semibold text-gray-600">Typ</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-600">Město</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-600">Manažer</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-600 hidden md:table-cell">Město</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-600 hidden md:table-cell">Manažer</th>
                   <th className="text-left py-3 px-4 font-semibold text-gray-600">Stav</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-600">Score</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-600 hidden md:table-cell">Score</th>
                 </tr>
               </thead>
               <tbody>
@@ -174,8 +174,8 @@ export function PartnersTable({ initialType }: PartnersTableProps) {
                     <td className="py-3 px-4 text-gray-600">
                       {partner.type === "AUTOBAZAR" ? "Autobazar" : "Vrakoviště"}
                     </td>
-                    <td className="py-3 px-4 text-gray-600">{partner.city || "—"}</td>
-                    <td className="py-3 px-4 text-gray-600">
+                    <td className="py-3 px-4 text-gray-600 hidden md:table-cell">{partner.city || "—"}</td>
+                    <td className="py-3 px-4 text-gray-600 hidden md:table-cell">
                       {partner.manager
                         ? `${partner.manager.firstName} ${partner.manager.lastName}`
                         : "—"}
@@ -183,7 +183,7 @@ export function PartnersTable({ initialType }: PartnersTableProps) {
                     <td className="py-3 px-4">
                       <PartnerStatusBadge status={partner.status} />
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-3 px-4 hidden md:table-cell">
                       <span className="font-bold text-orange-500">{partner.score}</span>
                     </td>
                   </tr>

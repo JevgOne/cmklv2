@@ -64,6 +64,7 @@ const columns = [
   {
     key: "method",
     header: "Metoda",
+    className: "hidden md:table-cell",
     render: (p: Payment) => (
       <span className="text-sm text-gray-700">
         {methodLabels[p.method] || p.method}
@@ -81,6 +82,7 @@ const columns = [
   {
     key: "vs",
     header: "VS",
+    className: "hidden md:table-cell",
     render: (p: Payment) => (
       <span className="text-xs font-mono text-gray-500">
         {p.variableSymbol || "-"}
@@ -90,6 +92,7 @@ const columns = [
   {
     key: "date",
     header: "Datum",
+    className: "hidden md:table-cell",
     render: (p: Payment) => (
       <span className="text-sm text-gray-500">
         {new Date(p.createdAt).toLocaleDateString("cs-CZ")}

@@ -124,7 +124,7 @@ export default async function AdminDashboardPage() {
             </h2>
             <PeriodSelector />
           </div>
-          <div className="h-[300px] bg-gray-50 rounded-lg flex items-center justify-center">
+          <div className="h-[200px] sm:h-[300px] bg-gray-50 rounded-lg flex items-center justify-center">
             <span className="text-gray-400 text-lg">📊 Graf prodejů</span>
           </div>
         </Card>
@@ -137,7 +137,7 @@ export default async function AdminDashboardPage() {
             </h2>
             <PeriodSelector />
           </div>
-          <div className="h-[300px] bg-gray-50 rounded-lg flex items-center justify-center">
+          <div className="h-[200px] sm:h-[300px] bg-gray-50 rounded-lg flex items-center justify-center">
             <span className="text-gray-400 text-lg">📊 Graf provizí</span>
           </div>
         </Card>

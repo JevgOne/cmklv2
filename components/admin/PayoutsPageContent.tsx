@@ -110,6 +110,7 @@ const sellerColumns = [
   {
     key: "date",
     header: "Datum",
+    className: "hidden md:table-cell",
     render: (p: SellerPayout) => (
       <span className="text-sm text-gray-500">
         {new Date(p.createdAt).toLocaleDateString("cs-CZ")}
@@ -209,6 +210,7 @@ const brokerColumns = [
   {
     key: "invoice",
     header: "Faktura",
+    className: "hidden md:table-cell",
     render: (p: BrokerPayout) =>
       p.invoiceNumber ? (
         <div>

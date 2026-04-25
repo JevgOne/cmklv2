@@ -47,7 +47,7 @@ function TableActions({ vehicleId, onDelete }: { vehicleId: string; onDelete: (i
   }
 
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center flex-wrap gap-1 md:gap-1.5">
       <a
         href={`/admin/vehicles/${vehicleId}`}
         className="w-9 h-9 flex items-center justify-center bg-gray-100 rounded-[10px] text-sm cursor-pointer transition-colors hover:bg-gray-200 border-none no-underline"
@@ -143,6 +143,7 @@ export function VehiclesPageContent() {
     {
       key: "trustScore",
       header: "Skóre důvěry",
+      className: "hidden md:table-cell",
       render: (item: Vehicle) => (
         <TrustScore value={item.trustScore} className="!shadow-none !p-0 !bg-transparent" />
       ),
@@ -150,6 +151,7 @@ export function VehiclesPageContent() {
     {
       key: "date",
       header: "Datum",
+      className: "hidden md:table-cell",
       render: (item: Vehicle) => (
         <span className="text-sm text-gray-500">{item.date}</span>
       ),

@@ -64,7 +64,7 @@ function TableActions({ brokerId, onDeactivate }: { brokerId: string; onDeactiva
   }
 
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center flex-wrap gap-1 md:gap-1.5">
       <a
         href={`/admin/brokers/${brokerId}`}
         className="w-9 h-9 flex items-center justify-center bg-gray-100 rounded-[10px] text-sm cursor-pointer transition-colors hover:bg-gray-200 border-none no-underline"
@@ -136,11 +136,13 @@ export function BrokersPageContent() {
     {
       key: "region",
       header: "Region",
+      className: "hidden md:table-cell",
       render: (item: Broker) => item.region,
     },
     {
       key: "vehicles",
       header: "Vozidla",
+      className: "hidden md:table-cell",
       render: (item: Broker) => item.vehicles,
     },
     {

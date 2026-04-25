@@ -83,6 +83,7 @@ export function ManagerBrokersContent({ brokers }: ManagerBrokersContentProps) {
     {
       key: "phone",
       header: "Telefon",
+      className: "hidden md:table-cell",
       render: (item: BrokerData) => (
         <span className="text-sm text-gray-700">{item.phone || "—"}</span>
       ),
@@ -99,6 +100,7 @@ export function ManagerBrokersContent({ brokers }: ManagerBrokersContentProps) {
     {
       key: "sales",
       header: "Prodeje",
+      className: "hidden md:table-cell",
       render: (item: BrokerData) => (
         <span className="text-sm text-gray-700">{item.sales}</span>
       ),
@@ -106,6 +108,7 @@ export function ManagerBrokersContent({ brokers }: ManagerBrokersContentProps) {
     {
       key: "commission",
       header: "Provize",
+      className: "hidden md:table-cell",
       render: (item: BrokerData) => (
         <span className="text-sm font-semibold text-gray-900">
           {item.totalCommission.toLocaleString("cs-CZ")} Kč

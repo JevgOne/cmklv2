@@ -169,6 +169,7 @@ export function ListingsPageContent() {
     {
       key: "type",
       header: "Typ",
+      className: "hidden md:table-cell",
       render: (item: ListingRow) => (
         <div className="flex flex-col gap-1">
           {getListingTypeBadge(item.listingType)}
@@ -214,6 +215,7 @@ export function ListingsPageContent() {
     {
       key: "views",
       header: "Zobrazení",
+      className: "hidden md:table-cell",
       render: (item: ListingRow) => (
         <span className="text-sm text-gray-600">{item.viewCount}</span>
       ),
@@ -222,7 +224,7 @@ export function ListingsPageContent() {
       key: "actions",
       header: "Akce",
       render: (item: ListingRow) => (
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-1 md:gap-2">
           {item.status === "DRAFT" && (
             <Button
               variant="success"

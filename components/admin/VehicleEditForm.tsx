@@ -122,7 +122,7 @@ export function VehicleEditForm({ vehicleId, initialData, apiUrl, redirectUrl }:
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm min-h-[120px] focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm min-h-[80px] sm:min-h-[120px] focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             placeholder="Popis vozidla..."
           />
         </div>
