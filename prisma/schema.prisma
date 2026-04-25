@@ -64,6 +64,7 @@ model User {
   brokerContractUrl   String?  // URL podepsané smlouvy s Carmakler
   brokerSignature     String?  // Base64 PNG podpisu makléře (onboarding smlouva)
   quickModeEnabled    Boolean  @default(false) // Rychlé nabírání (Makléř+ level)
+  hasSeenTour         Boolean  @default(false) // Průvodce systémem po aktivaci
 
   // Kreditový systém pro inzeráty
   listingCredits      Int      @default(0)  // Počet předplacených inzerátů (Bundle 30ks)
@@ -159,6 +160,9 @@ model User {
   skillTagsReceived SkillTag[]     @relation("SkillTagTarget")
   skillTagsGiven    SkillTag[]     @relation("SkillTagGiver")
   autoBadges        AutoBadge[]
+
+  // Blog/Magazín
+  articles          Article[]      @relation("ArticleAuthor")
 
   // Profilové tagy / hashtagy (M2M)
   tags            Tag[]            @relation("UserTags")
@@ -2257,4 +2261,68 @@ model AutoBadge {
 
   @@unique([userId, badge])
   @@index([userId])
+}
+
+// ============================================
+// BLOG / MAGAZÍN
+// ============================================
+
+model Article {
+  id             String   @id @default(cuid())
+  title          String
+  slug           String   @unique
+  content        String   // Rich text HTML
+  excerpt        String?
+  coverImage     String?  // Cloudinary URL
+
+  categoryId     String
+  category       ArticleCategory @relation(fields: [categoryId], references: [id])
+
+  authorId       String
+  author         User     @relation("ArticleAuthor", fields: [authorId], references: [id])
+
+  status         String   @default("DRAFT") // DRAFT, REVIEW, PUBLISHED, ARCHIVED
+  publishedAt    DateTime?
+  views          Int      @default(0)
+  readTime       Int?     // Odhadovaný čas čtení v minutách
+
+  seoTitle       String?
+  seoDescription String?
+
+  tags           ArticleTagLink[]
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([status])
+  @@index([categoryId])
+  @@index([authorId])
+  @@index([publishedAt])
+}
+
+model ArticleCategory {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  icon        String?   // emoji
+  articles    Article[]
+
+  createdAt   DateTime  @default(now())
+}
+
+model ArticleTag {
+  id       String           @id @default(cuid())
+  name     String           @unique
+  slug     String           @unique
+  articles ArticleTagLink[]
+}
+
+model ArticleTagLink {
+  articleId String
+  article   Article    @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  tagId     String
+  tag       ArticleTag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, tagId])
 }

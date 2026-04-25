@@ -9,7 +9,7 @@ interface StatsRowProps {
 
 export function StatsRow({ totalCommission, salesCount, activeVehicles }: StatsRowProps) {
   return (
-    <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4">
+    <div data-tour="dashboard-stats" className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4">
       <Card className="min-w-[140px] snap-start p-4 flex-shrink-0">
         <div className="text-2xl mb-1">💰</div>
         <div className="text-lg font-extrabold text-gray-900">

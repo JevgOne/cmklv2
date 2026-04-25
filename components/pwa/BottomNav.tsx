@@ -10,6 +10,7 @@ interface NavItem {
   icon: (active: boolean) => React.ReactNode;
   isCenter?: boolean;
   hasBadge?: boolean;
+  tourId?: string;
 }
 
 const NAV_ITEMS: NavItem[] = [
@@ -32,6 +33,7 @@ const NAV_ITEMS: NavItem[] = [
   {
     label: "Vozy",
     href: "/makler/vehicles",
+    tourId: "bottom-nav-vehicles",
     icon: (active: boolean) => (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -68,6 +70,7 @@ const NAV_ITEMS: NavItem[] = [
   {
     label: "Kontakty",
     href: "/makler/contacts",
+    tourId: "bottom-nav-contacts",
     icon: (active: boolean) => (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -85,6 +88,7 @@ const NAV_ITEMS: NavItem[] = [
   {
     label: "Profil",
     href: "/makler/profile",
+    tourId: "bottom-nav-profile",
     icon: (active: boolean) => (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -147,6 +151,7 @@ export function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
+              data-tour={item.tourId}
               className={`flex flex-col items-center justify-center min-w-[64px] py-1 ${
                 isActive ? "text-orange-500" : "text-gray-400"
               }`}

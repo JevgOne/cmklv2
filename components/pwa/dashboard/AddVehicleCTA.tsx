@@ -7,7 +7,7 @@ interface AddVehicleCTAProps {
 export function AddVehicleCTA({ quickModeEnabled = false }: AddVehicleCTAProps) {
   if (quickModeEnabled) {
     return (
-      <div className="grid grid-cols-2 gap-3">
+      <div data-tour="add-vehicle-cta" className="grid grid-cols-2 gap-3">
         {/* Rychlé nabírání */}
         <Link
           href="/makler/vehicles/quick"
@@ -47,6 +47,7 @@ export function AddVehicleCTA({ quickModeEnabled = false }: AddVehicleCTAProps) 
   return (
     <Link
       href="/makler/vehicles/new"
+      data-tour="add-vehicle-cta"
       className="block w-full rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 p-5 text-white shadow-orange transition-all duration-200 hover:-translate-y-0.5 hover:shadow-orange-hover no-underline"
     >
       <div className="flex items-center gap-4">

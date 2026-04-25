@@ -55,7 +55,7 @@ export function NotificationsList({ notifications: initial }: NotificationsListP
   };
 
   return (
-    <div className="space-y-3">
+    <div data-tour="notifications" className="space-y-3">
       <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide">
         Notifikace
       </h3>
