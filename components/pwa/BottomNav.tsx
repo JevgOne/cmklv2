@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { canAccess, type Feature } from "@/lib/feature-gates";
 
 interface NavItem {
   label: string;
@@ -11,6 +13,7 @@ interface NavItem {
   isCenter?: boolean;
   hasBadge?: boolean;
   tourId?: string;
+  requiredFeature?: Feature;
 }
 
 const NAV_ITEMS: NavItem[] = [
@@ -104,9 +107,16 @@ const NAV_ITEMS: NavItem[] = [
   },
 ];
 
+const BYPASS_ROLES = ["ADMIN", "BACKOFFICE", "MANAGER", "REGIONAL_DIRECTOR"];
+
 export function BottomNav() {
   const pathname = usePathname();
+  const { data: session } = useSession();
   const [followUpCount, setFollowUpCount] = useState(0);
+
+  const userLevel = session?.user?.level ?? "STAR_1";
+  const userRole = session?.user?.role ?? "";
+  const isBypass = BYPASS_ROLES.includes(userRole);
 
   useEffect(() => {
     async function fetchFollowUpCount() {
@@ -123,12 +133,18 @@ export function BottomNav() {
     fetchFollowUpCount();
   }, []);
 
+  function isLocked(item: NavItem): boolean {
+    if (isBypass || !item.requiredFeature) return false;
+    return !canAccess(userLevel, item.requiredFeature);
+  }
+
   return (
     <nav aria-label="Spodni navigace" className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 pb-[env(safe-area-inset-bottom)]">
       <div className="flex items-center justify-around h-16 max-w-lg mx-auto">
         {NAV_ITEMS.map((item) => {
           const isActive =
             pathname === item.href || pathname.startsWith(item.href + "/");
+          const locked = isLocked(item);
 
           if (item.isCenter) {
             return (
@@ -150,23 +166,29 @@ export function BottomNav() {
           return (
             <Link
               key={item.href}
-              href={item.href}
+              href={locked ? "#" : item.href}
               data-tour={item.tourId}
+              onClick={locked ? (e) => e.preventDefault() : undefined}
               className={`flex flex-col items-center justify-center min-w-[64px] py-1 ${
-                isActive ? "text-orange-500" : "text-gray-400"
+                locked ? "text-gray-300" : isActive ? "text-orange-500" : "text-gray-400"
               }`}
             >
               <span className="relative">
-                {item.icon(isActive)}
-                {item.hasBadge && followUpCount > 0 && (
+                {item.icon(isActive && !locked)}
+                {item.hasBadge && followUpCount > 0 && !locked && (
                   <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold px-1">
                     {followUpCount > 99 ? "99+" : followUpCount}
+                  </span>
+                )}
+                {locked && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 flex items-center justify-center rounded-full bg-gray-400 text-white text-[8px]">
+                    🔒
                   </span>
                 )}
               </span>
               <span
                 className={`text-[11px] mt-0.5 ${
-                  isActive ? "font-semibold" : ""
+                  locked ? "text-gray-300" : isActive ? "font-semibold" : ""
                 }`}
               >
                 {item.label}

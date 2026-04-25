@@ -12,6 +12,8 @@ import { FollowUpSection } from "@/components/pwa/dashboard/FollowUpSection";
 import { LevelBadge } from "@/components/pwa/gamification/LevelBadge";
 import { Card } from "@/components/ui/Card";
 import { DashboardTourWrapper } from "./DashboardTourWrapper";
+import { UnlockProgressSection } from "@/components/pwa/dashboard/UnlockProgressSection";
+import { canAccess, getNextLevelInfo } from "@/lib/feature-gates";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -80,7 +82,7 @@ export default async function DashboardPage() {
       prisma.user
         .findUnique({
           where: { id: userId },
-          select: { quickModeEnabled: true, level: true, totalRevenue: true, hasSeenTour: true },
+          select: { quickModeEnabled: true, level: true, totalRevenue: true, hasSeenTour: true, region: { select: { tier: true } } },
         })
         .catch(() => null),
       prisma.commission
@@ -94,12 +96,19 @@ export default async function DashboardPage() {
     ]);
 
   const totalCommission = commissionAgg._sum.commission ?? 0;
-  const quickModeEnabled = userData?.quickModeEnabled ?? false;
   const userLevel = userData?.level ?? "STAR_1";
   const userRevenue = userData?.totalRevenue ?? 0;
+  const regionTier = (userData as { region?: { tier?: string } } | null)?.region?.tier ?? "SMALL";
   const hasSeenTour = userData?.hasSeenTour ?? true;
   const leaderboardPosition = leaderboardData.findIndex((c) => c.brokerId === userId) + 1 || null;
   const totalBrokersInLeaderboard = leaderboardData.length;
+
+  // Feature gates: quick mode is level-based (STAR_2+)
+  const quickModeEnabled = canAccess(userLevel, "QUICK_VEHICLE_MODE");
+  const canSeeLeaderboard = canAccess(userLevel, "LEADERBOARD");
+  const canSeeMaterials = canAccess(userLevel, "MATERIALS");
+  const nextLevelInfo = getNextLevelInfo(userLevel, userRevenue, regionTier);
+  const isBroker = session.user.role === "BROKER";
 
   return (
     <div className="p-4 space-y-6">
@@ -127,7 +136,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Pozice v zebricku */}
-      {leaderboardPosition && (
+      {leaderboardPosition && canSeeLeaderboard && (
         <Link href="/makler/leaderboard">
           <Card className="p-3 bg-gradient-to-r from-orange-50 to-yellow-50 border border-orange-200">
             <div className="flex items-center justify-between">
@@ -199,20 +208,43 @@ export default async function DashboardPage() {
       <DraftsList />
 
       {/* Materialy */}
-      <Link href="/makler/materials" data-tour="materials-link">
-        <Card className="p-4 flex items-center gap-3 hover:bg-gray-50 transition-colors">
-          <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-lg shrink-0">
-            📋
+      {canSeeMaterials ? (
+        <Link href="/makler/materials" data-tour="materials-link">
+          <Card className="p-4 flex items-center gap-3 hover:bg-gray-50 transition-colors">
+            <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-lg shrink-0">
+              📋
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-gray-900 text-sm">Moje materialy</p>
+              <p className="text-xs text-gray-500">Vizitka, email podpis, prezentace</p>
+            </div>
+            <svg className="w-5 h-5 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </Card>
+        </Link>
+      ) : (
+        <Card className="p-4 flex items-center gap-3 opacity-60">
+          <div className="w-10 h-10 rounded-xl bg-gray-200 flex items-center justify-center text-lg shrink-0">
+            🔒
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-gray-900 text-sm">Moje materialy</p>
-            <p className="text-xs text-gray-500">Vizitka, email podpis, prezentace</p>
+            <p className="font-semibold text-gray-500 text-sm">Moje materialy</p>
+            <p className="text-xs text-gray-400">Dostupné od úrovně ⭐⭐⭐ Expert</p>
           </div>
-          <svg className="w-5 h-5 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
         </Card>
-      </Link>
+      )}
+
+      {/* Unlock progress — pro makléře, kteří nemají všechny funkce */}
+      {isBroker && nextLevelInfo && (
+        <UnlockProgressSection
+          userLevel={userLevel}
+          percentage={nextLevelInfo.percentage}
+          revenueNeeded={nextLevelInfo.revenueNeeded}
+          nextLevelKey={nextLevelInfo.nextLevelKey}
+          nextLevelName={nextLevelInfo.nextLevelName}
+        />
+      )}
 
       {/* Notifikace */}
       <NotificationsList

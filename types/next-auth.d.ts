@@ -8,6 +8,7 @@ declare module "next-auth" {
     lastName?: string;
     avatar?: string | null;
     accountType?: string | null;
+    level?: string;
     onboardingStep?: number;
     onboardingCompleted?: boolean;
     isEmailVerified?: boolean;
@@ -23,6 +24,7 @@ declare module "next-auth" {
       lastName: string;
       avatar: string | null;
       accountType: string | null;
+      level: string;
       onboardingStep: number;
       onboardingCompleted: boolean;
       isEmailVerified: boolean;
@@ -38,6 +40,7 @@ declare module "next-auth/jwt" {
     lastName?: string;
     avatar?: string | null;
     accountType?: string | null;
+    level?: string;
     onboardingStep?: number;
     onboardingCompleted?: boolean;
     isEmailVerified?: boolean;

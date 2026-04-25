@@ -38,6 +38,7 @@ export const authOptions: NextAuthOptions = {
           lastName: user.lastName,
           avatar: user.avatar ?? null,
           accountType: user.accountType ?? null,
+          level: user.level ?? "STAR_1",
           onboardingStep: user.onboardingStep,
           onboardingCompleted: user.onboardingCompleted,
           isEmailVerified: !!user.emailVerified,
@@ -58,6 +59,7 @@ export const authOptions: NextAuthOptions = {
         token.lastName = user.lastName;
         token.avatar = user.avatar;
         token.accountType = user.accountType;
+        token.level = user.level;
         token.onboardingStep = user.onboardingStep;
         token.onboardingCompleted = user.onboardingCompleted;
         token.isEmailVerified = user.isEmailVerified;
@@ -73,6 +75,7 @@ export const authOptions: NextAuthOptions = {
         session.user.lastName = (token.lastName as string) ?? "";
         session.user.avatar = (token.avatar as string | null) ?? null;
         session.user.accountType = (token.accountType as string | null) ?? null;
+        session.user.level = (token.level as string) ?? "STAR_1";
         session.user.onboardingStep = (token.onboardingStep as number) ?? 1;
         session.user.onboardingCompleted = (token.onboardingCompleted as boolean) ?? false;
         session.user.isEmailVerified = (token.isEmailVerified as boolean) ?? false;

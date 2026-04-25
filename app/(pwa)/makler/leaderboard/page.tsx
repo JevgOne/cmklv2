@@ -3,6 +3,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { LeaderboardTable } from "@/components/pwa/gamification/LeaderboardTable";
+import { canAccess, getNextLevelInfo } from "@/lib/feature-gates";
+import { LockedFeatureCard } from "@/components/pwa/LockedFeatureCard";
 
 export default async function LeaderboardPage() {
   const session = await getServerSession(authOptions);
@@ -12,6 +14,30 @@ export default async function LeaderboardPage() {
   }
 
   const userId = session.user.id;
+
+  // Feature gate: LEADERBOARD requires STAR_2+
+  if (session.user.role === "BROKER" && !canAccess(session.user.level ?? "STAR_1", "LEADERBOARD")) {
+    const userData = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { totalRevenue: true, level: true, region: { select: { tier: true } } },
+    });
+    const nextInfo = getNextLevelInfo(
+      userData?.level ?? "STAR_1",
+      userData?.totalRevenue ?? 0,
+      userData?.region?.tier ?? "SMALL"
+    );
+    return (
+      <div className="p-4 pb-24">
+        <LockedFeatureCard
+          feature="LEADERBOARD"
+          fullscreen
+          percentage={nextInfo?.percentage ?? 0}
+          revenueNeeded={nextInfo?.revenueNeeded ?? 0}
+        />
+      </div>
+    );
+  }
+
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
