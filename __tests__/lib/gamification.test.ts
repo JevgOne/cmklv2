@@ -1,45 +1,45 @@
 import { describe, it, expect } from 'vitest'
 import { calculateLevel, getLevelByKey, LEVELS, ACHIEVEMENTS } from '@/lib/gamification'
 
-describe('calculateLevel', () => {
-  it('0 prodejů → JUNIOR', () => {
+describe('calculateLevel (points-based)', () => {
+  it('0 bodů → TIPAR', () => {
     const level = calculateLevel(0)
+    expect(level.key).toBe('TIPAR')
+  })
+
+  it('299 bodů → stále TIPAR', () => {
+    const level = calculateLevel(299)
+    expect(level.key).toBe('TIPAR')
+  })
+
+  it('300 bodů → JUNIOR', () => {
+    const level = calculateLevel(300)
     expect(level.key).toBe('JUNIOR')
   })
 
-  it('4 prodeje → stále JUNIOR', () => {
-    const level = calculateLevel(4)
+  it('499 bodů → stále JUNIOR', () => {
+    const level = calculateLevel(499)
     expect(level.key).toBe('JUNIOR')
   })
 
-  it('5 prodejů → BROKER', () => {
-    const level = calculateLevel(5)
-    expect(level.key).toBe('BROKER')
-  })
-
-  it('19 prodejů → stále BROKER', () => {
-    const level = calculateLevel(19)
-    expect(level.key).toBe('BROKER')
-  })
-
-  it('20 prodejů → SENIOR', () => {
-    const level = calculateLevel(20)
+  it('500 bodů → SENIOR', () => {
+    const level = calculateLevel(500)
     expect(level.key).toBe('SENIOR')
   })
 
-  it('49 prodejů → stále SENIOR', () => {
-    const level = calculateLevel(49)
+  it('649 bodů → stále SENIOR', () => {
+    const level = calculateLevel(649)
     expect(level.key).toBe('SENIOR')
   })
 
-  it('50 prodejů → TOP', () => {
-    const level = calculateLevel(50)
-    expect(level.key).toBe('TOP')
+  it('650 bodů → EXPERT', () => {
+    const level = calculateLevel(650)
+    expect(level.key).toBe('EXPERT')
   })
 
-  it('100 prodejů → TOP', () => {
-    const level = calculateLevel(100)
-    expect(level.key).toBe('TOP')
+  it('1000 bodů → EXPERT', () => {
+    const level = calculateLevel(1000)
+    expect(level.key).toBe('EXPERT')
   })
 })
 
@@ -47,18 +47,24 @@ describe('getLevelByKey', () => {
   it('vrátí level podle klíče', () => {
     const level = getLevelByKey('SENIOR')
     expect(level.key).toBe('SENIOR')
-    expect(level.minSales).toBe(20)
+    expect(level.minPoints).toBe(500)
   })
 
-  it('neznámý klíč → fallback JUNIOR', () => {
+  it('neznámý klíč → fallback TIPAR', () => {
     const level = getLevelByKey('NONEXISTENT')
-    expect(level.key).toBe('JUNIOR')
+    expect(level.key).toBe('TIPAR')
   })
 })
 
 describe('LEVELS a ACHIEVEMENTS', () => {
   it('LEVELS má 4 úrovně', () => {
     expect(LEVELS).toHaveLength(4)
+  })
+
+  it('LEVELS jsou seřazené dle minPoints', () => {
+    for (let i = 1; i < LEVELS.length; i++) {
+      expect(LEVELS[i].minPoints).toBeGreaterThan(LEVELS[i - 1].minPoints)
+    }
   })
 
   it('ACHIEVEMENTS má definované klíče', () => {

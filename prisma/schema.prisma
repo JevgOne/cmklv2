@@ -30,9 +30,10 @@ model User {
   regionId String?
   region   Region? @relation(fields: [regionId], references: [id])
 
-  // Gamifikace
-  level      String @default("JUNIOR") // JUNIOR, BROKER, SENIOR, TOP
-  totalSales Int    @default(0)
+  // Gamifikace — bodový systém
+  level       String @default("TIPAR")  // TIPAR, JUNIOR, SENIOR, EXPERT
+  totalSales  Int    @default(0)        // Zachovat pro zpětnou kompatibilitu
+  totalPoints Float  @default(0)        // Kumulativní body
 
   // Profil makléře
   specializations String? // JSON array: ["SUV", "Luxury"]
@@ -86,7 +87,8 @@ model User {
   emailLogs EmailLog[] @relation("SenderEmails")
 
   // Gamifikace relace
-  achievements UserAchievement[]
+  achievements      UserAchievement[]
+  pointTransactions BrokerPointTransaction[] @relation("BrokerPoints")
 
   // Notifikační preference
   notificationPreferences NotificationPreference[]
@@ -1569,6 +1571,29 @@ model UserAchievement {
 
   @@unique([userId, achievementKey])
   @@index([userId])
+}
+
+model BrokerPointTransaction {
+  id       String @id @default(cuid())
+  brokerId String
+  broker   User   @relation("BrokerPoints", fields: [brokerId], references: [id])
+
+  type     String // CAR_SALE, LOAN, INSURANCE, TIP_BONUS, MANUAL_ADJUSTMENT
+  points   Float  // Počet bodů (může být desetinné — např. 2.8 za pojištění)
+
+  // Reference na zdroj bodů
+  vehicleId    String?
+  commissionId String?
+  description  String?
+
+  // Finanční hodnoty pro audit
+  sourceAmount Int?
+
+  createdAt DateTime @default(now())
+
+  @@index([brokerId])
+  @@index([type])
+  @@index([createdAt])
 }
 
 model PriceReduction {

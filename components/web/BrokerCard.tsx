@@ -24,10 +24,10 @@ export interface BrokerCardProps {
 }
 
 const LEVEL_LABEL: Record<string, string> = {
-  TOP: "TOP Makléř",
+  EXPERT: "Expert",
   SENIOR: "Senior",
-  BROKER: "Makléř",
-  JUNIOR: "Ověřený",
+  JUNIOR: "Junior",
+  TIPAR: "Tipař",
 };
 
 function StatCell({ value, label }: { value: number; label: string }) {
@@ -73,8 +73,8 @@ export function BrokerCard({ broker }: BrokerCardProps) {
         </h3>
 
         <div className="flex items-center gap-1.5 mt-1">
-          <Badge variant={broker.level === "TOP" || broker.level === "SENIOR" ? "top" : "verified"}>
-            {LEVEL_LABEL[broker.level] ?? "Makléř"}
+          <Badge variant={broker.level === "EXPERT" || broker.level === "SENIOR" ? "top" : "verified"}>
+            {LEVEL_LABEL[broker.level] ?? "Tipař"}
           </Badge>
           {primaryCity && (
             <>

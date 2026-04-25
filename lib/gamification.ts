@@ -192,8 +192,12 @@ export async function checkAndUnlockAchievements(userId: string): Promise<string
   // LOYAL_CLIENT
   if (loyalSellers.length > 0) await tryUnlock("LOYAL_CLIENT");
 
-  // Update level based on total sales
-  const level = calculateLevel(totalSales);
+  // Update totalSales counter (backward compat) — level is now managed by broker-points system
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { totalPoints: true },
+  });
+  const level = calculateLevel(user?.totalPoints ?? 0);
   await prisma.user.update({
     where: { id: userId },
     data: { level: level.key, totalSales },

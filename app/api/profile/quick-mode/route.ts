@@ -18,15 +18,15 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    // Kontrola levelu — JUNIOR nemůže aktivovat rychlé nabírání
+    // Kontrola levelu — TIPAR nemůže aktivovat rychlé nabírání
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       select: { level: true },
     });
 
-    if (user?.level === "JUNIOR") {
+    if (user?.level === "TIPAR") {
       return NextResponse.json(
-        { error: "Rychlé nabírání je dostupné od úrovně Makléř" },
+        { error: "Rychlé nabírání je dostupné od úrovně Junior" },
         { status: 403 }
       );
     }

@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { LevelBadge } from "@/components/pwa/gamification/LevelBadge";
 import { AchievementCard } from "@/components/pwa/gamification/AchievementCard";
 import { ACHIEVEMENTS, checkAndUnlockAchievements, getLevelByKey } from "@/lib/gamification";
+import { calculateLevelProgress } from "@/lib/gamification-levels";
 import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
 
@@ -36,10 +37,11 @@ export default async function StatsPage() {
     allBrokersSoldTotal,
     allBrokersCommissions,
     allBrokersSoldVehicles,
+    recentPoints,
   ] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
-      select: { level: true, totalSales: true },
+      select: { level: true, totalSales: true, totalPoints: true },
     }),
     prisma.vehicle.count({ where: { brokerId: userId } }),
     prisma.vehicle.count({ where: { brokerId: userId, status: "SOLD" } }),
@@ -75,9 +77,18 @@ export default async function StatsPage() {
       where: { brokerId: { not: null }, status: "SOLD", soldAt: { not: null } },
       select: { createdAt: true, soldAt: true },
     }),
+    // Poslední bodové transakce
+    prisma.brokerPointTransaction.findMany({
+      where: { brokerId: userId },
+      orderBy: { createdAt: "desc" },
+      take: 10,
+      select: { id: true, type: true, points: true, description: true, createdAt: true },
+    }),
   ]);
 
-  const level = getLevelByKey(user?.level ?? "JUNIOR");
+  const level = getLevelByKey(user?.level ?? "TIPAR");
+  const totalPoints = user?.totalPoints ?? 0;
+  const levelProgress = calculateLevelProgress(totalPoints);
   const conversionRate = totalVehicles > 0 ? Math.round((soldVehicles / totalVehicles) * 100) : 0;
 
   // Průměry všech brokerů
@@ -162,7 +173,7 @@ export default async function StatsPage() {
           <h1 className="text-2xl font-extrabold text-gray-900">Statistiky</h1>
           <p className="text-sm text-gray-500 mt-1">Váš výkon a achievementy</p>
         </div>
-        <LevelBadge level={user?.level ?? "JUNIOR"} size="lg" />
+        <LevelBadge level={user?.level ?? "TIPAR"} size="lg" />
       </div>
 
       {/* Prehled */}
@@ -426,32 +437,50 @@ export default async function StatsPage() {
       {/* Uroven - progress */}
       <Card className="p-4">
         <h3 className="font-bold text-gray-900 mb-2">Úroveň</h3>
-        <LevelBadge level={user?.level ?? "JUNIOR"} size="lg" className="mb-3" />
+        <LevelBadge level={user?.level ?? "TIPAR"} size="lg" className="mb-3" />
         <p className="text-sm text-gray-500 mb-2">
-          {user?.totalSales ?? 0} prodejů celkem
+          {totalPoints.toFixed(1)} bodů celkem
         </p>
-        {level.key !== "TOP" && (
+        {levelProgress.nextLevel && (
           <div>
             <div className="flex justify-between text-xs text-gray-400 mb-1">
-              <span>{level.minSales} prodejů</span>
-              <span>{level.maxSales === Infinity ? "50+" : level.maxSales} prodejů</span>
+              <span>{levelProgress.currentLevel.minPoints} bodů</span>
+              <span>{levelProgress.nextLevel.minPoints} bodů</span>
             </div>
             <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-orange-400 to-orange-600 rounded-full transition-all"
-                style={{
-                  width: `${Math.min(
-                    (((user?.totalSales ?? 0) - level.minSales) /
-                      ((level.maxSales === Infinity ? 50 : level.maxSales) - level.minSales)) *
-                      100,
-                    100
-                  )}%`,
-                }}
+                style={{ width: `${levelProgress.percentage}%` }}
               />
             </div>
+            <p className="text-xs text-gray-400 mt-1">
+              {levelProgress.pointsNeeded.toFixed(0)} bodů do {levelProgress.nextLevel.name}
+            </p>
           </div>
         )}
       </Card>
+
+      {/* Historie bodů */}
+      {recentPoints.length > 0 && (
+        <Card className="p-4">
+          <h3 className="font-bold text-gray-900 mb-3">Poslední body</h3>
+          <div className="space-y-2">
+            {recentPoints.map((pt) => (
+              <div key={pt.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                <div>
+                  <p className="text-sm font-medium text-gray-900">{pt.description ?? pt.type}</p>
+                  <p className="text-xs text-gray-500">
+                    {pt.type === "CAR_SALE" ? "Prodej auta" : pt.type === "LOAN" ? "Úvěr" : pt.type === "INSURANCE" ? "Pojištění" : pt.type}
+                    {" \u00B7 "}
+                    {new Date(pt.createdAt).toLocaleDateString("cs-CZ")}
+                  </p>
+                </div>
+                <span className="text-sm font-bold text-orange-500">+{pt.points.toFixed(1)} b</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
 
       {/* Quick links */}
       <div className="grid grid-cols-2 gap-3">

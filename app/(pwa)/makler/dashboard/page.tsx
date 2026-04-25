@@ -79,7 +79,7 @@ export default async function DashboardPage() {
       prisma.user
         .findUnique({
           where: { id: userId },
-          select: { quickModeEnabled: true, level: true },
+          select: { quickModeEnabled: true, level: true, totalPoints: true },
         })
         .catch(() => null),
       prisma.commission
@@ -94,7 +94,8 @@ export default async function DashboardPage() {
 
   const totalCommission = commissionAgg._sum.commission ?? 0;
   const quickModeEnabled = userData?.quickModeEnabled ?? false;
-  const userLevel = userData?.level ?? "JUNIOR";
+  const userLevel = userData?.level ?? "TIPAR";
+  const userPoints = userData?.totalPoints ?? 0;
   const leaderboardPosition = leaderboardData.findIndex((c) => c.brokerId === userId) + 1 || null;
   const totalBrokersInLeaderboard = leaderboardData.length;
 
@@ -110,7 +111,12 @@ export default async function DashboardPage() {
             Přehled tvého měsíce
           </p>
         </div>
-        <LevelBadge level={userLevel} size="md" />
+        <div className="text-right">
+          <LevelBadge level={userLevel} size="md" />
+          <p className="text-xs text-gray-500 mt-1">
+            {userPoints.toFixed(0)} bodů
+          </p>
+        </div>
       </div>
 
       {/* Pozice v zebricku */}

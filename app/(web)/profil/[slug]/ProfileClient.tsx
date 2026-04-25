@@ -35,6 +35,7 @@ export interface ProfileUser {
   role: string;
   level: string;
   totalSales: number;
+  totalPoints: number;
   profileViews: number;
   favoriteBrands: string | null;
   phone: string | null;
@@ -273,7 +274,7 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
   });
   const roleLabel = ROLE_LABELS[user.role] ?? user.role;
   const levelLabel =
-    user.level !== "JUNIOR" ? LEVEL_LABELS[user.level] ?? user.level : null;
+    user.level !== "TIPAR" ? LEVEL_LABELS[user.level] ?? user.level : null;
 
   const fullName = `${user.firstName} ${user.lastName}`;
   const hasAboutCard = !!(user.bio || user.motto || favBrands.length > 0);
@@ -345,7 +346,7 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
                     </p>
                     {/* Verification badges */}
                     <div className="flex flex-wrap gap-2 mt-2">
-                      {["BROKER", "SENIOR", "TOP"].includes(user.level) && (
+                      {["JUNIOR", "SENIOR", "EXPERT"].includes(user.level) && (
                         <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
                           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
@@ -379,7 +380,7 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
                         </Badge>
                       )}
                       {user.role === "BROKER" && (
-                        <LevelProgressBar level={user.level} totalSales={user.totalSales} size="md" />
+                        <LevelProgressBar level={user.level} totalPoints={user.totalPoints ?? 0} size="md" />
                       )}
                     </div>
                   )}
@@ -637,12 +638,11 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
 
         {["BROKER", "MANAGER", "REGIONAL_DIRECTOR"].includes(user.role) && (() => {
           const milestones = [
-            { sales: 0,  label: "Registrace",    shortLabel: memberSince, achieved: true },
-            { sales: 1,  label: "První prodej",  shortLabel: "1",         achieved: user.totalSales >= 1 },
-            { sales: 5,  label: "Makléř",        shortLabel: "5",         achieved: user.totalSales >= 5 },
-            { sales: 10, label: "10 prodejů",    shortLabel: "10",        achieved: user.totalSales >= 10 },
-            { sales: 20, label: "Senior",        shortLabel: "20",        achieved: user.totalSales >= 20 },
-            { sales: 50, label: "Top makléř",    shortLabel: "50",        achieved: user.totalSales >= 50 },
+            { sales: 0,   label: "Registrace",  shortLabel: memberSince, achieved: true },
+            { sales: 1,   label: "První prodej", shortLabel: "1",        achieved: user.totalSales >= 1 },
+            { sales: 300, label: "Junior",       shortLabel: "300b",     achieved: (user.totalPoints ?? 0) >= 300 },
+            { sales: 500, label: "Senior",       shortLabel: "500b",     achieved: (user.totalPoints ?? 0) >= 500 },
+            { sales: 650, label: "Expert",       shortLabel: "650b",     achieved: (user.totalPoints ?? 0) >= 650 },
           ];
           const lastAchievedIdx = milestones.reduce((acc, m, i) => (m.achieved ? i : acc), 0);
           const progressPct = ((lastAchievedIdx) / (milestones.length - 1)) * 100;

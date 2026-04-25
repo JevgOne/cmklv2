@@ -162,11 +162,13 @@ export default async function MakleriPage() {
                         </div>
                         <div className="text-center">
                           <div className="text-2xl font-extrabold bg-gradient-to-br from-orange-500 to-orange-600 bg-clip-text text-transparent">
-                            {broker.level === "TOP"
-                              ? "TOP"
+                            {broker.level === "EXPERT"
+                              ? "Expert"
                               : broker.level === "SENIOR"
                               ? "Senior"
-                              : "Makléř"}
+                              : broker.level === "JUNIOR"
+                              ? "Junior"
+                              : "Tipař"}
                           </div>
                           <div className="text-[11px] font-semibold text-gray-500 mt-1">
                             Úroveň

@@ -16,7 +16,7 @@ export interface BrokerBoxProps {
   phone: string;
   slug: string;
   level?: string;
-  totalSales?: number;
+  totalPoints?: number;
   className?: string;
 }
 
@@ -30,7 +30,7 @@ export function BrokerBox({
   phone,
   slug,
   level,
-  totalSales,
+  totalPoints,
   className,
 }: BrokerBoxProps) {
   return (
@@ -50,8 +50,8 @@ export function BrokerBox({
           <p className="text-sm text-orange-700 font-semibold">
             {level ? (LEVEL_LABELS[level] || "Makléř") : "Makléř"}
           </p>
-          {level && typeof totalSales === "number" && (
-            <LevelProgressBar level={level} totalSales={totalSales} size="sm" />
+          {level && typeof totalPoints === "number" && (
+            <LevelProgressBar level={level} totalPoints={totalPoints} size="sm" />
           )}
         </div>
       </div>

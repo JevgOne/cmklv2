@@ -5,14 +5,14 @@ import { LEVEL_LABELS } from "@/lib/role-labels";
 
 export interface LevelProgressBarProps {
   level: string;
-  totalSales: number;
+  totalPoints: number;
   size?: "sm" | "md";
 }
 
-export function LevelProgressBar({ level, totalSales, size = "sm" }: LevelProgressBarProps) {
-  const progress = calculateLevelProgress(totalSales);
+export function LevelProgressBar({ level, totalPoints, size = "sm" }: LevelProgressBarProps) {
+  const progress = calculateLevelProgress(totalPoints);
 
-  // TOP level = no progress bar, just badge
+  // Max level = no progress bar
   if (!progress.nextLevel) {
     return null;
   }
@@ -30,7 +30,7 @@ export function LevelProgressBar({ level, totalSales, size = "sm" }: LevelProgre
       </div>
       <p className={`text-gray-500 mt-1 ${isSm ? "text-[10px]" : "text-xs"}`}>
         {progress.percentage}% do {nextLabel}
-        {!isSm && ` \u00B7 ${progress.salesNeeded} ${progress.salesNeeded === 1 ? "prodej" : progress.salesNeeded < 5 ? "prodeje" : "prodej\u016F"}`}
+        {!isSm && ` \u00B7 ${progress.pointsNeeded.toFixed(0)} bod\u016F`}
       </p>
     </div>
   );

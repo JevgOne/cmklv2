@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { handoverVehicleSchema } from "@/lib/validators/sales";
 import { calculateCommission } from "@/lib/commission-calculator";
+import { addBrokerPoints, calculateCarSalePoints, type CareerLevelKey } from "@/lib/broker-points";
 import { createNotification } from "@/lib/notifications";
 
 /* ------------------------------------------------------------------ */
@@ -31,7 +32,7 @@ export async function POST(
       where: { OR: [{ id }, { slug: id }] },
       include: {
         broker: {
-          select: { id: true, firstName: true, lastName: true, managerId: true },
+          select: { id: true, firstName: true, lastName: true, managerId: true, level: true },
         },
       },
     });
@@ -80,8 +81,9 @@ export async function POST(
       );
     }
 
-    // Výpočet provize
-    const commissionBreakdown = calculateCommission(data.soldPrice);
+    // Výpočet provize dle úrovně makléře
+    const brokerLevel = (vehicle.broker?.level ?? "TIPAR") as CareerLevelKey;
+    const commissionBreakdown = calculateCommission(data.soldPrice, brokerLevel);
 
     const result = await prisma.$transaction(async (tx) => {
       // Change log
@@ -137,6 +139,30 @@ export async function POST(
 
       return { vehicle: updatedVehicle, commission, commissionBreakdown };
     });
+
+    // --- Body za prodej auta ---
+    if (vehicle.brokerId && result.commission) {
+      const points = calculateCarSalePoints(result.commissionBreakdown.total);
+      const pointResult = await addBrokerPoints({
+        brokerId: vehicle.brokerId,
+        type: "CAR_SALE",
+        points,
+        vehicleId: vehicle.id,
+        commissionId: result.commission.id,
+        description: `Prodej ${vehicle.brand} ${vehicle.model} za ${data.soldPrice} Kč`,
+        sourceAmount: result.commissionBreakdown.total,
+      });
+
+      if (pointResult.levelChanged) {
+        await createNotification({
+          userId: vehicle.brokerId,
+          type: "SYSTEM",
+          title: `Povýšení! Jste nyní ${pointResult.newLevel}`,
+          body: `Celkem ${pointResult.newTotalPoints.toFixed(1)} bodů`,
+          link: "/makler/stats",
+        });
+      }
+    }
 
     // --- Notifikace po prodeji ---
 

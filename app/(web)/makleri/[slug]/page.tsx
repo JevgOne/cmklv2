@@ -196,7 +196,7 @@ async function fetchLandingData(slug: string) {
   ]);
 
   const topLevelCount = tag.users.filter(
-    (u) => u.level === "TOP" || u.level === "SENIOR"
+    (u) => u.level === "EXPERT" || u.level === "SENIOR"
   ).length;
 
   const activeByBroker = new Map<string, number>();
@@ -308,7 +308,7 @@ export default async function HashtagLandingPage({ params }: PageProps) {
         "@type": "Person",
         name: `${b.firstName} ${b.lastName}`,
         url: `${BASE_URL}/profil/${b.slug}`,
-        jobTitle: b.level === "TOP" ? "TOP Automakléř" : b.level === "SENIOR" ? "Senior automakléř" : "Automakléř",
+        jobTitle: b.level === "EXPERT" ? "Expert automakléř" : b.level === "SENIOR" ? "Senior automakléř" : "Automakléř",
         ...(b.city && {
           address: {
             "@type": "PostalAddress",

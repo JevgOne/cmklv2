@@ -53,9 +53,9 @@ export function QuickModeToggle({ initialEnabled, userLevel }: QuickModeTogglePr
           <p className="text-sm font-medium text-gray-900">
             Rychlý režim nabírání
           </p>
-          {userLevel === "JUNIOR" ? (
+          {userLevel === "TIPAR" ? (
             <p className="text-xs text-orange-600 mt-0.5">
-              Dostupné od úrovně Makléř (5+ prodejů)
+              Dostupné od úrovně Junior (300+ bodů)
             </p>
           ) : (
             <p className="text-xs text-gray-500 mt-0.5">
@@ -67,7 +67,7 @@ export function QuickModeToggle({ initialEnabled, userLevel }: QuickModeTogglePr
         <Toggle
           checked={enabled}
           onChange={handleToggle}
-          disabled={saving || userLevel === "JUNIOR"}
+          disabled={saving || userLevel === "TIPAR"}
         />
       </div>
 

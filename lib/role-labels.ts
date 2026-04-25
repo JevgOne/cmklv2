@@ -18,10 +18,10 @@ export const ROLE_LABELS: Record<string, string> = {
 };
 
 export const LEVEL_LABELS: Record<string, string> = {
-  JUNIOR: "Nováček",
-  BROKER: "Makléř",
+  TIPAR: "Tipař",
+  JUNIOR: "Junior",
   SENIOR: "Senior",
-  TOP: "TOP Makléř",
+  EXPERT: "Expert",
 };
 
 export const ROLE_TABS: Record<string, string[]> = {
