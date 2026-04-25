@@ -4,10 +4,7 @@ import { join } from "path";
 export const OG_SIZE = { width: 1200, height: 630 };
 
 // Brand colors
-const ORANGE = "#F97316";
-const BG_GRADIENT = {
-  background: "linear-gradient(145deg, #080818 0%, #1a1a2e 30%, #16213e 65%, #0f3460 100%)",
-};
+export const ORANGE = "#F97316";
 
 let cachedLogo: string | null = null;
 
@@ -19,7 +16,8 @@ export async function getLogoBase64(): Promise<string> {
 }
 
 /**
- * Base OG image layout — dark gradient background with CarMakler logo
+ * Base OG image layout — dark gradient background with CarMakler logo.
+ * All children must be wrapped in a single container with display:flex.
  */
 export function OgLayout({
   logo,
@@ -39,29 +37,27 @@ export function OgLayout({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        ...BG_GRADIENT,
+        background: "linear-gradient(145deg, #080818 0%, #1a1a2e 30%, #16213e 65%, #0f3460 100%)",
         fontFamily: "sans-serif",
         position: "relative",
         overflow: "hidden",
       }}
     >
-      {/* Background photo overlay */}
-      {bgImage && (
-        <img
-          src={bgImage}
-          alt=""
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            opacity: 0.25,
-          }}
-        />
-      )}
-
+      {/* Background photo overlay — always rendered, hidden if no image */}
+      <img
+        src={bgImage || "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"}
+        alt=""
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          opacity: bgImage ? 0.25 : 0,
+          display: "flex",
+        }}
+      />
       {/* Decorative gradient orb */}
       <div
         style={{
@@ -72,16 +68,15 @@ export function OgLayout({
           height: 400,
           borderRadius: "50%",
           background: "radial-gradient(circle, rgba(249,115,22,0.12) 0%, transparent 70%)",
+          display: "flex",
         }}
       />
-
       {/* Logo */}
       <img
         src={logo}
         alt="CarMakléř"
         style={{ height: 64, marginBottom: 24, position: "relative" }}
       />
-
       {/* Orange accent line */}
       <div
         style={{
@@ -90,9 +85,9 @@ export function OgLayout({
           background: ORANGE,
           marginBottom: 24,
           position: "relative",
+          display: "flex",
         }}
       />
-
       {/* Content */}
       <div
         style={{
@@ -106,7 +101,6 @@ export function OgLayout({
       >
         {children}
       </div>
-
       {/* Bottom bar */}
       <div
         style={{
@@ -116,9 +110,9 @@ export function OgLayout({
           width: "100%",
           height: 4,
           background: `linear-gradient(90deg, transparent, ${ORANGE}, transparent)`,
+          display: "flex",
         }}
       />
-
       {/* URL watermark */}
       <div
         style={{
@@ -127,6 +121,7 @@ export function OgLayout({
           right: 40,
           fontSize: 14,
           color: "rgba(255,255,255,0.4)",
+          display: "flex",
         }}
       >
         www.carmakler.cz
@@ -134,5 +129,3 @@ export function OgLayout({
     </div>
   );
 }
-
-export { ORANGE };

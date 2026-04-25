@@ -46,12 +46,12 @@ export default async function Image({
 
   const item = vehicle || listing;
   if (!item) {
-    // Fallback to default
     return new ImageResponse(
       (
         <OgLayout logo={logo}>
-          <div style={{ fontSize: 42, fontWeight: 800, color: "white" }}>
-            Vozidlo na <span style={{ color: ORANGE }}>CarMakléř</span>
+          <div style={{ display: "flex", fontSize: 42, fontWeight: 800, color: "white" }}>
+            <span>Vozidlo na </span>
+            <span style={{ color: ORANGE, marginLeft: 10 }}>CarMakléř</span>
           </div>
         </OgLayout>
       ),
@@ -62,12 +62,14 @@ export default async function Image({
   const name = `${item.brand} ${item.model}${item.variant ? " " + item.variant : ""}`;
   const price = new Intl.NumberFormat("cs-CZ").format(item.price);
   const carImage = item.images?.[0]?.url;
+  const details = [item.year?.toString(), `${price} Kč`, item.city].filter(Boolean).join("  ·  ");
 
   return new ImageResponse(
     (
       <OgLayout logo={logo} bgImage={carImage}>
         <div
           style={{
+            display: "flex",
             fontSize: 46,
             fontWeight: 800,
             color: "white",
@@ -80,21 +82,12 @@ export default async function Image({
         <div
           style={{
             display: "flex",
-            gap: 24,
             marginTop: 24,
             fontSize: 22,
             color: "rgba(255,255,255,0.85)",
           }}
         >
-          <span>{item.year}</span>
-          <span style={{ color: "rgba(255,255,255,0.3)" }}>·</span>
-          <span style={{ color: ORANGE, fontWeight: 700 }}>{price} Kč</span>
-          {item.city && (
-            <>
-              <span style={{ color: "rgba(255,255,255,0.3)" }}>·</span>
-              <span>{item.city}</span>
-            </>
-          )}
+          {details}
         </div>
       </OgLayout>
     ),

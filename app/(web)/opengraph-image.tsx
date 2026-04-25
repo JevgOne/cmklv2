@@ -14,6 +14,7 @@ export default async function Image() {
       <OgLayout logo={logo}>
         <div
           style={{
+            display: "flex",
             fontSize: 48,
             fontWeight: 800,
             color: "white",
@@ -21,11 +22,12 @@ export default async function Image() {
             lineHeight: 1.2,
           }}
         >
-          Kompletní automobilová{" "}
-          <span style={{ color: "#F97316" }}>platforma</span>
+          <span>Kompletní automobilová </span>
+          <span style={{ color: "#F97316", marginLeft: 12 }}>platforma</span>
         </div>
         <div
           style={{
+            display: "flex",
             fontSize: 22,
             color: "rgba(255,255,255,0.7)",
             marginTop: 20,

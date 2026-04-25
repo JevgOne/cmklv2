@@ -36,7 +36,6 @@ export default async function Image({
       role: true,
       avatar: true,
       city: true,
-      trustScore: true,
     },
   });
 
@@ -44,8 +43,9 @@ export default async function Image({
     return new ImageResponse(
       (
         <OgLayout logo={logo}>
-          <div style={{ fontSize: 42, fontWeight: 800, color: "white" }}>
-            Profil na <span style={{ color: ORANGE }}>CarMakléř</span>
+          <div style={{ display: "flex", fontSize: 42, fontWeight: 800, color: "white" }}>
+            <span>Profil na </span>
+            <span style={{ color: ORANGE, marginLeft: 10 }}>CarMakléř</span>
           </div>
         </OgLayout>
       ),
@@ -55,6 +55,7 @@ export default async function Image({
 
   const fullName = `${user.firstName} ${user.lastName}`;
   const roleLabel = ROLE_LABELS[user.role] ?? "Profil";
+  const initials = `${user.firstName[0]}${user.lastName[0]}`;
 
   return new ImageResponse(
     (
@@ -66,44 +67,47 @@ export default async function Image({
             gap: 32,
           }}
         >
-          {/* Avatar */}
-          {user.avatar ? (
-            <img
-              src={user.avatar}
-              alt={fullName}
-              style={{
-                width: 120,
-                height: 120,
-                borderRadius: "50%",
-                border: `3px solid ${ORANGE}`,
-                objectFit: "cover",
-              }}
-            />
-          ) : (
-            <div
-              style={{
-                width: 120,
-                height: 120,
-                borderRadius: "50%",
-                background: "rgba(249,115,22,0.2)",
-                border: `3px solid ${ORANGE}`,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 48,
-                fontWeight: 700,
-                color: ORANGE,
-              }}
-            >
-              {user.firstName[0]}
-              {user.lastName[0]}
-            </div>
-          )}
+          {/* Avatar or initials */}
+          <div
+            style={{
+              width: 120,
+              height: 120,
+              borderRadius: "50%",
+              background: user.avatar ? "transparent" : "rgba(249,115,22,0.2)",
+              border: `3px solid ${ORANGE}`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 48,
+              fontWeight: 700,
+              color: ORANGE,
+              overflow: "hidden",
+              position: "relative",
+            }}
+          >
+            {user.avatar ? (
+              <img
+                src={user.avatar}
+                alt=""
+                style={{
+                  width: 120,
+                  height: 120,
+                  objectFit: "cover",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                }}
+              />
+            ) : (
+              initials
+            )}
+          </div>
 
           {/* Info */}
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div
               style={{
+                display: "flex",
                 fontSize: 42,
                 fontWeight: 800,
                 color: "white",
@@ -114,6 +118,7 @@ export default async function Image({
             </div>
             <div
               style={{
+                display: "flex",
                 fontSize: 20,
                 color: ORANGE,
                 marginTop: 8,
@@ -124,17 +129,16 @@ export default async function Image({
             >
               {roleLabel}
             </div>
-            {user.city && (
-              <div
-                style={{
-                  fontSize: 18,
-                  color: "rgba(255,255,255,0.6)",
-                  marginTop: 6,
-                }}
-              >
-                {user.city}
-              </div>
-            )}
+            <div
+              style={{
+                display: "flex",
+                fontSize: 18,
+                color: "rgba(255,255,255,0.6)",
+                marginTop: 6,
+              }}
+            >
+              {user.city || ""}
+            </div>
           </div>
         </div>
       </OgLayout>
