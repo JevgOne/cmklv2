@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CarMakler Marketplace - Investicni prilezitosti</title>
+<title>CarMakler Marketplace - Investiční příležitosti</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 
@@ -38,7 +38,8 @@
   .slide:last-child { page-break-after: auto; }
 
   .slide-title {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background: linear-gradient(145deg, rgba(8,8,24,0.88) 0%, rgba(26,26,46,0.85) 30%, rgba(22,33,62,0.82) 65%, rgba(15,52,96,0.80) 100%),
+                url('https://images.unsplash.com/photo-1563720223185-11003d516935?w=1920&q=80') center/cover no-repeat;
     color: white;
     justify-content: center;
     align-items: center;
@@ -47,27 +48,27 @@
   .slide-title::before {
     content: '';
     position: absolute;
-    top: -100px;
-    right: -100px;
-    width: 500px;
-    height: 500px;
+    top: -60px;
+    right: -60px;
+    width: 420px;
+    height: 420px;
     border-radius: 50%;
-    background: rgba(249, 115, 22, 0.08);
+    background: radial-gradient(circle, rgba(249, 115, 22, 0.15) 0%, transparent 70%);
   }
   .slide-title::after {
     content: '';
     position: absolute;
-    bottom: -150px;
-    left: -150px;
-    width: 600px;
-    height: 600px;
+    bottom: -100px;
+    left: -100px;
+    width: 500px;
+    height: 500px;
     border-radius: 50%;
-    background: rgba(249, 115, 22, 0.05);
+    background: radial-gradient(circle, rgba(249, 115, 22, 0.10) 0%, transparent 70%);
   }
-  .slide-title .logo { height: 80px; margin-bottom: 30px; position: relative; z-index: 1; }
+  .slide-title .logo { height: 90px; margin-bottom: 30px; position: relative; z-index: 1; filter: drop-shadow(0 0 24px rgba(249,115,22,0.25)); }
   .slide-title h1 { font-size: 42px; font-weight: 800; line-height: 1.2; margin-bottom: 16px; position: relative; z-index: 1; }
   .slide-title h1 span { color: #F97316; }
-  .slide-title .subtitle { font-size: 22px; font-weight: 300; color: rgba(255,255,255,0.8); position: relative; z-index: 1; }
+  .slide-title .subtitle { font-size: 18px; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.8); position: relative; z-index: 1; }
   .slide-title .date { position: absolute; bottom: 40px; right: 60px; font-size: 14px; color: rgba(255,255,255,0.5); }
   .slide-title .web { position: absolute; bottom: 40px; left: 60px; font-size: 14px; color: rgba(255,255,255,0.5); }
 
@@ -154,7 +155,8 @@
   .check { color: #22c55e; font-weight: 700; font-size: 18px; }
 
   .slide-cta {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background: linear-gradient(145deg, rgba(8,8,24,0.90) 0%, rgba(26,26,46,0.88) 50%, rgba(15,52,96,0.85) 100%),
+                url('https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=1920&q=80') center/cover no-repeat;
     color: white;
     justify-content: center;
     align-items: center;
@@ -231,9 +233,11 @@
 
 <!-- SLIDE 1: TITLE -->
 <div class="slide slide-title">
+  <div style="position:absolute;top:40%;left:-40px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,0.05) 0%,transparent 70%);"></div>
   <img src="../../public/brand/logo-white.png" alt="CarMakler" class="logo">
-  <h1>Marketplace — Investicni<br><span>prilezitosti</span> v automobilech</h1>
-  <p class="subtitle">Uzavrena platforma pro overene investory a dealery</p>
+  <div style="width:60px;height:3px;background:linear-gradient(90deg,transparent,#F97316,transparent);margin:-10px auto 24px;position:relative;z-index:1;"></div>
+  <h1>Marketplace — Investiční<br><span>příležitosti</span> v automobilech</h1>
+  <p class="subtitle">Uzavřená platforma pro ověřené investory a dealery</p>
   <p class="web">www.carmakler.cz/marketplace</p>
   <p class="date">2026</p>
   <div class="slide-footer"></div>
@@ -248,24 +252,24 @@
   <div class="grid-2" style="align-items: center;">
     <div>
       <p style="font-size: 18px; line-height: 1.8; color: #475569; margin-bottom: 24px;">
-        CarMakler Marketplace je <strong style="color: #1a1a2e;">uzavrena investicni platforma</strong> kde overeni dealeri nabizeji investicni prilezitosti — nakup, oprava a prodej vozidel se ziskem.
+        CarMakler Marketplace je <strong style="color: #1a1a2e;">uzavřená investiční platforma</strong> kde ověření dealeři nabízejí investiční příležitosti — nákup, oprava a prodej vozidel se ziskem.
       </p>
       <div class="highlight">
         <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px;">Jak to funguje</h3>
         <p style="font-size: 14px; line-height: 1.8; color: #475569;">
-          Dealer najde podhodnocene vozidlo, pripravi kalkulaci (nakup + oprava + predpokladany prodej), investor financuje. Auto se kupuje na firmu <strong style="color: #F97316;">CarMakler</strong> — pravni ochrana pro obe strany.
+          Dealer najde podhodnocené vozidlo, připraví kalkulaci (nákup + oprava + předpokládaný prodej), investor financuje. Auto se kupuje na firmu <strong style="color: #F97316;">CarMakler</strong> — právní ochrana pro obě strany.
         </p>
       </div>
     </div>
     <div class="dark-box" style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
-      <h3 style="font-size: 20px; color: #F97316; margin-bottom: 16px;">Klicove vyhody</h3>
+      <h3 style="font-size: 20px; color: #F97316; margin-bottom: 16px;">Klíčové výhody</h3>
       <ul style="font-size: 15px; line-height: 2.4; color: rgba(255,255,255,0.8); list-style: none;">
-        <li>✅ Pasivni prijem z investice</li>
+        <li>✅ Pasivní příjem z investice</li>
         <li>✅ Auto na firmu CarMakler (ochrana)</li>
-        <li>✅ Overeni a hodnoceni dealeri</li>
-        <li>✅ Transparentni kalkulace</li>
-        <li>✅ Escrow platby pres Stripe</li>
-        <li>✅ Kompletni pravni servis</li>
+        <li>✅ Ověření a hodnocení dealeři</li>
+        <li>✅ Transparentní kalkulace</li>
+        <li>✅ Escrow platby přes Stripe</li>
+        <li>✅ Kompletní právní servis</li>
       </ul>
     </div>
   </div>
@@ -275,7 +279,7 @@
 <!-- SLIDE 3: INVESTICNI MODEL -->
 <div class="slide">
   <div class="slide-header">
-    <h2>Investicni <span class="orange">model</span></h2>
+    <h2>Investiční <span class="orange">model</span></h2>
     <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
   </div>
   <div class="grid-3" style="align-items: stretch;">
@@ -283,19 +287,19 @@
       <div style="font-size: 48px; margin-bottom: 12px;">💰</div>
       <h3 style="font-size: 24px; color: #3b82f6;">40%</h3>
       <p style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Investor</p>
-      <p>Financuje nakup a opravu. Nestaral se o nic — dealer a CarMakler vse zaridi.</p>
+      <p>Financuje nákup a opravu. Nestará se o nic — dealer a CarMakler vše zařídí.</p>
     </div>
     <div class="feature-card" style="text-align: center; border-color: #22c55e;">
       <div style="font-size: 48px; margin-bottom: 12px;">🔧</div>
       <h3 style="font-size: 24px; color: #22c55e;">40%</h3>
       <p style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Dealer</p>
-      <p>Najde prilezitost, nakoupi, opravi a proda. Odbornik na automobily a trh.</p>
+      <p>Najde příležitost, nakoupí, opraví a prodá. Odborník na automobily a trh.</p>
     </div>
     <div class="feature-card" style="text-align: center; border-color: #F97316;">
       <div style="font-size: 48px; margin-bottom: 12px;">🛡️</div>
       <h3 style="font-size: 24px; color: #F97316;">20%</h3>
       <p style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">CarMakler</p>
-      <p>Sprava, garance, pravni servis, pojisteni. Auto na firmu CarMakler.</p>
+      <p>Správa, garance, právní servis, pojištění. Auto na firmu CarMakler.</p>
     </div>
   </div>
   <div style="margin-top: 20px;">
@@ -304,7 +308,7 @@
       <div class="segment" style="flex: 4; background: #22c55e;">40% Dealer</div>
       <div class="segment" style="flex: 2; background: #F97316;">20% CarMakler</div>
     </div>
-    <p style="text-align: center; font-size: 13px; color: #94a3b8;">Deleni cisteho zisku po odecteni vsech nakladu (nakup + oprava + poplatky)</p>
+    <p style="text-align: center; font-size: 13px; color: #94a3b8;">Dělení čistého zisku po odečtení všech nákladů (nákup + oprava + poplatky)</p>
   </div>
   <div class="slide-footer"></div>
 </div>
@@ -320,59 +324,59 @@
       <div class="step">
         <div class="step-num">1</div>
         <div>
-          <h4>Dealer najde prilezitost</h4>
-          <p>Overeny dealer najde podhodnocene vozidlo, pripravi detailni popis, fotodokumentaci a financni kalkulaci (nakup + oprava + predpokladany prodej).</p>
+          <h4>Dealer najde příležitost</h4>
+          <p>Ověřený dealer najde podhodnocené vozidlo, připraví detailní popis, fotodokumentaci a finanční kalkulaci (nákup + oprava + předpokládaný prodej).</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">2</div>
         <div>
-          <h4>Investor schvali a financuje</h4>
-          <p>Investor prozkouma nabidku, kalkulaci a historii dealera. Pokud souhlasi, uvolni prostredky pres Stripe escrow.</p>
+          <h4>Investor schválí a financuje</h4>
+          <p>Investor prozkoumá nabídku, kalkulaci a historii dealera. Pokud souhlasí, uvolní prostředky přes Stripe escrow.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
         <div>
           <h4>Dealer realizuje</h4>
-          <p>Dealer nakoupi vuz (na firmu CarMakler), provede opravu a pripravi k prodeji. Pravidelne reporty investorovi.</p>
+          <p>Dealer nakoupí vůz (na firmu CarMakler), provede opravu a připraví k prodeji. Pravidelné reporty investorovi.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">4</div>
         <div>
-          <h4>Prodej a deleni zisku</h4>
-          <p>Auto se proda, cisty zisk se rozdeli 40/40/20. Investor obdrzi svuj podil automaticky na ucet.</p>
+          <h4>Prodej a dělení zisku</h4>
+          <p>Auto se prodá, čistý zisk se rozdělí 40/40/20. Investor obdrží svůj podíl automaticky na účet.</p>
         </div>
       </div>
     </div>
     <div class="highlight" style="display: flex; flex-direction: column; justify-content: center;">
-      <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 20px;">Priklad dealu</h3>
+      <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 20px;">Příklad dealu</h3>
       <div style="font-size: 14px; line-height: 2.2;">
         <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(0,0,0,0.06);">
-          <span style="color: #64748b;">Nakupni cena:</span>
-          <span style="font-weight: 700;">180 000 Kc</span>
+          <span style="color: #64748b;">Nákupní cena:</span>
+          <span style="font-weight: 700;">180 000 Kč</span>
         </div>
         <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(0,0,0,0.06);">
-          <span style="color: #64748b;">Naklady na opravu:</span>
-          <span style="font-weight: 700;">45 000 Kc</span>
+          <span style="color: #64748b;">Náklady na opravu:</span>
+          <span style="font-weight: 700;">45 000 Kč</span>
         </div>
         <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(0,0,0,0.06);">
-          <span style="color: #64748b;">Celkova investice:</span>
-          <span style="font-weight: 700;">225 000 Kc</span>
+          <span style="color: #64748b;">Celková investice:</span>
+          <span style="font-weight: 700;">225 000 Kč</span>
         </div>
         <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(0,0,0,0.06);">
-          <span style="color: #64748b;">Prodejni cena:</span>
-          <span style="font-weight: 700;">299 000 Kc</span>
+          <span style="color: #64748b;">Prodejní cena:</span>
+          <span style="font-weight: 700;">299 000 Kč</span>
         </div>
         <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 2px solid #1a1a2e;">
-          <span style="font-weight: 700;">Cisty zisk:</span>
-          <span style="font-weight: 800; color: #22c55e; font-size: 18px;">74 000 Kc</span>
+          <span style="font-weight: 700;">Čistý zisk:</span>
+          <span style="font-weight: 800; color: #22c55e; font-size: 18px;">74 000 Kč</span>
         </div>
         <div style="margin-top: 8px; font-size: 13px;">
-          <span style="color: #3b82f6;">Investor: 29 600 Kc</span> ·
-          <span style="color: #22c55e;">Dealer: 29 600 Kc</span> ·
-          <span style="color: #F97316;">CM: 14 800 Kc</span>
+          <span style="color: #3b82f6;">Investor: 29 600 Kč</span> ·
+          <span style="color: #22c55e;">Dealer: 29 600 Kč</span> ·
+          <span style="color: #F97316;">CM: 14 800 Kč</span>
         </div>
       </div>
     </div>
@@ -383,28 +387,28 @@
 <!-- SLIDE 5: HISTORICKE VYNOSY -->
 <div class="slide">
   <div class="slide-header">
-    <h2>Historicke <span class="orange">vynosy</span></h2>
+    <h2>Historické <span class="orange">výnosy</span></h2>
     <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
   </div>
   <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 24px;">
     <div class="stat-box">
       <span class="number">15-25%</span>
-      <span class="label">prumerny ROI na deal</span>
+      <span class="label">průměrný ROI na deal</span>
     </div>
     <div class="stat-box">
-      <span class="number">45 dni</span>
-      <span class="label">prumerna doba dealu</span>
+      <span class="number">45 dní</span>
+      <span class="label">průměrná doba dealu</span>
     </div>
     <div class="stat-box">
       <span class="number">100k+</span>
-      <span class="label">minimalni investice</span>
+      <span class="label">minimální investice</span>
     </div>
   </div>
   <div style="flex: 1;">
     <table>
       <tr>
-        <th>Vuz</th>
-        <th style="text-align: right;">Nakup</th>
+        <th>Vůz</th>
+        <th style="text-align: right;">Nákup</th>
         <th style="text-align: right;">Oprava</th>
         <th style="text-align: right;">Prodej</th>
         <th style="text-align: right;">Zisk</th>
@@ -412,13 +416,13 @@
         <th style="text-align: right;">Doba</th>
       </tr>
       <tr>
-        <td><strong>Skoda Octavia III 2.0 TDI</strong></td>
+        <td><strong>Škoda Octavia III 2.0 TDI</strong></td>
         <td style="text-align: right;">180 000</td>
         <td style="text-align: right;">45 000</td>
         <td style="text-align: right;">299 000</td>
         <td style="text-align: right;" class="roi-positive">74 000</td>
         <td style="text-align: right;" class="roi-positive">33%</td>
-        <td style="text-align: right;">38 dni</td>
+        <td style="text-align: right;">38 dní</td>
       </tr>
       <tr>
         <td><strong>VW Golf VII 1.4 TSI</strong></td>
@@ -427,7 +431,7 @@
         <td style="text-align: right;">219 000</td>
         <td style="text-align: right;" class="roi-positive">44 000</td>
         <td style="text-align: right;" class="roi-positive">25%</td>
-        <td style="text-align: right;">42 dni</td>
+        <td style="text-align: right;">42 dní</td>
       </tr>
       <tr>
         <td><strong>BMW 320d F30</strong></td>
@@ -436,7 +440,7 @@
         <td style="text-align: right;">349 000</td>
         <td style="text-align: right;" class="roi-positive">64 000</td>
         <td style="text-align: right;" class="roi-positive">22%</td>
-        <td style="text-align: right;">51 dni</td>
+        <td style="text-align: right;">51 dní</td>
       </tr>
       <tr>
         <td><strong>Ford Focus III 1.5 EcoBoost</strong></td>
@@ -445,7 +449,7 @@
         <td style="text-align: right;">169 000</td>
         <td style="text-align: right;" class="roi-positive">34 000</td>
         <td style="text-align: right;" class="roi-positive">25%</td>
-        <td style="text-align: right;">35 dni</td>
+        <td style="text-align: right;">35 dní</td>
       </tr>
       <tr>
         <td><strong>Audi A4 B9 2.0 TFSI</strong></td>
@@ -454,10 +458,10 @@
         <td style="text-align: right;">429 000</td>
         <td style="text-align: right;" class="roi-positive">64 000</td>
         <td style="text-align: right;" class="roi-positive">18%</td>
-        <td style="text-align: right;">58 dni</td>
+        <td style="text-align: right;">58 dní</td>
       </tr>
     </table>
-    <p style="margin-top: 8px; font-size: 12px; color: #94a3b8;">Historicke vysledky nezarucuji budouci vynosy. Ceny uvedeny bez DPH.</p>
+    <p style="margin-top: 8px; font-size: 12px; color: #94a3b8;">Historické výsledky nezaručují budoucí výnosy. Ceny uvedeny bez DPH.</p>
   </div>
   <div class="slide-footer"></div>
 </div>
@@ -465,7 +469,7 @@
 <!-- SLIDE 6: RISK MANAGEMENT -->
 <div class="slide">
   <div class="slide-header">
-    <h2>Rizeni <span class="orange">rizik</span></h2>
+    <h2>Řízení <span class="orange">rizik</span></h2>
     <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
   </div>
   <div class="grid-2">
@@ -474,45 +478,45 @@
         <div class="shield-icon">🛡️</div>
         <div>
           <h4>Auto na firmu CarMakler</h4>
-          <p>Vozidlo je majetkem CarMakler s.r.o. po celou dobu. Pravni ochrana investora i dealera. Zadne riziko podvodu.</p>
+          <p>Vozidlo je majetkem CarMakler s.r.o. po celou dobu. Právní ochrana investora i dealera. Žádné riziko podvodu.</p>
         </div>
       </div>
       <div class="risk-shield">
         <div class="shield-icon">🔍</div>
         <div>
-          <h4>Inspekce kazdeho vozu</h4>
-          <p>Nezavisla technicka inspekce pred nakupem. CEBIA proverka historie. Overeni VIN a stavu tachometru.</p>
+          <h4>Inspekce každého vozu</h4>
+          <p>Nezávislá technická inspekce před nákupem. CEBIA prověrka historie. Ověření VIN a stavu tachometru.</p>
         </div>
       </div>
       <div class="risk-shield">
         <div class="shield-icon">📋</div>
         <div>
-          <h4>Pojisteni odpovednosti</h4>
-          <p>Profesionalni pojisteni kryje nepredvidane situace. Skoda na vozidle behem opravy je pojistena.</p>
+          <h4>Pojištění odpovědnosti</h4>
+          <p>Profesionální pojištění kryje nepředvídané situace. Škoda na vozidle během opravy je pojištěna.</p>
         </div>
       </div>
       <div class="risk-shield">
         <div class="shield-icon">💳</div>
         <div>
           <h4>Escrow platby</h4>
-          <p>Vse pres Stripe escrow. Prostredky se uvolni az po splneni podminek. Zadne prime prevody mezi stranami.</p>
+          <p>Vše přes Stripe escrow. Prostředky se uvolní až po splnění podmínek. Žádné přímé převody mezi stranami.</p>
         </div>
       </div>
     </div>
     <div class="dark-box" style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
-      <h3 style="font-size: 20px; color: #F97316; margin-bottom: 20px;">Co se stane kdyz...</h3>
+      <h3 style="font-size: 20px; color: #F97316; margin-bottom: 20px;">Co se stane když...</h3>
       <div style="margin-bottom: 16px;">
         <div style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-          <p style="font-size: 14px; font-weight: 700; margin-bottom: 4px;">...se auto neproda?</p>
-          <p style="font-size: 13px; color: rgba(255,255,255,0.6);">Snizeni ceny po 30 dnech. Po 60 dnech moznost aukce. Historicky se 98% aut proda do 60 dni.</p>
+          <p style="font-size: 14px; font-weight: 700; margin-bottom: 4px;">...se auto neprodá?</p>
+          <p style="font-size: 13px; color: rgba(255,255,255,0.6);">Snížení ceny po 30 dnech. Po 60 dnech možnost aukce. Historicky se 98% aut prodá do 60 dní.</p>
         </div>
         <div style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-          <p style="font-size: 14px; font-weight: 700; margin-bottom: 4px;">...dealer neplni slib?</p>
-          <p style="font-size: 13px; color: rgba(255,255,255,0.6);">Rating system + penalizace. Po 2 selhanich vylouceni z platformy. Escrow chrani investora.</p>
+          <p style="font-size: 14px; font-weight: 700; margin-bottom: 4px;">...dealer neplní slib?</p>
+          <p style="font-size: 13px; color: rgba(255,255,255,0.6);">Rating system + penalizace. Po 2 selháních vyloučení z platformy. Escrow chrání investora.</p>
         </div>
         <div style="padding: 12px 0;">
-          <p style="font-size: 14px; font-weight: 700; margin-bottom: 4px;">...oprava stoji vic nez plan?</p>
-          <p style="font-size: 13px; color: rgba(255,255,255,0.6);">Navyseni rozpoctu az po souhlasu investora. Transparentne zdokumentovano vcetne fotografii.</p>
+          <p style="font-size: 14px; font-weight: 700; margin-bottom: 4px;">...oprava stojí víc než plán?</p>
+          <p style="font-size: 13px; color: rgba(255,255,255,0.6);">Navýšení rozpočtu až po souhlasu investora. Transparentně zdokumentováno včetně fotografií.</p>
         </div>
       </div>
     </div>
@@ -523,57 +527,57 @@
 <!-- SLIDE 7: REGISTRACE + PODMINKY -->
 <div class="slide">
   <div class="slide-header">
-    <h2>Registrace a <span class="orange">podminky</span></h2>
+    <h2>Registrace a <span class="orange">podmínky</span></h2>
     <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
   </div>
   <div class="grid-2" style="align-items: center;">
     <div>
-      <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 20px;">Kdo se muze registrovat</h3>
+      <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 20px;">Kdo se může registrovat</h3>
       <div class="feature-card" style="margin-bottom: 16px;">
-        <h3>Fyzicka osoba (FO)</h3>
+        <h3>Fyzická osoba (FO)</h3>
         <ul>
-          <li>Obcan CR nebo EU</li>
-          <li>Vek 18+ let</li>
-          <li>Platny obcansky prukaz</li>
-          <li>Min. investice od 100 000 Kc</li>
+          <li>Občan ČR nebo EU</li>
+          <li>Věk 18+ let</li>
+          <li>Platný občanský průkaz</li>
+          <li>Min. investice od 100 000 Kč</li>
         </ul>
       </div>
       <div class="feature-card">
-        <h3>Pravnicka osoba (PO)</h3>
+        <h3>Právnická osoba (PO)</h3>
         <ul>
-          <li>Firma zapsana v OR</li>
-          <li>Vypis z obchodniho rejstriku</li>
+          <li>Firma zapsaná v OR</li>
+          <li>Výpis z obchodního rejstříku</li>
           <li>Identifikace jednatele</li>
-          <li>Min. investice od 100 000 Kc</li>
+          <li>Min. investice od 100 000 Kč</li>
         </ul>
       </div>
     </div>
     <div>
-      <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 20px;">Jak zacit — 3 kroky</h3>
+      <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 20px;">Jak začít — 3 kroky</h3>
       <div class="step">
         <div class="step-num">1</div>
         <div>
           <h4>Registrace</h4>
-          <p>Vyplnte formular na carmakler.cz/marketplace. Zakladni udaje, kontakt, investicni profil.</p>
+          <p>Vyplňte formulář na carmakler.cz/marketplace. Základní údaje, kontakt, investiční profil.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">2</div>
         <div>
           <h4>Verifikace</h4>
-          <p>Nahrajte OP (FO) nebo vypis z OR (PO). AML kontrola. Overeni uctu. Trvani: 1-2 pracovni dny.</p>
+          <p>Nahrajte OP (FO) nebo výpis z OR (PO). AML kontrola. Ověření účtu. Trvání: 1-2 pracovní dny.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
         <div>
-          <h4>Prvni deal</h4>
-          <p>Prohlizejte nabidky od overenach dealeru. Vyberte prilezitost, schvalte kalkulaci a investujte.</p>
+          <h4>První deal</h4>
+          <p>Prohlížejte nabídky od ověřených dealerů. Vyberte příležitost, schvalte kalkulaci a investujte.</p>
         </div>
       </div>
       <div class="highlight" style="text-align: center; margin-top: 16px;">
         <p style="font-size: 16px; font-weight: 700;">Registrace a verifikace je <span class="orange">ZDARMA</span></p>
-        <p style="font-size: 13px; color: #64748b; margin-top: 4px;">Zadne vstupni poplatky, zadne mesicni predplatne</p>
+        <p style="font-size: 13px; color: #64748b; margin-top: 4px;">Žádné vstupní poplatky, žádné měsíční předplatné</p>
       </div>
     </div>
   </div>
@@ -583,9 +587,9 @@
 <!-- SLIDE 8: CTA -->
 <div class="slide slide-cta">
   <img src="../../public/brand/logo-white.png" alt="CarMakler" class="logo" style="height: 60px; margin-bottom: 30px;">
-  <h2>Zacnete <span>investovat</span></h2>
+  <h2>Začněte <span>investovat</span></h2>
   <p style="font-size: 20px; color: rgba(255,255,255,0.7); max-width: 600px; line-height: 1.6;">
-    Registrujte se na CarMakler Marketplace a ziskejte pristup k investicnim prilezitostem s prumernym ROI 15-25%.
+    Registrujte se na CarMakler Marketplace a získejte přístup k investičním příležitostem s průměrným ROI 15-25%.
   </p>
   <div class="contact-grid">
     <div class="contact-item">

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CarMakler - Partnersky program pro autobazary</title>
+<title>CarMakler - Partnerský program pro autobazary</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 
@@ -39,7 +39,8 @@
 
   /* ---- SLIDE 1: TITLE ---- */
   .slide-title {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background: linear-gradient(145deg, rgba(8,8,24,0.88) 0%, rgba(26,26,46,0.85) 30%, rgba(22,33,62,0.82) 65%, rgba(15,52,96,0.80) 100%),
+                url('https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=1920&q=80') center/cover no-repeat;
     color: white;
     justify-content: center;
     align-items: center;
@@ -48,27 +49,27 @@
   .slide-title::before {
     content: '';
     position: absolute;
-    top: -100px;
-    right: -100px;
-    width: 500px;
-    height: 500px;
+    top: -60px;
+    right: -60px;
+    width: 420px;
+    height: 420px;
     border-radius: 50%;
-    background: rgba(249, 115, 22, 0.08);
+    background: radial-gradient(circle, rgba(249, 115, 22, 0.15) 0%, transparent 70%);
   }
   .slide-title::after {
     content: '';
     position: absolute;
-    bottom: -150px;
-    left: -150px;
-    width: 600px;
-    height: 600px;
+    bottom: -100px;
+    left: -100px;
+    width: 500px;
+    height: 500px;
     border-radius: 50%;
-    background: rgba(249, 115, 22, 0.05);
+    background: radial-gradient(circle, rgba(249, 115, 22, 0.10) 0%, transparent 70%);
   }
-  .slide-title .logo { height: 80px; margin-bottom: 30px; position: relative; z-index: 1; }
+  .slide-title .logo { height: 90px; margin-bottom: 30px; position: relative; z-index: 1; filter: drop-shadow(0 0 24px rgba(249,115,22,0.25)); }
   .slide-title h1 { font-size: 42px; font-weight: 800; line-height: 1.2; margin-bottom: 16px; position: relative; z-index: 1; }
   .slide-title h1 span { color: #F97316; }
-  .slide-title .subtitle { font-size: 22px; font-weight: 300; color: rgba(255,255,255,0.8); position: relative; z-index: 1; }
+  .slide-title .subtitle { font-size: 18px; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.8); position: relative; z-index: 1; }
   .slide-title .date { position: absolute; bottom: 40px; right: 60px; font-size: 14px; color: rgba(255,255,255,0.5); }
   .slide-title .web { position: absolute; bottom: 40px; left: 60px; font-size: 14px; color: rgba(255,255,255,0.5); }
 
@@ -200,7 +201,8 @@
 
   /* ---- CTA SLIDE ---- */
   .slide-cta {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background: linear-gradient(145deg, rgba(8,8,24,0.90) 0%, rgba(26,26,46,0.88) 50%, rgba(15,52,96,0.85) 100%),
+                url('https://images.unsplash.com/photo-1549317661-bd32c8ce0afa?w=1920&q=80') center/cover no-repeat;
     color: white;
     justify-content: center;
     align-items: center;
@@ -241,9 +243,11 @@
 
 <!-- SLIDE 1: TITLE -->
 <div class="slide slide-title">
+  <div style="position:absolute;top:40%;left:-40px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,0.05) 0%,transparent 70%);"></div>
   <img src="../../public/brand/logo-white.png" alt="CarMakler" class="logo">
-  <h1>Partnersky program<br>pro <span>autobazary</span></h1>
-  <p class="subtitle">Prodejte vice aut s mene namahy. Zdarma.</p>
+  <div style="width:60px;height:3px;background:linear-gradient(90deg,transparent,#F97316,transparent);margin:-10px auto 24px;position:relative;z-index:1;"></div>
+  <h1>Partnerský program<br>pro <span>autobazary</span></h1>
+  <p class="subtitle">Prodejte více aut s méně námahy. Zdarma.</p>
   <p class="web">www.carmakler.cz</p>
   <p class="date">2026</p>
   <div class="slide-footer"></div>
@@ -252,7 +256,7 @@
 <!-- SLIDE 2: PROBLEM -->
 <div class="slide">
   <div class="slide-header">
-    <h2>Znate tyto <span class="orange">problemy</span>?</h2>
+    <h2>Znáte tyto <span class="orange">problémy</span>?</h2>
     <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
   </div>
   <div class="grid-2" style="align-items: center;">
@@ -261,8 +265,8 @@
         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
           <span style="font-size: 28px;">😤</span>
           <div>
-            <h3 style="font-size: 18px; font-weight: 700;">Inzerovani na vice portalech</h3>
-            <p style="font-size: 14px; color: #64748b;">Sauto, Bazos, TipCars... Kazdy portal zvlast, rucne. Hodiny prace.</p>
+            <h3 style="font-size: 18px; font-weight: 700;">Inzerování na více portálech</h3>
+            <p style="font-size: 14px; color: #64748b;">Sauto, Bazoš, TipCars... Každý portál zvlášť, ručně. Hodiny práce.</p>
           </div>
         </div>
       </div>
@@ -270,8 +274,8 @@
         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
           <span style="font-size: 28px;">📉</span>
           <div>
-            <h3 style="font-size: 18px; font-weight: 700;">Ztracene poptavky</h3>
-            <p style="font-size: 14px; color: #64748b;">Emaily, telefony, zpravy z portalu — vse roztrousene, nic nesledovane.</p>
+            <h3 style="font-size: 18px; font-weight: 700;">Ztracené poptávky</h3>
+            <p style="font-size: 14px; color: #64748b;">E-maily, telefony, zprávy z portálů — vše roztroušené, nic nesledované.</p>
           </div>
         </div>
       </div>
@@ -279,8 +283,8 @@
         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
           <span style="font-size: 28px;">💸</span>
           <div>
-            <h3 style="font-size: 18px; font-weight: 700;">Vysoke naklady na inzerci</h3>
-            <p style="font-size: 14px; color: #64748b;">Tisice korun mesicne za topovani a zvyraznovani na kazdem portalu.</p>
+            <h3 style="font-size: 18px; font-weight: 700;">Vysoké náklady na inzerci</h3>
+            <p style="font-size: 14px; color: #64748b;">Tisíce korun měsíčně za topování a zvýrazňování na každém portálu.</p>
           </div>
         </div>
       </div>
@@ -288,46 +292,46 @@
         <div style="display: flex; align-items: center; gap: 12px;">
           <span style="font-size: 28px;">📊</span>
           <div>
-            <h3 style="font-size: 18px; font-weight: 700;">Zadne analyticke nastroje</h3>
-            <p style="font-size: 14px; color: #64748b;">Nevidite, co funguje. Nevidite konverze. Strilite naslepo.</p>
+            <h3 style="font-size: 18px; font-weight: 700;">Žádné analytické nástroje</h3>
+            <p style="font-size: 14px; color: #64748b;">Nevidíte, co funguje. Nevidíte konverze. Střílíte naslepo.</p>
           </div>
         </div>
       </div>
     </div>
     <div class="highlight" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 100%;">
       <p style="font-size: 64px; margin-bottom: 16px;">🚗</p>
-      <h3 style="font-size: 24px; font-weight: 800; margin-bottom: 12px;">CarMakler to resi.</h3>
-      <p style="font-size: 16px; color: #64748b; line-height: 1.6;">Jeden system na spravu vozidel, leadu a inzerce. Propojeny s celou siti kupujicich.</p>
+      <h3 style="font-size: 24px; font-weight: 800; margin-bottom: 12px;">CarMakler to řeší.</h3>
+      <p style="font-size: 16px; color: #64748b; line-height: 1.6;">Jeden systém na správu vozidel, leadů a inzerce. Propojený s celou sítí kupujících.</p>
     </div>
   </div>
   <div class="slide-footer"></div>
 </div>
 
-<!-- SLIDE 3: CO NABIZIME -->
+<!-- SLIDE 3: CO NABÍZÍME -->
 <div class="slide">
   <div class="slide-header">
-    <h2>Co vam <span class="orange">nabizime</span></h2>
+    <h2>Co vám <span class="orange">nabízíme</span></h2>
     <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
   </div>
   <div class="grid-4">
     <div class="feature-card">
       <div class="icon">🚗</div>
-      <h3>Sprava vozidel</h3>
+      <h3>Správa vozidel</h3>
       <ul>
-        <li>Neomezeny pocet inzeratu</li>
+        <li>Neomezený počet inzerátů</li>
         <li>Foto galerie</li>
-        <li>Stavy: aktivni, prodano, draft</li>
-        <li>Pocitadlo zobrazeni</li>
+        <li>Stavy: aktivní, prodáno, draft</li>
+        <li>Počítadlo zobrazení</li>
       </ul>
     </div>
     <div class="feature-card">
       <div class="icon">📋</div>
       <h3>CRM & Leady</h3>
       <ul>
-        <li>Centralni prehled poptavek</li>
-        <li>Stavy: Novy → Kontaktovan → Prodano</li>
-        <li>Kontaktni udaje kupujicich</li>
-        <li>Mesicni metriky</li>
+        <li>Centrální přehled poptávek</li>
+        <li>Stavy: Nový → Kontaktován → Prodáno</li>
+        <li>Kontaktní údaje kupujících</li>
+        <li>Měsíční metriky</li>
       </ul>
     </div>
     <div class="feature-card">
@@ -337,27 +341,27 @@
         <li>Import z Sauto.cz XML</li>
         <li>Import z TipCars XML</li>
         <li>CSV import</li>
-        <li>Automaticka synchronizace</li>
+        <li>Automatická synchronizace</li>
       </ul>
     </div>
     <div class="feature-card">
       <div class="icon">📊</div>
       <h3>Statistiky</h3>
       <ul>
-        <li>Dashboard v realnem case</li>
-        <li>Konverzni metriky</li>
-        <li>Prehled zobrazeni</li>
-        <li>Trendy a vykony</li>
+        <li>Dashboard v reálném čase</li>
+        <li>Konverzní metriky</li>
+        <li>Přehled zobrazení</li>
+        <li>Trendy a výkony</li>
       </ul>
     </div>
   </div>
   <div class="slide-footer"></div>
 </div>
 
-<!-- SLIDE 4: PARTNERSKY PORTAL -->
+<!-- SLIDE 4: PARTNERSKÝ PORTÁL -->
 <div class="slide">
   <div class="slide-header">
-    <h2>Partnersky <span class="orange">portal</span></h2>
+    <h2>Partnerský <span class="orange">portál</span></h2>
     <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
   </div>
   <div class="grid-2">
@@ -365,39 +369,39 @@
       <div class="feature-card" style="margin-bottom: 20px;">
         <h3 style="font-size: 20px; margin-bottom: 12px;">📱 Dashboard</h3>
         <p style="font-size: 14px; line-height: 1.7; color: #475569;">
-          Prehledny panel s klicovymi cisly: celkovy pocet vozidel, aktivni inzeraty,
-          leady za mesic, prodana auta. Vse na jednom miste, aktualizovane v realnem case.
+          Přehledný panel s klíčovými čísly: celkový počet vozidel, aktivní inzeráty,
+          leady za měsíc, prodaná auta. Vše na jednom místě, aktualizované v reálném čase.
         </p>
       </div>
       <div class="feature-card" style="margin-bottom: 20px;">
         <h3 style="font-size: 20px; margin-bottom: 12px;">💬 Komunikace</h3>
         <p style="font-size: 14px; line-height: 1.7; color: #475569;">
-          Integrovany system zprav pro komunikaci se zajemci. Vsechny konverzace
-          na jednom miste, historie zprav, rychle odpovedi.
+          Integrovaný systém zpráv pro komunikaci se zájemci. Všechny konverzace
+          na jednom místě, historie zpráv, rychlé odpovědi.
         </p>
       </div>
       <div class="feature-card">
         <h3 style="font-size: 20px; margin-bottom: 12px;">📄 Dokumenty & Fakturace</h3>
         <p style="font-size: 14px; line-height: 1.7; color: #475569;">
-          Uloziste obchodnich dokumentu, prehledna fakturace s rozpisem provizi,
-          mesicni vyuceni a historie plateb.
+          Úložiště obchodních dokumentů, přehledná fakturace s rozpisem provizí,
+          měsíční vyúčtování a historie plateb.
         </p>
       </div>
     </div>
     <div>
       <div class="dark-box" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
-        <h3 style="font-size: 20px; margin-bottom: 20px; color: #F97316;">Kompletni funkce portalu</h3>
+        <h3 style="font-size: 20px; margin-bottom: 20px; color: #F97316;">Kompletní funkce portálu</h3>
         <ul style="list-style: none; font-size: 15px; line-height: 2.2;">
           <li>✅ Dashboard s real-time statistikami</li>
-          <li>✅ Sprava vozidel (pridani, editace, mazani)</li>
-          <li>✅ CRM — sprava leadu a poptavek</li>
+          <li>✅ Správa vozidel (přidání, editace, mazání)</li>
+          <li>✅ CRM — správa leadů a poptávek</li>
           <li>✅ Feed import (Sauto, TipCars, CSV)</li>
-          <li>✅ Interni komunikace se zajemci</li>
-          <li>✅ Statistiky a analyza vykonu</li>
-          <li>✅ Firemni profil a kontaktni udaje</li>
+          <li>✅ Interní komunikace se zájemci</li>
+          <li>✅ Statistiky a analýza výkonů</li>
+          <li>✅ Firemní profil a kontaktní údaje</li>
           <li>✅ Dokumenty a fakturace</li>
-          <li>✅ Hromadne operace</li>
-          <li>✅ Mobilni pristup (responzivni design)</li>
+          <li>✅ Hromadné operace</li>
+          <li>✅ Mobilní přístup (responzivní design)</li>
         </ul>
       </div>
     </div>
@@ -405,10 +409,10 @@
   <div class="slide-footer"></div>
 </div>
 
-<!-- SLIDE 5: SROVNANI -->
+<!-- SLIDE 5: SROVNÁNÍ -->
 <div class="slide">
   <div class="slide-header">
-    <h2>Srovnani s <span class="orange">konkurenci</span></h2>
+    <h2>Srovnání s <span class="orange">konkurencí</span></h2>
     <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
   </div>
   <div style="flex: 1;">
@@ -417,18 +421,18 @@
         <th style="width: 28%;">Funkce</th>
         <th class="cm-col" style="width: 18%; text-align: center;">CarMakler</th>
         <th style="width: 18%; text-align: center;">Sauto.cz</th>
-        <th style="width: 18%; text-align: center;">Bazos.cz</th>
+        <th style="width: 18%; text-align: center;">Bazoš.cz</th>
         <th style="width: 18%; text-align: center;">TipCars.cz</th>
       </tr>
       <tr>
-        <td><strong>Zakladni inzerce zdarma</strong></td>
+        <td><strong>Základní inzerce zdarma</strong></td>
         <td class="cm-col" style="text-align: center;"><span class="check">✓</span></td>
         <td style="text-align: center;"><span class="cross">✗</span></td>
         <td style="text-align: center;"><span class="check">✓</span></td>
         <td style="text-align: center;"><span class="cross">✗</span></td>
       </tr>
       <tr>
-        <td><strong>CRM / Sprava leadu</strong></td>
+        <td><strong>CRM / Správa leadů</strong></td>
         <td class="cm-col" style="text-align: center;"><span class="check">✓</span></td>
         <td style="text-align: center;"><span class="cross">✗</span></td>
         <td style="text-align: center;"><span class="cross">✗</span></td>
@@ -442,7 +446,7 @@
         <td style="text-align: center;"><span class="partial">~</span></td>
       </tr>
       <tr>
-        <td><strong>Partnersky portal / dashboard</strong></td>
+        <td><strong>Partnerský portál / dashboard</strong></td>
         <td class="cm-col" style="text-align: center;"><span class="check">✓</span></td>
         <td style="text-align: center;"><span class="partial">~</span></td>
         <td style="text-align: center;"><span class="cross">✗</span></td>
@@ -456,7 +460,7 @@
         <td style="text-align: center;"><span class="partial">~</span></td>
       </tr>
       <tr>
-        <td><strong>Maklerska sit (doplnkovy prodej)</strong></td>
+        <td><strong>Makléřská síť (doplňkový prodej)</strong></td>
         <td class="cm-col" style="text-align: center;"><span class="check">✓</span></td>
         <td style="text-align: center;"><span class="cross">✗</span></td>
         <td style="text-align: center;"><span class="cross">✗</span></td>
@@ -470,85 +474,85 @@
         <td style="text-align: center;"><span class="cross">✗</span></td>
       </tr>
       <tr>
-        <td><strong>Proverka vozidla (Cebia)</strong></td>
+        <td><strong>Prověrka vozidla (Cebia)</strong></td>
         <td class="cm-col" style="text-align: center;"><span class="check">✓</span></td>
         <td style="text-align: center;"><span class="check">✓</span></td>
         <td style="text-align: center;"><span class="cross">✗</span></td>
         <td style="text-align: center;"><span class="check">✓</span></td>
       </tr>
       <tr>
-        <td><strong>Financovani & pojisteni</strong></td>
+        <td><strong>Financování & pojištění</strong></td>
         <td class="cm-col" style="text-align: center;"><span class="check">✓</span></td>
         <td style="text-align: center;"><span class="partial">~</span></td>
         <td style="text-align: center;"><span class="cross">✗</span></td>
         <td style="text-align: center;"><span class="partial">~</span></td>
       </tr>
     </table>
-    <p style="margin-top: 16px; font-size: 12px; color: #94a3b8;">✓ = plna podpora &nbsp; ~ = castecna / za priplatek &nbsp; ✗ = neni k dispozici</p>
+    <p style="margin-top: 16px; font-size: 12px; color: #94a3b8;">✓ = plná podpora &nbsp; ~ = částečná / za příplatek &nbsp; ✗ = není k dispozici</p>
   </div>
   <div class="slide-footer"></div>
 </div>
 
-<!-- SLIDE 6: CENOVY MODEL -->
+<!-- SLIDE 6: CENOVÝ MODEL -->
 <div class="slide">
   <div class="slide-header">
-    <h2>Cenovy <span class="orange">model</span></h2>
+    <h2>Cenový <span class="orange">model</span></h2>
     <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
   </div>
   <div class="grid-3" style="align-items: stretch;">
     <div class="pricing-card">
-      <h3>Zakladni</h3>
-      <div class="price">0 Kc <small>/mesic</small></div>
-      <p style="font-size: 13px; color: #64748b; margin-bottom: 12px;">Pro male bazary do 10 vozidel</p>
+      <h3>Základní</h3>
+      <div class="price">0 Kč <small>/měsíc</small></div>
+      <p style="font-size: 13px; color: #64748b; margin-bottom: 12px;">Pro malé bazary do 10 vozidel</p>
       <ul>
-        <li>Az 10 aktivnich inzeratu</li>
-        <li>Platnost 90 dni</li>
-        <li>Zakladni statistiky</li>
-        <li>Sprava poptavek</li>
-        <li>Partnersky dashboard</li>
+        <li>Až 10 aktivních inzerátů</li>
+        <li>Platnost 90 dní</li>
+        <li>Základní statistiky</li>
+        <li>Správa poptávek</li>
+        <li>Partnerský dashboard</li>
         <li>Feed import (CSV)</li>
       </ul>
     </div>
     <div class="pricing-card popular">
-      <span class="badge">Nejoblibenejsi</span>
+      <span class="badge">Nejoblíbenější</span>
       <h3>Bazar</h3>
-      <div class="price">990 Kc <small>/mesic</small></div>
-      <p style="font-size: 13px; color: #64748b; margin-bottom: 12px;">Pro stredni a velke bazary</p>
+      <div class="price">990 Kč <small>/měsíc</small></div>
+      <p style="font-size: 13px; color: #64748b; margin-bottom: 12px;">Pro střední a velké bazary</p>
       <ul>
-        <li>Neomezeny pocet inzeratu</li>
-        <li>Neomezena platnost</li>
-        <li>Detailni statistiky</li>
-        <li>CRM se spravou leadu</li>
+        <li>Neomezený počet inzerátů</li>
+        <li>Neomezená platnost</li>
+        <li>Detailní statistiky</li>
+        <li>CRM se správou leadů</li>
         <li>Feed import (Sauto, TipCars, CSV)</li>
-        <li>Prioritni podpora</li>
-        <li>TOP zvyrazneni 5x/mesic zdarma</li>
+        <li>Prioritní podpora</li>
+        <li>TOP zvýraznění 5x/měsíc zdarma</li>
       </ul>
     </div>
     <div class="pricing-card">
       <h3>Dealer</h3>
-      <div class="price">Individualne</div>
-      <p style="font-size: 13px; color: #64748b; margin-bottom: 12px;">Pro autorizovane dealery</p>
+      <div class="price">Individuálně</div>
+      <p style="font-size: 13px; color: #64748b; margin-bottom: 12px;">Pro autorizované dealery</p>
       <ul>
-        <li>Vse z tarifu Bazar</li>
-        <li>API pristup</li>
-        <li>Brandovany profil</li>
-        <li>Dedickovany account manager</li>
-        <li>Neomezene TOP zvyrazneni</li>
-        <li>Pristup na Marketplace</li>
-        <li>Proverovani vozidel v cene</li>
+        <li>Vše z tarifu Bazar</li>
+        <li>API přístup</li>
+        <li>Brandovaný profil</li>
+        <li>Dedikovaný account manager</li>
+        <li>Neomezené TOP zvýraznění</li>
+        <li>Přístup na Marketplace</li>
+        <li>Prověřování vozidel v ceně</li>
       </ul>
     </div>
   </div>
   <div style="text-align: center; margin-top: 16px;">
-    <p style="font-size: 14px; color: #64748b;">Provize z prodeje: <strong style="color: #F97316;">85 % pro vas</strong>, 15 % platforma. Zadne skryte poplatky.</p>
+    <p style="font-size: 14px; color: #64748b;">Provize z prodeje: <strong style="color: #F97316;">85 % pro vás</strong>, 15 % platforma. Žádné skryté poplatky.</p>
   </div>
   <div class="slide-footer"></div>
 </div>
 
-<!-- SLIDE 7: JAK ZACIT -->
+<!-- SLIDE 7: JAK ZAČÍT -->
 <div class="slide">
   <div class="slide-header">
-    <h2>Jak <span class="orange">zacit</span></h2>
+    <h2>Jak <span class="orange">začít</span></h2>
     <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
   </div>
   <div class="grid-2" style="align-items: center;">
@@ -557,28 +561,28 @@
         <div class="step-num">1</div>
         <div>
           <h4>Registrace na carmakler.cz</h4>
-          <p>Vyplnte ICO — system automaticky nacte udaje z ARESu. Registrace trva 2 minuty.</p>
+          <p>Vyplňte IČO — systém automaticky načte údaje z ARESu. Registrace trvá 2 minuty.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">2</div>
         <div>
-          <h4>Nastaveni profilu</h4>
-          <p>Doplnte popis bazaru, kontaktni udaje, otviraci dobu a logo. Vse v partnerskem portalu.</p>
+          <h4>Nastavení profilu</h4>
+          <p>Doplňte popis bazaru, kontaktní údaje, otevírací dobu a logo. Vše v partnerském portálu.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
         <div>
           <h4>Import vozidel</h4>
-          <p>Nahrajte vozidla rucne, nebo importujte hromadne pres XML/CSV feed z vaseho stavajiciho systemu.</p>
+          <p>Nahrajte vozidla ručně, nebo importujte hromadně přes XML/CSV feed z vašeho stávajícího systému.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">4</div>
         <div>
-          <h4>Prijimejte poptavky</h4>
-          <p>Poptavky od kupujicich prisou primo do vaseho CRM. Sledujte, odpovidejte, prodavejte.</p>
+          <h4>Přijímejte poptávky</h4>
+          <p>Poptávky od kupujících přijdou přímo do vašeho CRM. Sledujte, odpovídejte, prodávejte.</p>
         </div>
       </div>
     </div>
@@ -586,12 +590,12 @@
       <p style="font-size: 72px; margin-bottom: 20px;">🚀</p>
       <h3 style="font-size: 28px; font-weight: 800; margin-bottom: 12px;">Za 10 minut jste online</h3>
       <p style="font-size: 16px; color: #64748b; line-height: 1.6; max-width: 300px;">
-        Zadne dlouhe onboardingy. Zadne smlouvy na rok. Zaregistrujte se a zacnete prodavat hned.
+        Žádné dlouhé onboardingy. Žádné smlouvy na rok. Zaregistrujte se a začněte prodávat hned.
       </p>
       <div style="margin-top: 24px; background: white; border-radius: 12px; padding: 16px 24px; display: inline-block;">
-        <p style="font-size: 14px; color: #64748b;">Prvnich 30 dni</p>
+        <p style="font-size: 14px; color: #64748b;">Prvních 30 dní</p>
         <p style="font-size: 32px; font-weight: 800; color: #F97316;">ZDARMA</p>
-        <p style="font-size: 12px; color: #94a3b8;">Bez zavazku. Zrusite kdykoliv.</p>
+        <p style="font-size: 12px; color: #94a3b8;">Bez závazků. Zrušíte kdykoli.</p>
       </div>
     </div>
   </div>
@@ -601,9 +605,9 @@
 <!-- SLIDE 8: CTA -->
 <div class="slide slide-cta">
   <img src="../../public/brand/logo-white.png" alt="CarMakler" class="logo" style="height: 60px; margin-bottom: 30px;">
-  <h2>Pojdme <span>rust spolecne</span></h2>
+  <h2>Pojďme <span>růst společně</span></h2>
   <p style="font-size: 20px; color: rgba(255,255,255,0.7); max-width: 600px; line-height: 1.6;">
-    Pripojte svuj bazar k platforme CarMakler a ziskejte pristup k tisicum kupujicim. Bez rizika, bez zavazku.
+    Připojte svůj bazar k platformě CarMakler a získejte přístup k tisícům kupujícím. Bez rizika, bez závazků.
   </p>
   <div class="contact-grid">
     <div class="contact-item">

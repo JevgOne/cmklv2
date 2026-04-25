@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CarMakler - Pruvodce novym maklerem</title>
+<title>CarMakler - Průvodce novým makléřem</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 
@@ -38,7 +38,7 @@
   .slide:last-child { page-break-after: auto; }
 
   .slide-title {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background: linear-gradient(145deg, rgba(8,8,24,0.88) 0%, rgba(26,26,46,0.85) 30%, rgba(22,33,62,0.82) 65%, rgba(15,52,96,0.78) 100%), url('https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=1920&q=80') center/cover no-repeat;
     color: white;
     justify-content: center;
     align-items: center;
@@ -47,27 +47,27 @@
   .slide-title::before {
     content: '';
     position: absolute;
-    top: -100px;
-    right: -100px;
-    width: 500px;
-    height: 500px;
+    top: -60px;
+    right: -60px;
+    width: 420px;
+    height: 420px;
     border-radius: 50%;
-    background: rgba(249, 115, 22, 0.08);
+    background: radial-gradient(circle, rgba(249, 115, 22, 0.15) 0%, transparent 70%);
   }
   .slide-title::after {
     content: '';
     position: absolute;
-    bottom: -150px;
-    left: -150px;
-    width: 600px;
-    height: 600px;
+    bottom: -100px;
+    left: -100px;
+    width: 500px;
+    height: 500px;
     border-radius: 50%;
-    background: rgba(249, 115, 22, 0.05);
+    background: radial-gradient(circle, rgba(249, 115, 22, 0.10) 0%, transparent 70%);
   }
-  .slide-title .logo { height: 80px; margin-bottom: 30px; position: relative; z-index: 1; }
+  .slide-title .logo { height: 90px; margin-bottom: 30px; position: relative; z-index: 1; filter: drop-shadow(0 0 24px rgba(249,115,22,0.25)); }
   .slide-title h1 { font-size: 42px; font-weight: 800; line-height: 1.2; margin-bottom: 16px; position: relative; z-index: 1; }
   .slide-title h1 span { color: #F97316; }
-  .slide-title .subtitle { font-size: 22px; font-weight: 300; color: rgba(255,255,255,0.8); position: relative; z-index: 1; }
+  .slide-title .subtitle { font-size: 18px; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.8); position: relative; z-index: 1; }
   .slide-title .date { position: absolute; bottom: 40px; right: 60px; font-size: 14px; color: rgba(255,255,255,0.5); }
   .slide-title .web { position: absolute; bottom: 40px; left: 60px; font-size: 14px; color: rgba(255,255,255,0.5); }
 
@@ -147,7 +147,7 @@
   .step p { font-size: 13px; color: #64748b; line-height: 1.5; }
 
   .slide-cta {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background: linear-gradient(135deg, rgba(26,26,46,0.88) 0%, rgba(22,33,62,0.85) 50%, rgba(15,52,96,0.80) 100%), url('https://images.unsplash.com/photo-1549317661-bd32c8ce0afa?w=1920&q=80') center/cover no-repeat;
     color: white;
     justify-content: center;
     align-items: center;
@@ -241,9 +241,11 @@
 
 <!-- SLIDE 1: TITLE -->
 <div class="slide slide-title">
+  <div style="position:absolute;top:40%;left:-40px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,0.05) 0%,transparent 70%);"></div>
   <img src="../../public/brand/logo-white.png" alt="CarMakler" class="logo">
-  <h1>Pruvodce novym <span>maklerem</span></h1>
-  <p class="subtitle">Vse co potrebujete vedet pro uspesny start v siti CarMakler</p>
+  <div style="width:60px;height:3px;background:linear-gradient(90deg,transparent,#F97316,transparent);margin:-10px auto 24px;position:relative;z-index:1;"></div>
+  <h1>Průvodce novým <span>makléřem</span></h1>
+  <p class="subtitle">Vše co potřebujete vědět pro úspěšný start v síti CarMakler</p>
   <p class="web">www.carmakler.cz</p>
   <p class="date">2026</p>
   <div class="slide-footer"></div>
@@ -252,38 +254,38 @@
 <!-- SLIDE 2: 5 KROKU ONBOARDINGU -->
 <div class="slide">
   <div class="slide-header">
-    <h2>5 kroku k <span class="orange">aktivaci</span></h2>
+    <h2>5 kroků k <span class="orange">aktivaci</span></h2>
     <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
   </div>
   <div class="grid-5" style="align-items: stretch;">
     <div class="feature-card" style="text-align: center; padding: 20px 16px;">
       <div class="icon" style="margin: 0 auto 14px;">👤</div>
       <h3 style="font-size: 15px;">1. Profil</h3>
-      <p>Vyplnte osobni udaje, region pusobnosti a nahrajte fotku.</p>
+      <p>Vyplňte osobní údaje, region působnosti a nahrajte fotku.</p>
     </div>
     <div class="feature-card" style="text-align: center; padding: 20px 16px;">
       <div class="icon" style="margin: 0 auto 14px;">📄</div>
       <h3 style="font-size: 15px;">2. Dokumenty</h3>
-      <p>Nahrajte zivnostensky list a obcansky prukaz.</p>
+      <p>Nahrajte živnostenský list a občanský průkaz.</p>
     </div>
     <div class="feature-card" style="text-align: center; padding: 20px 16px;">
       <div class="icon" style="margin: 0 auto 14px;">✍️</div>
       <h3 style="font-size: 15px;">3. Smlouva</h3>
-      <p>Digitalni podpis zprostredkovatelske smlouvy primo v PWA.</p>
+      <p>Digitální podpis zprostředkovatelské smlouvy přímo v PWA.</p>
     </div>
     <div class="feature-card" style="text-align: center; padding: 20px 16px;">
       <div class="icon" style="margin: 0 auto 14px;">📝</div>
-      <h3 style="font-size: 15px;">4. Kviz</h3>
-      <p>5 rychlych otazek k overeni znalosti procesu.</p>
+      <h3 style="font-size: 15px;">4. Kvíz</h3>
+      <p>5 rychlých otázek k ověření znalostí procesu.</p>
     </div>
     <div class="feature-card" style="text-align: center; padding: 20px 16px;">
       <div class="icon" style="margin: 0 auto 14px;">🚀</div>
       <h3 style="font-size: 15px;">5. Aktivace</h3>
-      <p>Ucet aktivovan — muzete zacinat nabirat auta!</p>
+      <p>Účet aktivován — můžete začínat nabírat auta!</p>
     </div>
   </div>
   <div style="text-align: center; margin-top: 20px;">
-    <p style="font-size: 16px; color: #64748b;">Cely proces trva <strong style="color: #F97316;">priblizne 15 minut</strong>. Vse probehne online v PWA aplikaci.</p>
+    <p style="font-size: 16px; color: #64748b;">Celý proces trvá <strong style="color: #F97316;">přibližně 15 minut</strong>. Vše proběhne online v PWA aplikaci.</p>
   </div>
   <div class="slide-footer"></div>
 </div>
@@ -298,22 +300,22 @@
     <div class="pwa-screen">
       <div class="screen-icon">📊</div>
       <div class="screen-label">Dashboard</div>
-      <div class="screen-desc">Prehled statistik, aktivnich aut a leadu</div>
+      <div class="screen-desc">Přehled statistik, aktivních aut a leadů</div>
     </div>
     <div class="pwa-screen" style="border-color: #F97316; background: #FFF7ED;">
       <div class="screen-icon">🚗</div>
       <div class="screen-label">Nabrat auto</div>
-      <div class="screen-desc">Hlavni CTA — zadani noveho vozidla</div>
+      <div class="screen-desc">Hlavní CTA — zadání nového vozidla</div>
     </div>
     <div class="pwa-screen">
       <div class="screen-icon">📋</div>
       <div class="screen-label">Smlouvy</div>
-      <div class="screen-desc">Prehled a sprava vsech smluv</div>
+      <div class="screen-desc">Přehled a správa všech smluv</div>
     </div>
     <div class="pwa-screen">
       <div class="screen-icon">🤖</div>
       <div class="screen-label">AI Asistent</div>
-      <div class="screen-desc">Pomoc s popisky, cenami, komunikaci</div>
+      <div class="screen-desc">Pomoc s popisky, cenami, komunikací</div>
     </div>
     <div class="pwa-screen">
       <div class="screen-icon">👥</div>
@@ -326,7 +328,7 @@
       <div style="font-size: 48px;">📱</div>
       <div>
         <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">Funguje offline</h3>
-        <p style="font-size: 14px; color: #64748b; line-height: 1.6;">PWA aplikace funguje i bez internetu. Data se synchronizuji automaticky po pripojeni. Idealni pro praci v terenu.</p>
+        <p style="font-size: 14px; color: #64748b; line-height: 1.6;">PWA aplikace funguje i bez internetu. Data se synchronizují automaticky po připojení. Ideální pro práci v terénu.</p>
       </div>
     </div>
   </div>
@@ -336,7 +338,7 @@
 <!-- SLIDE 4: JAK NABRAT AUTO — 7 KROKU -->
 <div class="slide">
   <div class="slide-header">
-    <h2>Jak nabrat <span class="orange">auto</span> — 7 kroku</h2>
+    <h2>Jak nabrat <span class="orange">auto</span> — 7 kroků</h2>
     <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
   </div>
   <div class="grid-2">
@@ -344,29 +346,29 @@
       <div class="step">
         <div class="step-num">1</div>
         <div>
-          <h4>VIN sken / zadani</h4>
-          <p>Naskenujte VIN fotoaparatem nebo zadejte rucne. System automaticky nacte zakladni data.</p>
+          <h4>VIN sken / zadání</h4>
+          <p>Naskenujte VIN fotoaparátem nebo zadejte ručně. Systém automaticky načte základní data.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">2</div>
         <div>
-          <h4>Zakladni udaje</h4>
-          <p>Znacka, model, rok vyroby, najete km, palivo, prevodovka. Predvyplneno z VIN.</p>
+          <h4>Základní údaje</h4>
+          <p>Značka, model, rok výroby, najeté km, palivo, převodovka. Předvyplněno z VIN.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
         <div>
-          <h4>Vybava</h4>
-          <p>Checklisty vybavovych polozek — klimatizace, navigace, parkovaci senzory atd.</p>
+          <h4>Výbava</h4>
+          <p>Checklisty výbavových položek — klimatizace, navigace, parkovací senzory atd.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">4</div>
         <div>
           <h4>Stav vozu</h4>
-          <p>Hodnoceni stavu 1-5 pro karoserii, interiér, motor, podvozek. Poznamky k vadam.</p>
+          <p>Hodnocení stavu 1-5 pro karoserii, interiér, motor, podvozek. Poznámky k vadám.</p>
         </div>
       </div>
     </div>
@@ -375,25 +377,25 @@
         <div class="step-num">5</div>
         <div>
           <h4>Fotografie</h4>
-          <p>Minimum 15 fotek — exteriér (vsechny strany), interiér, motor, detaily. Pruvodce kompozici.</p>
+          <p>Minimum 15 fotek — exteriér (všechny strany), interiér, motor, detaily. Průvodce kompozicí.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">6</div>
         <div>
           <h4>Smlouva</h4>
-          <p>Digitalni podpis zprostredkovatelske smlouvy. Zakaznik podepisuje na vasem telefonu.</p>
+          <p>Digitální podpis zprostředkovatelské smlouvy. Zákazník podepisuje na Vašem telefonu.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">7</div>
         <div>
-          <h4>Odeslani</h4>
-          <p>Data jdou do BackOffice ke schvaleni. Prumerny cas schvaleni: 2 hodiny. Pak jde auto do inzerce.</p>
+          <h4>Odeslání</h4>
+          <p>Data jdou do BackOffice ke schválení. Průměrný čas schválení: 2 hodiny. Pak jde auto do inzerce.</p>
         </div>
       </div>
       <div class="highlight" style="margin-top: 8px; text-align: center;">
-        <p style="font-size: 14px; font-weight: 700; color: #1a1a2e;">Prumerna doba nabrani: <span class="orange">20-30 minut</span></p>
+        <p style="font-size: 14px; font-weight: 700; color: #1a1a2e;">Průměrná doba nabrání: <span class="orange">20-30 minut</span></p>
       </div>
     </div>
   </div>
@@ -409,25 +411,25 @@
   <div class="grid-2" style="align-items: center;">
     <div>
       <p style="font-size: 16px; line-height: 1.8; color: #475569; margin-bottom: 24px;">
-        Pro zkusene maklere nabizime <strong style="color: #1a1a2e;">zrychleny rezim</strong>. Minimalni pocet kroku, maximum rychlosti. Idealni kdyz viete presne co delate.
+        Pro zkušené makléře nabízíme <strong style="color: #1a1a2e;">zrychlený režim</strong>. Minimální počet kroků, maximum rychlosti. Ideální když víte přesně co děláte.
       </p>
       <div style="display: flex; gap: 16px; margin-bottom: 24px;">
         <div style="flex: 1; text-align: center; padding: 24px; background: #f8fafc; border-radius: 16px; border: 2px solid #F97316;">
           <div style="font-size: 36px; margin-bottom: 8px;">📷</div>
           <div style="font-size: 14px; font-weight: 700;">1. VIN</div>
-          <div style="font-size: 12px; color: #94a3b8;">Sken nebo zadani</div>
+          <div style="font-size: 12px; color: #94a3b8;">Sken nebo zadání</div>
         </div>
         <div style="font-size: 24px; color: #F97316; display: flex; align-items: center;">→</div>
         <div style="flex: 1; text-align: center; padding: 24px; background: #f8fafc; border-radius: 16px; border: 2px solid #F97316;">
           <div style="font-size: 36px; margin-bottom: 8px;">📸</div>
           <div style="font-size: 14px; font-weight: 700;">2. Fotky</div>
-          <div style="font-size: 12px; color: #94a3b8;">Min 15 fotografii</div>
+          <div style="font-size: 12px; color: #94a3b8;">Min 15 fotografií</div>
         </div>
         <div style="font-size: 24px; color: #F97316; display: flex; align-items: center;">→</div>
         <div style="flex: 1; text-align: center; padding: 24px; background: #f8fafc; border-radius: 16px; border: 2px solid #F97316;">
           <div style="font-size: 36px; margin-bottom: 8px;">✍️</div>
           <div style="font-size: 14px; font-weight: 700;">3. Smlouva</div>
-          <div style="font-size: 12px; color: #94a3b8;">Digitalni podpis</div>
+          <div style="font-size: 12px; color: #94a3b8;">Digitální podpis</div>
         </div>
       </div>
       <div class="dark-box" style="text-align: center;">
@@ -435,15 +437,15 @@
       </div>
     </div>
     <div class="highlight" style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
-      <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">Kdy pouzit Quick Mode?</h3>
+      <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">Kdy použít Quick Mode?</h3>
       <ul style="font-size: 14px; line-height: 2.2; color: #475569; list-style: none;">
-        <li>✅ Mate zkusenost s 10+ nabiranymi auty</li>
-        <li>✅ Vuz je v beznem stavu (zadne speciality)</li>
-        <li>✅ Zakaznik ceka a mate malo casu</li>
-        <li>✅ Chcete usetrit cas na administraci</li>
-        <li style="margin-top: 12px; color: #ef4444;">❌ Novy makler (pouzijte plny rezim)</li>
-        <li style="color: #ef4444;">❌ Neobvykly vuz (veteran, tuning...)</li>
-        <li style="color: #ef4444;">❌ Pozkozeny vuz (potreba detailniho popisu)</li>
+        <li>✅ Máte zkušenost s 10+ nabíranými auty</li>
+        <li>✅ Vůz je v běžném stavu (žádné speciality)</li>
+        <li>✅ Zákazník čeká a máte málo času</li>
+        <li>✅ Chcete ušetřit čas na administraci</li>
+        <li style="margin-top: 12px; color: #ef4444;">❌ Nový makléř (použijte plný režim)</li>
+        <li style="color: #ef4444;">❌ Neobvyklý vůz (veterán, tuning...)</li>
+        <li style="color: #ef4444;">❌ Poškozený vůz (potřeba detailního popisu)</li>
       </ul>
     </div>
   </div>
@@ -453,32 +455,32 @@
 <!-- SLIDE 6: PROVIZE A ODMENY -->
 <div class="slide">
   <div class="slide-header">
-    <h2>Provize a <span class="orange">odmeny</span></h2>
+    <h2>Provize a <span class="orange">odměny</span></h2>
     <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
   </div>
   <div class="grid-2" style="align-items: center;">
     <div>
       <div class="stat-box" style="margin-bottom: 20px;">
         <span class="number">5%</span>
-        <span class="label">z prodejni ceny vozidla (min 25 000 Kc)</span>
+        <span class="label">z prodejní ceny vozidla (min 25 000 Kč)</span>
       </div>
       <div class="feature-card">
-        <h3 style="font-size: 18px; margin-bottom: 16px;">Priklad vydelku</h3>
+        <h3 style="font-size: 18px; margin-bottom: 16px;">Příklad výdělku</h3>
         <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 14px;">
-          <span style="color: #64748b;">Auto za 200 000 Kc</span>
-          <span style="font-weight: 700; color: #1a1a2e;">25 000 Kc</span>
+          <span style="color: #64748b;">Auto za 200 000 Kč</span>
+          <span style="font-weight: 700; color: #1a1a2e;">25 000 Kč</span>
         </div>
         <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 14px;">
-          <span style="color: #64748b;">Auto za 400 000 Kc</span>
-          <span style="font-weight: 700; color: #1a1a2e;">20 000 Kc</span>
+          <span style="color: #64748b;">Auto za 400 000 Kč</span>
+          <span style="font-weight: 700; color: #1a1a2e;">20 000 Kč</span>
         </div>
         <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 14px;">
-          <span style="color: #64748b;">Auto za 800 000 Kc</span>
-          <span style="font-weight: 700; color: #1a1a2e;">40 000 Kc</span>
+          <span style="color: #64748b;">Auto za 800 000 Kč</span>
+          <span style="font-weight: 700; color: #1a1a2e;">40 000 Kč</span>
         </div>
         <div style="display: flex; justify-content: space-between; padding: 10px 0; font-size: 14px;">
-          <span style="color: #64748b;">5 aut mesicne (prumer 500k)</span>
-          <span style="font-weight: 700; color: #F97316; font-size: 18px;">125 000 Kc</span>
+          <span style="color: #64748b;">5 aut měsíčně (průměr 500k)</span>
+          <span style="font-weight: 700; color: #F97316; font-size: 18px;">125 000 Kč</span>
         </div>
       </div>
     </div>
@@ -487,23 +489,23 @@
         <h3 style="font-size: 20px; color: #F97316; margin-bottom: 20px;">Bonusy za objem</h3>
         <div style="margin-bottom: 16px;">
           <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 14px;">
-            <span style="color: rgba(255,255,255,0.7);">1-5 aut / mesic</span>
-            <span style="font-weight: 700;">Standardni 5%</span>
+            <span style="color: rgba(255,255,255,0.7);">1-5 aut / měsíc</span>
+            <span style="font-weight: 700;">Standardní 5%</span>
           </div>
           <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 14px;">
-            <span style="color: rgba(255,255,255,0.7);">6-9 aut / mesic</span>
+            <span style="color: rgba(255,255,255,0.7);">6-9 aut / měsíc</span>
             <span style="font-weight: 700; color: #F97316;">+0.25% bonus</span>
           </div>
           <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 14px;">
-            <span style="color: rgba(255,255,255,0.7);">10+ aut / mesic</span>
+            <span style="color: rgba(255,255,255,0.7);">10+ aut / měsíc</span>
             <span style="font-weight: 700; color: #F97316;">+0.5% bonus</span>
           </div>
           <div style="display: flex; justify-content: space-between; padding: 10px 0; font-size: 14px;">
-            <span style="color: rgba(255,255,255,0.7);">20+ aut / mesic</span>
-            <span style="font-weight: 700; color: #22c55e;">Individualni sazba</span>
+            <span style="color: rgba(255,255,255,0.7);">20+ aut / měsíc</span>
+            <span style="font-weight: 700; color: #22c55e;">Individuální sazba</span>
           </div>
         </div>
-        <p style="font-size: 12px; color: rgba(255,255,255,0.5);">Bonusy se pocitaji na konci mesice a pripocitavaji k nasledujici vyplate.</p>
+        <p style="font-size: 12px; color: rgba(255,255,255,0.5);">Bonusy se počítají na konci měsíce a připočítávají k následující výplatě.</p>
       </div>
     </div>
   </div>
@@ -519,42 +521,42 @@
   <div class="grid-4" style="align-items: stretch; margin-bottom: 24px;">
     <div class="level-card">
       <div class="level-icon">🌱</div>
-      <div class="level-name">Novacek</div>
-      <div class="level-range">0-5 prodeju</div>
+      <div class="level-name">Nováček</div>
+      <div class="level-range">0-5 prodejů</div>
       <div class="level-perks">
-        Zakladni provize<br>
-        Skolici materialy<br>
+        Základní provize<br>
+        Školicí materiály<br>
         Podpora mentora
       </div>
     </div>
     <div class="level-card active">
       <div class="level-icon">⭐</div>
-      <div class="level-name">Profesional</div>
-      <div class="level-range">6-20 prodeju</div>
+      <div class="level-name">Profesionál</div>
+      <div class="level-range">6-20 prodejů</div>
       <div class="level-perks">
-        Prioritni leady<br>
-        Rozsirena zona<br>
+        Prioritní leady<br>
+        Rozšířená zóna<br>
         Badge v profilu
       </div>
     </div>
     <div class="level-card">
       <div class="level-icon">🏆</div>
       <div class="level-name">Expert</div>
-      <div class="level-range">21-50 prodeju</div>
+      <div class="level-range">21-50 prodejů</div>
       <div class="level-perks">
-        Vyssi provize<br>
-        Exkluzivni akce<br>
-        Mentorovani novacku
+        Vyšší provize<br>
+        Exkluzivní akce<br>
+        Mentorování nováčků
       </div>
     </div>
     <div class="level-card">
       <div class="level-icon">👑</div>
-      <div class="level-name">Sampion</div>
-      <div class="level-range">51+ prodeju</div>
+      <div class="level-name">Šampion</div>
+      <div class="level-range">51+ prodejů</div>
       <div class="level-perks">
         Top provize<br>
         VIP podpora<br>
-        Ambasador znacky
+        Ambasador značky
       </div>
     </div>
   </div>
@@ -564,36 +566,36 @@
       <div style="display: flex; align-items: center; gap: 8px; background: #f8fafc; border-radius: 20px; padding: 8px 16px; border: 1px solid #e2e8f0;">
         <span style="font-size: 20px;">🎯</span>
         <div>
-          <div style="font-size: 13px; font-weight: 700;">Prvni prodej</div>
-          <div style="font-size: 11px; color: #94a3b8;">Uspesne dokonceny prvni obchod</div>
+          <div style="font-size: 13px; font-weight: 700;">První prodej</div>
+          <div style="font-size: 11px; color: #94a3b8;">Úspěšně dokončený první obchod</div>
         </div>
       </div>
       <div style="display: flex; align-items: center; gap: 8px; background: #f8fafc; border-radius: 20px; padding: 8px 16px; border: 1px solid #e2e8f0;">
         <span style="font-size: 20px;">⚡</span>
         <div>
-          <div style="font-size: 13px; font-weight: 700;">Rychly makler</div>
-          <div style="font-size: 11px; color: #94a3b8;">Prodej do 7 dni od nabrani</div>
+          <div style="font-size: 13px; font-weight: 700;">Rychlý makléř</div>
+          <div style="font-size: 11px; color: #94a3b8;">Prodej do 7 dní od nabrání</div>
         </div>
       </div>
       <div style="display: flex; align-items: center; gap: 8px; background: #f8fafc; border-radius: 20px; padding: 8px 16px; border: 1px solid #e2e8f0;">
         <span style="font-size: 20px;">🔥</span>
         <div>
-          <div style="font-size: 13px; font-weight: 700;">Mesicni rekordman</div>
-          <div style="font-size: 11px; color: #94a3b8;">Nejvice prodeju v mesici</div>
+          <div style="font-size: 13px; font-weight: 700;">Měsíční rekordman</div>
+          <div style="font-size: 11px; color: #94a3b8;">Nejvíce prodejů v měsíci</div>
         </div>
       </div>
       <div style="display: flex; align-items: center; gap: 8px; background: #f8fafc; border-radius: 20px; padding: 8px 16px; border: 1px solid #e2e8f0;">
         <span style="font-size: 20px;">⭐</span>
         <div>
-          <div style="font-size: 13px; font-weight: 700;">5 hvezd</div>
-          <div style="font-size: 11px; color: #94a3b8;">10x hodnoceni 5/5 od zakazniku</div>
+          <div style="font-size: 13px; font-weight: 700;">5 hvězd</div>
+          <div style="font-size: 11px; color: #94a3b8;">10x hodnocení 5/5 od zákazníků</div>
         </div>
       </div>
       <div style="display: flex; align-items: center; gap: 8px; background: #f8fafc; border-radius: 20px; padding: 8px 16px; border: 1px solid #e2e8f0;">
         <span style="font-size: 20px;">💰</span>
         <div>
-          <div style="font-size: 13px; font-weight: 700;">Milionar</div>
-          <div style="font-size: 11px; color: #94a3b8;">Celkove trzby 1M Kc+</div>
+          <div style="font-size: 13px; font-weight: 700;">Milionář</div>
+          <div style="font-size: 11px; color: #94a3b8;">Celkové tržby 1M Kč+</div>
         </div>
       </div>
     </div>
@@ -604,36 +606,36 @@
 <!-- SLIDE 8: FAQ -->
 <div class="slide">
   <div class="slide-header">
-    <h2>Caste <span class="orange">dotazy</span></h2>
+    <h2>Časté <span class="orange">dotazy</span></h2>
     <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
   </div>
   <div class="grid-2">
     <div>
       <div class="faq-item">
-        <div class="question">Kolik mohu vydelat jako makler?</div>
-        <div class="answer">Provize je 5% z prodejni ceny (min 25 000 Kc). Pri 5 autech mesicne (prumer 500k) je to 125 000 Kc. Top makleri vydelavaji pres 200 000 Kc mesicne.</div>
+        <div class="question">Kolik mohu vydělat jako makléř?</div>
+        <div class="answer">Provize je 5% z prodejní ceny (min 25 000 Kč). Při 5 autech měsíčně (průměr 500k) je to 125 000 Kč. Top makléři vydělávají přes 200 000 Kč měsíčně.</div>
       </div>
       <div class="faq-item">
-        <div class="question">Potrebuji zivnostensky list?</div>
-        <div class="answer">Ano, k registraci potrebujete platny zivnostensky list (volna zivnost). Pokud jeste nemate, pomuzmeme vam se zalozenim.</div>
+        <div class="question">Potřebuji živnostenský list?</div>
+        <div class="answer">Ano, k registraci potřebujete platný živnostenský list (volná živnost). Pokud ještě nemáte, pomůžeme vám se založením.</div>
       </div>
       <div class="faq-item">
-        <div class="question">Jak velky region mohu pokryvat?</div>
-        <div class="answer">Na zacatku vam pridelime region podle bydliste. S rostoucimi zkusenostmi (Level 2+) muzete oblast rozsirit.</div>
+        <div class="question">Jak velký region mohu pokrývat?</div>
+        <div class="answer">Na začátku vám přidělíme region podle bydliště. S rostoucími zkušenostmi (Level 2+) můžete oblast rozšířit.</div>
       </div>
     </div>
     <div>
       <div class="faq-item">
-        <div class="question">Co kdyz zakaznik reklamuje auto?</div>
-        <div class="answer">Reklamace resi BackOffice. Makler neni zodpovedny za skryte vady — to pokryva pojisteni. Vy jste zprostredkovatel, ne prodejce.</div>
+        <div class="question">Co když zákazník reklamuje auto?</div>
+        <div class="answer">Reklamace řeší BackOffice. Makléř není zodpovědný za skryté vady — to pokrývá pojištění. Vy jste zprostředkovatel, ne prodejce.</div>
       </div>
       <div class="faq-item">
-        <div class="question">Jak casto dostavem vyplatu?</div>
-        <div class="answer">Provize se vyplaci 2x mesicne (1. a 15. den). Prehled provizi a historii plateb najdete v PWA aplikaci.</div>
+        <div class="question">Jak často dostávám výplatu?</div>
+        <div class="answer">Provize se vyplácí 2x měsíčně (1. a 15. den). Přehled provizí a historii plateb najdete v PWA aplikaci.</div>
       </div>
       <div class="faq-item">
-        <div class="question">Mohu byt makler na castecny uvazek?</div>
-        <div class="answer">Ano! Mnoho nasich makleru pracuje na castecny uvazek. Nemame minimalni pozadavky na pocet prodeju. Pracujte podle svych moznosti.</div>
+        <div class="question">Mohu být makléř na částečný úvazek?</div>
+        <div class="answer">Ano! Mnoho našich makléřů pracuje na částečný úvazek. Nemáme minimální požadavky na počet prodejů. Pracujte podle svých možností.</div>
       </div>
     </div>
   </div>
@@ -643,9 +645,9 @@
 <!-- SLIDE 9: CTA -->
 <div class="slide slide-cta">
   <img src="../../public/brand/logo-white.png" alt="CarMakler" class="logo" style="height: 60px; margin-bottom: 30px;">
-  <h2>Pridejte se k <span>siti makleru</span></h2>
+  <h2>Přidejte se k <span>síti makléřů</span></h2>
   <p style="font-size: 20px; color: rgba(255,255,255,0.7); max-width: 600px; line-height: 1.6;">
-    Zaregistrujte se jiz dnes a zacnete vydelavat. Cely onboarding trva 15 minut.
+    Zaregistrujte se již dnes a začněte vydělávat. Celý onboarding trvá 15 minut.
   </p>
   <div class="contact-grid">
     <div class="contact-item">

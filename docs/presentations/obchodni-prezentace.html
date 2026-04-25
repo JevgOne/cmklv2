@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CarMakler - Obchodni prezentace</title>
+<title>CarMakler - Obchodní prezentace</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 
@@ -38,7 +38,8 @@
   .slide:last-child { page-break-after: auto; }
 
   .slide-title {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background: linear-gradient(145deg, rgba(8,8,24,0.88) 0%, rgba(26,26,46,0.85) 30%, rgba(22,33,62,0.82) 65%, rgba(15,52,96,0.80) 100%),
+                url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920&q=80') center/cover no-repeat;
     color: white;
     justify-content: center;
     align-items: center;
@@ -47,27 +48,27 @@
   .slide-title::before {
     content: '';
     position: absolute;
-    top: -100px;
-    right: -100px;
-    width: 500px;
-    height: 500px;
+    top: -60px;
+    right: -60px;
+    width: 420px;
+    height: 420px;
     border-radius: 50%;
-    background: rgba(249, 115, 22, 0.08);
+    background: radial-gradient(circle, rgba(249, 115, 22, 0.15) 0%, transparent 70%);
   }
   .slide-title::after {
     content: '';
     position: absolute;
-    bottom: -150px;
-    left: -150px;
-    width: 600px;
-    height: 600px;
+    bottom: -100px;
+    left: -100px;
+    width: 500px;
+    height: 500px;
     border-radius: 50%;
-    background: rgba(249, 115, 22, 0.05);
+    background: radial-gradient(circle, rgba(249, 115, 22, 0.10) 0%, transparent 70%);
   }
-  .slide-title .logo { height: 80px; margin-bottom: 30px; position: relative; z-index: 1; }
+  .slide-title .logo { height: 90px; margin-bottom: 30px; position: relative; z-index: 1; filter: drop-shadow(0 0 24px rgba(249,115,22,0.25)); }
   .slide-title h1 { font-size: 42px; font-weight: 800; line-height: 1.2; margin-bottom: 16px; position: relative; z-index: 1; }
   .slide-title h1 span { color: #F97316; }
-  .slide-title .subtitle { font-size: 22px; font-weight: 300; color: rgba(255,255,255,0.8); position: relative; z-index: 1; }
+  .slide-title .subtitle { font-size: 18px; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.8); position: relative; z-index: 1; }
   .slide-title .date { position: absolute; bottom: 40px; right: 60px; font-size: 14px; color: rgba(255,255,255,0.5); }
   .slide-title .web { position: absolute; bottom: 40px; left: 60px; font-size: 14px; color: rgba(255,255,255,0.5); }
 
@@ -190,7 +191,8 @@
   .cm-col { background: rgba(249, 115, 22, 0.05) !important; }
 
   .slide-cta {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background: linear-gradient(145deg, rgba(8,8,24,0.90) 0%, rgba(26,26,46,0.88) 50%, rgba(15,52,96,0.85) 100%),
+                url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1920&q=80') center/cover no-repeat;
     color: white;
     justify-content: center;
     align-items: center;
@@ -267,9 +269,11 @@
 
 <!-- SLIDE 1: TITLE -->
 <div class="slide slide-title">
+  <div style="position:absolute;top:40%;left:-40px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,0.05) 0%,transparent 70%);"></div>
   <img src="../../public/brand/logo-white.png" alt="CarMakler" class="logo">
-  <h1>Kompletni automobilova <span>platforma</span></h1>
-  <p class="subtitle">Maklerska sit · Inzerce · Eshop dilu · Marketplace VIP</p>
+  <div style="width:60px;height:3px;background:linear-gradient(90deg,transparent,#F97316,transparent);margin:-10px auto 24px;position:relative;z-index:1;"></div>
+  <h1>Kompletní automobilová <span>platforma</span></h1>
+  <p class="subtitle">Makléřská síť · Inzerce · Eshop dílů · Marketplace VIP</p>
   <p class="web">www.carmakler.cz</p>
   <p class="date">2026</p>
   <div class="slide-footer"></div>
@@ -284,39 +288,39 @@
   <div class="grid-2" style="align-items: center;">
     <div>
       <p style="font-size: 18px; line-height: 1.8; color: #475569; margin-bottom: 24px;">
-        CarMakler je <strong style="color: #1a1a2e;">technologicka firma</strong> propojujici vsechny ucastniky automobiloveho trhu — od soukromych prodejcu pres autobazary az po investory.
+        CarMakler je <strong style="color: #1a1a2e;">technologická firma</strong> propojující všechny účastníky automobilového trhu — od soukromých prodejců přes autobazary až po investory.
       </p>
       <div class="highlight">
-        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px;">Nase mise</h3>
+        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px;">Naše mise</h3>
         <p style="font-size: 14px; line-height: 1.7; color: #475569;">
-          Udelat prodej a nakup aut <strong style="color: #F97316;">bezpecnejsi, rychlejsi a transparentnejsi</strong> pro vsechny zucastnene strany.
+          Udělat prodej a nákup aut <strong style="color: #F97316;">bezpečnější, rychlejší a transparentnější</strong> pro všechny zúčastněné strany.
         </p>
       </div>
       <div style="margin-top: 16px; padding: 16px; border-left: 3px solid #F97316;">
-        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">Nase vize</h3>
+        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">Naše vize</h3>
         <p style="font-size: 14px; line-height: 1.7; color: #475569;">
-          Stat se jednickou na ceskem trhu s ojetymi vozy a autodily — jednotna platforma pro celou automobilovou komunitu.
+          Stát se jedničkou na českém trhu s ojetými vozy a autodíly — jednotná platforma pro celou automobilovou komunitu.
         </p>
       </div>
     </div>
     <div class="dark-box" style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
-      <h3 style="font-size: 20px; color: #F97316; margin-bottom: 20px;">V cislech</h3>
+      <h3 style="font-size: 20px; color: #F97316; margin-bottom: 20px;">V číslech</h3>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
         <div style="text-align: center; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 12px;">
           <div style="font-size: 32px; font-weight: 800; color: #F97316;">1 247</div>
-          <div style="font-size: 12px; color: rgba(255,255,255,0.6);">vozidel v nabidce</div>
+          <div style="font-size: 12px; color: rgba(255,255,255,0.6);">vozidel v nabídce</div>
         </div>
         <div style="text-align: center; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 12px;">
           <div style="font-size: 32px; font-weight: 800; color: #F97316;">186</div>
-          <div style="font-size: 12px; color: rgba(255,255,255,0.6);">aktivnich makleru</div>
+          <div style="font-size: 12px; color: rgba(255,255,255,0.6);">aktivních makléřů</div>
         </div>
         <div style="text-align: center; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 12px;">
           <div style="font-size: 32px; font-weight: 800; color: #F97316;">45+</div>
-          <div style="font-size: 12px; color: rgba(255,255,255,0.6);">partnerskych vrakovist</div>
+          <div style="font-size: 12px; color: rgba(255,255,255,0.6);">partnerských vrakovišť</div>
         </div>
         <div style="text-align: center; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 12px;">
           <div style="font-size: 32px; font-weight: 800; color: #F97316;">4.8★</div>
-          <div style="font-size: 12px; color: rgba(255,255,255,0.6);">hodnoceni zakazniku</div>
+          <div style="font-size: 12px; color: rgba(255,255,255,0.6);">hodnocení zákazníků</div>
         </div>
       </div>
     </div>
@@ -333,11 +337,11 @@
   <div class="grid-4">
     <div class="feature-card">
       <div class="icon">🤝</div>
-      <h3>Maklerska sit</h3>
-      <p style="font-size: 14px; font-weight: 700; color: #F97316; margin-bottom: 8px;">186 makleru</p>
+      <h3>Makléřská síť</h3>
+      <p style="font-size: 14px; font-weight: 700; color: #F97316; margin-bottom: 8px;">186 makléřů</p>
       <ul>
-        <li>Zprostredkovani prodeje</li>
-        <li>Overeni makleri</li>
+        <li>Zprostředkování prodeje</li>
+        <li>Ověření makléři</li>
         <li>PWA aplikace</li>
         <li>AI asistent</li>
         <li>Provize 5%, min 25k</li>
@@ -345,23 +349,23 @@
     </div>
     <div class="feature-card">
       <div class="icon">📋</div>
-      <h3>Inzertni platforma</h3>
-      <p style="font-size: 14px; font-weight: 700; color: #F97316; margin-bottom: 8px;">1 247 inzeratu</p>
+      <h3>Inzertní platforma</h3>
+      <p style="font-size: 14px; font-weight: 700; color: #F97316; margin-bottom: 8px;">1 247 inzerátů</p>
       <ul>
-        <li>Soukromi i bazary</li>
+        <li>Soukromí i bazary</li>
         <li>Feed import XML/CSV</li>
         <li>CRM pro bazary</li>
-        <li>TOP zvyrazneni</li>
-        <li>Hybridni model</li>
+        <li>TOP zvýraznění</li>
+        <li>Hybridní model</li>
       </ul>
     </div>
     <div class="feature-card">
       <div class="icon">🔧</div>
-      <h3>Eshop autodily</h3>
+      <h3>Eshop autodíly</h3>
       <p style="font-size: 14px; font-weight: 700; color: #F97316; margin-bottom: 8px;">Wolt model</p>
       <ul>
-        <li>Pouzite + aftermarket dily</li>
-        <li>Propojeni vrakovist</li>
+        <li>Použité + aftermarket díly</li>
+        <li>Propojení vrakovišť</li>
         <li>VIN matching</li>
         <li>Dodavatel zdarma</li>
         <li>Provize z prodeje</li>
@@ -372,9 +376,9 @@
       <h3>Marketplace VIP</h3>
       <p style="font-size: 14px; font-weight: 700; color: #F97316; margin-bottom: 8px;">Investment flipping</p>
       <ul>
-        <li>Uzavrena platforma</li>
-        <li>Overeni dealeri</li>
-        <li>Overeni investori</li>
+        <li>Uzavřená platforma</li>
+        <li>Ověření dealeři</li>
+        <li>Ověření investoři</li>
         <li>40/40/20 split</li>
         <li>Auto na firmu CM</li>
       </ul>
@@ -391,43 +395,43 @@
   </div>
   <div class="grid-2" style="align-items: center;">
     <div>
-      <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 24px;">Maklerska sit — 3 jednoduche kroky</h3>
+      <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 24px;">Makléřská síť — 3 jednoduché kroky</h3>
       <div class="step">
         <div class="step-num">1</div>
         <div>
-          <h4>Vyberte vuz</h4>
-          <p>Prohlizejte nabidku overených vozidel v nasem katalogu. Kazde auto ma kompletni historii a fotodokumentaci.</p>
+          <h4>Vyberte vůz</h4>
+          <p>Prohlížejte nabídku ověřených vozidel v našem katalogu. Každé auto má kompletní historii a fotodokumentaci.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">2</div>
         <div>
-          <h4>Kontaktujte maklere</h4>
-          <p>Vas osobni makler vam pomuze s celym procesem — od prohlidky az po prevod. Bez stresu, bez rizika.</p>
+          <h4>Kontaktujte makléře</h4>
+          <p>Váš osobní makléř vám pomůže s celým procesem — od prohlídky až po převod. Bez stresu, bez rizika.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
         <div>
-          <h4>Bezpecny nakup</h4>
-          <p>Pravni overeni, smluvni dokumentace, prevod na urade — vse zaridime. Vy jen prevezmete klice.</p>
+          <h4>Bezpečný nákup</h4>
+          <p>Právní ověření, smluvní dokumentace, převod na úřadě — vše zařídíme. Vy jen převezmete klíče.</p>
         </div>
       </div>
     </div>
     <div class="highlight" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 100%;">
       <p style="font-size: 72px; margin-bottom: 16px;">🚗</p>
-      <h3 style="font-size: 28px; font-weight: 800; margin-bottom: 12px;">Prumerne za <span class="orange">14 dni</span></h3>
+      <h3 style="font-size: 28px; font-weight: 800; margin-bottom: 12px;">Průměrně za <span class="orange">14 dní</span></h3>
       <p style="font-size: 16px; color: #64748b; line-height: 1.6; max-width: 280px;">
-        Od prvniho kontaktu po predani klicu. Rychle, bezpecne, s kompletnim servisem.
+        Od prvního kontaktu po předání klíčů. Rychle, bezpečně, s kompletním servisem.
       </p>
       <div style="margin-top: 20px; display: flex; gap: 16px;">
         <div style="text-align: center;">
           <div style="font-size: 24px; font-weight: 800; color: #F97316;">98%</div>
-          <div style="font-size: 11px; color: #94a3b8;">uspesnost</div>
+          <div style="font-size: 11px; color: #94a3b8;">úspěšnost</div>
         </div>
         <div style="text-align: center;">
           <div style="font-size: 24px; font-weight: 800; color: #F97316;">4.8★</div>
-          <div style="font-size: 11px; color: #94a3b8;">hodnoceni</div>
+          <div style="font-size: 11px; color: #94a3b8;">hodnocení</div>
         </div>
       </div>
     </div>
@@ -438,33 +442,33 @@
 <!-- SLIDE 5: CISLA A STATISTIKY -->
 <div class="slide">
   <div class="slide-header">
-    <h2>Cisla a <span class="orange">statistiky</span></h2>
+    <h2>Čísla a <span class="orange">statistiky</span></h2>
     <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
   </div>
   <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 20px; flex: 1; align-items: center;">
     <div class="stat-box">
       <span class="number">1 247</span>
-      <span class="label">vozidel v nabidce</span>
+      <span class="label">vozidel v nabídce</span>
     </div>
     <div class="stat-box">
       <span class="number">186</span>
-      <span class="label">aktivnich makleru</span>
+      <span class="label">aktivních makléřů</span>
     </div>
     <div class="stat-box">
       <span class="number">14</span>
-      <span class="label">dni prumerna doba prodeje</span>
+      <span class="label">dní průměrná doba prodeje</span>
     </div>
     <div class="stat-box">
       <span class="number">4.8★</span>
-      <span class="label">hodnoceni zakazniku</span>
+      <span class="label">hodnocení zákazníků</span>
     </div>
     <div class="stat-box">
       <span class="number">98%</span>
-      <span class="label">uspesnost prodeje</span>
+      <span class="label">úspěšnost prodeje</span>
     </div>
   </div>
   <div style="text-align: center; margin-top: 16px;">
-    <p style="font-size: 14px; color: #94a3b8;">Data platna k dubnu 2026. Statistiky se aktualizuji mesicne.</p>
+    <p style="font-size: 14px; color: #94a3b8;">Data platná k dubnu 2026. Statistiky se aktualizují měsíčně.</p>
   </div>
   <div class="slide-footer"></div>
 </div>
@@ -472,42 +476,42 @@
 <!-- SLIDE 6: CENIK -->
 <div class="slide">
   <div class="slide-header">
-    <h2>Cenik <span class="orange">sluzeb</span></h2>
+    <h2>Ceník <span class="orange">služeb</span></h2>
     <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
   </div>
   <div class="grid-3" style="align-items: stretch;">
     <div class="pricing-card">
-      <h3>Maklerska provize</h3>
-      <div class="price">5% <small>min 25 000 Kc</small></div>
+      <h3>Makléřská provize</h3>
+      <div class="price">5% <small>min 25 000 Kč</small></div>
       <ul>
-        <li>Kompletni servis prodeje</li>
+        <li>Kompletní servis prodeje</li>
         <li>Fotodokumentace</li>
-        <li>Inzerce na vsech kanalech</li>
-        <li>Pravni podpora</li>
-        <li>Smlouva a prevod</li>
+        <li>Inzerce na všech kanálech</li>
+        <li>Právní podpora</li>
+        <li>Smlouva a převod</li>
       </ul>
     </div>
     <div class="pricing-card popular">
       <span class="badge">Pro prodejce</span>
       <h3>Inzerce</h3>
-      <div class="price">0 Kc <small>zakladni</small></div>
+      <div class="price">0 Kč <small>základní</small></div>
       <ul>
-        <li>1 inzerat zdarma / 60 dni</li>
-        <li>TOP: 199 Kc / 7 dni</li>
-        <li>Prodlouzeni: 99 Kc / 30 dni</li>
-        <li>Bazar balicek: 1 990 Kc</li>
+        <li>1 inzerát zdarma / 60 dní</li>
+        <li>TOP: 199 Kč / 7 dní</li>
+        <li>Prodloužení: 99 Kč / 30 dní</li>
+        <li>Bazar balíček: 1 990 Kč</li>
         <li>Feed import zdarma</li>
       </ul>
     </div>
     <div class="pricing-card">
-      <h3>Proverka CEBIA</h3>
-      <div class="price">499 Kc</div>
+      <h3>Prověrka CEBIA</h3>
+      <div class="price">499 Kč</div>
       <ul>
-        <li>Kompletni historie vozu</li>
-        <li>Pocet majitelu</li>
+        <li>Kompletní historie vozu</li>
+        <li>Počet majitelů</li>
         <li>Nehody a opravy</li>
         <li>Stav tachometru</li>
-        <li>Makleri: ZDARMA</li>
+        <li>Makléři: ZDARMA</li>
       </ul>
     </div>
   </div>
@@ -517,43 +521,43 @@
 <!-- SLIDE 7: REFERENCE -->
 <div class="slide">
   <div class="slide-header">
-    <h2>Co rikaji nasi <span class="orange">klienti</span></h2>
+    <h2>Co říkají naši <span class="orange">klienti</span></h2>
     <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
   </div>
   <div class="grid-3">
     <div class="testimonial">
-      <div class="quote">Prodal jsem auto za 3 dny. Makler vse zaridil, ja jen podepsal smlouvu. Lepsi sluzbu jsem nezazil.</div>
+      <div class="quote">Prodal jsem auto za 3 dny. Makléř vše zařídil, já jen podepsal smlouvu. Lepší službu jsem nezažil.</div>
       <div class="author">
         <div class="avatar">JP</div>
         <div>
-          <div class="author-name">Jan Prochazka</div>
-          <div class="author-role">Soukromy prodejce, Praha</div>
+          <div class="author-name">Jan Procházka</div>
+          <div class="author-role">Soukromý prodejce, Praha</div>
         </div>
       </div>
     </div>
     <div class="testimonial">
-      <div class="quote">Jako bazar jsme presli na CarMakler a za mesic mame o 40% vice poptavek. CRM system je skvely.</div>
+      <div class="quote">Jako bazar jsme přešli na CarMakler a za měsíc máme o 40% více poptávek. CRM systém je skvělý.</div>
       <div class="author">
         <div class="avatar">MK</div>
         <div>
-          <div class="author-name">Martin Kratky</div>
-          <div class="author-role">Auto Kratky s.r.o., Brno</div>
+          <div class="author-name">Martin Krátký</div>
+          <div class="author-role">Auto Krátký s.r.o., Brno</div>
         </div>
       </div>
     </div>
     <div class="testimonial">
-      <div class="quote">Marketplace VIP je skvela prilezitost. Prvni investice se mi vratila za 38 dni s ROI 22%. Doporucuji.</div>
+      <div class="quote">Marketplace VIP je skvělá příležitost. První investice se mi vrátila za 38 dní s ROI 22%. Doporučuji.</div>
       <div class="author">
         <div class="avatar">PN</div>
         <div>
-          <div class="author-name">Petr Novotny</div>
+          <div class="author-name">Petr Novotný</div>
           <div class="author-role">Investor, Ostrava</div>
         </div>
       </div>
     </div>
   </div>
   <div style="text-align: center; margin-top: 20px;">
-    <p style="font-size: 14px; color: #94a3b8;">Vice recenzi na Google (4.8★) a Firmy.cz</p>
+    <p style="font-size: 14px; color: #94a3b8;">Více recenzí na Google (4.8★) a Firmy.cz</p>
   </div>
   <div class="slide-footer"></div>
 </div>
@@ -561,7 +565,7 @@
 <!-- SLIDE 8: SROVNANI -->
 <div class="slide">
   <div class="slide-header">
-    <h2>Proc <span class="orange">CarMakler</span></h2>
+    <h2>Proč <span class="orange">CarMakler</span></h2>
     <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
   </div>
   <div style="flex: 1;">
@@ -574,35 +578,35 @@
         <th style="width: 18%; text-align: center;">TipCars.cz</th>
       </tr>
       <tr>
-        <td><strong>Osobni makler</strong></td>
+        <td><strong>Osobní makléř</strong></td>
         <td class="cm-col" style="text-align: center;"><span class="check">✓</span></td>
         <td style="text-align: center;"><span class="cross">✗</span></td>
         <td style="text-align: center;"><span class="cross">✗</span></td>
         <td style="text-align: center;"><span class="cross">✗</span></td>
       </tr>
       <tr>
-        <td><strong>Proverka historie</strong></td>
+        <td><strong>Prověrka historie</strong></td>
         <td class="cm-col" style="text-align: center;"><span class="check">✓</span></td>
         <td style="text-align: center;"><span class="check">✓</span></td>
         <td style="text-align: center;"><span class="cross">✗</span></td>
         <td style="text-align: center;"><span class="check">✓</span></td>
       </tr>
       <tr>
-        <td><strong>Pravni servis</strong></td>
+        <td><strong>Právní servis</strong></td>
         <td class="cm-col" style="text-align: center;"><span class="check">✓</span></td>
         <td style="text-align: center;"><span class="cross">✗</span></td>
         <td style="text-align: center;"><span class="cross">✗</span></td>
         <td style="text-align: center;"><span class="cross">✗</span></td>
       </tr>
       <tr>
-        <td><strong>Eshop autodily</strong></td>
+        <td><strong>Eshop autodíly</strong></td>
         <td class="cm-col" style="text-align: center;"><span class="check">✓</span></td>
         <td style="text-align: center;"><span class="cross">✗</span></td>
         <td style="text-align: center;"><span class="cross">✗</span></td>
         <td style="text-align: center;"><span class="cross">✗</span></td>
       </tr>
       <tr>
-        <td><strong>Investicni marketplace</strong></td>
+        <td><strong>Investiční marketplace</strong></td>
         <td class="cm-col" style="text-align: center;"><span class="check">✓</span></td>
         <td style="text-align: center;"><span class="cross">✗</span></td>
         <td style="text-align: center;"><span class="cross">✗</span></td>
@@ -616,21 +620,21 @@
         <td style="text-align: center;"><span class="cross">✗</span></td>
       </tr>
       <tr>
-        <td><strong>CRM / Sprava leadu</strong></td>
+        <td><strong>CRM / Správa leadů</strong></td>
         <td class="cm-col" style="text-align: center;"><span class="check">✓</span></td>
         <td style="text-align: center;"><span class="cross">✗</span></td>
         <td style="text-align: center;"><span class="cross">✗</span></td>
         <td style="text-align: center;"><span class="cross">✗</span></td>
       </tr>
       <tr>
-        <td><strong>Financovani & pojisteni</strong></td>
+        <td><strong>Financování & pojištění</strong></td>
         <td class="cm-col" style="text-align: center;"><span class="check">✓</span></td>
         <td style="text-align: center;"><span class="partial">~</span></td>
         <td style="text-align: center;"><span class="cross">✗</span></td>
         <td style="text-align: center;"><span class="partial">~</span></td>
       </tr>
     </table>
-    <p style="margin-top: 12px; font-size: 12px; color: #94a3b8;">✓ = plna podpora &nbsp; ~ = castecna / za priplatek &nbsp; ✗ = neni k dispozici</p>
+    <p style="margin-top: 12px; font-size: 12px; color: #94a3b8;">✓ = plná podpora &nbsp; ~ = částečná / za příplatek &nbsp; ✗ = není k dispozici</p>
   </div>
   <div class="slide-footer"></div>
 </div>
@@ -638,9 +642,9 @@
 <!-- SLIDE 9: CTA -->
 <div class="slide slide-cta">
   <img src="../../public/brand/logo-white.png" alt="CarMakler" class="logo" style="height: 60px; margin-bottom: 30px;">
-  <h2>Pojdme <span>spolupracovat</span></h2>
+  <h2>Pojďme <span>spolupracovat</span></h2>
   <p style="font-size: 20px; color: rgba(255,255,255,0.7); max-width: 600px; line-height: 1.6;">
-    At uz jste prodejce, bazar, vrakoviste nebo investor — mame reseni prave pro vas.
+    Ať už jste prodejce, bazar, vrakoviště nebo investor — máme řešení právě pro vás.
   </p>
   <div class="contact-grid">
     <div class="contact-item">

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CarMakler - Cenik sluzeb</title>
+<title>CarMakler - Ceník služeb</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 
@@ -38,7 +38,8 @@
   .slide:last-child { page-break-after: auto; }
 
   .slide-title {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background: linear-gradient(145deg, rgba(8,8,24,0.88) 0%, rgba(26,26,46,0.85) 30%, rgba(22,33,62,0.82) 65%, rgba(15,52,96,0.80) 100%),
+                url('https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=1920&q=80') center/cover no-repeat;
     color: white;
     justify-content: center;
     align-items: center;
@@ -47,27 +48,27 @@
   .slide-title::before {
     content: '';
     position: absolute;
-    top: -100px;
-    right: -100px;
-    width: 500px;
-    height: 500px;
+    top: -60px;
+    right: -60px;
+    width: 420px;
+    height: 420px;
     border-radius: 50%;
-    background: rgba(249, 115, 22, 0.08);
+    background: radial-gradient(circle, rgba(249, 115, 22, 0.15) 0%, transparent 70%);
   }
   .slide-title::after {
     content: '';
     position: absolute;
-    bottom: -150px;
-    left: -150px;
-    width: 600px;
-    height: 600px;
+    bottom: -100px;
+    left: -100px;
+    width: 500px;
+    height: 500px;
     border-radius: 50%;
-    background: rgba(249, 115, 22, 0.05);
+    background: radial-gradient(circle, rgba(249, 115, 22, 0.10) 0%, transparent 70%);
   }
-  .slide-title .logo { height: 80px; margin-bottom: 30px; position: relative; z-index: 1; }
+  .slide-title .logo { height: 90px; margin-bottom: 30px; position: relative; z-index: 1; filter: drop-shadow(0 0 24px rgba(249,115,22,0.25)); }
   .slide-title h1 { font-size: 42px; font-weight: 800; line-height: 1.2; margin-bottom: 16px; position: relative; z-index: 1; }
   .slide-title h1 span { color: #F97316; }
-  .slide-title .subtitle { font-size: 22px; font-weight: 300; color: rgba(255,255,255,0.8); position: relative; z-index: 1; }
+  .slide-title .subtitle { font-size: 18px; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.8); position: relative; z-index: 1; }
   .slide-title .date { position: absolute; bottom: 40px; right: 60px; font-size: 14px; color: rgba(255,255,255,0.5); }
   .slide-title .web { position: absolute; bottom: 40px; left: 60px; font-size: 14px; color: rgba(255,255,255,0.5); }
 
@@ -164,7 +165,8 @@
   tr:nth-child(even) td { background: #f8fafc; }
 
   .slide-cta {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background: linear-gradient(145deg, rgba(8,8,24,0.90) 0%, rgba(26,26,46,0.88) 50%, rgba(15,52,96,0.85) 100%),
+                url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1920&q=80') center/cover no-repeat;
     color: white;
     justify-content: center;
     align-items: center;
@@ -233,9 +235,11 @@
 
 <!-- SLIDE 1: TITLE -->
 <div class="slide slide-title">
+  <div style="position:absolute;top:40%;left:-40px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,0.05) 0%,transparent 70%);"></div>
   <img src="../../public/brand/logo-white.png" alt="CarMakler" class="logo">
-  <h1>Cenik <span>sluzeb</span></h1>
-  <p class="subtitle">Kompletni prehled cen pro vsechny produkty platformy CarMakler</p>
+  <div style="width:60px;height:3px;background:linear-gradient(90deg,transparent,#F97316,transparent);margin:-10px auto 24px;position:relative;z-index:1;"></div>
+  <h1>Ceník <span>služeb</span></h1>
+  <p class="subtitle">Kompletní přehled cen pro všechny produkty platformy CarMakler</p>
   <p class="web">www.carmakler.cz</p>
   <p class="date">2026</p>
   <div class="slide-footer"></div>
@@ -244,45 +248,45 @@
 <!-- SLIDE 2: MAKLERSKA SIT -->
 <div class="slide">
   <div class="slide-header">
-    <h2>Maklerska <span class="orange">sit</span></h2>
+    <h2>Makléřská <span class="orange">síť</span></h2>
     <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
   </div>
   <div class="grid-3" style="align-items: stretch;">
     <div class="pricing-card">
-      <h3>Standardni provize</h3>
-      <div class="price">5% <small>z prodejni ceny</small></div>
-      <p style="font-size: 14px; color: #64748b; margin-bottom: 12px;">Minimalne 25 000 Kc</p>
+      <h3>Standardní provize</h3>
+      <div class="price">5% <small>z prodejní ceny</small></div>
+      <p style="font-size: 14px; color: #64748b; margin-bottom: 12px;">Minimálně 25 000 Kč</p>
       <ul>
-        <li>Kompletni servis prodeje</li>
+        <li>Kompletní servis prodeje</li>
         <li>Fotodokumentace vozu</li>
-        <li>Inzerce na vsech kanalech</li>
-        <li>Pravni podpora</li>
-        <li>Smlouva a prevod</li>
+        <li>Inzerce na všech kanálech</li>
+        <li>Právní podpora</li>
+        <li>Smlouva a převod</li>
       </ul>
     </div>
     <div class="pricing-card popular">
-      <span class="badge">Doporuceno</span>
-      <h3>Exkluzivni smlouva</h3>
-      <div class="price">4,5% <small>z prodejni ceny</small></div>
-      <p style="font-size: 14px; color: #64748b; margin-bottom: 12px;">Prednost v nabidce</p>
+      <span class="badge">Doporučeno</span>
+      <h3>Exkluzivní smlouva</h3>
+      <div class="price">4,5% <small>z prodejní ceny</small></div>
+      <p style="font-size: 14px; color: #64748b; margin-bottom: 12px;">Přednost v nabídce</p>
       <ul>
-        <li>Vse ze standardni provize</li>
-        <li>Nizsi provize (4,5%)</li>
-        <li>Prioritni zobrazeni</li>
-        <li>Dedickovany makler</li>
-        <li>Garantovany prodej do 30 dni</li>
+        <li>Vše ze standardní provize</li>
+        <li>Nižší provize (4,5%)</li>
+        <li>Prioritní zobrazení</li>
+        <li>Dedikovaný makléř</li>
+        <li>Garantovaný prodej do 30 dní</li>
       </ul>
     </div>
     <div class="pricing-card">
       <h3>Volume partner</h3>
-      <div class="price">Individualne</div>
-      <p style="font-size: 14px; color: #64748b; margin-bottom: 12px;">10+ aut mesicne</p>
+      <div class="price">Individuálně</div>
+      <p style="font-size: 14px; color: #64748b; margin-bottom: 12px;">10+ aut měsíčně</p>
       <ul>
-        <li>Individualni sazba provize</li>
-        <li>Prioritni zpracovani</li>
-        <li>Dedickovany team</li>
+        <li>Individuální sazba provize</li>
+        <li>Prioritní zpracování</li>
+        <li>Dedikovaný team</li>
         <li>API integrace</li>
-        <li>Mesicni reporting</li>
+        <li>Měsíční reporting</li>
       </ul>
     </div>
   </div>
@@ -292,46 +296,46 @@
 <!-- SLIDE 3: INZERTNI PLATFORMA -->
 <div class="slide">
   <div class="slide-header">
-    <h2>Inzertni <span class="orange">platforma</span></h2>
+    <h2>Inzertní <span class="orange">platforma</span></h2>
     <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
   </div>
   <div class="grid-3" style="align-items: stretch;">
     <div class="pricing-card">
-      <h3>Soukromy prodejce</h3>
-      <div class="price">0 Kc</div>
-      <p style="font-size: 14px; color: #64748b; margin-bottom: 12px;">1 inzerat zdarma / 60 dni</p>
+      <h3>Soukromý prodejce</h3>
+      <div class="price">0 Kč</div>
+      <p style="font-size: 14px; color: #64748b; margin-bottom: 12px;">1 inzerát zdarma / 60 dní</p>
       <ul>
-        <li>1 aktivni inzerat</li>
-        <li>Platnost 60 dni</li>
-        <li>Az 20 fotografii</li>
-        <li>Zakladni statistiky</li>
-        <li>Kontakt se zajemci</li>
+        <li>1 aktivní inzerát</li>
+        <li>Platnost 60 dní</li>
+        <li>Až 20 fotografií</li>
+        <li>Základní statistiky</li>
+        <li>Kontakt se zájemci</li>
       </ul>
     </div>
     <div class="pricing-card popular">
-      <span class="badge">Nejoblibenejsi</span>
+      <span class="badge">Nejoblíbenější</span>
       <h3>Premium inzerce</h3>
-      <div class="price">199 Kc <small>/7 dni</small></div>
-      <p style="font-size: 14px; color: #64748b; margin-bottom: 12px;">TOP zvyrazneni</p>
+      <div class="price">199 Kč <small>/7 dní</small></div>
+      <p style="font-size: 14px; color: #64748b; margin-bottom: 12px;">TOP zvýraznění</p>
       <ul>
-        <li>TOP pozice ve vyhledavani</li>
-        <li>Zvyrazneny inzerat</li>
-        <li>3x vice zobrazeni</li>
-        <li>Prodlouzeni: 99 Kc/30 dni</li>
-        <li>Statistiky zobrazeni</li>
+        <li>TOP pozice ve vyhledávání</li>
+        <li>Zvýrazněný inzerát</li>
+        <li>3x více zobrazení</li>
+        <li>Prodloužení: 99 Kč/30 dní</li>
+        <li>Statistiky zobrazení</li>
       </ul>
     </div>
     <div class="pricing-card">
-      <h3>Bazar balicek</h3>
-      <div class="price">1 990 Kc <small>/mesic</small></div>
-      <p style="font-size: 14px; color: #64748b; margin-bottom: 12px;">Az 30 inzeratu</p>
+      <h3>Bazar balíček</h3>
+      <div class="price">1 990 Kč <small>/měsíc</small></div>
+      <p style="font-size: 14px; color: #64748b; margin-bottom: 12px;">Až 30 inzerátů</p>
       <ul>
-        <li>30 aktivnich inzeratu</li>
-        <li>Neomezena platnost</li>
+        <li>30 aktivních inzerátů</li>
+        <li>Neomezená platnost</li>
         <li>Feed import (Sauto, TipCars)</li>
-        <li>CRM sprava leadu</li>
-        <li>Partnersky dashboard</li>
-        <li>5x TOP zvyrazneni zdarma</li>
+        <li>CRM správa leadů</li>
+        <li>Partnerský dashboard</li>
+        <li>5x TOP zvýraznění zdarma</li>
       </ul>
     </div>
   </div>
@@ -341,78 +345,78 @@
 <!-- SLIDE 4: DOPLNKOVE SLUZBY -->
 <div class="slide">
   <div class="slide-header">
-    <h2>Doplnkove <span class="orange">sluzby</span></h2>
+    <h2>Doplňkové <span class="orange">služby</span></h2>
     <img src="../../public/brand/logo-color.png" alt="" class="logo-small">
   </div>
   <div class="grid-2">
     <div>
       <div class="feature-card" style="height: 100%;">
-        <h3 style="font-size: 20px; margin-bottom: 20px;">Sluzby pro prodejce</h3>
+        <h3 style="font-size: 20px; margin-bottom: 20px;">Služby pro prodejce</h3>
         <div class="service-row">
           <div>
-            <div class="service-name">CEBIA proverka</div>
-            <div class="service-desc">Kompletni historie vozidla</div>
+            <div class="service-name">CEBIA prověrka</div>
+            <div class="service-desc">Kompletní historie vozidla</div>
           </div>
-          <div class="service-price">499 Kc</div>
+          <div class="service-price">499 Kč</div>
         </div>
         <div class="service-row">
           <div>
-            <div class="service-name">CEBIA proverka (makleri)</div>
-            <div class="service-desc">V ramci maklerske smlouvy</div>
+            <div class="service-name">CEBIA prověrka (makléři)</div>
+            <div class="service-desc">V rámci makléřské smlouvy</div>
           </div>
           <div class="service-price" style="color: #22c55e;">ZDARMA</div>
         </div>
         <div class="service-row">
           <div>
-            <div class="service-name">Kaucni rezervace</div>
+            <div class="service-name">Kauční rezervace</div>
             <div class="service-desc">48h garance na vozidlo</div>
           </div>
-          <div class="service-price">5 000 Kc</div>
+          <div class="service-price">5 000 Kč</div>
         </div>
         <div class="service-row">
           <div>
-            <div class="service-name">TOP zvyrazneni</div>
-            <div class="service-desc">Prioritni pozice na 7 dni</div>
+            <div class="service-name">TOP zvýraznění</div>
+            <div class="service-desc">Prioritní pozice na 7 dní</div>
           </div>
-          <div class="service-price">199 Kc</div>
+          <div class="service-price">199 Kč</div>
         </div>
         <div class="service-row">
           <div>
-            <div class="service-name">Prodlouzeni inzeratu</div>
-            <div class="service-desc">Dalsi 30 dni platnosti</div>
+            <div class="service-name">Prodloužení inzerátu</div>
+            <div class="service-desc">Další 30 dní platnosti</div>
           </div>
-          <div class="service-price">99 Kc</div>
+          <div class="service-price">99 Kč</div>
         </div>
       </div>
     </div>
     <div>
       <div class="feature-card" style="height: 100%;">
-        <h3 style="font-size: 20px; margin-bottom: 20px;">Financni sluzby</h3>
+        <h3 style="font-size: 20px; margin-bottom: 20px;">Finanční služby</h3>
         <div class="service-row">
           <div>
-            <div class="service-name">Kalkulace financovani</div>
-            <div class="service-desc">Porovnani nabidek od 5+ bank</div>
+            <div class="service-name">Kalkulace financování</div>
+            <div class="service-desc">Porovnání nabídek od 5+ bank</div>
           </div>
           <div class="service-price" style="color: #22c55e;">ZDARMA</div>
         </div>
         <div class="service-row">
           <div>
-            <div class="service-name">Sjednani financovani</div>
-            <div class="service-desc">Provize od financni spolecnosti</div>
+            <div class="service-name">Sjednání financování</div>
+            <div class="service-desc">Provize od finanční společnosti</div>
           </div>
           <div class="service-price" style="color: #22c55e;">ZDARMA</div>
         </div>
         <div class="service-row">
           <div>
-            <div class="service-name">Porovnani pojisteni</div>
-            <div class="service-desc">POV + HAV od vsech pojistoven</div>
+            <div class="service-name">Porovnání pojištění</div>
+            <div class="service-desc">POV + HAV od všech pojišťoven</div>
           </div>
           <div class="service-price" style="color: #22c55e;">ZDARMA</div>
         </div>
         <div class="service-row">
           <div>
-            <div class="service-name">Sjednani pojisteni</div>
-            <div class="service-desc">Online sjednani behem minuty</div>
+            <div class="service-name">Sjednání pojištění</div>
+            <div class="service-desc">Online sjednání během minuty</div>
           </div>
           <div class="service-price" style="color: #22c55e;">ZDARMA</div>
         </div>
@@ -432,10 +436,10 @@
     <div>
       <div class="feature-card" style="margin-bottom: 20px;">
         <div class="icon">🔧</div>
-        <h3 style="font-size: 20px;">Eshop autodily — Wolt model</h3>
+        <h3 style="font-size: 20px;">Eshop autodíly — Wolt model</h3>
         <p style="font-size: 14px; line-height: 1.8; margin-top: 12px;">
-          Dodavatele (vrakoviste, velkoobchody) se registruji <strong style="color: #22c55e;">ZDARMA</strong>.
-          Carmakler si bere provizi az z prodanych dilu.
+          Dodavatelé (vrakoviště, velkoobchody) se registrují <strong style="color: #22c55e;">ZDARMA</strong>.
+          Carmakler si bere provizi až z prodaných dílů.
         </p>
         <div style="margin-top: 16px;">
           <div class="service-row">
@@ -447,14 +451,14 @@
           <div class="service-row">
             <div>
               <div class="service-name">Provize z prodeje</div>
-              <div class="service-desc">Default sazba, individualne dohodou</div>
+              <div class="service-desc">Defaultní sazba, individuálně dohodou</div>
             </div>
             <div class="service-price">15%</div>
           </div>
           <div class="service-row">
             <div>
-              <div class="service-name">Zakaznik</div>
-              <div class="service-desc">Cena dilu + doprava</div>
+              <div class="service-name">Zákazník</div>
+              <div class="service-desc">Cena dílů + doprava</div>
             </div>
             <div class="service-price">Dle katalogu</div>
           </div>
@@ -465,8 +469,8 @@
       <div class="dark-box" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
         <h3 style="font-size: 20px; margin-bottom: 16px; color: #F97316;">💎 Marketplace VIP</h3>
         <p style="font-size: 14px; line-height: 1.8; color: rgba(255,255,255,0.8); margin-bottom: 20px;">
-          Uzavrena investicni platforma pro flipping aut.
-          Overeni dealeri nabizi prilezitosti, overeni investori financuji.
+          Uzavřená investiční platforma pro flipping aut.
+          Ověření dealeři nabízí příležitosti, ověření investoři financují.
         </p>
         <div class="split-visual">
           <div class="segment" style="flex: 4; background: #3b82f6;">40% Investor</div>
@@ -479,11 +483,11 @@
             <span style="color: #22c55e; font-weight: 700;">ZDARMA</span>
           </div>
           <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 13px;">
-            <span style="color: rgba(255,255,255,0.6);">Minimalni investice</span>
-            <span style="color: #F97316; font-weight: 700;">od 100 000 Kc</span>
+            <span style="color: rgba(255,255,255,0.6);">Minimální investice</span>
+            <span style="color: #F97316; font-weight: 700;">od 100 000 Kč</span>
           </div>
           <div style="display: flex; justify-content: space-between; padding: 8px 0; font-size: 13px;">
-            <span style="color: rgba(255,255,255,0.6);">Prumerny ROI</span>
+            <span style="color: rgba(255,255,255,0.6);">Průměrný ROI</span>
             <span style="color: #F97316; font-weight: 700;">15-25%</span>
           </div>
         </div>
@@ -496,9 +500,9 @@
 <!-- SLIDE 6: CTA -->
 <div class="slide slide-cta">
   <img src="../../public/brand/logo-white.png" alt="CarMakler" class="logo" style="height: 60px; margin-bottom: 30px;">
-  <h2>Kontaktujte nas pro <span>individualni nabidku</span></h2>
+  <h2>Kontaktujte nás pro <span>individuální nabídku</span></h2>
   <p style="font-size: 20px; color: rgba(255,255,255,0.7); max-width: 600px; line-height: 1.6;">
-    Kazdy partner je jedinecny. Pripravime cenovou nabidku na miru vasim potrebam.
+    Každý partner je jedinečný. Připravíme cenovou nabídku na míru vašim potřebám.
   </p>
   <div class="contact-grid">
     <div class="contact-item">
