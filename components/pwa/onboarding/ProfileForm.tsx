@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Alert } from "@/components/ui/Alert";
 import { BROKER_SPECIALIZATIONS } from "@/lib/broker-specializations";
+import { StepComplete } from "./StepComplete";
 
 // Sjednoceno na shared catalog — CZ labels se ukládají přímo do
 // User.specializations (dřív se ukládaly lowercase values jako "personal",
@@ -18,6 +19,7 @@ const SPECIALIZATIONS = BROKER_SPECIALIZATIONS.vehicleTypes;
 export function ProfileForm() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showCelebration, setShowCelebration] = useState(false);
 
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
@@ -68,14 +70,22 @@ export function ProfileForm() {
         return;
       }
 
-      router.push("/makler/onboarding/documents");
+      setShowCelebration(true);
     } catch {
       setError("Došlo k neočekávané chybě. Zkuste to znovu.");
       setLoading(false);
     }
   };
 
+  const handleContinue = useCallback(() => {
+    router.push("/makler/onboarding/documents");
+  }, [router]);
+
   return (
+    <>
+    {showCelebration && (
+      <StepComplete step={1} emoji="👤" title="Profil hotový!" subtitle="Skvělý start — pokračujeme dokumenty." onContinue={handleContinue} />
+    )}
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
         <Alert variant="error">
@@ -165,5 +175,6 @@ export function ProfileForm() {
         {loading ? "Ukládám..." : "Pokračovat"}
       </Button>
     </form>
+    </>
   );
 }

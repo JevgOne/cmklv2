@@ -19,6 +19,7 @@ const aboutItems = [
   { href: "/makleri", title: "Naši makléři" },
   { href: "/jak-to-funguje", title: "Jak to funguje" },
   { href: "/recenze", title: "Recenze" },
+  { href: "/blog", title: "Blog" },
   { href: "/kariera", title: "Kariéra" },
   { href: "/kontakt", title: "Kontakt" },
   { href: "/registrace/partner", title: "Registrace pro partnery" },

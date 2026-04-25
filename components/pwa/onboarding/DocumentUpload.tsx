@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Alert";
 import { cn } from "@/lib/utils";
+import { StepComplete } from "./StepComplete";
 
 interface DocumentFile {
   file: File;
@@ -28,6 +29,7 @@ export function DocumentUpload() {
   const router = useRouter();
   const [documents, setDocuments] = useState<Record<string, DocumentFile>>({});
   const [error, setError] = useState("");
+  const [showCelebration, setShowCelebration] = useState(false);
   const [loading, setLoading] = useState(false);
   const [dragOver, setDragOver] = useState<string | null>(null);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
@@ -84,14 +86,22 @@ export function DocumentUpload() {
         return;
       }
 
-      router.push("/makler/onboarding/training");
+      setShowCelebration(true);
     } catch {
       setError("Došlo k neočekávané chybě. Zkuste to znovu.");
       setLoading(false);
     }
   };
 
+  const handleContinue = useCallback(() => {
+    router.push("/makler/onboarding/training");
+  }, [router]);
+
   return (
+    <>
+    {showCelebration && (
+      <StepComplete step={2} emoji="📄" title="Dokumenty nahrány!" subtitle="Ověření identity = důvěra klientů." onContinue={handleContinue} />
+    )}
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
         <Alert variant="error">
@@ -178,5 +188,6 @@ export function DocumentUpload() {
         {loading ? "Nahrávání..." : "Pokračovat"}
       </Button>
     </form>
+    </>
   );
 }

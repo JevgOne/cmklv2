@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import DOMPurify from "isomorphic-dompurify";
 import { SignatureCanvas } from "@/components/pwa/contracts/SignatureCanvas";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Alert } from "@/components/ui/Alert";
+import { StepComplete } from "./StepComplete";
 
 export function ContractSign() {
   const router = useRouter();
@@ -16,6 +17,7 @@ export function ContractSign() {
   const [agreed, setAgreed] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
 
   // Load contract template
   useEffect(() => {
@@ -65,12 +67,16 @@ export function ContractSign() {
         return;
       }
 
-      router.push("/makler/onboarding/approval");
+      setShowCelebration(true);
     } catch {
       setError("Došlo k neočekávané chybě. Zkuste to znovu.");
       setLoading(false);
     }
   };
+
+  const handleContinue = useCallback(() => {
+    router.push("/makler/onboarding/approval");
+  }, [router]);
 
   if (loadingContract) {
     return (
@@ -87,6 +93,10 @@ export function ContractSign() {
   }
 
   return (
+    <>
+    {showCelebration && (
+      <StepComplete step={4} emoji="✍️" title="Smlouva podepsána!" subtitle="Poslední krok za vámi. Čeká na schválení." onContinue={handleContinue} />
+    )}
     <div className="space-y-6">
       {error && (
         <Alert variant="error">
@@ -147,5 +157,6 @@ export function ContractSign() {
         {loading ? "Odesílám..." : "Podepsat a odeslat"}
       </Button>
     </div>
+    </>
   );
 }

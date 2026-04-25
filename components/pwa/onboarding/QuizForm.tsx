@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Alert";
 import { cn } from "@/lib/utils";
+import { StepComplete } from "./StepComplete";
 
 interface QuizQuestion {
   question: string;
@@ -74,6 +75,7 @@ export function QuizForm() {
   const [score, setScore] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showCelebration, setShowCelebration] = useState(false);
 
   const handleSelect = (questionIndex: number, optionIndex: number) => {
     if (submitted) return;
@@ -119,13 +121,17 @@ export function QuizForm() {
           return;
         }
 
-        router.push("/makler/onboarding/contract");
+        setShowCelebration(true);
       } catch {
         setError("Došlo k chybě. Zkuste to znovu.");
         setLoading(false);
       }
     }
   };
+
+  const handleContinue = useCallback(() => {
+    router.push("/makler/onboarding/contract");
+  }, [router]);
 
   const handleRetry = () => {
     setAnswers({});
@@ -135,6 +141,10 @@ export function QuizForm() {
   };
 
   return (
+    <>
+    {showCelebration && (
+      <StepComplete step={3} emoji="🎓" title="Školení dokončeno!" subtitle="Jste připraveni na úspěch v terénu." onContinue={handleContinue} />
+    )}
     <div className="space-y-6">
       {error && (
         <Alert variant="error">
@@ -212,5 +222,6 @@ export function QuizForm() {
         </Button>
       )}
     </div>
+    </>
   );
 }

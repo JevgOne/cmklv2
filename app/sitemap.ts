@@ -80,6 +80,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     },
     {
+      url: `${BASE_URL}/blog`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.8,
+    },
+    {
       url: `${BASE_URL}/kontakt`,
       lastModified: new Date(),
       changeFrequency: "monthly",
@@ -290,6 +296,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // DB nedostupná
   }
 
+  // Dynamické stránky — blog články
+  let blogPages: MetadataRoute.Sitemap = [];
+  try {
+    const articles = await prisma.article.findMany({
+      where: { status: "PUBLISHED" },
+      select: { slug: true, updatedAt: true },
+    });
+
+    blogPages = articles.map((a) => ({
+      url: `${BASE_URL}/blog/${a.slug}`,
+      lastModified: a.updatedAt,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    }));
+  } catch {
+    // DB nedostupná
+  }
+
   return [
     ...staticPages,
     ...brandPages,
@@ -305,5 +329,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...brokerPages,
     ...tagPages,
     ...partnerPages,
+    ...blogPages,
   ];
 }
