@@ -68,33 +68,46 @@ export function SkillTags({ tags, targetId, context, interactive = false }: Skil
   if (displayTags.length === 0) return null;
 
   return (
-    <div className="flex flex-wrap justify-center gap-2">
-      {displayTags.map((t) => {
-        const clicked = clickedTags.has(t.tag);
-        return (
-          <button
-            key={t.tag}
-            type="button"
-            onClick={() => handleClick(t.tag)}
-            disabled={!interactive || clicked || busy}
-            title={t.label}
-            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-sm transition-all
-              ${interactive && !clicked
-                ? "cursor-pointer hover:scale-105 hover:shadow-sm active:scale-95 bg-white border border-gray-200 hover:border-orange-300"
-                : "cursor-default bg-gray-50 border border-gray-100"
-              }
-              ${clicked ? "bg-orange-50 border-orange-200 scale-105" : ""}
-            `}
-          >
-            <span className="text-base">{t.emoji}</span>
-            {t.count > 0 && (
-              <span className={`text-xs font-medium ${clicked ? "text-orange-600" : "text-gray-600"}`}>
-                {t.count}
-              </span>
-            )}
-          </button>
-        );
-      })}
+    <div className="flex flex-col items-center gap-2">
+      {interactive && (
+        <p className="text-[11px] text-gray-400 uppercase tracking-wider font-medium">
+          Ohodnoťte makléře
+        </p>
+      )}
+      <div className="flex flex-wrap justify-center gap-1.5">
+        {displayTags.map((t) => {
+          const clicked = clickedTags.has(t.tag);
+          const hasCount = t.count > 0;
+          return (
+            <button
+              key={t.tag}
+              type="button"
+              onClick={() => handleClick(t.tag)}
+              disabled={!interactive || clicked || busy}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all
+                ${interactive && !clicked
+                  ? "cursor-pointer hover:scale-105 hover:shadow-sm active:scale-95 bg-white border border-gray-200 hover:border-orange-300 hover:bg-orange-50"
+                  : "cursor-default"
+                }
+                ${clicked
+                  ? "bg-orange-50 border border-orange-300 text-orange-700 scale-105"
+                  : hasCount
+                    ? "bg-gray-50 border border-gray-200 text-gray-700"
+                    : "bg-white border border-gray-150 text-gray-400"
+                }
+              `}
+            >
+              <span className="text-sm leading-none">{t.emoji}</span>
+              <span>{t.label}</span>
+              {hasCount && (
+                <span className={`text-[10px] font-bold ${clicked ? "text-orange-500" : "text-gray-400"}`}>
+                  {t.count}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

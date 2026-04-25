@@ -357,7 +357,7 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
                 {memberSince}
               </p>
 
-              {/* Star badge + Trust Score */}
+              {/* Career Level + Trust Score — side by side */}
               <div className="flex items-center gap-4 mt-4">
                 {["BROKER", "MANAGER", "REGIONAL_DIRECTOR"].includes(user.role) && (
                   <LevelBadge level={user.level} size="lg" />
@@ -367,14 +367,7 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
                 )}
               </div>
 
-              {/* Auto-badges */}
-              {reputation && reputation.badges.length > 0 && (
-                <div className="mt-3">
-                  <AutoBadges badges={reputation.badges} />
-                </div>
-              )}
-
-              {/* Activity signals */}
+              {/* Activity signal — compact inline */}
               {reputation && (
                 <div className="mt-2">
                   <ActivitySignal
@@ -385,32 +378,8 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
                 </div>
               )}
 
-              {/* Skill Tagy */}
-              {reputation && (
-                <div className="mt-3">
-                  <SkillTags
-                    tags={reputation.skillTags}
-                    targetId={user.id}
-                    context={reputation.context}
-                    interactive={!isOwner}
-                  />
-                </div>
-              )}
-
-              {user.tags && user.tags.length > 0 && (
-                <div className="flex flex-wrap justify-center gap-1.5 mt-4">
-                  {user.tags.map((tag) => (
-                    <TagPill
-                      key={tag.slug}
-                      slug={tag.slug}
-                      label={tag.label}
-                    />
-                  ))}
-                </div>
-              )}
-
               {/* Stats row — Instagram divide-x style */}
-              <div className="flex justify-center divide-x divide-gray-200 mt-5 py-4 w-full border-t border-b border-gray-100">
+              <div className="flex justify-center divide-x divide-gray-200 mt-4 py-4 w-full border-t border-b border-gray-100">
                 {["BROKER", "MANAGER", "REGIONAL_DIRECTOR"].includes(
                   user.role,
                 ) && <Stat value={stats.totalSales} label="Prodejů" />}
@@ -455,6 +424,37 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
                     />
                   )}
               </div>
+
+              {/* Auto-badges */}
+              {reputation && reputation.badges.length > 0 && (
+                <div className="mt-4">
+                  <AutoBadges badges={reputation.badges} />
+                </div>
+              )}
+
+              {/* Skill Tags — under stats for better hierarchy */}
+              {reputation && (
+                <div className="mt-4">
+                  <SkillTags
+                    tags={reputation.skillTags}
+                    targetId={user.id}
+                    context={reputation.context}
+                    interactive={!isOwner}
+                  />
+                </div>
+              )}
+
+              {user.tags && user.tags.length > 0 && (
+                <div className="flex flex-wrap justify-center gap-1.5 mt-4">
+                  {user.tags.map((tag) => (
+                    <TagPill
+                      key={tag.slug}
+                      slug={tag.slug}
+                      label={tag.label}
+                    />
+                  ))}
+                </div>
+              )}
 
               {/* Actions */}
               <div className="flex flex-wrap justify-center gap-2 mt-5">
