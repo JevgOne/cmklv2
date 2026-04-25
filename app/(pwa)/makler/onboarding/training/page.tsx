@@ -10,12 +10,12 @@ export default function OnboardingTrainingPage() {
   return (
     <div>
       <h2 className="text-xl font-bold text-gray-900 mb-2">
-        {showQuiz ? "Kviz" : "Skoleni"}
+        {showQuiz ? "Kvíz" : "Školení"}
       </h2>
       <p className="text-sm text-gray-500 mb-6">
         {showQuiz
-          ? "Odpovedete na 10 otazek. Pro uspesne dokonceni potrebujete alespon 80%."
-          : "Projdete si zakladni informace o fungovani Carmakler."}
+          ? "Odpovězte na 10 otázek. Pro úspěšné dokončení potřebujete alespoň 80%."
+          : "Projděte si základní informace o fungování Carmakler."}
       </p>
 
       {showQuiz ? (

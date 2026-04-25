@@ -6,6 +6,7 @@ import { invitationSchema } from "@/lib/validators/onboarding";
 import { randomUUID } from "crypto";
 import { z } from "zod";
 import { sendEmail } from "@/lib/resend";
+import { emailLayoutHTML } from "@/lib/brand-styles";
 
 const MANAGER_ROLES = ["MANAGER", "REGIONAL_DIRECTOR", "ADMIN", "BACKOFFICE"];
 
@@ -118,35 +119,24 @@ export async function POST(request: Request) {
       : "Carmakler";
     const regionName = invitation.region?.name || "";
 
+    const emailContent = `
+      <p>Dobrý den${name ? ` ${name}` : ""},</p>
+      <p>Manažer <strong>${managerName}</strong> vás zve do makléřské sítě Carmakler${regionName ? ` (region ${regionName})` : ""}.</p>
+      <p>Pro dokončení registrace klikněte na tlačítko níže:</p>
+      <div style="text-align: center; margin: 32px 0;">
+        <a href="${registrationUrl}"
+           style="background-color: #f97316; color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; display: inline-block;">
+          Registrovat se jako makléř
+        </a>
+      </div>
+      <p style="color: #6b7280; font-size: 14px;">Pozvánka je platná 7 dní. Pokud odkaz nefunguje, zkopírujte tuto adresu do prohlížeče:</p>
+      <p style="color: #6b7280; font-size: 12px; word-break: break-all;">${registrationUrl}</p>
+    `;
+
     await sendEmail({
       to: email,
-      subject: "Pozvanka do Carmakler",
-      html: `
-        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
-          <div style="background: linear-gradient(135deg, #f97316, #ea580c); padding: 24px 32px; text-align: center; border-radius: 12px 12px 0 0;">
-            <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #ffffff;">Carmakler</h1>
-          </div>
-          <div style="padding: 32px;">
-            <p>Dobry den${name ? ` ${name}` : ""},</p>
-            <p>manazer <strong>${managerName}</strong> vas zve do maklerskesiti Carmakler${regionName ? ` (region ${regionName})` : ""}.</p>
-            <p>Pro dokonceni registrace kliknete na tlacitko nize:</p>
-            <div style="text-align: center; margin: 32px 0;">
-              <a href="${registrationUrl}"
-                 style="background-color: #f97316; color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; display: inline-block;">
-                Registrovat se jako makler
-              </a>
-            </div>
-            <p style="color: #6b7280; font-size: 14px;">Pozvanka je platna 7 dni. Pokud odkaz nefunguje, zkopirujte tuto adresu do prohlizece:</p>
-            <p style="color: #6b7280; font-size: 12px; word-break: break-all;">${registrationUrl}</p>
-          </div>
-          <div style="padding: 16px 32px; background-color: #f9fafb; border-top: 1px solid #e5e7eb; text-align: center; border-radius: 0 0 12px 12px;">
-            <p style="margin: 0; font-size: 12px; color: #9ca3af;">
-              Tento email byl odeslan ze systemu Carmakler. |
-              <a href="https://carmakler.cz" style="color: #f97316; text-decoration: none;">carmakler.cz</a>
-            </p>
-          </div>
-        </div>
-      `,
+      subject: "Pozvánka do Carmakler",
+      html: emailLayoutHTML(emailContent, ""),
     });
 
     return NextResponse.json({ invitation }, { status: 201 });

@@ -4,10 +4,20 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { brokerRegistrationSchema } from "@/lib/validators/onboarding";
 import { sendVerificationEmail } from "@/lib/email-verification";
+import { rateLimit } from "@/lib/rate-limit";
 
 // POST /api/auth/register/broker — registrace makléře přes pozvánku
 export async function POST(request: Request) {
   try {
+    const ip = request.headers.get("x-forwarded-for") || "unknown";
+    const { success } = rateLimit(ip, 5, 15 * 60 * 1000);
+    if (!success) {
+      return NextResponse.json(
+        { error: "Příliš mnoho pokusů. Zkuste to později." },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
     const data = brokerRegistrationSchema.parse(body);
 
