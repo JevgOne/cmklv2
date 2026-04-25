@@ -191,6 +191,22 @@ export default async function DashboardPage() {
       {/* Drafty z IndexedDB */}
       <DraftsList />
 
+      {/* Materiály */}
+      <Link href="/makler/materials">
+        <Card className="p-4 flex items-center gap-3 hover:bg-gray-50 transition-colors">
+          <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-lg shrink-0">
+            📋
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-gray-900 text-sm">Moje materiály</p>
+            <p className="text-xs text-gray-500">Vizitka, email podpis, prezentace</p>
+          </div>
+          <svg className="w-5 h-5 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </Card>
+      </Link>
+
       {/* Notifikace */}
       <NotificationsList
         notifications={notifications.map((n) => ({
