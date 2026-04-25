@@ -113,8 +113,7 @@ export default function BrokerRegistrationPage() {
     if (!phone.trim()) errors.phone = "Telefon je povinný";
     if (password.length < 8) errors.password = "Heslo musí mít alespoň 8 znaků";
     if (password !== passwordConfirm) errors.passwordConfirm = "Hesla se neshodují";
-    if (!ico.trim()) errors.ico = "IČO je povinné";
-    else if (icoStatus === "invalid") errors.ico = "Neplatné IČO";
+    if (ico.trim() && icoStatus === "invalid") errors.ico = "Neplatné IČO";
     if (!consent) errors.consent = "Musíte souhlasit s podmínkami";
 
     setFieldErrors(errors);
@@ -139,7 +138,7 @@ export default function BrokerRegistrationPage() {
           firstName,
           lastName,
           phone,
-          ico,
+          ico: ico.trim() || undefined,
         }),
       });
 

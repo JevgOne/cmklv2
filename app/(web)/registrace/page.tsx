@@ -12,7 +12,7 @@ export default function RegistracePage() {
     password: "",
     passwordConfirm: "",
     role: "ADVERTISER" as "ADVERTISER" | "BUYER",
-    accountType: "PRIVATE" as "PRIVATE" | "DEALER" | "BAZAAR",
+    accountType: "PRIVATE" as "PRIVATE" | "BAZAAR",
     companyName: "",
     ico: "",
   });
@@ -193,11 +193,10 @@ export default function RegistracePage() {
               <label className="mb-2 block text-sm font-medium text-gray-700">
                 Typ prodejce
               </label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 {([
                   { value: "PRIVATE", label: "Soukromý" },
-                  { value: "BAZAAR", label: "Autobazar" },
-                  { value: "DEALER", label: "Dealer" },
+                  { value: "BAZAAR", label: "Autobazar / Autosalon" },
                 ] as const).map((option) => (
                   <button
                     key={option.value}

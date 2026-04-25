@@ -79,7 +79,7 @@ export async function POST(request: Request) {
           firstName: data.firstName,
           lastName: data.lastName,
           phone: data.phone,
-          ico: data.ico,
+          ico: data.ico || null,
           role: "BROKER",
           status: "ONBOARDING",
           managerId: invitation.manager.id,

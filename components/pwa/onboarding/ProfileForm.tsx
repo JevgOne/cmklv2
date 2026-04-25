@@ -155,10 +155,10 @@ export function ProfileForm() {
 
       {/* IBAN */}
       <Input
-        label="Bankovní účet (IBAN)"
+        label="Bankovní účet"
         value={iban}
         onChange={(e) => setIban(e.target.value)}
-        placeholder="CZ65 0800 0000 1920 0014 5399"
+        placeholder="1234567890/0800"
       />
 
       <Button type="submit" variant="primary" size="lg" disabled={loading} className="w-full">

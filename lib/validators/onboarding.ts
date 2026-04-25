@@ -6,7 +6,7 @@ export const brokerRegistrationSchema = z.object({
   firstName: z.string().min(1, "Jméno je povinné"),
   lastName: z.string().min(1, "Příjmení je povinné"),
   phone: z.string().min(1, "Telefon je povinný"),
-  ico: z.string().min(7, "IČO musí mít alespoň 7 znaků").max(8, "IČO má maximálně 8 znaků"),
+  ico: z.string().min(7, "IČO musí mít alespoň 7 znaků").max(8, "IČO má maximálně 8 znaků").optional().or(z.literal("")),
 });
 
 export const profileSchema = z.object({

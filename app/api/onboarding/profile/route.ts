@@ -49,10 +49,11 @@ export async function PUT(request: Request) {
       );
     }
 
-    const ibanClean = iban.trim().replace(/\s/g, "").toUpperCase();
-    if (!/^CZ\d{22}$/.test(ibanClean)) {
+    const ibanClean = iban.trim();
+    // Czech bank account format: [předčíslí-]číslo_účtu/kód_banky (e.g. 1234567890/0800 or 19-1234567890/0800)
+    if (!/^(\d{1,6}-)?(\d{1,10})\/\d{4}$/.test(ibanClean)) {
       return NextResponse.json(
-        { error: "Neplatný formát IBAN (očekáváno CZ + 22 číslic)" },
+        { error: "Neplatný formát účtu (očekáváno číslo účtu/kód banky, např. 1234567890/0800)" },
         { status: 400 }
       );
     }
