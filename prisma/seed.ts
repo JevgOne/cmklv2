@@ -108,8 +108,16 @@ async function main() {
     },
   });
 
+  const regionPlzensky = await prisma.region.create({
+    data: {
+      name: "Plze\u0148sk\u00FD",
+      tier: "OSTRAVA_PLZEN",
+      cities: JSON.stringify(["Plze\u0148", "Klatovy", "Rokycany"]),
+    },
+  });
+
   console.log(
-    `Created regions: ${regionPraha.name}, ${regionJihomoravsky.name}, ${regionMoravskoslezsky.name}`
+    `Created regions: ${regionPraha.name}, ${regionJihomoravsky.name}, ${regionMoravskoslezsky.name}, ${regionPlzensky.name}`
   );
 
   // ============================================

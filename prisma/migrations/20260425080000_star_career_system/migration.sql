@@ -9,6 +9,7 @@ ALTER TABLE "Region" ADD COLUMN IF NOT EXISTS "tier" TEXT NOT NULL DEFAULT 'SMAL
 UPDATE "Region" SET "tier" = 'PRAHA' WHERE "name" = 'Praha';
 UPDATE "Region" SET "tier" = 'BRNO' WHERE "name" = 'Jihomoravský';
 UPDATE "Region" SET "tier" = 'OSTRAVA_PLZEN' WHERE "name" = 'Moravskoslezský';
+UPDATE "Region" SET "tier" = 'OSTRAVA_PLZEN' WHERE "name" = 'Plzeňský';
 
 -- 3. Add totalRevenue to User (Int, default 0)
 ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "totalRevenue" INTEGER NOT NULL DEFAULT 0;
