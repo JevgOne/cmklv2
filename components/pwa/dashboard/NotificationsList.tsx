@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 
 interface Notification {
@@ -5,6 +9,7 @@ interface Notification {
   type: string;
   title: string;
   body: string;
+  link: string | null;
   read: boolean;
   createdAt: string;
 }
@@ -21,10 +26,33 @@ const typeIcons: Record<string, string> = {
   SYSTEM: "🔔",
 };
 
-export function NotificationsList({ notifications }: NotificationsListProps) {
+export function NotificationsList({ notifications: initial }: NotificationsListProps) {
+  const router = useRouter();
+  const [notifications, setNotifications] = useState(initial);
+
   if (notifications.length === 0) {
     return null;
   }
+
+  const handleClick = async (n: Notification) => {
+    if (!n.read) {
+      try {
+        await fetch("/api/broker/notifications", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ids: [n.id] }),
+        });
+        setNotifications((prev) =>
+          prev.map((item) => (item.id === n.id ? { ...item, read: true } : item))
+        );
+      } catch {
+        // silently fail
+      }
+    }
+    if (n.link) {
+      router.push(n.link);
+    }
+  };
 
   return (
     <div className="space-y-3">
@@ -32,27 +60,33 @@ export function NotificationsList({ notifications }: NotificationsListProps) {
         Notifikace
       </h3>
       {notifications.map((notification) => (
-        <Card
+        <button
           key={notification.id}
-          className={`p-4 ${!notification.read ? "border-l-4 border-l-orange-500" : ""}`}
+          type="button"
+          onClick={() => handleClick(notification)}
+          className="w-full text-left"
         >
-          <div className="flex gap-3">
-            <div className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center text-lg flex-shrink-0">
-              {typeIcons[notification.type] || "🔔"}
+          <Card
+            className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors ${!notification.read ? "border-l-4 border-l-orange-500" : ""}`}
+          >
+            <div className="flex gap-3">
+              <div className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center text-lg flex-shrink-0">
+                {typeIcons[notification.type] || "🔔"}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="font-semibold text-gray-900 text-sm">
+                  {notification.title}
+                </div>
+                <div className="text-xs text-gray-500 mt-0.5 truncate">
+                  {notification.body}
+                </div>
+                <div className="text-xs text-gray-400 mt-1">
+                  {formatRelativeTime(notification.createdAt)}
+                </div>
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
-              <div className="font-semibold text-gray-900 text-sm">
-                {notification.title}
-              </div>
-              <div className="text-xs text-gray-500 mt-0.5 truncate">
-                {notification.body}
-              </div>
-              <div className="text-xs text-gray-400 mt-1">
-                {formatRelativeTime(notification.createdAt)}
-              </div>
-            </div>
-          </div>
-        </Card>
+          </Card>
+        </button>
       ))}
     </div>
   );
