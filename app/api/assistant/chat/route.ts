@@ -128,9 +128,11 @@ ${knowledgeBase}`;
     claudeMessages.push({ role: "user", content: message });
 
     // Volání Claude API
-    const anthropic = new Anthropic();
+    const anthropic = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    });
     const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-6-20250514",
+      model: "claude-sonnet-4-5-20241022",
       max_tokens: 1000,
       system: systemPrompt,
       messages: claudeMessages,

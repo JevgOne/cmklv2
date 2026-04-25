@@ -71,9 +71,11 @@ ${data.equipment?.length ? `Výbava: ${data.equipment.join(", ")}` : ""}
 ${data.highlights?.length ? `Hlavní přednosti: ${data.highlights.join(", ")}` : ""}`;
 
     // Volání Claude API
-    const anthropic = new Anthropic();
+    const anthropic = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    });
     const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-6-20250514",
+      model: "claude-sonnet-4-5-20241022",
       max_tokens: 1000,
       system: systemPrompt,
       messages: [{ role: "user", content: userPrompt }],

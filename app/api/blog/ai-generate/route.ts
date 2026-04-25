@@ -23,7 +23,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { topic, categoryName } = generateSchema.parse(body);
 
-    const client = new Anthropic();
+    const client = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    });
     const prompt = `Jsi redaktor automobilového magazínu CarMakléř. Napiš článek na téma: "${topic}".
 ${categoryName ? `Kategorie: ${categoryName}.` : ""}
 
@@ -47,7 +49,7 @@ Vrať JSON objekt s těmito poli:
 Vrať POUZE validní JSON, žádný markdown wrapper.`;
 
     const message = await client.messages.create({
-      model: "claude-sonnet-4-20250514",
+      model: "claude-sonnet-4-5-20241022",
       max_tokens: 4096,
       messages: [{ role: "user", content: prompt }],
     });
