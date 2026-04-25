@@ -120,7 +120,7 @@ export async function POST(request: Request) {
     });
 
     // Uložit smlouvu a podpis, dokončit onboarding
-    await prisma.user.update({
+    const updatedBroker = await prisma.user.update({
       where: { id: session.user.id },
       data: {
         brokerSignature: data.signature,
@@ -129,7 +129,25 @@ export async function POST(request: Request) {
         onboardingCompleted: true,
         // Status zůstane ONBOARDING — aktivaci provede manager/admin
       },
+      select: { managerId: true, firstName: true, lastName: true },
     });
+
+    // Notifikovat managera o dokončeném onboardingu
+    if (updatedBroker.managerId) {
+      try {
+        await prisma.notification.create({
+          data: {
+            userId: updatedBroker.managerId,
+            type: "BROKER_ONBOARDING_COMPLETE",
+            title: "Nový makléř čeká na aktivaci",
+            body: `${updatedBroker.firstName} ${updatedBroker.lastName} dokončil/a onboarding a čeká na schválení.`,
+            link: "/admin/brokers",
+          },
+        });
+      } catch (notifError) {
+        console.error("Failed to notify manager:", notifError);
+      }
+    }
 
     return NextResponse.json({
       message: "Smlouva byla podepsána. Čekejte na aktivaci účtu.",

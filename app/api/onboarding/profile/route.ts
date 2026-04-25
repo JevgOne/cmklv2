@@ -49,6 +49,14 @@ export async function PUT(request: Request) {
       );
     }
 
+    const ibanClean = iban.trim().replace(/\s/g, "").toUpperCase();
+    if (!/^CZ\d{22}$/.test(ibanClean)) {
+      return NextResponse.json(
+        { error: "Neplatný formát IBAN (očekáváno CZ + 22 číslic)" },
+        { status: 400 }
+      );
+    }
+
     // Upload profilove fotky
     const photo = formData.get("photo") as File | null;
     let avatarUrl: string | null = null;
