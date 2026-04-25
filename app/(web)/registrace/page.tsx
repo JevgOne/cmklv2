@@ -196,7 +196,7 @@ export default function RegistracePage() {
               <div className="grid grid-cols-2 gap-2">
                 {([
                   { value: "PRIVATE", label: "Soukromý" },
-                  { value: "BAZAAR", label: "Autobazar / Autosalon" },
+                  { value: "BAZAAR", label: "Autobazar" },
                 ] as const).map((option) => (
                   <button
                     key={option.value}
