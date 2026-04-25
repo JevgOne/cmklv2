@@ -1,6 +1,6 @@
 "use client";
 
-import { BADGE_CATALOG, type BadgeContext } from "@/lib/reputation/auto-badges";
+import { BADGE_CATALOG, type BadgeContext } from "@/lib/reputation/badge-defs";
 
 interface AutoBadgesProps {
   badges: { badge: string; context: string; unlockedAt: string | Date }[];

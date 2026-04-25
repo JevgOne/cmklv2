@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { SKILL_TAGS, MIN_TAG_DISPLAY_COUNT, type SkillTagContext } from "@/lib/reputation/skill-tags";
+import { SKILL_TAGS, MIN_TAG_DISPLAY_COUNT, type SkillTagContext } from "@/lib/reputation/skill-tag-defs";
 
 interface SkillTagsProps {
   tags: { tag: string; count: number }[];
