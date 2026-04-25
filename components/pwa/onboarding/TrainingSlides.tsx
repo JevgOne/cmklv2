@@ -4,55 +4,76 @@ import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
+interface SlidePoint {
+  text: string;
+  /** Highlighted key info that may appear in quiz */
+  highlight?: boolean;
+}
+
 interface Slide {
   title: string;
   icon: string;
-  points: string[];
+  intro: string;
+  points: SlidePoint[];
+  tip?: string;
 }
 
 const SLIDES: Slide[] = [
   {
-    title: "Jak funguje Carmakler",
+    title: "Jak funguje CarMakléř",
     icon: "1",
+    intro: "CarMakléř je platforma, která propojuje prodejce vozidel s certifikovanými makléři. Pochopte celý proces od A do Z.",
     points: [
-      "Carmakler propojuje prodejce vozidel s ověřenými makléři",
-      "Makléř nabere auto v terénu a zadá ho do systému",
-      "BackOffice schválí vozidlo a publikuje inzerát",
-      "Po úspěšném prodeji makléř získá provizi 5 % z prodejní ceny (min. 25 000 Kč)",
+      { text: "CarMakléř propojuje prodejce vozidel s ověřenými makléři — vy jste ten prostředník" },
+      { text: "Makléř nabere auto v terénu, provede inspekci a zadá ho do systému přes PWA aplikaci" },
+      { text: "BackOffice tým schválí vozidlo a publikuje inzerát na všechny portály", highlight: true },
+      { text: "Vozidlo se po zadání do systému NEpublikuje automaticky — vždy musí projít schválením BackOffice", highlight: true },
+      { text: "Provize makléře činí 5 % z prodejní ceny (minimálně 25 000 Kč)", highlight: true },
+      { text: "Provize se vyplácí až po úspěšném prodeji a úhradě kupujícím — ne dříve", highlight: true },
     ],
+    tip: "Příklad: Prodáte auto za 500 000 Kč → vaše provize je 25 000 Kč (5 %). Prodáte za 300 000 Kč → provize je stále 25 000 Kč (minimum).",
   },
   {
     title: "Jak nabrat auto",
     icon: "2",
+    intro: "Nabírání auta je váš hlavní úkol. Kvalitní zpracování = rychlejší prodej = spokojený klient.",
     points: [
-      "Použijte VIN dekodér pro automatické načtení údajů",
-      "Pořiďte kvalitní fotky podle fotoprůvodce (min. 15 fotek)",
-      "Proveďte inspekci a zaznamenejte stav vozu",
-      "Nastavte reálnou cenu na základě tržní analýzy",
-      "Vše zadejte do PWA aplikace — funguje i offline",
+      { text: "Použijte VIN dekodér pro automatické načtení technických údajů vozidla — ušetří vám čas a snížíte chybovost", highlight: true },
+      { text: "Pořiďte kvalitní fotky podle fotoprůvodce — minimálně 15 fotografií (exteriér, interiér, detaily, vady)", highlight: true },
+      { text: "Proveďte důkladnou inspekci a poctivě zaznamenejte stav vozu — laky, poškrábání, mechanický stav" },
+      { text: "Nastavte reálnou cenu na základě tržní analýzy — nadsazená cena = auto se neprodá" },
+      { text: "Vše zadejte do PWA aplikace — funguje i offline, data se synchronizují po připojení k internetu", highlight: true },
+      { text: "Čím kvalitněji auto zpracujete, tím rychleji BackOffice schválí a tím dříve se začne prodávat" },
     ],
+    tip: "PWA aplikace funguje plně offline — můžete nabírat auta i v garáži bez signálu. Data se odešlou automaticky jakmile budete online.",
   },
   {
     title: "Jednání s prodejcem",
     icon: "3",
+    intro: "Profesionální jednání buduje důvěru. Spokojený prodejce vás doporučí dalším a vy si vybudujete síť kontaktů.",
     points: [
-      "Vždy jednejte profesionálně a transparentně",
-      "Vysvětlete prodejci celý proces a výhody spolupráce",
-      "Podepište makléřskou smlouvu před zahájením inzerce",
-      "Pravidelně informujte prodejce o stavu prodeje",
-      "Při prohlídce buďte důkladní — vyhnete se reklamacím",
+      { text: "Vždy jednejte profesionálně a transparentně — prodejce musí rozumět celému procesu" },
+      { text: "Podepište makléřskou smlouvu PŘED zahájením jakékoliv inzerce — to je povinný první krok", highlight: true },
+      { text: "Nikdy neslibujte garantovaný prodej ani konkrétní termín — to není možné garantovat", highlight: true },
+      { text: "Pravidelně informujte prodejce o stavu prodeje — alespoň jednou týdně", highlight: true },
+      { text: "Při prohlídce buďte důkladní a upřímní o stavu vozu — vyhnete se pozdějším reklamacím" },
+      { text: "Vysvětlete prodejci výhody: profesionální fotky, inzerce na všech portálech, ověření kupujících" },
     ],
+    tip: "Dobrá komunikace = spokojený klient = doporučení dalším prodejcům. Jeden spokojený prodejce vám může přinést 3-5 dalších kontaktů.",
   },
   {
-    title: "Právní minimum",
+    title: "Právní minimum a pravidla",
     icon: "4",
+    intro: "Dodržování pravidel chrání vás i klienty. Tyto body jsou klíčové — porušení může vést k ukončení spolupráce.",
     points: [
-      "Makléřská smlouva je povinný první krok před inzercí",
-      "Nikdy neslibujte garantovaný prodej ani konkrétní čas",
-      "Ověřujte vlastnictví vozu v registru vozidel",
-      "Provize se vyplácí až po úspěšném prodeji a úhradě",
-      "Dodržujte GDPR — osobní údaje klientů nedávejte dál",
+      { text: "Makléřská smlouva je povinný PRVNÍ krok — bez ní nesmíte vozidlo inzerovat ani nabízet", highlight: true },
+      { text: "Nikdy neslibujte garantovaný prodej ani konkrétní čas prodeje", highlight: true },
+      { text: "Ověřujte vlastnictví vozu — prodejce musí být skutečným vlastníkem nebo mít plnou moc" },
+      { text: "Provize se vyplácí výhradně po úspěšném prodeji a úhradě — nikdy předem", highlight: true },
+      { text: "Dodržujte GDPR — osobní údaje klientů nesmíte předávat třetím stranám ani používat pro jiné účely" },
+      { text: "Veškeré smlouvy a dokumenty zpracovávejte přes platformu CarMakléř — máte je pak vždy k dispozici" },
     ],
+    tip: "Zapamatujte si: Smlouva → Fotky → Systém → Schválení → Inzerce → Prodej → Provize. V tomto pořadí, nikdy jinak.",
   },
 ];
 
@@ -86,23 +107,43 @@ export function TrainingSlides({ onComplete }: TrainingSlidesProps) {
 
       {/* Slide content */}
       <div className="bg-white rounded-2xl shadow-card p-6">
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex items-center gap-3 mb-3">
           <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center text-white font-bold">
             {slide.icon}
           </div>
           <h3 className="text-lg font-bold text-gray-900">{slide.title}</h3>
         </div>
 
+        <p className="text-sm text-gray-500 mb-4 leading-relaxed">{slide.intro}</p>
+
         <ul className="space-y-3">
           {slide.points.map((point, i) => (
-            <li key={i} className="flex items-start gap-3">
-              <svg className="w-5 h-5 text-orange-500 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <li key={i} className={cn(
+              "flex items-start gap-3 rounded-lg p-2 -mx-2",
+              point.highlight && "bg-orange-50 border border-orange-100"
+            )}>
+              <svg className={cn(
+                "w-5 h-5 mt-0.5 shrink-0",
+                point.highlight ? "text-orange-500" : "text-gray-400"
+              )} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span className="text-sm text-gray-700">{point}</span>
+              <span className={cn(
+                "text-sm leading-relaxed",
+                point.highlight ? "text-gray-900 font-medium" : "text-gray-700"
+              )}>{point.text}</span>
             </li>
           ))}
         </ul>
+
+        {slide.tip && (
+          <div className="mt-4 bg-blue-50 border border-blue-100 rounded-lg p-3">
+            <p className="text-xs text-blue-800 leading-relaxed">
+              <span className="font-semibold">Tip: </span>
+              {slide.tip}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Navigation */}
