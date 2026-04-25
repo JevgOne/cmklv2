@@ -5,10 +5,10 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { LikeButton } from "@/components/web/LikeButton";
 import { TagPill } from "@/components/web/TagPill";
+import { LevelBadge } from "@/components/pwa/gamification/LevelBadge";
 import { VehicleCard, type VehicleData } from "@/components/web/VehicleCard";
 import { getDefaultCover } from "@/lib/profile/defaultCovers";
 import { categorizeSpecialization } from "@/lib/broker-specializations";
@@ -16,7 +16,6 @@ import { fuelLabels, transmissionLabels } from "@/lib/vehicle-labels";
 import { formatPrice, getInitials, parseCities } from "@/lib/utils";
 import {
   ROLE_LABELS,
-  LEVEL_LABELS,
   ROLE_TABS,
   TAB_LABELS,
   DAY_LABELS,
@@ -274,9 +273,6 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
     year: "numeric",
   });
   const roleLabel = ROLE_LABELS[user.role] ?? user.role;
-  const levelLabel =
-    user.level !== "STAR_1" ? LEVEL_LABELS[user.level] ?? user.level : null;
-
   const fullName = `${user.firstName} ${user.lastName}`;
   const hasAboutCard = !!(user.bio || user.motto || favBrands.length > 0);
   const hasSpecCard =
@@ -373,13 +369,9 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
                       )}
                     </div>
                   </div>
-                  {(levelLabel || ["BROKER", "MANAGER", "REGIONAL_DIRECTOR"].includes(user.role)) && (
+                  {["BROKER", "MANAGER", "REGIONAL_DIRECTOR"].includes(user.role) && (
                     <div className="shrink-0 flex flex-col items-end gap-1">
-                      {levelLabel && (
-                        <Badge variant="top">
-                          {levelLabel}
-                        </Badge>
-                      )}
+                      <LevelBadge level={user.level} size="md" />
                     </div>
                   )}
                 </div>
@@ -634,63 +626,6 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
           </Card>
         )}
 
-        {["BROKER", "MANAGER", "REGIONAL_DIRECTOR"].includes(user.role) && (() => {
-          const milestones = [
-            { sales: 0,   label: "Registrace",  shortLabel: memberSince, achieved: true },
-            { sales: 1,   label: "První prodej", shortLabel: "1",        achieved: user.totalSales >= 1 },
-            { sales: 2,   label: "⭐⭐",         shortLabel: "⭐⭐",       achieved: ["STAR_2", "STAR_3", "STAR_4", "STAR_5"].includes(user.level) },
-            { sales: 3,   label: "⭐⭐⭐",        shortLabel: "⭐⭐⭐",      achieved: ["STAR_3", "STAR_4", "STAR_5"].includes(user.level) },
-            { sales: 4,   label: "⭐⭐⭐⭐⭐",      shortLabel: "⭐⭐⭐⭐⭐",    achieved: user.level === "STAR_5" },
-          ];
-          const lastAchievedIdx = milestones.reduce((acc, m, i) => (m.achieved ? i : acc), 0);
-          const progressPct = ((lastAchievedIdx) / (milestones.length - 1)) * 100;
-
-          return (
-            <Card className="p-6 sm:p-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Milníky</h2>
-              <div className="relative">
-                {/* Progress track */}
-                <div className="absolute top-4 left-0 right-0 h-1 bg-gray-200 rounded-full mx-4 sm:mx-6" />
-                <div
-                  className="absolute top-4 left-0 h-1 bg-gradient-to-r from-orange-400 to-orange-500 rounded-full mx-4 sm:mx-6 transition-all duration-500"
-                  style={{ width: `calc(${progressPct}% - ${progressPct < 100 ? '2rem' : '3rem'})` }}
-                />
-                {/* Milestone nodes */}
-                <div className="relative flex justify-between">
-                  {milestones.map((m, i) => {
-                    const isActive = i === lastAchievedIdx && i < milestones.length - 1;
-                    return (
-                      <div key={m.sales} className="flex flex-col items-center" style={{ width: `${100 / milestones.length}%` }}>
-                        <div
-                          className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
-                            m.achieved
-                              ? isActive
-                                ? "bg-orange-500 text-white ring-4 ring-orange-100 scale-110"
-                                : "bg-orange-500 text-white"
-                              : "bg-white border-2 border-gray-300 text-gray-400"
-                          }`}
-                        >
-                          {m.achieved ? (
-                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                            </svg>
-                          ) : (
-                            <span className="text-[10px]">{m.shortLabel}</span>
-                          )}
-                        </div>
-                        <span className={`mt-2 text-[11px] sm:text-xs text-center leading-tight ${
-                          m.achieved ? "text-gray-900 font-semibold" : "text-gray-400"
-                        }`}>
-                          {m.label}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </Card>
-          );
-        })()}
 
         {hasContactCard && (
           <Card className="p-6 sm:p-8">
