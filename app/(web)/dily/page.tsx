@@ -9,6 +9,8 @@ import { prisma } from "@/lib/prisma";
 import { PART_CATEGORIES } from "@/lib/parts-categories";
 import { pageCanonical } from "@/lib/canonical";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "Autodíly — levnější než nové, s zárukou",
   description:

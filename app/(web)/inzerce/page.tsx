@@ -6,6 +6,8 @@ import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "Inzerce aut zdarma — vložte inzerát za minutu",
   description:

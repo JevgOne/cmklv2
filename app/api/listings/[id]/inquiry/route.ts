@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { createNotification } from "@/lib/notifications";
 
 /* ------------------------------------------------------------------ */
 /*  POST /api/listings/[id]/inquiry — Odeslat dotaz na inzerát        */
@@ -27,7 +28,7 @@ export async function POST(
     // Ověřit, že inzerát existuje a je aktivní
     const listing = await prisma.listing.findUnique({
       where: { id },
-      select: { id: true, status: true },
+      select: { id: true, status: true, userId: true, brand: true, model: true },
     });
 
     if (!listing || listing.status !== "ACTIVE") {
@@ -54,6 +55,18 @@ export async function POST(
       where: { id },
       data: { inquiryCount: { increment: 1 } },
     });
+
+    // Notify listing owner
+    if (listing.userId) {
+      const listingName = `${listing.brand} ${listing.model}`.trim() || "inzerát";
+      await createNotification({
+        userId: listing.userId,
+        type: "MESSAGE",
+        title: `Nový dotaz na ${listingName}`,
+        body: `${data.name}${data.phone ? ` (${data.phone})` : ""} — ${data.message.slice(0, 100)}`,
+        link: `/inzerce/moje/${id}`,
+      });
+    }
 
     return NextResponse.json({ inquiry }, { status: 201 });
   } catch (error) {

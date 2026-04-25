@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { companyInfo } from "@/lib/company-info";
+
+export const revalidate = 3600;
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { TrustScore } from "@/components/ui/TrustScore";

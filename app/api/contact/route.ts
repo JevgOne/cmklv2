@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { rateLimit } from "@/lib/rate-limit";
+import { createNotification } from "@/lib/notifications";
+import { assignRegionByCity, roundRobinAssignBroker } from "@/lib/lead-management";
 
 const contactSchema = z.object({
   name: z.string().min(1, "Jméno je povinné"),
@@ -9,6 +11,8 @@ const contactSchema = z.object({
   email: z.string().email("Neplatný email"),
   message: z.string().optional(),
   vehicleId: z.string().optional(),
+  brokerId: z.string().optional(),
+  city: z.string().optional(),
   source: z.string().optional(),
 });
 
@@ -26,6 +30,36 @@ export async function POST(request: Request) {
     const body = await request.json();
     const data = contactSchema.parse(body);
 
+    // If contacting a specific broker (from profile page), use that broker
+    // Otherwise try auto-assignment by region
+    let assignedBrokerId: string | null = data.brokerId || null;
+
+    if (!assignedBrokerId && data.vehicleId) {
+      // If inquiry about a specific vehicle, assign to the vehicle's broker
+      const vehicle = await prisma.vehicle.findUnique({
+        where: { id: data.vehicleId },
+        select: { brokerId: true },
+      });
+      assignedBrokerId = vehicle?.brokerId || null;
+    }
+
+    if (!assignedBrokerId && data.city) {
+      const regionId = await assignRegionByCity(data.city);
+      if (regionId) {
+        assignedBrokerId = await roundRobinAssignBroker(regionId);
+      }
+    }
+
+    // Fallback: assign to broker with fewest leads across all regions
+    if (!assignedBrokerId) {
+      const leastBusyBroker = await prisma.user.findFirst({
+        where: { role: "BROKER", status: "ACTIVE" },
+        select: { id: true },
+        orderBy: { assignedLeads: { _count: "asc" } },
+      });
+      assignedBrokerId = leastBusyBroker?.id || null;
+    }
+
     const lead = await prisma.lead.create({
       data: {
         name: data.name,
@@ -34,9 +68,22 @@ export async function POST(request: Request) {
         description: data.message || null,
         vehicleId: data.vehicleId || null,
         source: data.source || "WEB_FORM",
-        status: "NEW",
+        status: assignedBrokerId ? "ASSIGNED" : "NEW",
+        assignedToId: assignedBrokerId,
+        assignedAt: assignedBrokerId ? new Date() : null,
       },
     });
+
+    // Notify assigned broker in PWA
+    if (assignedBrokerId) {
+      await createNotification({
+        userId: assignedBrokerId,
+        type: "SYSTEM",
+        title: "Nová poptávka z webu",
+        body: `${data.name} (${data.phone})${data.message ? ` — ${data.message.slice(0, 80)}` : ""}`,
+        link: `/makler/leads/${lead.id}`,
+      });
+    }
 
     return NextResponse.json({ success: true, leadId: lead.id });
   } catch (error) {

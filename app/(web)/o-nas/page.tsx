@@ -6,6 +6,8 @@ import { prisma } from "@/lib/prisma";
 import { companyInfo } from "@/lib/company-info";
 import { pageCanonical } from "@/lib/canonical";
 
+export const revalidate = 86400;
+
 export const metadata: Metadata = {
   title: "O nás",
   description:

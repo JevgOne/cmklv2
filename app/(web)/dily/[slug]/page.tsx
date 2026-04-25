@@ -11,6 +11,8 @@ import { prisma } from "@/lib/prisma";
 import { getCategoryLabel, getConditionLabel } from "@/lib/parts-categories";
 import type { PartCategory, PartCondition } from "@/types/parts";
 
+export const revalidate = 86400;
+
 export async function generateMetadata({
   params,
 }: {

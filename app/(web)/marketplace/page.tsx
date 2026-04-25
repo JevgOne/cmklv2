@@ -121,7 +121,7 @@ const faqJsonLd = {
   })),
 };
 
-// Landing má searchParams → nesmí mít revalidate (jinak Next.js static prerender se pokoušel cache invaidovat na každé query change). Necháme dynamic.
+export const dynamic = "force-dynamic";
 
 type MarketplacePageProps = {
   searchParams: Promise<{ reason?: string }>;
