@@ -293,9 +293,9 @@ export function SettingsContent({
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-bold text-gray-900">Rychlý režim</h2>
-            {userLevel === "TIPAR" ? (
+            {userLevel === "STAR_1" ? (
               <p className="text-sm text-orange-600">
-                Dostupné od úrovně Junior (300+ bodů)
+                Dostupné od úrovně ⭐⭐
               </p>
             ) : (
               <p className="text-sm text-gray-500">
@@ -306,7 +306,7 @@ export function SettingsContent({
           <Toggle
             checked={quickMode}
             onChange={handleQuickModeToggle}
-            disabled={userLevel === "TIPAR"}
+            disabled={userLevel === "STAR_1"}
           />
         </div>
       </Card>

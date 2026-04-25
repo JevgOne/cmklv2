@@ -1,16 +1,18 @@
 "use client";
 
-import { calculateLevelProgress } from "@/lib/gamification-levels";
+import { calculateStarProgress, REGION_THRESHOLDS } from "@/lib/gamification-levels";
 import { LEVEL_LABELS } from "@/lib/role-labels";
+import { formatPrice } from "@/lib/utils";
 
 export interface LevelProgressBarProps {
   level: string;
-  totalPoints: number;
+  totalRevenue: number;
+  regionTier?: string;
   size?: "sm" | "md";
 }
 
-export function LevelProgressBar({ level, totalPoints, size = "sm" }: LevelProgressBarProps) {
-  const progress = calculateLevelProgress(totalPoints);
+export function LevelProgressBar({ level, totalRevenue, regionTier = "SMALL", size = "sm" }: LevelProgressBarProps) {
+  const progress = calculateStarProgress(totalRevenue, regionTier);
 
   // Max level = no progress bar
   if (!progress.nextLevel) {
@@ -29,8 +31,11 @@ export function LevelProgressBar({ level, totalPoints, size = "sm" }: LevelProgr
         />
       </div>
       <p className={`text-gray-500 mt-1 ${isSm ? "text-[10px]" : "text-xs"}`}>
-        {progress.percentage}% do {nextLabel}
-        {!isSm && ` \u00B7 ${progress.pointsNeeded.toFixed(0)} bod\u016F`}
+        {formatPrice(totalRevenue)} / {formatPrice(
+          (REGION_THRESHOLDS[regionTier] ?? REGION_THRESHOLDS.SMALL)[progress.nextLevel.key as keyof typeof REGION_THRESHOLDS.SMALL]
+        )}{" "}
+        do {nextLabel}
+        {!isSm && ` · chybí ${formatPrice(progress.revenueNeeded)}`}
       </p>
     </div>
   );

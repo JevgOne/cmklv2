@@ -25,13 +25,14 @@ export const metadata: Metadata = {
 /* ------------------------------------------------------------------ */
 
 const levelBadges: Record<string, { variant: "top" | "default" | "verified"; label: string }[]> = {
-  TOP: [
+  STAR_5: [
     { variant: "top", label: "TOP Makléř" },
     { variant: "default", label: "Rychlá reakce" },
   ],
-  SENIOR: [{ variant: "top", label: "TOP Makléř" }],
-  BROKER: [{ variant: "verified", label: "Ověřený" }],
-  JUNIOR: [{ variant: "verified", label: "Ověřený" }],
+  STAR_4: [{ variant: "top", label: "TOP Makléř" }],
+  STAR_3: [{ variant: "top", label: "TOP Makléř" }],
+  STAR_2: [{ variant: "verified", label: "Ověřený" }],
+  STAR_1: [{ variant: "verified", label: "Ověřený" }],
 };
 
 /* ------------------------------------------------------------------ */
@@ -106,7 +107,7 @@ export default async function MakleriPage() {
                   ? (() => { try { return JSON.parse(broker.cities); } catch { return []; } })()
                   : [];
                 const primaryCity = cities[0] || "ČR";
-                const badges = levelBadges[broker.level] || levelBadges.JUNIOR;
+                const badges = levelBadges[broker.level] || levelBadges.STAR_1;
 
                 return (
                   <Link
@@ -162,13 +163,7 @@ export default async function MakleriPage() {
                         </div>
                         <div className="text-center">
                           <div className="text-2xl font-extrabold bg-gradient-to-br from-orange-500 to-orange-600 bg-clip-text text-transparent">
-                            {broker.level === "EXPERT"
-                              ? "Expert"
-                              : broker.level === "SENIOR"
-                              ? "Senior"
-                              : broker.level === "JUNIOR"
-                              ? "Junior"
-                              : "Tipař"}
+                            {"⭐".repeat(parseInt(broker.level?.replace("STAR_", "") || "1"))}
                           </div>
                           <div className="text-[11px] font-semibold text-gray-500 mt-1">
                             Úroveň

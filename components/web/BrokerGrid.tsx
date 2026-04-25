@@ -16,10 +16,11 @@ export interface BrokerGridProps {
 }
 
 const LEVEL_RANK: Record<string, number> = {
-  TOP: 4,
-  SENIOR: 3,
-  BROKER: 2,
-  JUNIOR: 1,
+  STAR_5: 5,
+  STAR_4: 4,
+  STAR_3: 3,
+  STAR_2: 2,
+  STAR_1: 1,
 };
 
 export function BrokerGrid({ brokers, initialLimit = 12 }: BrokerGridProps) {

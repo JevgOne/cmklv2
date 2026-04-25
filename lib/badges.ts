@@ -127,21 +127,22 @@ export async function checkAndAwardBadges(userId: string): Promise<string[]> {
 export async function checkAndUpdateLevel(userId: string): Promise<string | null> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { totalPoints: true, level: true },
+    select: { totalRevenue: true, level: true, region: { select: { tier: true } } },
   });
 
   if (!user) return null;
 
-  // Level is now determined by totalPoints (career system)
-  const { calculateCareerLevel } = await import("./broker-points");
-  const careerLevel = calculateCareerLevel(user.totalPoints);
+  // Level is now determined by totalRevenue + region tier (star system)
+  const { calculateStarLevel } = await import("./broker-points");
+  const regionTier = (user.region?.tier ?? "SMALL") as import("./broker-points").RegionTier;
+  const starLevel = calculateStarLevel(user.totalRevenue, regionTier);
 
-  if (careerLevel.key !== user.level) {
+  if (starLevel.key !== user.level) {
     await prisma.user.update({
       where: { id: userId },
-      data: { level: careerLevel.key },
+      data: { level: starLevel.key },
     });
-    return careerLevel.key;
+    return starLevel.key;
   }
 
   return null;

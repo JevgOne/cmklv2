@@ -76,6 +76,7 @@ async function main() {
   const regionPraha = await prisma.region.create({
     data: {
       name: "Praha",
+      tier: "PRAHA",
       cities: JSON.stringify([
         "Praha 1",
         "Praha 2",
@@ -94,6 +95,7 @@ async function main() {
   const regionJihomoravsky = await prisma.region.create({
     data: {
       name: "Jihomoravsk\u00FD",
+      tier: "BRNO",
       cities: JSON.stringify(["Brno", "Znojmo", "B\u0159eclav"]),
     },
   });
@@ -101,6 +103,7 @@ async function main() {
   const regionMoravskoslezsky = await prisma.region.create({
     data: {
       name: "Moravskoslezsk\u00FD",
+      tier: "OSTRAVA_PLZEN",
       cities: JSON.stringify(["Ostrava", "Opava", "Fr\u00FDdek-M\u00EDstek"]),
     },
   });

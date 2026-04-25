@@ -79,7 +79,7 @@ export default async function DashboardPage() {
       prisma.user
         .findUnique({
           where: { id: userId },
-          select: { quickModeEnabled: true, level: true, totalPoints: true },
+          select: { quickModeEnabled: true, level: true, totalRevenue: true },
         })
         .catch(() => null),
       prisma.commission
@@ -94,8 +94,8 @@ export default async function DashboardPage() {
 
   const totalCommission = commissionAgg._sum.commission ?? 0;
   const quickModeEnabled = userData?.quickModeEnabled ?? false;
-  const userLevel = userData?.level ?? "TIPAR";
-  const userPoints = userData?.totalPoints ?? 0;
+  const userLevel = userData?.level ?? "STAR_1";
+  const userRevenue = userData?.totalRevenue ?? 0;
   const leaderboardPosition = leaderboardData.findIndex((c) => c.brokerId === userId) + 1 || null;
   const totalBrokersInLeaderboard = leaderboardData.length;
 
@@ -114,7 +114,7 @@ export default async function DashboardPage() {
         <div className="text-right">
           <LevelBadge level={userLevel} size="md" />
           <p className="text-xs text-gray-500 mt-1">
-            {userPoints.toFixed(0)} bodů
+            {new Intl.NumberFormat("cs-CZ").format(userRevenue)} Kč obrat
           </p>
         </div>
       </div>

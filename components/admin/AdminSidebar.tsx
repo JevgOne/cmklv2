@@ -34,6 +34,13 @@ const navSections: NavSection[] = [
     roles: ["ADMIN", "BACKOFFICE", "MANAGER", "REGIONAL_DIRECTOR"],
   },
   {
+    title: "KARIÉRA",
+    items: [
+      { id: "career", href: "/admin/career", icon: "⭐", label: "Kariérní systém" },
+    ],
+    roles: ["ADMIN", "BACKOFFICE", "MANAGER", "REGIONAL_DIRECTOR"],
+  },
+  {
     title: "MANAŽER",
     items: [
       { id: "manager-dashboard", href: "/admin/manager", icon: "📊", label: "Můj tým" },

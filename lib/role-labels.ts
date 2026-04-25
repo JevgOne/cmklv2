@@ -18,10 +18,11 @@ export const ROLE_LABELS: Record<string, string> = {
 };
 
 export const LEVEL_LABELS: Record<string, string> = {
-  TIPAR: "Tipař",
-  JUNIOR: "Junior",
-  SENIOR: "Senior",
-  EXPERT: "Expert",
+  STAR_1: "⭐",
+  STAR_2: "⭐⭐",
+  STAR_3: "⭐⭐⭐",
+  STAR_4: "⭐⭐⭐⭐",
+  STAR_5: "⭐⭐⭐⭐⭐",
 };
 
 export const ROLE_TABS: Record<string, string[]> = {

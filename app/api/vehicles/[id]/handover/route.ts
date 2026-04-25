@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { handoverVehicleSchema } from "@/lib/validators/sales";
 import { calculateCommission } from "@/lib/commission-calculator";
-import { addBrokerPoints, calculateCarSalePoints, type CareerLevelKey } from "@/lib/broker-points";
+import { addBrokerRevenue, type StarLevelKey } from "@/lib/broker-points";
 import { createNotification } from "@/lib/notifications";
 
 /* ------------------------------------------------------------------ */
@@ -82,7 +82,7 @@ export async function POST(
     }
 
     // Výpočet provize dle úrovně makléře
-    const brokerLevel = (vehicle.broker?.level ?? "TIPAR") as CareerLevelKey;
+    const brokerLevel = (vehicle.broker?.level ?? "STAR_1") as StarLevelKey;
     const commissionBreakdown = calculateCommission(data.soldPrice, brokerLevel);
 
     const result = await prisma.$transaction(async (tx) => {
@@ -140,25 +140,25 @@ export async function POST(
       return { vehicle: updatedVehicle, commission, commissionBreakdown };
     });
 
-    // --- Body za prodej auta ---
+    // --- Obrat za prodej auta ---
     if (vehicle.brokerId && result.commission) {
-      const points = calculateCarSalePoints(result.commissionBreakdown.total);
-      const pointResult = await addBrokerPoints({
+      const revenueResult = await addBrokerRevenue({
         brokerId: vehicle.brokerId,
         type: "CAR_SALE",
-        points,
+        amount: data.soldPrice,
         vehicleId: vehicle.id,
         commissionId: result.commission.id,
         description: `Prodej ${vehicle.brand} ${vehicle.model} za ${data.soldPrice} Kč`,
-        sourceAmount: result.commissionBreakdown.total,
       });
 
-      if (pointResult.levelChanged) {
+      if (revenueResult.levelChanged) {
+        const starLevel = revenueResult.newLevel;
+        const stars = "⭐".repeat(parseInt(starLevel.replace("STAR_", "")));
         await createNotification({
           userId: vehicle.brokerId,
           type: "SYSTEM",
-          title: `Povýšení! Jste nyní ${pointResult.newLevel}`,
-          body: `Celkem ${pointResult.newTotalPoints.toFixed(1)} bodů`,
+          title: `Povýšení! Jste nyní ${stars} Makléř`,
+          body: `Celkový obrat ${new Intl.NumberFormat("cs-CZ").format(revenueResult.newTotalRevenue)} Kč`,
           link: "/makler/stats",
         });
       }

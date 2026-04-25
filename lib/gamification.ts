@@ -1,14 +1,14 @@
 import { prisma } from "./prisma";
-import { calculateLevel } from "./gamification-levels";
+import { calculateStarLevel } from "./gamification-levels";
 
-// Re-export client-safe level helpers so existing server imports still work
+// Re-export client-safe star level helpers so existing server imports still work
 export {
-  LEVELS,
-  calculateLevel,
-  getLevelByKey,
-  calculateLevelProgress,
-  type LevelKey,
-  type LevelProgress,
+  STAR_LEVELS,
+  calculateStarLevel,
+  getStarLevelByKey,
+  calculateStarProgress,
+  type StarLevelKey,
+  type StarProgress,
 } from "./gamification-levels";
 
 // ============================================
@@ -192,12 +192,13 @@ export async function checkAndUnlockAchievements(userId: string): Promise<string
   // LOYAL_CLIENT
   if (loyalSellers.length > 0) await tryUnlock("LOYAL_CLIENT");
 
-  // Update totalSales counter (backward compat) — level is now managed by broker-points system
+  // Update totalSales counter (backward compat) — level is now managed by broker-points star system
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { totalPoints: true },
+    select: { totalRevenue: true, region: { select: { tier: true } } },
   });
-  const level = calculateLevel(user?.totalPoints ?? 0);
+  const regionTier = (user?.region?.tier as string) ?? "SMALL";
+  const level = calculateStarLevel(user?.totalRevenue ?? 0, regionTier);
   await prisma.user.update({
     where: { id: userId },
     data: { level: level.key, totalSales },

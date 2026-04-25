@@ -3,16 +3,16 @@
  *
  * Pravidla:
  * - Celková provize = 5% z prodejní ceny, minimálně 25 000 Kč
- * - Makléřův podíl závisí na kariérní úrovni:
- *   - Tipař: 30%
- *   - Junior: 40%
- *   - Senior: 55%
- *   - Expert: 65%
- * - +5% bonus za TIP (doporučení klienta)
+ * - Makléřův podíl závisí na kariérní úrovni (hvězdičky):
+ *   - ⭐     30%
+ *   - ⭐⭐    40%
+ *   - ⭐⭐⭐   50%
+ *   - ⭐⭐⭐⭐  55%
+ *   - ⭐⭐⭐⭐⭐ 60%
  * - Manažerský bonus = 2 500 Kč (fixní)
  */
 
-import { getCareerLevelByKey, TIP_BONUS_RATE, type CareerLevelKey } from "./broker-points";
+import { getStarLevelByKey, type StarLevelKey } from "./broker-points";
 
 export interface CommissionBreakdown {
   total: number;
@@ -28,13 +28,12 @@ const MANAGER_BONUS = 2_500;
 
 export function calculateCommission(
   soldPrice: number,
-  brokerLevel: CareerLevelKey = "TIPAR",
-  isTip: boolean = false
+  brokerLevel: StarLevelKey = "STAR_1"
 ): CommissionBreakdown {
   const total = Math.max(soldPrice * COMMISSION_RATE, MIN_COMMISSION);
 
-  const careerLevel = getCareerLevelByKey(brokerLevel);
-  const brokerRate = careerLevel.commissionRate + (isTip ? TIP_BONUS_RATE : 0);
+  const starLevel = getStarLevelByKey(brokerLevel);
+  const brokerRate = starLevel.commissionRate;
 
   const brokerShare = total * brokerRate;
   const managerBonus = MANAGER_BONUS;

@@ -1,149 +1,160 @@
 import { prisma } from "./prisma";
 
 // ============================================
-// KARIÉRNÍ ÚROVNĚ
+// KARIÉRNÍ ÚROVNĚ — HVĚZDIČKOVÝ SYSTÉM
 // ============================================
 
-export const CAREER_LEVELS = [
-  { key: "TIPAR", name: "Tipař", minPoints: 0, commissionRate: 0.30 },
-  { key: "JUNIOR", name: "Junior", minPoints: 300, commissionRate: 0.40 },
-  { key: "SENIOR", name: "Senior", minPoints: 500, commissionRate: 0.55 },
-  { key: "EXPERT", name: "Expert", minPoints: 650, commissionRate: 0.65 },
+export type StarLevelKey = "STAR_1" | "STAR_2" | "STAR_3" | "STAR_4" | "STAR_5";
+export type RegionTier = "PRAHA" | "BRNO" | "OSTRAVA_PLZEN" | "SMALL";
+
+export const STAR_LEVELS = [
+  { key: "STAR_1" as const, stars: 1, name: "⭐ Makléř", commissionRate: 0.30 },
+  { key: "STAR_2" as const, stars: 2, name: "⭐⭐ Makléř", commissionRate: 0.40 },
+  { key: "STAR_3" as const, stars: 3, name: "⭐⭐⭐ Makléř", commissionRate: 0.50 },
+  { key: "STAR_4" as const, stars: 4, name: "⭐⭐⭐⭐ Makléř", commissionRate: 0.55 },
+  { key: "STAR_5" as const, stars: 5, name: "⭐⭐⭐⭐⭐ Makléř", commissionRate: 0.60 },
 ] as const;
 
-export type CareerLevelKey = "TIPAR" | "JUNIOR" | "SENIOR" | "EXPERT";
-
-export const TIP_BONUS_RATE = 0.05; // +5% za doporučení klienta
+export type StarLevel = (typeof STAR_LEVELS)[number];
 
 // ============================================
-// VÝPOČET BODŮ
+// REGIONÁLNÍ PRAHY (celkový kumulativní obrat v Kč)
 // ============================================
 
-/** Auto prodej: 1 000 Kč provize pro firmu = 1 bod */
-export function calculateCarSalePoints(companyCommission: number): number {
-  return companyCommission / 1000;
-}
-
-/** Úvěr: fixně 20 bodů (počítá se od 20k Kč) */
-export function calculateLoanPoints(loanAmount: number): number {
-  if (loanAmount < 20_000) return 0;
-  return 20;
-}
-
-/** POV/HAV: 10 000 Kč co zaplatí klient = 1.4 bodu */
-export function calculateInsurancePoints(clientPayment: number): number {
-  return (clientPayment / 10_000) * 1.4;
-}
+export const REGION_THRESHOLDS: Record<RegionTier, Record<StarLevelKey, number>> = {
+  PRAHA: {
+    STAR_1: 0,
+    STAR_2: 1_500_000,
+    STAR_3: 2_500_000,
+    STAR_4: 4_000_000,
+    STAR_5: 6_000_000,
+  },
+  BRNO: {
+    STAR_1: 0,
+    STAR_2: 1_200_000,
+    STAR_3: 2_000_000,
+    STAR_4: 3_000_000,
+    STAR_5: 4_500_000,
+  },
+  OSTRAVA_PLZEN: {
+    STAR_1: 0,
+    STAR_2: 1_000_000,
+    STAR_3: 1_500_000,
+    STAR_4: 2_500_000,
+    STAR_5: 3_500_000,
+  },
+  SMALL: {
+    STAR_1: 0,
+    STAR_2: 750_000,
+    STAR_3: 1_200_000,
+    STAR_4: 2_000_000,
+    STAR_5: 3_000_000,
+  },
+};
 
 // ============================================
-// LEVEL Z BODŮ
+// LEVEL Z OBRATU + REGIONU
 // ============================================
 
-export function calculateCareerLevel(totalPoints: number): (typeof CAREER_LEVELS)[number] {
-  for (let i = CAREER_LEVELS.length - 1; i >= 0; i--) {
-    if (totalPoints >= CAREER_LEVELS[i].minPoints) {
-      return CAREER_LEVELS[i];
+export function calculateStarLevel(totalRevenue: number, regionTier: RegionTier): StarLevel {
+  const thresholds = REGION_THRESHOLDS[regionTier];
+  for (let i = STAR_LEVELS.length - 1; i >= 0; i--) {
+    if (totalRevenue >= thresholds[STAR_LEVELS[i].key]) {
+      return STAR_LEVELS[i];
     }
   }
-  return CAREER_LEVELS[0];
+  return STAR_LEVELS[0];
 }
 
-export function getCareerLevelByKey(key: string): (typeof CAREER_LEVELS)[number] {
-  return CAREER_LEVELS.find((l) => l.key === key) ?? CAREER_LEVELS[0];
-}
-
-// ============================================
-// BROKER COMMISSION RATE
-// ============================================
-
-/** Vrátí % provize pro makléře na základě jeho úrovně + TIP bonus */
-export function getBrokerCommissionRate(level: CareerLevelKey, isTip: boolean = false): number {
-  const careerLevel = getCareerLevelByKey(level);
-  return careerLevel.commissionRate + (isTip ? TIP_BONUS_RATE : 0);
+export function getStarLevelByKey(key: string): StarLevel {
+  return STAR_LEVELS.find((l) => l.key === key) ?? STAR_LEVELS[0];
 }
 
 // ============================================
-// PŘIDAT BODY
+// PROGRESS K DALŠÍ HVĚZDIČCE
 // ============================================
 
-export async function addBrokerPoints(params: {
+export interface StarProgress {
+  currentLevel: StarLevel;
+  nextLevel: StarLevel | null;
+  percentage: number;
+  totalRevenue: number;
+  revenueNeeded: number;
+}
+
+export function calculateStarProgress(totalRevenue: number, regionTier: RegionTier): StarProgress {
+  const currentLevel = calculateStarLevel(totalRevenue, regionTier);
+  const thresholds = REGION_THRESHOLDS[regionTier];
+  const currentIdx = STAR_LEVELS.findIndex((l) => l.key === currentLevel.key);
+  const nextLevel = currentIdx < STAR_LEVELS.length - 1 ? STAR_LEVELS[currentIdx + 1] : null;
+
+  if (!nextLevel) {
+    return { currentLevel, nextLevel: null, percentage: 100, totalRevenue, revenueNeeded: 0 };
+  }
+
+  const currentThreshold = thresholds[currentLevel.key];
+  const nextThreshold = thresholds[nextLevel.key];
+  const range = nextThreshold - currentThreshold;
+  const progress = totalRevenue - currentThreshold;
+  const percentage = Math.min(100, Math.round((progress / range) * 100));
+  const revenueNeeded = Math.max(0, nextThreshold - totalRevenue);
+
+  return { currentLevel, nextLevel, percentage, totalRevenue, revenueNeeded };
+}
+
+// ============================================
+// PŘIDAT OBRAT PO PRODEJI
+// ============================================
+
+export async function addBrokerRevenue(params: {
   brokerId: string;
-  type: "CAR_SALE" | "LOAN" | "INSURANCE" | "TIP_BONUS" | "MANUAL_ADJUSTMENT";
-  points: number;
+  type: "CAR_SALE" | "MANUAL_ADJUSTMENT";
+  amount: number;
   vehicleId?: string;
   commissionId?: string;
   description?: string;
-  sourceAmount?: number;
-}): Promise<{ newTotalPoints: number; newLevel: CareerLevelKey; levelChanged: boolean }> {
-  const { brokerId, type, points, vehicleId, commissionId, description, sourceAmount } = params;
+}): Promise<{ newTotalRevenue: number; newLevel: StarLevelKey; levelChanged: boolean }> {
+  const { brokerId, type, amount, vehicleId, commissionId, description } = params;
 
   const result = await prisma.$transaction(async (tx) => {
+    // Zjistit region tier makléře
+    const broker = await tx.user.findUnique({
+      where: { id: brokerId },
+      select: { level: true, totalRevenue: true, region: { select: { tier: true } } },
+    });
+
+    const regionTier = (broker?.region?.tier as RegionTier) ?? "SMALL";
+
+    // Vytvořit transakci
+    const newTotalRevenue = (broker?.totalRevenue ?? 0) + amount;
+
     await tx.brokerPointTransaction.create({
       data: {
         brokerId,
         type,
-        points,
+        amount,
         vehicleId: vehicleId ?? null,
         commissionId: commissionId ?? null,
         description: description ?? null,
-        sourceAmount: sourceAmount ?? null,
+        revenueAtTime: newTotalRevenue,
       },
     });
 
-    const agg = await tx.brokerPointTransaction.aggregate({
-      where: { brokerId },
-      _sum: { points: true },
-    });
+    // Spočítat novou úroveň
+    const newStarLevel = calculateStarLevel(newTotalRevenue, regionTier);
+    const levelChanged = broker?.level !== newStarLevel.key;
 
-    const newTotalPoints = agg._sum.points ?? 0;
-    const newLevel = calculateCareerLevel(newTotalPoints);
-
-    const user = await tx.user.findUnique({
-      where: { id: brokerId },
-      select: { level: true },
-    });
-
-    const levelChanged = user?.level !== newLevel.key;
-
+    // Update User
     await tx.user.update({
       where: { id: brokerId },
       data: {
-        totalPoints: newTotalPoints,
-        level: newLevel.key,
+        totalRevenue: newTotalRevenue,
+        level: newStarLevel.key,
       },
     });
 
-    return { newTotalPoints, newLevel: newLevel.key as CareerLevelKey, levelChanged };
+    return { newTotalRevenue, newLevel: newStarLevel.key as StarLevelKey, levelChanged };
   });
 
   return result;
-}
-
-// ============================================
-// PROGRESS K DALŠÍ ÚROVNI
-// ============================================
-
-export interface CareerProgress {
-  currentLevel: (typeof CAREER_LEVELS)[number];
-  nextLevel: (typeof CAREER_LEVELS)[number] | null;
-  percentage: number;
-  currentPoints: number;
-  pointsNeeded: number;
-}
-
-export function calculateCareerProgress(totalPoints: number): CareerProgress {
-  const currentLevel = calculateCareerLevel(totalPoints);
-  const currentIdx = CAREER_LEVELS.findIndex((l) => l.key === currentLevel.key);
-  const nextLevel = currentIdx < CAREER_LEVELS.length - 1 ? CAREER_LEVELS[currentIdx + 1] : null;
-
-  if (!nextLevel) {
-    return { currentLevel, nextLevel: null, percentage: 100, currentPoints: totalPoints, pointsNeeded: 0 };
-  }
-
-  const rangeSize = nextLevel.minPoints - currentLevel.minPoints;
-  const progress = totalPoints - currentLevel.minPoints;
-  const percentage = Math.min(100, Math.round((progress / rangeSize) * 100));
-  const pointsNeeded = Math.max(0, nextLevel.minPoints - totalPoints);
-
-  return { currentLevel, nextLevel, percentage, currentPoints: totalPoints, pointsNeeded };
 }

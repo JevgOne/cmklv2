@@ -30,10 +30,10 @@ model User {
   regionId String?
   region   Region? @relation(fields: [regionId], references: [id])
 
-  // Gamifikace — bodový systém
-  level       String @default("TIPAR")  // TIPAR, JUNIOR, SENIOR, EXPERT
-  totalSales  Int    @default(0)        // Zachovat pro zpětnou kompatibilitu
-  totalPoints Float  @default(0)        // Kumulativní body
+  // Gamifikace — hvězdičkový kariérní systém
+  level        String @default("STAR_1")  // STAR_1, STAR_2, STAR_3, STAR_4, STAR_5
+  totalSales   Int    @default(0)         // Zachovat pro zpětnou kompatibilitu (badges)
+  totalRevenue Int    @default(0)         // Celkový kumulativní obrat prodejů v Kč
 
   // Profil makléře
   specializations String? // JSON array: ["SUV", "Luxury"]
@@ -178,6 +178,7 @@ model Region {
   id     String  @id @default(cuid())
   name   String  @unique
   cities String? // JSON array
+  tier   String  @default("SMALL") // PRAHA, BRNO, OSTRAVA_PLZEN, SMALL
   users  User[]
 
   invitations Invitation[]
@@ -1578,16 +1579,16 @@ model BrokerPointTransaction {
   brokerId String
   broker   User   @relation("BrokerPoints", fields: [brokerId], references: [id])
 
-  type     String // CAR_SALE, LOAN, INSURANCE, TIP_BONUS, MANUAL_ADJUSTMENT
-  points   Float  // Počet bodů (může být desetinné — např. 2.8 za pojištění)
+  type   String // CAR_SALE, MANUAL_ADJUSTMENT
+  amount Int    @default(0) // Obrat v Kč
 
-  // Reference na zdroj bodů
+  // Reference na zdroj
   vehicleId    String?
   commissionId String?
   description  String?
 
-  // Finanční hodnoty pro audit
-  sourceAmount Int?
+  // Audit
+  revenueAtTime Int? // Kumulativní obrat po této transakci
 
   createdAt DateTime @default(now())
 

@@ -50,7 +50,7 @@ export async function GET() {
         brokerId: entry.brokerId,
         name: broker ? `${broker.firstName} ${broker.lastName}` : "Neznamy",
         avatar: broker?.avatar ?? null,
-        level: broker?.level ?? "TIPAR",
+        level: broker?.level ?? "STAR_1",
         salesCount: entry._count,
         totalCommission: entry._sum.commission ?? 0,
       };
