@@ -146,7 +146,7 @@ function Stat({
   valueClass?: string;
 }) {
   return (
-    <div className="text-center">
+    <div className="text-center px-5 sm:px-8">
       <div className={`text-xl font-bold ${valueClass ?? "text-gray-900"}`}>
         {value}
       </div>
@@ -314,8 +314,9 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
         <section className="-mt-20 sm:-mt-24 relative z-10">
           <div className="bg-white rounded-2xl shadow-card p-6 sm:p-8">
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-              <div className="relative w-28 h-28 sm:w-36 sm:h-36 -mt-16 sm:-mt-20 rounded-full border-4 border-white bg-gray-200 overflow-hidden shadow-lg shrink-0 mx-auto sm:mx-0">
+            <div className="flex flex-col items-center">
+              {/* Avatar */}
+              <div className="relative w-28 h-28 sm:w-32 sm:h-32 -mt-20 sm:-mt-24 rounded-full border-4 border-white bg-gray-200 overflow-hidden shadow-lg">
                 {user.avatar ? (
                   <Image
                     src={user.avatar}
@@ -330,179 +331,177 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
                 )}
               </div>
 
-              <div className="flex-1 min-w-0">
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 break-words">
-                      {fullName}
-                    </h1>
-                    <p className="text-sm text-gray-500 mt-1">
-                      {roleLabel}
-                      {user.city ? ` · ${user.city}` : ""} · Člen od{" "}
-                      {memberSince}
-                    </p>
-                    {/* Verification badges */}
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {["STAR_2", "STAR_3", "STAR_4", "STAR_5"].includes(user.level) && (
-                        <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
-                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                          </svg>
-                          Ověřená identita
-                        </span>
-                      )}
-                      {user.phone && (
-                        <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
-                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                          Ověřený telefon
-                        </span>
-                      )}
-                      {user.email && (
-                        <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
-                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                          Ověřený e-mail
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  {["BROKER", "MANAGER", "REGIONAL_DIRECTOR"].includes(user.role) && (
-                    <div className="shrink-0 flex flex-col items-end gap-1">
-                      <LevelBadge level={user.level} size="md" />
-                    </div>
-                  )}
+              {/* Name */}
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-4 text-center">
+                {fullName}
+              </h1>
+              <p className="text-sm text-gray-500 mt-1 text-center">
+                {roleLabel}
+                {user.city ? ` · ${user.city}` : ""} · Člen od{" "}
+                {memberSince}
+              </p>
+
+              {/* Star badge */}
+              {["BROKER", "MANAGER", "REGIONAL_DIRECTOR"].includes(user.role) && (
+                <div className="mt-3">
+                  <LevelBadge level={user.level} size="lg" />
                 </div>
+              )}
 
-                {user.tags && user.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 mt-4">
-                    {user.tags.map((tag) => (
-                      <TagPill
-                        key={tag.slug}
-                        slug={tag.slug}
-                        label={tag.label}
-                      />
-                    ))}
-                  </div>
+              {/* Verification badges */}
+              <div className="flex flex-wrap justify-center gap-2 mt-3">
+                {["STAR_2", "STAR_3", "STAR_4", "STAR_5"].includes(user.level) && (
+                  <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    Ověřená identita
+                  </span>
                 )}
+                {user.phone && (
+                  <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Ověřený telefon
+                  </span>
+                )}
+                {user.email && (
+                  <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Ověřený e-mail
+                  </span>
+                )}
+              </div>
 
-                {/* Stats row */}
-                <div className="flex flex-wrap gap-6 sm:gap-8 mt-5 py-3 border-t border-gray-100">
-                  {stats.vehicles > 0 && (
-                    <Stat value={stats.vehicles} label="Vozidla" />
-                  )}
-                  {stats.listings > 0 && (
-                    <Stat value={stats.listings} label="Inzeráty" />
-                  )}
-                  {stats.parts > 0 && (
-                    <Stat value={stats.parts} label="Díly" />
-                  )}
-                  <Stat value={stats.totalLikes} label="Lajky" />
-                  {["BROKER", "MANAGER", "REGIONAL_DIRECTOR"].includes(
-                    user.role,
-                  ) && <Stat value={stats.totalSales} label="Prodáno" />}
-                  {roleStats.completedFlips !== undefined && (
-                    <Stat value={roleStats.completedFlips} label="Flipy" />
-                  )}
-                  {roleStats.avgROI !== undefined && (
+              {user.tags && user.tags.length > 0 && (
+                <div className="flex flex-wrap justify-center gap-1.5 mt-4">
+                  {user.tags.map((tag) => (
+                    <TagPill
+                      key={tag.slug}
+                      slug={tag.slug}
+                      label={tag.label}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* Stats row — Instagram divide-x style */}
+              <div className="flex justify-center divide-x divide-gray-200 mt-5 py-4 w-full border-t border-b border-gray-100">
+                {["BROKER", "MANAGER", "REGIONAL_DIRECTOR"].includes(
+                  user.role,
+                ) && <Stat value={stats.totalSales} label="Prodejů" />}
+                {stats.vehicles > 0 && (
+                  <Stat value={stats.vehicles} label="Vozidla" />
+                )}
+                {stats.listings > 0 && (
+                  <Stat value={stats.listings} label="Inzeráty" />
+                )}
+                {stats.parts > 0 && (
+                  <Stat value={stats.parts} label="Díly" />
+                )}
+                <Stat value={stats.totalLikes} label="Lajky" />
+                {roleStats.completedFlips !== undefined && (
+                  <Stat value={roleStats.completedFlips} label="Flipy" />
+                )}
+                {roleStats.avgROI !== undefined && (
+                  <Stat
+                    value={`${roleStats.avgROI}%`}
+                    label="Průměrné ROI"
+                    valueClass="text-green-600"
+                  />
+                )}
+                {roleStats.totalInvested !== undefined && (
+                  <Stat
+                    value={formatPrice(roleStats.totalInvested)}
+                    label="Investováno"
+                  />
+                )}
+                {roleStats.completedDeals !== undefined && (
+                  <Stat
+                    value={roleStats.completedDeals}
+                    label="Dokončené dealy"
+                  />
+                )}
+                {roleStats.totalReturn !== undefined &&
+                  roleStats.totalReturn > 0 && (
                     <Stat
-                      value={`${roleStats.avgROI}%`}
-                      label="Průměrné ROI"
+                      value={formatPrice(roleStats.totalReturn)}
+                      label="Výnos"
                       valueClass="text-green-600"
                     />
                   )}
-                  {roleStats.totalInvested !== undefined && (
-                    <Stat
-                      value={formatPrice(roleStats.totalInvested)}
-                      label="Investováno"
-                    />
-                  )}
-                  {roleStats.completedDeals !== undefined && (
-                    <Stat
-                      value={roleStats.completedDeals}
-                      label="Dokončené dealy"
-                    />
-                  )}
-                  {roleStats.totalReturn !== undefined &&
-                    roleStats.totalReturn > 0 && (
-                      <Stat
-                        value={formatPrice(roleStats.totalReturn)}
-                        label="Výnos"
-                        valueClass="text-green-600"
-                      />
-                    )}
-                </div>
-
-                {/* Actions */}
-                <div className="flex flex-wrap gap-2 mt-5">
-                  {isOwner ? (
-                    <Link
-                      href="/muj-ucet/profil"
-                      className="inline-flex items-center gap-1.5 py-2 px-4 bg-orange-500 text-white font-semibold rounded-full text-sm no-underline hover:bg-orange-600 transition-colors"
-                    >
-                      Upravit profil
-                    </Link>
-                  ) : (
-                    <>
-                      {user.phone && (
-                        <a
-                          href={`tel:${user.phone}`}
-                          className="inline-flex items-center gap-1.5 py-2.5 px-5 bg-orange-500 text-white font-semibold rounded-full text-sm no-underline hover:bg-orange-600 transition-colors shadow-sm"
-                        >
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                          </svg>
-                          Zavolat
-                        </a>
-                      )}
-                      {user.email && (
-                        <a
-                          href={`mailto:${user.email}`}
-                          className="inline-flex items-center gap-1.5 py-2.5 px-5 border-2 border-orange-500 text-orange-600 font-semibold rounded-full text-sm no-underline hover:bg-orange-50 transition-colors"
-                        >
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                          </svg>
-                          Napsat zprávu
-                        </a>
-                      )}
-                    </>
-                  )}
-                  <button
-                    onClick={handleShare}
-                    className="inline-flex items-center gap-1.5 py-2 px-4 bg-white border border-gray-200 text-gray-700 font-semibold rounded-full text-sm cursor-pointer hover:border-orange-300 transition-colors"
-                  >
-                    {copied ? "Zkopírováno!" : "Sdílet profil"}
-                  </button>
-                </div>
-
-                {/* CTA — Prodat auto s tímto makléřem */}
-                {!isOwner && (user.role === "BROKER" || user.role === "MANAGER") && (
-                  <div className="mt-4 pt-4 border-t border-gray-200">
-                    <Link
-                      href="/chci-prodat"
-                      className="flex items-center gap-3 p-4 bg-orange-50 rounded-xl no-underline hover:bg-orange-100 transition-colors group"
-                    >
-                      <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                        🚗
-                      </div>
-                      <div>
-                        <div className="font-bold text-gray-900 text-sm">
-                          Chcete prodat auto?
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          Vyplňte formulář a makléř vás kontaktuje
-                        </div>
-                      </div>
-                      <span className="ml-auto text-orange-500 font-semibold text-sm">
-                        →
-                      </span>
-                    </Link>
-                  </div>
-                )}
               </div>
+
+              {/* Actions */}
+              <div className="flex flex-wrap justify-center gap-2 mt-5">
+                {isOwner ? (
+                  <Link
+                    href="/muj-ucet/profil"
+                    className="inline-flex items-center gap-1.5 py-2 px-4 bg-orange-500 text-white font-semibold rounded-full text-sm no-underline hover:bg-orange-600 transition-colors"
+                  >
+                    Upravit profil
+                  </Link>
+                ) : (
+                  <>
+                    {user.phone && (
+                      <a
+                        href={`tel:${user.phone}`}
+                        className="inline-flex items-center gap-1.5 py-2.5 px-5 bg-orange-500 text-white font-semibold rounded-full text-sm no-underline hover:bg-orange-600 transition-colors shadow-sm"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                        </svg>
+                        Zavolat
+                      </a>
+                    )}
+                    {user.email && (
+                      <a
+                        href={`mailto:${user.email}`}
+                        className="inline-flex items-center gap-1.5 py-2.5 px-5 border-2 border-orange-500 text-orange-600 font-semibold rounded-full text-sm no-underline hover:bg-orange-50 transition-colors"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        Napsat zprávu
+                      </a>
+                    )}
+                  </>
+                )}
+                <button
+                  onClick={handleShare}
+                  className="inline-flex items-center gap-1.5 py-2 px-4 bg-white border border-gray-200 text-gray-700 font-semibold rounded-full text-sm cursor-pointer hover:border-orange-300 transition-colors"
+                >
+                  {copied ? "Zkopírováno!" : "Sdílet profil"}
+                </button>
+              </div>
+
+              {/* CTA — Prodat auto s tímto makléřem */}
+              {!isOwner && (user.role === "BROKER" || user.role === "MANAGER") && (
+                <div className="w-full mt-4 pt-4 border-t border-gray-200">
+                  <Link
+                    href="/chci-prodat"
+                    className="flex items-center gap-3 p-4 bg-orange-50 rounded-xl no-underline hover:bg-orange-100 transition-colors group"
+                  >
+                    <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                      🚗
+                    </div>
+                    <div>
+                      <div className="font-bold text-gray-900 text-sm">
+                        Chcete prodat auto?
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        Vyplňte formulář a makléř vás kontaktuje
+                      </div>
+                    </div>
+                    <span className="ml-auto text-orange-500 font-semibold text-sm">
+                      →
+                    </span>
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </section>
