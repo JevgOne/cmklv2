@@ -8,6 +8,7 @@ import { Alert } from "@/components/ui/Alert";
 import { StepLayout } from "./StepLayout";
 import { useDraftContext } from "@/lib/hooks/useDraft";
 import { offlineStorage } from "@/lib/offline/storage";
+import { uploadDraftPhotos } from "@/lib/offline/upload-photos";
 import { formatPrice, formatMileage } from "@/lib/utils";
 import type { VehicleDraft } from "@/types/vehicle-draft";
 
@@ -110,6 +111,7 @@ export function ReviewStep() {
   const draftId = searchParams.get("draft") || "";
   const { draft, updateStatus, saveDraft } = useDraftContext();
   const [submitting, setSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const checklist = useMemo(
@@ -194,6 +196,26 @@ export function ReviewStep() {
         }
 
         const result = (await response.json()) as { id: string };
+
+        // Upload photos from IndexedDB to Cloudinary
+        const allPhotos = draft.photos?.photos ?? [];
+        if (allPhotos.length > 0) {
+          setSubmitStatus("Nahrávám fotky...");
+          const imageUrls = await uploadDraftPhotos(
+            draft.id,
+            allPhotos,
+            (done, total) => setSubmitStatus(`Nahrávám fotky... (${done}/${total})`)
+          );
+          if (imageUrls.length > 0) {
+            setSubmitStatus("Ukládám fotky k vozidlu...");
+            await fetch(`/api/vehicles/${result.id}/images`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ images: imageUrls }),
+            });
+          }
+        }
+
         updateStatus("submitted");
         await saveDraft();
 
@@ -217,6 +239,8 @@ export function ReviewStep() {
           `submit_${draft.id}`,
           "SUBMIT_VEHICLE",
           {
+            _draftId: draft.id,
+            _photos: draft.photos?.photos ?? [],
             vin: ov.vin ?? "",
             brand: od.brand ?? "",
             model: od.model ?? "",
@@ -433,7 +457,7 @@ export function ReviewStep() {
             disabled={!allPassed || submitting}
           >
             {submitting
-              ? "Odesílám..."
+              ? (submitStatus || "Odesílám...")
               : navigator.onLine
                 ? "Odeslat ke schválení"
                 : "Uložit k odeslání (offline)"}
