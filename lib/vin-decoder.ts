@@ -166,6 +166,10 @@ function normalizeNhtsa(
 ): VinDecoderResult {
   const record = data.Results?.[0] ?? {};
 
+  // Check NHTSA error code — "5" means VIN has errors (common for EU VINs)
+  const errorCode = record["ErrorCode"] ?? "";
+  const hasErrors = errorCode.includes("5") || errorCode.includes("14");
+
   const strVal = (key: string): string | undefined => {
     const v = record[key];
     return typeof v === "string" && v.trim().length > 0 ? v.trim() : undefined;
@@ -177,6 +181,31 @@ function normalizeNhtsa(
     const parsed = parseInt(v, 10);
     return isNaN(parsed) ? undefined : parsed;
   };
+
+  // Detect EU VIN — positions 4-6 are often "ZZZ" (filler)
+  const isEuropeanVin = vin.substring(3, 6) === "ZZZ";
+
+  // For EU VINs, NHTSA year decode is unreliable — decode from VIN position 10
+  let year = numVal("ModelYear");
+  if (isEuropeanVin || hasErrors) {
+    const vinYear = decodeYearFromVin(vin);
+    if (vinYear && (!year || Math.abs(year - vinYear) > 5)) {
+      year = vinYear;
+    }
+  }
+
+  // If NHTSA returned no model (common for EU VINs), don't trust the data
+  const model = strVal("Model");
+  if (hasErrors && !model) {
+    // NHTSA can't decode this VIN properly — return what we can
+    return {
+      vin,
+      brand: strVal("Make"),
+      model: undefined,
+      year,
+      raw: record as Record<string, unknown>,
+    };
+  }
 
   // Normalizace fuel type
   const rawFuel = strVal("FuelTypePrimary");
@@ -197,9 +226,9 @@ function normalizeNhtsa(
   return {
     vin,
     brand: strVal("Make"),
-    model: strVal("Model"),
+    model,
     variant: strVal("Trim"),
-    year: numVal("ModelYear"),
+    year,
     fuelType,
     transmission,
     enginePower: numVal("EngineKW"),
@@ -210,6 +239,25 @@ function normalizeNhtsa(
     seatsCount: numVal("Seats"),
     raw: record as Record<string, unknown>,
   };
+}
+
+// ============================================
+// VIN Year Decode (position 10)
+// ============================================
+
+function decodeYearFromVin(vin: string): number | undefined {
+  if (vin.length < 10) return undefined;
+  const code = vin[9];
+  const yearMap: Record<string, number> = {
+    A: 2010, B: 2011, C: 2012, D: 2013, E: 2014,
+    F: 2015, G: 2016, H: 2017, J: 2018, K: 2019,
+    L: 2020, M: 2021, N: 2022, P: 2023, R: 2024,
+    S: 2025, T: 2026, V: 2027, W: 2028, X: 2029,
+    Y: 2030, "1": 2031, "2": 2032, "3": 2033,
+    "4": 2034, "5": 2035, "6": 2036, "7": 2037,
+    "8": 2038, "9": 2039,
+  };
+  return yearMap[code];
 }
 
 // ============================================

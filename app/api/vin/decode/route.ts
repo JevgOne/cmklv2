@@ -43,10 +43,15 @@ export async function GET(request: NextRequest) {
     // Dekódování (nikdy nethrowuje — vrátí alespoň { vin })
     const result = await decodeVin(parseResult.data);
 
+    // Flag pro klienta: pokud chybí model, je potřeba manuální doplnění
+    const isIncomplete = !result.brand || !result.model || !result.year;
+
     return NextResponse.json({
       data: result,
-      // Flag pro klienta: pokud API nevrátilo brand, je potřeba manuální zadání
-      manual: !result.brand,
+      manual: isIncomplete,
+      message: isIncomplete
+        ? "VIN byl částečně rozpoznán. Doplňte prosím chybějící údaje ručně."
+        : undefined,
     });
   } catch (error) {
     console.error("GET /api/vin/decode error:", error);
