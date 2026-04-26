@@ -174,21 +174,26 @@ export function AdminSidebar({ open, onClose }: AdminSidebarProps) {
                 const hasQuery = !!hrefQuery;
                 let isActive: boolean;
                 if (hasQuery) {
-                  // Match path AND query param (e.g. /admin/partners?type=AUTOBAZAR)
                   const params = new URLSearchParams(hrefQuery);
                   isActive = pathname === hrefPath &&
                     Array.from(params.entries()).every(([k, v]) => searchParams.get(k) === v);
-                } else {
-                  // Check if sibling items have query variants for same path
+                } else if (pathname === item.href) {
+                  // Exact match — active unless a query-sibling is more specific
                   const hasQuerySiblings = section.items.some(
                     (sibling) => sibling.id !== item.id && sibling.href.startsWith(item.href + "?")
                   );
-                  if (hasQuerySiblings && pathname === item.href) {
-                    // Only active when no filter query params are set
-                    isActive = !searchParams.get("type");
-                  } else {
-                    isActive = pathname === item.href || pathname.startsWith(item.href + "/");
-                  }
+                  isActive = hasQuerySiblings ? !searchParams.get("type") : true;
+                } else if (pathname.startsWith(item.href + "/")) {
+                  // Prefix match — only if no sibling item is a better (longer) match
+                  const hasBetterMatch = section.items.some(
+                    (sibling) => sibling.id !== item.id &&
+                      !sibling.href.includes("?") &&
+                      sibling.href.length > item.href.length &&
+                      (pathname === sibling.href || pathname.startsWith(sibling.href + "/"))
+                  );
+                  isActive = !hasBetterMatch;
+                } else {
+                  isActive = false;
                 }
                 return (
                   <Link
