@@ -224,50 +224,50 @@ export function ListingsPageContent() {
       key: "actions",
       header: "Akce",
       render: (item: ListingRow) => (
-        <div className="flex flex-wrap gap-1 md:gap-2">
+        <div className="flex items-center gap-2">
           {item.status === "DRAFT" && (
-            <Button
-              variant="success"
-              size="sm"
-              onClick={() => handleAction(item.id, "approve")}
-            >
-              Schválit
-            </Button>
-          )}
-          {item.status === "DRAFT" && (
-            <Button
-              variant="danger"
-              size="sm"
-              onClick={() => handleAction(item.id, "reject")}
-            >
-              Zamítnout
-            </Button>
+            <>
+              <button
+                onClick={() => handleAction(item.id, "approve")}
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md text-white bg-emerald-500 hover:bg-emerald-600 transition-colors"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5"><path fillRule="evenodd" d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z" clipRule="evenodd" /></svg>
+                Schválit
+              </button>
+              <button
+                onClick={() => handleAction(item.id, "reject")}
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md text-red-600 bg-red-50 hover:bg-red-100 transition-colors"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5"><path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z" /></svg>
+                Zamítnout
+              </button>
+            </>
           )}
           {item.status === "ACTIVE" && (
-            <Button
-              variant="ghost"
-              size="sm"
+            <button
               onClick={() => handleAction(item.id, "deactivate")}
+              className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md text-amber-700 bg-amber-50 hover:bg-amber-100 transition-colors"
             >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5"><path d="M4.5 7a.75.75 0 0 0 0 1.5h7a.75.75 0 0 0 0-1.5h-7Z" /></svg>
               Deaktivovat
-            </Button>
+            </button>
           )}
           {item.status === "INACTIVE" && (
-            <Button
-              variant="success"
-              size="sm"
+            <button
               onClick={() => handleAction(item.id, "approve")}
+              className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md text-white bg-emerald-500 hover:bg-emerald-600 transition-colors"
             >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5"><path fillRule="evenodd" d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z" clipRule="evenodd" /></svg>
               Aktivovat
-            </Button>
+            </button>
           )}
-          <Button
-            variant="ghost"
-            size="sm"
+          <button
             onClick={() => router.push(`/admin/inzerce/${item.id}`)}
+            className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
           >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5"><path d="M6.22 8.72a.75.75 0 0 1 0-1.06l3.5-3.5a.75.75 0 1 1 1.06 1.06L7.81 8l2.97 2.78a.75.75 0 1 1-1.06 1.06l-3.5-3.5Z" /></svg>
             Detail
-          </Button>
+          </button>
         </div>
       ),
     },

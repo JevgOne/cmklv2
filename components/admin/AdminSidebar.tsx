@@ -223,12 +223,20 @@ export function AdminSidebar({ open, onClose }: AdminSidebarProps) {
         {/* Footer */}
         <div className="p-4 border-t border-white/[0.08]">
           <Link href="/admin/profile" className="flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors no-underline">
-            <div
-              className="w-[40px] h-[40px] rounded-lg flex items-center justify-center"
-              style={{ background: "var(--gradient-orange)" }}
-            >
-              <span className="font-bold text-white text-sm">{initials}</span>
-            </div>
+            {session?.user?.avatar ? (
+              <img
+                src={session.user.avatar}
+                alt={displayName}
+                className="w-[40px] h-[40px] rounded-lg object-cover"
+              />
+            ) : (
+              <div
+                className="w-[40px] h-[40px] rounded-lg flex items-center justify-center"
+                style={{ background: "var(--gradient-orange)" }}
+              >
+                <span className="font-bold text-white text-sm">{initials}</span>
+              </div>
+            )}
             <div className="flex-1 min-w-0">
               <div className="font-semibold text-sm text-white">{displayName}</div>
               <div className="text-xs text-gray-500">{roleLabel}</div>
