@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
     if (!session?.user) {
       return NextResponse.json({ error: "Nepřihlášen" }, { status: 401 });
     }
-    if (!["ADMIN", "BACKOFFICE"].includes(session.user.role)) {
+    if (!["ADMIN", "BACKOFFICE", "MANAGER"].includes(session.user.role)) {
       return NextResponse.json({ error: "Nemáte oprávnění" }, { status: 403 });
     }
 

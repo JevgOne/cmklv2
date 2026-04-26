@@ -244,7 +244,14 @@ export function AdminSidebar({ open, onClose }: AdminSidebarProps) {
           </Link>
           <button
             type="button"
-            onClick={() => signOut({ callbackUrl: "/login" })}
+            onClick={async () => {
+              try {
+                await signOut({ redirect: false });
+              } catch {
+                // ignore signOut errors
+              }
+              window.location.href = "/login";
+            }}
             className="mt-3 w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
