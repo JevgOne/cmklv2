@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
 import { BASE_URL } from "@/lib/seo-data";
+import { generatePersonJsonLd } from "@/lib/seo";
 import { ROLE_LABELS } from "@/lib/role-labels";
 import { getSkillTagCounts } from "@/lib/reputation/skill-tags";
 import { ProfileClient, type ProfileData } from "./ProfileClient";
@@ -286,35 +287,20 @@ export default async function ProfilePage({
   const { user } = data;
   const fullName = `${user.firstName} ${user.lastName}`;
   const roleLabel = ROLE_LABELS[user.role] ?? "Profil";
-  const sameAs = user.socialLinks
-    ? Object.values(user.socialLinks).filter(
-        (v): v is string => typeof v === "string" && v.length > 0,
-      )
-    : [];
-
-  const jsonLd: Record<string, unknown> = {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    name: fullName,
-    url: `${BASE_URL}/profil/${slug}`,
-    jobTitle: roleLabel,
-    worksFor: { "@type": "Organization", name: "CarMakléř" },
-  };
-  if (user.city) {
-    jsonLd.address = {
-      "@type": "PostalAddress",
-      addressLocality: user.city,
-      addressCountry: "CZ",
-    };
-  }
-  if (user.avatar) jsonLd.image = user.avatar;
-  if (sameAs.length > 0) jsonLd.sameAs = sameAs;
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{
+          __html: generatePersonJsonLd({
+            name: fullName,
+            url: `${BASE_URL}/profil/${slug}`,
+            image: user.avatar || undefined,
+            jobTitle: roleLabel,
+            address: user.city || undefined,
+          }),
+        }}
       />
       <ProfileClient initialData={data} slug={slug} />
     </>
