@@ -40,6 +40,7 @@ export function VinStep() {
     (draft?.vin?.decodedData as VinDecoderResult | undefined) ?? null
   );
   const [decodeError, setDecodeError] = useState<string | null>(null);
+  const [manualEntryNote, setManualEntryNote] = useState(false);
   const [offlineNote, setOfflineNote] = useState(false);
   const [scanModalOpen, setScanModalOpen] = useState(false);
   const [hasCamera, setHasCamera] = useState(false);
@@ -67,6 +68,7 @@ export function VinStep() {
 
       setVin(value);
       setDecodeError(null);
+      setManualEntryNote(false);
       setOfflineNote(false);
 
       if (value.length === 17) {
@@ -167,29 +169,51 @@ export function VinStep() {
       const json = await res.json();
 
       if (!res.ok) {
-        setDecodeError(json.error ?? "Chyba při dekódování VIN");
+        // API selhalo — uložit VIN bez dekódování, umožnit manuální zadání
+        setManualEntryNote(true);
+        updateSection("vin", {
+          vin,
+          vinVerified: false,
+        });
         return;
       }
 
       const result: VinDecoderResult = json.data;
-      setDecoded(result);
+      const isManual = json.manual === true;
 
-      // Cache do IndexedDB
-      try {
-        await offlineStorage.cacheVin(vin, result as unknown as Record<string, unknown>);
-      } catch {
-        // Cache selhala, ale dekódování proběhlo
+      if (isManual || !result.brand) {
+        // API nevrátilo data — manuální zadání v dalším kroku
+        setManualEntryNote(true);
+        updateSection("vin", {
+          vin,
+          vinVerified: false,
+        });
+      } else {
+        setDecoded(result);
+        setManualEntryNote(false);
+
+        // Cache do IndexedDB
+        try {
+          await offlineStorage.cacheVin(vin, result as unknown as Record<string, unknown>);
+        } catch {
+          // Cache selhala, ale dekódování proběhlo
+        }
+
+        // Uložit do draftu
+        updateSection("vin", {
+          vin,
+          vinVerified: true,
+          decodedData: result,
+        });
       }
-
-      // Uložit do draftu
+    } catch (err) {
+      // Fetch selhalo — umožnit pokračování s manuálním zadáním
+      console.error("VIN decode error:", err);
+      setManualEntryNote(true);
       updateSection("vin", {
         vin,
-        vinVerified: true,
-        decodedData: result,
+        vinVerified: false,
       });
-    } catch (err) {
-      setDecodeError("Nepodařilo se dekódovat VIN. Zkuste to znovu.");
-      console.error("VIN decode error:", err);
     } finally {
       setDecoding(false);
     }
@@ -371,6 +395,21 @@ export function VinStep() {
         {decodeError && (
           <Alert variant="error">
             <span className="text-sm">{decodeError}</span>
+          </Alert>
+        )}
+
+        {/* Manual entry note — APIs nevrátily data */}
+        {manualEntryNote && !decoded && (
+          <Alert variant="info">
+            <div className="space-y-1">
+              <p className="text-sm font-semibold">
+                VIN se nepodařilo automaticky dekódovat
+              </p>
+              <p className="text-sm">
+                Údaje o vozidle (značka, model, rok atd.) vyplníte ručně v dalším kroku.
+                Můžete pokračovat kliknutím na &quot;Pokračovat&quot;.
+              </p>
+            </div>
           </Alert>
         )}
 

@@ -26,7 +26,13 @@ export async function decodeVin(vin: string): Promise<VinDecoderResult> {
   }
 
   // Fallback na NHTSA vPIC API (free, no key)
-  return decodeWithNhtsa(normalized);
+  try {
+    return await decodeWithNhtsa(normalized);
+  } catch (err) {
+    console.warn("NHTSA fallback selhalo:", err);
+    // Vrátit minimální výsledek — UI nabídne manuální zadání
+    return { vin: normalized };
+  }
 }
 
 // ============================================

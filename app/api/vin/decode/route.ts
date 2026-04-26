@@ -10,6 +10,10 @@ const vinSchema = z.string().regex(
 );
 
 export async function GET(request: NextRequest) {
+  // Extrahovat VIN z query params předem (pro graceful fallback v catch)
+  const { searchParams } = new URL(request.url);
+  const rawVin = searchParams.get("vin")?.toUpperCase().trim();
+
   try {
     // Auth check
     const session = await getServerSession(authOptions);
@@ -19,10 +23,6 @@ export async function GET(request: NextRequest) {
         { status: 401 }
       );
     }
-
-    // Query param
-    const { searchParams } = new URL(request.url);
-    const rawVin = searchParams.get("vin")?.toUpperCase().trim();
 
     if (!rawVin) {
       return NextResponse.json(
@@ -40,23 +40,21 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Dekódování
+    // Dekódování (nikdy nethrowuje — vrátí alespoň { vin })
     const result = await decodeVin(parseResult.data);
 
-    return NextResponse.json({ data: result });
+    return NextResponse.json({
+      data: result,
+      // Flag pro klienta: pokud API nevrátilo brand, je potřeba manuální zadání
+      manual: !result.brand,
+    });
   } catch (error) {
     console.error("GET /api/vin/decode error:", error);
 
-    if (error instanceof Error && error.name === "AbortError") {
-      return NextResponse.json(
-        { error: "Dekódování VIN trvalo příliš dlouho. Zkuste to znovu." },
-        { status: 504 }
-      );
-    }
-
+    // Graceful degradation — nikdy nevracet 500, vždy umožnit manuální zadání
     return NextResponse.json(
-      { error: "Chyba při dekódování VIN" },
-      { status: 500 }
+      { data: { vin: rawVin ?? "" }, manual: true },
+      { status: 200 }
     );
   }
 }
