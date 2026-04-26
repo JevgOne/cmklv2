@@ -97,6 +97,22 @@ export const investmentFilterSchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(12),
 });
 
+// Admin — aktualizace žádosti o přístup
+const applicationStatuses = ["NEW", "CONTACTED", "APPROVED", "REJECTED", "SPAM"] as const;
+
+export const updateApplicationSchema = z.object({
+  status: z.enum(applicationStatuses),
+  adminNotes: z.string().optional(),
+  rejectionReason: z.string().optional(),
+});
+
+export const applicationFilterSchema = z.object({
+  status: z.string().optional(),
+  search: z.string().optional(),
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+});
+
 // Žádost o přístup — PUBLIC (nevyžaduje login)
 export const applySchema = z
   .object({

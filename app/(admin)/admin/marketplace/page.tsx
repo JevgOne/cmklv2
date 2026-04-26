@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { StatCard } from "@/components/ui/StatCard";
 import { Badge } from "@/components/ui/Badge";
@@ -10,7 +11,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminMarketplacePage() {
   // Real stats from DB
-  const [totalFlips, activeFlips, pendingApprovalCount, pendingInvestments, allFlipsRaw] =
+  const [totalFlips, activeFlips, pendingApprovalCount, pendingInvestments, allFlipsRaw, newApplicationsCount] =
     await Promise.all([
       prisma.flipOpportunity.count(),
       prisma.flipOpportunity.count({
@@ -38,6 +39,7 @@ export default async function AdminMarketplacePage() {
         orderBy: { createdAt: "desc" },
         take: 30,
       }),
+      prisma.marketplaceApplication.count({ where: { status: "NEW" } }),
     ]);
 
   // Compute total volume
@@ -90,6 +92,18 @@ export default async function AdminMarketplacePage() {
           Marketplace
         </h1>
       </div>
+
+      {/* Applications link */}
+      <Link
+        href="/admin/marketplace/applications"
+        className="flex items-center gap-3 mb-6 px-5 py-4 bg-orange-50 border border-orange-200 rounded-2xl no-underline hover:bg-orange-100 transition-colors"
+      >
+        <span className="text-lg">📋</span>
+        <span className="text-sm font-bold text-gray-900">Žádosti o přístup</span>
+        {newApplicationsCount > 0 && (
+          <Badge variant="rejected">{newApplicationsCount} nových</Badge>
+        )}
+      </Link>
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
