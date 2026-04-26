@@ -73,7 +73,7 @@ export const payoutSchema = z.object({
 // Investice
 export const createInvestmentSchema = z.object({
   opportunityId: z.string().min(1, "ID příležitosti je povinné"),
-  amount: z.number().int().min(1000, "Minimální investice je 1 000 Kč"),
+  amount: z.number().int().min(10000, "Minimální investice je 10 000 Kč"),
 });
 
 // Potvrzení platby (admin)

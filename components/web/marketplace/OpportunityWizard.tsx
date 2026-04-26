@@ -31,7 +31,6 @@ interface FormData {
   repairCost: number;
   repairPhotos: string[];
   estimatedSalePrice: number;
-  marketAnalysis: string;
 }
 
 const initialFormData: FormData = {
@@ -47,7 +46,6 @@ const initialFormData: FormData = {
   repairCost: 0,
   repairPhotos: [],
   estimatedSalePrice: 0,
-  marketAnalysis: "",
 };
 
 export function OpportunityWizard() {
@@ -238,13 +236,6 @@ export function OpportunityWizard() {
               value={form.estimatedSalePrice || ""}
               onChange={(e) => updateForm({ estimatedSalePrice: Number(e.target.value) })}
               min={0}
-            />
-            <Textarea
-              label="Analýza trhu"
-              value={form.marketAnalysis}
-              onChange={(e) => updateForm({ marketAnalysis: e.target.value })}
-              placeholder="Proč si myslíte, že auto půjde prodat za tuto cenu? Jaké jsou srovnatelné nabídky na trhu?"
-              rows={4}
             />
             <Alert variant="info">
               <span className="text-sm">

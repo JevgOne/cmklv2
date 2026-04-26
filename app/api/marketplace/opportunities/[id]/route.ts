@@ -42,6 +42,7 @@ export async function GET(
             lastName: true,
             companyName: true,
             avatar: true,
+            email: true,
           },
         },
         investments: {
@@ -84,9 +85,17 @@ export async function GET(
           )
         : opportunity.investments;
 
+    // Email dealera viditelný pouze pro ADMIN/BACKOFFICE
+    const isAdmin = ADMIN_ROLES.includes(session.user.role);
+    const dealerData = {
+      ...opportunity.dealer,
+      email: isAdmin ? opportunity.dealer.email : undefined,
+    };
+
     return NextResponse.json({
       opportunity: {
         ...opportunity,
+        dealer: dealerData,
         totalNeeded: opportunity.purchasePrice + opportunity.repairCost,
         investments,
       },
