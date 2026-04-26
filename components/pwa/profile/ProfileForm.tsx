@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
@@ -28,6 +29,7 @@ interface ProfileFormProps {
 }
 
 export function ProfileForm({ defaultValues }: ProfileFormProps) {
+  const { update: updateSession } = useSession();
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
@@ -57,6 +59,8 @@ export function ProfileForm({ defaultValues }: ProfileFormProps) {
       });
 
       if (res.ok) {
+        // Refresh JWT token so session reflects updated name
+        await updateSession();
         setMessage({ type: "success", text: "Profil byl uložen." });
       } else {
         const err = await res.json();

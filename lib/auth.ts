@@ -51,7 +51,7 @@ export const authOptions: NextAuthOptions = {
     signIn: "/login",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       if (user) {
         token.role = user.role;
         token.status = user.status;
@@ -63,6 +63,37 @@ export const authOptions: NextAuthOptions = {
         token.onboardingStep = user.onboardingStep;
         token.onboardingCompleted = user.onboardingCompleted;
         token.isEmailVerified = user.isEmailVerified;
+      }
+      // Re-fetch user from DB when client calls session.update()
+      if (trigger === "update" && token.sub) {
+        const freshUser = await prisma.user.findUnique({
+          where: { id: token.sub },
+          select: {
+            firstName: true,
+            lastName: true,
+            avatar: true,
+            role: true,
+            status: true,
+            accountType: true,
+            level: true,
+            onboardingStep: true,
+            onboardingCompleted: true,
+            emailVerified: true,
+          },
+        });
+        if (freshUser) {
+          token.firstName = freshUser.firstName;
+          token.lastName = freshUser.lastName;
+          token.name = `${freshUser.firstName} ${freshUser.lastName}`;
+          token.avatar = freshUser.avatar;
+          token.role = freshUser.role;
+          token.status = freshUser.status;
+          token.accountType = freshUser.accountType;
+          token.level = freshUser.level ?? "STAR_1";
+          token.onboardingStep = freshUser.onboardingStep;
+          token.onboardingCompleted = freshUser.onboardingCompleted;
+          token.isEmailVerified = !!freshUser.emailVerified;
+        }
       }
       return token;
     },

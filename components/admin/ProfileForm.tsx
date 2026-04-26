@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 
@@ -15,6 +16,7 @@ interface ProfileFormProps {
 
 export function ProfileForm({ initialData }: ProfileFormProps) {
   const router = useRouter();
+  const { update: updateSession } = useSession();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -51,6 +53,8 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
       }
 
       setSuccess(true);
+      // Refresh JWT token so session reflects updated name
+      await updateSession();
       router.refresh();
     } catch {
       setError("Nepodařilo se uložit změny");
