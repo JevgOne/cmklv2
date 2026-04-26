@@ -6,7 +6,7 @@
  * komponentu s vlastním `tagline` + `productColumn` + (shop) `trustBar`.
  *
  * Struktura:
- *  - 3-col grid: O nás + social | Produkt | Podpora
+ *  - 3 or 4-col grid: O nás + social | Produkt | (Produkt 2) | Podpora
  *  - Platformy sekce (PlatformSwitcher variant="footer")
  *  - Volitelný trust bar (shop platby + dopravci)
  *  - Bottom bar: © + IČO/DIČ (pokud nejsou placeholder) + legal nav
@@ -33,6 +33,11 @@ export interface FooterBaseProps {
     title: string;
     links: FooterProductLink[];
   };
+  /** Druhý sloupec odkazů (volitelný — pro rozdělení dlouhého seznamu) */
+  productColumn2?: {
+    title: string;
+    links: FooterProductLink[];
+  };
   /** Volitelný trust bar (pouze shop — platby + dopravci) */
   trustBar?: React.ReactNode;
 }
@@ -48,6 +53,7 @@ export function FooterBase({
   platformKey,
   tagline,
   productColumn,
+  productColumn2,
   trustBar,
 }: FooterBaseProps) {
   const currentYear = new Date().getFullYear();
@@ -57,7 +63,7 @@ export function FooterBase({
     <footer className="bg-gray-950 text-white border-t-4 border-orange-500">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
         {/* === 4-SLOUPCOVÝ GRID === */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 lg:gap-12">
+        <div className={`grid grid-cols-1 sm:grid-cols-2 ${productColumn2 ? "lg:grid-cols-4" : "lg:grid-cols-3"} gap-10 lg:gap-12`}>
           {/* Sloupec 1 — O nás + social */}
           <div>
             <Link href="/" className="inline-block no-underline mb-8">
@@ -144,7 +150,37 @@ export function FooterBase({
             </ul>
           </div>
 
-          {/* Sloupec 3 — Podpora (shared) */}
+          {/* Sloupec 3 — Druhý product column (volitelný) */}
+          {productColumn2 && (
+            <div>
+              <h3 className="text-xs font-bold uppercase tracking-widest text-orange-400/80 mb-5">
+                {productColumn2.title}
+              </h3>
+              <ul className="list-none p-0 m-0 flex flex-col gap-3">
+                {productColumn2.links.map((link, i) => (
+                  <li key={`${productColumn2.title}-${i}`}>
+                    {link.external ? (
+                      <a
+                        href={link.href}
+                        className="text-sm text-gray-500 hover:text-white transition-colors no-underline"
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link
+                        href={link.href}
+                        className="text-sm text-gray-500 hover:text-white transition-colors no-underline"
+                      >
+                        {link.label}
+                      </Link>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Sloupec 4 — Podpora (shared) */}
           <div>
             <h3 className="text-xs font-bold uppercase tracking-widest text-orange-400/80 mb-5">
               Podpora
