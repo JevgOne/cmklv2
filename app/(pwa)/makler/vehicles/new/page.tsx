@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -32,6 +32,17 @@ export default function NewVehiclePage() {
   const { createDraft } = useDraftContext();
   const [drafts, setDrafts] = useState<StoredDraft[]>([]);
   const [loading, setLoading] = useState(true);
+  const [confirmId, setConfirmId] = useState<string | null>(null);
+
+  const handleDeleteDraft = useCallback(async (id: string) => {
+    try {
+      await offlineStorage.deleteDraft(id);
+      setDrafts((prev) => prev.filter((d) => d.id !== id));
+    } catch {
+      // Silent fail
+    }
+    setConfirmId(null);
+  }, []);
 
   useEffect(() => {
     async function loadDrafts() {
@@ -152,14 +163,31 @@ export default function NewVehiclePage() {
               Rozpracované drafty ({drafts.length})
             </h2>
             {drafts.map((draft) => (
-              <button
-                key={draft.id}
-                onClick={() => handleContinueDraft(draft)}
-                className="block w-full text-left"
-              >
-                <Card className="p-4" hover>
+              <Card key={draft.id} className="p-4">
+                {confirmId === draft.id ? (
                   <div className="flex items-center justify-between">
-                    <div className="min-w-0 flex-1">
+                    <span className="text-sm text-gray-700">Opravdu smazat draft?</span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setConfirmId(null)}
+                        className="px-3 py-1.5 text-xs font-semibold text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                      >
+                        Ne
+                      </button>
+                      <button
+                        onClick={() => handleDeleteDraft(draft.id)}
+                        className="px-3 py-1.5 text-xs font-semibold text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors"
+                      >
+                        Smazat
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between">
+                    <button
+                      onClick={() => handleContinueDraft(draft)}
+                      className="min-w-0 flex-1 text-left bg-transparent border-none p-0 cursor-pointer"
+                    >
                       <div className="font-semibold text-gray-900 truncate">
                         {draft.title}
                       </div>
@@ -172,27 +200,31 @@ export default function NewVehiclePage() {
                           {formatRelativeTime(draft.updatedAt)}
                         </span>
                       </div>
-                    </div>
+                    </button>
                     <div className="flex items-center gap-2 ml-3 flex-shrink-0">
                       <DraftStatusPill status={draft.status} />
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                        className="w-5 h-5 text-gray-300"
+                      <button
+                        onClick={() => setConfirmId(draft.id)}
+                        className="p-1.5 text-gray-300 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50"
+                        aria-label="Smazat draft"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M8.25 4.5l7.5 7.5-7.5 7.5"
-                        />
-                      </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                          <path fillRule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.519.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z" clipRule="evenodd" />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => handleContinueDraft(draft)}
+                        className="p-1 text-gray-300 bg-transparent border-none cursor-pointer"
+                        aria-label="Pokračovat"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                      </button>
                     </div>
                   </div>
-                </Card>
-              </button>
+                )}
+              </Card>
             ))}
           </div>
         ) : null}
