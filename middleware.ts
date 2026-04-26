@@ -214,6 +214,11 @@ export async function middleware(request: NextRequest) {
     if (!MAKLER_ROLES.includes(token.role as string)) {
       return NextResponse.redirect(new URL("/", request.url));
     }
+
+    // ACTIVE broker → redirect to dashboard (already approved, no need for onboarding)
+    if (token.status === "ACTIVE") {
+      return NextResponse.redirect(new URL("/makler/dashboard", request.url));
+    }
   }
 
   // Chranene makler routy — PWA stranky (ne verejne profily /makler/[slug])

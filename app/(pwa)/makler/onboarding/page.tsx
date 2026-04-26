@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
 const STEP_ROUTES: Record<number, string> = {
   1: "/makler/onboarding/profile",
@@ -17,7 +18,18 @@ export default async function OnboardingPage() {
     redirect("/login");
   }
 
-  const step = session.user.onboardingStep ?? 1;
+  // Fresh DB check — JWT can be stale after admin activation
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { status: true, onboardingStep: true },
+  });
+
+  // If broker is already ACTIVE → go straight to dashboard
+  if (user?.status === "ACTIVE") {
+    redirect("/makler/dashboard");
+  }
+
+  const step = user?.onboardingStep ?? session.user.onboardingStep ?? 1;
   const route = STEP_ROUTES[step] || STEP_ROUTES[1];
 
   redirect(route);
