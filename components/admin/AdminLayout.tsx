@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 
@@ -14,10 +14,12 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   return (
     <div className="min-h-screen flex">
       {/* Sidebar */}
-      <AdminSidebar
-        open={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-      />
+      <Suspense fallback={null}>
+        <AdminSidebar
+          open={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+        />
+      </Suspense>
 
       {/* Main area */}
       <div className="flex-1 lg:ml-[280px] bg-gray-100 min-h-screen">
