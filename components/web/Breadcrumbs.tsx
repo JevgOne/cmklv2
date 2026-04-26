@@ -7,9 +7,10 @@ export interface BreadcrumbItem {
 
 interface BreadcrumbsProps {
   items: BreadcrumbItem[];
+  className?: string;
 }
 
-export function Breadcrumbs({ items }: BreadcrumbsProps) {
+export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -29,7 +30,7 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
       />
       <nav
         aria-label="Breadcrumb"
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4"
+        className={className || "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4"}
       >
         <ol className="flex items-center gap-2 text-sm text-gray-500 list-none p-0 m-0">
           {items.map((item, i) => (
