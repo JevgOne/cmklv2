@@ -64,6 +64,10 @@ export function QuickStep3() {
   const [condition, setCondition] = useState(
     (draft?.details?.condition as string) ?? ""
   );
+  const [description, setDescription] = useState(
+    (draft?.details?.description as string) ?? ""
+  );
+  const [generatingDesc, setGeneratingDesc] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -97,6 +101,43 @@ export function QuickStep3() {
     []
   );
 
+  // Generate AI description
+  const handleGenerateDescription = useCallback(async () => {
+    if (generatingDesc) return;
+    const brand = decoded?.brand ?? (draft?.details?.brand as string) ?? "";
+    const model = decoded?.model ?? (draft?.details?.model as string) ?? "";
+    if (!brand || !model) return;
+
+    setGeneratingDesc(true);
+    try {
+      const res = await fetch("/api/assistant/generate-description", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          brand,
+          model,
+          year: decoded?.year ?? (draft?.details?.year as number) ?? new Date().getFullYear(),
+          mileage: mileageNum || 0,
+          condition: condition || "GOOD",
+          fuelType: decoded?.fuelType,
+          transmission: decoded?.transmission,
+          enginePower: decoded?.enginePower,
+          bodyType: decoded?.bodyType,
+          equipment: [],
+          highlights: [],
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.description) setDescription(data.description);
+      }
+    } catch {
+      // Silently fail
+    } finally {
+      setGeneratingDesc(false);
+    }
+  }, [generatingDesc, decoded, draft?.details, mileageNum, condition]);
+
   // Odeslat rychlý draft
   const handleSubmit = useCallback(async () => {
     if (!canSubmit || !draft) return;
@@ -120,6 +161,7 @@ export function QuickStep3() {
       bodyType: decoded?.bodyType,
       doorsCount: decoded?.doorsCount,
       seatsCount: decoded?.seatsCount,
+      description: description || undefined,
     });
 
     updateSection("pricing", {
@@ -172,6 +214,7 @@ export function QuickStep3() {
         mileage: mileageNum,
         price,
         condition,
+        description: description || undefined,
       };
 
       const res = await fetch("/api/vehicles/quick", {
@@ -218,6 +261,7 @@ export function QuickStep3() {
     decoded,
     price,
     commission,
+    description,
     saveDraft,
     isOnline,
     router,
@@ -317,6 +361,43 @@ export function QuickStep3() {
               </button>
             ))}
           </div>
+        </div>
+
+        {/* Popis vozidla (volitelný) */}
+        <div>
+          <label className="text-[13px] font-semibold text-gray-700 uppercase tracking-wide block mb-2">
+            Popis vozidla
+          </label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Volitelný popis vozidla..."
+            rows={4}
+            className="w-full rounded-lg border-2 border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-orange-300 focus:bg-white resize-none transition-colors"
+          />
+          <button
+            type="button"
+            onClick={handleGenerateDescription}
+            disabled={generatingDesc || !decoded?.brand}
+            className="mt-2 w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 disabled:opacity-50 rounded-lg text-sm font-medium text-gray-700 transition-colors"
+          >
+            {generatingDesc ? (
+              <>
+                <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                Generuji popis...
+              </>
+            ) : (
+              <>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                  <path fillRule="evenodd" d="M9 4.5a.75.75 0 01.721.544l.813 2.846a3.75 3.75 0 002.576 2.576l2.846.813a.75.75 0 010 1.442l-2.846.813a3.75 3.75 0 00-2.576 2.576l-.813 2.846a.75.75 0 01-1.442 0l-.813-2.846a3.75 3.75 0 00-2.576-2.576l-2.846-.813a.75.75 0 010-1.442l2.846-.813A3.75 3.75 0 007.466 7.89l.813-2.846A.75.75 0 019 4.5z" clipRule="evenodd" />
+                </svg>
+                Vygenerovat popis AI
+              </>
+            )}
+          </button>
         </div>
 
         {/* Error */}
