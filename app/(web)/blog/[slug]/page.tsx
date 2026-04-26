@@ -392,7 +392,7 @@ export default async function BlogArticlePage({
                   className="group no-underline"
                 >
                   <Card className="h-full overflow-hidden hover:shadow-lg transition-all hover:-translate-y-1">
-                    {rel.coverImage && (
+                    {rel.coverImage ? (
                       <div className="relative aspect-[16/9] overflow-hidden">
                         <Image
                           src={rel.coverImage}
@@ -401,6 +401,10 @@ export default async function BlogArticlePage({
                           className="object-cover group-hover:scale-105 transition-transform duration-500"
                           sizes="(max-width: 640px) 100vw, 33vw"
                         />
+                      </div>
+                    ) : (
+                      <div className="aspect-[16/9] bg-gradient-to-br from-orange-100 to-amber-50 flex items-center justify-center">
+                        <span className="text-4xl">{rel.category?.icon || "\ud83d\udcdd"}</span>
                       </div>
                     )}
                     <div className="p-4">

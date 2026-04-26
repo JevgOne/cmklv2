@@ -111,7 +111,7 @@ export default async function BlogCategoryPage({
               className="group no-underline"
             >
               <Card className="h-full overflow-hidden hover:shadow-lg transition-shadow">
-                {article.coverImage && (
+                {article.coverImage ? (
                   <div className="relative aspect-[16/9]">
                     <Image
                       src={article.coverImage}
@@ -120,6 +120,10 @@ export default async function BlogCategoryPage({
                       className="object-cover"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     />
+                  </div>
+                ) : (
+                  <div className="aspect-[16/9] bg-gradient-to-br from-orange-100 to-amber-50 flex items-center justify-center">
+                    <span className="text-4xl">{article.category?.icon || "\ud83d\udcdd"}</span>
                   </div>
                 )}
                 <div className="p-4">

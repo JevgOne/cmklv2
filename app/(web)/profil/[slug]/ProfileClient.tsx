@@ -218,6 +218,8 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
           }
           setNextCursor(data.nextCursor);
           setItemType(data.type);
+        } else {
+          console.error("Profile items API error:", res.status);
         }
       } catch (err) {
         if ((err as { name?: string }).name === "AbortError") return;
