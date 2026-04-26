@@ -83,7 +83,7 @@ async function getFeaturedCars() {
 async function getFeaturedBrokers(): Promise<BrokerCardBroker[]> {
   try {
     const dbBrokers = await prisma.user.findMany({
-      where: { role: "BROKER", status: "ACTIVE" },
+      where: { role: { in: ["BROKER", "ADMIN", "MANAGER"] }, status: "ACTIVE", slug: { not: null } },
       select: {
         slug: true,
         firstName: true,

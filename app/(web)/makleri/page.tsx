@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
+import { BrokerCard, type BrokerCardBroker } from "@/components/web/BrokerCard";
 import { prisma } from "@/lib/prisma";
 import { generateItemListJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
@@ -22,58 +22,59 @@ export const metadata: Metadata = {
 };
 
 /* ------------------------------------------------------------------ */
-/*  Data                                                               */
-/* ------------------------------------------------------------------ */
-
-const levelBadges: Record<string, { variant: "top" | "default" | "verified"; label: string }[]> = {
-  STAR_5: [
-    { variant: "top", label: "TOP Makléř" },
-    { variant: "default", label: "Rychlá reakce" },
-  ],
-  STAR_4: [{ variant: "top", label: "TOP Makléř" }],
-  STAR_3: [{ variant: "top", label: "TOP Makléř" }],
-  STAR_2: [{ variant: "verified", label: "Ověřený" }],
-  STAR_1: [{ variant: "verified", label: "Ověřený" }],
-};
-
-/* ------------------------------------------------------------------ */
 /*  Page                                                               */
 /* ------------------------------------------------------------------ */
 
 export default async function MakleriPage() {
-  let brokers: {
-    slug: string;
-    firstName: string;
-    lastName: string;
-    avatar: string | null;
-    cities: string | null;
-    level: string;
-    totalSales: number;
-    trustScore: { score: number; tier: string } | null;
-  }[] = [];
+  let brokers: BrokerCardBroker[] = [];
   let brokerCount = 0;
 
   try {
+    const teamFilter = { status: "ACTIVE" as const, slug: { not: null }, role: { in: ["BROKER", "ADMIN", "MANAGER"] as const } };
     const [count, dbBrokers] = await Promise.all([
-      prisma.user.count({ where: { role: "BROKER", status: "ACTIVE" } }),
+      prisma.user.count({ where: teamFilter }),
       prisma.user.findMany({
-        where: { role: "BROKER", status: "ACTIVE", slug: { not: null } },
+        where: teamFilter,
         select: {
           slug: true,
           firstName: true,
           lastName: true,
           avatar: true,
-          cities: true,
           level: true,
+          city: true,
+          cities: true,
+          bio: true,
           totalSales: true,
+          phone: true,
+          showPhone: true,
+          tags: { select: { slug: true, label: true } },
           trustScore: { select: { score: true, tier: true } },
+          _count: { select: { vehicles: { where: { status: "ACTIVE" } } } },
         },
         orderBy: { totalSales: "desc" },
       }),
     ]);
 
     brokerCount = count;
-    brokers = dbBrokers as typeof brokers;
+    brokers = dbBrokers.map((b) => ({
+      slug: b.slug || "makler",
+      firstName: b.firstName,
+      lastName: b.lastName,
+      avatar: b.avatar,
+      level: b.level,
+      city: b.city,
+      cities: b.cities
+        ? (() => { try { return JSON.parse(b.cities); } catch { return []; } })()
+        : [],
+      bio: b.bio,
+      totalSales: b.totalSales,
+      activeVehicles: b._count.vehicles,
+      phone: b.phone,
+      showPhone: b.showPhone,
+      tags: b.tags,
+      trustScore: b.trustScore?.score ?? null,
+      trustTier: b.trustScore?.tier ?? null,
+    }));
   } catch {
     /* DB unavailable */
   }
@@ -113,94 +114,9 @@ export default async function MakleriPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {brokers.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {brokers.map((broker) => {
-                const initials =
-                  (broker.firstName?.[0] ?? "") + (broker.lastName?.[0] ?? "");
-                const cities: string[] = broker.cities
-                  ? (() => { try { return JSON.parse(broker.cities); } catch { return []; } })()
-                  : [];
-                const primaryCity = cities[0] || "ČR";
-                const badges = levelBadges[broker.level] || levelBadges.STAR_1;
-
-                return (
-                  <Link
-                    key={broker.slug}
-                    href={`/profil/${broker.slug}`}
-                    className="no-underline text-inherit"
-                  >
-                    <Card
-                      hover
-                      className="p-7 relative overflow-visible group h-full"
-                    >
-                      {/* Orange top bar on hover */}
-                      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 to-orange-600 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 rounded-t-2xl" />
-
-                      <div className="flex items-center gap-4 mb-5">
-                        {broker.avatar ? (
-                          <img
-                            src={broker.avatar}
-                            alt={`${broker.firstName} ${broker.lastName}`}
-                            className="w-[60px] h-[60px] rounded-xl object-cover shrink-0"
-                          />
-                        ) : (
-                          <div className="w-[60px] h-[60px] bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center text-[22px] font-extrabold text-white shrink-0">
-                            {initials}
-                          </div>
-                        )}
-                        <div>
-                          <h3 className="text-lg font-bold text-gray-900">
-                            {broker.firstName} {broker.lastName}
-                          </h3>
-                          <p className="text-sm text-gray-500">
-                            {primaryCity}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex gap-2 flex-wrap mb-5">
-                        {badges.map((b, i) => (
-                          <Badge key={i} variant={b.variant}>
-                            {b.label}
-                          </Badge>
-                        ))}
-                      </div>
-
-                      <div className={`grid ${broker.trustScore && broker.trustScore.score > 0 ? "grid-cols-3" : "grid-cols-2"} gap-4 pt-5 border-t border-gray-100`}>
-                        <div className="text-center">
-                          <div className="text-2xl font-extrabold text-gray-900">
-                            {broker.totalSales}
-                          </div>
-                          <div className="text-[11px] font-semibold text-gray-500 mt-1">
-                            Prodejů
-                          </div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-2xl font-extrabold bg-gradient-to-br from-orange-500 to-orange-600 bg-clip-text text-transparent">
-                            {"⭐".repeat(parseInt(broker.level?.replace("STAR_", "") || "1"))}
-                          </div>
-                          <div className="text-[11px] font-semibold text-gray-500 mt-1">
-                            Úroveň
-                          </div>
-                        </div>
-                        {broker.trustScore && broker.trustScore.score > 0 && (
-                          <div className="text-center">
-                            <div className={`text-2xl font-extrabold ${
-                              broker.trustScore.score >= 75 ? "text-yellow-600" :
-                              broker.trustScore.score >= 50 ? "text-slate-600" :
-                              broker.trustScore.score >= 25 ? "text-amber-600" : "text-gray-500"
-                            }`}>
-                              {broker.trustScore.score}
-                            </div>
-                            <div className="text-[11px] font-semibold text-gray-500 mt-1">
-                              Trust Score
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </Card>
-                  </Link>
-                );
-              })}
+              {brokers.map((broker) => (
+                <BrokerCard key={broker.slug} broker={broker} />
+              ))}
             </div>
           ) : (
             <div className="text-center py-16">
