@@ -239,6 +239,15 @@ export function ListingDetailContent() {
               Deaktivovat
             </Button>
           )}
+          {(listing.status === "INACTIVE" || listing.status === "REJECTED") && (
+            <Button
+              variant="success"
+              onClick={() => handleAction("approve")}
+              disabled={actionLoading}
+            >
+              Znovu aktivovat
+            </Button>
+          )}
         </div>
 
         {showRejectForm && (
