@@ -88,13 +88,15 @@ export function BrokerCard({ broker }: BrokerCardProps) {
               </span>
             </>
           )}
-          {primaryCity && (
-            <>
-              <span className="text-gray-300">·</span>
-              <span className="text-xs text-gray-500">{primaryCity}</span>
-            </>
-          )}
         </div>
+        {primaryCity && (
+          <div className="flex items-center gap-1 mt-1.5">
+            <svg className="w-3.5 h-3.5 text-orange-400" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+            </svg>
+            <span className="text-sm text-gray-600 font-medium">{primaryCity}</span>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-3 divide-x divide-gray-100 mt-4 py-3 mx-5 border-y border-gray-100">
