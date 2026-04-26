@@ -15,23 +15,23 @@ interface DocumentItem {
 
 const documents: DocumentItem[] = [
   {
-    title: "Partnerska smlouva",
+    title: "Partnerská smlouva",
     description:
-      "Vzor partnerske smlouvy pro spolupraci s Carmakler. Ke stazeni ve formatu PDF.",
-    href: "/documents/partnerska-smlouva.pdf",
-    available: true,
+      "Vzor partnerské smlouvy pro spolupráci s Carmakler. Pro získání smlouvy kontaktujte info@carmakler.cz.",
+    href: null,
+    available: false,
   },
   {
     title: "Obchodní podmínky",
     description:
-      "Obchodní podmínky pro partnery platformy Carmakler. Aktualni verze.",
-    href: "/documents/obchodni-podminky.pdf",
+      "Obchodní podmínky jsou dostupné na webu carmakler.cz/obchodni-podminky.",
+    href: "/obchodni-podminky",
     available: true,
   },
   {
-    title: "Mesicni vyuctovani",
+    title: "Měsíční vyúčtování",
     description:
-      "Bude dostupne po prvnim mesici spoluprace. Automaticky generovane.",
+      "Bude dostupné po prvním měsíci spolupráce. Automaticky generované.",
     href: null,
     available: false,
   },
@@ -57,14 +57,13 @@ export default function PartnerDocumentsPage() {
             {doc.available && doc.href ? (
               <a
                 href={doc.href}
-                download
                 className="inline-flex items-center justify-center gap-2 bg-orange-500 text-white px-4 py-2.5 rounded-full text-sm font-semibold hover:bg-orange-600 transition-colors no-underline"
               >
-                Stahnout PDF
+                Zobrazit
               </a>
             ) : (
               <span className="inline-flex items-center justify-center gap-2 bg-gray-100 text-gray-400 px-4 py-2.5 rounded-full text-sm font-semibold cursor-not-allowed">
-                Zatim nedostupne
+                Připravujeme
               </span>
             )}
           </Card>
