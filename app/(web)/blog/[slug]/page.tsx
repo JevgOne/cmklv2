@@ -8,6 +8,11 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { pageCanonical } from "@/lib/canonical";
 import { BASE_URL } from "@/lib/seo-data";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { ArticleReactions } from "@/components/web/blog/ArticleReactions";
+import { ArticleComments } from "@/components/web/blog/ArticleComments";
+import { NewsletterSignup } from "@/components/web/blog/NewsletterSignup";
 import { ShareButtons } from "./ShareButtons";
 
 export const revalidate = 86400;
@@ -60,6 +65,7 @@ export default async function BlogArticlePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const session = await getServerSession(authOptions);
 
   const article = await prisma.article.findUnique({
     where: { slug },
@@ -88,12 +94,19 @@ export default async function BlogArticlePage({
     .update({ where: { id: article.id }, data: { views: { increment: 1 } } })
     .catch(() => {});
 
-  // Related articles
+  // Related articles — tag-based + category matching
+  const articleTagIds = article.tags.map((t) => t.tagId);
+
   const related = await prisma.article.findMany({
     where: {
       status: "PUBLISHED",
-      categoryId: article.categoryId,
       id: { not: article.id },
+      OR: [
+        { categoryId: article.categoryId },
+        ...(articleTagIds.length > 0
+          ? [{ tags: { some: { tagId: { in: articleTagIds } } } }]
+          : []),
+      ],
     },
     include: {
       category: { select: { name: true, slug: true, icon: true } },
@@ -102,6 +115,41 @@ export default async function BlogArticlePage({
     orderBy: { publishedAt: "desc" },
     take: 3,
   });
+
+  // Reactions
+  const [reactionGroups, userReactionsList] = await Promise.all([
+    prisma.articleReaction.groupBy({
+      by: ["type"],
+      where: { articleId: article.id },
+      _count: true,
+    }),
+    session?.user?.id
+      ? prisma.articleReaction.findMany({
+          where: { articleId: article.id, userId: session.user.id },
+          select: { type: true },
+        })
+      : Promise.resolve([]),
+  ]);
+
+  const reactionCounts: Record<string, number> = {};
+  for (const r of reactionGroups) {
+    reactionCounts[r.type] = r._count;
+  }
+
+  // Comments (only approved — isHidden=false)
+  const [approvedComments, commentTotal] = await Promise.all([
+    prisma.profileComment.findMany({
+      where: { articleId: article.id, isHidden: false },
+      include: {
+        user: { select: { id: true, firstName: true, lastName: true, avatar: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 10,
+    }),
+    prisma.profileComment.count({
+      where: { articleId: article.id, isHidden: false },
+    }),
+  ]);
 
   const articleUrl = `${BASE_URL}/blog/${article.slug}`;
 
@@ -218,12 +266,21 @@ export default async function BlogArticlePage({
         {article.tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-8">
             {article.tags.map(({ tag }) => (
-              <Badge key={tag.id} variant="default">
-                #{tag.name}
-              </Badge>
+              <Link key={tag.id} href={`/blog?tag=${tag.slug}`} className="no-underline">
+                <Badge variant="default" className="hover:bg-orange-100 transition-colors">
+                  #{tag.name}
+                </Badge>
+              </Link>
             ))}
           </div>
         )}
+
+        {/* Reactions */}
+        <ArticleReactions
+          articleId={article.id}
+          initialCounts={reactionCounts}
+          initialUserReactions={userReactionsList.map((r) => r.type)}
+        />
 
         {/* Share */}
         <div className="border-t border-b border-gray-100 py-6 mb-8">
@@ -265,6 +322,25 @@ export default async function BlogArticlePage({
             </div>
           </div>
         </Card>
+
+        {/* Comments */}
+        <ArticleComments
+          articleId={article.id}
+          initialComments={approvedComments.map((c) => ({
+            id: c.id,
+            text: c.text,
+            isHidden: c.isHidden,
+            createdAt: c.createdAt.toISOString(),
+            author: c.user,
+          }))}
+          total={commentTotal}
+          isLoggedIn={!!session?.user}
+        />
+
+        {/* Newsletter */}
+        <div className="mb-12">
+          <NewsletterSignup />
+        </div>
 
         {/* Related articles */}
         {related.length > 0 && (

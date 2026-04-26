@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { pageCanonical } from "@/lib/canonical";
 import { BASE_URL } from "@/lib/seo-data";
+import { NewsletterSignup } from "@/components/web/blog/NewsletterSignup";
 
 export const revalidate = 3600;
 
@@ -33,9 +34,9 @@ function formatDate(date: Date): string {
 export default async function BlogPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; category?: string }>;
+  searchParams: Promise<{ page?: string; category?: string; tag?: string }>;
 }) {
-  const { page: pageParam, category: categorySlug } = await searchParams;
+  const { page: pageParam, category: categorySlug, tag: tagSlug } = await searchParams;
   const page = Math.max(1, parseInt(pageParam || "1", 10));
   const perPage = 12;
 
@@ -47,8 +48,17 @@ export default async function BlogPage({
     });
     if (cat) where.categoryId = cat.id;
   }
+  if (tagSlug) {
+    const tag = await prisma.articleTag.findUnique({
+      where: { slug: tagSlug },
+      select: { id: true },
+    });
+    if (tag) {
+      where.tags = { some: { tagId: tag.id } };
+    }
+  }
 
-  const [articles, total, categories, featured] = await Promise.all([
+  const [articles, total, categories, featured, articleTags] = await Promise.all([
     prisma.article.findMany({
       where,
       include: {
@@ -74,6 +84,10 @@ export default async function BlogPage({
           orderBy: { publishedAt: "desc" },
         })
       : null,
+    prisma.articleTag.findMany({
+      include: { _count: { select: { articles: true } } },
+      orderBy: { name: "asc" },
+    }),
   ]);
 
   const totalPages = Math.ceil(total / perPage);
@@ -264,6 +278,36 @@ export default async function BlogPage({
                     <span className="ml-1 text-xs opacity-70">({cat._count.articles})</span>
                   </Link>
                 ))}
+              </div>
+
+              {/* Tags */}
+              {articleTags.length > 0 && (
+                <div className="mt-8">
+                  <h2 className="font-bold text-lg mb-4">Témata</h2>
+                  <div className="flex flex-wrap gap-2">
+                    {articleTags.map((t) => (
+                      <Link
+                        key={t.id}
+                        href={`/blog?tag=${t.slug}`}
+                        className={`text-sm px-3 py-1 rounded-full no-underline transition-colors ${
+                          tagSlug === t.slug
+                            ? "bg-orange-500 text-white"
+                            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                        }`}
+                      >
+                        #{t.name}
+                        <span className="ml-1 text-xs opacity-70">
+                          ({t._count.articles})
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Newsletter */}
+              <div className="mt-8">
+                <NewsletterSignup />
               </div>
             </div>
           </aside>

@@ -90,6 +90,7 @@ const navSections: NavSection[] = [
     items: [
       { id: "blog", href: "/admin/blog", icon: "📝", label: "Články" },
       { id: "ai-drafts", href: "/admin/blog/ai-drafts", icon: "🤖", label: "AI Návrhy" },
+      { id: "comments", href: "/admin/blog/comments", icon: "💬", label: "Komentáře" },
       { id: "tags", href: "/admin/tagy", icon: "🏷️", label: "Tagy" },
     ],
     roles: ["ADMIN"],

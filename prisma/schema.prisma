@@ -163,6 +163,7 @@ model User {
 
   // Blog/Magazín
   articles          Article[]      @relation("ArticleAuthor")
+  articleReactions   ArticleReaction[] @relation("UserArticleReactions")
 
   // Profilové tagy / hashtagy (M2M)
   tags            Tag[]            @relation("UserTags")
@@ -2150,6 +2151,8 @@ model ProfileComment {
   listing    Listing?  @relation("ListingComments", fields: [listingId], references: [id], onDelete: Cascade)
   partId     String?
   part       Part?     @relation("PartComments", fields: [partId], references: [id], onDelete: Cascade)
+  articleId  String?
+  article    Article?  @relation("ArticleComments", fields: [articleId], references: [id], onDelete: Cascade)
 
   text       String
   isHidden   Boolean   @default(false)
@@ -2160,7 +2163,43 @@ model ProfileComment {
   @@index([vehicleId])
   @@index([listingId])
   @@index([partId])
+  @@index([articleId])
   @@index([userId])
+}
+
+model ArticleReaction {
+  id         String   @id @default(cuid())
+  articleId  String
+  article    Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  userId     String?  // Null = anonymní (cookie-based)
+  user       User?    @relation("UserArticleReactions", fields: [userId], references: [id], onDelete: Cascade)
+  sessionId  String?  // Fallback pro nepřihlášené (z cookie)
+  type       String   // LIKE, HEART, CLAP, FIRE, THINKING
+
+  createdAt  DateTime @default(now())
+
+  @@unique([articleId, userId, type])
+  @@unique([articleId, sessionId, type])
+  @@index([articleId])
+}
+
+// ============================================
+// NEWSLETTER
+// ============================================
+
+model NewsletterSubscriber {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  name            String?
+  status          String    @default("PENDING") // PENDING, ACTIVE, UNSUBSCRIBED
+  source          String    @default("BLOG")    // BLOG, FOOTER, POPUP
+  confirmToken    String?   @unique             // Token pro double opt-in
+  confirmedAt     DateTime?
+  unsubscribedAt  DateTime?
+
+  createdAt       DateTime  @default(now())
+
+  @@index([status])
 }
 
 model ProfileBadge {
@@ -2290,6 +2329,8 @@ model Article {
   seoDescription String?
 
   tags           ArticleTagLink[]
+  comments       ProfileComment[]   @relation("ArticleComments")
+  reactions      ArticleReaction[]
 
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
