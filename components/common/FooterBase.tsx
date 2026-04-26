@@ -6,7 +6,7 @@
  * komponentu s vlastním `tagline` + `productColumn` + (shop) `trustBar`.
  *
  * Struktura:
- *  - 4-col grid: O nás + social | Produkt | Podpora | Firma
+ *  - 3-col grid: O nás + social | Produkt | Podpora
  *  - Platformy sekce (PlatformSwitcher variant="footer")
  *  - Volitelný trust bar (shop platby + dopravci)
  *  - Bottom bar: © + IČO/DIČ (pokud nejsou placeholder) + legal nav
@@ -228,6 +228,16 @@ export function FooterBase({
               {!isPlaceholder(companyInfo.dic) && (
                 <span> &middot; DIČ: {companyInfo.dic}</span>
               )}
+              <span> &middot;{" "}
+                <a
+                  href="https://weblyx.cz"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-orange-400 transition-colors no-underline"
+                >
+                  weblyx.cz
+                </a>
+              </span>
             </div>
             <nav
               aria-label="Právní informace"
@@ -252,17 +262,6 @@ export function FooterBase({
                 Cookies
               </a>
             </nav>
-          </div>
-          <div className="text-center mt-4 text-xs text-gray-700">
-            © {new Date().getFullYear()} CarMakléř |{" "}
-            <a
-              href="https://weblyx.cz"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-orange-400 transition-colors no-underline"
-            >
-              weblyx.cz
-            </a>
           </div>
         </div>
       </div>
