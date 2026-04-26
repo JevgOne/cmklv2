@@ -57,7 +57,7 @@ export function FooterBase({
     <footer className="bg-gray-950 text-white border-t-4 border-orange-500">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
         {/* === 4-SLOUPCOVÝ GRID === */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 lg:gap-12">
           {/* Sloupec 1 — O nás + social */}
           <div>
             <Link href="/" className="inline-block no-underline mb-8">
@@ -186,23 +186,6 @@ export function FooterBase({
                   Reklamační řád
                 </a>
               </li>
-            </ul>
-          </div>
-
-          {/* Sloupec 4 — Firma (shared) */}
-          <div>
-            <h3 className="text-xs font-bold uppercase tracking-widest text-orange-400/80 mb-5">
-              Firma
-            </h3>
-            <ul className="list-none p-0 m-0 flex flex-col gap-3 text-sm text-gray-500">
-              <li className="text-gray-400 font-semibold">
-                {companyInfo.legalName}
-              </li>
-              {!isPlaceholder(companyInfo.ico) && <li>IČO: {companyInfo.ico}</li>}
-              {!isPlaceholder(companyInfo.dic) && <li>DIČ: {companyInfo.dic}</li>}
-              {!isPlaceholder(companyInfo.address.full) && (
-                <li className="leading-relaxed">{companyInfo.address.full}</li>
-              )}
               <li>
                 <a
                   href={urls.main("/o-nas")}
