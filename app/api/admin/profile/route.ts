@@ -41,6 +41,7 @@ const updateProfileSchema = z.object({
   firstName: z.string().min(2, "Jméno musí mít alespoň 2 znaky"),
   lastName: z.string().min(2, "Příjmení musí mít alespoň 2 znaky"),
   phone: z.string().optional().nullable(),
+  avatar: z.string().url().optional().nullable(),
 });
 
 export async function PATCH(request: NextRequest) {
@@ -59,6 +60,7 @@ export async function PATCH(request: NextRequest) {
         firstName: data.firstName,
         lastName: data.lastName,
         phone: data.phone || null,
+        ...(data.avatar !== undefined ? { avatar: data.avatar } : {}),
       },
       select: {
         id: true,

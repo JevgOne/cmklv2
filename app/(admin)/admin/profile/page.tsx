@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import Image from "next/image";
 import { ProfileForm } from "@/components/admin/ProfileForm";
 
 const roleLabels: Record<string, string> = {
@@ -43,12 +44,18 @@ export default async function AdminProfilePage() {
 
       {/* User info header */}
       <div className="bg-white rounded-2xl shadow-card p-6 flex items-center gap-4">
-        <div
-          className="w-16 h-16 rounded-xl flex items-center justify-center text-xl font-bold text-white"
-          style={{ background: "var(--gradient-orange)" }}
-        >
-          {(user.firstName[0] || "")}{(user.lastName[0] || "")}
-        </div>
+        {user.avatar ? (
+          <div className="relative w-16 h-16 rounded-xl overflow-hidden">
+            <Image src={user.avatar} alt="Avatar" fill className="object-cover" sizes="64px" />
+          </div>
+        ) : (
+          <div
+            className="w-16 h-16 rounded-xl flex items-center justify-center text-xl font-bold text-white"
+            style={{ background: "var(--gradient-orange)" }}
+          >
+            {(user.firstName[0] || "")}{(user.lastName[0] || "")}
+          </div>
+        )}
         <div>
           <div className="text-lg font-bold text-gray-900">{user.firstName} {user.lastName}</div>
           <div className="text-sm text-gray-500">{user.email}</div>
@@ -63,6 +70,7 @@ export default async function AdminProfilePage() {
           firstName: user.firstName,
           lastName: user.lastName,
           phone: user.phone || "",
+          avatar: user.avatar,
         }}
       />
     </div>
