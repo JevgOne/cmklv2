@@ -82,7 +82,7 @@ export default async function DashboardPage() {
       prisma.user
         .findUnique({
           where: { id: userId },
-          select: { quickModeEnabled: true, level: true, totalRevenue: true, hasSeenTour: true, region: { select: { tier: true } } },
+          select: { quickModeEnabled: true, level: true, totalRevenue: true, hasSeenTour: true, ico: true, createdAt: true, region: { select: { tier: true } } },
         })
         .catch(() => null),
       prisma.commission
@@ -109,6 +109,16 @@ export default async function DashboardPage() {
   const canSeeMaterials = canAccess(userLevel, "MATERIALS");
   const nextLevelInfo = getNextLevelInfo(userLevel, userRevenue, regionTier);
   const isBroker = session.user.role === "BROKER";
+
+  // IČO countdown — broker has 30 days from registration to provide IČO
+  const brokerIco = (userData as { ico?: string | null } | null)?.ico;
+  const brokerCreatedAt = (userData as { createdAt?: Date } | null)?.createdAt;
+  let icoDaysLeft: number | null = null;
+  if (isBroker && !brokerIco && brokerCreatedAt) {
+    const deadline = new Date(brokerCreatedAt);
+    deadline.setDate(deadline.getDate() + 30);
+    icoDaysLeft = Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  }
 
   return (
     <div className="p-4 space-y-6">
@@ -157,6 +167,50 @@ export default async function DashboardPage() {
             </div>
           </Card>
         </Link>
+      )}
+
+      {/* IČO upozornění */}
+      {icoDaysLeft !== null && icoDaysLeft > 0 && (
+        <Card className={`p-4 border ${icoDaysLeft <= 7 ? "bg-red-50 border-red-200" : "bg-amber-50 border-amber-200"}`}>
+          <div className="flex items-center gap-3">
+            <span className="text-xl">{icoDaysLeft <= 7 ? "⚠️" : "📋"}</span>
+            <div className="flex-1">
+              <p className="text-sm font-bold text-gray-900">
+                Doplňte IČO — zbývá {icoDaysLeft} {icoDaysLeft === 1 ? "den" : icoDaysLeft < 5 ? "dny" : "dní"}
+              </p>
+              <p className="text-xs text-gray-500 mt-0.5">
+                Pro plnohodnotnou spolupráci potřebujeme vaše IČO do 30 dnů od registrace.
+              </p>
+            </div>
+            <Link
+              href="/makler/settings"
+              className="text-xs font-semibold text-orange-600 hover:text-orange-700 whitespace-nowrap"
+            >
+              Doplnit →
+            </Link>
+          </div>
+        </Card>
+      )}
+      {icoDaysLeft !== null && icoDaysLeft <= 0 && (
+        <Card className="p-4 bg-red-50 border border-red-300">
+          <div className="flex items-center gap-3">
+            <span className="text-xl">🚨</span>
+            <div className="flex-1">
+              <p className="text-sm font-bold text-red-700">
+                Lhůta pro doplnění IČO vypršela
+              </p>
+              <p className="text-xs text-red-600 mt-0.5">
+                Doplňte IČO co nejdříve, jinak může být váš účet pozastaven.
+              </p>
+            </div>
+            <Link
+              href="/makler/settings"
+              className="text-xs font-semibold text-red-600 hover:text-red-700 whitespace-nowrap"
+            >
+              Doplnit →
+            </Link>
+          </div>
+        </Card>
       )}
 
       {/* Statistiky */}

@@ -63,6 +63,8 @@ export default async function AdminBrokerDetailPage({ params }: PageProps) {
       cities: true,
       ico: true,
       bankAccount: true,
+      documents: true,
+      brokerContractUrl: true,
       slug: true,
       level: true,
       totalSales: true,
@@ -121,6 +123,7 @@ export default async function AdminBrokerDetailPage({ params }: PageProps) {
   const brokerStatus = statusInfo[broker.status] || { label: broker.status, variant: "pending" as const };
   const specializations = broker.specializations ? JSON.parse(broker.specializations) as string[] : [];
   const cities = broker.cities ? JSON.parse(broker.cities) as string[] : [];
+  const documents = broker.documents ? JSON.parse(broker.documents) as Record<string, string> : null;
 
   const totalCommissionAmount = commissions.reduce((sum, c) => sum + c.commission, 0);
   const paidCommissions = commissions.filter((c) => c.status === "PAID");
@@ -292,6 +295,80 @@ export default async function AdminBrokerDetailPage({ params }: PageProps) {
           </p>
         </Card>
       </div>
+
+      {/* Dokumenty */}
+      <Card className="p-6">
+        <h3 className="text-lg font-bold text-gray-900 mb-4">Dokumenty</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {/* Živnostenský list */}
+          <div className={`rounded-xl border-2 p-4 text-center ${documents?.tradeLicense ? "border-green-200 bg-green-50" : "border-gray-200 bg-gray-50"}`}>
+            <div className="text-2xl mb-2">{documents?.tradeLicense ? "✅" : "❌"}</div>
+            <p className="text-sm font-semibold text-gray-900">Živnostenský list</p>
+            {documents?.tradeLicense ? (
+              <a
+                href={documents.tradeLicense}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-orange-600 hover:underline mt-1 inline-block"
+              >
+                Zobrazit →
+              </a>
+            ) : (
+              <p className="text-xs text-gray-400 mt-1">Nenahrán</p>
+            )}
+          </div>
+
+          {/* Smlouva */}
+          <div className={`rounded-xl border-2 p-4 text-center ${broker.brokerContractUrl ? "border-green-200 bg-green-50" : "border-gray-200 bg-gray-50"}`}>
+            <div className="text-2xl mb-2">{broker.brokerContractUrl ? "✅" : "❌"}</div>
+            <p className="text-sm font-semibold text-gray-900">Smlouva</p>
+            {broker.brokerContractUrl ? (
+              <a
+                href={broker.brokerContractUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-orange-600 hover:underline mt-1 inline-block"
+              >
+                Zobrazit →
+              </a>
+            ) : (
+              <p className="text-xs text-gray-400 mt-1">Nepodepsána</p>
+            )}
+          </div>
+
+          {/* IČO */}
+          <div className={`rounded-xl border-2 p-4 text-center ${broker.ico ? "border-green-200 bg-green-50" : "border-amber-200 bg-amber-50"}`}>
+            <div className="text-2xl mb-2">{broker.ico ? "✅" : "⏳"}</div>
+            <p className="text-sm font-semibold text-gray-900">IČO</p>
+            {broker.ico ? (
+              <p className="text-xs text-gray-600 mt-1 font-mono">{broker.ico}</p>
+            ) : (
+              <p className="text-xs text-amber-600 mt-1">Čeká na doplnění</p>
+            )}
+          </div>
+        </div>
+
+        {/* OP fotky */}
+        {(documents?.idFront || documents?.idBack) && (
+          <div className="mt-4 pt-4 border-t border-gray-100">
+            <p className="text-sm font-semibold text-gray-700 mb-2">Občanský průkaz</p>
+            <div className="flex gap-3">
+              {documents?.idFront && (
+                <a href={documents.idFront} target="_blank" rel="noopener noreferrer" className="block">
+                  <img src={documents.idFront} alt="OP přední strana" className="w-24 h-16 object-cover rounded-lg border border-gray-200" />
+                  <p className="text-[10px] text-gray-400 mt-1 text-center">Přední</p>
+                </a>
+              )}
+              {documents?.idBack && (
+                <a href={documents.idBack} target="_blank" rel="noopener noreferrer" className="block">
+                  <img src={documents.idBack} alt="OP zadní strana" className="w-24 h-16 object-cover rounded-lg border border-gray-200" />
+                  <p className="text-[10px] text-gray-400 mt-1 text-center">Zadní</p>
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+      </Card>
 
       {/* Vehicles */}
       <Card className="p-6">

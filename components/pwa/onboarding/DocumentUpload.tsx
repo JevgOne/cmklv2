@@ -20,7 +20,7 @@ interface DocumentSlot {
 }
 
 const DOCUMENT_SLOTS: DocumentSlot[] = [
-  { key: "trade_license", label: "Živnostenský list", description: "PDF nebo foto", accept: "application/pdf,image/jpeg,image/png" },
+  { key: "trade_license", label: "Živnostenský list", description: "Nahrajte fotku živnostenského listu", accept: "image/jpeg,image/png,image/webp" },
   { key: "id_front", label: "Občanský průkaz — přední strana", description: "Foto přední strany OP", accept: "image/jpeg,image/png" },
   { key: "id_back", label: "Občanský průkaz — zadní strana", description: "Foto zadní strany OP", accept: "image/jpeg,image/png" },
 ];
