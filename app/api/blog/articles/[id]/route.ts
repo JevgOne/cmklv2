@@ -15,6 +15,7 @@ const updateSchema = z.object({
   seoDescription: z.string().max(160).optional(),
   readTime: z.number().int().positive().optional(),
   status: z.enum(["DRAFT", "REVIEW", "ARCHIVED"]).optional(),
+  tagIds: z.array(z.string()).max(5).optional(),
 });
 
 export async function GET(
@@ -69,7 +70,17 @@ export async function PATCH(
     }
 
     const body = await request.json();
-    const data = updateSchema.parse(body);
+    const { tagIds, ...data } = updateSchema.parse(body);
+
+    // Update tags if provided
+    if (tagIds !== undefined) {
+      await prisma.articleTagLink.deleteMany({ where: { articleId: id } });
+      if (tagIds.length > 0) {
+        await prisma.articleTagLink.createMany({
+          data: tagIds.map((tagId) => ({ articleId: id, tagId })),
+        });
+      }
+    }
 
     const updated = await prisma.article.update({
       where: { id },

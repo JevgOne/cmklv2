@@ -311,6 +311,35 @@ export function SettingsContent({
         </div>
       </Card>
 
+      {/* Blog — moje články */}
+      <Link href="/makler/blog">
+        <Card className="p-5 hover:bg-gray-50 transition-colors cursor-pointer">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-bold text-gray-900">
+                Moje články
+              </h2>
+              <p className="text-sm text-gray-500">
+                Psaní a správa blog článků
+              </p>
+            </div>
+            <svg
+              className="w-5 h-5 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8.25 4.5l7.5 7.5-7.5 7.5"
+              />
+            </svg>
+          </div>
+        </Card>
+      </Link>
+
       {/* Nastavení notifikací */}
       <Link href="/makler/settings/notifications">
         <Card className="p-5 hover:bg-gray-50 transition-colors cursor-pointer">

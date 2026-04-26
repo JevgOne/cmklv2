@@ -14,6 +14,7 @@ const createSchema = z.object({
   seoTitle: z.string().max(70).optional(),
   seoDescription: z.string().max(160).optional(),
   readTime: z.number().int().positive().optional(),
+  tagIds: z.array(z.string()).max(5).optional(),
 });
 
 export async function GET(request: NextRequest) {
@@ -86,11 +87,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Článek s tímto slugem již existuje" }, { status: 409 });
     }
 
+    const { tagIds, ...articleData } = data;
+
     const article = await prisma.article.create({
       data: {
-        ...data,
+        ...articleData,
         authorId: session.user.id,
         status: "DRAFT",
+        ...(tagIds?.length ? {
+          tags: {
+            create: tagIds.map((tagId) => ({ tagId })),
+          },
+        } : {}),
       },
       include: {
         category: { select: { id: true, name: true, slug: true, icon: true } },
