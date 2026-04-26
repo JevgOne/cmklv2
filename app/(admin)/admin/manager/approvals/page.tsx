@@ -18,13 +18,14 @@ export default async function ManagerApprovalsPage() {
     redirect("/login");
   }
 
-  if (session.user.role !== "MANAGER") {
+  if (!["MANAGER", "REGIONAL_DIRECTOR", "ADMIN"].includes(session.user.role)) {
     redirect("/admin/dashboard");
   }
 
-  // Najdi makléře pod tímto manažerem
+  // ADMIN vidí všechny makléře, MANAGER jen své
+  const managerFilter = session.user.role === "ADMIN" ? {} : { managerId: session.user.id };
   const teamBrokers = await prisma.user.findMany({
-    where: { managerId: session.user.id, role: "BROKER" },
+    where: { ...managerFilter, role: "BROKER" },
     select: { id: true },
   });
 

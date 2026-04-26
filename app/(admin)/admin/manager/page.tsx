@@ -14,11 +14,12 @@ export const dynamic = "force-dynamic";
 export default async function ManagerDashboardPage() {
   const session = await getServerSession(authOptions);
 
-  if (!session?.user || session.user.role !== "MANAGER") {
+  if (!session?.user || !["MANAGER", "REGIONAL_DIRECTOR", "ADMIN"].includes(session.user.role)) {
     redirect("/");
   }
 
-  const managerId = session.user.id;
+  // ADMIN vidí všechny makléře, MANAGER jen své
+  const managerId = session.user.role === "ADMIN" ? undefined : session.user.id;
 
   // Statistiky tymu
   const totalBrokers = await prisma.user.count({

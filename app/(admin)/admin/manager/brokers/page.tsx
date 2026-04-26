@@ -11,11 +11,11 @@ export const dynamic = "force-dynamic";
 export default async function ManagerBrokersPage() {
   const session = await getServerSession(authOptions);
 
-  if (!session?.user || session.user.role !== "MANAGER") {
+  if (!session?.user || !["MANAGER", "REGIONAL_DIRECTOR", "ADMIN"].includes(session.user.role)) {
     redirect("/");
   }
 
-  const managerId = session.user.id;
+  const managerId = session.user.role === "ADMIN" ? undefined : session.user.id;
 
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);

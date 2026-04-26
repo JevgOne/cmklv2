@@ -15,12 +15,12 @@ export const dynamic = "force-dynamic";
 export default async function TransferVehiclesPage({ params }: PageProps) {
   const session = await getServerSession(authOptions);
 
-  if (!session?.user || session.user.role !== "MANAGER") {
+  if (!session?.user || !["MANAGER", "REGIONAL_DIRECTOR", "ADMIN"].includes(session.user.role)) {
     redirect("/");
   }
 
   const { id: sourceBrokerId } = await params;
-  const managerId = session.user.id;
+  const managerId = session.user.role === "ADMIN" ? undefined : session.user.id;
 
   // Zdrojový makléř
   const sourceBroker = await prisma.user.findFirst({

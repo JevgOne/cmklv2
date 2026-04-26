@@ -10,7 +10,7 @@ export default async function ManagerNotificationsPage() {
     redirect("/login");
   }
 
-  if (session.user.role !== "MANAGER") {
+  if (!["MANAGER", "REGIONAL_DIRECTOR", "ADMIN"].includes(session.user.role)) {
     redirect("/admin/dashboard");
   }
 
