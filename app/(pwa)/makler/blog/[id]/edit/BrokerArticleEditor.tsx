@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
+import { RichTextEditor } from "@/components/ui/RichTextEditor";
 
 interface ArticleData {
   id: string;
@@ -227,12 +228,10 @@ export function BrokerArticleEditor({
       {/* Content */}
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-2">Obsah článku *</label>
-        <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          rows={15}
-          placeholder={"Pište svůj článek zde...\n\nTip: Pište přirozeně, redakce článek před publikací zformátuje."}
-          className={`${inputClass} leading-relaxed`}
+        <RichTextEditor
+          content={content}
+          onChange={setContent}
+          placeholder="Pište svůj článek zde..."
         />
         <p className="text-xs text-gray-400 mt-1">
           {content.replace(/<[^>]*>/g, "").split(/\s+/).filter(Boolean).length} slov · ~{Math.max(1, Math.round(content.replace(/<[^>]*>/g, "").split(/\s+/).filter(Boolean).length / 200))} min čtení

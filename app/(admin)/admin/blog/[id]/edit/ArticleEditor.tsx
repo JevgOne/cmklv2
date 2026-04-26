@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
+import { RichTextEditor } from "@/components/ui/RichTextEditor";
 
 interface ArticleData {
   id: string;
@@ -219,14 +220,12 @@ export function ArticleEditor({
         {/* Content */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Obsah (HTML) *
+            Obsah *
           </label>
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            rows={20}
-            placeholder="<h2>Nadpis</h2><p>Text článku...</p>"
-            className={`${inputClass} font-mono text-xs`}
+          <RichTextEditor
+            content={content}
+            onChange={setContent}
+            placeholder="Pište obsah článku..."
           />
         </div>
 
