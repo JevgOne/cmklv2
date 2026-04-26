@@ -213,25 +213,25 @@ test.describe("Admin API — auth protection", () => {
     expect(res.status()).toBe(403);
   });
 
-  test("PUT /api/marketplace/investments/fake-id/confirm-payment — requires ADMIN role", async ({ request }) => {
+  test("PUT /api/marketplace/investments/fake-id/confirm-payment — requires auth", async ({ request }) => {
     const res = await request.put("/api/marketplace/investments/fake-id/confirm-payment", {
       data: { paymentReference: "test" },
     });
-    expect(res.status()).toBe(403);
+    expect(res.status()).toBe(401);
   });
 
-  test("POST /api/marketplace/opportunities/fake-id/approve — requires ADMIN role", async ({ request }) => {
+  test("POST /api/marketplace/opportunities/fake-id/approve — requires auth", async ({ request }) => {
     const res = await request.post("/api/marketplace/opportunities/fake-id/approve", {
       data: { approved: true },
     });
-    expect(res.status()).toBe(403);
+    expect(res.status()).toBe(401);
   });
 
-  test("POST /api/marketplace/opportunities/fake-id/payout — requires ADMIN role", async ({ request }) => {
+  test("POST /api/marketplace/opportunities/fake-id/payout — requires auth", async ({ request }) => {
     const res = await request.post("/api/marketplace/opportunities/fake-id/payout", {
       data: { actualSalePrice: 300000 },
     });
-    expect(res.status()).toBe(403);
+    expect(res.status()).toBe(401);
   });
 });
 

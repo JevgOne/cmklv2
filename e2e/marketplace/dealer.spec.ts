@@ -132,6 +132,9 @@ test.describe("Opportunity Wizard", () => {
 
     // Wait a bit for state to update
     await page.waitForTimeout(300);
+
+    const continueBtn = page.locator('button:has-text("Pokračovat")');
+    await expect(continueBtn).toBeEnabled();
   });
 
   test("step 2 — repair plan fields visible", async ({ page }) => {
