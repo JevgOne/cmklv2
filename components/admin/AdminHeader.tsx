@@ -1,16 +1,35 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { NotificationBell } from "@/components/admin/NotificationBell";
+import { AdminGlobalSearch } from "@/components/admin/AdminGlobalSearch";
 
 interface AdminHeaderProps {
   onMenuToggle: () => void;
 }
 
 export function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  // Cmd/Ctrl+K shortcut
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, []);
+
   return (
     <header className="sticky top-0 bg-white border-b border-gray-200 h-[72px] z-50 flex items-center justify-between px-4 sm:px-6 lg:px-8">
       {/* Left: Search bar */}
-      <div className="flex items-center gap-3 bg-gray-100 px-4 py-2.5 rounded-full w-full max-w-[200px] sm:max-w-[320px]">
+      <div
+        onClick={() => setSearchOpen(true)}
+        className="flex items-center gap-3 bg-gray-100 px-4 py-2.5 rounded-full w-full max-w-[200px] sm:max-w-[320px] cursor-pointer hover:bg-gray-200 transition-colors"
+      >
         <svg
           className="w-4 h-4 text-gray-400 shrink-0"
           fill="none"
@@ -24,12 +43,13 @@ export function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
           />
         </svg>
-        <input
-          type="text"
-          placeholder="Hledat vozidla, makléře..."
-          className="border-none bg-transparent text-sm w-full outline-none placeholder:text-gray-400"
-        />
+        <span className="text-sm text-gray-400 flex-1">Hledat vozidla, makléře...</span>
+        <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 text-[10px] text-gray-400 bg-white/70 rounded font-mono">
+          ⌘K
+        </kbd>
       </div>
+
+      <AdminGlobalSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
 
       {/* Right: Actions */}
       <div className="flex items-center gap-4">
