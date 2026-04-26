@@ -59,6 +59,19 @@ export function OpportunityWizard() {
     setForm((prev) => ({ ...prev, ...updates }));
   };
 
+  const canProceed = () => {
+    switch (step) {
+      case 1:
+        return form.brand.length > 0 && form.model.length > 0 && form.year > 1900 && form.mileage >= 0 && form.purchasePrice > 0;
+      case 2:
+        return form.repairCost >= 0;
+      case 3:
+        return form.estimatedSalePrice > 0;
+      default:
+        return true;
+    }
+  };
+
   const totalCost = form.purchasePrice + form.repairCost;
   const profit = form.estimatedSalePrice - totalCost;
   const roi = totalCost > 0
@@ -319,7 +332,7 @@ export function OpportunityWizard() {
             <div />
           )}
           {step < 4 ? (
-            <Button variant="primary" onClick={() => setStep(step + 1)}>
+            <Button variant="primary" onClick={() => setStep(step + 1)} disabled={!canProceed()}>
               Pokračovat
             </Button>
           ) : (
