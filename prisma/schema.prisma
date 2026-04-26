@@ -124,6 +124,7 @@ model User {
   orderItemsAsSupplier  OrderItem[]  @relation("SupplierOrderItems")
   supplierSubOrders     SubOrder[]   @relation("SupplierSubOrders")
   partsFeedConfigs      PartsFeedConfig[]
+  donorVehicles         DonorVehicle[] @relation("SupplierDonorVehicles")
 
   // Marketplace relace
   dealerFlips FlipOpportunity[]
@@ -1002,6 +1003,15 @@ model Part {
   feedConfig   PartsFeedConfig? @relation(fields: [feedConfigId], references: [id])
   externalId   String?  // ID dílu v externím feedu
 
+  // TecDoc (připraveno pro budoucí integraci)
+  tecdocArticleId     Int?
+  tecdocProductGroup  String?
+
+  // Donor car
+  donorVehicleId String?
+  donorVehicle   DonorVehicle? @relation(fields: [donorVehicleId], references: [id])
+  partGrade      String?  // A, B, C
+
   // Relace
   images             PartImage[]
   orderItems         OrderItem[]
@@ -1028,6 +1038,8 @@ model Part {
   @@index([manufacturer])
   @@index([oemNumber])
   @@index([partNumber])
+  @@index([donorVehicleId])
+  @@index([tecdocArticleId])
 }
 
 model PartImage {
@@ -2366,4 +2378,50 @@ model ArticleTagLink {
   tag       ArticleTag @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([articleId, tagId])
+}
+
+// ============================================
+// DONOR CAR (Vrakoviště — celé auto → díly)
+// ============================================
+
+model DonorVehicle {
+  id           String @id @default(cuid())
+  supplierId   String
+  supplier     User   @relation("SupplierDonorVehicles", fields: [supplierId], references: [id])
+
+  vin          String
+  kTypeId      Int?
+  brand        String
+  model        String
+  year         Int?
+  variant      String?
+  engine       String?
+  fuel         String?
+  transmission String?
+
+  // Likvidace
+  disposalType String   // ACCIDENT, MECHANICAL, COMPLETE, FLOOD, FIRE
+  damageZones  Json?    // { "FRONT": "destroyed", "REAR": "ok", ... }
+
+  // Fotky celého auta
+  photos       Json?    // ["url1", "url2", ...]
+
+  // Statistiky
+  totalParts     Int @default(0)
+  publishedParts Int @default(0)
+  totalValue     Int @default(0)
+
+  // Status
+  status       String @default("DRAFT") // DRAFT, PUBLISHED, ARCHIVED
+
+  // Relace
+  parts        Part[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([supplierId])
+  @@index([vin])
+  @@index([kTypeId])
+  @@index([status])
 }
