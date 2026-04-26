@@ -43,11 +43,40 @@ export async function GET(
       return NextResponse.json({ error: "Neprihlasen" }, { status: 401 });
     }
 
-    if (session.user.role !== "MANAGER") {
+    const role = session.user.role;
+    if (!["MANAGER", "REGIONAL_DIRECTOR", "ADMIN"].includes(role)) {
       return NextResponse.json({ error: "Nemate opravneni" }, { status: 403 });
     }
 
     const { id } = await params;
+
+    // ADMIN sees all vehicles
+    if (role === "ADMIN") {
+      const fullVehicle = await prisma.vehicle.findUnique({
+        where: { id },
+        include: {
+          broker: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
+          images: { orderBy: { order: "asc" } },
+          changeLog: { orderBy: { createdAt: "desc" }, take: 20 },
+          contracts: { select: { id: true, status: true, type: true } },
+        },
+      });
+
+      if (!fullVehicle) {
+        return NextResponse.json(
+          { error: "Vozidlo nenalezeno" },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json(fullVehicle);
+    }
 
     const vehicle = await verifyManagerOwnership(session.user.id, id);
 
@@ -96,7 +125,8 @@ export async function PUT(
       return NextResponse.json({ error: "Neprihlasen" }, { status: 401 });
     }
 
-    if (session.user.role !== "MANAGER") {
+    const role = session.user.role;
+    if (!["MANAGER", "REGIONAL_DIRECTOR", "ADMIN"].includes(role)) {
       return NextResponse.json({ error: "Nemate opravneni" }, { status: 403 });
     }
 
@@ -114,7 +144,10 @@ export async function PUT(
 
     const data = updateSchema.parse(body);
 
-    const vehicle = await verifyManagerOwnership(session.user.id, id);
+    // ADMIN can edit any vehicle
+    const vehicle = role === "ADMIN"
+      ? await prisma.vehicle.findUnique({ where: { id } })
+      : await verifyManagerOwnership(session.user.id, id);
 
     if (!vehicle) {
       return NextResponse.json(

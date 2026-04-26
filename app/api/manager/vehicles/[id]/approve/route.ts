@@ -21,7 +21,8 @@ export async function POST(
       return NextResponse.json({ error: "Neprihlasen" }, { status: 401 });
     }
 
-    if (session.user.role !== "MANAGER") {
+    const role = session.user.role;
+    if (!["MANAGER", "REGIONAL_DIRECTOR", "ADMIN"].includes(role)) {
       return NextResponse.json({ error: "Nemate opravneni" }, { status: 403 });
     }
 
@@ -70,8 +71,8 @@ export async function POST(
       );
     }
 
-    // Ownership check: vozidlo musí patřit makléři tohoto manažera
-    if (!vehicle.broker || vehicle.broker.managerId !== session.user.id) {
+    // Ownership check: vozidlo musí patřit makléři tohoto manažera (ADMIN bypass)
+    if (role !== "ADMIN" && (!vehicle.broker || vehicle.broker.managerId !== session.user.id)) {
       return NextResponse.json(
         { error: "Vozidlo nepatri vasemu makleri" },
         { status: 403 }

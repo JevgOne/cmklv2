@@ -26,15 +26,16 @@ export async function GET(
       return NextResponse.json({ error: "Neprihlasen" }, { status: 401 });
     }
 
-    if (session.user.role !== "MANAGER") {
+    const role = session.user.role;
+    if (!["MANAGER", "REGIONAL_DIRECTOR", "ADMIN"].includes(role)) {
       return NextResponse.json({ error: "Nemate opravneni" }, { status: 403 });
     }
 
     const { id } = await params;
 
-    // Overit ze makler patri pod tohoto manazera
+    // Overit ze makler patri pod tohoto manazera (ADMIN vidi vse)
     const broker = await prisma.user.findFirst({
-      where: { id, managerId: session.user.id, role: "BROKER" },
+      where: { id, ...(role === "ADMIN" ? {} : { managerId: session.user.id }), role: "BROKER" },
       select: {
         id: true,
         firstName: true,
@@ -93,15 +94,16 @@ export async function PUT(
       return NextResponse.json({ error: "Neprihlasen" }, { status: 401 });
     }
 
-    if (session.user.role !== "MANAGER") {
+    const role = session.user.role;
+    if (!["MANAGER", "REGIONAL_DIRECTOR", "ADMIN"].includes(role)) {
       return NextResponse.json({ error: "Nemate opravneni" }, { status: 403 });
     }
 
     const { id } = await params;
 
-    // Overit ze makler patri pod tohoto manazera
+    // Overit ze makler patri pod tohoto manazera (ADMIN vidi vse)
     const existingBroker = await prisma.user.findFirst({
-      where: { id, managerId: session.user.id, role: "BROKER" },
+      where: { id, ...(role === "ADMIN" ? {} : { managerId: session.user.id }), role: "BROKER" },
     });
 
     if (!existingBroker) {

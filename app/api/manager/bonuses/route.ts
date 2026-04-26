@@ -13,13 +13,16 @@ export async function GET() {
       return NextResponse.json({ error: "Neprihlasen" }, { status: 401 });
     }
 
-    if (session.user.role !== "MANAGER") {
+    const role = session.user.role;
+    if (!["MANAGER", "REGIONAL_DIRECTOR", "ADMIN"].includes(role)) {
       return NextResponse.json({ error: "Nemate opravneni" }, { status: 403 });
     }
 
+    const managerId = role === "ADMIN" ? undefined : session.user.id;
+
     // Najdi makléře pod tímto manažerem
     const teamBrokers = await prisma.user.findMany({
-      where: { managerId: session.user.id, role: "BROKER" },
+      where: { ...(managerId ? { managerId } : {}), role: "BROKER" },
       select: { id: true },
     });
 

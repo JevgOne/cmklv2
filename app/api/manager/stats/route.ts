@@ -11,11 +11,12 @@ export async function GET() {
       return NextResponse.json({ error: "Neprihlasen" }, { status: 401 });
     }
 
-    if (session.user.role !== "MANAGER") {
+    const role = session.user.role;
+    if (!["MANAGER", "REGIONAL_DIRECTOR", "ADMIN"].includes(role)) {
       return NextResponse.json({ error: "Nemate opravneni" }, { status: 403 });
     }
 
-    const managerId = session.user.id;
+    const managerId = role === "ADMIN" ? undefined : session.user.id;
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 

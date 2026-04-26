@@ -13,16 +13,17 @@ export async function POST(
     if (!session?.user) {
       return NextResponse.json({ error: "Nepřihlášen" }, { status: 401 });
     }
-    if (session.user.role !== "MANAGER") {
+    const role = session.user.role;
+    if (!["MANAGER", "REGIONAL_DIRECTOR", "ADMIN"].includes(role)) {
       return NextResponse.json({ error: "Nemáte oprávnění" }, { status: 403 });
     }
 
     const { id: sourceBrokerId } = await params;
-    const managerId = session.user.id;
+    const managerId = role === "ADMIN" ? undefined : session.user.id;
 
-    // Ověřit, že zdrojový makléř patří pod tohoto manažera
+    // Ověřit, že zdrojový makléř patří pod tohoto manažera (ADMIN vidí vše)
     const sourceBroker = await prisma.user.findFirst({
-      where: { id: sourceBrokerId, managerId, role: "BROKER" },
+      where: { id: sourceBrokerId, ...(managerId ? { managerId } : {}), role: "BROKER" },
       select: { id: true, firstName: true, lastName: true },
     });
 
@@ -44,9 +45,9 @@ export async function POST(
 
     const { vehicleIds, targetBrokerId, reason } = parsed.data;
 
-    // Ověřit, že cílový makléř patří pod stejného manažera
+    // Ověřit, že cílový makléř patří pod stejného manažera (ADMIN vidí vše)
     const targetBroker = await prisma.user.findFirst({
-      where: { id: targetBrokerId, managerId, role: "BROKER" },
+      where: { id: targetBrokerId, ...(managerId ? { managerId } : {}), role: "BROKER" },
       select: { id: true, firstName: true, lastName: true },
     });
 
@@ -90,7 +91,7 @@ export async function POST(
       // Vytvořit change log záznamy
       const changeLogs = transferredIds.map((vehicleId) => ({
         vehicleId,
-        userId: managerId,
+        userId: session.user.id,
         field: "brokerId",
         oldValue: `${sourceBroker.firstName} ${sourceBroker.lastName} (${sourceBrokerId})`,
         newValue: `${targetBroker.firstName} ${targetBroker.lastName} (${targetBrokerId})`,

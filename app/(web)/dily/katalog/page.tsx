@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Select } from "@/components/ui/Select";
 import { Input } from "@/components/ui/Input";
@@ -83,7 +83,7 @@ function getPartTypeBadge(partType: string): "used" | "new" | "aftermarket" {
   }
 }
 
-export default function DilyKatalogPage() {
+function DilyKatalogInner() {
   const searchParams = useSearchParams();
 
   const [activeTab, setActiveTab] = useState(searchParams.get("category") || "vse");
@@ -118,6 +118,11 @@ export default function DilyKatalogPage() {
 
     try {
       const res = await fetch(`/api/parts?${params.toString()}`);
+      if (!res.ok) {
+        console.error("Parts API error:", res.status);
+        setParts([]);
+        return;
+      }
       const data = await res.json();
       setParts(data.parts ?? []);
       setTotal(data.total ?? 0);
@@ -334,5 +339,33 @@ export default function DilyKatalogPage() {
         )}
       </div>
     </div>
+  );
+}
+
+function KatalogFallback() {
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <section className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
+          <div className="h-9 w-80 bg-gray-200 rounded animate-pulse" />
+          <div className="h-5 w-40 bg-gray-200 rounded animate-pulse mt-2" />
+        </div>
+      </section>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="bg-white rounded-2xl h-80 animate-pulse" />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function DilyKatalogPage() {
+  return (
+    <Suspense fallback={<KatalogFallback />}>
+      <DilyKatalogInner />
+    </Suspense>
   );
 }

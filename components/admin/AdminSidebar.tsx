@@ -48,7 +48,7 @@ const navSections: NavSection[] = [
       { id: "manager-approvals", href: "/admin/manager/approvals", icon: "✅", label: "Schvalování" },
       { id: "manager-bonuses", href: "/admin/manager/bonuses", icon: "🎯", label: "Bonusy" },
     ],
-    roles: ["MANAGER", "REGIONAL_DIRECTOR"],
+    roles: ["ADMIN", "MANAGER", "REGIONAL_DIRECTOR"],
   },
   {
     title: "PARTNEŘI",
