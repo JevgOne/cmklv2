@@ -8,6 +8,7 @@ import { calculateCommission } from "@/lib/commission-calculator";
 import { addBrokerRevenue, type StarLevelKey } from "@/lib/broker-points";
 import { createNotification } from "@/lib/notifications";
 import { recalculateBrokerScore } from "@/lib/reputation/recalculate";
+import { sendEmail, RESEND_FROM } from "@/lib/resend";
 
 /* ------------------------------------------------------------------ */
 /*  POST /api/vehicles/[id]/handover — Předání vozidla kupujícímu      */
@@ -215,14 +216,86 @@ export async function POST(
       );
     }
 
-    // --- Follow-up (FÁZE 4) ---
-    // TODO: TASK-026 — automatický email kupujícímu po 7 dnech (follow-up systém)
+    // --- Follow-up emaily po předání ---
+    const vehicleLabel = `${vehicle.brand} ${vehicle.model}`;
+    const priceFormatted = new Intl.NumberFormat("cs-CZ").format(data.soldPrice);
+    const brokerName = result.vehicle.broker
+      ? `${result.vehicle.broker.firstName} ${result.vehicle.broker.lastName}`
+      : "Váš makléř";
+
+    // Najít kupujícího z inquiry (RESERVED/SOLD)
+    const buyerInquiry = await prisma.vehicleInquiry.findFirst({
+      where: {
+        vehicleId: vehicle.id,
+        status: { in: ["RESERVED", "SOLD"] },
+        buyerEmail: { not: null },
+      },
+      orderBy: { updatedAt: "desc" },
+      select: { buyerName: true, buyerEmail: true },
+    });
+
+    // Email kupujícímu
+    if (buyerInquiry?.buyerEmail) {
+      sendEmail({
+        from: RESEND_FROM,
+        to: buyerInquiry.buyerEmail,
+        subject: `Potvrzení předání vozidla ${vehicleLabel} | Carmakler`,
+        html: `
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #F97316;">Carmakler</h2>
+            <p>Dobrý den${buyerInquiry.buyerName ? `, ${buyerInquiry.buyerName}` : ""},</p>
+            <p>potvrzujeme, že vozidlo <strong>${vehicleLabel}</strong> vám bylo úspěšně předáno.</p>
+            <table style="margin: 16px 0; border-collapse: collapse;">
+              <tr><td style="padding: 4px 12px 4px 0; color: #666;">Vozidlo:</td><td style="padding: 4px 0;"><strong>${vehicleLabel}</strong></td></tr>
+              <tr><td style="padding: 4px 12px 4px 0; color: #666;">Prodejní cena:</td><td style="padding: 4px 0;"><strong>${priceFormatted} Kč</strong></td></tr>
+              <tr><td style="padding: 4px 12px 4px 0; color: #666;">Makléř:</td><td style="padding: 4px 0;">${brokerName}</td></tr>
+            </table>
+            <p>Děkujeme za důvěru a přejeme mnoho spokojených kilometrů!</p>
+            <p>Pokud budete mít jakékoli dotazy, neváhejte se na nás obrátit.</p>
+            <br/>
+            <p>S pozdravem,<br/>Tým Carmakler</p>
+            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+            <p style="color: #999; font-size: 12px;">Tato zpráva byla odeslána automaticky ze systému Carmakler.</p>
+          </div>
+        `,
+        text: `Potvrzení předání vozidla ${vehicleLabel}. Prodejní cena: ${priceFormatted} Kč. Makléř: ${brokerName}. Děkujeme za důvěru!`,
+      }).catch((err) => console.error("Buyer handover email failed:", err));
+    }
+
+    // Email prodávajícímu
+    if (vehicle.sellerEmail) {
+      sendEmail({
+        from: RESEND_FROM,
+        to: vehicle.sellerEmail,
+        subject: `Vaše vozidlo ${vehicleLabel} bylo úspěšně prodáno | Carmakler`,
+        html: `
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #F97316;">Carmakler</h2>
+            <p>Dobrý den${vehicle.sellerName ? `, ${vehicle.sellerName}` : ""},</p>
+            <p>rádi vás informujeme, že vaše vozidlo <strong>${vehicleLabel}</strong> bylo úspěšně předáno novému majiteli.</p>
+            <table style="margin: 16px 0; border-collapse: collapse;">
+              <tr><td style="padding: 4px 12px 4px 0; color: #666;">Vozidlo:</td><td style="padding: 4px 0;"><strong>${vehicleLabel}</strong></td></tr>
+              <tr><td style="padding: 4px 12px 4px 0; color: #666;">Prodejní cena:</td><td style="padding: 4px 0;"><strong>${priceFormatted} Kč</strong></td></tr>
+              <tr><td style="padding: 4px 12px 4px 0; color: #666;">Makléř:</td><td style="padding: 4px 0;">${brokerName}</td></tr>
+            </table>
+            <p>Děkujeme, že jste využili služeb Carmakler. Budeme rádi, pokud nás doporučíte svým známým.</p>
+            <br/>
+            <p>S pozdravem,<br/>Tým Carmakler</p>
+            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+            <p style="color: #999; font-size: 12px;">Tato zpráva byla odeslána automaticky ze systému Carmakler.</p>
+          </div>
+        `,
+        text: `Vaše vozidlo ${vehicleLabel} bylo úspěšně prodáno za ${priceFormatted} Kč. Makléř: ${brokerName}. Děkujeme za důvěru!`,
+      }).catch((err) => console.error("Seller handover email failed:", err));
+    }
+
+    // Follow-up reminder pro makléře
     if (vehicle.brokerId) {
       await createNotification({
         userId: vehicle.brokerId,
         type: "SYSTEM",
         title: "Zavolej kupujícímu za 7 dní",
-        body: `Follow-up po prodeji ${vehicle.brand} ${vehicle.model}`,
+        body: `Follow-up po prodeji ${vehicleLabel}`,
         link: `/makler/vehicles/${vehicle.id}`,
       });
     }
