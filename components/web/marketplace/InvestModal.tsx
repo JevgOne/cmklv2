@@ -55,6 +55,8 @@ export function InvestModal({
       if (res.ok) {
         setSubmitted(true);
       }
+    } catch (err) {
+      console.error("InvestModal: investment submit failed:", err);
     } finally {
       setSubmitting(false);
     }

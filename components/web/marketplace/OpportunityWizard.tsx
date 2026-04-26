@@ -95,6 +95,7 @@ export function OpportunityWizard() {
           purchasePrice: form.purchasePrice,
           repairDescription: form.repairDescription,
           repairCost: form.repairCost,
+          repairPhotos: form.repairPhotos.length > 0 ? form.repairPhotos : undefined,
           estimatedSalePrice: form.estimatedSalePrice,
         }),
       });

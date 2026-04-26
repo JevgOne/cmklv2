@@ -59,8 +59,22 @@ async function getDealerData() {
     ).length;
     const soldFlips = opportunities.filter((o) => o.status === "SOLD").length;
 
+    // Compute average ROI from completed flips with actual sale price
+    const completedOpps = dbOpps.filter(
+      (o) => o.status === "COMPLETED" && o.actualSalePrice !== null && o.actualSalePrice > 0
+    );
+    let averageRoi = 0;
+    if (completedOpps.length > 0) {
+      const totalRoi = completedOpps.reduce((sum, o) => {
+        const cost = o.purchasePrice + o.repairCost;
+        const profit = (o.actualSalePrice ?? 0) - cost;
+        return sum + (cost > 0 ? (profit / cost) * 100 : 0);
+      }, 0);
+      averageRoi = Math.round((totalRoi / completedOpps.length) * 10) / 10;
+    }
+
     return {
-      stats: { totalFlips, activeFlips, soldFlips, averageRoi: 0 },
+      stats: { totalFlips, activeFlips, soldFlips, averageRoi },
       opportunities,
     };
   } catch {

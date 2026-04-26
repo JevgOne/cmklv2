@@ -121,8 +121,8 @@ export function DealDetailClient({
         body: JSON.stringify({ status: newStatus }),
       });
       if (res.ok) router.refresh();
-    } catch {
-      // Silent fail
+    } catch (err) {
+      console.error("DealDetailClient: status update failed:", err);
     }
   };
 

@@ -63,8 +63,8 @@ export function DealPhotoGallery({
           });
           router.refresh();
         }
-      } catch {
-        // Silent fail
+      } catch (err) {
+        console.error("DealPhotoGallery: upload failed:", err);
       } finally {
         setUploading(false);
       }

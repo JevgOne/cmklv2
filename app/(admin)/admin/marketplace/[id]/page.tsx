@@ -83,8 +83,8 @@ export default function AdminFlipDetailPage() {
                   createdAt: i.createdAt?.split("T")[0] || "",
                 }));
             }
-          } catch {
-            // Investments endpoint may not support this filter
+          } catch (err) {
+            console.error("Admin flip detail: investments load failed:", err);
           }
 
           setFlip({
@@ -110,8 +110,8 @@ export default function AdminFlipDetailPage() {
             payments,
           });
         }
-      } catch {
-        // handled by loading state
+      } catch (err) {
+        console.error("Admin flip detail: load failed:", err);
       } finally {
         setLoading(false);
       }
