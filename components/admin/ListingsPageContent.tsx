@@ -252,6 +252,15 @@ export function ListingsPageContent() {
               Deaktivovat
             </Button>
           )}
+          {item.status === "INACTIVE" && (
+            <Button
+              variant="success"
+              size="sm"
+              onClick={() => handleAction(item.id, "approve")}
+            >
+              Aktivovat
+            </Button>
+          )}
           <Button
             variant="ghost"
             size="sm"
