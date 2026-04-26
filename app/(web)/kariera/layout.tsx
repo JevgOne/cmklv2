@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { generateJobPostingJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
 
 // Canonical exportujeme na layout level (kontrolovaná výjimka pravidla Q5):
@@ -17,10 +18,50 @@ export const metadata: Metadata = {
   alternates: pageCanonical("/kariera"),
 };
 
+const positions = [
+  {
+    title: "Automakléř",
+    location: "Praha",
+    description: "Pomáhejte klientům s prodejem a nákupem vozidel. Zajišťujte kompletní servis od prvního kontaktu po předání klíčů.",
+    salary: { minValue: 40000, maxValue: 80000 },
+  },
+  {
+    title: "Automakléř",
+    location: "Brno",
+    description: "Pomáhejte klientům s prodejem a nákupem vozidel. Zajišťujte kompletní servis od prvního kontaktu po předání klíčů.",
+    salary: { minValue: 40000, maxValue: 80000 },
+  },
+  {
+    title: "Regionální manažer",
+    location: "Celá ČR",
+    description: "Řiďte tým makléřů a rozvíjejte region. Zodpovídejte za výkon, kvalitu služeb a růst v přiděleném regionu.",
+    salary: { minValue: 50000, maxValue: 100000 },
+  },
+];
+
 export default function KarieraLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <>
+      {positions.map((pos, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: generateJobPostingJsonLd({
+              title: pos.title,
+              description: pos.description,
+              location: pos.location,
+              employmentType: "CONTRACTOR",
+              baseSalary: pos.salary,
+            }),
+          }}
+        />
+      ))}
+      {children}
+    </>
+  );
 }

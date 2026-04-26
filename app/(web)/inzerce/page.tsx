@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { prisma } from "@/lib/prisma";
+import { generateWebPageJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
 
 export const revalidate = 3600;
@@ -114,6 +115,16 @@ export default async function InzercePage() {
 
   return (
     <main className="min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: generateWebPageJsonLd({
+            name: "Inzerce vozidel",
+            description: "Prodejte auto online. Inzertní platforma CarMakléř pro soukromé prodejce, autobazary a dealery.",
+            url: "https://carmakler.cz/inzerce",
+          }),
+        }}
+      />
       <Breadcrumbs
         items={[
           { label: "Domů", href: "/" },

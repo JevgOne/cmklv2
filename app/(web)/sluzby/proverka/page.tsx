@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ServicePage } from "@/components/web/ServicePage";
 import { ProverkaForm } from "@/components/web/ProverkaForm";
+import { generateServiceJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
@@ -82,19 +83,32 @@ const faq = [
 
 export default function ProverkaPage() {
   return (
-    <ServicePage
-      hero={{
-        title: "Kupte auto s jistotou",
-        highlight: "s jistotou",
-        subtitle:
-          "Zjistěte pravdu o autě, než za něj zaplatíte. Report do 30 minut.",
-      }}
-      steps={steps}
-      benefits={benefits}
-      cta={<ProverkaForm />}
-      faq={faq}
-      breadcrumbLabel="Prověrka vozidla"
-      currentService="proverka"
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: generateServiceJsonLd({
+            name: "Prověrka vozidla",
+            description: "Kompletní prověrka historie a technického stavu vozidla. Kontrola havárií, stočení km, zástav a servisní historie. Report do 30 minut.",
+            url: "https://carmakler.cz/sluzby/proverka",
+            areaServed: "CZ",
+          }),
+        }}
+      />
+      <ServicePage
+        hero={{
+          title: "Kupte auto s jistotou",
+          highlight: "s jistotou",
+          subtitle:
+            "Zjistěte pravdu o autě, než za něj zaplatíte. Report do 30 minut.",
+        }}
+        steps={steps}
+        benefits={benefits}
+        cta={<ProverkaForm />}
+        faq={faq}
+        breadcrumbLabel="Prověrka vozidla"
+        currentService="proverka"
+      />
+    </>
   );
 }

@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { prisma } from "@/lib/prisma";
+import { generateItemListJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
 
 export const revalidate = 3600; // ISR: 1 hodina
@@ -79,6 +80,16 @@ export default async function MakleriPage() {
 
   return (
     <main>
+      {brokers.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: generateItemListJsonLd(
+              brokers.map((b) => `https://carmakler.cz/profil/${b.slug}`)
+            ),
+          }}
+        />
+      )}
       <Breadcrumbs
         items={[
           { label: "Domů", href: "/" },

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ServicePage } from "@/components/web/ServicePage";
 import { FinancovaniCalc } from "@/components/web/FinancovaniCalc";
+import { generateServiceJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
@@ -83,19 +84,32 @@ const faq = [
 
 export default function FinancovaniPage() {
   return (
-    <ServicePage
-      hero={{
-        title: "Auto na splátky do 30 minut",
-        highlight: "do 30 minut",
-        subtitle:
-          "Bez zálohy, úrok od 3,9 %, schválení online. Porovnáme nabídky bank za vás.",
-      }}
-      steps={steps}
-      benefits={benefits}
-      cta={<FinancovaniCalc />}
-      faq={faq}
-      breadcrumbLabel="Financování"
-      currentService="financovani"
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: generateServiceJsonLd({
+            name: "Financování auta",
+            description: "Auto na splátky bez zálohy, úrok od 3,9 %. Online schválení do 30 minut, bez návštěvy pobočky. Porovnání nabídek bank.",
+            url: "https://carmakler.cz/sluzby/financovani",
+            areaServed: "CZ",
+          }),
+        }}
+      />
+      <ServicePage
+        hero={{
+          title: "Auto na splátky do 30 minut",
+          highlight: "do 30 minut",
+          subtitle:
+            "Bez zálohy, úrok od 3,9 %, schválení online. Porovnáme nabídky bank za vás.",
+        }}
+        steps={steps}
+        benefits={benefits}
+        cta={<FinancovaniCalc />}
+        faq={faq}
+        breadcrumbLabel="Financování"
+        currentService="financovani"
+      />
+    </>
   );
 }

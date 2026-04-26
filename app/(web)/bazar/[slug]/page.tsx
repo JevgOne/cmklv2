@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import type { Metadata } from "next";
+import { generateLocalBusinessJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
 
 interface Props {
@@ -73,6 +74,28 @@ export default async function BazarProfilePage({ params }: Props) {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: generateLocalBusinessJsonLd({
+            name: partner.name,
+            description: partner.description || `Autobazar ${partner.name} — ověřený partner CarMakléř.`,
+            url: `https://carmakler.cz/bazar/${slug}`,
+            telephone: partner.phone || undefined,
+            email: partner.email || undefined,
+            address: partner.city ? {
+              streetAddress: partner.address || undefined,
+              addressLocality: partner.city,
+              addressRegion: partner.region || undefined,
+              postalCode: partner.zip || undefined,
+            } : undefined,
+            geo: partner.latitude && partner.longitude ? {
+              latitude: partner.latitude,
+              longitude: partner.longitude,
+            } : undefined,
+          }),
+        }}
+      />
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start gap-6 mb-8">
         {partner.logo ? (

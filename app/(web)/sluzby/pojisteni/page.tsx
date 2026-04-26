@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ServicePage } from "@/components/web/ServicePage";
 import { PojisteniForm } from "@/components/web/PojisteniForm";
+import { generateServiceJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
@@ -83,19 +84,32 @@ const faq = [
 
 export default function PojisteniPage() {
   return (
-    <ServicePage
-      hero={{
-        title: "Povinné ručení i havarijní online",
-        highlight: "online",
-        subtitle:
-          "Porovnáme všechny pojišťovny v ČR a najdeme tu nejlevnější. Sjednáte za 3 minuty, zdarma.",
-      }}
-      steps={steps}
-      benefits={benefits}
-      cta={<PojisteniForm />}
-      faq={faq}
-      breadcrumbLabel="Pojištění"
-      currentService="pojisteni"
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: generateServiceJsonLd({
+            name: "Pojištění auta",
+            description: "Porovnání povinného ručení i havarijního pojištění od všech pojišťoven v ČR. Sjednání online za 3 minuty, zdarma.",
+            url: "https://carmakler.cz/sluzby/pojisteni",
+            areaServed: "CZ",
+          }),
+        }}
+      />
+      <ServicePage
+        hero={{
+          title: "Povinné ručení i havarijní online",
+          highlight: "online",
+          subtitle:
+            "Porovnáme všechny pojišťovny v ČR a najdeme tu nejlevnější. Sjednáte za 3 minuty, zdarma.",
+        }}
+        steps={steps}
+        benefits={benefits}
+        cta={<PojisteniForm />}
+        faq={faq}
+        breadcrumbLabel="Pojištění"
+        currentService="pojisteni"
+      />
+    </>
   );
 }

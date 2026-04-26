@@ -129,6 +129,61 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.4,
     },
+    // Chybějící veřejné stránky
+    {
+      url: `${BASE_URL}/jak-to-funguje`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${BASE_URL}/marketplace`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      url: `${BASE_URL}/marketplace/apply`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
+      url: `${BASE_URL}/inzerce/katalog`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.8,
+    },
+    {
+      url: `${BASE_URL}/shop/katalog`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.7,
+    },
+    {
+      url: `${BASE_URL}/dily/katalog`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.7,
+    },
+    {
+      url: `${BASE_URL}/shop/vraceni-zbozi`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.4,
+    },
+    {
+      url: `${BASE_URL}/shop/reklamace`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.4,
+    },
+    {
+      url: `${BASE_URL}/nabidka/porovnani`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.5,
+    },
   ];
 
   // SEO landing pages — značky (16)
@@ -314,6 +369,42 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // DB nedostupná
   }
 
+  // Dynamické stránky — autobazary (partner landing pages)
+  let bazarPages: MetadataRoute.Sitemap = [];
+  try {
+    const bazars = await prisma.partner.findMany({
+      where: { status: "AKTIVNI_PARTNER", type: "AUTOBAZAR" },
+      select: { slug: true, updatedAt: true },
+    });
+
+    bazarPages = bazars.map((b) => ({
+      url: `${BASE_URL}/bazar/${b.slug}`,
+      lastModified: b.updatedAt,
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    }));
+  } catch {
+    // DB nedostupná
+  }
+
+  // Dynamické stránky — inzeráty (aktivní listings)
+  let listingPages: MetadataRoute.Sitemap = [];
+  try {
+    const listings = await prisma.listing.findMany({
+      where: { status: "ACTIVE" },
+      select: { slug: true, updatedAt: true },
+    });
+
+    listingPages = listings.map((l) => ({
+      url: `${BASE_URL}/inzerce/katalog/${l.slug}`,
+      lastModified: l.updatedAt,
+      changeFrequency: "daily" as const,
+      priority: 0.7,
+    }));
+  } catch {
+    // DB nedostupná
+  }
+
   return [
     ...staticPages,
     ...brandPages,
@@ -329,6 +420,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...brokerPages,
     ...tagPages,
     ...partnerPages,
+    ...bazarPages,
+    ...listingPages,
     ...blogPages,
   ];
 }

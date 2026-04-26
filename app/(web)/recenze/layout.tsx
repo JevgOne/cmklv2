@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { generateAggregateRatingJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
 
 // Canonical exportujeme na layout level (kontrolovaná výjimka pravidla Q5):
@@ -17,18 +18,16 @@ export const metadata: Metadata = {
   alternates: pageCanonical("/recenze"),
 };
 
-const reviewJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "CarMakléř",
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: "4.8",
-    reviewCount: "8",
-    bestRating: "5",
-    worstRating: "1",
-  },
-};
+const reviewJsonLdStr = generateAggregateRatingJsonLd({
+  organizationName: "CarMakléř",
+  ratingValue: 4.8,
+  reviewCount: 8,
+  reviews: [
+    { author: "Jana K.", reviewBody: "Prodej proběhl hladce a rychle. Auto bylo prodané za 12 dní.", ratingValue: 5 },
+    { author: "Martin D.", reviewBody: "Konečně někdo, kdo se o všechno postará.", ratingValue: 5 },
+    { author: "Lucie N.", reviewBody: "Makléř byl profesionální, vždy dostupný.", ratingValue: 5 },
+  ],
+});
 
 export default function RecenzeLayout({
   children,
@@ -39,7 +38,7 @@ export default function RecenzeLayout({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: reviewJsonLdStr }}
       />
       {children}
     </>

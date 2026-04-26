@@ -6,6 +6,7 @@ import { PartsSearch } from "@/components/web/PartsSearch";
 import { ProductCard } from "@/components/web/ProductCard";
 import { prisma } from "@/lib/prisma";
 import { PART_CATEGORIES } from "@/lib/parts-categories";
+import { generateWebPageJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
@@ -95,6 +96,16 @@ export default async function ShopPage() {
 
   return (
     <div className="min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: generateWebPageJsonLd({
+            name: "Eshop autodíly",
+            description: "Nové i použité autodíly z českých vrakovišť. Hledejte podle VIN, značky nebo kategorie.",
+            url: "https://carmakler.cz/shop",
+          }),
+        }}
+      />
       {/* ============================================================ */}
       {/* Hero                                                          */}
       {/* ============================================================ */}

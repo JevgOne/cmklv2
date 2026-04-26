@@ -508,3 +508,212 @@ export function generateStoreJsonLd(store: StoreJsonLdData): string {
 
   return JSON.stringify(jsonLd);
 }
+
+// --- Nové generátory (sitemap-jsonld-audit FÁZE 3) ---
+
+/**
+ * LocalBusiness JSON-LD — pro /kontakt a partner stránky.
+ * Schema.org subtype AutomotiveBusiness.
+ */
+export interface LocalBusinessJsonLdData {
+  name: string;
+  description: string;
+  url: string;
+  telephone?: string;
+  email?: string;
+  address?: {
+    streetAddress?: string;
+    addressLocality?: string;
+    addressRegion?: string;
+    postalCode?: string;
+  };
+  geo?: { latitude: number; longitude: number };
+  openingHours?: string;
+  image?: string;
+  priceRange?: string;
+}
+
+export function generateLocalBusinessJsonLd(biz: LocalBusinessJsonLdData): string {
+  const jsonLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "AutomotiveBusiness",
+    name: biz.name,
+    description: biz.description,
+    url: biz.url,
+  };
+
+  if (biz.telephone) jsonLd.telephone = biz.telephone;
+  if (biz.email) jsonLd.email = biz.email;
+  if (biz.image) jsonLd.image = biz.image;
+  if (biz.priceRange) jsonLd.priceRange = biz.priceRange;
+  if (biz.openingHours) jsonLd.openingHours = biz.openingHours;
+
+  if (biz.address) {
+    jsonLd.address = {
+      "@type": "PostalAddress",
+      addressCountry: "CZ",
+      ...(biz.address.streetAddress && { streetAddress: biz.address.streetAddress }),
+      ...(biz.address.addressLocality && { addressLocality: biz.address.addressLocality }),
+      ...(biz.address.addressRegion && { addressRegion: biz.address.addressRegion }),
+      ...(biz.address.postalCode && { postalCode: biz.address.postalCode }),
+    };
+  }
+
+  if (biz.geo) {
+    jsonLd.geo = {
+      "@type": "GeoCoordinates",
+      latitude: biz.geo.latitude,
+      longitude: biz.geo.longitude,
+    };
+  }
+
+  return JSON.stringify(jsonLd);
+}
+
+/**
+ * AggregateRating + Review[] JSON-LD — pro /recenze.
+ * Emituje Organization s aggregateRating a individuálními reviews.
+ */
+export interface ReviewJsonLdData {
+  author: string;
+  reviewBody: string;
+  ratingValue: number;
+  datePublished?: string;
+}
+
+export interface AggregateRatingJsonLdData {
+  organizationName: string;
+  ratingValue: number;
+  reviewCount: number;
+  bestRating?: number;
+  worstRating?: number;
+  reviews?: ReviewJsonLdData[];
+}
+
+export function generateAggregateRatingJsonLd(data: AggregateRatingJsonLdData): string {
+  const jsonLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: data.organizationName,
+    url: "https://carmakler.cz",
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: data.ratingValue,
+      reviewCount: data.reviewCount,
+      bestRating: data.bestRating ?? 5,
+      worstRating: data.worstRating ?? 1,
+    },
+  };
+
+  if (data.reviews && data.reviews.length > 0) {
+    jsonLd.review = data.reviews.map((r) => ({
+      "@type": "Review",
+      author: { "@type": "Person", name: r.author },
+      reviewBody: r.reviewBody,
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: r.ratingValue,
+        bestRating: data.bestRating ?? 5,
+      },
+      ...(r.datePublished && { datePublished: r.datePublished }),
+    }));
+  }
+
+  return JSON.stringify(jsonLd);
+}
+
+/**
+ * JobPosting JSON-LD — pro /kariera.
+ * Generuje jednu pracovní pozici pro Google for Jobs.
+ */
+export interface JobPostingJsonLdData {
+  title: string;
+  description: string;
+  location: string;
+  employmentType?: string;
+  baseSalary?: { minValue: number; maxValue: number; currency?: string };
+  datePosted?: string;
+  validThrough?: string;
+}
+
+export function generateJobPostingJsonLd(job: JobPostingJsonLdData): string {
+  const jsonLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "JobPosting",
+    title: job.title,
+    description: job.description,
+    hiringOrganization: {
+      "@type": "Organization",
+      name: "Carmakler",
+      sameAs: "https://carmakler.cz",
+      logo: "https://carmakler.cz/brand/logo-color.png",
+    },
+    jobLocation: {
+      "@type": "Place",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: job.location,
+        addressCountry: "CZ",
+      },
+    },
+    datePosted: job.datePosted ?? new Date().toISOString().slice(0, 10),
+  };
+
+  if (job.employmentType) jsonLd.employmentType = job.employmentType;
+  if (job.validThrough) jsonLd.validThrough = job.validThrough;
+
+  if (job.baseSalary) {
+    jsonLd.baseSalary = {
+      "@type": "MonetaryAmount",
+      currency: job.baseSalary.currency ?? "CZK",
+      value: {
+        "@type": "QuantitativeValue",
+        minValue: job.baseSalary.minValue,
+        maxValue: job.baseSalary.maxValue,
+        unitText: "MONTH",
+      },
+    };
+  }
+
+  return JSON.stringify(jsonLd);
+}
+
+/**
+ * Person JSON-LD — pro /profil/[slug] (broker profile pages).
+ */
+export interface PersonJsonLdData {
+  name: string;
+  url: string;
+  image?: string;
+  jobTitle?: string;
+  worksFor?: string;
+  address?: string;
+  description?: string;
+}
+
+export function generatePersonJsonLd(person: PersonJsonLdData): string {
+  const jsonLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: person.name,
+    url: person.url,
+    worksFor: {
+      "@type": "Organization",
+      name: person.worksFor ?? "Carmakler",
+      url: "https://carmakler.cz",
+    },
+  };
+
+  if (person.image) jsonLd.image = person.image;
+  if (person.jobTitle) jsonLd.jobTitle = person.jobTitle;
+  if (person.description) jsonLd.description = person.description;
+  if (person.address) {
+    jsonLd.address = {
+      "@type": "PostalAddress",
+      addressLocality: person.address,
+      addressCountry: "CZ",
+    };
+  }
+
+  return JSON.stringify(jsonLd);
+}
