@@ -11,8 +11,12 @@ export default function robots(): MetadataRoute.Robots {
         disallow: [
           "/api/",
           "/admin/",
-          "/makler/dashboard",
+          "/makler/",
+          "/marketplace/dashboard",
+          "/marketplace/investor",
+          "/marketplace/dealer",
           "/login",
+          "/prihlaseni",
           "/registrace",
         ],
       },
