@@ -96,6 +96,14 @@ export interface InspectionData {
   // Závady
   defects: DefectRecord[];
 
+  // Fotky kol (LP, PP, LZ, PZ → imageId)
+  wheelPhotos?: {
+    LP: string | null;
+    PP: string | null;
+    LZ: string | null;
+    PZ: string | null;
+  };
+
   // Celkový dojem
   overallRating: number; // 1-5
   notes?: string;

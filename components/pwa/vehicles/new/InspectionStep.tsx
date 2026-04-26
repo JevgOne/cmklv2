@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Textarea } from "@/components/ui/Textarea";
@@ -9,7 +9,9 @@ import { Modal } from "@/components/ui/Modal";
 import { StepLayout } from "./StepLayout";
 import { StarRating } from "./StarRating";
 import { DefectCapture } from "./DefectCapture";
+import { offlineStorage } from "@/lib/offline/storage";
 import { useDraftContext } from "@/lib/hooks/useDraft";
+import { HintBox } from "./HintBox";
 import type {
   InspectionData,
   BodyCondition,
@@ -17,10 +19,10 @@ import type {
 } from "@/types/vehicle-draft";
 
 const BODY_CONDITIONS: { value: BodyCondition; label: string; emoji: string }[] = [
-  { value: "EXCELLENT", label: "Výborný", emoji: "\u2728" },
-  { value: "GOOD", label: "Dobrý", emoji: "\uD83D\uDC4D" },
-  { value: "FAIR", label: "Ucházejí", emoji: "\uD83D\uDE10" },
-  { value: "POOR", label: "Špatný", emoji: "\uD83D\uDC4E" },
+  { value: "EXCELLENT", label: "Výborný", emoji: "✨" },
+  { value: "GOOD", label: "Dobrý", emoji: "👍" },
+  { value: "FAIR", label: "Ucházejí", emoji: "😐" },
+  { value: "POOR", label: "Špatný", emoji: "👎" },
 ];
 
 const DEFAULT_DOCUMENTS: InspectionData["documents"] = {
@@ -88,6 +90,9 @@ export function InspectionStep() {
 
   const [rejectOpen, setRejectOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
+  const wheelPhotos = (inspection.wheelPhotos ?? { LP: null, PP: null, LZ: null, PZ: null }) as Record<string, string | null>;
+  const wheelInputRef = useRef<HTMLInputElement>(null);
+  const [activeWheelSlot, setActiveWheelSlot] = useState<string | null>(null);
 
   const update = useCallback(
     (data: Partial<InspectionData>) => {
@@ -112,6 +117,21 @@ export function InspectionStep() {
     router.push("/makler/vehicles/new");
   };
 
+  const handleWheelCapture = (slot: string) => {
+    setActiveWheelSlot(slot);
+    wheelInputRef.current?.click();
+  };
+
+  const handleWheelPhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !activeWheelSlot) return;
+    const imageId = `wheel_${activeWheelSlot}_${Date.now()}`;
+    await offlineStorage.saveImage(imageId, draftId, file);
+    update({ wheelPhotos: { ...wheelPhotos, [activeWheelSlot]: imageId } as InspectionData["wheelPhotos"] });
+    setActiveWheelSlot(null);
+    e.target.value = "";
+  };
+
   return (
     <StepLayout
       step={3}
@@ -120,6 +140,12 @@ export function InspectionStep() {
       onBack={handleBack}
     >
       <div className="space-y-8">
+        <HintBox>
+          Důkladná prohlídka je klíčová pro správné ocenění vozu.
+          Zaškrtněte stav dokumentů, exteriéru, interiéru a motoru.
+          Foťte všechny nalezené závady — čím více fotek, tím lépe.
+        </HintBox>
+
         {/* Dokumenty */}
         <Section title="Dokumenty">
           <div className="space-y-3">
@@ -285,6 +311,53 @@ export function InspectionStep() {
                 }
               />
             </div>
+          </div>
+        </Section>
+
+        {/* Fotky kol */}
+        <Section title="Fotky kol">
+          <p className="text-xs text-gray-500 mb-3">
+            Vyfoťte všechna 4 kola — stav pneumatik, disků a brzdových kotoučů.
+          </p>
+          <input
+            ref={wheelInputRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={handleWheelPhotoChange}
+            className="hidden"
+          />
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { slot: "LP", label: "Levé přední" },
+              { slot: "PP", label: "Pravé přední" },
+              { slot: "LZ", label: "Levé zadní" },
+              { slot: "PZ", label: "Pravé zadní" },
+            ].map(({ slot, label }) => (
+              <button
+                key={slot}
+                type="button"
+                onClick={() => handleWheelCapture(slot)}
+                className={`flex flex-col items-center justify-center gap-1.5 p-4 rounded-xl border-2 border-dashed transition-all ${
+                  wheelPhotos[slot]
+                    ? "border-green-300 bg-green-50"
+                    : "border-gray-200 bg-gray-50 hover:border-orange-300 hover:bg-orange-50"
+                }`}
+              >
+                {wheelPhotos[slot] ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 text-green-500">
+                    <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clipRule="evenodd" />
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 text-gray-400">
+                    <path d="M12 9a3.75 3.75 0 100 7.5A3.75 3.75 0 0012 9z" />
+                    <path fillRule="evenodd" d="M9.344 3.071a49.52 49.52 0 015.312 0c.967.052 1.83.585 2.332 1.39l.821 1.317c.24.383.645.643 1.11.71.386.054.77.113 1.152.177 1.432.239 2.429 1.493 2.429 2.909V18a3 3 0 01-3 3H4.5a3 3 0 01-3-3V9.574c0-1.416.997-2.67 2.429-2.909.382-.064.766-.123 1.151-.178a1.56 1.56 0 001.11-.71l.822-1.315a2.942 2.942 0 012.332-1.39zM6.75 12.75a5.25 5.25 0 1110.5 0 5.25 5.25 0 01-10.5 0z" clipRule="evenodd" />
+                  </svg>
+                )}
+                <span className="text-xs font-medium text-gray-600">{label}</span>
+                <span className="text-[10px] text-gray-400">{slot}</span>
+              </button>
+            ))}
           </div>
         </Section>
 

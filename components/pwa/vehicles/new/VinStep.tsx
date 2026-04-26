@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Alert";
 import { Card } from "@/components/ui/Card";
+import { HintBox } from "./HintBox";
 import type { VinDecoderResult } from "@/types/vehicle-draft";
 
 const VIN_REGEX = /^[A-HJ-NPR-Z0-9]{0,17}$/;
@@ -228,6 +229,12 @@ export function VinStep() {
       showSave
     >
       <div className="space-y-6">
+        <HintBox>
+          VIN (Vehicle Identification Number) je 17místný kód unikátní pro každé auto.
+          Najdete ho na štítku ve dveřním sloupku řidiče nebo na palubní desce.
+          Po zadání VIN systém automaticky vyplní značku, model a další údaje.
+        </HintBox>
+
         {/* VIN Input */}
         <div>
           <Input

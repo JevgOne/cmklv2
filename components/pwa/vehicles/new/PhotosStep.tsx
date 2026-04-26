@@ -7,6 +7,7 @@ import { StepLayout } from "@/components/pwa/vehicles/new/StepLayout";
 import { PhotoGuide } from "@/components/pwa/vehicles/new/PhotoGuide";
 import { Button, ProgressBar, Dropdown } from "@/components/ui";
 import { PhotoPositionDiagram } from "@/components/pwa/vehicles/new/PhotoPositionDiagram";
+import { HintBox } from "@/components/pwa/vehicles/new/HintBox";
 import { offlineStorage } from "@/lib/offline/storage";
 import { resizeImage, createThumbnail } from "@/lib/image-utils";
 
@@ -325,6 +326,12 @@ export function PhotosStep() {
   return (
     <StepLayout step={4} title="Fotodokumentace">
       <div className="space-y-6">
+        <HintBox>
+          Kvalitní fotky prodávají! Foťte za denního světla, auto čisté.
+          Povinné jsou fotky VIN štítku a tachometru.
+          Klikněte na číslo v diagramu nebo na slot v seznamu.
+        </HintBox>
+
         {/* Categories */}
         {PHOTO_CATEGORIES.map((category) => (
           <div key={category.id}>

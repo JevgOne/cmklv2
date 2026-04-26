@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { StepLayout } from "./StepLayout";
 import { ContactSearch } from "./ContactSearch";
 import { useDraftContext } from "@/lib/hooks/useDraft";
+import { HintBox } from "./HintBox";
 import type { ContactData, LeadSource } from "@/types/vehicle-draft";
 
 const LEAD_SOURCES: { value: LeadSource; label: string }[] = [
@@ -72,6 +73,12 @@ export function ContactStep() {
       nextDisabled={!contact.sellerName || !contact.sellerPhone}
     >
       <div className="space-y-6">
+        <HintBox>
+          Vyplňte kontakt na prodejce a odkud jste lead získali.
+          Telefon a jméno jsou povinné — bez nich nelze pokračovat.
+          Adresu můžete zadat ručně nebo použít GPS polohu.
+        </HintBox>
+
         {/* Zdroj leadu */}
         <Select
           label="Zdroj leadu"
