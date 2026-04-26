@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { Button } from "@/components/ui/Button";
 import { DealerStats } from "@/components/web/marketplace/DealerStats";
 import { OpportunityCard } from "@/components/web/marketplace/OpportunityCard";
@@ -13,8 +15,20 @@ export const metadata: Metadata = {
 
 async function getDealerData() {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return {
+        stats: { totalFlips: 0, activeFlips: 0, soldFlips: 0, averageRoi: 0 },
+        opportunities: [],
+      };
+    }
+
+    const isAdmin = ["ADMIN", "BACKOFFICE"].includes(session.user.role);
+    const where: Record<string, unknown> = { status: { not: "CANCELLED" } };
+    if (!isAdmin) where.dealerId = session.user.id;
+
     const dbOpps = await prisma.flipOpportunity.findMany({
-      where: { status: { not: "CANCELLED" } },
+      where,
       include: {
         dealer: { select: { firstName: true, lastName: true } },
       },
