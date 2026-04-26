@@ -231,9 +231,11 @@ export function VehiclesPageContent() {
                 </div>
               )}
             </div>
-            <Button variant="primary" size="sm" disabled title="Vozidla přidávají makléři přes PWA aplikaci">
-              Přidat vozidlo
-            </Button>
+            <a href="/admin/vehicles/new">
+              <Button variant="primary" size="sm">
+                Přidat vozidlo
+              </Button>
+            </a>
           </div>
         </div>
       </div>
