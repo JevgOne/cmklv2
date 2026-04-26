@@ -17,22 +17,22 @@ export const dynamic = "force-dynamic";
 const ALLOWED_ROLES = ["ADMIN", "BACKOFFICE", "MANAGER", "REGIONAL_DIRECTOR"];
 
 const statusInfo: Record<string, { label: string; variant: "verified" | "pending" | "rejected" }> = {
-  ACTIVE: { label: "Aktivn\u00ed", variant: "verified" },
-  PENDING: { label: "\u010cekaj\u00edc\u00ed", variant: "pending" },
+  ACTIVE: { label: "Aktivní", variant: "verified" },
+  PENDING: { label: "Čekající", variant: "pending" },
   ONBOARDING: { label: "Onboarding", variant: "pending" },
   SUSPENDED: { label: "Pozastaven", variant: "rejected" },
-  INACTIVE: { label: "Neaktivn\u00ed", variant: "rejected" },
+  INACTIVE: { label: "Neaktivní", variant: "rejected" },
 };
 
 const vehicleStatusMap: Record<string, { label: string; variant: "active" | "pending" | "rejected" }> = {
   DRAFT: { label: "Koncept", variant: "pending" },
-  PENDING: { label: "\u010cekaj\u00edc\u00ed", variant: "pending" },
-  ACTIVE: { label: "Aktivn\u00ed", variant: "active" },
-  RESERVED: { label: "Rezervov\u00e1no", variant: "pending" },
-  SOLD: { label: "Prod\u00e1no", variant: "active" },
+  PENDING: { label: "Čekající", variant: "pending" },
+  ACTIVE: { label: "Aktivní", variant: "active" },
+  RESERVED: { label: "Rezervováno", variant: "pending" },
+  SOLD: { label: "Prodáno", variant: "active" },
   PAID: { label: "Zaplaceno", variant: "active" },
-  REJECTED: { label: "Zam\u00edtnuto", variant: "rejected" },
-  ARCHIVED: { label: "Archivov\u00e1no", variant: "rejected" },
+  REJECTED: { label: "Zamítnuto", variant: "rejected" },
+  ARCHIVED: { label: "Archivováno", variant: "rejected" },
 };
 
 export default async function AdminBrokerDetailPage({ params }: PageProps) {
@@ -134,7 +134,7 @@ export default async function AdminBrokerDetailPage({ params }: PageProps) {
           <span>Admin</span>
           <span>/</span>
           <Link href="/admin/brokers" className="hover:text-gray-700">
-            Makl\u00e9\u0159i
+            Makléři
           </Link>
           <span>/</span>
           <span className="text-gray-900">
@@ -149,13 +149,13 @@ export default async function AdminBrokerDetailPage({ params }: PageProps) {
             {canEdit && (
               <Link href={`/admin/brokers/${broker.id}/edit`}>
                 <Button variant="primary" size="sm">
-                  \u270f\ufe0f Upravit
+                  ✏️ Upravit
                 </Button>
               </Link>
             )}
             <Link href="/admin/brokers">
               <Button variant="outline" size="sm">
-                \u2190 Zp\u011bt
+                ← Zpět
               </Button>
             </Link>
           </div>
@@ -179,11 +179,11 @@ export default async function AdminBrokerDetailPage({ params }: PageProps) {
             <div className="flex flex-wrap gap-4 text-sm text-gray-500 mt-2">
               <span>{broker.email}</span>
               {broker.phone && <span>{broker.phone}</span>}
-              {broker.ico && <span>I\u010c: {broker.ico}</span>}
+              {broker.ico && <span>IČ: {broker.ico}</span>}
             </div>
             {broker.manager && (
               <div className="text-sm text-gray-500 mt-1">
-                Mana\u017eer: {broker.manager.firstName} {broker.manager.lastName}
+                Manažer: {broker.manager.firstName} {broker.manager.lastName}
               </div>
             )}
             <div className="flex flex-wrap gap-2 mt-3">
@@ -220,17 +220,17 @@ export default async function AdminBrokerDetailPage({ params }: PageProps) {
           <div className="text-3xl font-extrabold text-gray-900 mb-1">
             {broker._count.commissions}
           </div>
-          <div className="text-sm text-gray-500">Celkem prodej\u016f</div>
+          <div className="text-sm text-gray-500">Celkem prodejů</div>
         </Card>
         <Card className="p-6 text-center">
           <div className="text-3xl font-extrabold text-gray-900 mb-1">
-            {totalCommissionAmount.toLocaleString("cs-CZ")} K\u010d
+            {totalCommissionAmount.toLocaleString("cs-CZ")} Kč
           </div>
           <div className="text-sm text-gray-500">Celkem provize</div>
         </Card>
         <Card className="p-6 text-center">
           <div className="text-3xl font-extrabold text-gray-900 mb-1">
-            {paidTotal.toLocaleString("cs-CZ")} K\u010d
+            {paidTotal.toLocaleString("cs-CZ")} Kč
           </div>
           <div className="text-sm text-gray-500">Vyplaceno</div>
         </Card>
@@ -239,7 +239,7 @@ export default async function AdminBrokerDetailPage({ params }: PageProps) {
       {/* Info grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">Kontaktn\u00ed \u00fadaje</h3>
+          <h3 className="text-lg font-bold text-gray-900 mb-4">Kontaktní údaje</h3>
           <dl className="space-y-3 text-sm">
             <div className="flex justify-between">
               <dt className="text-gray-500">Email</dt>
@@ -247,26 +247,26 @@ export default async function AdminBrokerDetailPage({ params }: PageProps) {
             </div>
             <div className="flex justify-between">
               <dt className="text-gray-500">Telefon</dt>
-              <dd className="font-medium text-gray-900">{broker.phone || "\u2014"}</dd>
+              <dd className="font-medium text-gray-900">{broker.phone || "—"}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-gray-500">I\u010cO</dt>
-              <dd className="font-medium text-gray-900">{broker.ico || "\u2014"}</dd>
+              <dt className="text-gray-500">IČO</dt>
+              <dd className="font-medium text-gray-900">{broker.ico || "—"}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-gray-500">Bankovn\u00ed \u00fa\u010det</dt>
-              <dd className="font-medium text-gray-900">{broker.bankAccount || "\u2014"}</dd>
+              <dt className="text-gray-500">Bankovní účet</dt>
+              <dd className="font-medium text-gray-900">{broker.bankAccount || "—"}</dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-gray-500">Slug</dt>
-              <dd className="font-medium text-gray-900 font-mono">{broker.slug || "\u2014"}</dd>
+              <dd className="font-medium text-gray-900 font-mono">{broker.slug || "—"}</dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-gray-500">Level</dt>
               <dd className="font-medium text-gray-900">{broker.level}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-gray-500">Registrov\u00e1n</dt>
+              <dt className="text-gray-500">Registrován</dt>
               <dd className="font-medium text-gray-900">
                 {broker.createdAt.toLocaleDateString("cs-CZ")}
               </dd>
@@ -275,9 +275,9 @@ export default async function AdminBrokerDetailPage({ params }: PageProps) {
         </Card>
 
         <Card className="p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">O makl\u00e9\u0159ovi</h3>
+          <h3 className="text-lg font-bold text-gray-900 mb-4">O makléřovi</h3>
           <p className="text-sm text-gray-700">
-            {broker.bio || "\u017d\u00e1dn\u00e9 bio."}
+            {broker.bio || "Žádné bio."}
           </p>
         </Card>
       </div>
@@ -289,7 +289,7 @@ export default async function AdminBrokerDetailPage({ params }: PageProps) {
         </h3>
         {vehicles.length === 0 ? (
           <p className="text-sm text-gray-400 text-center py-8">
-            Makl\u00e9\u0159 nem\u00e1 \u017e\u00e1dn\u00e1 vozidla.
+            Makléř nemá žádná vozidla.
           </p>
         ) : (
           <div className="overflow-x-auto -mx-6 px-6">
@@ -298,7 +298,7 @@ export default async function AdminBrokerDetailPage({ params }: PageProps) {
                 <tr className="border-b border-gray-200 text-left text-gray-500">
                   <th className="pb-3 font-medium">Vozidlo</th>
                   <th className="pb-3 font-medium hidden sm:table-cell">Rok</th>
-                  <th className="pb-3 font-medium hidden md:table-cell">N\u00e1jezd</th>
+                  <th className="pb-3 font-medium hidden md:table-cell">Nájezd</th>
                   <th className="pb-3 font-medium">Cena</th>
                   <th className="pb-3 font-medium">Stav</th>
                 </tr>
@@ -321,7 +321,7 @@ export default async function AdminBrokerDetailPage({ params }: PageProps) {
                                 className="w-full h-full object-cover"
                               />
                             ) : (
-                              <span className="text-lg text-gray-300">\ud83d\ude97</span>
+                              <span className="text-lg text-gray-300">🚗</span>
                             )}
                           </div>
                           <span className="font-semibold text-gray-900">
@@ -334,7 +334,7 @@ export default async function AdminBrokerDetailPage({ params }: PageProps) {
                         {v.mileage.toLocaleString("cs-CZ")} km
                       </td>
                       <td className="py-3 font-semibold text-gray-900">
-                        {v.price.toLocaleString("cs-CZ")} K\u010d
+                        {v.price.toLocaleString("cs-CZ")} Kč
                       </td>
                       <td className="py-3">
                         <StatusPill variant={vs.variant}>{vs.label}</StatusPill>
@@ -355,7 +355,7 @@ export default async function AdminBrokerDetailPage({ params }: PageProps) {
         </h3>
         {commissions.length === 0 ? (
           <p className="text-sm text-gray-400 text-center py-8">
-            Zat\u00edm \u017e\u00e1dn\u00e9 provize.
+            Zatím žádné provize.
           </p>
         ) : (
           <div className="overflow-x-auto -mx-6 px-6">
@@ -363,7 +363,7 @@ export default async function AdminBrokerDetailPage({ params }: PageProps) {
               <thead>
                 <tr className="border-b border-gray-200 text-left text-gray-500">
                   <th className="pb-3 font-medium">Vozidlo</th>
-                  <th className="pb-3 font-medium hidden sm:table-cell">Prodejn\u00ed cena</th>
+                  <th className="pb-3 font-medium hidden sm:table-cell">Prodejní cena</th>
                   <th className="pb-3 font-medium">Provize</th>
                   <th className="pb-3 font-medium hidden md:table-cell">Stav</th>
                   <th className="pb-3 font-medium hidden md:table-cell">Datum</th>
@@ -376,10 +376,10 @@ export default async function AdminBrokerDetailPage({ params }: PageProps) {
                       {c.vehicle.brand} {c.vehicle.model}
                     </td>
                     <td className="py-3 hidden sm:table-cell text-gray-600">
-                      {c.salePrice.toLocaleString("cs-CZ")} K\u010d
+                      {c.salePrice.toLocaleString("cs-CZ")} Kč
                     </td>
                     <td className="py-3 font-semibold text-gray-900">
-                      {c.commission.toLocaleString("cs-CZ")} K\u010d
+                      {c.commission.toLocaleString("cs-CZ")} Kč
                       <span className="text-gray-400 font-normal ml-1">
                         ({(c.rate * 100).toFixed(0)}%)
                       </span>
@@ -395,12 +395,12 @@ export default async function AdminBrokerDetailPage({ params }: PageProps) {
                         }
                       >
                         {c.status === "PENDING"
-                          ? "\u010cekaj\u00edc\u00ed"
+                          ? "Čekající"
                           : c.status === "APPROVED"
-                            ? "Schv\u00e1leno"
+                            ? "Schváleno"
                             : c.status === "PAID"
                               ? "Vyplaceno"
-                              : "Zru\u0161eno"}
+                              : "Zrušeno"}
                       </StatusPill>
                     </td>
                     <td className="py-3 hidden md:table-cell text-gray-500">

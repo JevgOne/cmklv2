@@ -51,7 +51,7 @@ export default async function AdminBrokerEditPage({ params }: PageProps) {
           <span>Admin</span>
           <span>/</span>
           <Link href="/admin/brokers" className="hover:text-gray-700">
-            Makl\u00e9\u0159i
+            Makléři
           </Link>
           <span>/</span>
           <Link href={`/admin/brokers/${broker.id}`} className="hover:text-gray-700">
@@ -66,7 +66,7 @@ export default async function AdminBrokerEditPage({ params }: PageProps) {
           </h1>
           <Link href={`/admin/brokers/${broker.id}`}>
             <Button variant="outline" size="sm">
-              \u2190 Zp\u011bt na detail
+              ← Zpět na detail
             </Button>
           </Link>
         </div>
