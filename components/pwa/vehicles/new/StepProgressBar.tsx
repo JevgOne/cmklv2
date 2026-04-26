@@ -2,14 +2,14 @@
 
 import { ProgressBar } from "@/components/ui/ProgressBar";
 
-const STEP_LABELS = ["VIN", "Kontakt", "Prohlídka", "Fotky", "Detaily", "Cena", "Shrnutí"];
+const STEP_LABELS = ["VIN", "Kontakt", "Prohlídka", "Fotky", "Detaily", "Výbava", "Cena", "Shrnutí"];
 
 interface StepProgressBarProps {
   currentStep: number;
   totalSteps?: number;
 }
 
-export function StepProgressBar({ currentStep, totalSteps = 7 }: StepProgressBarProps) {
+export function StepProgressBar({ currentStep, totalSteps = 8 }: StepProgressBarProps) {
   const progress = (currentStep / totalSteps) * 100;
 
   return (

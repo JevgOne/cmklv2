@@ -26,7 +26,7 @@ export function StepLayout({
   nextLabel = "Pokračovat",
   nextDisabled = false,
   showSave = false,
-  totalSteps = 7,
+  totalSteps = 8,
 }: StepLayoutProps) {
   const router = useRouter();
   const { saveDraft } = useDraftContext();

@@ -15,8 +15,9 @@ const STEP_ROUTES: Record<number, string> = {
   3: "inspection",
   4: "photos",
   5: "details",
-  6: "pricing",
-  7: "review",
+  6: "equipment",
+  7: "pricing",
+  8: "review",
 };
 
 interface StoredDraft {
@@ -193,7 +194,7 @@ export default function NewVehiclePage() {
                       </div>
                       <div className="flex items-center gap-2 mt-1">
                         <span className="text-xs text-gray-400">
-                          Krok {draft.currentStep} / 7
+                          Krok {draft.currentStep} / 8
                         </span>
                         <span className="text-xs text-gray-300">|</span>
                         <span className="text-xs text-gray-400">

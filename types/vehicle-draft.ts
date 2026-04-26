@@ -230,7 +230,7 @@ export interface VehicleDraft {
   id: string;
   brokerId?: string;
   status: DraftStatus;
-  currentStep: number; // 1-7
+  currentStep: number; // 1-8
   createdAt: number;   // timestamp
   updatedAt: number;   // timestamp
 

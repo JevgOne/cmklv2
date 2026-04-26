@@ -238,7 +238,7 @@ export function PricingStep() {
   }, [handleSave, router, draft?.id]);
 
   return (
-    <StepLayout step={6} title="Cena a lokace">
+    <StepLayout step={7} title="Cena a lokace">
       <div className="space-y-6">
         {/* Price */}
         <div>

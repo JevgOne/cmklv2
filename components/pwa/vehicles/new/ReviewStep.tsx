@@ -60,8 +60,8 @@ function buildChecklist(draft: VehicleDraft): ChecklistItem[] {
       id: "equipment",
       label: "Výbava (alespoň 1 položka)",
       passed: !!details.equipment && details.equipment.length > 0,
-      step: 5,
-      route: "details",
+      step: 6,
+      route: "equipment",
     },
     {
       id: "photos_min",
@@ -74,14 +74,14 @@ function buildChecklist(draft: VehicleDraft): ChecklistItem[] {
       id: "price",
       label: "Cena nastavena",
       passed: !!pricing.price && pricing.price > 0,
-      step: 6,
+      step: 7,
       route: "pricing",
     },
     {
       id: "city",
       label: "Lokace / město",
       passed: !!pricing.city,
-      step: 6,
+      step: 7,
       route: "pricing",
     },
     {
@@ -291,7 +291,7 @@ export function ReviewStep() {
 
   return (
     <StepLayout
-      step={7}
+      step={8}
       title="Kontrola"
       onBack={handleBack}
       showSave
