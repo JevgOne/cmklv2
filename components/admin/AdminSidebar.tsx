@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -104,6 +104,7 @@ interface AdminSidebarProps {
 
 export function AdminSidebar({ open, onClose }: AdminSidebarProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { data: session } = useSession();
   const userRole = session?.user?.role;
 
@@ -169,7 +170,26 @@ export function AdminSidebar({ open, onClose }: AdminSidebarProps) {
                 {section.title}
               </div>
               {section.items.map((item) => {
-                const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+                const [hrefPath, hrefQuery] = item.href.split("?");
+                const hasQuery = !!hrefQuery;
+                let isActive: boolean;
+                if (hasQuery) {
+                  // Match path AND query param (e.g. /admin/partners?type=AUTOBAZAR)
+                  const params = new URLSearchParams(hrefQuery);
+                  isActive = pathname === hrefPath &&
+                    Array.from(params.entries()).every(([k, v]) => searchParams.get(k) === v);
+                } else {
+                  // Check if sibling items have query variants for same path
+                  const hasQuerySiblings = section.items.some(
+                    (sibling) => sibling.id !== item.id && sibling.href.startsWith(item.href + "?")
+                  );
+                  if (hasQuerySiblings && pathname === item.href) {
+                    // Only active when no filter query params are set
+                    isActive = !searchParams.get("type");
+                  } else {
+                    isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+                  }
+                }
                 return (
                   <Link
                     key={item.id}
