@@ -98,6 +98,11 @@ const nextConfig: NextConfig = {
         destination: "https://carmakler.cz/:path*",
         permanent: true,
       },
+      {
+        source: "/auth/prihlasit",
+        destination: "/login",
+        permanent: true,
+      },
     ];
   },
   async headers() {
