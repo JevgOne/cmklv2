@@ -39,7 +39,7 @@ export function ContactStep() {
   );
 
   const handleNext = () => {
-    updateStep(2);
+    updateStep(3);
     router.push(`/makler/vehicles/new/inspection?draft=${draftId}`);
   };
 
@@ -66,7 +66,7 @@ export function ContactStep() {
 
   return (
     <StepLayout
-      step={1}
+      step={2}
       title="Kontakt"
       onNext={handleNext}
       nextDisabled={!contact.sellerName || !contact.sellerPhone}

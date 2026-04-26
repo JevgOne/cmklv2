@@ -213,7 +213,7 @@ export function VinStep() {
     });
 
     await saveDraft();
-    router.push(`/makler/vehicles/new/photos?draft=${draft?.id}`);
+    router.push(`/makler/vehicles/new/contact?draft=${draft?.id}`);
   }, [vin, decoded, updateSection, saveDraft, router, draft?.id]);
 
   const isValid = VIN_FULL_REGEX.test(vin);
@@ -221,7 +221,7 @@ export function VinStep() {
 
   return (
     <StepLayout
-      step={3}
+      step={1}
       title="VIN kód"
       onNext={handleNext}
       nextDisabled={!canProceed}

@@ -97,8 +97,8 @@ export function InspectionStep() {
   );
 
   const handleNext = () => {
-    updateStep(3);
-    router.push(`/makler/vehicles/new/vin?draft=${draftId}`);
+    updateStep(4);
+    router.push(`/makler/vehicles/new/photos?draft=${draftId}`);
   };
 
   const handleBack = () => {
@@ -114,7 +114,7 @@ export function InspectionStep() {
 
   return (
     <StepLayout
-      step={2}
+      step={3}
       title="Prohlídka"
       onNext={handleNext}
       onBack={handleBack}

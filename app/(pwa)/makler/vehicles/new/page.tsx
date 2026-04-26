@@ -10,9 +10,9 @@ import { offlineStorage } from "@/lib/offline/storage";
 import type { VehicleDraft } from "@/types/vehicle-draft";
 
 const STEP_ROUTES: Record<number, string> = {
-  1: "contact",
-  2: "inspection",
-  3: "vin",
+  1: "vin",
+  2: "contact",
+  3: "inspection",
   4: "photos",
   5: "details",
   6: "pricing",
@@ -63,7 +63,7 @@ export default function NewVehiclePage() {
 
   const handleNewVehicle = async () => {
     const id = await createDraft();
-    router.push(`/makler/vehicles/new/contact?draft=${id}`);
+    router.push(`/makler/vehicles/new/vin?draft=${id}`);
   };
 
   const handleContinueDraft = (draft: StoredDraft) => {
