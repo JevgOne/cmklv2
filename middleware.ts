@@ -281,6 +281,27 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Chráněné marketplace deal detail routy (sjednocený pohled)
+  if (pathname.startsWith("/marketplace/deals")) {
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+
+    if (!token) {
+      const applyUrl = new URL("/marketplace/apply", request.url);
+      applyUrl.searchParams.set("reason", "auth_required");
+      return NextResponse.redirect(applyUrl);
+    }
+
+    const MARKETPLACE_ALL_ROLES = ["VERIFIED_DEALER", "INVESTOR", "ADMIN", "BACKOFFICE"];
+    if (!MARKETPLACE_ALL_ROLES.includes(token.role as string)) {
+      const landingUrl = new URL("/marketplace", request.url);
+      landingUrl.searchParams.set("reason", "not_authorized");
+      return NextResponse.redirect(landingUrl);
+    }
+  }
+
   // Chráněné marketplace dealer routy
   if (pathname.startsWith("/marketplace/dealer")) {
     const token = await getToken({

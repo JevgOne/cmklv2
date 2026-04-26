@@ -48,7 +48,7 @@ export const OpportunityCard = memo(function OpportunityCard({
   neededAmount,
   status,
   dealerName,
-  linkPrefix = "/marketplace/investor",
+  linkPrefix = "/marketplace/deals",
 }: OpportunityCardProps) {
   const totalCost = purchasePrice + repairCost;
   const profit = estimatedSalePrice - totalCost;
