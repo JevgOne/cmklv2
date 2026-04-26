@@ -76,10 +76,17 @@ export const createInvestmentSchema = z.object({
   amount: z.number().int().min(10000, "Minimální investice je 10 000 Kč"),
 });
 
-// Potvrzení platby (admin)
-export const confirmPaymentSchema = z.object({
-  paymentReference: z.string().min(1, "Číslo platby je povinné"),
-});
+// Potvrzení nebo zamítnutí platby (admin)
+export const confirmPaymentSchema = z.union([
+  z.object({
+    paymentReference: z.string().min(1, "Číslo platby je povinné"),
+    rejected: z.literal(false).optional(),
+  }),
+  z.object({
+    rejected: z.literal(true),
+    paymentReference: z.string().optional(),
+  }),
+]);
 
 // Filtr investic
 export const investmentFilterSchema = z.object({

@@ -50,7 +50,16 @@ export async function PUT(
     const body = await request.json();
     const data = confirmPaymentSchema.parse(body);
 
-    // Aktualizovat investici
+    // Reject flow — zamítnutí platby
+    if ("rejected" in data && data.rejected === true) {
+      const updated = await prisma.investment.update({
+        where: { id },
+        data: { paymentStatus: "REFUNDED" },
+      });
+      return NextResponse.json({ investment: updated });
+    }
+
+    // Confirm flow — potvrzení platby
     const updated = await prisma.investment.update({
       where: { id },
       data: {
