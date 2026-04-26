@@ -124,7 +124,7 @@ export async function POST(
       type: "MESSAGE",
       title: `Nový dotaz na ${vehicle.brand} ${vehicle.model}`,
       body: `${data.buyerName}: ${data.message}`,
-      link: `/makler/vehicles/${vehicle.id}/inquiries`,
+      link: `/makler/messages/${vehicle.id}`,
     });
 
     return NextResponse.json({ inquiry }, { status: 201 });
