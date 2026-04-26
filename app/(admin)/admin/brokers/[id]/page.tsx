@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -124,7 +125,7 @@ export default async function AdminBrokerDetailPage({ params }: PageProps) {
   const totalCommissionAmount = commissions.reduce((sum, c) => sum + c.commission, 0);
   const paidCommissions = commissions.filter((c) => c.status === "PAID");
   const paidTotal = paidCommissions.reduce((sum, c) => sum + c.commission, 0);
-  const canEdit = ["ADMIN", "BACKOFFICE"].includes(session.user.role);
+  const canEdit = ["ADMIN", "MANAGER", "REGIONAL_DIRECTOR"].includes(session.user.role);
 
   return (
     <div className="space-y-6">
@@ -165,10 +166,20 @@ export default async function AdminBrokerDetailPage({ params }: PageProps) {
       {/* Profile header card */}
       <Card className="p-6">
         <div className="flex flex-col sm:flex-row items-start gap-6">
-          <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shrink-0">
-            {broker.firstName[0] || ""}
-            {broker.lastName[0] || ""}
-          </div>
+          {broker.avatar ? (
+            <Image
+              src={broker.avatar}
+              alt={`${broker.firstName} ${broker.lastName}`}
+              width={80}
+              height={80}
+              className="w-20 h-20 rounded-full object-cover shrink-0"
+            />
+          ) : (
+            <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white text-2xl font-bold shrink-0">
+              {broker.firstName[0] || ""}
+              {broker.lastName[0] || ""}
+            </div>
+          )}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-1">
               <h2 className="text-xl font-extrabold text-gray-900">

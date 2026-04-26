@@ -68,7 +68,7 @@ const updateBrokerSchema = z.object({
   bankAccount: z.string().optional(),
 });
 
-const EDIT_ROLES = ["ADMIN", "BACKOFFICE"];
+const EDIT_ROLES = ["ADMIN", "MANAGER", "REGIONAL_DIRECTOR"];
 
 export async function PATCH(
   request: NextRequest,
@@ -84,8 +84,22 @@ export async function PATCH(
     const body = await request.json();
     const data = updateBrokerSchema.parse(body);
 
+    // Manager může editovat jen své makléře, Regional Director jen ze svého regionu
+    let editFilter: Record<string, string> = {};
+    if (session.user.role === "MANAGER") {
+      editFilter = { managerId: session.user.id };
+    } else if (session.user.role === "REGIONAL_DIRECTOR") {
+      const director = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { regionId: true },
+      });
+      if (director?.regionId) {
+        editFilter = { regionId: director.regionId };
+      }
+    }
+
     const broker = await prisma.user.findFirst({
-      where: { id, role: "BROKER" },
+      where: { id, role: "BROKER", ...editFilter },
       select: { id: true },
     });
 

@@ -12,7 +12,7 @@ interface PageProps {
 
 export const dynamic = "force-dynamic";
 
-const ALLOWED_ROLES = ["ADMIN", "BACKOFFICE"];
+const ALLOWED_ROLES = ["ADMIN", "MANAGER", "REGIONAL_DIRECTOR"];
 
 export default async function AdminBrokerEditPage({ params }: PageProps) {
   const session = await getServerSession(authOptions);
@@ -23,8 +23,22 @@ export default async function AdminBrokerEditPage({ params }: PageProps) {
 
   const { id } = await params;
 
+  // Manager vidí jen své makléře, Regional Director jen makléře ze svého regionu
+  let editFilter: Record<string, string> = {};
+  if (session.user.role === "MANAGER") {
+    editFilter = { managerId: session.user.id };
+  } else if (session.user.role === "REGIONAL_DIRECTOR") {
+    const director = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { regionId: true },
+    });
+    if (director?.regionId) {
+      editFilter = { regionId: director.regionId };
+    }
+  }
+
   const broker = await prisma.user.findFirst({
-    where: { id, role: "BROKER" },
+    where: { id, role: "BROKER", ...editFilter },
     select: {
       id: true,
       firstName: true,
