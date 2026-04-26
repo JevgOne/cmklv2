@@ -30,7 +30,7 @@ export default async function MakleriPage() {
   let brokerCount = 0;
 
   try {
-    const teamFilter = { status: "ACTIVE" as const, slug: { not: null }, role: { in: ["BROKER", "ADMIN", "MANAGER"] as const } };
+    const teamFilter = { status: "ACTIVE" as const, slug: { not: null }, role: { in: ["BROKER", "ADMIN", "MANAGER"] as string[] } };
     const [count, dbBrokers] = await Promise.all([
       prisma.user.count({ where: teamFilter }),
       prisma.user.findMany({

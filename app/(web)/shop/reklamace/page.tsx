@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/Button";
 import { BASE_URL } from "@/lib/seo-data";
 import { pageCanonical } from "@/lib/canonical";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Reklamace | Shop",
   description:
