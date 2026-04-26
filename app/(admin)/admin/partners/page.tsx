@@ -1,7 +1,9 @@
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { StatCard } from "@/components/ui/StatCard";
+import { Button } from "@/components/ui/Button";
 import { PartnersTable } from "@/components/admin/partners/PartnersTable";
 
 // Admin pages call Prisma at top of server component — force dynamic
@@ -64,6 +66,13 @@ export default async function AdminPartnersPage() {
             CRM Partneru
           </h1>
         </div>
+        {!isManager && (
+          <Link href="/admin/partners/new">
+            <Button variant="primary" size="sm">
+              + Nový partner
+            </Button>
+          </Link>
+        )}
       </div>
 
       {/* Stat Cards */}

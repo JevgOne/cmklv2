@@ -37,6 +37,20 @@ export const createPartnerSchema = z.object({
   description: z.string().optional().nullable(),
 });
 
+export const createPartnerWithAccountSchema = z.object({
+  name: z.string().min(1, "Název je povinný"),
+  type: z.enum(PARTNER_TYPES),
+  email: z.string().email("Neplatný email"),
+  contactPerson: z.string().min(1, "Kontaktní osoba je povinná"),
+  ico: z.string().regex(/^\d{8}$/, "IČO musí mít 8 číslic").optional().or(z.literal("")),
+  phone: z.string().optional().or(z.literal("")),
+  address: z.string().optional().or(z.literal("")),
+  city: z.string().optional().or(z.literal("")),
+  region: z.string().optional().or(z.literal("")),
+  zip: z.string().optional().or(z.literal("")),
+  notes: z.string().optional().or(z.literal("")),
+});
+
 export const updatePartnerSchema = createPartnerSchema.partial().extend({
   status: z.enum(PARTNER_STATUSES).optional(),
   managerId: z.string().optional().nullable(),
