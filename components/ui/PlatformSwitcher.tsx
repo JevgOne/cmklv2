@@ -30,8 +30,8 @@ const PLATFORMS: Platform[] = [
   },
   {
     key: "marketplace",
-    label: "CarMarketplace",
-    mobileLabel: "CarMarketplace",
+    label: "Marketplace",
+    mobileLabel: "Marketplace",
     href: urls.marketplace("/"),
   },
 ];
