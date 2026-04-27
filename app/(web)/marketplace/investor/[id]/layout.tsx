@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Detail příležitosti | Marketplace",
+  title: "Detail příležitosti | CarMarketplace",
   description:
-    "Prohlédněte si investiční příležitost na CarMakléř Marketplace. Detaily vozu, kalkulace nákladů a očekávaný výnos.",
+    "Prohlédněte si investiční příležitost na CarMarketplace. Detaily vozu, kalkulace nákladů a očekávaný výnos.",
   robots: { index: false, follow: true },
 };
 

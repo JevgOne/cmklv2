@@ -100,7 +100,7 @@ export default function ApplicationDetailPage() {
       <div className="mb-6 sm:mb-8">
         <div className="flex items-center gap-2 text-[13px] text-gray-500 mb-2">
           <Link href="/admin/marketplace" className="hover:text-orange-500 transition-colors no-underline text-gray-500">
-            Admin / Marketplace
+            Admin / CarMarketplace
           </Link>
           <span>/</span>
           <Link href="/admin/marketplace/applications" className="hover:text-orange-500 transition-colors no-underline text-gray-500">

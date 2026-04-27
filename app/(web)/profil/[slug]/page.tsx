@@ -25,6 +25,7 @@ const getProfileData = cache(
         city: true,
         slug: true,
         role: true,
+        jobTitle: true,
         level: true,
         totalSales: true,
         totalRevenue: true,
@@ -176,6 +177,7 @@ const getProfileData = cache(
         city: user.city,
         slug: user.slug ?? slug,
         role: user.role,
+        jobTitle: user.jobTitle,
         level: user.level,
         totalSales: user.totalSales,
         totalRevenue: user.totalRevenue,
@@ -254,7 +256,7 @@ export async function generateMetadata({
   }
 
   const { user } = data;
-  const roleLabel = ROLE_LABELS[user.role] ?? "Profil";
+  const roleLabel = user.jobTitle || ROLE_LABELS[user.role] || "Profil";
   const fullName = `${user.firstName} ${user.lastName}`;
   const description =
     user.bio?.slice(0, 155) ||
@@ -286,7 +288,7 @@ export default async function ProfilePage({
 
   const { user } = data;
   const fullName = `${user.firstName} ${user.lastName}`;
-  const roleLabel = ROLE_LABELS[user.role] ?? "Profil";
+  const roleLabel = user.jobTitle || ROLE_LABELS[user.role] || "Profil";
 
   return (
     <>

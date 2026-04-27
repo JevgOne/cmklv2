@@ -9,6 +9,10 @@ export interface ProfitCalculatorProps {
   initialPurchasePrice?: number;
   initialRepairCost?: number;
   initialSalePrice?: number;
+  /** Dohodnutý split — pokud existuje, slider je disabled */
+  agreedDealerSharePct?: number | null;
+  /** CarMakléř fee v procentech z prodejní ceny */
+  carmaklerFeePct?: number;
   readOnly?: boolean;
   className?: string;
 }
@@ -17,19 +21,29 @@ export function ProfitCalculator({
   initialPurchasePrice = 0,
   initialRepairCost = 0,
   initialSalePrice = 0,
+  agreedDealerSharePct = null,
+  carmaklerFeePct = 5,
   readOnly = false,
   className,
 }: ProfitCalculatorProps) {
   const [purchasePrice, setPurchasePrice] = useState(initialPurchasePrice);
   const [repairCost, setRepairCost] = useState(initialRepairCost);
   const [salePrice, setSalePrice] = useState(initialSalePrice);
+  const [dealerPct, setDealerPct] = useState(agreedDealerSharePct ?? 50);
+
+  const isLocked = agreedDealerSharePct !== null && agreedDealerSharePct !== undefined;
+  const activeDealerPct = isLocked ? agreedDealerSharePct : dealerPct;
+  const investorPct = 100 - activeDealerPct;
 
   const totalCost = purchasePrice + repairCost;
   const totalProfit = salePrice - totalCost;
   const roi = totalCost > 0 ? ((totalProfit / totalCost) * 100).toFixed(1) : "0";
-  const investorShare = Math.round(totalProfit * 0.4);
-  const dealerShare = Math.round(totalProfit * 0.4);
-  const platformShare = Math.round(totalProfit * 0.2);
+
+  // Nový model: CarMakléř fee = % z prodejní ceny, zbytek se dělí dealer/investor
+  const carmaklerFee = Math.round(salePrice * (carmaklerFeePct / 100));
+  const distributableProfit = Math.max(0, totalProfit - carmaklerFee);
+  const dealerShare = Math.round(distributableProfit * (activeDealerPct / 100));
+  const investorShare = distributableProfit - dealerShare;
 
   return (
     <Card className={className}>
@@ -95,31 +109,58 @@ export function ProfitCalculator({
           </div>
         </div>
 
-        {/* Profit split */}
+        {/* Slider — dělení zisku */}
         {totalProfit > 0 && (
-          <div className="mt-6 bg-gray-50 rounded-xl p-4">
-            <h4 className="text-sm font-bold text-gray-900 mb-3">Rozdělení zisku</h4>
-            <div className="space-y-2">
+          <div className="mt-6">
+            <div className="flex items-center justify-between mb-2">
+              <h4 className="text-sm font-bold text-gray-900">Dělení zisku</h4>
+              {isLocked && (
+                <span className="text-xs font-semibold text-success-500 bg-success-50 px-2 py-0.5 rounded-full">
+                  Dohodnuto
+                </span>
+              )}
+            </div>
+
+            {/* Slider */}
+            <div className="mb-4">
+              <input
+                type="range"
+                min={0}
+                max={100}
+                step={5}
+                value={activeDealerPct}
+                onChange={(e) => setDealerPct(Number(e.target.value))}
+                disabled={isLocked}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-orange-500 disabled:opacity-60 disabled:cursor-not-allowed"
+              />
+              <div className="flex justify-between text-xs text-gray-400 mt-1">
+                <span>Dealer {activeDealerPct}%</span>
+                <span>Investor {investorPct}%</span>
+              </div>
+            </div>
+
+            {/* Profit split breakdown */}
+            <div className="bg-gray-50 rounded-xl p-4 space-y-2">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-success-500" />
-                  <span className="text-sm text-gray-600">Investor (40%)</span>
+                  <div className="w-3 h-3 rounded-full bg-orange-500" />
+                  <span className="text-sm text-gray-600">CarMakléř ({carmaklerFeePct}% z ceny)</span>
                 </div>
-                <span className="font-bold text-gray-900">{formatPrice(investorShare)}</span>
+                <span className="font-bold text-gray-900">{formatPrice(carmaklerFee)}</span>
               </div>
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-info-500" />
-                  <span className="text-sm text-gray-600">Realizátor (40%)</span>
+                  <span className="text-sm text-gray-600">Dealer ({activeDealerPct}%)</span>
                 </div>
                 <span className="font-bold text-gray-900">{formatPrice(dealerShare)}</span>
               </div>
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-orange-500" />
-                  <span className="text-sm text-gray-600">CarMakléř (20%)</span>
+                  <div className="w-3 h-3 rounded-full bg-success-500" />
+                  <span className="text-sm text-gray-600">Investor ({investorPct}%)</span>
                 </div>
-                <span className="font-bold text-gray-900">{formatPrice(platformShare)}</span>
+                <span className="font-bold text-gray-900">{formatPrice(investorShare)}</span>
               </div>
             </div>
           </div>

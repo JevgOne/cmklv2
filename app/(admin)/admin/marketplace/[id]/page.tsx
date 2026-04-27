@@ -179,7 +179,7 @@ export default function AdminFlipDetailPage() {
         <span>Admin</span>
         <span>/</span>
         <Link href="/admin/marketplace" className="hover:text-orange-500 transition-colors no-underline text-gray-500">
-          Marketplace
+          CarMarketplace
         </Link>
         <span>/</span>
         <span className="text-gray-900">{flip.brand} {flip.model}</span>

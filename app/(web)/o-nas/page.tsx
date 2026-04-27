@@ -43,28 +43,22 @@ async function getStats() {
 
 const team = [
   {
-    initials: "JC",
-    name: "Jan Carmak",
-    position: "CEO & Zakladatel",
-    bio: "Vizionář s 15letou zkušeností v automobilovém průmyslu. Založil CarMakléř s cílem změnit způsob, jakým se v Česku prodávají auta.",
+    initials: "RZ",
+    name: "Radim Zajíček",
+    position: "Zakladatel & COO",
+    bio: "Zakladatel CarMakléř. Stojí za vizí platformy, která mění způsob prodeje aut v Česku. Řídí provoz a rozvoj makléřské sítě.",
   },
   {
-    initials: "PT",
-    name: "Petr Tech",
-    position: "CTO",
-    bio: "Technologický nadšenec, který stojí za vývojem celé platformy. Dříve vedl vývoj v několika českých startupech.",
+    initials: "YU",
+    name: "Yevgen Ulyanchenko",
+    position: "CEO & CTO",
+    bio: "Zodpovídá za strategii, technologii a vývoj celé platformy. Propojuje byznys s moderními technologiemi.",
   },
   {
-    initials: "EM",
-    name: "Eva Manažerová",
-    position: "COO",
-    bio: "Zajišťuje hladký chod operací a rozvoj makléřské sítě. Má za sebou 10 let v managementu služeb.",
-  },
-  {
-    initials: "MP",
-    name: "Martin Prodej",
-    position: "Head of Sales",
-    bio: "Vede obchodní tým a stará se o spokojenost klientů. Jeho tým dosahuje vynikajících výsledků.",
+    initials: "KF",
+    name: "Kateřina Fusslová",
+    position: "Manažer prodeje",
+    bio: "Koordinuje tým makléřů a stará se o hladký průběh každého prodeje. Zajišťuje spokojenost klientů od prvního kontaktu po předání klíčů.",
   },
 ];
 
@@ -142,7 +136,7 @@ export default async function ONasPage() {
             Pomáháme lidem prodat auto za nejvíc a koupit bezpečně
           </h1>
           <p className="text-white/60 mt-5 text-lg max-w-2xl mx-auto">
-            Jsme síť certifikovaných automakléřů po celé ČR. Každý den pomáháme desítkám lidí, kteří nechtějí řešit inzeráty, podvodníky a papírování.
+            Jsme tým profesionálních automakléřů po celé ČR. Každý den pomáháme lidem, kteří nechtějí řešit inzeráty, podvodníky a papírování.
           </p>
         </div>
       </section>
@@ -157,10 +151,16 @@ export default async function ONasPage() {
             Prodej auta v Česku je noční můra. Focení na parkovišti, desítky zpráv od spekulantů, nekonečné jednání o ceně a pak ještě běhání po úřadech s přepisem. A nákup? Stočené tachometry, zatajené nehody, nejistota na každém kroku.
           </p>
           <p className="text-gray-600 leading-relaxed mb-4">
-            Proto jsme vytvořili CarMakléř — síť certifikovaných makléřů, kteří se o vše postarají za vás. Prodejcům zajistíme profesionální prezentaci a prodej za nejvyšší možnou cenu. Kupujícím nabídneme prověřená vozidla s kompletní historií.
+            A pak tu máte autobazary. Vykoupí vaše auto za zlomek ceny, pár tisíc investují do leštění a prodají za dvojnásobek. Vy přijdete o peníze, kupující dostane přikrášlenou realitu. Všichni prohrávají — kromě bazaráka.
+          </p>
+          <p className="text-gray-600 leading-relaxed mb-4">
+            Proto jsme vytvořili CarMakléř. Tým profesionálních makléřů, kteří stojí na vaší straně. Nejsme překupníci, nic nevykupujeme ani neprodáváme za sebe. Makléř zastupuje vaše zájmy — ne svoje. Prodejcům zajistíme profesionální prezentaci a prodej za nejvyšší možnou cenu. Kupujícím nabídneme prověřená vozidla s kompletní historií.
+          </p>
+          <p className="text-gray-600 leading-relaxed mb-4">
+            Věříme, že férovost a transparentnost se vyplatí. Proto u nás víte přesně, kolik co stojí, kdo komu co platí a proč. Žádné skryté poplatky, žádné triky, žádné „to je normální". Platíte jen z úspěšného prodeje — 5 % z prodejní ceny, minimum 25 000 Kč. To je vše.
           </p>
           <p className="text-gray-600 leading-relaxed">
-            Nejsme autobazar — nic nevykupujeme ani neprodáváme za sebe. Jsme na vaší straně. Makléř zastupuje vaše zájmy, ne svoje.
+            Jsme firma, která chce změnit trh s ojetými auty v Česku. Poctivě, otevřeně a s respektem ke každému klientovi. Protože prodat nebo koupit auto by nemělo být stresující — mělo by to být v pohodě.
           </p>
         </div>
       </section>
@@ -168,7 +168,7 @@ export default async function ONasPage() {
       {/* Numbers */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
             {stats.map((stat) => (
               <Card key={stat.label} className="p-6 text-center">
                 <div className="text-3xl md:text-4xl font-extrabold bg-gradient-to-br from-orange-500 to-orange-600 bg-clip-text text-transparent">
@@ -193,7 +193,7 @@ export default async function ONasPage() {
             <p className="text-gray-500 mt-2">Lidé, kteří stojí za CarMakléř</p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {team.map((person) => (
               <Card key={person.name} hover className="p-6 text-center">
                 <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center text-2xl font-extrabold text-white mx-auto">

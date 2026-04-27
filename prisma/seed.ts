@@ -138,11 +138,16 @@ async function main() {
   await prisma.user.create({
     data: {
       email: "zenuly3@gmail.com",
-      firstName: "Jevgenij",
-      lastName: "Onegin",
+      firstName: "Yevgen",
+      lastName: "Ulyanchenko",
       passwordHash: jevgenijHash,
-      role: "ADMIN",
+      role: "BROKER",
       status: "ACTIVE",
+      slug: "yevgen-ulyanchenko",
+      jobTitle: "CEO & CTO",
+      city: "Praha",
+      bio: "Zodpovídá za strategii, technologii a vývoj celé platformy. Propojuje byznys s moderními technologiemi.",
+      showPhone: true,
     },
   });
 
@@ -150,10 +155,15 @@ async function main() {
     data: {
       email: "radim@wikiporadce.cz",
       firstName: "Radim",
-      lastName: "Carmakler",
+      lastName: "Zajíček",
       passwordHash: radimHash,
-      role: "ADMIN",
+      role: "BROKER",
       status: "ACTIVE",
+      slug: "radim-zajicek",
+      jobTitle: "Zakladatel & COO",
+      city: "Praha",
+      bio: "Zakladatel CarMakléř. Stojí za vizí platformy, která mění způsob prodeje aut v Česku. Řídí provoz a rozvoj makléřské sítě.",
+      showPhone: true,
     },
   });
 
@@ -161,10 +171,15 @@ async function main() {
     data: {
       email: "Fusslova.k@gmail.com",
       firstName: "Kateřina",
-      lastName: "Carmakler",
+      lastName: "Fusslová",
       passwordHash: katerinaHash,
-      role: "MANAGER",
+      role: "BROKER",
       status: "ACTIVE",
+      slug: "katerina-fusslova",
+      jobTitle: "Manažer prodeje",
+      city: "Praha",
+      bio: "Koordinuje tým makléřů a stará se o hladký průběh každého prodeje. Zajišťuje spokojenost klientů od prvního kontaktu po předání klíčů.",
+      showPhone: true,
     },
   });
 

@@ -36,6 +36,7 @@ model User {
   totalRevenue Int    @default(0)         // Celkový kumulativní obrat prodejů v Kč
 
   // Profil makléře
+  jobTitle        String?   // Zobrazená pozice na webu (Founder, Manažer, ...) — nezávislá na DB roli
   specializations String? // JSON array: ["SUV", "Luxury"]
   cities          String? // JSON array: ["Praha", "Brno"]
   bio             String?
@@ -127,8 +128,11 @@ model User {
   donorVehicles         DonorVehicle[] @relation("SupplierDonorVehicles")
 
   // Marketplace relace
-  dealerFlips FlipOpportunity[]
-  investments Investment[]
+  dealerFlips      FlipOpportunity[]
+  investments      Investment[]
+  negotiationsFrom DealNegotiation[] @relation("NegotiationFrom")
+  negotiationsTo   DealNegotiation[] @relation("NegotiationTo")
+  dealComments     DealComment[]
   marketplaceApplicationsReviewed  MarketplaceApplication[] @relation("MarketplaceApplicationReviewer")
   marketplaceApplicationsConverted MarketplaceApplication[] @relation("MarketplaceApplicationConvertedUser")
 
@@ -1338,8 +1342,26 @@ model FlipOpportunity {
   adminNotes      String?
   rejectionReason String?
 
+  // Dohodnutý split (vyplněno po ACCEPTED negotiation)
+  agreedDealerSharePct  Int?    // null = ještě nedohodnuto
+  agreedInvestorSharePct Int?
+  carmaklerFeePct       Int     @default(5) // 5% z prodejní ceny
+
+  // AI Deal Score
+  dealScore             Int?    // 1-100, AI-generated
+  dealScoreUpdatedAt    DateTime?
+
+  // Dealer reputation (cached)
+  dealerRating          Float?  // 1.0-5.0
+
+  // Progress tracker
+  repairProgress        Int     @default(0) // 0-100%
+  repairMilestones      String? // JSON: [{date, label, photos}]
+
   // Relace
-  investments Investment[]
+  investments  Investment[]
+  negotiations DealNegotiation[]
+  comments     DealComment[]
 
   // Timestamps
   createdAt DateTime @default(now())
@@ -2424,4 +2446,62 @@ model DonorVehicle {
   @@index([vin])
   @@index([kTypeId])
   @@index([status])
+}
+
+// ============================================
+// MARKETPLACE — Vyjednávání a diskuze
+// ============================================
+
+model DealNegotiation {
+  id            String          @id @default(cuid())
+  opportunityId String
+  opportunity   FlipOpportunity @relation(fields: [opportunityId], references: [id])
+
+  // Kdo nabídku poslal
+  fromUserId    String
+  fromUser      User            @relation("NegotiationFrom", fields: [fromUserId], references: [id])
+  fromRole      String          // "VERIFIED_DEALER" | "INVESTOR"
+
+  // Komu
+  toUserId      String
+  toUser        User            @relation("NegotiationTo", fields: [toUserId], references: [id])
+
+  // Nabídka
+  dealerSharePct   Int          // Procenta pro dealera (0-100)
+  investorSharePct Int          // = 100 - dealerSharePct
+  message          String?      @db.Text
+
+  // Status
+  status        String          @default("PENDING") // PENDING, ACCEPTED, REJECTED, EXPIRED, SUPERSEDED
+  respondedAt   DateTime?
+
+  // Pořadí (1 = první nabídka, 2 = protinabídka, ...)
+  round         Int             @default(1)
+
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([opportunityId])
+  @@index([fromUserId])
+  @@index([toUserId])
+  @@index([status])
+}
+
+model DealComment {
+  id            String          @id @default(cuid())
+  opportunityId String
+  opportunity   FlipOpportunity @relation(fields: [opportunityId], references: [id])
+  userId        String
+  user          User            @relation(fields: [userId], references: [id])
+  content       String          @db.Text
+  parentId      String?
+  parent        DealComment?    @relation("DealCommentReplies", fields: [parentId], references: [id])
+  replies       DealComment[]   @relation("DealCommentReplies")
+
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([opportunityId])
+  @@index([userId])
+  @@index([parentId])
 }

@@ -4,9 +4,9 @@ import { OpportunityWizard } from "@/components/web/marketplace/OpportunityWizar
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
-  title: "Nová příležitost | Realizátor | Marketplace",
+  title: "Nová příležitost | Realizátor | CarMarketplace",
   description:
-    "Vytvořte novou investiční příležitost na CarMakléř Marketplace. Zadejte detaily vozu, kalkulaci nákladů a očekávaný zisk.",
+    "Vytvořte novou investiční příležitost na CarMarketplace. Zadejte detaily vozu, kalkulaci nákladů a očekávaný zisk.",
   alternates: pageCanonical("/marketplace/dealer/nova"),
   robots: { index: false, follow: true },
 };
@@ -18,7 +18,7 @@ export default function NewOpportunityPage() {
       <div className="mb-8">
         <div className="flex items-center gap-2 text-[13px] text-gray-500 mb-1">
           <Link href="/marketplace" className="hover:text-orange-500 transition-colors no-underline text-gray-500">
-            Marketplace
+            CarMarketplace
           </Link>
           <span>/</span>
           <Link href="/marketplace/dealer" className="hover:text-orange-500 transition-colors no-underline text-gray-500">

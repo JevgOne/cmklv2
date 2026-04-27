@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { DealDetailClient } from "@/components/web/marketplace/DealDetailClient";
 
 export const metadata: Metadata = {
-  title: "Detail flipu | Marketplace VIP",
+  title: "Detail flipu | CarMarketplace",
   robots: { index: false, follow: false },
 };
 
@@ -27,27 +27,38 @@ export default async function DealDetailPage({
   const userRole = session.user.role;
   const userId = session.user.id;
 
-  const opp = await prisma.flipOpportunity.findUnique({
-    where: { id },
-    include: {
-      dealer: {
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true,
-          companyName: true,
-          avatar: true,
+  const [opp, negotiations] = await Promise.all([
+    prisma.flipOpportunity.findUnique({
+      where: { id },
+      include: {
+        dealer: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            companyName: true,
+            avatar: true,
+            _count: { select: { dealerFlips: { where: { status: { in: ["COMPLETED", "CANCELLED"] } } } } },
+          },
         },
-      },
-      investments: {
-        include: {
-          investor: {
-            select: { id: true, firstName: true, lastName: true },
+        investments: {
+          include: {
+            investor: {
+              select: { id: true, firstName: true, lastName: true },
+            },
           },
         },
       },
-    },
-  });
+    }),
+    prisma.dealNegotiation.findMany({
+      where: { opportunityId: id },
+      include: {
+        fromUser: { select: { id: true, firstName: true, lastName: true } },
+        toUser: { select: { id: true, firstName: true, lastName: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    }),
+  ]);
 
   if (!opp) notFound();
 
@@ -80,6 +91,21 @@ export default async function DealDetailPage({
       ? investments.reduce((sum, inv) => sum + inv.amount, 0)
       : 0;
 
+  // Map negotiations for client
+  const mappedNegotiations = negotiations.map((n) => ({
+    id: n.id,
+    fromUser: n.fromUser,
+    toUser: n.toUser,
+    fromRole: n.fromRole,
+    dealerSharePct: n.dealerSharePct,
+    investorSharePct: n.investorSharePct,
+    message: n.message,
+    status: n.status,
+    round: n.round,
+    createdAt: n.createdAt.toISOString(),
+    respondedAt: n.respondedAt?.toISOString() ?? null,
+  }));
+
   return (
     <DealDetailClient
       opportunity={{
@@ -102,6 +128,13 @@ export default async function DealDetailPage({
         repairPhotos,
         adminNotes: opp.adminNotes,
         createdAt: opp.createdAt.toISOString(),
+        agreedDealerSharePct: opp.agreedDealerSharePct,
+        agreedInvestorSharePct: opp.agreedInvestorSharePct,
+        carmaklerFeePct: opp.carmaklerFeePct,
+        dealScore: opp.dealScore,
+        dealerRating: opp.dealerRating ?? null,
+        repairProgress: opp.repairProgress,
+        repairMilestones: opp.repairMilestones ? (() => { try { return JSON.parse(opp.repairMilestones); } catch { return []; } })() : [],
       }}
       dealer={{
         id: opp.dealer.id,
@@ -109,6 +142,7 @@ export default async function DealDetailPage({
         lastName: opp.dealer.lastName,
         companyName: opp.dealer.companyName,
         avatar: opp.dealer.avatar,
+        flipCount: opp.dealer._count.dealerFlips,
       }}
       investments={investments.map((inv) => ({
         id: inv.id,
@@ -116,6 +150,7 @@ export default async function DealDetailPage({
         amount: inv.amount,
         paymentStatus: inv.paymentStatus,
       }))}
+      negotiations={mappedNegotiations}
       userRole={userRole}
       userId={userId}
       investorAmount={investorAmount}

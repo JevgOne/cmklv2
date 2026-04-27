@@ -45,7 +45,7 @@ const sellingSteps = [
     icon: "📞",
     title: "Makléř se ozve do 30 minut",
     description:
-      "Přiřadíme vám certifikovaného makléře ve vašem okolí. Dohodne si prohlídku vozu.",
+      "Přiřadíme vám ověřeného makléře ve vašem okolí. Dohodne si prohlídku vozu.",
   },
   {
     number: 3,

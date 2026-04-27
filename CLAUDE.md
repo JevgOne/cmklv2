@@ -6,7 +6,7 @@ Carmakler je ekosystém 4 propojených produktů pod jednou značkou:
 1. **Carmakler (makléřská síť)** — Zprostředkování prodeje vozidel přes síť certifikovaných makléřů. Makléř nabere auto v terénu, zadá do systému, BackOffice schválí, auto se prodá. Provize: 5% z prodejní ceny, min. 25 000 Kč.
 2. **Inzertní platforma** — Digitální inzerce aut pro soukromé prodejce, autobazary a dealery. Obdoba Sauto/Bazoš s vyšší kvalitou. Propojení s makléřskou sítí.
 3. **Eshop autodíly** — E-shop s použitými díly z vrakovišť + nové aftermarket díly. Vrakoviště přidávají díly přes jednoduchou PWA. Zákazník hledá díly podle VIN/vozu.
-4. **Marketplace (VIP)** — Uzavřená investiční platforma pro flipping aut. Ověření dealeři nabízí příležitosti (nákup + oprava + prodej), ověření investoři financují. Dělení zisku: 40% investor, 40% dealer, 20% Carmakler. Auto se kupuje na firmu Carmakler.
+4. **Marketplace** — Uzavřená investiční platforma pro flipping aut. Ověření dealeři nabízí příležitosti (nákup + oprava + prodej), ověření investoři financují. Provize Carmakler 5% z prodejní ceny, zbytek zisku dle dohody dealer/investor. Auto se kupuje na firmu Carmakler.
 
 ## Tech Stack
 - **Framework:** Next.js 15 (App Router, Server Components)

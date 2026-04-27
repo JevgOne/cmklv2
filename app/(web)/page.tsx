@@ -90,6 +90,7 @@ async function getFeaturedBrokers(): Promise<BrokerCardBroker[]> {
         lastName: true,
         avatar: true,
         level: true,
+        jobTitle: true,
         city: true,
         cities: true,
         bio: true,
@@ -110,6 +111,7 @@ async function getFeaturedBrokers(): Promise<BrokerCardBroker[]> {
         lastName: b.lastName,
         avatar: b.avatar,
         level: b.level,
+        jobTitle: b.jobTitle,
         city: b.city,
         cities: b.cities
           ? (() => { try { return JSON.parse(b.cities); } catch { return []; } })()
@@ -186,7 +188,7 @@ const benefits = [
   {
     icon: "🤝",
     title: "Makléř vždy blízko vás",
-    desc: "Síť certifikovaných makléřů po celé ČR. Osobní přístup, ne call centrum.",
+    desc: "Tým profesionálních makléřů po celé ČR. Osobní přístup, ne call centrum.",
   },
 ];
 
@@ -267,7 +269,7 @@ export default async function HomePage() {
               {/* Left — text */}
               <div>
                 <span className="inline-block bg-orange-100 text-orange-600 text-sm font-semibold px-4 py-1.5 rounded-full mb-6">
-                  Síť certifikovaných automakléřů v ČR
+                  Tým profesionálních automakléřů v ČR
                 </span>
                 <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
                   Prodejte auto za{" "}

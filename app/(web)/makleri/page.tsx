@@ -41,6 +41,7 @@ export default async function MakleriPage() {
           lastName: true,
           avatar: true,
           level: true,
+          jobTitle: true,
           city: true,
           cities: true,
           bio: true,
@@ -62,6 +63,7 @@ export default async function MakleriPage() {
       lastName: b.lastName,
       avatar: b.avatar,
       level: b.level,
+      jobTitle: b.jobTitle,
       city: b.city,
       cities: b.cities
         ? (() => { try { return JSON.parse(b.cities); } catch { return []; } })()

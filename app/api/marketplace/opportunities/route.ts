@@ -7,6 +7,7 @@ import {
   createOpportunitySchema,
   opportunityFilterSchema,
 } from "@/lib/validators/marketplace";
+import { calculateDealScore } from "@/lib/marketplace/deal-score";
 
 const DEALER_ROLES = ["VERIFIED_DEALER", "ADMIN", "BACKOFFICE"];
 
@@ -48,6 +49,11 @@ export async function POST(request: NextRequest) {
         status: "PENDING_APPROVAL",
       },
     });
+
+    // Fire-and-forget: spočítat Deal Score asynchronně
+    calculateDealScore(opportunity.id).catch((err) =>
+      console.error("Deal score calculation failed:", err)
+    );
 
     return NextResponse.json({ opportunity }, { status: 201 });
   } catch (error) {

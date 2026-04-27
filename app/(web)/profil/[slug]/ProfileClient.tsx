@@ -36,6 +36,7 @@ export interface ProfileUser {
   city: string | null;
   slug: string;
   role: string;
+  jobTitle?: string | null;
   level: string;
   totalSales: number;
   totalRevenue: number;
@@ -290,7 +291,7 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
     month: "long",
     year: "numeric",
   });
-  const roleLabel = ROLE_LABELS[user.role] ?? user.role;
+  const roleLabel = user.jobTitle || ROLE_LABELS[user.role] || user.role;
   const fullName = `${user.firstName} ${user.lastName}`;
   const hasAboutCard = !!(user.bio || user.motto || favBrands.length > 0);
   const hasSpecCard =

@@ -28,10 +28,12 @@ const PLATFORMS: Platform[] = [
     mobileLabel: "Shop — autodíly",
     href: urls.shop("/"),
   },
-  // marketplace ENTRY ZÁMĚRNĚ ODSTRANĚN (#101) — VIP invite-only,
-  // přístupný pouze přes přímý URL (https://marketplace.carmakler.cz)
-  // a interní navbar pro přihlášené investory/dealery.
-  // NEPRIDÁVAT zpět bez konzultace s product ownerem.
+  {
+    key: "marketplace",
+    label: "CarMarketplace",
+    mobileLabel: "CarMarketplace",
+    href: urls.marketplace("/"),
+  },
 ];
 
 export interface PlatformSwitcherProps {

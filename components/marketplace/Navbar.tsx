@@ -20,7 +20,7 @@ export function MarketplaceNavbar() {
             <span className="text-white">Makléř</span>
           </span>
           <span className="text-sm font-semibold text-orange-400 border border-orange-800 rounded-full px-2 py-0.5">
-            Marketplace
+            CarMarketplace
           </span>
         </Link>
 

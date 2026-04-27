@@ -8,11 +8,11 @@ import { getMarketplaceStats } from "@/lib/stats";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
-  title: "Marketplace | Investiční platforma pro flipping aut",
+  title: "CarMarketplace | Investiční platforma pro flipping aut",
   description:
     "Investujte do aut a vydělejte 15-25 % ročně. Ověření realizátoři nabízí příležitosti, ověření investoři financují. Bezpečně přes CarMakléř.",
   openGraph: {
-    title: "Marketplace — investice do aut | CarMakléř",
+    title: "CarMarketplace — investice do aut | CarMakléř",
     description:
       "Investujte do aut a vydělejte 15-25 % ročně. Ověření realizátoři, bezpečné transakce přes CarMakléř.",
   },
@@ -42,7 +42,7 @@ const howItWorks = [
     step: 4,
     icon: "🎉",
     title: "Prodej a dělení zisku",
-    desc: "Auto se prodá za tržní cenu. Zisk se dělí: 40 % investor, 40 % realizátor, 20 % CarMakléř.",
+    desc: "Auto se prodá za tržní cenu. CarMakléř si účtuje 5 % z prodejní ceny, zbytek zisku se dělí mezi investora a realizátora dle dohody.",
   },
 ];
 
@@ -85,7 +85,7 @@ const faqs = [
   },
   {
     q: "Jak se dělí zisk?",
-    a: "Zisk se dělí v poměru 40 % investor, 40 % realizátor, 20 % CarMakléř. Poměr je fixní pro všechny flipy.",
+    a: "CarMakléř si účtuje 5 % z prodejní ceny jako provizi. Zbytek čistého zisku se dělí mezi investora a realizátora v poměru, na kterém se dohodnou před zahájením flipu.",
   },
   {
     q: "Co když se auto neprodá?",
@@ -139,7 +139,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
       <Breadcrumbs
         items={[
           { label: "Domů", href: "/" },
-          { label: "Marketplace" },
+          { label: "CarMarketplace" },
         ]}
       />
 
@@ -269,7 +269,9 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
               const totalCost = ex.purchase + ex.repair;
               const profit = ex.sale - totalCost;
               const roi = ((profit / totalCost) * 100).toFixed(0);
-              const investorProfit = Math.round(profit * 0.4);
+              // 5% fee z prodejní ceny, zbytek 50/50 (ukázkový default split)
+              const carmaklerFee = Math.round(ex.sale * 0.05);
+              const investorProfit = Math.round((profit - carmaklerFee) * 0.5);
 
               return (
                 <Card key={ex.car} hover className="p-6">
@@ -360,7 +362,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
             Připojte se k platformě
           </h2>
           <p className="text-gray-600 mt-3 mb-8 max-w-xl mx-auto leading-relaxed">
-            Marketplace je VIP platforma — přístup mají jen ověření dealeři a investoři.
+            CarMarketplace je exkluzivní platforma — přístup mají jen ověření dealeři a investoři.
             Vyplňte žádost a my vás do 48 hodin prověříme.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">

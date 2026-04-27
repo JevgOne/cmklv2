@@ -5,6 +5,8 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Button } from "@/components/ui/Button";
+import { DealScoreBadge } from "./DealScoreBadge";
+import { DealerReputationBadge } from "./DealerReputationBadge";
 import { formatPrice } from "@/lib/utils";
 
 export interface OpportunityCardProps {
@@ -20,6 +22,9 @@ export interface OpportunityCardProps {
   neededAmount: number;
   status: "PENDING_APPROVAL" | "APPROVED" | "FUNDING" | "FUNDED" | "IN_REPAIR" | "FOR_SALE" | "SOLD" | "COMPLETED" | "CANCELLED";
   dealerName: string;
+  dealScore?: number | null;
+  dealerRating?: number | null;
+  dealerFlipCount?: number;
   linkPrefix?: string;
 }
 
@@ -48,6 +53,9 @@ export const OpportunityCard = memo(function OpportunityCard({
   neededAmount,
   status,
   dealerName,
+  dealScore,
+  dealerRating,
+  dealerFlipCount,
   linkPrefix = "/marketplace/deals",
 }: OpportunityCardProps) {
   const totalCost = purchasePrice + repairCost;
@@ -77,7 +85,8 @@ export const OpportunityCard = memo(function OpportunityCard({
           <div className="absolute top-3 left-3">
             <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
           </div>
-          <div className="absolute top-3 right-3">
+          <div className="absolute top-3 right-3 flex items-center gap-1.5">
+            <DealScoreBadge score={dealScore} size="sm" />
             <span className="bg-white/90 backdrop-blur-sm text-gray-900 font-bold text-sm px-3 py-1.5 rounded-lg">
               ROI {roi}%
             </span>
@@ -92,6 +101,11 @@ export const OpportunityCard = memo(function OpportunityCard({
           <p className="text-sm text-gray-500 mt-1">
             {year} · {dealerName}
           </p>
+          {dealerRating != null && (
+            <div className="mt-1.5">
+              <DealerReputationBadge rating={dealerRating} flipCount={dealerFlipCount} size="sm" />
+            </div>
+          )}
 
           {/* Prices */}
           <div className="grid grid-cols-3 gap-2 mt-4">

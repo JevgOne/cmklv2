@@ -5,14 +5,14 @@ import { Alert } from "@/components/ui/Alert";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
-  title: "Žádost o přístup | Marketplace",
+  title: "Žádost o přístup | CarMarketplace",
   description:
     "Vyplňte žádost o přístup k marketplace. Investujte do aut nebo nabízejte flip příležitosti. Ověříme váš profil do 48 hodin.",
   robots: { index: true, follow: true },
   openGraph: {
-    title: "Žádost o přístup k Marketplace | CarMakléř",
+    title: "Žádost o přístup k CarMarketplace | CarMakléř",
     description:
-      "Staňte se součástí VIP investiční platformy pro flipping vozidel. Ověřeni dealeři + investoři.",
+      "Staňte se součástí CarMarketplace investiční platformy pro flipping vozidel. Ověřeni dealeři + investoři.",
   },
   alternates: pageCanonical("/marketplace/apply"),
 };
@@ -39,7 +39,7 @@ export default async function MarketplaceApplyPage({ searchParams }: Props) {
       <Breadcrumbs
         items={[
           { label: "Domů", href: "/" },
-          { label: "Marketplace", href: "/marketplace" },
+          { label: "CarMarketplace", href: "/marketplace" },
           { label: "Žádost o přístup" },
         ]}
       />
@@ -50,7 +50,7 @@ export default async function MarketplaceApplyPage({ searchParams }: Props) {
             <Alert variant="info" className="mb-6">
               <span className="text-sm leading-relaxed">
                 <strong className="block mb-1">Pro přístup musíte být ověřený uživatel</strong>
-                Marketplace je VIP platforma pro ověřené dealery a investory. Vyplňte žádost
+                CarMarketplace je exkluzivní platforma pro ověřené dealery a investory. Vyplňte žádost
                 níže a my vás do 48 hodin prověříme.
               </span>
             </Alert>

@@ -86,11 +86,23 @@ export default async function AdminMarketplacePage() {
         <div className="flex items-center gap-2 text-[13px] text-gray-500 mb-2">
           <span>Admin</span>
           <span>/</span>
-          <span className="text-gray-900">Marketplace</span>
+          <span className="text-gray-900">CarMarketplace</span>
         </div>
-        <h1 className="text-[28px] font-extrabold text-gray-900">
-          Marketplace
-        </h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-[28px] font-extrabold text-gray-900">
+            CarMarketplace
+          </h1>
+          <Link
+            href="/marketplace"
+            target="_blank"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-orange-500 hover:text-orange-600 no-underline transition-colors"
+          >
+            Otevřít web
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </Link>
+        </div>
       </div>
 
       {/* Applications link */}

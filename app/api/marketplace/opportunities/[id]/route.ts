@@ -4,6 +4,13 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { updateOpportunitySchema } from "@/lib/validators/marketplace";
+import { calculateDealScore } from "@/lib/marketplace/deal-score";
+import { notifyMarketplace } from "@/lib/marketplace/notifications";
+import {
+  marketplaceStatusChangeSubject,
+  marketplaceStatusChangeHtml,
+  marketplaceStatusChangeText,
+} from "@/lib/email-templates/marketplace-status-change";
 
 const ADMIN_ROLES = ["ADMIN", "BACKOFFICE"];
 
@@ -204,10 +211,58 @@ export async function PUT(
       }
     }
 
+    const oldStatus = opportunity.status;
+
     const updated = await prisma.flipOpportunity.update({
       where: { id },
       data: updateData,
     });
+
+    // Notify investors about status change
+    if (updateData.status && updateData.status !== oldStatus) {
+      const carTitle = `${updated.brand} ${updated.model} ${updated.year}`;
+      const link = `/marketplace/deals/${id}`;
+      const investors = await prisma.investment.findMany({
+        where: { opportunityId: id },
+        select: { investorId: true },
+        distinct: ["investorId"],
+      });
+      const recipientIds = [
+        ...investors.map((i) => i.investorId),
+        ...(updated.dealerId !== session.user.id ? [updated.dealerId] : []),
+      ];
+      if (recipientIds.length > 0) {
+        const emailData = {
+          recipientName: "",
+          carTitle,
+          oldStatus: oldStatus,
+          newStatus: updateData.status as string,
+          link: `${process.env.NEXT_PUBLIC_APP_URL || "https://carmakler.cz"}${link}`,
+        };
+        notifyMarketplace({
+          type: "STATUS_CHANGE",
+          opportunityId: id,
+          recipientIds,
+          title: "Změna stavu flipu",
+          body: carTitle,
+          link,
+          email: {
+            subject: marketplaceStatusChangeSubject(emailData),
+            html: marketplaceStatusChangeHtml(emailData),
+            text: marketplaceStatusChangeText(emailData),
+          },
+        }).catch(() => {});
+      }
+    }
+
+    // Recalculate deal score if key financial/data fields changed
+    const scoreFields = ["purchasePrice", "repairCost", "estimatedSalePrice", "condition", "photos", "repairDescription", "repairPhotos", "vin"];
+    const changedKeys = Object.keys(updateData);
+    if (changedKeys.some((k) => scoreFields.includes(k))) {
+      calculateDealScore(id).catch((err) =>
+        console.error("Deal score recalculation failed:", err)
+      );
+    }
 
     return NextResponse.json({ opportunity: updated });
   } catch (error) {

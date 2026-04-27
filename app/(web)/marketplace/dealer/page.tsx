@@ -5,11 +5,12 @@ import { authOptions } from "@/lib/auth";
 import { Button } from "@/components/ui/Button";
 import { DealerStats } from "@/components/web/marketplace/DealerStats";
 import { OpportunityCard } from "@/components/web/marketplace/OpportunityCard";
+import { NotificationBell } from "@/components/web/marketplace/NotificationBell";
 import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
-  title: "Realizátor Dashboard | Marketplace",
+  title: "Realizátor Dashboard | CarMarketplace",
   alternates: pageCanonical("/marketplace/dealer"),
 };
 
@@ -50,6 +51,7 @@ async function getDealerData() {
         neededAmount: opp.purchasePrice + opp.repairCost,
         status: opp.status as "FUNDING" | "APPROVED" | "IN_REPAIR" | "FOR_SALE" | "SOLD" | "PENDING_APPROVAL",
         dealerName: `${opp.dealer.firstName} ${opp.dealer.lastName}`,
+        dealerRating: opp.dealerRating ?? null,
       };
     });
 
@@ -95,7 +97,7 @@ export default async function DealerDashboardPage() {
         <div>
           <div className="flex items-center gap-2 text-[13px] text-gray-500 mb-1">
             <Link href="/marketplace" className="hover:text-orange-500 transition-colors no-underline text-gray-500">
-              Marketplace
+              CarMarketplace
             </Link>
             <span>/</span>
             <span className="text-gray-900">Realizátor</span>
@@ -104,11 +106,14 @@ export default async function DealerDashboardPage() {
             Moje příležitosti
           </h1>
         </div>
-        <Link href="/marketplace/dealer/nova" className="no-underline">
-          <Button variant="primary">
-            + Nová příležitost
-          </Button>
-        </Link>
+        <div className="flex items-center gap-3">
+          <NotificationBell />
+          <Link href="/marketplace/dealer/nova" className="no-underline">
+            <Button variant="primary">
+              + Nová příležitost
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Stats */}

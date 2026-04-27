@@ -4,12 +4,19 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { payoutSchema } from "@/lib/validators/marketplace";
+import { calculateDealerRating } from "@/lib/marketplace/dealer-rating";
+import { notifyMarketplace } from "@/lib/marketplace/notifications";
+import {
+  marketplacePayoutSubject,
+  marketplacePayoutHtml,
+  marketplacePayoutText,
+} from "@/lib/email-templates/marketplace-payout";
 
 const ADMIN_ROLES = ["ADMIN", "BACKOFFICE"];
 
 /* ------------------------------------------------------------------ */
 /*  POST /api/marketplace/opportunities/[id]/payout                    */
-/*  Admin provede výplatu — logika 40/40/20                            */
+/*  Admin provede výplatu — 5% CarMakléř fee + dohodnutý split         */
 /* ------------------------------------------------------------------ */
 
 export async function POST(
@@ -36,6 +43,9 @@ export async function POST(
         },
       },
     });
+    // Helper for car title (used in notifications below)
+    const carTitle = opportunity ? `${opportunity.brand} ${opportunity.model} ${opportunity.year}` : "";
+    const dealLink = `/marketplace/deals/${id}`;
 
     if (!opportunity) {
       return NextResponse.json(
@@ -83,6 +93,35 @@ export async function POST(
         ),
       ]);
 
+      // Recalculate dealer rating after completed flip (fire-and-forget)
+      calculateDealerRating(opportunity.dealerId).catch(() => {});
+
+      // Notify investors about payout (fire-and-forget)
+      for (const inv of opportunity.investments) {
+        const emailData = {
+          recipientName: "",
+          carTitle,
+          investedAmount: inv.amount,
+          returnAmount: inv.amount,
+          profit: 0,
+          roi: 0,
+          link: `${process.env.NEXT_PUBLIC_APP_URL || "https://carmakler.cz"}${dealLink}`,
+        };
+        notifyMarketplace({
+          type: "PAYOUT",
+          opportunityId: id,
+          recipientIds: [inv.investorId],
+          title: "Vyúčtování investice",
+          body: `${carTitle} — vklad vrácen`,
+          link: dealLink,
+          email: {
+            subject: marketplacePayoutSubject(emailData),
+            html: marketplacePayoutHtml(emailData),
+            text: marketplacePayoutText(emailData),
+          },
+        }).catch(() => {});
+      }
+
       return NextResponse.json({
         payout: {
           actualProfit,
@@ -100,10 +139,24 @@ export async function POST(
       });
     }
 
-    // Výpočet podílů: 40% investoři, 40% dealer, 20% Carmakler
-    const investorShare = Math.floor(actualProfit * 0.4);
-    const dealerShare = Math.floor(actualProfit * 0.4);
-    const carmaklerShare = actualProfit - investorShare - dealerShare;
+    // Nový provizní model:
+    // 1) CarMakléř fee = carmaklerFeePct % z prodejní ceny (default 5%)
+    // 2) Zbytek zisku se dělí podle dohodnutého split (agreedDealerSharePct / agreedInvestorSharePct)
+    //    Pokud split není dohodnutý, fallback na 50/50
+    const carmaklerFeePct = opportunity.carmaklerFeePct ?? 5;
+    const carmaklerShare = Math.floor(actualSalePrice * (carmaklerFeePct / 100));
+    const distributableProfit = actualProfit - carmaklerShare;
+
+    const dealerPct = opportunity.agreedDealerSharePct ?? 50;
+    const investorPct = opportunity.agreedInvestorSharePct ?? 50;
+    const totalPct = dealerPct + investorPct || 100;
+
+    const dealerShare = distributableProfit > 0
+      ? Math.floor(distributableProfit * (dealerPct / totalPct))
+      : 0;
+    const investorShare = distributableProfit > 0
+      ? distributableProfit - dealerShare
+      : 0;
 
     // Rozdělit investorský podíl poměrně
     const totalInvested = opportunity.investments.reduce(
@@ -145,6 +198,39 @@ export async function POST(
         })
       ),
     ]);
+
+    // Recalculate dealer rating after completed flip (fire-and-forget)
+    calculateDealerRating(opportunity.dealerId).catch(() => {});
+
+    // Notify each investor about their payout (fire-and-forget)
+    for (const payout of investmentPayouts) {
+      const profit = payout.returnAmount - payout.investedAmount;
+      const roi = payout.investedAmount > 0
+        ? Math.round((profit / payout.investedAmount) * 1000) / 10
+        : 0;
+      const emailData = {
+        recipientName: "",
+        carTitle,
+        investedAmount: payout.investedAmount,
+        returnAmount: payout.returnAmount,
+        profit,
+        roi,
+        link: `${process.env.NEXT_PUBLIC_APP_URL || "https://carmakler.cz"}${dealLink}`,
+      };
+      notifyMarketplace({
+        type: "PAYOUT",
+        opportunityId: id,
+        recipientIds: [payout.investorId],
+        title: "Výplata zisku",
+        body: `${carTitle} — +${roi}% ROI`,
+        link: dealLink,
+        email: {
+          subject: marketplacePayoutSubject(emailData),
+          html: marketplacePayoutHtml(emailData),
+          text: marketplacePayoutText(emailData),
+        },
+      }).catch(() => {});
+    }
 
     return NextResponse.json({
       payout: {

@@ -17,6 +17,7 @@ export interface BrokerCardBroker {
   phone: string | null;
   showPhone: boolean;
   tags: { slug: string; label: string }[];
+  jobTitle?: string | null;
   trustScore?: number | null;
   trustTier?: string | null;
   topSkillTags?: { tag: string; emoji: string; count: number }[];
@@ -71,6 +72,12 @@ export function BrokerCard({ broker }: BrokerCardProps) {
         <h3 className="mt-3 text-lg font-bold text-gray-900 truncate max-w-full text-center">
           {broker.firstName} {broker.lastName}
         </h3>
+
+        {broker.jobTitle && (
+          <span className="text-xs font-semibold text-orange-500 mt-0.5">
+            {broker.jobTitle}
+          </span>
+        )}
 
         <div className="flex items-center gap-1.5 mt-1">
           <Badge variant={["STAR_4", "STAR_5"].includes(broker.level) ? "top" : "verified"}>

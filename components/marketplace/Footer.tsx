@@ -6,7 +6,7 @@ export function MarketplaceFooter() {
       platformKey="marketplace"
       tagline="VIP investiční platforma pro flipping vozidel. Ověření dealeři a investoři na jednom místě."
       productColumn={{
-        title: "Marketplace",
+        title: "CarMarketplace",
         links: [
           { href: "/", label: "Jak to funguje" },
           { href: "/apply?role=investor", label: "Pro investory" },

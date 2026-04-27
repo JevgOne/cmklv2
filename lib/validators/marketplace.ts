@@ -113,6 +113,32 @@ export const applicationFilterSchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(20),
 });
 
+// Milník opravy (dealer)
+export const createMilestoneSchema = z.object({
+  label: z.string().min(1, "Název milníku je povinný").max(100),
+  progressPct: z.number().int().min(0).max(100),
+  photos: z.array(z.string().url()).max(10).optional(),
+  note: z.string().max(500).optional(),
+});
+
+// Vyjednávání — dealer vytváří nabídku (round 1)
+export const createNegotiationSchema = z.object({
+  opportunityId: z.string().min(1, "ID příležitosti je povinné"),
+  investorId: z.string().min(1, "ID investora je povinné"),
+  dealerSharePct: z.number().int().min(0).max(100, "Podíl musí být 0-100%"),
+  message: z.string().max(2000).optional(),
+});
+
+// Odpověď na nabídku — investor accept/reject/counter
+export const respondNegotiationSchema = z.object({
+  action: z.enum(["ACCEPT", "REJECT", "COUNTER"]),
+  dealerSharePct: z.number().int().min(0).max(100).optional(),
+  message: z.string().max(2000).optional(),
+}).refine(
+  (data) => data.action !== "COUNTER" || (data.dealerSharePct !== undefined && data.dealerSharePct !== null),
+  { message: "Protinabídka musí obsahovat dealerSharePct", path: ["dealerSharePct"] }
+);
+
 // Žádost o přístup — PUBLIC (nevyžaduje login)
 export const applySchema = z
   .object({

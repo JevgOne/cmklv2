@@ -1671,7 +1671,7 @@ model AiConversation {
 
 ## TASK-019: Inzertní platforma — kompletní digitální inzerce vozidel
 Priorita: 2
-Stav: zpracovává se
+Stav: hotovo
 Projekt: /Users/lunagroup/carmakler
 
 ### Kompletní zadání:
@@ -6292,4 +6292,173 @@ Vytvořit kompletní sadu PDF šablon a prezentací v jednotném vizuálním sty
 
 ---
 
+## TASK-043: Blog/Magazín — AI-asistovaný content + články makléřů
+Priorita: 2
+Stav: backlog
+Projekt: /Users/zen/Projects/cmklv2/cmklv2
+
+### Kompletní zadání:
+
+Přidat blog/magazín sekci na `carmakler.cz/blog` s AI-asistovaným workflow a možností pro makléře psát vlastní články.
+
+**AI Workflow (Varianta A):**
+1. AI (Claude API) najde aktuální téma / vygeneruje návrh článku
+2. Draft se uloží do admin panelu ke schválení
+3. Admin/redakce zkontroluje, upraví, schválí
+4. Článek se publikuje na webu
+
+**Kdo může psát:**
+- Admin/redakce — přes admin panel
+- Makléři — přes makléřský dashboard (články jdou do review)
+- AI — generuje drafty ke schválení
+
+**Kategorie:**
+1. Novinky z autosvěta
+2. Rady a tipy (koupě ojetiny, údržba, STK)
+3. Recenze vozů
+4. Tržní analýzy (ceny aut, trendy)
+5. Carmakler novinky (nové funkce platformy)
+6. Dovozy aut z Dubaje — příležitosti, cla, homologace, tipy
+7. Dovozy aut z USA — Copart, IAAI, shipping, customs, EPA/DOT
+
+**Technická implementace:**
+
+1. **DB modely (Prisma):**
+   - `Article` — id, title, slug, content (rich text/MDX), excerpt, coverImage, category, status (DRAFT/REVIEW/PUBLISHED/ARCHIVED), authorId, publishedAt, seoTitle, seoDescription, readTime, views
+   - `ArticleCategory` — id, name, slug, description, icon
+   - `ArticleComment` — id, articleId, userId, content, createdAt (volitelně, fáze 2)
+   - `ArticleTag` — id, name, slug (pro cross-linking)
+
+2. **Stránky:**
+   - `app/(web)/blog/page.tsx` — seznam článků, filtry dle kategorií, featured articles
+   - `app/(web)/blog/[slug]/page.tsx` — detail článku, related articles, share buttons
+   - `app/(web)/blog/kategorie/[slug]/page.tsx` — články dle kategorie
+   - `app/(admin)/admin/blog/page.tsx` — správa článků (CRUD, status management)
+   - `app/(admin)/admin/blog/[id]/edit/page.tsx` — WYSIWYG editor
+   - `app/(admin)/admin/blog/ai-drafts/page.tsx` — AI vygenerované drafty ke schválení
+   - `app/(pwa)/dashboard/blog/page.tsx` — makléř píše články (simplified editor)
+
+3. **API routes:**
+   - `api/blog/articles` — CRUD
+   - `api/blog/ai-generate` — Claude API generuje draft na zadané téma
+   - `api/blog/ai-suggest-topics` — AI navrhuje témata na základě trendů
+   - `api/blog/publish` — schválení a publikace
+
+4. **SEO:**
+   - Každý článek = samostatná indexovatelná stránka
+   - JSON-LD Article schema
+   - OpenGraph + Twitter Cards
+   - Sitemap integration
+   - Kanonické URL
+
+5. **Design:**
+   - Moderní magazín layout (grid karty s cover image, excerpt, autor, datum)
+   - Featured article hero na vrchu
+   - Sidebar s kategoriemi + populární články
+   - Článek: čitelný layout, max-w-prose, heading hierarchy
+   - Autor karta (avatar, jméno, bio, link na profil)
+   - Share buttons (FB, X, LinkedIn, copy link)
+   - Related articles dole
+   - Obrázky přes Cloudinary
+
+**Boom kategorie — Dovozy:**
+- Dovozy z Dubaje: jak kupovat na dubizzle/Emirates Auction, cla do EU, homologace, VIN check pro arabské vozy, úspora vs rizika
+- Dovozy z USA: Copart/IAAI tutoriál, shipping (RoRo vs kontejner), US customs → EU customs, EPA/DOT compliance, salvage title vysvětlení, reálné příklady s kalkulací
+
+### Očekávaný výstup:
+1. Funkční blog na carmakler.cz/blog
+2. Admin panel pro správu článků
+3. AI generátor draftů
+4. Makléři mohou psát články
+5. 7 kategorií s předpřipravenými AI drafty
+6. SEO optimalizovaná struktura
+
+---
+
 <!-- Další úkoly přidávej pod tuto čáru ve stejném formátu -->
+
+## TASK-NEW-001: Vehicle Equipment Checkboxes
+Priorita: 1
+Stav: zpracovává se
+Datum: 2026-04-26
+
+### Zadání:
+Přidat checkboxy výbavy do vehicle intake flow. Po VIN decode předvyplnit sériovou výbavu z API response. Makléř potvrdí/upraví. Kategorie: bezpečnost, komfort, infotainment, exteriér, interiér. Aftermarket úpravy ručně.
+
+---
+
+## TASK-NEW-002: Donor Car Flow (PWA Parts Supplier)
+Priorita: 1
+Stav: zpracovává se
+Datum: 2026-04-26
+
+### Zadání:
+Kompletní donor car flow v PWA pro vrakoviště:
+1. VIN → dekóduj auto
+2. Typ poškození (nehoda/nepojízdné/kompletní/zatopené/požár)
+3. Damage zone selector (8 zón, 4 stupně poškození)
+4. Automatický filtr dílů (vyřadit zničené zóny)
+5. Výběr dílů + stav A/B/C + poznámka + fotka
+6. Fotky celého auta (4 povinné)
+7. Cena (návrh + ruční úprava)
+8. Souhrn + publikace do eshopu
+
+Plán: `.claude-context/tasks/plan-tecdoc-integration.md`
+Zatím bez TecDoc API — mock data seznam dílů.
+
+---
+
+## TASK-NEW-003: Blog Rich Text Editor
+Priorita: 2
+Stav: zpracovává se
+Datum: 2026-04-26
+
+### Zadání:
+Nahradit textarea za rich text editor (TipTap). Admin/makléř může psát články s formátováním, obrázky, odkazy. Toolbar: bold, italic, headings, lists, images, links, blockquotes.
+
+---
+
+## TASK-NEW-004: Redirect /auth/prihlasit → /login
+Priorita: 1
+Stav: zpracovává se
+Datum: 2026-04-26
+
+### Zadání:
+Přidat 301 redirect v next.config.ts: /auth/prihlasit → /login
+
+---
+
+## TASK-NEW-005: Marketplace VIP Detail Page
+Priorita: 2
+Stav: zpracovává se
+Datum: 2026-04-26
+
+### Zadání:
+Implementovat detail stránku pro marketplace VIP dealy. Gated za INVESTOR/VERIFIED_DEALER/ADMIN. Landing page existuje, detaily dealů chybí. Implementovat:
+- Deal detail page s fotkami auta
+- Finanční kalkulace (nákupní cena, opravy, prodejní cena, ROI)
+- Dělení zisku: 40% investor, 40% dealer, 20% Carmakler
+- Tlačítko "Investovat" / "Mám zájem"
+- Historie dealů
+
+---
+
+## TASK-NEW-006: Responzivita — Manuální Test
+Priorita: 2
+Stav: čeká
+Datum: 2026-04-26
+
+### Zadání:
+Otestovat responzivitu celého webu v Chrome DevTools: 375px (iPhone), 768px (tablet), 1280px (desktop). Hlavní web, admin, PWA, eshop, inzerce, marketplace.
+
+---
+
+## TASK-NEW-007: TecDoc Setup (čeká na API klíče)
+Priorita: 2
+Stav: čeká na registraci
+Datum: 2026-04-26
+
+### Zadání:
+Připravit TecDoc service layer, env variables, API wrapper. Čeká na registraci uživatele (instrukce na ~/Desktop/CARMAKLER-TODO-registrace.md). Zatím mock service s hardcoded díly.
+
+---

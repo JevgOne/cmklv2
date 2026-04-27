@@ -45,6 +45,7 @@ export async function GET() {
             purchasePrice: true,
             repairCost: true,
             actualSalePrice: true,
+            carmaklerFeePct: true,
           },
         }),
       ]);
@@ -55,7 +56,11 @@ export async function GET() {
           (opp.actualSalePrice ?? 0) - opp.purchasePrice - opp.repairCost;
         return sum + Math.max(0, profit);
       }, 0);
-      const carmaklerRevenue = Math.floor(totalProfit * 0.2);
+      // CarMakléř revenue = carmaklerFeePct % z prodejní ceny (ne ze zisku)
+      const carmaklerRevenue = completedOpportunities.reduce((sum, opp) => {
+        const feePct = opp.carmaklerFeePct ?? 5;
+        return sum + Math.floor((opp.actualSalePrice ?? 0) * (feePct / 100));
+      }, 0);
 
       return NextResponse.json({
         stats: {
@@ -94,14 +99,21 @@ export async function GET() {
             purchasePrice: true,
             repairCost: true,
             actualSalePrice: true,
+            carmaklerFeePct: true,
+            agreedDealerSharePct: true,
           },
         }),
       ]);
 
       const totalEarnings = myOpportunities.reduce((sum, opp) => {
-        const profit =
-          (opp.actualSalePrice ?? 0) - opp.purchasePrice - opp.repairCost;
-        return sum + Math.floor(Math.max(0, profit) * 0.4);
+        const salePrice = opp.actualSalePrice ?? 0;
+        const profit = salePrice - opp.purchasePrice - opp.repairCost;
+        if (profit <= 0) return sum;
+        const feePct = opp.carmaklerFeePct ?? 5;
+        const carmaklerFee = Math.floor(salePrice * (feePct / 100));
+        const distributable = profit - carmaklerFee;
+        const dealerPct = opp.agreedDealerSharePct ?? 50;
+        return sum + Math.floor(Math.max(0, distributable) * (dealerPct / 100));
       }, 0);
 
       return NextResponse.json({
