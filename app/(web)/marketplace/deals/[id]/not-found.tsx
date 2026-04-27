@@ -13,7 +13,7 @@ export default function DealNotFound() {
         href="/marketplace"
         className="inline-flex items-center px-5 py-2.5 bg-orange-500 text-white rounded-xl font-semibold hover:bg-orange-600 transition-colors no-underline"
       >
-        Zpět na CarMarketplace
+        Zpět na Marketplace
       </Link>
     </div>
   );

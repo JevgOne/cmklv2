@@ -179,7 +179,7 @@ export function DealDetailClient({
     <div className="max-w-7xl mx-auto px-4 py-8">
       <Breadcrumbs
         items={[
-          { label: "CarMarketplace", href: "/marketplace" },
+          { label: "Marketplace", href: "/marketplace" },
           { label: "Deals" },
           { label: `${opp.brand} ${opp.model}` },
         ]}

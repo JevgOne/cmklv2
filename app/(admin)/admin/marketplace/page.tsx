@@ -86,11 +86,11 @@ export default async function AdminMarketplacePage() {
         <div className="flex items-center gap-2 text-[13px] text-gray-500 mb-2">
           <span>Admin</span>
           <span>/</span>
-          <span className="text-gray-900">CarMarketplace</span>
+          <span className="text-gray-900">Marketplace</span>
         </div>
         <div className="flex items-center gap-3">
           <h1 className="text-[28px] font-extrabold text-gray-900">
-            CarMarketplace
+            Marketplace
           </h1>
           <Link
             href="/marketplace"

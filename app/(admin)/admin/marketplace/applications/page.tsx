@@ -67,7 +67,7 @@ export default async function AdminApplicationsPage({
       <div className="mb-6 sm:mb-8">
         <div className="flex items-center gap-2 text-[13px] text-gray-500 mb-2">
           <Link href="/admin/marketplace" className="hover:text-orange-500 transition-colors no-underline text-gray-500">
-            Admin / CarMarketplace
+            Admin / Marketplace
           </Link>
           <span>/</span>
           <span className="text-gray-900">Žádosti o přístup</span>

@@ -8,11 +8,11 @@ import { getMarketplaceStats } from "@/lib/stats";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
-  title: "CarMarketplace | Investiční platforma pro flipping aut",
+  title: "Marketplace | Investiční platforma pro flipping aut",
   description:
     "Investujte do aut a vydělejte 15-25 % ročně. Ověření realizátoři nabízí příležitosti, ověření investoři financují. Bezpečně přes CarMakléř.",
   openGraph: {
-    title: "CarMarketplace — investice do aut | CarMakléř",
+    title: "Marketplace — investice do aut | CarMakléř",
     description:
       "Investujte do aut a vydělejte 15-25 % ročně. Ověření realizátoři, bezpečné transakce přes CarMakléř.",
   },
@@ -139,7 +139,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
       <Breadcrumbs
         items={[
           { label: "Domů", href: "/" },
-          { label: "CarMarketplace" },
+          { label: "Marketplace" },
         ]}
       />
 
@@ -362,7 +362,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
             Připojte se k platformě
           </h2>
           <p className="text-gray-600 mt-3 mb-8 max-w-xl mx-auto leading-relaxed">
-            CarMarketplace je exkluzivní platforma — přístup mají jen ověření dealeři a investoři.
+            Marketplace je exkluzivní platforma — přístup mají jen ověření dealeři a investoři.
             Vyplňte žádost a my vás do 48 hodin prověříme.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">

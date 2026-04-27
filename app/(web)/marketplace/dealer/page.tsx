@@ -10,7 +10,7 @@ import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
-  title: "Realizátor Dashboard | CarMarketplace",
+  title: "Realizátor Dashboard | Marketplace",
   alternates: pageCanonical("/marketplace/dealer"),
 };
 
@@ -97,7 +97,7 @@ export default async function DealerDashboardPage() {
         <div>
           <div className="flex items-center gap-2 text-[13px] text-gray-500 mb-1">
             <Link href="/marketplace" className="hover:text-orange-500 transition-colors no-underline text-gray-500">
-              CarMarketplace
+              Marketplace
             </Link>
             <span>/</span>
             <span className="text-gray-900">Realizátor</span>

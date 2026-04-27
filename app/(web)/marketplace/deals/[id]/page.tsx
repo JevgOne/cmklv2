@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { DealDetailClient } from "@/components/web/marketplace/DealDetailClient";
 
 export const metadata: Metadata = {
-  title: "Detail flipu | CarMarketplace",
+  title: "Detail flipu | Marketplace",
   robots: { index: false, follow: false },
 };
 
