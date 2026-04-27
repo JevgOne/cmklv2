@@ -157,7 +157,7 @@ export default async function ONasPage() {
             Proto jsme vytvořili CarMakléř. Tým profesionálních makléřů, kteří stojí na vaší straně. Nejsme překupníci, nic nevykupujeme ani neprodáváme za sebe. Makléř zastupuje vaše zájmy — ne svoje. Prodejcům zajistíme profesionální prezentaci a prodej za nejvyšší možnou cenu. Kupujícím nabídneme prověřená vozidla s kompletní historií.
           </p>
           <p className="text-gray-600 leading-relaxed mb-4">
-            Věříme, že férovost a transparentnost se vyplatí. Proto u nás víte přesně, kolik co stojí, kdo komu co platí a proč. Žádné skryté poplatky, žádné triky, žádné „to je normální". Platíte jen z úspěšného prodeje — 5 % z prodejní ceny, minimum 25 000 Kč. To je vše.
+            Věříme, že férovost a transparentnost se vyplatí. Proto u nás víte přesně, kolik co stojí, kdo komu co platí a proč. Žádné skryté poplatky, žádné triky, žádné &bdquo;to je normální&ldquo;. Platíte jen z úspěšného prodeje — 5 % z prodejní ceny, minimum 25 000 Kč. To je vše.
           </p>
           <p className="text-gray-600 leading-relaxed">
             Jsme firma, která chce změnit trh s ojetými auty v Česku. Poctivě, otevřeně a s respektem ke každému klientovi. Protože prodat nebo koupit auto by nemělo být stresující — mělo by to být v pohodě.
