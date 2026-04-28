@@ -1,10 +1,17 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
   title: "Ceník | Carmakler",
   description:
     "Prodej vozu přes Carmakler za jednoduchou provizi 5 % z prodejní ceny. Žádné skryté poplatky, vše v ceně.",
+  openGraph: {
+    title: "Ceník služeb | CarMakléř",
+    description:
+      "Provize 5 % z prodejní ceny, min. 25 000 Kč. Vše zahrnuto — fotky, inzerce, smlouvy, přepis.",
+  },
+  alternates: pageCanonical("/cenik"),
 };
 
 const included = [
