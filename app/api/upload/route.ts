@@ -19,6 +19,7 @@ const PRESETS: Record<string, { folder: string; allowedTypes: string[]; watermar
   avatar: { folder: "carmakler/avatars", allowedTypes: ALLOWED_IMAGE_TYPES },
   cover: { folder: "carmakler/covers", allowedTypes: ALLOWED_IMAGE_TYPES },
   marketplace: { folder: "carmakler/marketplace", allowedTypes: ALLOWED_IMAGE_TYPES, watermark: true },
+  team: { folder: "carmakler/team", allowedTypes: ALLOWED_IMAGE_TYPES },
 };
 
 /**

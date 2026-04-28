@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 
@@ -31,7 +31,9 @@ export default function AdminTeamPage() {
   const [editing, setEditing] = useState<string | null>(null);
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchMembers = useCallback(async () => {
     try {
@@ -69,6 +71,31 @@ export default function AdminTeamPage() {
   function cancelEdit() {
     setEditing(null);
     setError("");
+  }
+
+  async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError("");
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("upload_preset", "team");
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || "Chyba při nahrávání fotky");
+        return;
+      }
+      const { url } = await res.json();
+      setForm((prev) => ({ ...prev, photoUrl: url }));
+    } catch {
+      setError("Chyba při nahrávání fotky");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
   }
 
   async function handleSave() {
@@ -205,15 +232,39 @@ export default function AdminTeamPage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                URL fotky
+                Fotka
               </label>
-              <input
-                type="text"
-                value={form.photoUrl}
-                onChange={(e) => setForm({ ...form, photoUrl: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                placeholder="https://..."
-              />
+              <div className="flex items-center gap-3">
+                {form.photoUrl && (
+                  <img
+                    src={form.photoUrl}
+                    alt="Náhled"
+                    className="w-14 h-14 rounded-xl object-cover shrink-0"
+                  />
+                )}
+                <div className="flex-1">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={handlePhotoUpload}
+                    disabled={uploading}
+                    className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-600 hover:file:bg-orange-100 disabled:opacity-50"
+                  />
+                  {uploading && (
+                    <p className="text-xs text-orange-500 mt-1">Nahrávám...</p>
+                  )}
+                  {form.photoUrl && (
+                    <button
+                      type="button"
+                      onClick={() => setForm({ ...form, photoUrl: "" })}
+                      className="text-xs text-red-500 hover:text-red-700 mt-1"
+                    >
+                      Odebrat fotku
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
             <div className="sm:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">
