@@ -2175,8 +2175,13 @@ model ProfileLike {
 
 model ProfileComment {
   id         String   @id @default(cuid())
-  userId     String
-  user       User     @relation("UserProfileComments", fields: [userId], references: [id], onDelete: Cascade)
+  userId     String?
+  user       User?    @relation("UserProfileComments", fields: [userId], references: [id], onDelete: Cascade)
+
+  // Guest komentáře (bez přihlášení)
+  authorName  String?
+  authorEmail String?
+  guestIp     String?
 
   // Polymorfní target — právě jeden musí být non-null
   vehicleId  String?
@@ -2189,7 +2194,7 @@ model ProfileComment {
   article    Article?  @relation("ArticleComments", fields: [articleId], references: [id], onDelete: Cascade)
 
   text       String
-  isHidden   Boolean   @default(false)
+  isHidden   Boolean   @default(true)
 
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
@@ -2199,6 +2204,7 @@ model ProfileComment {
   @@index([partId])
   @@index([articleId])
   @@index([userId])
+  @@index([guestIp])
 }
 
 model ArticleReaction {

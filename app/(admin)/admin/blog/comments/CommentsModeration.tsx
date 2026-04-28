@@ -9,7 +9,9 @@ interface Comment {
   text: string;
   isHidden: boolean;
   createdAt: string;
-  author: { firstName: string; lastName: string; email: string; avatar: string | null };
+  author: { firstName: string; lastName: string; email: string; avatar: string | null } | null;
+  authorName: string | null;
+  authorEmail: string | null;
   article: { title: string; slug: string };
 }
 
@@ -101,8 +103,17 @@ export function CommentsModeration({ comments: initial }: { comments: Comment[] 
             {filtered.map((c) => (
               <tr key={c.id}>
                 <td className="py-3 pr-3">
-                  <div className="font-medium">{c.author.firstName} {c.author.lastName}</div>
-                  <div className="text-xs text-gray-400">{c.author.email}</div>
+                  {c.author ? (
+                    <>
+                      <div className="font-medium">{c.author.firstName} {c.author.lastName}</div>
+                      <div className="text-xs text-gray-400">{c.author.email}</div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="font-medium">{c.authorName || "Anonymní"} <span className="text-xs text-orange-500 font-normal">host</span></div>
+                      {c.authorEmail && <div className="text-xs text-gray-400">{c.authorEmail}</div>}
+                    </>
+                  )}
                 </td>
                 <td className="py-3 pr-3 max-w-xs">
                   <p className="line-clamp-2">{c.text}</p>

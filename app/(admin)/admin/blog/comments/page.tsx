@@ -32,6 +32,8 @@ export default async function AdminBlogCommentsPage() {
           isHidden: c.isHidden,
           createdAt: c.createdAt.toISOString(),
           author: c.user,
+          authorName: c.authorName,
+          authorEmail: c.authorEmail,
           article: c.article!,
         }))}
       />

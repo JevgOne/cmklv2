@@ -370,9 +370,11 @@ export default async function BlogArticlePage({
             isHidden: c.isHidden,
             createdAt: c.createdAt.toISOString(),
             author: c.user,
+            authorName: c.authorName,
           }))}
           total={commentTotal}
           isLoggedIn={!!session?.user}
+          userName={session?.user ? `${session.user.firstName || ""} ${session.user.lastName || ""}`.trim() : undefined}
         />
 
         {/* Newsletter */}
