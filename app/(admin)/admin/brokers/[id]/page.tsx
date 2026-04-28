@@ -169,20 +169,13 @@ export default async function AdminBrokerDetailPage({ params }: PageProps) {
       {/* Profile header card */}
       <Card className="p-6">
         <div className="flex flex-col sm:flex-row items-start gap-6">
-          {broker.avatar ? (
-            <Image
-              src={broker.avatar}
-              alt={`${broker.firstName} ${broker.lastName}`}
-              width={80}
-              height={80}
-              className="w-20 h-20 rounded-full object-cover shrink-0"
-            />
-          ) : (
-            <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white text-2xl font-bold shrink-0">
-              {broker.firstName[0] || ""}
-              {broker.lastName[0] || ""}
-            </div>
-          )}
+          <Image
+            src={broker.avatar || "/brand/default-avatar.png"}
+            alt={`${broker.firstName} ${broker.lastName}`}
+            width={80}
+            height={80}
+            className="w-20 h-20 rounded-full object-cover shrink-0"
+          />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-1">
               <h2 className="text-xl font-extrabold text-gray-900">

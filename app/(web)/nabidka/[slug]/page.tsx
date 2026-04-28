@@ -408,9 +408,6 @@ export default async function VehicleDetailPage({
   const brokerName = broker
     ? `${broker.firstName} ${broker.lastName}`
     : null;
-  const brokerInitials = broker
-    ? `${broker.firstName.charAt(0)}${broker.lastName.charAt(0)}`
-    : "";
   const brokerPhone = broker?.phone || "";
   const brokerSlug = broker?.slug || "";
   const brokerCities = broker?.cities
@@ -789,7 +786,6 @@ export default async function VehicleDetailPage({
             <ContactForm vehicleName={vehicleName} vehicleId={vehicle.id} brokerId={vehicle.brokerId || undefined} />
             <BrokerBox
               name={brokerName!}
-              initials={brokerInitials}
               region={brokerCities || "Česká republika"}
               rating={4.8}
               salesCount={0}

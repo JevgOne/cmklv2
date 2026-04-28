@@ -39,9 +39,11 @@ export function SellerInfo({
   return (
     <Card className="p-6">
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-lg font-bold text-gray-500">
-          {sellerName.charAt(0).toUpperCase()}
-        </div>
+        <img
+          src="/brand/default-avatar.png"
+          alt={sellerName}
+          className="w-12 h-12 rounded-full object-cover"
+        />
         <div>
           <div className="font-bold text-gray-900">{sellerName}</div>
           <ListingBadge

@@ -187,17 +187,11 @@ export default async function ONasPage() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {team.map((person) => (
                 <Card key={person.id} hover className="p-6 text-center">
-                  {person.photoUrl ? (
-                    <img
-                      src={person.photoUrl}
-                      alt={person.name}
-                      className="w-20 h-20 rounded-xl object-cover mx-auto"
-                    />
-                  ) : (
-                    <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center text-2xl font-extrabold text-white mx-auto">
-                      {person.initials}
-                    </div>
-                  )}
+                  <img
+                    src={person.photoUrl || "/brand/default-avatar.png"}
+                    alt={person.name}
+                    className="w-20 h-20 rounded-xl object-cover mx-auto"
+                  />
                   <h3 className="font-bold text-gray-900 mt-4">{person.name}</h3>
                   <p className="text-sm text-orange-500 font-semibold mt-1">
                     {person.position}

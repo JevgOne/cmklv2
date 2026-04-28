@@ -8,7 +8,6 @@ import { LEVEL_LABELS } from "@/lib/role-labels";
 
 export interface BrokerBoxProps {
   name: string;
-  initials: string;
   region: string;
   rating: number;
   salesCount: number;
@@ -23,7 +22,6 @@ export interface BrokerBoxProps {
 
 export function BrokerBox({
   name,
-  initials,
   region,
   rating,
   salesCount,
@@ -44,9 +42,11 @@ export function BrokerBox({
     >
       {/* Avatar + info */}
       <div className="flex items-center gap-4">
-        <div className="w-[60px] h-[60px] bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center text-[22px] font-extrabold text-white shrink-0">
-          {initials}
-        </div>
+        <img
+          src="/brand/default-avatar.png"
+          alt={name}
+          className="w-[60px] h-[60px] rounded-xl object-cover shrink-0"
+        />
         <div className="min-w-0 flex-1">
           <h4 className="text-lg font-bold text-gray-900">{name}</h4>
           <p className="text-sm text-orange-700 font-semibold">

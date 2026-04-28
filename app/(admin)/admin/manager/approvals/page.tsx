@@ -149,13 +149,11 @@ export default async function ManagerApprovalsPage() {
 
                   {/* Broker info */}
                   <div className="flex items-center gap-2 mb-4">
-                    <div className="w-7 h-7 bg-gradient-to-br from-orange-500 to-orange-600 rounded-md flex items-center justify-center">
-                      <span className="text-[10px] font-bold text-white">
-                        {vehicle.broker
-                          ? `${vehicle.broker.firstName[0]}${vehicle.broker.lastName[0]}`
-                          : "?"}
-                      </span>
-                    </div>
+                    <img
+                      src="/brand/default-avatar.png"
+                      alt=""
+                      className="w-7 h-7 rounded-md object-cover"
+                    />
                     <span className="text-sm text-gray-600">{brokerName}</span>
                     <span className="text-xs text-gray-400">
                       · zadano{" "}

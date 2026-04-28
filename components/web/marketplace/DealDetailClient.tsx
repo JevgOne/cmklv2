@@ -479,13 +479,11 @@ export function DealDetailClient({
           <Card className="p-5">
             <h4 className="font-bold text-gray-900 mb-3">Realizátor</h4>
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-lg font-bold text-gray-400">
-                {dealer.avatar ? (
-                  <img src={dealer.avatar} alt="" className="w-full h-full rounded-full object-cover" />
-                ) : (
-                  `${dealer.firstName[0]}${dealer.lastName[0]}`
-                )}
-              </div>
+              <img
+                src={dealer.avatar || "/brand/default-avatar.png"}
+                alt=""
+                className="w-12 h-12 rounded-full object-cover"
+              />
               <div>
                 <div className="font-semibold text-gray-900">
                   {dealer.firstName} {dealer.lastName}

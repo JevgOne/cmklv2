@@ -81,7 +81,6 @@ export default async function ManagerDashboardPage() {
     .map((b) => ({
       id: b.id,
       name: `${b.firstName} ${b.lastName}`,
-      initials: `${b.firstName[0] || ""}${b.lastName[0] || ""}`,
       avatar: b.avatar,
       activeVehicles: b._count.vehicles,
       sales: b._count.commissions,
@@ -183,9 +182,11 @@ export default async function ManagerDashboardPage() {
                   <span className="text-sm font-bold text-gray-400 w-5">
                     {index + 1}.
                   </span>
-                  <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0">
-                    {broker.initials}
-                  </div>
+                  <img
+                    src={broker.avatar || "/brand/default-avatar.png"}
+                    alt={broker.name}
+                    className="w-10 h-10 rounded-lg object-cover shrink-0"
+                  />
                   <div className="flex-1 min-w-0">
                     <div className="font-semibold text-gray-900 text-sm">
                       {broker.name}

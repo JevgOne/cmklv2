@@ -339,17 +339,11 @@ export default function AdminTeamPage() {
             <Card key={member.id} className="p-4">
               <div className="flex items-center gap-4">
                 {/* Avatar */}
-                {member.photoUrl ? (
-                  <img
-                    src={member.photoUrl}
-                    alt={member.name}
-                    className="w-14 h-14 rounded-xl object-cover"
-                  />
-                ) : (
-                  <div className="w-14 h-14 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center text-lg font-extrabold text-white shrink-0">
-                    {member.initials}
-                  </div>
-                )}
+                <img
+                  src={member.photoUrl || "/brand/default-avatar.png"}
+                  alt={member.name}
+                  className="w-14 h-14 rounded-xl object-cover shrink-0"
+                />
 
                 {/* Info */}
                 <div className="flex-1 min-w-0">

@@ -48,7 +48,6 @@ export default async function ManagerBrokersPage() {
   const brokersData = brokers.map((b) => ({
     id: b.id,
     name: `${b.firstName} ${b.lastName}`,
-    initials: `${b.firstName[0] || ""}${b.lastName[0] || ""}`,
     email: b.email,
     phone: b.phone || "",
     avatar: b.avatar,

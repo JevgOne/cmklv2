@@ -92,22 +92,12 @@ export function LeaderboardTable({
           >
             <div className="flex items-center gap-3">
               <RankBadge rank={entry.rank} />
-              <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-xs font-bold flex-shrink-0 overflow-hidden">
-                {entry.avatar ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={entry.avatar}
-                    alt={entry.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  entry.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")
-                    .slice(0, 2)
-                )}
-              </div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={entry.avatar || "/brand/default-avatar.png"}
+                alt={entry.name}
+                className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+              />
               <div className="flex-1 min-w-0">
                 <p className="font-bold text-sm text-gray-900 truncate">
                   {entry.name}

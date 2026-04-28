@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 import { OgLayout, OG_SIZE, getLogoBase64, ORANGE } from "@/lib/og-image";
 import { prisma } from "@/lib/prisma";
+import { BASE_URL } from "@/lib/seo-data";
 
 export const runtime = "nodejs";
 export const alt = "Profil na CarMakléř";
@@ -55,7 +56,7 @@ export default async function Image({
 
   const fullName = `${user.firstName} ${user.lastName}`;
   const roleLabel = ROLE_LABELS[user.role] ?? "Profil";
-  const initials = `${user.firstName[0]}${user.lastName[0]}`;
+  const avatarSrc = user.avatar || `${BASE_URL}/brand/default-avatar.png`;
 
   return new ImageResponse(
     (
@@ -67,40 +68,29 @@ export default async function Image({
             gap: 32,
           }}
         >
-          {/* Avatar or initials */}
+          {/* Avatar */}
           <div
             style={{
               width: 120,
               height: 120,
               borderRadius: "50%",
-              background: user.avatar ? "transparent" : "rgba(249,115,22,0.2)",
               border: `3px solid ${ORANGE}`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 48,
-              fontWeight: 700,
-              color: ORANGE,
               overflow: "hidden",
               position: "relative",
             }}
           >
-            {user.avatar ? (
-              <img
-                src={user.avatar}
-                alt=""
-                style={{
-                  width: 120,
-                  height: 120,
-                  objectFit: "cover",
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                }}
-              />
-            ) : (
-              initials
-            )}
+            <img
+              src={avatarSrc}
+              alt=""
+              style={{
+                width: 120,
+                height: 120,
+                objectFit: "cover",
+                position: "absolute",
+                top: 0,
+                left: 0,
+              }}
+            />
           </div>
 
           {/* Info */}

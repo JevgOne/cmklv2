@@ -17,7 +17,7 @@ import { VehicleCard, type VehicleData } from "@/components/web/VehicleCard";
 import { getDefaultCover } from "@/lib/profile/defaultCovers";
 import { categorizeSpecialization } from "@/lib/broker-specializations";
 import { fuelLabels, transmissionLabels } from "@/lib/vehicle-labels";
-import { formatPrice, getInitials, parseCities } from "@/lib/utils";
+import { formatPrice, parseCities } from "@/lib/utils";
 import {
   ROLE_LABELS,
   ROLE_TABS,
@@ -336,18 +336,12 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
             <div className="flex flex-col items-center">
               {/* Avatar */}
               <div className="relative w-28 h-28 sm:w-32 sm:h-32 -mt-20 sm:-mt-24 rounded-full border-4 border-white bg-gray-200 overflow-hidden shadow-lg">
-                {user.avatar ? (
-                  <Image
-                    src={user.avatar}
-                    alt={fullName}
-                    fill
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-4xl text-gray-400">
-                    {getInitials(user.firstName, user.lastName)}
-                  </div>
-                )}
+                <Image
+                  src={user.avatar || "/brand/default-avatar.png"}
+                  alt={fullName}
+                  fill
+                  className="object-cover"
+                />
               </div>
 
               {/* Name */}

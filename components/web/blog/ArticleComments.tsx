@@ -194,25 +194,16 @@ export function ArticleComments({
           const displayName = comment.author
             ? `${comment.author.firstName} ${comment.author.lastName}`
             : comment.authorName || "Anonymní";
-          const initials = comment.author
-            ? `${comment.author.firstName[0] || ""}${comment.author.lastName[0] || ""}`
-            : (comment.authorName || "A")[0]?.toUpperCase() || "A";
 
           return (
             <div key={comment.id} className="flex gap-3">
-              {comment.author?.avatar ? (
-                <Image
-                  src={comment.author.avatar}
-                  alt=""
-                  width={36}
-                  height={36}
-                  className="rounded-full shrink-0"
-                />
-              ) : (
-                <div className="w-9 h-9 rounded-full bg-orange-100 text-orange-500 flex items-center justify-center text-xs font-bold shrink-0">
-                  {initials}
-                </div>
-              )}
+              <Image
+                src={comment.author?.avatar || "/brand/default-avatar.png"}
+                alt=""
+                width={36}
+                height={36}
+                className="rounded-full shrink-0"
+              />
               <div>
                 <div className="flex items-center gap-2">
                   <span className="font-medium text-sm">{displayName}</span>

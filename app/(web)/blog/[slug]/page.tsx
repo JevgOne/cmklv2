@@ -222,20 +222,13 @@ export default async function BlogArticlePage({
 
           <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400">
             <div className="flex items-center gap-2.5">
-              {article.author.avatar ? (
-                <Image
-                  src={article.author.avatar}
-                  alt=""
-                  width={36}
-                  height={36}
-                  className="rounded-full ring-2 ring-white/20"
-                />
-              ) : (
-                <div className="w-9 h-9 rounded-full bg-orange-500/30 text-orange-300 flex items-center justify-center text-xs font-bold ring-2 ring-white/10">
-                  {article.author.firstName[0]}
-                  {article.author.lastName[0]}
-                </div>
-              )}
+              <Image
+                src={article.author.avatar || "/brand/default-avatar.png"}
+                alt=""
+                width={36}
+                height={36}
+                className="rounded-full ring-2 ring-white/20"
+              />
               <span className="font-medium text-gray-200">
                 {article.author.firstName} {article.author.lastName}
               </span>
@@ -324,20 +317,13 @@ export default async function BlogArticlePage({
         {/* Author card */}
         <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl p-6 md:p-8 mb-10 ring-1 ring-orange-100">
           <div className="flex items-start gap-4 md:gap-6">
-            {article.author.avatar ? (
-              <Image
-                src={article.author.avatar}
-                alt=""
-                width={72}
-                height={72}
-                className="rounded-full ring-4 ring-white shadow-md"
-              />
-            ) : (
-              <div className="w-[72px] h-[72px] rounded-full bg-orange-200 text-orange-700 flex items-center justify-center text-2xl font-bold shrink-0 ring-4 ring-white shadow-md">
-                {article.author.firstName[0]}
-                {article.author.lastName[0]}
-              </div>
-            )}
+            <Image
+              src={article.author.avatar || "/brand/default-avatar.png"}
+              alt=""
+              width={72}
+              height={72}
+              className="rounded-full ring-4 ring-white shadow-md shrink-0"
+            />
             <div>
               <p className="text-xs font-semibold text-orange-500 uppercase tracking-wider mb-1">Autor článku</p>
               <h3 className="font-bold text-xl text-gray-900">

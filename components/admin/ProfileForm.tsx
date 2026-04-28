@@ -167,24 +167,15 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
               Profilová fotka
             </label>
             <div className="flex items-center gap-4">
-              {avatar ? (
-                <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-gray-100">
-                  <Image
-                    src={avatar}
-                    alt="Avatar"
-                    fill
-                    className="object-cover"
-                    sizes="80px"
-                  />
-                </div>
-              ) : (
-                <div
-                  className="w-20 h-20 rounded-xl flex items-center justify-center text-2xl font-bold text-white"
-                  style={{ background: "var(--gradient-orange)" }}
-                >
-                  {firstName[0] || ""}{lastName[0] || ""}
-                </div>
-              )}
+              <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-gray-100">
+                <Image
+                  src={avatar || "/brand/default-avatar.png"}
+                  alt="Avatar"
+                  fill
+                  className="object-cover"
+                  sizes="80px"
+                />
+              </div>
               <div className="flex flex-col gap-2">
                 <input
                   ref={fileInputRef}

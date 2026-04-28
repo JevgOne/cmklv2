@@ -260,18 +260,14 @@ export default async function VrakovisteLandingPage({ params }: PageProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
           <div className="flex flex-col md:flex-row md:items-center gap-6">
             {/* Logo */}
-            <div className="relative w-28 h-28 md:w-32 md:h-32 bg-gray-100 rounded-2xl flex items-center justify-center overflow-hidden flex-shrink-0">
-              {partner.logo ? (
-                <Image
-                  src={partner.logo}
-                  alt={partner.name}
-                  fill
-                  sizes="(max-width: 768px) 112px, 128px"
-                  className="object-cover"
-                />
-              ) : (
-                <span className="text-4xl text-gray-300">🏭</span>
-              )}
+            <div className="relative w-28 h-28 md:w-32 md:h-32 bg-gray-100 rounded-2xl overflow-hidden flex-shrink-0">
+              <Image
+                src={partner.logo || "/brand/default-avatar.png"}
+                alt={partner.name}
+                fill
+                sizes="(max-width: 768px) 112px, 128px"
+                className="object-cover"
+              />
             </div>
 
             {/* Info */}

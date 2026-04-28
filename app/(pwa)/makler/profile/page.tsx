@@ -80,18 +80,14 @@ export default async function ProfilePage() {
     <div className="p-4 space-y-6">
       {/* Header s avatarem */}
       <div className="flex items-center gap-4">
-        <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-2xl flex-shrink-0 overflow-hidden relative">
-          {user.avatar ? (
-            <Image
-              src={user.avatar}
-              alt={`${user.firstName} ${user.lastName}`}
-              fill
-              className="object-cover"
-              sizes="64px"
-            />
-          ) : (
-            <span>👤</span>
-          )}
+        <div className="w-16 h-16 rounded-full flex-shrink-0 overflow-hidden relative">
+          <Image
+            src={user.avatar || "/brand/default-avatar.png"}
+            alt={`${user.firstName} ${user.lastName}`}
+            fill
+            className="object-cover"
+            sizes="64px"
+          />
         </div>
         <div className="flex-1 min-w-0">
           <h1 className="text-xl font-extrabold text-gray-900">

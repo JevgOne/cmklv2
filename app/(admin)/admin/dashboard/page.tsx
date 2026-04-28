@@ -309,9 +309,6 @@ export default async function AdminDashboardPage() {
               const brokerName = vehicle.broker
                 ? `${vehicle.broker.firstName} ${vehicle.broker.lastName}`
                 : vehicle.contactName || "Soukromý";
-              const brokerInitials = vehicle.broker
-                ? `${vehicle.broker.firstName[0] || ""}${vehicle.broker.lastName[0] || ""}`
-                : (vehicle.contactName || "S")[0] || "S";
 
               return (
                 <div
@@ -340,11 +337,11 @@ export default async function AdminDashboardPage() {
                       {vehicle.year} · {vehicle.mileage.toLocaleString("cs-CZ")} km · {vehicle.fuelType}
                     </p>
                     <div className="flex items-center gap-2 mt-2">
-                      <div className="w-6 h-6 bg-gradient-to-br from-orange-500 to-orange-600 rounded-md flex items-center justify-center">
-                        <span className="text-[10px] font-bold text-white">
-                          {brokerInitials}
-                        </span>
-                      </div>
+                      <img
+                        src="/brand/default-avatar.png"
+                        alt=""
+                        className="w-6 h-6 rounded-md object-cover"
+                      />
                       <span className="text-sm text-gray-600">
                         {brokerName}
                       </span>

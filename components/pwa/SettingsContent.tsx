@@ -374,19 +374,13 @@ export function SettingsContent({
         <h2 className="text-lg font-bold text-gray-900 mb-4">Podpis pro emaily</h2>
         <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
           <div className="flex items-center gap-3">
-            {avatar ? (
-              <Image
-                src={avatar}
-                alt="Avatar"
-                width={40}
-                height={40}
-                className="rounded-full object-cover"
-              />
-            ) : (
-              <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold text-sm">
-                {firstName.charAt(0)}{lastName.charAt(0)}
-              </div>
-            )}
+            <Image
+              src={avatar || "/brand/default-avatar.png"}
+              alt="Avatar"
+              width={40}
+              height={40}
+              className="rounded-full object-cover"
+            />
             <div>
               <p className="text-sm font-semibold text-gray-900">
                 {firstName} {lastName}

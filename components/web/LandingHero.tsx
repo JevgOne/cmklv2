@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { LandingStats } from "@/lib/landing-copy";
-import { getInitials } from "@/lib/utils";
+
 
 export interface LandingHeroBroker {
   slug: string;
@@ -78,7 +78,6 @@ export function LandingHero({
           {featuredBrokers.length > 0 && (
             <div className="flex items-center md:mt-2 shrink-0">
               {featuredBrokers.map((b, i) => {
-                const initials = getInitials(b.firstName, b.lastName);
                 return (
                   <div
                     key={b.slug}
@@ -88,16 +87,12 @@ export function LandingHero({
                     style={{ zIndex: 10 - i }}
                     aria-hidden
                   >
-                    {b.avatar ? (
-                      /* eslint-disable-next-line @next/next/no-img-element */
-                      <img
-                        src={b.avatar}
-                        alt=""
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <span className="text-sm">{initials}</span>
-                    )}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={b.avatar || "/brand/default-avatar.png"}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 );
               })}

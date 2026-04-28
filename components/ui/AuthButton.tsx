@@ -5,18 +5,6 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { getRedirectByRole } from "@/lib/auth-redirect";
 
-/** Generates 1-2 letter initials from first/last name or full name. */
-function getInitials(firstName?: string, lastName?: string, name?: string): string {
-  if (firstName) {
-    return (firstName[0] + (lastName?.[0] ?? "")).toUpperCase();
-  }
-  if (name) {
-    const parts = name.trim().split(/\s+/);
-    return (parts[0]?.[0] ?? "").toUpperCase() + (parts[1]?.[0] ?? "").toUpperCase();
-  }
-  return "?";
-}
-
 /**
  * Auth-aware button for the main navbar.
  * - Unauthenticated: shows "Prihlasit se" link
@@ -59,7 +47,6 @@ export function AuthButton() {
 
   // Authenticated
   const { firstName, lastName, name, avatar, role } = session.user;
-  const initials = getInitials(firstName, lastName, name);
   const dashboardUrl = getRedirectByRole(role);
   const displayName = firstName
     ? `${firstName}${lastName ? ` ${lastName}` : ""}`
@@ -74,17 +61,11 @@ export function AuthButton() {
         aria-expanded={open}
         aria-haspopup="true"
       >
-        {avatar ? (
-          <img
-            src={avatar}
-            alt={displayName}
-            className="w-9 h-9 rounded-full object-cover"
-          />
-        ) : (
-          <div className="w-9 h-9 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-sm font-semibold select-none">
-            {initials}
-          </div>
-        )}
+        <img
+          src={avatar || "/brand/default-avatar.png"}
+          alt={displayName}
+          className="w-9 h-9 rounded-full object-cover"
+        />
       </button>
 
       {open && (
@@ -156,7 +137,6 @@ export function MobileAuthSection({ onNavigate }: { onNavigate?: () => void }) {
   }
 
   const { firstName, lastName, name, avatar, role } = session.user;
-  const initials = getInitials(firstName, lastName, name);
   const dashboardUrl = getRedirectByRole(role);
   const displayName = firstName
     ? `${firstName}${lastName ? ` ${lastName}` : ""}`
@@ -166,13 +146,11 @@ export function MobileAuthSection({ onNavigate }: { onNavigate?: () => void }) {
     <div className="space-y-3">
       {/* User info row */}
       <div className="flex items-center gap-3 px-1">
-        {avatar ? (
-          <img src={avatar} alt={displayName} className="w-10 h-10 rounded-full object-cover" />
-        ) : (
-          <div className="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-sm font-semibold select-none">
-            {initials}
-          </div>
-        )}
+        <img
+          src={avatar || "/brand/default-avatar.png"}
+          alt={displayName}
+          className="w-10 h-10 rounded-full object-cover"
+        />
         <div className="min-w-0">
           <p className="text-sm font-semibold text-gray-900 truncate">{displayName}</p>
           <p className="text-xs text-gray-500 truncate">{session.user.email}</p>

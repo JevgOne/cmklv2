@@ -98,17 +98,11 @@ export default async function BazarProfilePage({ params }: Props) {
       />
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start gap-6 mb-8">
-        {partner.logo ? (
-          <img
-            src={partner.logo}
-            alt={partner.name}
-            className="w-24 h-24 rounded-2xl object-cover bg-gray-100"
-          />
-        ) : (
-          <div className="w-24 h-24 rounded-2xl bg-gray-100 flex items-center justify-center text-4xl">
-            🏢
-          </div>
-        )}
+        <img
+          src={partner.logo || "/brand/default-avatar.png"}
+          alt={partner.name}
+          className="w-24 h-24 rounded-2xl object-cover bg-gray-100"
+        />
         <div>
           <div className="flex items-center gap-3 mb-2">
             <h1 className="text-3xl font-extrabold text-gray-900">

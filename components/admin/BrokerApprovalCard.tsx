@@ -12,7 +12,6 @@ interface OnboardingBroker {
   name: string;
   email: string;
   phone: string;
-  initials: string;
   avatar?: string | null;
   ico?: string;
   bio?: string;
@@ -92,13 +91,8 @@ export function BrokerApprovalCard({ broker, onActivate, onReject }: BrokerAppro
 
       <div className="flex items-start gap-4">
         {/* Avatar */}
-        <div className="relative w-14 h-14 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center text-white text-lg font-bold shrink-0">
-          {broker.avatar ? (
-            
-            <Image src={broker.avatar} alt={broker.name} fill className="rounded-xl object-cover" sizes="56px" />
-          ) : (
-            broker.initials
-          )}
+        <div className="relative w-14 h-14 rounded-xl overflow-hidden shrink-0">
+          <Image src={broker.avatar || "/brand/default-avatar.png"} alt={broker.name} fill className="rounded-xl object-cover" sizes="56px" />
         </div>
 
         {/* Info */}

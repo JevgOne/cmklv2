@@ -10,7 +10,7 @@ interface Broker {
   id: string;
   name: string;
   email: string;
-  initials: string;
+  avatar?: string | null;
   region: string;
   vehicles: number;
   status: "active" | "pending" | "rejected";
@@ -22,7 +22,6 @@ interface OnboardingBroker {
   name: string;
   email: string;
   phone: string;
-  initials: string;
   avatar?: string | null;
   ico?: string;
   bio?: string;
@@ -123,9 +122,11 @@ export function BrokersPageContent() {
       header: "Makléř",
       render: (item: Broker) => (
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0">
-            {item.initials}
-          </div>
+          <img
+            src={item.avatar || "/brand/default-avatar.png"}
+            alt={item.name}
+            className="w-10 h-10 rounded-lg object-cover shrink-0"
+          />
           <div>
             <div className="font-semibold text-gray-900">{item.name}</div>
             <div className="text-xs text-gray-500">{item.email}</div>

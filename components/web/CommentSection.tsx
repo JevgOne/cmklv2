@@ -136,15 +136,11 @@ export function CommentSection({
       ) : (
         comments.map((comment) => (
           <div key={comment.id} className="flex gap-2">
-            <div className="w-7 h-7 rounded-full bg-gray-200 flex-shrink-0 flex items-center justify-center text-xs overflow-hidden">
-              {comment.user.avatar ? (
-                <img src={comment.user.avatar} alt="" className="w-full h-full object-cover" />
-              ) : (
-                <span className="text-gray-500">
-                  {comment.user.firstName?.[0]}{comment.user.lastName?.[0]}
-                </span>
-              )}
-            </div>
+            <img
+              src={comment.user.avatar || "/brand/default-avatar.png"}
+              alt=""
+              className="w-7 h-7 rounded-full object-cover flex-shrink-0"
+            />
             <div className="flex-1 min-w-0">
               <div className="flex items-baseline gap-2">
                 {comment.user.slug ? (

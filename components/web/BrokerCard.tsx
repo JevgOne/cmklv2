@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 
-import { getInitials } from "@/lib/utils";
 
 export interface BrokerCardBroker {
   slug: string;
@@ -47,7 +46,6 @@ function StatCell({ value, label }: { value: number; label: string }) {
 }
 
 export function BrokerCard({ broker }: BrokerCardProps) {
-  const initials = getInitials(broker.firstName, broker.lastName);
   const primaryCity = broker.city || broker.cities[0] || null;
   return (
     <article className="rounded-2xl bg-white shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 flex flex-col h-full overflow-hidden group">
@@ -55,18 +53,12 @@ export function BrokerCard({ broker }: BrokerCardProps) {
       <div className="flex flex-col items-center pt-6 px-5">
         {/* Gradient ring wrapper */}
         <div className="p-[3px] rounded-full bg-gradient-to-br from-orange-400 via-orange-500 to-orange-600 shadow-sm">
-          {broker.avatar ? (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img
-              src={broker.avatar}
-              alt={`${broker.firstName} ${broker.lastName}`}
-              className="w-20 h-20 rounded-full object-cover border-[3px] border-white"
-            />
-          ) : (
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 border-[3px] border-white flex items-center justify-center text-orange-500 font-extrabold text-xl">
-              {initials}
-            </div>
-          )}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={broker.avatar || "/brand/default-avatar.png"}
+            alt={`${broker.firstName} ${broker.lastName}`}
+            className="w-20 h-20 rounded-full object-cover border-[3px] border-white"
+          />
         </div>
 
         <h3 className="mt-3 text-lg font-bold text-gray-900 truncate max-w-full text-center">

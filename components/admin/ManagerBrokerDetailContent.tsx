@@ -240,10 +240,11 @@ export function ManagerBrokerDetailContent({
       {/* Profile header */}
       <Card className="p-6">
         <div className="flex flex-col sm:flex-row items-start gap-6">
-          <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shrink-0">
-            {broker.firstName[0] || ""}
-            {broker.lastName[0] || ""}
-          </div>
+          <img
+            src={broker.avatar || "/brand/default-avatar.png"}
+            alt={`${broker.firstName} ${broker.lastName}`}
+            className="w-20 h-20 rounded-2xl object-cover shrink-0"
+          />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-1">
               <h1 className="text-2xl font-extrabold text-gray-900">
