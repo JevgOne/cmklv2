@@ -22,9 +22,18 @@ export default async function AdminBlogCommentsPage() {
     take: 100,
   });
 
+  const pendingCount = comments.filter((c) => c.isHidden).length;
+
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Moderace komentářů</h1>
+      <div className="flex items-center gap-3 mb-6">
+        <h1 className="text-[28px] font-extrabold text-gray-900">Moderace komentářů</h1>
+        {pendingCount > 0 && (
+          <span className="bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">
+            {pendingCount} ke schválení
+          </span>
+        )}
+      </div>
       <CommentsModeration
         comments={comments.map((c) => ({
           id: c.id,

@@ -17,7 +17,9 @@ interface Comment {
 
 export function CommentsModeration({ comments: initial }: { comments: Comment[] }) {
   const [comments, setComments] = useState(initial);
-  const [filter, setFilter] = useState<"ALL" | "PENDING" | "APPROVED">("ALL");
+  const [filter, setFilter] = useState<"ALL" | "PENDING" | "APPROVED">(
+    initial.some((c) => c.isHidden) ? "PENDING" : "ALL"
+  );
   const [loading, setLoading] = useState<string | null>(null);
 
   const filtered = comments.filter((c) => {
