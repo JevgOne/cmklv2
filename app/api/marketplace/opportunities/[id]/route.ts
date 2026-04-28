@@ -232,8 +232,7 @@ export async function PUT(
         ...(updated.dealerId !== session.user.id ? [updated.dealerId] : []),
       ];
       if (recipientIds.length > 0) {
-        const emailData = {
-          recipientName: "",
+        const baseEmailData = {
           carTitle,
           oldStatus: oldStatus,
           newStatus: updateData.status as string,
@@ -246,10 +245,13 @@ export async function PUT(
           title: "Změna stavu flipu",
           body: carTitle,
           link,
-          email: {
-            subject: marketplaceStatusChangeSubject(emailData),
-            html: marketplaceStatusChangeHtml(emailData),
-            text: marketplaceStatusChangeText(emailData),
+          email: (recipientName) => {
+            const emailData = { ...baseEmailData, recipientName };
+            return {
+              subject: marketplaceStatusChangeSubject(emailData),
+              html: marketplaceStatusChangeHtml(emailData),
+              text: marketplaceStatusChangeText(emailData),
+            };
           },
         }).catch(() => {});
       }

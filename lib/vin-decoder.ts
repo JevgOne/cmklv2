@@ -4,24 +4,24 @@ import type { VinDecoderResult } from "@/types/vehicle-draft";
 const TIMEOUT_MS = 10_000;
 
 // ============================================
-// VIN Decoder — vindecoder.eu primary, NHTSA fallback
+// VIN Decoder — Vincario (api.vincario.com) primary, NHTSA fallback
 // ============================================
 
 export async function decodeVin(vin: string): Promise<VinDecoderResult> {
   const normalized = vin.toUpperCase().trim();
 
-  // Zkusit primární API (vindecoder.eu)
+  // Zkusit primární API (Vincario)
   const apiKey = process.env.VINDECODER_API_KEY;
   const apiSecret = process.env.VINDECODER_API_SECRET;
 
   if (apiKey && apiSecret) {
     try {
-      const result = await decodeWithVinDecoderEu(normalized, apiKey, apiSecret);
+      const result = await decodeWithVincario(normalized, apiKey, apiSecret);
       if (result.brand) {
         return result;
       }
     } catch (err) {
-      console.warn("vindecoder.eu selhalo, zkouším NHTSA fallback:", err);
+      console.warn("Vincario API selhalo, zkouším NHTSA fallback:", err);
     }
   }
 
@@ -36,10 +36,10 @@ export async function decodeVin(vin: string): Promise<VinDecoderResult> {
 }
 
 // ============================================
-// vindecoder.eu API
+// Vincario API (api.vincario.com)
 // ============================================
 
-interface VinDecoderEuResponse {
+interface VincarioResponse {
   decode?: Array<{
     label: string;
     value: string | number | null;
@@ -51,13 +51,13 @@ function createSecretHash(vin: string, apiKey: string, apiSecret: string): strin
   return crypto.createHash("sha1").update(input, "utf8").digest("hex").substring(0, 10);
 }
 
-async function decodeWithVinDecoderEu(
+async function decodeWithVincario(
   vin: string,
   apiKey: string,
   apiSecret: string
 ): Promise<VinDecoderResult> {
   const secretHash = createSecretHash(vin, apiKey, apiSecret);
-  const url = `https://api.vindecoder.eu/3.2/${apiKey}/${secretHash}/decode/${vin}.json`;
+  const url = `https://api.vincario.com/3.2/${apiKey}/${secretHash}/decode/${vin}.json`;
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
@@ -69,19 +69,19 @@ async function decodeWithVinDecoderEu(
     });
 
     if (!response.ok) {
-      throw new Error(`vindecoder.eu vrátil ${response.status}`);
+      throw new Error(`Vincario API vrátil ${response.status}`);
     }
 
-    const json: VinDecoderEuResponse = await response.json();
-    return normalizeVinDecoderEu(vin, json);
+    const json: VincarioResponse = await response.json();
+    return normalizeVincario(vin, json);
   } finally {
     clearTimeout(timeout);
   }
 }
 
-function normalizeVinDecoderEu(
+function normalizeVincario(
   vin: string,
-  data: VinDecoderEuResponse
+  data: VincarioResponse
 ): VinDecoderResult {
   const entries = data.decode ?? [];
   const map = new Map<string, string | number | null>();

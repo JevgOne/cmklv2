@@ -24,7 +24,10 @@ export default async function PartnerMessagesPage() {
     <div>
       <h1 className="text-2xl font-extrabold text-gray-900 mb-2">Zpravy</h1>
       <p className="text-gray-500 text-sm mb-6">
-        Systemove notifikace a zpravy. Plna komunikace bude brzy k dispozici.
+        Systémové notifikace a zprávy. Pro komunikaci nás kontaktujte na{" "}
+        <a href="mailto:info@carmakler.cz" className="text-orange-500 hover:underline">info@carmakler.cz</a>{" "}
+        nebo{" "}
+        <a href="tel:+420733179199" className="text-orange-500 hover:underline">+420 733 179 199</a>.
       </p>
 
       {notifications.length === 0 ? (

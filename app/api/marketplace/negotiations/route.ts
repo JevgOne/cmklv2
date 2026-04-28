@@ -96,8 +96,7 @@ export async function POST(request: NextRequest) {
     // Notify investor about new offer (fire-and-forget)
     const carTitle = `${opportunity.brand} ${opportunity.model} ${opportunity.year}`;
     const link = `/marketplace/deals/${opportunity.id}`;
-    const emailData = {
-      recipientName: "", // will be filled by notification system
+    const baseEmailData = {
       dealerName: session.user.firstName ?? "Realizátor",
       carTitle,
       dealerSharePct: data.dealerSharePct,
@@ -113,10 +112,13 @@ export async function POST(request: NextRequest) {
       title: "Nová nabídka na rozdělení zisku",
       body: `${carTitle} — ${data.dealerSharePct}/${investorSharePct}`,
       link,
-      email: {
-        subject: marketplaceNegotiationSubject(emailData),
-        html: marketplaceNegotiationHtml(emailData),
-        text: marketplaceNegotiationText(emailData),
+      email: (recipientName) => {
+        const emailData = { ...baseEmailData, recipientName };
+        return {
+          subject: marketplaceNegotiationSubject(emailData),
+          html: marketplaceNegotiationHtml(emailData),
+          text: marketplaceNegotiationText(emailData),
+        };
       },
     }).catch(() => {});
 

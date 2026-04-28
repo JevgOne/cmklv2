@@ -83,8 +83,7 @@ export async function POST(
       const opp = negotiation.opportunity;
       const carTitle = `${opp.brand} ${opp.model} ${opp.year}`;
       const link = `/marketplace/deals/${opp.id}`;
-      const emailData = {
-        recipientName: "",
+      const baseEmailData = {
         dealerName: session.user.firstName ?? "Strana",
         carTitle,
         dealerSharePct: negotiation.dealerSharePct,
@@ -99,10 +98,13 @@ export async function POST(
         title: "Nabídka přijata!",
         body: `${carTitle} — ${negotiation.dealerSharePct}/${negotiation.investorSharePct}`,
         link,
-        email: {
-          subject: marketplaceNegotiationSubject(emailData),
-          html: marketplaceNegotiationHtml(emailData),
-          text: marketplaceNegotiationText(emailData),
+        email: (recipientName) => {
+          const emailData = { ...baseEmailData, recipientName };
+          return {
+            subject: marketplaceNegotiationSubject(emailData),
+            html: marketplaceNegotiationHtml(emailData),
+            text: marketplaceNegotiationText(emailData),
+          };
         },
       }).catch(() => {});
 
@@ -125,8 +127,7 @@ export async function POST(
       const oppR = negotiation.opportunity;
       const carTitleR = `${oppR.brand} ${oppR.model} ${oppR.year}`;
       const linkR = `/marketplace/deals/${oppR.id}`;
-      const emailDataR = {
-        recipientName: "",
+      const baseEmailDataR = {
         dealerName: session.user.firstName ?? "Strana",
         carTitle: carTitleR,
         dealerSharePct: negotiation.dealerSharePct,
@@ -141,10 +142,13 @@ export async function POST(
         title: "Nabídka zamítnuta",
         body: carTitleR,
         link: linkR,
-        email: {
-          subject: marketplaceNegotiationSubject(emailDataR),
-          html: marketplaceNegotiationHtml(emailDataR),
-          text: marketplaceNegotiationText(emailDataR),
+        email: (recipientName) => {
+          const emailDataR = { ...baseEmailDataR, recipientName };
+          return {
+            subject: marketplaceNegotiationSubject(emailDataR),
+            html: marketplaceNegotiationHtml(emailDataR),
+            text: marketplaceNegotiationText(emailDataR),
+          };
         },
       }).catch(() => {});
 
@@ -191,8 +195,7 @@ export async function POST(
     const oppC = negotiation.opportunity;
     const carTitleC = `${oppC.brand} ${oppC.model} ${oppC.year}`;
     const linkC = `/marketplace/deals/${oppC.id}`;
-    const emailDataC = {
-      recipientName: "",
+    const baseEmailDataC = {
       dealerName: session.user.firstName ?? "Strana",
       carTitle: carTitleC,
       dealerSharePct: counterDealerPct,
@@ -207,10 +210,13 @@ export async function POST(
       title: "Protinabídka na rozdělení zisku",
       body: `${carTitleC} — ${counterDealerPct}/${counterInvestorPct}`,
       link: linkC,
-      email: {
-        subject: marketplaceNegotiationSubject(emailDataC),
-        html: marketplaceNegotiationHtml(emailDataC),
-        text: marketplaceNegotiationText(emailDataC),
+      email: (recipientName) => {
+        const emailDataC = { ...baseEmailDataC, recipientName };
+        return {
+          subject: marketplaceNegotiationSubject(emailDataC),
+          html: marketplaceNegotiationHtml(emailDataC),
+          text: marketplaceNegotiationText(emailDataC),
+        };
       },
     }).catch(() => {});
 

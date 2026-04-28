@@ -6,6 +6,11 @@ import { ApprovalActions } from "@/components/admin/ApprovalActions";
 import { ExportButton } from "./ExportButton";
 import { prisma } from "@/lib/prisma";
 
+const MONTH_LABELS = [
+  "Led", "Úno", "Bře", "Dub", "Kvě", "Čer",
+  "Čec", "Srp", "Zář", "Říj", "Lis", "Pro",
+];
+
 function formatRelativeTime(date: Date): string {
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
@@ -17,6 +22,12 @@ function formatRelativeTime(date: Date): string {
   if (diffMin < 60) return `před ${diffMin} min`;
   if (diffHour < 24) return `před ${diffHour} hod`;
   return `před ${diffDay} dny`;
+}
+
+function formatCzk(value: number): string {
+  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
+  if (value >= 1_000) return `${(value / 1_000).toFixed(0)}k`;
+  return `${value}`;
 }
 
 // Admin pages call Prisma at top of server component — force dynamic
@@ -43,6 +54,47 @@ export default async function AdminDashboardPage() {
     totalCommission > 0
       ? `${(totalCommission / 1000).toFixed(0)}k Kč`
       : "0 Kč";
+
+  // Chart data: last 12 months — sales count + commission sum per month
+  const salesData = await Promise.all(
+    Array.from({ length: 12 }, (_, i) => {
+      const date = new Date();
+      date.setMonth(date.getMonth() - (11 - i));
+      const start = new Date(date.getFullYear(), date.getMonth(), 1);
+      const end = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+      return prisma.vehicle
+        .count({
+          where: { status: "SOLD", soldAt: { gte: start, lt: end } },
+        })
+        .then((count) => ({
+          label: MONTH_LABELS[start.getMonth()],
+          count,
+        }));
+    }),
+  );
+
+  const commissionData = await Promise.all(
+    Array.from({ length: 12 }, (_, i) => {
+      const date = new Date();
+      date.setMonth(date.getMonth() - (11 - i));
+      const start = new Date(date.getFullYear(), date.getMonth(), 1);
+      const end = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+      return prisma.commission
+        .aggregate({
+          where: { soldAt: { gte: start, lt: end } },
+          _sum: { commission: true },
+        })
+        .then((r) => ({
+          label: MONTH_LABELS[start.getMonth()],
+          total: r._sum.commission || 0,
+        }));
+    }),
+  );
+
+  const maxSales = Math.max(...salesData.map((d) => d.count), 1);
+  const maxCommission = Math.max(...commissionData.map((d) => d.total), 1);
+  const hasSalesData = salesData.some((d) => d.count > 0);
+  const hasCommissionData = commissionData.some((d) => d.total > 0);
 
   // Real activity feed from recent vehicles
   const recentActivity = await prisma.vehicle.findMany({
@@ -124,22 +176,66 @@ export default async function AdminDashboardPage() {
             </h2>
             <PeriodSelector />
           </div>
-          <div className="h-[200px] sm:h-[300px] bg-gray-50 rounded-lg flex items-center justify-center">
-            <span className="text-gray-400 text-lg">📊 Graf prodejů</span>
-          </div>
+          {hasSalesData ? (
+            <div className="h-[200px] sm:h-[280px] flex items-end gap-1 sm:gap-2">
+              {salesData.map((d) => (
+                <div key={d.label} className="flex-1 flex flex-col items-center gap-1 h-full justify-end">
+                  {d.count > 0 && (
+                    <span className="text-[10px] sm:text-xs font-semibold text-gray-700">
+                      {d.count}
+                    </span>
+                  )}
+                  <div
+                    className="w-full rounded-t-md bg-orange-500 transition-all min-h-[2px]"
+                    style={{
+                      height: d.count > 0 ? `${(d.count / maxSales) * 100}%` : "2px",
+                      opacity: d.count > 0 ? 1 : 0.2,
+                    }}
+                  />
+                  <span className="text-[10px] sm:text-xs text-gray-400 mt-1">{d.label}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="h-[200px] sm:h-[280px] bg-gray-50 rounded-lg flex items-center justify-center">
+              <span className="text-gray-400 text-sm">Zatím žádná data</span>
+            </div>
+          )}
         </Card>
 
         {/* Commission Chart */}
         <Card className="p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 sm:mb-6">
             <h2 className="text-base sm:text-[18px] font-bold text-gray-900">
-              Provize podle regionů
+              Provize za posledních 12 měsíců
             </h2>
             <PeriodSelector />
           </div>
-          <div className="h-[200px] sm:h-[300px] bg-gray-50 rounded-lg flex items-center justify-center">
-            <span className="text-gray-400 text-lg">📊 Graf provizí</span>
-          </div>
+          {hasCommissionData ? (
+            <div className="h-[200px] sm:h-[280px] flex items-end gap-1 sm:gap-2">
+              {commissionData.map((d) => (
+                <div key={d.label} className="flex-1 flex flex-col items-center gap-1 h-full justify-end">
+                  {d.total > 0 && (
+                    <span className="text-[10px] sm:text-xs font-semibold text-gray-700">
+                      {formatCzk(d.total)}
+                    </span>
+                  )}
+                  <div
+                    className="w-full rounded-t-md bg-green-500 transition-all min-h-[2px]"
+                    style={{
+                      height: d.total > 0 ? `${(d.total / maxCommission) * 100}%` : "2px",
+                      opacity: d.total > 0 ? 1 : 0.2,
+                    }}
+                  />
+                  <span className="text-[10px] sm:text-xs text-gray-400 mt-1">{d.label}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="h-[200px] sm:h-[280px] bg-gray-50 rounded-lg flex items-center justify-center">
+              <span className="text-gray-400 text-sm">Zatím žádná data</span>
+            </div>
+          )}
         </Card>
       </div>
 

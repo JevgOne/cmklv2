@@ -41,26 +41,16 @@ async function getStats() {
   }
 }
 
-const team = [
-  {
-    initials: "RZ",
-    name: "Radim Zajíček",
-    position: "Zakladatel & COO",
-    bio: "Zakladatel CarMakléř. Stojí za vizí platformy, která mění způsob prodeje aut v Česku. Řídí provoz a rozvoj makléřské sítě.",
-  },
-  {
-    initials: "YU",
-    name: "Yevgen Ulyanchenko",
-    position: "CEO & CTO",
-    bio: "Zodpovídá za strategii, technologii a vývoj celé platformy. Propojuje byznys s moderními technologiemi.",
-  },
-  {
-    initials: "KF",
-    name: "Kateřina Fusslová",
-    position: "Manažer prodeje",
-    bio: "Koordinuje tým makléřů a stará se o hladký průběh každého prodeje. Zajišťuje spokojenost klientů od prvního kontaktu po předání klíčů.",
-  },
-];
+async function getTeamMembers() {
+  try {
+    return await prisma.teamMember.findMany({
+      where: { isPublic: true },
+      orderBy: { order: "asc" },
+    });
+  } catch {
+    return [];
+  }
+}
 
 const values = [
   {
@@ -115,7 +105,7 @@ const orgJsonLd = {
 };
 
 export default async function ONasPage() {
-  const stats = await getStats();
+  const [stats, team] = await Promise.all([getStats(), getTeamMembers()]);
 
   return (
     <main>
@@ -193,22 +183,34 @@ export default async function ONasPage() {
             <p className="text-gray-500 mt-2">Lidé, kteří stojí za CarMakléř</p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {team.map((person) => (
-              <Card key={person.name} hover className="p-6 text-center">
-                <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center text-2xl font-extrabold text-white mx-auto">
-                  {person.initials}
-                </div>
-                <h3 className="font-bold text-gray-900 mt-4">{person.name}</h3>
-                <p className="text-sm text-orange-500 font-semibold mt-1">
-                  {person.position}
-                </p>
-                <p className="text-sm text-gray-500 mt-3 leading-relaxed">
-                  {person.bio}
-                </p>
-              </Card>
-            ))}
-          </div>
+          {team.length > 0 ? (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {team.map((person) => (
+                <Card key={person.id} hover className="p-6 text-center">
+                  {person.photoUrl ? (
+                    <img
+                      src={person.photoUrl}
+                      alt={person.name}
+                      className="w-20 h-20 rounded-xl object-cover mx-auto"
+                    />
+                  ) : (
+                    <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center text-2xl font-extrabold text-white mx-auto">
+                      {person.initials}
+                    </div>
+                  )}
+                  <h3 className="font-bold text-gray-900 mt-4">{person.name}</h3>
+                  <p className="text-sm text-orange-500 font-semibold mt-1">
+                    {person.position}
+                  </p>
+                  <p className="text-sm text-gray-500 mt-3 leading-relaxed">
+                    {person.bio}
+                  </p>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-gray-400">Tým se připravuje.</p>
+          )}
         </div>
       </section>
 

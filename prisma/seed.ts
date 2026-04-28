@@ -63,6 +63,9 @@ async function main() {
   await prisma.vehicle.deleteMany();
   // Tags
   await prisma.tag.deleteMany();
+  // Reviews & Team
+  await prisma.review.deleteMany();
+  await prisma.teamMember.deleteMany();
   // Core
   await prisma.user.deleteMany();
   await prisma.region.deleteMany();
@@ -144,7 +147,7 @@ async function main() {
       role: "BROKER",
       status: "ACTIVE",
       slug: "yevgen-ulyanchenko",
-      jobTitle: "CEO & CTO",
+      jobTitle: "Zakladatel, CEO & CTO",
       city: "Praha",
       bio: "Zodpovídá za strategii, technologii a vývoj celé platformy. Propojuje byznys s moderními technologiemi.",
       showPhone: true,
@@ -3678,6 +3681,50 @@ async function main() {
   console.log("Admin: zenuly3@gmail.com (ADMIN)");
   console.log("Admin: radim@wikiporadce.cz (ADMIN)");
   console.log("Manager: Fusslova.k@gmail.com (MANAGER)");
+
+  // --- Team Members ---
+  console.log("\nSeeding team members...");
+  await prisma.teamMember.upsert({
+    where: { id: "team-radim" },
+    create: {
+      id: "team-radim",
+      name: "Radim Zajíček",
+      initials: "RZ",
+      position: "Zakladatel & COO",
+      bio: "Zakladatel CarMakléř. Stojí za vizí platformy, která mění způsob prodeje aut v Česku. Řídí provoz a rozvoj makléřské sítě.",
+      order: 0,
+      isPublic: true,
+    },
+    update: {},
+  });
+  await prisma.teamMember.upsert({
+    where: { id: "team-yevgen" },
+    create: {
+      id: "team-yevgen",
+      name: "Yevgen Ulyanchenko",
+      initials: "YU",
+      position: "Zakladatel, CEO & CTO",
+      bio: "Zodpovídá za strategii, technologii a vývoj celé platformy. Propojuje byznys s moderními technologiemi.",
+      order: 1,
+      isPublic: true,
+    },
+    update: {},
+  });
+  await prisma.teamMember.upsert({
+    where: { id: "team-katerina" },
+    create: {
+      id: "team-katerina",
+      name: "Kateřina Fusslová",
+      initials: "KF",
+      position: "Manažer prodeje",
+      bio: "Koordinuje tým makléřů a stará se o hladký průběh každého prodeje. Zajišťuje spokojenost klientů od prvního kontaktu po předání klíčů.",
+      order: 2,
+      isPublic: true,
+    },
+    update: {},
+  });
+  console.log("Team members seeded: RZ, YU, KF");
+
   console.log("\n--- DEMO ACCOUNTS ---");
   console.log("Demo login: admin@carmakler.cz / heslo123");
   console.log("Advertiser login: prodejce@email.cz / heslo123");

@@ -192,27 +192,6 @@ const benefits = [
   },
 ];
 
-const testimonials = [
-  {
-    quote:
-      "Auto prodané za 12 dní, za cenu o 40 000 Kč vyšší, než mi nabízel bazar. Makléř se postaral o všechno — od fotek po přepis na úřadě.",
-    name: "Jana K.",
-    city: "Praha",
-  },
-  {
-    quote:
-      "Nemusel jsem řešit vůbec nic. Makléř nafotil auto, napsal inzerát, domluvil prohlídky i kupní smlouvu. Já jen dostal peníze.",
-    name: "Martin D.",
-    city: "Brno",
-  },
-  {
-    quote:
-      "Díky prověrce jsem zjistil, že auto mělo stočený tachometr. Ušetřil jsem si 200 000 Kč a problém. Skvělá služba.",
-    name: "Tomáš H.",
-    city: "Ostrava",
-  },
-];
-
 const proKoho = [
   { icon: "👨‍💼", title: "Zaměstnanec", subtitle: "V ČR" },
   { icon: "✈️", title: "Zaměstnanec", subtitle: "V zahraničí" },
@@ -250,8 +229,15 @@ const jsonLd = {
 };
 
 export default async function HomePage() {
-  const cars = await getFeaturedCars();
-  const brokers = await getFeaturedBrokers();
+  const [cars, brokers, testimonials] = await Promise.all([
+    getFeaturedCars(),
+    getFeaturedBrokers(),
+    prisma.review.findMany({
+      where: { isPublished: true, isFeatured: true },
+      orderBy: { createdAt: "desc" },
+      take: 3,
+    }).catch(() => [] as Awaited<ReturnType<typeof prisma.review.findMany>>),
+  ]);
 
   return (
     <main className="min-h-screen">
@@ -485,6 +471,7 @@ export default async function HomePage() {
       {/* ============================================================ */}
       {/* Section 6 — Recenze                                          */}
       {/* ============================================================ */}
+      {testimonials.length > 0 && (
       <section className="py-12 sm:py-16 lg:py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12">
@@ -495,31 +482,34 @@ export default async function HomePage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
             {testimonials.map((t) => (
-              <Card key={t.name} hover className="p-6">
+              <Card key={t.id} hover className="p-6">
                 {/* Stars */}
                 <div className="flex gap-0.5 mb-4">
-                  {[...Array(5)].map((_, i) => (
+                  {[...Array(t.rating)].map((_, i) => (
                     <span key={i} className="text-orange-400 text-lg">
-                      ⭐
+                      ★
                     </span>
                   ))}
                 </div>
                 {/* Quote */}
                 <p className="text-gray-700 italic leading-relaxed">
-                  &ldquo;{t.quote}&rdquo;
+                  &ldquo;{t.text}&rdquo;
                 </p>
                 {/* Author */}
                 <div className="mt-4 pt-4 border-t border-gray-100">
                   <span className="font-bold text-gray-900 text-sm">
-                    {t.name}
+                    {t.authorName}
                   </span>
-                  <span className="text-gray-500 text-sm">, {t.city}</span>
+                  {t.authorCity && (
+                    <span className="text-gray-500 text-sm">, {t.authorCity}</span>
+                  )}
                 </div>
               </Card>
             ))}
           </div>
         </div>
       </section>
+      )}
 
       {/* ============================================================ */}
       {/* Section 7 — TOP Makléři                                      */}

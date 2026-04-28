@@ -5,6 +5,7 @@ import { SellCarForm } from "@/components/web/SellCarForm";
 import { FAQ } from "@/components/web/FAQ";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { getBrokerStats } from "@/lib/stats";
+import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
@@ -111,7 +112,13 @@ const faqJsonLd = {
 export const revalidate = 3600; // 1 hodina
 
 export default async function ChciProdatPage() {
-  const stats = await getBrokerStats();
+  const [stats, featuredReview] = await Promise.all([
+    getBrokerStats(),
+    prisma.review.findFirst({
+      where: { isPublished: true, isFeatured: true, type: "SELLER" },
+      orderBy: { createdAt: "desc" },
+    }).catch(() => null),
+  ]);
   return (
     <div className="flex flex-col gap-16 md:gap-24 pb-16 md:pb-24">
       <script
@@ -224,26 +231,29 @@ export default async function ChciProdatPage() {
       </section>
 
       {/* SECTION 5: Testimonial */}
+      {featuredReview && (
       <section className="max-w-4xl mx-auto w-full px-4">
         <Card className="p-8 md:p-12 text-center bg-gray-50">
           <div className="text-orange-500 text-4xl mb-6">&ldquo;</div>
           <blockquote className="text-lg md:text-xl text-gray-800 font-medium leading-relaxed mb-6 max-w-2xl mx-auto">
-            Prodej proběhl hladce. Auto bylo prodané za 12 dní za cenu, která
-            mě příjemně překvapila. Makléř se o všechno postaral.
+            {featuredReview.text}
           </blockquote>
           <div className="flex items-center justify-center gap-3">
             <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center text-white font-bold text-sm">
-              JK
+              {featuredReview.authorName.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()}
             </div>
             <div className="text-left">
-              <div className="font-semibold text-gray-900">Jana K., Praha</div>
+              <div className="font-semibold text-gray-900">
+                {featuredReview.authorName}{featuredReview.authorCity ? `, ${featuredReview.authorCity}` : ""}
+              </div>
               <div className="text-yellow-500 text-sm tracking-wider">
-                ⭐⭐⭐⭐⭐
+                {"★".repeat(featuredReview.rating)}
               </div>
             </div>
           </div>
         </Card>
       </section>
+      )}
 
       {/* SECTION 6: FAQ */}
       <section className="max-w-3xl mx-auto w-full px-4">

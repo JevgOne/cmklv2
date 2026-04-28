@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { generateAggregateRatingJsonLd } from "@/lib/seo";
+import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
 
+export const revalidate = 3600;
+
 // Canonical exportujeme na layout level (kontrolovaná výjimka pravidla Q5):
-// /recenze/page.tsx je client component (`"use client"`) a NEMŮŽE exportovat
-// vlastní `metadata`. Single-page subtree → layout-level canonical bez rizika
-// inheritance leak-u na child routes (žádné child routes nejsou).
+// /recenze/page.tsx NEMŮŽE exportovat vlastní `metadata` vedle server component data fetch.
+// Single-page subtree → layout-level canonical bez rizika inheritance leak-u.
 export const metadata: Metadata = {
   title: "Recenze",
   description:
@@ -18,22 +20,39 @@ export const metadata: Metadata = {
   alternates: pageCanonical("/recenze"),
 };
 
-const reviewJsonLdStr = generateAggregateRatingJsonLd({
-  organizationName: "CarMakléř",
-  ratingValue: 4.8,
-  reviewCount: 8,
-  reviews: [
-    { author: "Jana K.", reviewBody: "Prodej proběhl hladce a rychle. Auto bylo prodané za 12 dní.", ratingValue: 5 },
-    { author: "Martin D.", reviewBody: "Konečně někdo, kdo se o všechno postará.", ratingValue: 5 },
-    { author: "Lucie N.", reviewBody: "Makléř byl profesionální, vždy dostupný.", ratingValue: 5 },
-  ],
-});
-
-export default function RecenzeLayout({
+export default async function RecenzeLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const reviews = await prisma.review.findMany({
+    where: { isPublished: true },
+    select: { rating: true, authorName: true, text: true },
+  }).catch(() => []);
+
+  if (reviews.length === 0) {
+    return <>{children}</>;
+  }
+
+  const avgRating =
+    reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+
+  const topReviews = reviews
+    .filter((r) => r.rating >= 4)
+    .slice(0, 3)
+    .map((r) => ({
+      author: r.authorName,
+      reviewBody: r.text.length > 200 ? r.text.slice(0, 200) + "…" : r.text,
+      ratingValue: r.rating,
+    }));
+
+  const reviewJsonLdStr = generateAggregateRatingJsonLd({
+    organizationName: "CarMakléř",
+    ratingValue: Math.round(avgRating * 10) / 10,
+    reviewCount: reviews.length,
+    reviews: topReviews,
+  });
+
   return (
     <>
       <script

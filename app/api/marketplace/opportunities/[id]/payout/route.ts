@@ -98,8 +98,7 @@ export async function POST(
 
       // Notify investors about payout (fire-and-forget)
       for (const inv of opportunity.investments) {
-        const emailData = {
-          recipientName: "",
+        const baseEmailData = {
           carTitle,
           investedAmount: inv.amount,
           returnAmount: inv.amount,
@@ -114,10 +113,13 @@ export async function POST(
           title: "Vyúčtování investice",
           body: `${carTitle} — vklad vrácen`,
           link: dealLink,
-          email: {
-            subject: marketplacePayoutSubject(emailData),
-            html: marketplacePayoutHtml(emailData),
-            text: marketplacePayoutText(emailData),
+          email: (recipientName) => {
+            const emailData = { ...baseEmailData, recipientName };
+            return {
+              subject: marketplacePayoutSubject(emailData),
+              html: marketplacePayoutHtml(emailData),
+              text: marketplacePayoutText(emailData),
+            };
           },
         }).catch(() => {});
       }
@@ -208,8 +210,7 @@ export async function POST(
       const roi = payout.investedAmount > 0
         ? Math.round((profit / payout.investedAmount) * 1000) / 10
         : 0;
-      const emailData = {
-        recipientName: "",
+      const baseEmailData = {
         carTitle,
         investedAmount: payout.investedAmount,
         returnAmount: payout.returnAmount,
@@ -224,10 +225,13 @@ export async function POST(
         title: "Výplata zisku",
         body: `${carTitle} — +${roi}% ROI`,
         link: dealLink,
-        email: {
-          subject: marketplacePayoutSubject(emailData),
-          html: marketplacePayoutHtml(emailData),
-          text: marketplacePayoutText(emailData),
+        email: (recipientName) => {
+          const emailData = { ...baseEmailData, recipientName };
+          return {
+            subject: marketplacePayoutSubject(emailData),
+            html: marketplacePayoutHtml(emailData),
+            text: marketplacePayoutText(emailData),
+          };
         },
       }).catch(() => {});
     }

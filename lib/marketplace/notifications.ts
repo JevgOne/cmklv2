@@ -23,12 +23,11 @@ export interface NotifyParams {
   title: string;
   body: string;
   link: string;
-  /** Optional email content — if provided, email will be sent */
-  email?: {
-    subject: string;
-    html: string;
-    text: string;
-  };
+  /** Optional email content — if provided, email will be sent.
+   *  Can be a static object or a builder function that receives recipientName for personalization. */
+  email?:
+    | { subject: string; html: string; text: string }
+    | ((recipientName: string) => { subject: string; html: string; text: string });
 }
 
 /**
@@ -78,24 +77,29 @@ export async function notifyMarketplace(params: NotifyParams): Promise<void> {
       });
 
       if (emailRecipients.length > 0) {
-        // Fetch email addresses
+        // Fetch email addresses + names
         const users = await prisma.user.findMany({
           where: { id: { in: emailRecipients } },
           select: { id: true, email: true, firstName: true },
         });
 
+        const isBuilder = typeof email === "function";
+
         // Send emails in parallel (fire-and-forget per email)
         await Promise.allSettled(
           users
             .filter((u) => u.email)
-            .map((u) =>
-              sendEmail({
+            .map((u) => {
+              const emailContent = isBuilder
+                ? email(u.firstName || "")
+                : email;
+              return sendEmail({
                 to: u.email,
-                subject: email.subject,
-                html: email.html,
-                text: email.text,
-              })
-            )
+                subject: emailContent.subject,
+                html: emailContent.html,
+                text: emailContent.text,
+              });
+            })
         );
       }
     }

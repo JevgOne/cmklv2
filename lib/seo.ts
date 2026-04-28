@@ -630,6 +630,9 @@ export interface JobPostingJsonLdData {
   title: string;
   description: string;
   location: string;
+  streetAddress?: string;
+  postalCode?: string;
+  addressRegion?: string;
   employmentType?: string;
   baseSalary?: { minValue: number; maxValue: number; currency?: string };
   datePosted?: string;
@@ -653,14 +656,17 @@ export function generateJobPostingJsonLd(job: JobPostingJsonLdData): string {
       address: {
         "@type": "PostalAddress",
         addressLocality: job.location,
+        addressRegion: job.addressRegion ?? (job.location === "Celá ČR" ? "Česká republika" : job.location),
+        streetAddress: job.streetAddress ?? job.location,
+        postalCode: job.postalCode ?? "",
         addressCountry: "CZ",
       },
     },
     datePosted: job.datePosted ?? new Date().toISOString().slice(0, 10),
+    validThrough: job.validThrough ?? new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
   };
 
   if (job.employmentType) jsonLd.employmentType = job.employmentType;
-  if (job.validThrough) jsonLd.validThrough = job.validThrough;
 
   if (job.baseSalary) {
     jsonLd.baseSalary = {

@@ -111,8 +111,7 @@ export async function POST(
       const link = `/marketplace/deals/${id}`;
       const investorIds = opp.investments.map((i) => i.investorId);
       if (investorIds.length > 0) {
-        const emailData = {
-          recipientName: "",
+        const baseEmailData = {
           carTitle,
           milestoneName: data.label,
           progressPct: data.progressPct,
@@ -126,10 +125,13 @@ export async function POST(
           title: `Oprava — ${data.progressPct}%`,
           body: `${carTitle}: ${data.label}`,
           link,
-          email: {
-            subject: marketplaceRepairUpdateSubject(emailData),
-            html: marketplaceRepairUpdateHtml(emailData),
-            text: marketplaceRepairUpdateText(emailData),
+          email: (recipientName) => {
+            const emailData = { ...baseEmailData, recipientName };
+            return {
+              subject: marketplaceRepairUpdateSubject(emailData),
+              html: marketplaceRepairUpdateHtml(emailData),
+              text: marketplaceRepairUpdateText(emailData),
+            };
           },
         }).catch(() => {});
       }
