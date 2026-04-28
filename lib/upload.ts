@@ -69,7 +69,7 @@ export async function uploadToServer(
     // Sharp processing pipeline
     const sharp = (await import("sharp")).default;
 
-    let pipeline = sharp(buffer).resize({
+    let pipeline = sharp(buffer).rotate().resize({
       width: MAX_IMAGE_WIDTH,
       withoutEnlargement: true,
     });
