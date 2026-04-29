@@ -46,7 +46,6 @@ export async function generateMetadata({
     openGraph: {
       title: `${title} | CarMakléř Blog`,
       description,
-      ...(article.coverImage ? { images: [{ url: article.coverImage }] } : {}),
     },
     alternates: pageCanonical(`/blog/${slug}`),
   };

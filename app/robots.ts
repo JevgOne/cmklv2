@@ -23,6 +23,14 @@ export default function robots(): MetadataRoute.Robots {
           "/registrace",
         ],
       },
+      // AI crawlers — explicitly allowed for GEO/AIEO
+      { userAgent: "GPTBot", allow: "/", disallow: ["/api/", "/admin/", "/makler/", "/partner/", "/parts/", "/muj-ucet/"] },
+      { userAgent: "ChatGPT-User", allow: "/", disallow: ["/api/", "/admin/", "/makler/", "/partner/", "/parts/", "/muj-ucet/"] },
+      { userAgent: "CCBot", allow: "/" },
+      { userAgent: "ClaudeBot", allow: "/" },
+      { userAgent: "PerplexityBot", allow: "/" },
+      { userAgent: "Applebot-Extended", allow: "/" },
+      { userAgent: "GoogleOther", allow: "/" },
     ],
     sitemap: `${BASE_URL}/sitemap.xml`,
   };

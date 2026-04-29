@@ -135,7 +135,7 @@ export default async function StatsPage() {
     else segments["nad 1M"]++;
   });
 
-  // Mesicni prodeje (poslednich 6 mesicu) - placeholder data pro grafy
+  // Mesicni prodeje (poslednich 6 mesicu)
   const monthRanges = Array.from({ length: 6 }, (_, idx) => {
     const i = 5 - idx;
     const ms = new Date(now.getFullYear(), now.getMonth() - i, 1);
@@ -334,7 +334,7 @@ export default async function StatsPage() {
         </div>
       </div>
 
-      {/* Prodeje po měsících - bar chart placeholder */}
+      {/* Prodeje po měsících */}
       <Card className="p-4">
         <h3 className="font-bold text-gray-900 mb-4">Prodeje po měsících</h3>
         <div className="flex items-end gap-2 h-32">
@@ -355,7 +355,7 @@ export default async function StatsPage() {
         </div>
       </Card>
 
-      {/* Provize po měsících - line chart placeholder */}
+      {/* Provize po měsících */}
       <Card className="p-4">
         <h3 className="font-bold text-gray-900 mb-4">Provize po měsících</h3>
         <div className="flex items-end gap-2 h-32">

@@ -43,7 +43,7 @@ export default function OnboardingTrainingPage() {
       {/* Welcome video */}
       <div className="bg-white rounded-2xl shadow-card overflow-hidden mb-6">
         <div className="relative aspect-video bg-gray-900 flex items-center justify-center">
-          {/* Placeholder for video — replace src with actual YouTube/Vimeo embed */}
+          {/* TODO: nahradit skutečným YouTube/Vimeo embedem až bude video natočeno */}
           <div className="absolute inset-0 bg-gradient-to-br from-orange-600/90 to-orange-800/90 flex flex-col items-center justify-center text-white p-6 text-center">
             <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center mb-4">
               <svg className="w-10 h-10 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
