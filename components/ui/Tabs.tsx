@@ -59,7 +59,7 @@ export function Tabs({ tabs, activeTab: controlledTab, defaultTab, onTabChange, 
   return (
     <div
       role="tablist"
-      className={cn("flex gap-1 bg-gray-100 p-1 rounded-lg", className)}
+      className={cn("flex gap-1 bg-gray-100 p-1 rounded-lg overflow-x-auto", className)}
       onKeyDown={handleKeyDown}
     >
       {tabs.map((tab) => {
