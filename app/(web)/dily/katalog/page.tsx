@@ -1,150 +1,159 @@
-"use client";
-
-import { useState, useEffect, useCallback, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
-import { Select } from "@/components/ui/Select";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
-import { Tabs } from "@/components/ui/Tabs";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { prisma } from "@/lib/prisma";
 import { ProductCard } from "@/components/web/ProductCard";
+import { PartsFilters } from "@/components/web/PartsFilters";
 import { PartRequestForm } from "@/components/web/PartRequestForm";
+import { Button } from "@/components/ui/Button";
+import { pageCanonical } from "@/lib/canonical";
 
-interface PartImage {
-  id: string;
-  url: string;
-  isPrimary: boolean;
-}
+export const revalidate = 300;
 
-interface PartResult {
-  id: string;
-  slug: string;
-  name: string;
-  category: string;
-  condition: string;
-  partType: string;
-  price: number;
-  stock: number;
-  compatibleBrands: string | null;
-  compatibleModels: string | null;
-  images: PartImage[];
-}
-
-const tabs = [
-  { value: "vse", label: "Vše" },
-  { value: "ENGINE", label: "Motor" },
-  { value: "BODY", label: "Karoserie" },
-  { value: "BRAKES", label: "Brzdy" },
-  { value: "SUSPENSION", label: "Podvozek" },
-  { value: "ELECTRICAL", label: "Elektro" },
-  { value: "INTERIOR", label: "Interiér" },
-];
-
-const brandOptions = [
-  { value: "Škoda", label: "Škoda" },
-  { value: "Volkswagen", label: "Volkswagen" },
-  { value: "BMW", label: "BMW" },
-  { value: "Audi", label: "Audi" },
-  { value: "Mercedes-Benz", label: "Mercedes-Benz" },
-  { value: "Hyundai", label: "Hyundai" },
-  { value: "Toyota", label: "Toyota" },
-  { value: "Ford", label: "Ford" },
-];
-
-const partTypeOptions = [
-  { value: "", label: "Vše" },
-  { value: "USED", label: "Použité" },
-  { value: "NEW", label: "Nové" },
-  { value: "AFTERMARKET", label: "Aftermarket" },
-];
-
-const sortOptions = [
-  { value: "newest", label: "Nejnovější" },
-  { value: "cheapest", label: "Nejlevnější" },
-  { value: "expensive", label: "Nejdražší" },
-  { value: "popular", label: "Nejoblíbenější" },
-];
+export const metadata: Metadata = {
+  title: "Katalog autodílů",
+  description:
+    "Použité i nové autodíly z ověřených vrakovišť a dodavatelů. Hledejte podle značky, kategorie nebo VIN.",
+  openGraph: {
+    title: "Katalog autodílů | CarMakléř",
+    description:
+      "Autodíly z ověřených vrakovišť. Použité, nové i aftermarket díly.",
+  },
+  alternates: pageCanonical("/dily/katalog"),
+};
 
 function conditionToStars(condition: string): number | undefined {
   switch (condition) {
-    case "NEW": return undefined;
-    case "USED_GOOD": return 4;
-    case "USED_FAIR": return 3;
-    case "USED_POOR": return 2;
-    case "REFURBISHED": return 5;
-    default: return undefined;
+    case "NEW":
+      return undefined;
+    case "USED_GOOD":
+      return 4;
+    case "USED_FAIR":
+      return 3;
+    case "USED_POOR":
+      return 2;
+    case "REFURBISHED":
+      return 5;
+    default:
+      return undefined;
   }
 }
 
 function getPartTypeBadge(partType: string): "used" | "new" | "aftermarket" {
   switch (partType) {
-    case "NEW": return "new";
-    case "AFTERMARKET": return "aftermarket";
-    default: return "used";
+    case "NEW":
+      return "new";
+    case "AFTERMARKET":
+      return "aftermarket";
+    default:
+      return "used";
   }
 }
 
-function DilyKatalogInner() {
-  const searchParams = useSearchParams();
+export default async function DilyKatalogPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string>>;
+}) {
+  const params = await searchParams;
 
-  const [activeTab, setActiveTab] = useState(searchParams.get("category") || "vse");
-  const [brand, setBrand] = useState("");
-  const [partType, setPartType] = useState("");
-  const [manufacturer, setManufacturer] = useState("");
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
-  const [inStock, setInStock] = useState(false);
-  const [sort, setSort] = useState("newest");
-  const [page, setPage] = useState(1);
+  // --- Build Prisma where clause ---
+  const where: Record<string, unknown> = { status: "ACTIVE" };
 
-  const [parts, setParts] = useState<PartResult[]>([]);
-  const [total, setTotal] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const [loading, setLoading] = useState(true);
+  if (params.category) where.category = params.category;
+  if (params.partType) where.partType = params.partType;
+  if (params.brand) where.compatibleBrands = { contains: params.brand };
+  if (params.manufacturer) {
+    where.manufacturer = {
+      contains: params.manufacturer,
+      mode: "insensitive" as const,
+    };
+  }
 
-  const fetchParts = useCallback(async () => {
-    setLoading(true);
-    const params = new URLSearchParams();
+  if (params.minPrice || params.maxPrice) {
+    const priceFilter: Record<string, number> = {};
+    if (params.minPrice) priceFilter.gte = parseInt(params.minPrice, 10);
+    if (params.maxPrice) priceFilter.lte = parseInt(params.maxPrice, 10);
+    where.price = priceFilter;
+  }
 
-    if (activeTab !== "vse") params.set("category", activeTab);
-    if (brand) params.set("brand", brand);
-    if (partType) params.set("partType", partType);
-    if (manufacturer) params.set("manufacturer", manufacturer);
-    if (minPrice) params.set("minPrice", minPrice);
-    if (maxPrice) params.set("maxPrice", maxPrice);
-    if (inStock) params.set("inStock", "true");
-    params.set("sort", sort);
-    params.set("page", String(page));
-    params.set("limit", "18");
+  if (params.inStock === "true") where.stock = { gt: 0 };
 
-    try {
-      const res = await fetch(`/api/parts?${params.toString()}`);
-      if (!res.ok) {
-        console.error("Parts API error:", res.status);
-        setParts([]);
-        return;
-      }
-      const data = await res.json();
-      setParts(data.parts ?? []);
-      setTotal(data.total ?? 0);
-      setTotalPages(data.totalPages ?? 0);
-    } catch {
-      setParts([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [activeTab, brand, partType, manufacturer, minPrice, maxPrice, inStock, sort, page]);
+  // --- Sorting ---
+  type SortOrder = "asc" | "desc";
+  let orderBy: Record<string, SortOrder>[];
+  switch (params.sort) {
+    case "cheapest":
+      orderBy = [{ price: "asc" }];
+      break;
+    case "expensive":
+      orderBy = [{ price: "desc" }];
+      break;
+    case "popular":
+      orderBy = [{ viewCount: "desc" }];
+      break;
+    default:
+      orderBy = [{ createdAt: "desc" }];
+      break;
+  }
 
-  useEffect(() => {
-    fetchParts();
-  }, [fetchParts]);
+  // --- Pagination ---
+  const page = Math.max(1, parseInt(params.page || "1", 10));
+  const limit = 18;
+  const skip = (page - 1) * limit;
 
-  const handleTabChange = (val: string) => {
-    setActiveTab(val);
-    setPage(1);
+  // --- Prisma query ---
+  const [parts, total] = await Promise.all([
+    prisma.part.findMany({
+      where,
+      include: {
+        images: { where: { isPrimary: true }, take: 1 },
+        supplier: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            companyName: true,
+          },
+        },
+      },
+      orderBy,
+      skip,
+      take: limit,
+    }),
+    prisma.part.count({ where }),
+  ]);
+
+  const totalPages = Math.ceil(total / limit);
+
+  // --- JSON-LD ---
+  const catalogJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Katalog autodílů — CarMakléř",
+    description: "Použité i nové autodíly z ověřených vrakovišť.",
+    numberOfItems: total,
+    itemListElement: parts.slice(0, 10).map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `https://carmakler.cz/dily/${p.slug}`,
+      name: p.name,
+    })),
+  };
+
+  // --- Pagination URL builder ---
+  const buildPageUrl = (p: number) => {
+    const urlParams = new URLSearchParams(params);
+    urlParams.set("page", String(p));
+    return `/dily/katalog?${urlParams.toString()}`;
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(catalogJsonLd) }}
+      />
+
       {/* Header */}
       <section className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
@@ -158,89 +167,12 @@ function DilyKatalogInner() {
         </div>
       </section>
 
-      {/* Tabs + Filters + Grid */}
+      {/* Filters (CLIENT ISLAND) + Grid (SERVER) */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Tabs */}
-        <div className="mb-6 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-          <Tabs
-            tabs={tabs}
-            activeTab={activeTab}
-            onTabChange={handleTabChange}
-          />
-        </div>
+        <PartsFilters variant="dily" resultCount={total} />
 
-        {/* Filter bar */}
-        <div className="bg-white rounded-xl p-4 sm:p-5 md:p-6 shadow-sm mb-6 sm:mb-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3 sm:gap-4 items-end">
-            <Select
-              label="Značka vozu"
-              placeholder="Všechny značky"
-              options={brandOptions}
-              value={brand}
-              onChange={(e) => { setBrand(e.target.value); setPage(1); }}
-            />
-            <Select
-              label="Typ dílu"
-              placeholder="Vše"
-              options={partTypeOptions}
-              value={partType}
-              onChange={(e) => { setPartType(e.target.value); setPage(1); }}
-            />
-            <Input
-              label="Výrobce"
-              placeholder="TRW, Bosch..."
-              value={manufacturer}
-              onChange={(e) => { setManufacturer(e.target.value); setPage(1); }}
-            />
-            <div className="grid grid-cols-2 gap-2">
-              <Input
-                label="Cena od"
-                placeholder="0"
-                type="number"
-                value={minPrice}
-                onChange={(e) => { setMinPrice(e.target.value); setPage(1); }}
-              />
-              <Input
-                label="Cena do"
-                placeholder="50 000"
-                type="number"
-                value={maxPrice}
-                onChange={(e) => { setMaxPrice(e.target.value); setPage(1); }}
-              />
-            </div>
-            <Select
-              label="Řazení"
-              options={sortOptions}
-              value={sort}
-              onChange={(e) => { setSort(e.target.value); setPage(1); }}
-            />
-            <div className="flex flex-col gap-2">
-              <span className="text-[13px] font-semibold text-gray-700 uppercase tracking-wide">
-                Dostupnost
-              </span>
-              <label className="flex items-center gap-2 cursor-pointer py-3">
-                <input
-                  type="checkbox"
-                  checked={inStock}
-                  onChange={(e) => { setInStock(e.target.checked); setPage(1); }}
-                  className="w-5 h-5 rounded border-gray-300 text-orange-500 focus:ring-orange-500 cursor-pointer"
-                />
-                <span className="text-[15px] font-medium text-gray-700">
-                  Pouze skladem
-                </span>
-              </label>
-            </div>
-          </div>
-        </div>
-
-        {/* Product grid */}
-        {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-2xl h-80 animate-pulse" />
-            ))}
-          </div>
-        ) : parts.length > 0 ? (
+        {/* Product grid — SERVER rendered */}
+        {parts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {parts.map((part) => (
               <ProductCard
@@ -278,94 +210,34 @@ function DilyKatalogInner() {
               <p className="text-gray-500 text-sm mb-4">
                 Popište jaký díl hledáte a ověřená vrakoviště vám pošlou nabídky.
               </p>
-              <PartRequestForm
-                prefillQuery={searchParams.get("q") ?? undefined}
-              />
+              <PartRequestForm prefillQuery={params.q ?? undefined} />
             </div>
           </div>
         )}
 
-        {/* Pagination */}
+        {/* Link-based pagination — SERVER rendered */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-2 mt-12">
-            <Button
-              variant="ghost"
-              size="sm"
-              disabled={page <= 1}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-            >
-              &larr; Předchozí
-            </Button>
-            {Array.from({ length: Math.min(totalPages, 5) }).map((_, i) => {
-              const p = i + 1;
-              return (
-                <button
-                  key={p}
-                  onClick={() => setPage(p)}
-                  className={`inline-flex items-center justify-center w-10 h-10 rounded-full font-semibold text-sm cursor-pointer transition-colors border-none ${
-                    p === page
-                      ? "bg-orange-500 text-white"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }`}
-                >
-                  {p}
-                </button>
-              );
-            })}
-            {totalPages > 5 && (
-              <>
-                <span className="text-gray-500 px-1">...</span>
-                <button
-                  onClick={() => setPage(totalPages)}
-                  className={`inline-flex items-center justify-center w-10 h-10 rounded-full font-semibold text-sm cursor-pointer transition-colors border-none ${
-                    totalPages === page
-                      ? "bg-orange-500 text-white"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }`}
-                >
-                  {totalPages}
-                </button>
-              </>
+          <div className="flex justify-center items-center gap-4 mt-12">
+            {page > 1 && (
+              <Link href={buildPageUrl(page - 1)} className="no-underline">
+                <Button variant="outline" size="default">
+                  &larr; Předchozí
+                </Button>
+              </Link>
             )}
-            <Button
-              variant="ghost"
-              size="sm"
-              disabled={page >= totalPages}
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            >
-              Další &rarr;
-            </Button>
+            <span className="text-sm text-gray-500">
+              Stránka {page} z {totalPages}
+            </span>
+            {page < totalPages && (
+              <Link href={buildPageUrl(page + 1)} className="no-underline">
+                <Button variant="outline" size="default">
+                  Další &rarr;
+                </Button>
+              </Link>
+            )}
           </div>
         )}
       </div>
     </div>
-  );
-}
-
-function KatalogFallback() {
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <section className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
-          <div className="h-9 w-80 bg-gray-200 rounded animate-pulse" />
-          <div className="h-5 w-40 bg-gray-200 rounded animate-pulse mt-2" />
-        </div>
-      </section>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="bg-white rounded-2xl h-80 animate-pulse" />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default function DilyKatalogPage() {
-  return (
-    <Suspense fallback={<KatalogFallback />}>
-      <DilyKatalogInner />
-    </Suspense>
   );
 }
