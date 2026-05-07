@@ -1,11 +1,11 @@
-"use client";
-
-import { useState, useEffect, use } from "react";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { OrderTracker } from "@/components/web/OrderTracker";
 import { formatPrice } from "@/lib/utils";
+import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 
 type OrderTrackerStatus = "NEW" | "CONFIRMED" | "SHIPPED" | "DELIVERED" | "CANCELLED";
@@ -29,88 +29,64 @@ const statusBadge: Record<string, { label: string; variant: "verified" | "pendin
   CANCELLED: { label: "Zrušená", variant: "rejected" },
 };
 
-interface OrderItem {
-  id: string;
-  quantity: number;
-  unitPrice: number;
-  totalPrice: number;
-  part: { name: string; slug: string; images?: { url: string }[] };
-}
+export const metadata: Metadata = {
+  title: "Sledování objednávky",
+  robots: { index: false, follow: false },
+};
 
-interface SubOrderInfo {
-  id: string;
-  status: string;
-  deliveryMethod: string;
-  zasilkovnaPointName: string | null;
-  trackingNumber: string | null;
-  shippedAt: string | null;
-  deliveredAt: string | null;
-  subtotal: number;
-  shippingPrice: number;
-  supplierName: string;
-  items: OrderItem[];
-}
+export default async function SledovaniPage({
+  params,
+}: {
+  params: Promise<{ token: string }>;
+}) {
+  const { token } = await params;
 
-interface Order {
-  id: string;
-  orderNumber: string;
-  status: string;
-  totalPrice: number;
-  shippingPrice: number;
-  paymentMethod: string;
-  paymentStatus: string;
-  trackingNumber: string | null;
-  deliveryMethod: string;
-  zasilkovnaPointName: string | null;
-  deliveryName: string;
-  createdAt: string;
-  shippedAt: string | null;
-  deliveredAt: string | null;
-  items: OrderItem[];
-  subOrders?: SubOrderInfo[];
-}
-
-export default function SledovaniPage({ params }: { params: Promise<{ token: string }> }) {
-  const { token } = use(params);
-  const [order, setOrder] = useState<Order | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function fetchOrder() {
-      try {
-        const res = await fetch(`/api/orders/track/${token}`);
-        if (res.ok) {
-          const data = await res.json();
-          setOrder(data.order);
-        } else {
-          setError("Objednávka nenalezena nebo neplatný odkaz");
-        }
-      } catch {
-        setError("Chyba při načítání");
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchOrder();
-  }, [token]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-pulse text-gray-500">Načítání objednávky...</div>
-      </div>
-    );
+  if (!token || token.length < 32) {
+    notFound();
   }
 
-  if (error || !order) {
+  const order = await prisma.order.findUnique({
+    where: { guestToken: token },
+    include: {
+      subOrders: {
+        include: {
+          supplier: { select: { companyName: true, firstName: true, lastName: true } },
+          items: {
+            include: {
+              part: {
+                select: {
+                  name: true,
+                  slug: true,
+                  images: { where: { isPrimary: true }, take: 1 },
+                },
+              },
+            },
+          },
+        },
+        orderBy: { createdAt: "asc" },
+      },
+      items: {
+        include: {
+          part: {
+            select: {
+              name: true,
+              slug: true,
+              images: { where: { isPrimary: true }, take: 1 },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!order) {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-2xl mx-auto px-4 py-16 text-center">
           <div className="text-5xl mb-4">🔍</div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Objednávka nenalezena</h1>
           <p className="text-gray-500 mb-6">
-            {error ?? "Odkaz pro sledování je neplatný nebo vypršela jeho platnost."}
+            Odkaz pro sledování je neplatný nebo vypršela jeho platnost.
           </p>
           <Link href="/shop" className="no-underline">
             <Button variant="outline">Zpět do shopu</Button>
@@ -121,7 +97,27 @@ export default function SledovaniPage({ params }: { params: Promise<{ token: str
   }
 
   const badge = statusBadge[order.status] ?? statusBadge.PENDING;
-  const date = new Date(order.createdAt).toLocaleDateString("cs-CZ");
+  const date = order.createdAt.toLocaleDateString("cs-CZ");
+
+  const subOrders = order.subOrders.map((so) => ({
+    id: so.id,
+    status: so.status,
+    deliveryMethod: so.deliveryMethod,
+    zasilkovnaPointName: so.zasilkovnaPointName,
+    trackingNumber: so.trackingNumber,
+    shippedAt: so.shippedAt,
+    deliveredAt: so.deliveredAt,
+    subtotal: so.subtotal,
+    shippingPrice: so.shippingPrice,
+    supplierName: so.supplier.companyName ?? `${so.supplier.firstName} ${so.supplier.lastName}`,
+    items: so.items.map((i) => ({
+      id: i.id,
+      quantity: i.quantity,
+      unitPrice: i.unitPrice,
+      totalPrice: i.totalPrice,
+      part: i.part,
+    })),
+  }));
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -155,9 +151,9 @@ export default function SledovaniPage({ params }: { params: Promise<{ token: str
         </Card>
 
         {/* SubOrders per supplier (if multiple) */}
-        {order.subOrders && order.subOrders.length > 1 ? (
+        {subOrders.length > 1 ? (
           <>
-            {order.subOrders.map((so, idx) => {
+            {subOrders.map((so) => {
               const soBadge = statusBadge[so.status] ?? statusBadge.PENDING;
               return (
                 <Card key={so.id} className="p-6">
@@ -260,13 +256,13 @@ export default function SledovaniPage({ params }: { params: Promise<{ token: str
             {order.shippedAt && (
               <div className="flex justify-between">
                 <span className="text-gray-500">Odesláno</span>
-                <span className="text-gray-900">{new Date(order.shippedAt).toLocaleDateString("cs-CZ")}</span>
+                <span className="text-gray-900">{order.shippedAt.toLocaleDateString("cs-CZ")}</span>
               </div>
             )}
             {order.deliveredAt && (
               <div className="flex justify-between">
                 <span className="text-gray-500">Doručeno</span>
-                <span className="text-gray-900">{new Date(order.deliveredAt).toLocaleDateString("cs-CZ")}</span>
+                <span className="text-gray-900">{order.deliveredAt.toLocaleDateString("cs-CZ")}</span>
               </div>
             )}
           </div>
