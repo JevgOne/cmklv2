@@ -1,10 +1,20 @@
-"use client";
-
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
 import { CareerForm } from "@/components/web/CareerForm";
+import { ScrollToFormButton } from "@/components/web/ScrollToFormButton";
+import { pageCanonical } from "@/lib/canonical";
+
+export const metadata: Metadata = {
+  title: "Kariéra",
+  description: "Staňte se automakléřem. Pracujte flexibilně, vydělejte bez stropu. Otevřené pozice v Praze, Brně a po celé ČR.",
+  openGraph: {
+    title: "Kariéra | CarMakléř",
+    description: "Staňte se automakléřem. Flexibilní práce, provize 5% z každého prodeje.",
+  },
+  alternates: pageCanonical("/kariera"),
+};
 
 const benefits = [
   {
@@ -121,16 +131,7 @@ export default function KarieraPage() {
                   {pos.desc}
                 </p>
                 <div className="mt-6">
-                  <Button
-                    variant="primary"
-                    size="default"
-                    onClick={() => {
-                      const el = document.getElementById("kariera-form");
-                      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
-                    }}
-                  >
-                    Mám zájem
-                  </Button>
+                  <ScrollToFormButton />
                 </div>
               </Card>
             ))}
