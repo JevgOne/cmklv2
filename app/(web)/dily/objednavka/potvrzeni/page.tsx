@@ -1,14 +1,15 @@
-"use client";
-
-import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 
-export default function DilyPotvrzeniPage() {
-  const searchParams = useSearchParams();
-  const orderId = searchParams.get("id") ?? "---";
-  const trackingUrl = searchParams.get("tracking");
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
+
+export default async function DilyPotvrzeniPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ id?: string; tracking?: string }>;
+}) {
+  const { id: orderId = "---", tracking: trackingUrl } = await searchParams;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -46,7 +47,7 @@ export default function DilyPotvrzeniPage() {
                 href={trackingUrl}
                 className="text-orange-500 font-semibold text-sm break-all no-underline hover:text-orange-600"
               >
-                {typeof window !== "undefined" ? window.location.origin : ""}{trackingUrl}
+                {baseUrl}{trackingUrl}
               </Link>
             </div>
           )}
