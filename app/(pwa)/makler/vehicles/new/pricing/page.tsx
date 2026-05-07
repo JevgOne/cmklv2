@@ -1,5 +1,3 @@
-"use client";
-
 import { PricingStep } from "@/components/pwa/vehicles/new/PricingStep";
 import { StepPageGuard } from "@/components/pwa/vehicles/new/StepPageGuard";
 

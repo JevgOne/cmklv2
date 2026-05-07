@@ -1,13 +1,14 @@
-"use client";
-
-import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 
-export default function QuickSuccessPage() {
-  const searchParams = useSearchParams();
-  const vehicleId = searchParams.get("vehicleId");
+export default async function QuickSuccessPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string>>;
+}) {
+  const params = await searchParams;
+  const vehicleId = params.vehicleId ?? null;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[100dvh] px-6">

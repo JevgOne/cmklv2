@@ -1,5 +1,3 @@
-"use client";
-
 import { ReviewStep } from "@/components/pwa/vehicles/new/ReviewStep";
 import { StepPageGuard } from "@/components/pwa/vehicles/new/StepPageGuard";
 

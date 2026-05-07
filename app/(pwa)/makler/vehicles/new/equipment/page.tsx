@@ -1,5 +1,3 @@
-"use client";
-
 import { EquipmentStep } from "@/components/pwa/vehicles/new/EquipmentStep";
 import { StepPageGuard } from "@/components/pwa/vehicles/new/StepPageGuard";
 

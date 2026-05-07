@@ -1,12 +1,13 @@
-"use client";
-
-import { useSearchParams } from "next/navigation";
 import { SuccessView } from "@/components/pwa/vehicles/new/SuccessView";
 
-export default function SuccessPage() {
-  const searchParams = useSearchParams();
-  const offline = searchParams.get("offline") === "1";
-  const vehicleId = searchParams.get("vehicleId");
+export default async function SuccessPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string>>;
+}) {
+  const params = await searchParams;
+  const offline = params.offline === "1";
+  const vehicleId = params.vehicleId ?? null;
 
   return <SuccessView offline={offline} vehicleId={vehicleId} />;
 }

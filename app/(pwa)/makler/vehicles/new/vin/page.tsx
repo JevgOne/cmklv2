@@ -1,5 +1,3 @@
-"use client";
-
 import { VinStep } from "@/components/pwa/vehicles/new/VinStep";
 import { StepPageGuard } from "@/components/pwa/vehicles/new/StepPageGuard";
 
