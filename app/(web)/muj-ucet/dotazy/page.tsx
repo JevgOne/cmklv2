@@ -1,32 +1,13 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { EmptyState } from "@/components/ui/EmptyState";
 
-interface InquiryItem {
-  id: string;
-  message: string;
-  reply: string | null;
-  repliedAt: string | null;
-  read: boolean;
-  createdAt: string;
-  listing: {
-    id: string;
-    slug: string;
-    brand: string;
-    model: string;
-    variant: string | null;
-    year: number;
-    price: number;
-    images: { url: string; isPrimary: boolean }[];
-  };
-}
-
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString("cs-CZ", {
+function formatDate(date: Date): string {
+  return date.toLocaleDateString("cs-CZ", {
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -41,44 +22,34 @@ function formatPrice(price: number): string {
   }).format(price);
 }
 
-export default function DotazyPage() {
-  const [inquiries, setInquiries] = useState<InquiryItem[]>([]);
-  const [loading, setLoading] = useState(true);
+export default async function DotazyPage() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) redirect("/login");
 
-  useEffect(() => {
-    const fetchInquiries = async () => {
-      try {
-        const res = await fetch("/api/buyer/inquiries");
-        if (res.ok) {
-          const data = await res.json();
-          setInquiries(data.inquiries || []);
-        }
-      } catch {
-        // silently fail
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchInquiries();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-10 h-10 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin" />
-      </div>
-    );
-  }
+  const inquiries = await prisma.inquiry.findMany({
+    where: { senderId: session.user.id },
+    include: {
+      listing: {
+        select: {
+          id: true, slug: true, brand: true, model: true,
+          variant: true, year: true, price: true,
+          images: { select: { url: true, isPrimary: true } },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
 
   if (inquiries.length === 0) {
     return (
-      <EmptyState
-        icon="&#128172;"
-        title="Zatím jste neodeslali žádné dotazy"
-        description="Při procházení nabídky můžete poslat dotaz prodejci."
-        actionLabel="Prohlédnout nabídku"
-        onAction={() => window.location.href = "/nabidka"}
-      />
+      <div className="text-center py-20">
+        <div className="text-4xl mb-3">&#128172;</div>
+        <h3 className="text-xl font-bold text-gray-900">Zatím jste neodeslali žádné dotazy</h3>
+        <p className="text-gray-500 mt-2">Při procházení nabídky můžete poslat dotaz prodejci.</p>
+        <Link href="/nabidka" className="inline-block mt-4 text-orange-500 font-semibold no-underline">
+          Prohlédnout nabídku &rarr;
+        </Link>
+      </div>
     );
   }
 

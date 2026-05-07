@@ -1,6 +1,7 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { prisma } from "@/lib/prisma";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { OrderTracker } from "@/components/web/OrderTracker";
@@ -21,29 +22,6 @@ function mapToTrackerStatus(apiStatus: string): OrderTrackerStatus {
   }
 }
 
-interface OrderItem {
-  id: string;
-  quantity: number;
-  unitPrice: number;
-  totalPrice: number;
-  part: {
-    name: string;
-    slug: string;
-    images?: { url: string }[];
-  };
-}
-
-interface Order {
-  id: string;
-  orderNumber: string;
-  status: string;
-  trackingNumber: string | null;
-  totalPrice: number;
-  paymentMethod: string;
-  createdAt: string;
-  items: OrderItem[];
-}
-
 const statusBadge: Record<string, { label: string; variant: "verified" | "pending" | "new" | "default" | "rejected" }> = {
   PENDING: { label: "Nová", variant: "new" },
   CONFIRMED: { label: "Potvrzena", variant: "pending" },
@@ -52,26 +30,23 @@ const statusBadge: Record<string, { label: string; variant: "verified" | "pendin
   CANCELLED: { label: "Zrušena", variant: "rejected" },
 };
 
-export default function MojeObjednavkyPage() {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(true);
+export default async function MojeObjednavkyPage() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) redirect("/login");
 
-  useEffect(() => {
-    async function fetchOrders() {
-      try {
-        const res = await fetch("/api/orders?role=buyer");
-        if (res.ok) {
-          const data = await res.json();
-          setOrders(data.orders ?? []);
-        }
-      } catch {
-        // Zůstanou prázdné
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchOrders();
-  }, []);
+  const orders = await prisma.order.findMany({
+    where: { buyerId: session.user.id },
+    include: {
+      items: {
+        include: {
+          part: {
+            select: { name: true, slug: true, images: { select: { url: true }, take: 1 } },
+          },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -84,15 +59,9 @@ export default function MojeObjednavkyPage() {
       </section>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        {loading ? (
-          <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white rounded-2xl h-48 animate-pulse" />
-            ))}
-          </div>
-        ) : orders.length === 0 ? (
+        {orders.length === 0 ? (
           <div className="text-center py-16">
-            <span className="text-5xl block mb-4">📦</span>
+            <span className="text-5xl block mb-4">&#128230;</span>
             <h3 className="text-xl font-bold text-gray-900">Zatím žádné objednávky</h3>
             <p className="text-gray-500 mt-2">Prozkoumejte náš katalog a objednejte si díly</p>
             <Link
@@ -105,7 +74,7 @@ export default function MojeObjednavkyPage() {
         ) : (
           orders.map((order) => {
             const badge = statusBadge[order.status] ?? statusBadge.PENDING;
-            const date = new Date(order.createdAt).toLocaleDateString("cs-CZ");
+            const date = order.createdAt.toLocaleDateString("cs-CZ");
             return (
               <Card key={order.id} className="p-6">
                 {/* Header row */}

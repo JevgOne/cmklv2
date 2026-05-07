@@ -1,0 +1,392 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import { StatCard } from "@/components/ui/StatCard";
+import { StatusPill } from "@/components/ui/StatusPill";
+import { Textarea } from "@/components/ui/Textarea";
+import { Alert } from "@/components/ui/Alert";
+
+interface ListingDetail {
+  id: string;
+  slug: string;
+  brand: string;
+  model: string;
+  variant: string | null;
+  year: number;
+  mileage: number;
+  price: number;
+  priceNegotiable: boolean;
+  fuelType: string;
+  transmission: string;
+  status: string;
+  viewCount: number;
+  inquiryCount: number;
+  description: string | null;
+  city: string;
+  district: string | null;
+  contactName: string;
+  contactPhone: string;
+  contactEmail: string | null;
+  isPremium: boolean;
+  createdAt: string;
+  publishedAt: string | null;
+  images: { id: string; url: string; isPrimary: boolean; order: number }[];
+  inquiries: InquiryItem[];
+}
+
+interface InquiryItem {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  message: string;
+  reply: string | null;
+  repliedAt: string | null;
+  status: string;
+  read: boolean;
+  createdAt: string;
+}
+
+function formatPrice(price: number): string {
+  return new Intl.NumberFormat("cs-CZ", {
+    style: "currency",
+    currency: "CZK",
+    maximumFractionDigits: 0,
+  }).format(price);
+}
+
+function formatDate(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString("cs-CZ", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+type StatusVariant = "active" | "pending" | "rejected" | "draft" | "sold";
+
+function getStatusVariant(status: string): StatusVariant {
+  switch (status) {
+    case "ACTIVE": return "active";
+    case "DRAFT": return "draft";
+    case "SOLD": return "sold";
+    default: return "pending";
+  }
+}
+
+function InfoRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <span className="text-gray-500 text-xs">{label}</span>
+      <div className="font-semibold text-gray-900">{value}</div>
+    </div>
+  );
+}
+
+interface ListingDetailManagerProps {
+  initialListing: ListingDetail;
+  listingId: string;
+}
+
+export function ListingDetailManager({ initialListing, listingId }: ListingDetailManagerProps) {
+  const router = useRouter();
+  const [listing, setListing] = useState<ListingDetail>(initialListing);
+  const [replyText, setReplyText] = useState<Record<string, string>>({});
+  const [replyLoading, setReplyLoading] = useState<string | null>(null);
+
+  const fetchListing = async () => {
+    try {
+      const [listingRes, inquiriesRes] = await Promise.all([
+        fetch(`/api/listings/${listingId}`),
+        fetch(`/api/listings/${listingId}/inquiry`),
+      ]);
+
+      if (listingRes.ok) {
+        const listingData = await listingRes.json();
+        const detail = listingData.listing || listingData;
+
+        let inquiries: InquiryItem[] = [];
+        if (inquiriesRes.ok) {
+          const inquiryData = await inquiriesRes.json();
+          inquiries = inquiryData.inquiries || [];
+        }
+
+        setListing({ ...detail, inquiries });
+      }
+    } catch {
+      // silently fail
+    }
+  };
+
+  const handleReply = async (inquiryId: string) => {
+    const text = replyText[inquiryId]?.trim();
+    if (!text) return;
+
+    setReplyLoading(inquiryId);
+    try {
+      const res = await fetch(`/api/listings/${listingId}/inquiry/${inquiryId}/reply`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reply: text }),
+      });
+
+      if (res.ok) {
+        setReplyText((prev) => ({ ...prev, [inquiryId]: "" }));
+        fetchListing();
+      }
+    } catch {
+      // silently fail
+    } finally {
+      setReplyLoading(null);
+    }
+  };
+
+  const primaryImage = listing.images?.find((img) => img.isPrimary) || listing.images?.[0];
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <button
+            onClick={() => router.back()}
+            className="text-sm text-gray-500 hover:text-gray-700 cursor-pointer bg-transparent border-none mb-2 block"
+          >
+            &larr; Zpět na seznam
+          </button>
+          <h2 className="text-2xl font-extrabold text-gray-900">
+            {listing.brand} {listing.model} {listing.variant || ""}
+          </h2>
+        </div>
+        <StatusPill variant={getStatusVariant(listing.status)}>
+          {listing.status}
+        </StatusPill>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <StatCard
+          icon={<span>&#128065;</span>}
+          iconColor="blue"
+          value={String(listing.viewCount)}
+          label="Zobrazení"
+        />
+        <StatCard
+          icon={<span>&#128172;</span>}
+          iconColor="green"
+          value={String(listing.inquiryCount)}
+          label="Dotazů"
+        />
+        <StatCard
+          icon={<span>&#128176;</span>}
+          iconColor="orange"
+          value={formatPrice(listing.price)}
+          label="Cena"
+        />
+        <StatCard
+          icon={<span>&#128197;</span>}
+          value={listing.publishedAt ? formatDate(listing.publishedAt) : "---"}
+          label="Publikováno"
+        />
+      </div>
+
+      {/* Promote / Extend actions */}
+      {listing.status === "ACTIVE" && (
+        <Card className="p-5">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="font-bold text-gray-900 text-sm">Zvýšit viditelnost</h3>
+              <p className="text-xs text-gray-500 mt-0.5">
+                Více zobrazení = více zájemců = rychlejší prodej
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={async () => {
+                  try {
+                    const res = await fetch(`/api/listings/${listingId}/promote`, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ action: "extend" }),
+                    });
+                    if (res.ok) {
+                      const data = await res.json();
+                      if (data.checkoutUrl) window.location.href = data.checkoutUrl;
+                    }
+                  } catch { /* ignore */ }
+                }}
+              >
+                Prodloužit (99 Kč)
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={async () => {
+                  try {
+                    const res = await fetch(`/api/listings/${listingId}/promote`, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ action: "promote" }),
+                    });
+                    if (res.ok) {
+                      const data = await res.json();
+                      if (data.checkoutUrl) window.location.href = data.checkoutUrl;
+                    }
+                  } catch { /* ignore */ }
+                }}
+              >
+                Zvýraznit TOP (199 Kč)
+              </Button>
+            </div>
+          </div>
+          {listing.isPremium && (
+            <div className="mt-3 flex items-center gap-2">
+              <Badge variant="top">TOP</Badge>
+              <span className="text-xs text-gray-500">Váš inzerát je aktuálně zvýrazněný</span>
+            </div>
+          )}
+        </Card>
+      )}
+
+      {/* SLA warning for unreplied inquiries */}
+      {listing.inquiries && listing.inquiries.some((inq) => !inq.reply && !inq.repliedAt) && (
+        <Alert variant="warning" className="flex items-center gap-2">
+          <span className="font-semibold">Máte neodpovězené dotazy!</span>
+          {" "}Odpovězte do 24 hodin, jinak může být inzerát snížen ve vyhledávání.
+        </Alert>
+      )}
+
+      {/* Photos */}
+      {listing.images && listing.images.length > 0 && (
+        <Card className="p-0 overflow-hidden">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1">
+            {listing.images
+              .sort((a, b) => a.order - b.order)
+              .map((img, index) => (
+                <div
+                  key={img.id}
+                  className={`relative aspect-[4/3] bg-gray-100 ${
+                    index === 0 ? "col-span-2 row-span-2" : ""
+                  }`}
+                >
+                  <img
+                    src={img.url}
+                    alt={`Foto ${index + 1}`}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                  {img.isPrimary && (
+                    <Badge variant="top" className="absolute top-2 left-2">
+                      Hlavní
+                    </Badge>
+                  )}
+                </div>
+              ))}
+          </div>
+        </Card>
+      )}
+
+      {/* Listing info */}
+      <Card className="p-6">
+        <h3 className="text-lg font-bold text-gray-900 mb-4">Detail inzerátu</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
+          <InfoRow label="Rok" value={String(listing.year)} />
+          <InfoRow label="Nájezd" value={`${new Intl.NumberFormat("cs-CZ").format(listing.mileage)} km`} />
+          <InfoRow label="Palivo" value={listing.fuelType} />
+          <InfoRow label="Převodovka" value={listing.transmission} />
+          <InfoRow label="Město" value={listing.city} />
+          <InfoRow label="Cena" value={`${formatPrice(listing.price)}${listing.priceNegotiable ? " (k jednání)" : ""}`} />
+        </div>
+        {listing.description && (
+          <div className="mt-4 pt-4 border-t border-gray-100">
+            <p className="text-sm text-gray-600 whitespace-pre-line">{listing.description}</p>
+          </div>
+        )}
+      </Card>
+
+      {/* Inquiries */}
+      <Card className="p-6">
+        <h3 className="text-lg font-bold text-gray-900 mb-4">
+          Dotazy ({listing.inquiries?.length || 0})
+        </h3>
+
+        {(!listing.inquiries || listing.inquiries.length === 0) ? (
+          <p className="text-sm text-gray-500">Zatím žádné dotazy.</p>
+        ) : (
+          <div className="space-y-4">
+            {listing.inquiries.map((inquiry) => (
+              <div
+                key={inquiry.id}
+                className="border border-gray-200 rounded-xl p-4"
+              >
+                <div className="flex items-start justify-between">
+                  <div>
+                    <span className="font-semibold text-gray-900 text-sm">
+                      {inquiry.name}
+                    </span>
+                    <span className="text-xs text-gray-500 ml-2">
+                      {inquiry.email} &middot; {formatDate(inquiry.createdAt)}
+                    </span>
+                  </div>
+                  <div className="flex gap-1.5">
+                    {inquiry.status === "NEW" && <Badge variant="new">Nový</Badge>}
+                    {inquiry.status === "READ" && <Badge variant="pending">Přečteno</Badge>}
+                    {inquiry.status === "REPLIED" && <Badge variant="verified">Odpovězeno</Badge>}
+                    {inquiry.status === "CLOSED" && <Badge variant="default">Uzavřeno</Badge>}
+                    {!inquiry.reply && !inquiry.repliedAt && (() => {
+                      const hours = Math.floor((Date.now() - new Date(inquiry.createdAt).getTime()) / (1000 * 60 * 60));
+                      if (hours >= 24) {
+                        return <span className="text-xs text-red-500 font-semibold">SLA překročeno</span>;
+                      }
+                      if (hours >= 12) {
+                        return <span className="text-xs text-orange-500 font-semibold">Odpovězte do {24 - hours}h</span>;
+                      }
+                      return null;
+                    })()}
+                  </div>
+                </div>
+
+                <p className="text-sm text-gray-700 mt-2">{inquiry.message}</p>
+
+                {inquiry.reply ? (
+                  <div className="mt-3 pl-4 border-l-2 border-orange-200">
+                    <span className="text-xs text-gray-500">Vaše odpověď:</span>
+                    <p className="text-sm text-gray-700 mt-1">{inquiry.reply}</p>
+                  </div>
+                ) : (
+                  <div className="mt-3">
+                    <Textarea
+                      placeholder="Napište odpověď..."
+                      value={replyText[inquiry.id] || ""}
+                      onChange={(e) =>
+                        setReplyText((prev) => ({ ...prev, [inquiry.id]: e.target.value }))
+                      }
+                      className="min-h-[80px]"
+                    />
+                    <div className="flex justify-end mt-2">
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() => handleReply(inquiry.id)}
+                        disabled={replyLoading === inquiry.id || !replyText[inquiry.id]?.trim()}
+                      >
+                        {replyLoading === inquiry.id ? "Odesílám..." : "Odpovědět"}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </Card>
+    </div>
+  );
+}

@@ -1,31 +1,9 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { prisma } from "@/lib/prisma";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-
-interface PartRequestOffer {
-  id: string;
-  partName: string;
-  price: number;
-  condition: string;
-  status: string;
-  supplier: { companyName: string | null; firstName: string | null; lastName: string | null };
-  createdAt: string;
-}
-
-interface PartRequest {
-  id: string;
-  description: string;
-  vehicleBrand: string | null;
-  vehicleModel: string | null;
-  vehicleYear: number | null;
-  status: string;
-  expiresAt: string;
-  createdAt: string;
-  offers: PartRequestOffer[];
-  _count: { offers: number };
-}
 
 const STATUS_MAP: Record<string, { label: string; variant: "success" | "pending" | "rejected" }> = {
   OPEN: { label: "Otevřená", variant: "pending" },
@@ -35,8 +13,8 @@ const STATUS_MAP: Record<string, { label: string; variant: "success" | "pending"
   CANCELLED: { label: "Zrušeno", variant: "rejected" },
 };
 
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString("cs-CZ");
+function formatDate(date: Date): string {
+  return date.toLocaleDateString("cs-CZ");
 }
 
 function formatPrice(amount: number): string {
@@ -47,34 +25,25 @@ function formatPrice(amount: number): string {
   }).format(amount);
 }
 
-export default function PoptavkyPage() {
-  const [requests, setRequests] = useState<PartRequest[]>([]);
-  const [loading, setLoading] = useState(true);
+export default async function PoptavkyPage() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) redirect("/login");
 
-  useEffect(() => {
-    const fetchRequests = async () => {
-      try {
-        const res = await fetch("/api/part-requests");
-        if (res.ok) {
-          const data = await res.json();
-          setRequests(data.requests ?? []);
-        }
-      } catch {
-        // silently fail
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchRequests();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-10 h-10 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin" />
-      </div>
-    );
-  }
+  const requests = await prisma.partRequest.findMany({
+    where: { buyerId: session.user.id },
+    include: {
+      offers: {
+        include: {
+          supplier: {
+            select: { companyName: true, firstName: true, lastName: true },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      },
+      _count: { select: { offers: true } },
+    },
+    orderBy: { createdAt: "desc" },
+  });
 
   return (
     <div className="space-y-6">
@@ -101,7 +70,7 @@ export default function PoptavkyPage() {
               label: req.status,
               variant: "pending" as const,
             };
-            const isExpired = new Date(req.expiresAt) < new Date();
+            const isExpired = req.expiresAt < new Date();
 
             return (
               <Card key={req.id} className="p-5">

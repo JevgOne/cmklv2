@@ -1,97 +1,71 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { StatCard } from "@/components/ui/StatCard";
 import { Card } from "@/components/ui/Card";
 import { ProfileCompletenessBar } from "@/components/profile/ProfileCompletenessBar";
 import type { ProfileCompletenessInput } from "@/lib/profile-completeness";
 
-interface DashboardStats {
-  favorites: number;
-  watchdogs: number;
-  inquiries: number;
-}
+export default async function MujUcetPage() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) redirect("/login");
 
-export default function MujUcetPage() {
-  const [stats, setStats] = useState<DashboardStats>({ favorites: 0, watchdogs: 0, inquiries: 0 });
-  const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<ProfileCompletenessInput | null>(null);
+  const [favoritesCount, watchdogsCount, inquiriesCount, profile] = await Promise.all([
+    prisma.favorite.count({ where: { userId: session.user.id, listingId: { not: null } } }),
+    prisma.watchdog.count({ where: { userId: session.user.id } }),
+    prisma.inquiry.count({ where: { senderId: session.user.id } }),
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: {
+        avatar: true, coverPhoto: true, bio: true, city: true,
+        motto: true, yearsExperience: true, website: true,
+        specializations: true, services: true, languageSkills: true,
+        socialLinks: true,
+      },
+    }),
+  ]);
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const res = await fetch("/api/buyer/stats");
-        if (res.ok) {
-          const data = await res.json();
-          setStats(data);
-        }
-      } catch {
-        // silently fail
-      } finally {
-        setLoading(false);
+  const completenessInput: ProfileCompletenessInput | null = profile
+    ? {
+        avatar: profile.avatar ?? null,
+        coverPhoto: profile.coverPhoto ?? null,
+        bio: profile.bio ?? null,
+        city: profile.city ?? null,
+        motto: profile.motto ?? null,
+        yearsExperience: profile.yearsExperience ?? null,
+        website: profile.website ?? null,
+        specializations: profile.specializations as string | null,
+        services: profile.services as string[] | null,
+        languageSkills: profile.languageSkills as string[] | null,
+        socialLinks: profile.socialLinks as Record<string, string> | null,
       }
-    };
-    const fetchProfile = async () => {
-      try {
-        const res = await fetch("/api/profile/edit");
-        if (res.ok) {
-          const { user } = await res.json();
-          if (user) {
-            setProfile({
-              avatar: user.avatar ?? null,
-              coverPhoto: user.coverPhoto ?? null,
-              bio: user.bio ?? null,
-              city: user.city ?? null,
-              motto: user.motto ?? null,
-              yearsExperience: user.yearsExperience ?? null,
-              website: user.website ?? null,
-              specializations: user.specializations ?? null,
-              services: user.services ?? null,
-              languageSkills: user.languageSkills ?? null,
-              socialLinks: user.socialLinks ?? null,
-            });
-          }
-        }
-      } catch {
-        // silently fail
-      }
-    };
-    fetchStats();
-    fetchProfile();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-10 h-10 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin" />
-      </div>
-    );
-  }
+    : null;
 
   return (
     <div className="space-y-6">
       {/* Profile completeness banner (TASK-060) */}
-      {profile && <ProfileCompletenessBar user={profile} />}
+      {completenessInput && <ProfileCompletenessBar user={completenessInput} />}
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <StatCard
           icon={<span>&#9829;</span>}
           iconColor="red"
-          value={String(stats.favorites)}
+          value={String(favoritesCount)}
           label="Oblíbené vozy"
         />
         <StatCard
           icon={<span>&#128276;</span>}
           iconColor="blue"
-          value={String(stats.watchdogs)}
+          value={String(watchdogsCount)}
           label="Hlídací psi"
         />
         <StatCard
           icon={<span>&#128172;</span>}
           iconColor="green"
-          value={String(stats.inquiries)}
+          value={String(inquiriesCount)}
           label="Odeslaných dotazů"
         />
       </div>
