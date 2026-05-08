@@ -1,40 +1,22 @@
-"use client";
-
-import { useState, useEffect, use } from "react";
+import type { Metadata } from "next";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
 import { ZONE_LABELS, DAMAGE_LEVEL_LABELS, DAMAGE_LEVEL_COLORS, type DamageZone, type DamageLevel } from "@/lib/damage-zones";
 import { getGroupName } from "@/lib/tecdoc";
 
-interface DonorDetail {
-  id: string;
-  brand: string;
-  model: string;
-  year: number | null;
-  vin: string;
-  variant: string | null;
-  engine: string | null;
-  fuel: string | null;
-  transmission: string | null;
-  disposalType: string;
-  damageZones: Record<string, string> | null;
-  photos: string[] | null;
-  totalParts: number;
-  publishedParts: number;
-  totalValue: number;
-  status: string;
-  parts: Array<{
-    id: string;
-    name: string;
-    category: string;
-    price: number;
-    partGrade: string | null;
-    status: string;
-    tecdocProductGroup: string | null;
-    images: Array<{ url: string }>;
-  }>;
-}
+export const metadata: Metadata = {
+  title: "Detail donor auta | Carmakler",
+  description: "Detail donor auta a seznam dílů.",
+};
+
+export const dynamic = "force-dynamic";
+
+const ALLOWED_ROLES = ["PARTS_SUPPLIER", "ADMIN", "BACKOFFICE"];
 
 const DISPOSAL_LABELS: Record<string, string> = {
   ACCIDENT: "Nehoda",
@@ -44,45 +26,38 @@ const DISPOSAL_LABELS: Record<string, string> = {
   FIRE: "Požár",
 };
 
-export default function DonorVehicleDetailPage({
+export default async function DonorVehicleDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = use(params);
-  const [donor, setDonor] = useState<DonorDetail | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch(`/api/donor-vehicles/${id}`)
-      .then((r) => r.json())
-      .then((data) => setDonor(data.donor ?? null))
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [id]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-white px-4 py-8">
-        <div className="space-y-4 animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-2/3" />
-          <div className="h-4 bg-gray-200 rounded w-1/3" />
-          <div className="h-32 bg-gray-200 rounded-xl" />
-          <div className="h-20 bg-gray-200 rounded-xl" />
-        </div>
-      </div>
-    );
+  const session = await getServerSession(authOptions);
+  if (!session?.user || !ALLOWED_ROLES.includes(session.user.role)) {
+    redirect("/login");
   }
 
+  const { id } = await params;
+
+  const donor = await prisma.donorVehicle.findUnique({
+    where: { id },
+    include: {
+      parts: {
+        include: { images: { take: 1 } },
+        orderBy: { createdAt: "asc" },
+      },
+    },
+  });
+
   if (!donor) {
-    return (
-      <div className="min-h-screen bg-white px-4 py-8 text-center">
-        <p className="text-gray-600">Donor auto nenalezeno</p>
-        <Link href="/parts/donors" className="text-orange-600 text-sm mt-2 inline-block">
-          Zpět na seznam
-        </Link>
-      </div>
-    );
+    notFound();
+  }
+
+  // Supplier can only see own
+  if (
+    session.user.role === "PARTS_SUPPLIER" &&
+    donor.supplierId !== session.user.id
+  ) {
+    redirect("/parts/donors");
   }
 
   const photos = (donor.photos ?? []) as string[];

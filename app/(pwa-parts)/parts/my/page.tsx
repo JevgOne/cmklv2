@@ -1,99 +1,75 @@
-"use client";
+import type { Metadata } from "next";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
+import { MyPartsClient } from "@/components/pwa-parts/parts/MyPartsClient";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { Button } from "@/components/ui/Button";
-import { PartCard } from "@/components/pwa-parts/parts/PartCard";
-import { PartFilters } from "@/components/pwa-parts/parts/PartFilters";
+export const metadata: Metadata = {
+  title: "Moje díly | Carmakler",
+  description: "Správa vašich dílů na platformě Carmakler.",
+};
 
-interface PartResult {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-  status: string;
-  viewCount: number;
-  stock: number;
-}
+export const dynamic = "force-dynamic";
 
-export default function MyPartsPage() {
-  const [activeTab, setActiveTab] = useState("all");
-  const [parts, setParts] = useState<PartResult[]>([]);
-  const [counts, setCounts] = useState<Record<string, number>>({});
-  const [loading, setLoading] = useState(true);
+const SUPPLIER_ROLES = [
+  "PARTS_SUPPLIER",
+  "WHOLESALE_SUPPLIER",
+  "PARTNER_VRAKOVISTE",
+  "ADMIN",
+  "BACKOFFICE",
+];
 
-  useEffect(() => {
-    async function fetchParts() {
-      setLoading(true);
-      try {
-        const statusParam = activeTab !== "all" ? `?status=${activeTab}` : "";
-        const res = await fetch(`/api/parts/my${statusParam}`);
-        if (res.ok) {
-          const data = await res.json();
-          setParts(data.parts ?? []);
-          setCounts(data.counts ?? {});
-        }
-      } catch {
-        // Zůstanou prázdné
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchParts();
-  }, [activeTab]);
+export default async function MyPartsPage() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id || !SUPPLIER_ROLES.includes(session.user.role)) {
+    redirect("/login");
+  }
 
-  return (
-    <div className="px-4 py-6 max-w-lg mx-auto space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-extrabold text-gray-900">Moje díly</h1>
-        <Link href="/parts/new" className="no-underline">
-          <Button variant="primary" size="sm" className="bg-gradient-to-br from-green-500 to-green-600">
-            + Přidat
-          </Button>
-        </Link>
-      </div>
+  const where = { supplierId: session.user.id };
+  const baseWhere = { ...where };
 
-      <PartFilters activeTab={activeTab} onTabChange={setActiveTab} counts={counts} />
+  const [parts, total, activeCount, inactiveCount, soldCount] = await Promise.all([
+    prisma.part.findMany({
+      where,
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        category: true,
+        price: true,
+        stock: true,
+        status: true,
+        viewCount: true,
+        createdAt: true,
+        images: { where: { isPrimary: true }, take: 1, select: { url: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+    }),
+    prisma.part.count({ where }),
+    prisma.part.count({ where: { ...baseWhere, status: "ACTIVE" } }),
+    prisma.part.count({ where: { ...baseWhere, status: "INACTIVE" } }),
+    prisma.part.count({ where: { ...baseWhere, status: "SOLD" } }),
+  ]);
 
-      {loading ? (
-        <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-white rounded-2xl h-20 animate-pulse" />
-          ))}
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {parts.map((part) => (
-            <PartCard
-              key={part.id}
-              id={part.id}
-              name={part.name}
-              category={part.category}
-              price={part.price}
-              status={part.status as "ACTIVE" | "SOLD" | "INACTIVE"}
-              views={part.viewCount}
-              quantity={part.stock}
-            />
-          ))}
-        </div>
-      )}
+  const serializedParts = parts.map((p) => ({
+    id: p.id,
+    name: p.name,
+    category: p.category,
+    price: p.price,
+    stock: p.stock,
+    status: p.status,
+    viewCount: p.viewCount,
+    image: p.images[0]?.url ?? null,
+  }));
 
-      {!loading && parts.length === 0 && (
-        <div className="text-center py-12">
-          <div className="text-4xl mb-3">📦</div>
-          <p className="text-gray-500 font-medium">Žádné díly v této kategorii</p>
-        </div>
-      )}
+  const counts = {
+    all: activeCount + inactiveCount + soldCount,
+    ACTIVE: activeCount,
+    INACTIVE: inactiveCount,
+    SOLD: soldCount,
+  };
 
-      {/* Import link */}
-      <div className="text-center pt-4">
-        <Link
-          href="/parts/import"
-          className="text-sm text-green-600 font-semibold no-underline"
-        >
-          Hromadný import z CSV
-        </Link>
-      </div>
-    </div>
-  );
+  return <MyPartsClient initialParts={serializedParts} initialCounts={counts} />;
 }

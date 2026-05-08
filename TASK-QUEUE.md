@@ -6379,7 +6379,7 @@ Přidat blog/magazín sekci na `carmakler.cz/blog` s AI-asistovaným workflow a 
 
 ## TASK-NEW-001: Vehicle Equipment Checkboxes
 Priorita: 1
-Stav: zpracovává se
+Stav: hotovo
 Datum: 2026-04-26
 
 ### Zadání:
@@ -6389,7 +6389,7 @@ Přidat checkboxy výbavy do vehicle intake flow. Po VIN decode předvyplnit sé
 
 ## TASK-NEW-002: Donor Car Flow (PWA Parts Supplier)
 Priorita: 1
-Stav: zpracovává se
+Stav: hotovo
 Datum: 2026-04-26
 
 ### Zadání:
@@ -6410,7 +6410,7 @@ Zatím bez TecDoc API — mock data seznam dílů.
 
 ## TASK-NEW-003: Blog Rich Text Editor
 Priorita: 2
-Stav: zpracovává se
+Stav: hotovo
 Datum: 2026-04-26
 
 ### Zadání:
@@ -6420,7 +6420,7 @@ Nahradit textarea za rich text editor (TipTap). Admin/makléř může psát čl�
 
 ## TASK-NEW-004: Redirect /auth/prihlasit → /login
 Priorita: 1
-Stav: zpracovává se
+Stav: hotovo
 Datum: 2026-04-26
 
 ### Zadání:
@@ -6430,7 +6430,7 @@ Přidat 301 redirect v next.config.ts: /auth/prihlasit → /login
 
 ## TASK-NEW-005: Marketplace VIP Detail Page
 Priorita: 2
-Stav: zpracovává se
+Stav: hotovo
 Datum: 2026-04-26
 
 ### Zadání:

@@ -1,22 +1,19 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import type { Metadata } from "next";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { formatPrice } from "@/lib/utils";
 
-interface DonorVehicle {
-  id: string;
-  brand: string;
-  model: string;
-  year: number | null;
-  vin: string;
-  disposalType: string;
-  totalParts: number;
-  publishedParts: number;
-  totalValue: number;
-  status: string;
-  createdAt: string;
-}
+export const metadata: Metadata = {
+  title: "Donor auta | Carmakler",
+  description: "Přehled donor aut dodavatele.",
+};
+
+export const dynamic = "force-dynamic";
+
+const ALLOWED_ROLES = ["PARTS_SUPPLIER", "ADMIN", "BACKOFFICE"];
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   DRAFT: { label: "Koncept", color: "bg-gray-100 text-gray-700" },
@@ -32,17 +29,23 @@ const DISPOSAL_LABELS: Record<string, string> = {
   FIRE: "Požár",
 };
 
-export default function DonorVehiclesListPage() {
-  const [donors, setDonors] = useState<DonorVehicle[]>([]);
-  const [loading, setLoading] = useState(true);
+export default async function DonorVehiclesListPage() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || !ALLOWED_ROLES.includes(session.user.role)) {
+    redirect("/login");
+  }
 
-  useEffect(() => {
-    fetch("/api/donor-vehicles")
-      .then((r) => r.json())
-      .then((data) => setDonors(data.donors ?? []))
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+  const where = session.user.role === "PARTS_SUPPLIER"
+    ? { supplierId: session.user.id }
+    : {};
+
+  const donors = await prisma.donorVehicle.findMany({
+    where,
+    orderBy: { createdAt: "desc" },
+    take: 12,
+  });
+
+  const serialized = JSON.parse(JSON.stringify(donors));
 
   return (
     <div className="min-h-screen bg-white">
@@ -59,16 +62,7 @@ export default function DonorVehiclesListPage() {
       </div>
 
       <div className="px-4 py-4">
-        {loading ? (
-          <div className="space-y-3">
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="h-24 bg-gray-100 rounded-xl animate-pulse"
-              />
-            ))}
-          </div>
-        ) : donors.length === 0 ? (
+        {serialized.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-4xl mb-3">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1} className="w-16 h-16 mx-auto text-gray-300">
@@ -90,7 +84,7 @@ export default function DonorVehiclesListPage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {donors.map((donor) => {
+            {serialized.map((donor: { id: string; brand: string; model: string; year: number | null; vin: string; disposalType: string; publishedParts: number; totalValue: number; status: string }) => {
               const st = STATUS_LABELS[donor.status] ?? STATUS_LABELS.DRAFT;
               return (
                 <Link

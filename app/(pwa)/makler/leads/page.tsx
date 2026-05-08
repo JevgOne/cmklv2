@@ -1,86 +1,45 @@
-"use client";
+import type { Metadata } from "next";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
+import { BrokerLeadsClient } from "@/components/pwa/leads/BrokerLeadsClient";
 
-import { useEffect, useState, useCallback } from "react";
-import { Tabs } from "@/components/ui/Tabs";
-import { LeadCard, LeadCardData } from "@/components/pwa/leads/LeadCard";
-import { EmptyState } from "@/components/ui/EmptyState";
+export const metadata: Metadata = {
+  title: "Leady | Carmakler",
+  description: "Přehled přiřazených leadů makléře.",
+};
 
-const LEAD_TABS = [
-  { value: "NEW", label: "Nové" },
-  { value: "ASSIGNED", label: "Přijaté" },
-  { value: "CONTACTED", label: "Kontaktováno" },
-  { value: "MEETING_SCHEDULED", label: "Schůzka" },
-  { value: "REJECTED", label: "Odmítnuté" },
-];
+export const dynamic = "force-dynamic";
 
-export default function LeadsPage() {
-  const [activeTab, setActiveTab] = useState("NEW");
-  const [leads, setLeads] = useState<LeadCardData[]>([]);
-  const [loading, setLoading] = useState(true);
+const BROKER_ROLES = ["BROKER", "ADMIN", "BACKOFFICE"];
 
-  const fetchLeads = useCallback(async (status: string) => {
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/leads?status=${status}&assignedToId=me`);
-      if (res.ok) {
-        const data = await res.json();
-        setLeads(data.leads ?? data ?? []);
-      } else {
-        setLeads([]);
-      }
-    } catch {
-      setLeads([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchLeads(activeTab);
-  }, [activeTab, fetchLeads]);
-
-  function handleTabChange(value: string) {
-    setActiveTab(value);
+export default async function LeadsPage() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || !BROKER_ROLES.includes(session.user.role)) {
+    redirect("/login");
   }
 
-  return (
-    <div className="p-4 space-y-4">
-      <div>
-        <h1 className="text-2xl font-extrabold text-gray-900">Leady</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Přehled vašich přiřazených leadů
-        </p>
-      </div>
+  const leads = await prisma.lead.findMany({
+    where: {
+      assignedToId: session.user.id,
+      status: "NEW",
+    },
+    include: {
+      assignedTo: {
+        select: { id: true, firstName: true, lastName: true, slug: true },
+      },
+      assignedBy: {
+        select: { id: true, firstName: true, lastName: true },
+      },
+      region: { select: { id: true, name: true } },
+      vehicle: { select: { id: true, brand: true, model: true, slug: true } },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 20,
+  });
 
-      <Tabs
-        tabs={LEAD_TABS}
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-        className="overflow-x-auto"
-      />
+  const serialized = JSON.parse(JSON.stringify(leads));
 
-      {loading ? (
-        <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="h-24 bg-gray-100 rounded-2xl animate-pulse"
-            />
-          ))}
-        </div>
-      ) : leads.length === 0 ? (
-        <EmptyState
-          icon="📋"
-          title="Žádné leady"
-          description={`V kategorii "${LEAD_TABS.find((t) => t.value === activeTab)?.label}" nemáte žádné leady.`}
-        />
-      ) : (
-        <div className="space-y-3">
-          {leads.map((lead) => (
-            <LeadCard key={lead.id} lead={lead} />
-          ))}
-        </div>
-      )}
-    </div>
-  );
+  return <BrokerLeadsClient initialLeads={serialized} />;
 }
