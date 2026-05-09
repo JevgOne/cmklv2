@@ -21,6 +21,11 @@ export default function robots(): MetadataRoute.Robots {
           "/login",
           "/prihlaseni",
           "/registrace",
+          "/gate",
+          "/overeni-emailu/",
+          "/reset-hesla/",
+          "/zapomenute-heslo",
+          "/notifikace/",
         ],
       },
       // AI crawlers — explicitly allowed for GEO/AIEO

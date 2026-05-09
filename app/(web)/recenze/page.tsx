@@ -1,8 +1,22 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { prisma } from "@/lib/prisma";
 import { ReviewList } from "@/components/web/ReviewList";
+import { pageCanonical } from "@/lib/canonical";
+
+export const metadata: Metadata = {
+  title: "Recenze zákazníků",
+  description:
+    "Přečtěte si recenze zákazníků CarMakléř. Ověřené hodnocení prodeje aut přes makléře, nákupu autodílů a investičních příležitostí.",
+  openGraph: {
+    title: "Recenze zákazníků | CarMakléř",
+    description:
+      "Ověřené recenze zákazníků platformy CarMakléř.",
+  },
+  alternates: pageCanonical("/recenze"),
+};
 
 export const revalidate = 3600;
 

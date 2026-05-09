@@ -135,8 +135,43 @@ export default async function ProductDetailPage({
     ? JSON.parse(part.supplier.cities)[0] ?? ""
     : "";
 
+  // Product JSON-LD structured data
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: part.name,
+    description: part.description || `${part.name} — autodíl na CarMakléř`,
+    ...(part.images[0] && { image: part.images[0].url }),
+    ...(part.oemNumber && { sku: part.oemNumber }),
+    ...(part.partNumber && { mpn: part.partNumber }),
+    brand: {
+      "@type": "Brand",
+      name: compatibleBrands[0] || "CarMakléř",
+    },
+    offers: {
+      "@type": "Offer",
+      url: `${process.env.NEXT_PUBLIC_APP_URL || "https://carmakler.cz"}/shop/produkt/${part.slug || part.id}`,
+      priceCurrency: "CZK",
+      price: part.price,
+      availability: part.stock > 0
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      itemCondition: part.condition === "NEW"
+        ? "https://schema.org/NewCondition"
+        : "https://schema.org/UsedCondition",
+      seller: {
+        "@type": "Organization",
+        name: supplierName,
+      },
+    },
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Breadcrumbs */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">

@@ -405,6 +405,34 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // DB nedostupná
   }
 
+  // Dynamické stránky — díly + shop produkty (Part model)
+  let partPages: MetadataRoute.Sitemap = [];
+  try {
+    const parts = await prisma.part.findMany({
+      where: { status: "ACTIVE" },
+      select: { slug: true, updatedAt: true },
+    });
+
+    partPages = parts
+      .filter((p) => p.slug)
+      .flatMap((p) => [
+        {
+          url: `${BASE_URL}/dily/${p.slug}`,
+          lastModified: p.updatedAt,
+          changeFrequency: "daily" as const,
+          priority: 0.7,
+        },
+        {
+          url: `${BASE_URL}/shop/produkt/${p.slug}`,
+          lastModified: p.updatedAt,
+          changeFrequency: "daily" as const,
+          priority: 0.7,
+        },
+      ]);
+  } catch {
+    // DB nedostupná
+  }
+
   // Dynamické stránky — inzeráty (aktivní listings)
   let listingPages: MetadataRoute.Sitemap = [];
   try {
@@ -441,5 +469,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...bazarPages,
     ...listingPages,
     ...blogPages,
+    ...partPages,
   ];
 }

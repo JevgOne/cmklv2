@@ -94,8 +94,43 @@ export default async function DilyPage() {
     slug: cat.value.toLowerCase(),
   }));
 
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "Odkud pocházejí použité díly?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Díly pochází z ověřených českých vrakovišť a autorizovaných dodavatelů. Každý díl projde kontrolou kvality před odesláním.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Jak zjistím, zda díl pasuje na moje auto?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Zadejte VIN kód svého vozidla a systém zobrazí pouze kompatibilní díly. Alternativně vyberte značku, model a rok výroby.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Jaké jsou podmínky vrácení dílů?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Díly lze vrátit do 14 dnů od doručení bez udání důvodu. Reklamaci lze uplatnit po celou dobu záruky (6–24 měsíců).",
+        },
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       {/* Hero */}
       <section className="bg-gradient-to-b from-orange-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-20 text-center">

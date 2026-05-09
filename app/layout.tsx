@@ -69,6 +69,12 @@ export const metadata: Metadata = {
       { url: "/brand/apple-touch-icon.png", sizes: "180x180" },
     ],
   },
+  other: {
+    "geo.region": "CZ",
+    "geo.placename": "Praha, Česká republika",
+    "geo.position": "50.0755;14.4378",
+    "ICBM": "50.0755, 14.4378",
+  },
   // POZN: `alternates.canonical` SE NEEXPORTUJE v root layoutu — způsobovalo
   // bug #127 (všechny child stránky dědily homepage URL místo svého). Každá
   // indexovaná stránka MUSÍ exportovat vlastní `alternates: pageCanonical("/path")`

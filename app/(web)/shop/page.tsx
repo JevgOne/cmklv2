@@ -106,6 +106,41 @@ export default async function ShopPage() {
           }),
         }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: [
+              {
+                "@type": "Question",
+                name: "Jaká je záruka na autodíly z CarMakléř?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Na všechny díly poskytujeme záruku 6–24 měsíců podle typu dílu. Nové díly mají záruku 24 měsíců, použité díly z vrakovišť 6 měsíců.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Jak najdu správný díl pro své auto?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Zadejte VIN kód, značku a model vozidla nebo název dílu do vyhledávání. Systém automaticky zobrazí kompatibilní díly pro vaše auto.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Jak rychle díly doručíte?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Expedice do 24 hodin od objednání. Doručení přes Zásilkovnu, PPL nebo Českou poštu — obvykle 1–3 pracovní dny po celé ČR.",
+                },
+              },
+            ],
+          }),
+        }}
+      />
       {/* ============================================================ */}
       {/* Hero                                                          */}
       {/* ============================================================ */}

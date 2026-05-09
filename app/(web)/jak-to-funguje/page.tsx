@@ -109,12 +109,55 @@ const partsSteps = [
   },
 ];
 
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Kolik stojí prodej auta přes CarMakléř?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Provize je 5% z prodejní ceny, minimálně 25 000 Kč. V ceně je vše — fotky, inzerce, prohlídky, smlouva i přepis na úřadě.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Jak dlouho trvá prodej auta?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Průměrná doba prodeje je 2–4 týdny. Makléř se ozve do 30 minut od zadání a začne okamžitě pracovat na prodeji.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Jak funguje nákup autodílů?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Zadejte značku, model nebo VIN vozidla a vyhledejte kompatibilní díly. Objednejte online s doručením přes Zásilkovnu, PPL nebo Českou poštu. Na díly je záruka 12–24 měsíců.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Jsou auta na CarMakléř prověřená?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Ano. Každé auto od makléře prochází prověrkou VIN, technického stavu a právní čistoty (nehody, stočení km, zástavy, servis).",
+      },
+    },
+  ],
+};
+
 export default function JakToFungujePage() {
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <Breadcrumbs
         items={[

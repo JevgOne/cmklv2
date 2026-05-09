@@ -1,0 +1,26 @@
+import { ImageResponse } from "next/og";
+import { OgLayout, OG_SIZE, getLogoBase64, ORANGE } from "@/lib/og-image";
+
+export const runtime = "nodejs";
+export const alt = "Kariéra — CarMakléř";
+export const size = OG_SIZE;
+export const contentType = "image/png";
+
+export default async function Image() {
+  const logo = await getLogoBase64();
+
+  return new ImageResponse(
+    (
+      <OgLayout logo={logo}>
+        <div style={{ display: "flex", fontSize: 48, fontWeight: 800, color: "white", textAlign: "center", lineHeight: 1.2 }}>
+          <span>Staňte se </span>
+          <span style={{ color: ORANGE, marginLeft: 14 }}>makléřem</span>
+        </div>
+        <div style={{ display: "flex", fontSize: 22, color: "rgba(255,255,255,0.7)", marginTop: 20, textAlign: "center" }}>
+          Certifikace zdarma · Flexibilní práce · Provize od prvního dne
+        </div>
+      </OgLayout>
+    ),
+    { ...size },
+  );
+}
