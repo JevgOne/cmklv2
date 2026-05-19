@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lead Scout — Admin UI Mockup</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Outfit', sans-serif; background: #f8f9fb; color: #1a1a2e; }
+
+  /* Layout */
+  .layout { display: flex; min-height: 100vh; }
+
+  /* Sidebar */
+  .sidebar { width: 260px; background: #0f0f1a; color: white; padding: 24px 0; flex-shrink: 0; position: fixed; height: 100vh; overflow-y: auto; }
+  .sidebar-logo { padding: 0 20px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 16px; }
+  .sidebar-logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, #f97316, #ea580c); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; color: white; }
+  .sidebar-logo-text { font-size: 17px; font-weight: 800; letter-spacing: 0.5px; }
+  .sidebar-section { padding: 8px 12px; margin-top: 8px; }
+  .sidebar-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.35); padding: 0 8px; margin-bottom: 8px; }
+  .sidebar-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.6); cursor: pointer; transition: all 0.15s; margin-bottom: 2px; }
+  .sidebar-item:hover { background: rgba(255,255,255,0.06); color: white; }
+  .sidebar-item.active { background: linear-gradient(135deg, rgba(249,115,22,0.15), rgba(249,115,22,0.08)); color: #f97316; font-weight: 600; }
+  .sidebar-item-icon { font-size: 18px; width: 24px; text-align: center; }
+  .sidebar-badge { margin-left: auto; background: #f97316; color: white; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+
+  /* Main */
+  .main { margin-left: 260px; flex: 1; padding: 32px; }
+
+  /* Breadcrumb */
+  .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #6b7280; margin-bottom: 8px; }
+  .breadcrumb a { color: #6b7280; text-decoration: none; }
+  .breadcrumb a:hover { color: #f97316; }
+  .breadcrumb span { color: #9ca3af; }
+
+  /* Page header */
+  .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .page-title { font-size: 28px; font-weight: 800; color: #0f0f1a; }
+  .page-subtitle { font-size: 14px; color: #6b7280; margin-top: 2px; }
+  .header-actions { display: flex; gap: 12px; }
+
+  /* Stat cards */
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .stat-card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 0 0 1px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.04); }
+  .stat-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .stat-card-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .stat-card-icon.orange { background: #fff7ed; }
+  .stat-card-icon.green { background: #f0fdf4; }
+  .stat-card-icon.blue { background: #eff6ff; }
+  .stat-card-icon.purple { background: #faf5ff; }
+  .stat-card-trend { font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+  .stat-card-trend.up { color: #16a34a; }
+  .stat-card-trend.down { color: #dc2626; }
+  .stat-card-value { font-size: 32px; font-weight: 800; color: #0f0f1a; line-height: 1; }
+  .stat-card-label { font-size: 13px; color: #6b7280; margin-top: 4px; }
+
+  /* Button */
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 9999px; font-family: 'Outfit'; font-size: 14px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; }
+  .btn-primary { background: linear-gradient(135deg, #f97316, #ea580c); color: white; box-shadow: 0 8px 24px -6px rgba(249,115,22,0.35); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px -6px rgba(249,115,22,0.45); }
+  .btn-secondary { background: #0f0f1a; color: white; }
+  .btn-outline { background: white; color: #374151; border: 2px solid #e5e7eb; }
+  .btn-outline:hover { border-color: #d1d5db; background: #f9fafb; }
+  .btn-sm { padding: 6px 14px; font-size: 13px; }
+  .btn-success { background: #16a34a; color: white; }
+  .btn-danger { background: #dc2626; color: white; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 4px; background: #f3f4f6; padding: 4px; border-radius: 12px; margin-bottom: 20px; width: fit-content; }
+  .tab { padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; color: #6b7280; cursor: pointer; transition: all 0.15s; background: transparent; border: none; font-family: 'Outfit'; }
+  .tab:hover { color: #0f0f1a; }
+  .tab.active { background: white; color: #0f0f1a; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .tab .tab-count { background: #e5e7eb; padding: 1px 8px; border-radius: 20px; font-size: 12px; margin-left: 6px; }
+  .tab.active .tab-count { background: #f97316; color: white; }
+
+  /* Filters */
+  .filters { display: flex; gap: 12px; margin-bottom: 20px; align-items: center; flex-wrap: wrap; }
+  .filter-select { padding: 9px 36px 9px 14px; border: 2px solid #e5e7eb; border-radius: 10px; font-family: 'Outfit'; font-size: 14px; font-weight: 500; color: #374151; background: white; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+  .filter-select:focus { border-color: #f97316; outline: none; box-shadow: 0 0 0 3px rgba(249,115,22,0.1); }
+  .filter-search { padding: 9px 14px 9px 38px; border: 2px solid #e5e7eb; border-radius: 10px; font-family: 'Outfit'; font-size: 14px; font-weight: 500; color: #374151; background: white url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z' stroke='%239CA3AF' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat 12px center; width: 280px; }
+  .filter-search:focus { border-color: #f97316; outline: none; box-shadow: 0 0 0 3px rgba(249,115,22,0.1); }
+
+  /* Table */
+  .table-wrap { background: white; border-radius: 16px; box-shadow: 0 0 0 1px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.04); overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  thead { background: #f9fafb; }
+  th { padding: 12px 16px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #6b7280; text-align: left; border-bottom: 1px solid #e5e7eb; }
+  td { padding: 14px 16px; font-size: 14px; border-bottom: 1px solid #f3f4f6; }
+  tr:hover { background: #fafbfc; }
+  tr:last-child td { border-bottom: none; }
+
+  .lead-name { font-weight: 600; color: #0f0f1a; }
+  .lead-name:hover { color: #f97316; cursor: pointer; }
+  .lead-city { color: #6b7280; font-size: 13px; }
+  .lead-phone { font-family: monospace; font-size: 13px; color: #374151; }
+  .lead-source { font-size: 12px; font-weight: 600; color: #6b7280; background: #f3f4f6; padding: 3px 10px; border-radius: 20px; display: inline-block; }
+
+  /* Status badges */
+  .status { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+  .status-new { background: #dbeafe; color: #1d4ed8; }
+  .status-contacted { background: #fef3c7; color: #b45309; }
+  .status-qualified { background: #d1fae5; color: #065f46; }
+  .status-rejected { background: #fee2e2; color: #b91c1c; }
+  .status-won { background: #d1fae5; color: #065f46; }
+  .status-lost { background: #f3f4f6; color: #6b7280; }
+  .status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
+  .status-new::before { background: #3b82f6; }
+  .status-contacted::before { background: #f59e0b; }
+  .status-qualified::before { background: #10b981; }
+  .status-rejected::before { background: #ef4444; }
+  .status-won::before { background: #10b981; }
+
+  /* Score */
+  .score { font-weight: 700; font-size: 15px; }
+  .score-high { color: #16a34a; }
+  .score-mid { color: #f59e0b; }
+  .score-low { color: #dc2626; }
+
+  /* Avatar */
+  .avatar { width: 28px; height: 28px; border-radius: 50%; background: #f97316; color: white; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+  .avatar.unassigned { background: #e5e7eb; color: #9ca3af; }
+  .assigned-cell { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+
+  /* Pagination */
+  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-top: 1px solid #f3f4f6; }
+  .pagination-info { font-size: 13px; color: #6b7280; }
+  .pagination-buttons { display: flex; gap: 6px; }
+  .page-btn { width: 36px; height: 36px; border: 1px solid #e5e7eb; background: white; border-radius: 8px; font-family: 'Outfit'; font-size: 14px; font-weight: 600; color: #374151; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .page-btn:hover { background: #f9fafb; border-color: #d1d5db; }
+  .page-btn.active { background: #0f0f1a; color: white; border-color: #0f0f1a; }
+
+  /* Country flags */
+  .flag { font-size: 16px; margin-right: 4px; }
+
+  /* ===== DETAIL PAGE ===== */
+  .detail-page { display: none; }
+  .detail-page.visible { display: block; }
+  .list-page.hidden { display: none; }
+
+  .detail-grid { display: grid; grid-template-columns: 1fr 380px; gap: 24px; }
+
+  .card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 0 0 1px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.04); margin-bottom: 16px; }
+  .card-title { font-size: 16px; font-weight: 700; color: #0f0f1a; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .card-title-icon { font-size: 18px; }
+
+  .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f3f4f6; }
+  .info-row:last-child { border-bottom: none; }
+  .info-label { font-size: 13px; color: #6b7280; font-weight: 500; }
+  .info-value { font-size: 14px; font-weight: 600; color: #0f0f1a; text-align: right; }
+  .info-value a { color: #f97316; text-decoration: none; }
+  .info-value a:hover { text-decoration: underline; }
+
+  /* Status card */
+  .status-card-current { display: flex; align-items: center; gap: 12px; padding: 16px; background: #f0fdf4; border-radius: 12px; margin-bottom: 16px; }
+  .status-card-current .status { font-size: 14px; padding: 6px 16px; }
+
+  /* Action buttons */
+  .action-buttons { display: flex; flex-direction: column; gap: 10px; }
+  .action-btn { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 12px; border: 2px solid #e5e7eb; background: white; font-family: 'Outfit'; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.15s; color: #374151; }
+  .action-btn:hover { border-color: #d1d5db; background: #f9fafb; }
+  .action-btn.primary { border-color: #f97316; color: #f97316; background: #fff7ed; }
+  .action-btn.primary:hover { background: #fed7aa; }
+  .action-btn.danger { border-color: #fca5a5; color: #dc2626; background: #fef2f2; }
+  .action-btn.danger:hover { background: #fee2e2; }
+  .action-btn.success { border-color: #86efac; color: #16a34a; background: #f0fdf4; }
+  .action-btn.success:hover { background: #dcfce7; }
+  .action-btn-icon { font-size: 18px; }
+
+  /* Activity timeline */
+  .timeline { position: relative; padding-left: 24px; }
+  .timeline::before { content: ''; position: absolute; left: 7px; top: 8px; bottom: 8px; width: 2px; background: #e5e7eb; }
+  .timeline-item { position: relative; padding-bottom: 20px; }
+  .timeline-item:last-child { padding-bottom: 0; }
+  .timeline-dot { position: absolute; left: -20px; top: 4px; width: 12px; height: 12px; min-width: 12px; max-width: 12px; min-height: 12px; max-height: 12px; border-radius: 50%; border: 2px solid white; flex-shrink: 0; }
+  .timeline-dot::before { display: none !important; }
+  .timeline-dot.system { background: #3b82f6; }
+  .timeline-dot.call { background: #f97316; }
+  .timeline-dot.note { background: #6b7280; }
+  .timeline-dot.status { background: #10b981; }
+  .timeline-title { font-size: 14px; font-weight: 600; color: #0f0f1a; }
+  .timeline-desc { font-size: 13px; color: #6b7280; margin-top: 2px; }
+  .timeline-time { font-size: 12px; color: #9ca3af; margin-top: 4px; }
+
+  /* Notes */
+  .notes-textarea { width: 100%; min-height: 80px; padding: 12px; border: 2px solid #e5e7eb; border-radius: 12px; font-family: 'Outfit'; font-size: 14px; resize: vertical; color: #374151; }
+  .notes-textarea:focus { border-color: #f97316; outline: none; box-shadow: 0 0 0 3px rgba(249,115,22,0.1); }
+
+  /* Back link */
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: #6b7280; cursor: pointer; margin-bottom: 16px; }
+  .back-link:hover { color: #f97316; }
+
+  /* Page nav tabs */
+  .page-nav { display: flex; gap: 8px; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 2px solid #f3f4f6; }
+  .page-nav-btn { padding: 10px 20px; border-radius: 10px; font-family: 'Outfit'; font-size: 14px; font-weight: 600; border: 2px solid #e5e7eb; background: white; color: #6b7280; cursor: pointer; transition: all 0.15s; }
+  .page-nav-btn:hover { border-color: #f97316; color: #f97316; }
+  .page-nav-btn.active { background: #0f0f1a; color: white; border-color: #0f0f1a; }
+
+  /* Vehicle card */
+  .vehicle-card { display: flex; gap: 16px; padding: 16px; background: #f9fafb; border-radius: 12px; }
+  .vehicle-img { width: 100px; height: 70px; background: #e5e7eb; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 24px; }
+  .vehicle-info h4 { font-size: 16px; font-weight: 700; }
+  .vehicle-price { font-size: 20px; font-weight: 800; color: #f97316; }
+
+  /* Raw payload */
+  .raw-payload { background: #1a1a2e; color: #a5b4fc; padding: 16px; border-radius: 12px; font-family: 'JetBrains Mono', monospace; font-size: 12px; max-height: 200px; overflow-y: auto; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">C</div>
+      <div class="sidebar-logo-text">CARMAKLER</div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Hlavni</div>
+      <div class="sidebar-item"><span class="sidebar-item-icon">📊</span> Dashboard</div>
+      <div class="sidebar-item"><span class="sidebar-item-icon">🚗</span> Vozidla</div>
+      <div class="sidebar-item"><span class="sidebar-item-icon">📋</span> Leady</div>
+      <div class="sidebar-item active">
+        <span class="sidebar-item-icon">🔍</span> Lead Scout
+        <span class="sidebar-badge">847</span>
+      </div>
+      <div class="sidebar-item"><span class="sidebar-item-icon">🤝</span> Partneri</div>
+      <div class="sidebar-item"><span class="sidebar-item-icon">👥</span> Uzivatele</div>
+      <div class="sidebar-item"><span class="sidebar-item-icon">📦</span> Objednavky</div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Eshop</div>
+      <div class="sidebar-item"><span class="sidebar-item-icon">🔧</span> Dily</div>
+      <div class="sidebar-item"><span class="sidebar-item-icon">📦</span> Objednavky dilu</div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Inzerce</div>
+      <div class="sidebar-item"><span class="sidebar-item-icon">📰</span> Inzeraty</div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Marketplace</div>
+      <div class="sidebar-item"><span class="sidebar-item-icon">💰</span> VIP Dealy</div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">System</div>
+      <div class="sidebar-item"><span class="sidebar-item-icon">⚙️</span> Nastaveni</div>
+      <div class="sidebar-item"><span class="sidebar-item-icon">🔑</span> API Tokeny</div>
+    </div>
+  </nav>
+
+  <!-- Main content -->
+  <main class="main">
+
+    <!-- Page navigation -->
+    <div class="page-nav">
+      <button class="page-nav-btn active" onclick="showPage('list')">Seznam leadu</button>
+      <button class="page-nav-btn" onclick="showPage('detail-business')">Detail — Autobazar</button>
+      <button class="page-nav-btn" onclick="showPage('detail-private')">Detail — Soukromnik</button>
+    </div>
+
+    <!-- ==================== LIST PAGE ==================== -->
+    <div id="list-page" class="list-page">
+      <div class="breadcrumb">
+        <a href="#">Admin</a> <span>/</span> <a href="#">Lead Scout</a>
+      </div>
+
+      <div class="page-header">
+        <div>
+          <div class="page-title">Lead Scout</div>
+          <div class="page-subtitle">Automaticky nalezene kontakty z verejnych zdroju</div>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-outline btn-sm">📥 Export CSV</button>
+          <button class="btn btn-secondary btn-sm">⚡ Spustit sber</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <div class="stat-card-icon orange">🔍</div>
+            <div class="stat-card-trend up">↑ 12% <span style="color:#9ca3af">tento tyden</span></div>
+          </div>
+          <div class="stat-card-value">847</div>
+          <div class="stat-card-label">Celkem leadu</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <div class="stat-card-icon blue">🆕</div>
+            <div class="stat-card-trend up">↑ 34 dnes</div>
+          </div>
+          <div class="stat-card-value">156</div>
+          <div class="stat-card-label">Novych (ceka na zpracovani)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <div class="stat-card-icon green">✅</div>
+          </div>
+          <div class="stat-card-value">23</div>
+          <div class="stat-card-label">Kvalifikovanych</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <div class="stat-card-icon purple">🎯</div>
+          </div>
+          <div class="stat-card-value">14.2%</div>
+          <div class="stat-card-label">Konverzni pomer</div>
+        </div>
+      </div>
+
+      <!-- Category Tabs -->
+      <div class="tabs" id="category-tabs">
+        <button class="tab active" onclick="switchTab('all')">Vse <span class="tab-count">847</span></button>
+        <button class="tab" onclick="switchTab('vrakoviste')">🏚️ Vrakoviste <span class="tab-count">89</span></button>
+        <button class="tab" onclick="switchTab('autobazary')">🚗 Autobazary <span class="tab-count">312</span></button>
+        <button class="tab" onclick="switchTab('soukromnici')">👤 Soukromnici <span class="tab-count">446</span></button>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters">
+        <select class="filter-select">
+          <option>🇨🇿 Cesko</option>
+          <option>🇩🇪 Nemecko</option>
+          <option>Vse zeme</option>
+        </select>
+        <select class="filter-select">
+          <option>Vsechny statusy</option>
+          <option>🔵 Novy</option>
+          <option>🟡 Kontaktovano</option>
+          <option>🟢 Kvalifikovano</option>
+          <option>🔴 Odmitnuto</option>
+        </select>
+        <select class="filter-select" id="source-filter">
+          <option>Vsechny zdroje</option>
+          <option>Google Places</option>
+          <option>Firmy.cz</option>
+          <option>Bazos.cz</option>
+          <option>Sauto.cz</option>
+          <option>TipCars</option>
+          <option>Mobile.de</option>
+        </select>
+        <input type="text" class="filter-search" placeholder="Hledat podle nazvu, telefonu, mesta...">
+      </div>
+
+      <!-- ====== TABLE: ALL / AUTOBAZARY / VRAKOVISTE ====== -->
+      <div class="table-wrap" id="table-default">
+        <table>
+          <thead>
+            <tr>
+              <th>Nazev / Kontakt</th>
+              <th>Typ</th>
+              <th>Mesto</th>
+              <th>Zdroj</th>
+              <th>Score</th>
+              <th>Status</th>
+              <th>Prirazeno</th>
+              <th>Datum</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div class="lead-name" onclick="showPage('detail-business')">AutoMax Praha s.r.o.</div>
+                <div class="lead-phone">+420 602 345 678</div>
+              </td>
+              <td><span style="font-size:16px">🚗</span></td>
+              <td><span class="flag">🇨🇿</span> Praha 5</td>
+              <td><span class="lead-source">Google Places</span></td>
+              <td><span class="score score-high">85</span></td>
+              <td><span class="status status-new">Novy</span></td>
+              <td><span class="assigned-cell"><span class="avatar unassigned">—</span> Neprirazeno</span></td>
+              <td style="color:#6b7280; font-size:13px">dnes 3:14</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="lead-name">Autobazar U Dalnice</div>
+                <div class="lead-phone">+420 777 888 999</div>
+              </td>
+              <td><span style="font-size:16px">🚗</span></td>
+              <td><span class="flag">🇨🇿</span> Brno</td>
+              <td><span class="lead-source">Firmy.cz</span></td>
+              <td><span class="score score-high">72</span></td>
+              <td><span class="status status-contacted">Kontaktovano</span></td>
+              <td><span class="assigned-cell"><span class="avatar">KN</span> Karel Novak</span></td>
+              <td style="color:#6b7280; font-size:13px">vcera</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="lead-name">Autohaus Schmidt GmbH</div>
+                <div class="lead-phone">+49 30 1234567</div>
+              </td>
+              <td><span style="font-size:16px">🚗</span></td>
+              <td><span class="flag">🇩🇪</span> Berlin</td>
+              <td><span class="lead-source">Google Places</span></td>
+              <td><span class="score score-high">78</span></td>
+              <td><span class="status status-new">Novy</span></td>
+              <td><span class="assigned-cell"><span class="avatar unassigned">—</span> Neprirazeno</span></td>
+              <td style="color:#6b7280; font-size:13px">dnes 2:45</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="lead-name">Ekologicka likvidace Plzen</div>
+                <div class="lead-phone">+420 377 234 567</div>
+              </td>
+              <td><span style="font-size:16px">🏚️</span></td>
+              <td><span class="flag">🇨🇿</span> Plzen</td>
+              <td><span class="lead-source">Firmy.cz</span></td>
+              <td><span class="score score-mid">58</span></td>
+              <td><span class="status status-qualified">Kvalifikovano</span></td>
+              <td><span class="assigned-cell"><span class="avatar">LH</span> Lucie Hozna</span></td>
+              <td style="color:#6b7280; font-size:13px">pred 3 dny</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="lead-name">KFZ-Handel Muller</div>
+                <div class="lead-phone">+49 89 9876543</div>
+              </td>
+              <td><span style="font-size:16px">🚗</span></td>
+              <td><span class="flag">🇩🇪</span> Munchen</td>
+              <td><span class="lead-source">Google Places</span></td>
+              <td><span class="score score-mid">63</span></td>
+              <td><span class="status status-new">Novy</span></td>
+              <td><span class="assigned-cell"><span class="avatar unassigned">—</span> Neprirazeno</span></td>
+              <td style="color:#6b7280; font-size:13px">dnes 3:02</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="lead-name">Vrakoviste Cerny s.r.o.</div>
+                <div class="lead-phone">+420 412 345 678</div>
+              </td>
+              <td><span style="font-size:16px">🏚️</span></td>
+              <td><span class="flag">🇨🇿</span> Usti n/L</td>
+              <td><span class="lead-source">Zlatestranky</span></td>
+              <td><span class="score score-low">32</span></td>
+              <td><span class="status status-rejected">Odmitnuto</span></td>
+              <td><span class="assigned-cell"><span class="avatar">LH</span> Lucie Hozna</span></td>
+              <td style="color:#6b7280; font-size:13px">pred 5 dny</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <div class="pagination-info">Zobrazeno 1–6 z 312 leadu</div>
+          <div class="pagination-buttons">
+            <button class="page-btn">‹</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">...</button>
+            <button class="page-btn">32</button>
+            <button class="page-btn">›</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====== TABLE: SOUKROMNICI — with vehicle info ====== -->
+      <div class="table-wrap" id="table-soukromnici" style="display:none">
+        <table>
+          <thead>
+            <tr>
+              <th>Prodejce</th>
+              <th>Vozidlo</th>
+              <th>Cena</th>
+              <th>Rok / km</th>
+              <th>Mesto</th>
+              <th>Zdroj</th>
+              <th>Score</th>
+              <th>Status</th>
+              <th>Makler</th>
+              <th>Datum</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr onclick="showPage('detail-private')" style="cursor:pointer">
+              <td>
+                <div class="lead-name">Jana Novakova</div>
+                <div class="lead-phone">+420 608 123 456</div>
+              </td>
+              <td>
+                <div style="display:flex; align-items:center; gap:10px">
+                  <div style="width:56px;height:40px;background:#f3f4f6;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🚗</div>
+                  <div>
+                    <div style="font-weight:700; font-size:14px">Skoda Octavia</div>
+                    <div style="font-size:12px; color:#6b7280">Combi 2.0 TDI, 1. majitel</div>
+                  </div>
+                </div>
+              </td>
+              <td><span style="font-weight:800; color:#f97316; font-size:15px">289 000 Kc</span></td>
+              <td><span style="font-size:13px">2019<br><span style="color:#6b7280">78 000 km</span></span></td>
+              <td><span class="flag">🇨🇿</span> Praha 4</td>
+              <td><span class="lead-source">Bazos.cz</span></td>
+              <td><span class="score score-high">71</span></td>
+              <td><span class="status status-new">Novy</span></td>
+              <td><span class="assigned-cell"><span class="avatar">PM</span> Petr M.</span></td>
+              <td style="color:#6b7280; font-size:13px">dnes 7:00</td>
+            </tr>
+            <tr style="cursor:pointer">
+              <td>
+                <div class="lead-name">Martin Svoboda</div>
+                <div class="lead-phone">+420 721 555 333</div>
+              </td>
+              <td>
+                <div style="display:flex; align-items:center; gap:10px">
+                  <div style="width:56px;height:40px;background:#f3f4f6;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🚗</div>
+                  <div>
+                    <div style="font-weight:700; font-size:14px">VW Passat</div>
+                    <div style="font-size:12px; color:#6b7280">Variant 2.0 TDI DSG</div>
+                  </div>
+                </div>
+              </td>
+              <td><span style="font-weight:800; color:#f97316; font-size:15px">345 000 Kc</span></td>
+              <td><span style="font-size:13px">2020<br><span style="color:#6b7280">62 000 km</span></span></td>
+              <td><span class="flag">🇨🇿</span> Olomouc</td>
+              <td><span class="lead-source">Sbazar.cz</span></td>
+              <td><span class="score score-mid">54</span></td>
+              <td><span class="status status-contacted">Kontaktovano</span></td>
+              <td><span class="assigned-cell"><span class="avatar">JK</span> Jan K.</span></td>
+              <td style="color:#6b7280; font-size:13px">pred 2 dny</td>
+            </tr>
+            <tr style="cursor:pointer">
+              <td>
+                <div class="lead-name">Pavel Horak</div>
+                <div class="lead-phone">+420 605 999 111</div>
+              </td>
+              <td>
+                <div style="display:flex; align-items:center; gap:10px">
+                  <div style="width:56px;height:40px;background:#f3f4f6;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🚗</div>
+                  <div>
+                    <div style="font-weight:700; font-size:14px">BMW 320d</div>
+                    <div style="font-size:12px; color:#6b7280">xDrive, M-paket, automat</div>
+                  </div>
+                </div>
+              </td>
+              <td><span style="font-weight:800; color:#f97316; font-size:15px">489 000 Kc</span></td>
+              <td><span style="font-size:13px">2021<br><span style="color:#6b7280">45 000 km</span></span></td>
+              <td><span class="flag">🇨🇿</span> Praha 10</td>
+              <td><span class="lead-source">Bazos.cz</span></td>
+              <td><span class="score score-high">82</span></td>
+              <td><span class="status status-new">Novy</span></td>
+              <td><span class="assigned-cell"><span class="avatar">PM</span> Petr M.</span></td>
+              <td style="color:#6b7280; font-size:13px">dnes 7:00</td>
+            </tr>
+            <tr style="cursor:pointer">
+              <td>
+                <div class="lead-name">Eva Kralova</div>
+                <div class="lead-phone">+420 773 222 444</div>
+              </td>
+              <td>
+                <div style="display:flex; align-items:center; gap:10px">
+                  <div style="width:56px;height:40px;background:#f3f4f6;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🚗</div>
+                  <div>
+                    <div style="font-weight:700; font-size:14px">Toyota Yaris</div>
+                    <div style="font-size:12px; color:#6b7280">1.5 Hybrid, Style</div>
+                  </div>
+                </div>
+              </td>
+              <td><span style="font-weight:800; color:#f97316; font-size:15px">215 000 Kc</span></td>
+              <td><span style="font-size:13px">2018<br><span style="color:#6b7280">92 000 km</span></span></td>
+              <td><span class="flag">🇨🇿</span> Brno</td>
+              <td><span class="lead-source">Sauto.cz</span></td>
+              <td><span class="score score-mid">61</span></td>
+              <td><span class="status status-new">Novy</span></td>
+              <td><span class="assigned-cell"><span class="avatar unassigned">—</span> Pool</span></td>
+              <td style="color:#6b7280; font-size:13px">dnes 7:00</td>
+            </tr>
+            <tr style="cursor:pointer">
+              <td>
+                <div class="lead-name">Hans Weber</div>
+                <div class="lead-phone">+49 171 2345678</div>
+              </td>
+              <td>
+                <div style="display:flex; align-items:center; gap:10px">
+                  <div style="width:56px;height:40px;background:#f3f4f6;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🚗</div>
+                  <div>
+                    <div style="font-weight:700; font-size:14px">Mercedes C220d</div>
+                    <div style="font-size:12px; color:#6b7280">AMG Line, Panorama, LED</div>
+                  </div>
+                </div>
+              </td>
+              <td><span style="font-weight:800; color:#f97316; font-size:15px">€ 18 900</span></td>
+              <td><span style="font-size:13px">2020<br><span style="color:#6b7280">55 000 km</span></span></td>
+              <td><span class="flag">🇩🇪</span> Dresden</td>
+              <td><span class="lead-source">Mobile.de</span></td>
+              <td><span class="score score-high">74</span></td>
+              <td><span class="status status-new">Novy</span></td>
+              <td><span class="assigned-cell"><span class="avatar unassigned">—</span> Pool</span></td>
+              <td style="color:#6b7280; font-size:13px">dnes 3:15</td>
+            </tr>
+            <tr style="cursor:pointer">
+              <td>
+                <div class="lead-name">Tomas Vlcek</div>
+                <div class="lead-phone">+420 602 111 222</div>
+              </td>
+              <td>
+                <div style="display:flex; align-items:center; gap:10px">
+                  <div style="width:56px;height:40px;background:#f3f4f6;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🚗</div>
+                  <div>
+                    <div style="font-weight:700; font-size:14px">Hyundai Tucson</div>
+                    <div style="font-size:12px; color:#6b7280">1.6 T-GDI, Smart</div>
+                  </div>
+                </div>
+              </td>
+              <td><span style="font-weight:800; color:#f97316; font-size:15px">425 000 Kc</span></td>
+              <td><span style="font-size:13px">2022<br><span style="color:#6b7280">31 000 km</span></span></td>
+              <td><span class="flag">🇨🇿</span> Ostrava</td>
+              <td><span class="lead-source">Bazos.cz</span></td>
+              <td><span class="score score-high">77</span></td>
+              <td><span class="status status-qualified">Kvalifikovano</span></td>
+              <td><span class="assigned-cell"><span class="avatar">MH</span> Milan H.</span></td>
+              <td style="color:#6b7280; font-size:13px">pred 1 dnem</td>
+            </tr>
+            <tr style="cursor:pointer">
+              <td>
+                <div class="lead-name">Petra Dlouha</div>
+                <div class="lead-phone">+420 777 333 666</div>
+              </td>
+              <td>
+                <div style="display:flex; align-items:center; gap:10px">
+                  <div style="width:56px;height:40px;background:#f3f4f6;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🚗</div>
+                  <div>
+                    <div style="font-weight:700; font-size:14px">Kia Sportage</div>
+                    <div style="font-size:12px; color:#6b7280">1.6 CRDi, Exclusive</div>
+                  </div>
+                </div>
+              </td>
+              <td><span style="font-weight:800; color:#f97316; font-size:15px">369 000 Kc</span></td>
+              <td><span style="font-size:13px">2019<br><span style="color:#6b7280">85 000 km</span></span></td>
+              <td><span class="flag">🇨🇿</span> Liberec</td>
+              <td><span class="lead-source">Sbazar.cz</span></td>
+              <td><span class="score score-mid">48</span></td>
+              <td><span class="status status-rejected">Odmitnuto</span></td>
+              <td><span class="assigned-cell"><span class="avatar">JK</span> Jan K.</span></td>
+              <td style="color:#6b7280; font-size:13px">pred 4 dny</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <div class="pagination-info">Zobrazeno 1–7 z 446 soukromniku</div>
+          <div class="pagination-buttons">
+            <button class="page-btn">‹</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">...</button>
+            <button class="page-btn">45</button>
+            <button class="page-btn">›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== DETAIL PAGE — BUSINESS ==================== -->
+    <div id="detail-business" class="detail-page">
+      <div class="back-link" onclick="showPage('list')">← Zpet na seznam</div>
+
+      <div class="breadcrumb">
+        <a href="#">Admin</a> <span>/</span> <a href="#" onclick="showPage('list')">Lead Scout</a> <span>/</span> AutoMax Praha s.r.o.
+      </div>
+
+      <div class="page-header">
+        <div>
+          <div class="page-title">AutoMax Praha s.r.o.</div>
+          <div class="page-subtitle">🚗 Autobazar · 🇨🇿 Praha 5 · Score: <span class="score score-high">85</span></div>
+        </div>
+      </div>
+
+      <div class="detail-grid">
+        <!-- Left column -->
+        <div>
+          <!-- Contact -->
+          <div class="card">
+            <div class="card-title"><span class="card-title-icon">📇</span> Kontaktni udaje</div>
+            <div class="info-row"><span class="info-label">Nazev firmy</span><span class="info-value">AutoMax Praha s.r.o.</span></div>
+            <div class="info-row"><span class="info-label">Kontaktni osoba</span><span class="info-value">Jan Novak (jednatel)</span></div>
+            <div class="info-row"><span class="info-label">Telefon</span><span class="info-value"><a href="tel:+420602345678">+420 602 345 678</a></span></div>
+            <div class="info-row"><span class="info-label">Email</span><span class="info-value"><a href="mailto:info@automax-praha.cz">info@automax-praha.cz</a></span></div>
+            <div class="info-row"><span class="info-label">Web</span><span class="info-value"><a href="#">automax-praha.cz</a></span></div>
+          </div>
+
+          <!-- Location -->
+          <div class="card">
+            <div class="card-title"><span class="card-title-icon">📍</span> Lokace</div>
+            <div class="info-row"><span class="info-label">Adresa</span><span class="info-value">Plzenska 234/12, 150 00 Praha 5</span></div>
+            <div class="info-row"><span class="info-label">Kraj</span><span class="info-value">Praha</span></div>
+            <div class="info-row"><span class="info-label">GPS</span><span class="info-value">50.0712, 14.3968</span></div>
+            <div style="height:150px; background:#e5e7eb; border-radius:12px; margin-top:12px; display:flex; align-items:center; justify-content:center; color:#9ca3af;">
+              Mapa (Google Maps embed)
+            </div>
+          </div>
+
+          <!-- Business info -->
+          <div class="card">
+            <div class="card-title"><span class="card-title-icon">🏢</span> Firemni informace</div>
+            <div class="info-row"><span class="info-label">ICO</span><span class="info-value">12345678</span></div>
+            <div class="info-row"><span class="info-label">Odhadovana velikost</span><span class="info-value">Stredni (10-30 vozidel)</span></div>
+            <div class="info-row"><span class="info-label">Google hodnoceni</span><span class="info-value">⭐ 4.5 (87 recenzi)</span></div>
+            <div class="info-row"><span class="info-label">Zdroj</span><span class="info-value"><span class="lead-source">Google Places</span></span></div>
+            <div class="info-row"><span class="info-label">Zdrojove URL</span><span class="info-value"><a href="#">maps.google.com/...</a></span></div>
+            <div class="info-row"><span class="info-label">Nalezeno</span><span class="info-value">19. 5. 2026, 3:14</span></div>
+          </div>
+
+          <!-- Raw payload -->
+          <div class="card">
+            <div class="card-title"><span class="card-title-icon">🔧</span> Raw data (debug)</div>
+            <div class="raw-payload">{
+  "place_id": "ChIJN1t_tDeuEmsRUsoyG83frY4",
+  "business_status": "OPERATIONAL",
+  "formatted_phone_number": "+420 602 345 678",
+  "types": ["car_dealer", "point_of_interest"],
+  "opening_hours": {
+    "open_now": true,
+    "weekday_text": ["Po-Pa: 8:00-18:00", "So: 9:00-14:00"]
+  },
+  "reviews": 87,
+  "rating": 4.5
+}</div>
+          </div>
+        </div>
+
+        <!-- Right column -->
+        <div>
+          <!-- Status -->
+          <div class="card">
+            <div class="card-title"><span class="card-title-icon">📊</span> Status</div>
+            <div class="status-card-current">
+              <span class="status status-new">Novy</span>
+              <span style="font-size:13px; color:#6b7280">— ceka na zpracovani</span>
+            </div>
+            <select class="filter-select" style="width:100%; margin-bottom:12px;">
+              <option selected>🔵 Novy</option>
+              <option>🟡 Kontaktovano</option>
+              <option>🟢 Kvalifikovano</option>
+              <option>🔴 Odmitnuto</option>
+              <option>✅ Ziskano</option>
+              <option>❌ Ztraceno</option>
+            </select>
+            <button class="btn btn-primary" style="width:100%">Ulozit status</button>
+          </div>
+
+          <!-- Actions -->
+          <div class="card">
+            <div class="card-title"><span class="card-title-icon">⚡</span> Akce</div>
+            <div class="action-buttons">
+              <button class="action-btn primary"><span class="action-btn-icon">👋</span> Pridat pod sebe</button>
+              <button class="action-btn"><span class="action-btn-icon">👤</span> Priradit kolegovi</button>
+              <button class="action-btn success"><span class="action-btn-icon">🔄</span> Konvertovat na Partnera</button>
+              <button class="action-btn danger"><span class="action-btn-icon">✕</span> Odmitnout</button>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="card">
+            <div class="card-title"><span class="card-title-icon">📝</span> Poznamky</div>
+            <textarea class="notes-textarea" placeholder="Pridat poznamku..."></textarea>
+            <button class="btn btn-outline btn-sm" style="margin-top:10px">Ulozit poznamku</button>
+          </div>
+
+          <!-- Activity log -->
+          <div class="card">
+            <div class="card-title"><span class="card-title-icon">📅</span> Historie aktivit</div>
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-dot system"></div>
+                <div class="timeline-title">Lead nalezen</div>
+                <div class="timeline-desc">Automaticky sbiran z Google Places</div>
+                <div class="timeline-time">dnes v 3:14</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot status"></div>
+                <div class="timeline-title">Prirazen region: Praha</div>
+                <div class="timeline-desc">Automaticke prirazeni podle mesta</div>
+                <div class="timeline-time">dnes v 3:14</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== DETAIL PAGE — PRIVATE SELLER ==================== -->
+    <div id="detail-private" class="detail-page">
+      <div class="back-link" onclick="showPage('list')">← Zpet na seznam</div>
+
+      <div class="breadcrumb">
+        <a href="#">Admin</a> <span>/</span> <a href="#" onclick="showPage('list')">Lead Scout</a> <span>/</span> Jana Novakova
+      </div>
+
+      <div class="page-header">
+        <div>
+          <div class="page-title">Jana Novakova</div>
+          <div class="page-subtitle">👤 Soukromnik · 🇨🇿 Praha 4 · Score: <span class="score score-high">71</span></div>
+        </div>
+      </div>
+
+      <div class="detail-grid">
+        <!-- Left column -->
+        <div>
+          <!-- Vehicle -->
+          <div class="card">
+            <div class="card-title"><span class="card-title-icon">🚗</span> Nabizene vozidlo</div>
+            <div class="vehicle-card">
+              <div class="vehicle-img">🚗</div>
+              <div class="vehicle-info">
+                <h4>Skoda Octavia Combi 2.0 TDI</h4>
+                <div style="font-size:13px; color:#6b7280; margin: 4px 0;">2019 · 78 000 km · Diesel</div>
+                <div class="vehicle-price">289 000 Kc</div>
+              </div>
+            </div>
+            <div style="margin-top:16px">
+              <div class="info-row"><span class="info-label">Titulek inzeratu</span><span class="info-value">Prodej Octavia, 1. majitel, servisni kniha</span></div>
+              <div class="info-row"><span class="info-label">Znacka / Model</span><span class="info-value">Skoda Octavia</span></div>
+              <div class="info-row"><span class="info-label">Rok vyroby</span><span class="info-value">2019</span></div>
+              <div class="info-row"><span class="info-label">Najeto</span><span class="info-value">78 000 km</span></div>
+              <div class="info-row"><span class="info-label">Cena</span><span class="info-value" style="color:#f97316; font-weight:800">289 000 Kc</span></div>
+            </div>
+          </div>
+
+          <!-- Contact -->
+          <div class="card">
+            <div class="card-title"><span class="card-title-icon">📇</span> Kontakt na prodejce</div>
+            <div class="info-row"><span class="info-label">Jmeno</span><span class="info-value">Jana Novakova</span></div>
+            <div class="info-row"><span class="info-label">Telefon</span><span class="info-value"><a href="tel:+420608123456">+420 608 123 456</a></span></div>
+            <div class="info-row"><span class="info-label">Lokalita</span><span class="info-value">Praha 4 — Nusle</span></div>
+          </div>
+
+          <!-- Source -->
+          <div class="card">
+            <div class="card-title"><span class="card-title-icon">🌐</span> Zdroj</div>
+            <div class="info-row"><span class="info-label">Portal</span><span class="info-value"><span class="lead-source">Bazos.cz</span></span></div>
+            <div class="info-row"><span class="info-label">URL inzeratu</span><span class="info-value"><a href="#">bazos.cz/inzerat/123456</a></span></div>
+            <div class="info-row"><span class="info-label">Datum nalezeni</span><span class="info-value">19. 5. 2026, 2:30</span></div>
+            <div class="info-row"><span class="info-label">Expirace</span><span class="info-value" style="color:#f59e0b">za 5 dni (24. 5.)</span></div>
+          </div>
+        </div>
+
+        <!-- Right column -->
+        <div>
+          <!-- Status -->
+          <div class="card">
+            <div class="card-title"><span class="card-title-icon">📊</span> Status</div>
+            <div class="status-card-current">
+              <span class="status status-new">Novy</span>
+              <span style="font-size:13px; color:#6b7280">— prirazeno dnes ranni distribuci</span>
+            </div>
+            <select class="filter-select" style="width:100%; margin-bottom:12px;">
+              <option selected>🔵 Novy</option>
+              <option>🟡 Kontaktovano</option>
+              <option>🟢 Kvalifikovano</option>
+              <option>🔴 Odmitnuto</option>
+              <option>✅ Ziskano</option>
+              <option>❌ Ztraceno</option>
+            </select>
+            <button class="btn btn-primary" style="width:100%">Ulozit status</button>
+          </div>
+
+          <!-- Assignment -->
+          <div class="card">
+            <div class="card-title"><span class="card-title-icon">👤</span> Prirazeni</div>
+            <div style="display:flex; align-items:center; gap:12px; padding:12px; background:#fff7ed; border-radius:12px; margin-bottom:12px;">
+              <span class="avatar">PM</span>
+              <div>
+                <div style="font-weight:600; font-size:14px">Petr Makler</div>
+                <div style="font-size:12px; color:#6b7280">Makler · Region Praha</div>
+              </div>
+            </div>
+            <button class="action-btn" style="width:100%"><span class="action-btn-icon">🔄</span> Predat kolegovi</button>
+          </div>
+
+          <!-- Actions -->
+          <div class="card">
+            <div class="card-title"><span class="card-title-icon">⚡</span> Akce maklere</div>
+            <div class="action-buttons">
+              <button class="action-btn primary"><span class="action-btn-icon">📞</span> Zavolat (oznacit jako kontaktovano)</button>
+              <button class="action-btn success"><span class="action-btn-icon">🚗</span> Konvertovat na Lead (nabrat auto)</button>
+              <button class="action-btn danger"><span class="action-btn-icon">✕</span> Odmitnout (nema zajem)</button>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="card">
+            <div class="card-title"><span class="card-title-icon">📝</span> Poznamky</div>
+            <textarea class="notes-textarea" placeholder="Poznamka z hovoru..."></textarea>
+            <button class="btn btn-outline btn-sm" style="margin-top:10px">Ulozit</button>
+          </div>
+
+          <!-- Activity log -->
+          <div class="card">
+            <div class="card-title"><span class="card-title-icon">📅</span> Historie</div>
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-dot system"></div>
+                <div class="timeline-title">Lead nalezen</div>
+                <div class="timeline-desc">Bazos.cz — osobni automobily</div>
+                <div class="timeline-time">dnes v 2:30</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot status"></div>
+                <div class="timeline-title">Prirazen makleri: Petr Makler</div>
+                <div class="timeline-desc">Automaticka ranni distribuce (region Praha)</div>
+                <div class="timeline-time">dnes v 7:00</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+function showPage(page) {
+  document.getElementById('list-page').style.display = 'none';
+  document.getElementById('detail-business').style.display = 'none';
+  document.getElementById('detail-private').style.display = 'none';
+
+  document.querySelectorAll('.page-nav-btn').forEach(b => b.classList.remove('active'));
+
+  if (page === 'list') {
+    document.getElementById('list-page').style.display = 'block';
+    document.querySelectorAll('.page-nav-btn')[0].classList.add('active');
+  } else if (page === 'detail-business') {
+    document.getElementById('detail-business').style.display = 'block';
+    document.querySelectorAll('.page-nav-btn')[1].classList.add('active');
+  } else if (page === 'detail-private') {
+    document.getElementById('detail-private').style.display = 'block';
+    document.querySelectorAll('.page-nav-btn')[2].classList.add('active');
+  }
+}
+
+function switchTab(tab) {
+  // Update tab styles
+  document.querySelectorAll('#category-tabs .tab').forEach(t => {
+    t.classList.remove('active');
+    const count = t.querySelector('.tab-count');
+    if (count) { count.style.background = '#e5e7eb'; count.style.color = ''; }
+  });
+  const tabs = document.querySelectorAll('#category-tabs .tab');
+  let activeIdx = 0;
+  if (tab === 'vrakoviste') activeIdx = 1;
+  else if (tab === 'autobazary') activeIdx = 2;
+  else if (tab === 'soukromnici') activeIdx = 3;
+  tabs[activeIdx].classList.add('active');
+  const activeCount = tabs[activeIdx].querySelector('.tab-count');
+  if (activeCount) { activeCount.style.background = '#f97316'; activeCount.style.color = 'white'; }
+
+  // Switch tables
+  if (tab === 'soukromnici') {
+    document.getElementById('table-default').style.display = 'none';
+    document.getElementById('table-soukromnici').style.display = 'block';
+  } else {
+    document.getElementById('table-default').style.display = 'block';
+    document.getElementById('table-soukromnici').style.display = 'none';
+  }
+}
+</script>
+
+</body>
+</html>

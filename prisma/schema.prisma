@@ -178,6 +178,10 @@ model User {
   brokerPayouts     BrokerPayout[] @relation("BrokerPayouts")
   approvedPayouts   BrokerPayout[] @relation("PayoutApprover")
 
+  // Lead Scout relace
+  assignedScoutLeads    ScoutLead[]         @relation("ScoutLeadAssignee")
+  scoutLeadActivities   ScoutLeadActivity[]
+
   // Auth
   emailVerified DateTime?
 
@@ -199,6 +203,7 @@ model Region {
 
   invitations Invitation[]
   leads       Lead[]
+  scoutLeads  ScoutLead[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -2540,4 +2545,110 @@ model DealComment {
   @@index([opportunityId])
   @@index([userId])
   @@index([parentId])
+}
+
+// ============================================
+// LEAD SCOUT — automaticky nalezené leady
+// ============================================
+
+model ScoutLead {
+  id          String   @id @default(cuid())
+
+  // Classification
+  category    String   // VRAKOVISTE | AUTOBAZAR | SOUKROMNIK
+  country     String   @default("CZ") // CZ | DE | AT | SK | PL
+
+  // Source tracking
+  source      String   // GOOGLE_PLACES | ARES | FIRMY_CZ | ZLATESTRANKY | HANDELSREGISTER | BAZOS | SBAZAR | SAUTO | TIPCARS | MOBILE_DE | AUTOSCOUT24 | MANUAL
+  sourceId    String?  // ID in source system (Google place_id, listing ID, etc.)
+  sourceUrl   String?  // Original URL
+  scrapedAt   DateTime @default(now())
+
+  // Contact
+  name        String   // Business name or person name
+  phone       String?
+  email       String?
+  web         String?
+  contactPerson String?
+
+  // Location
+  address     String?
+  city        String?
+  region      String?  // Kraj (CZ) or Bundesland (DE)
+  zip         String?
+  latitude    Float?
+  longitude   Float?
+
+  // Business info (AUTOBAZAR / VRAKOVISTE only)
+  ico               String?
+  estimatedSize     String?  // SMALL | MEDIUM | LARGE
+  googleRating      Float?
+  googleReviewCount Int?
+
+  // Vehicle info (SOUKROMNIK only)
+  vehicleBrand   String?
+  vehicleModel   String?
+  vehicleYear    Int?
+  vehiclePrice   Int?
+  vehicleMileage Int?
+  listingTitle   String?
+
+  // Raw payload
+  rawPayload  Json?    // Full scraped data for debugging/enrichment
+
+  // Scoring
+  score       Int      @default(0)  // 0-100 priority score
+
+  // Assignment & status
+  status       String   @default("NEW") // NEW | CONTACTED | QUALIFIED | REJECTED | WON | LOST
+  assignedToId String?
+  assignedTo   User?    @relation("ScoutLeadAssignee", fields: [assignedToId], references: [id])
+  assignedAt   DateTime?
+  regionId     String?
+  linkedRegion Region?  @relation(fields: [regionId], references: [id])
+
+  // Rejection / notes
+  rejectionReason String?
+  notes           String?
+
+  // Conversion (filled when status = WON)
+  convertedToPartnerId String?  // → Partner.id (AUTOBAZAR/VRAKOVISTE)
+  convertedToLeadId    String?  // → Lead.id (SOUKROMNIK)
+
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Activity log
+  activities  ScoutLeadActivity[]
+
+  @@unique([source, sourceId])
+  @@index([category])
+  @@index([country])
+  @@index([status])
+  @@index([assignedToId])
+  @@index([regionId])
+  @@index([score])
+  @@index([phone])
+  @@index([web])
+  @@index([ico])
+  @@index([createdAt])
+  @@index([category, country, status])
+}
+
+model ScoutLeadActivity {
+  id          String    @id @default(cuid())
+  scoutLeadId String
+  scoutLead   ScoutLead @relation(fields: [scoutLeadId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  type        String    // POZNAMKA | TELEFONAT | EMAIL | ZMENA_STAVU | SYSTEM | KONVERZE
+  title       String
+  description String?
+  oldStatus   String?
+  newStatus   String?
+  createdAt   DateTime  @default(now())
+
+  @@index([scoutLeadId])
+  @@index([createdAt])
 }
