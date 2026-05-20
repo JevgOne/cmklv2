@@ -152,36 +152,54 @@ async function fetchAS24(
   const html = await response.text();
   const prices: PricePoint[] = [];
 
-  // Parse data-price attributes from article elements
-  const priceRegex = /data-price="(\d+)"/g;
+  // Parse article elements with rich data attributes
+  // Pattern: <article ... data-price="12750" data-mileage="85000" data-first-registration="03/2018" ...>
+  //          <h2>Opel Corsa 1.4 Turbo</h2> <a href="/offers/...">
+  const articleRegex = /<article[^>]*?data-price="(\d+)"([^>]*)>[\s\S]*?<\/article>/g;
   let match;
-  while ((match = priceRegex.exec(html)) !== null) {
+
+  while ((match = articleRegex.exec(html)) !== null) {
     const rawPrice = parseInt(match[1], 10);
     if (rawPrice <= 0) continue;
 
-    const priceCZK =
-      country === "cz" ? rawPrice : Math.round(rawPrice * EUR_TO_CZK);
+    // AS24 data-price is ALWAYS in EUR (even on .cz domain)
+    const priceCZK = Math.round(rawPrice * EUR_TO_CZK);
+
+    const attrs = match[0]; // full article HTML
+
+    // Extract year from data-first-registration="MM/YYYY" or "MM-YYYY"
+    const yearMatch = attrs.match(/data-first-registration="[^"]*?(\d{4})/);
+    const itemYear = yearMatch ? parseInt(yearMatch[1], 10) : null;
+
+    // Extract mileage from data-mileage="85000"
+    const mileageMatch = attrs.match(/data-mileage="(\d+)"/);
+    const itemMileage = mileageMatch ? parseInt(mileageMatch[1], 10) : null;
+
+    // Extract title from <h2> inside the article
+    const titleMatch = attrs.match(/<h2[^>]*>([^<]+)<\/h2>/);
+    const itemTitle = titleMatch ? titleMatch[1].trim() : null;
+
+    // Extract URL from offer link
+    const urlMatch = attrs.match(/href="(\/(?:offers|nabidka|angebote)\/[^"]+)"/);
+    const itemUrl = urlMatch ? `https://${domain}${urlMatch[1]}` : `https://${domain}/lst/${brandSlug}/${modelSlug}`;
 
     prices.push({
       price: priceCZK,
-      year: null,
-      mileage: null,
+      year: itemYear,
+      mileage: itemMileage,
       source: "AUTOSCOUT24",
-      url: `https://${domain}/lst/${brandSlug}/${modelSlug}`,
-      title: null,
+      url: itemUrl,
+      title: itemTitle,
     });
   }
 
-  // Fallback: try JSON-LD or other price patterns if no data-price found
+  // Fallback: simple data-price regex if article parsing found nothing
   if (prices.length === 0) {
-    const altPriceRegex = /"price"\s*:\s*"?(\d+)"?/g;
-    while ((match = altPriceRegex.exec(html)) !== null) {
+    const priceRegex = /data-price="(\d+)"/g;
+    while ((match = priceRegex.exec(html)) !== null) {
       const rawPrice = parseInt(match[1], 10);
-      if (rawPrice <= 0 || rawPrice > 50_000_000) continue;
-
-      const priceCZK =
-        country === "cz" ? rawPrice : Math.round(rawPrice * EUR_TO_CZK);
-
+      if (rawPrice <= 0) continue;
+      const priceCZK = Math.round(rawPrice * EUR_TO_CZK);
       prices.push({
         price: priceCZK,
         year: null,
