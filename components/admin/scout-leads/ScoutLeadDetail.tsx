@@ -7,6 +7,11 @@ import { Button } from "@/components/ui/Button";
 import { ScoutLeadStatusBadge } from "./ScoutLeadStatusBadge";
 import { ScoutLeadActivityLog } from "./ScoutLeadActivityLog";
 import { ScoutLeadConvertModal } from "./ScoutLeadConvertModal";
+import { LeadDataCompleteness } from "./LeadDataCompleteness";
+import { LeadPriceChart } from "./LeadPriceChart";
+import { LeadPriceVerdict } from "./LeadPriceVerdict";
+import { LeadEquipmentTags } from "./LeadEquipmentTags";
+import { LeadSimilarTable } from "./LeadSimilarTable";
 
 interface ScoutLeadData {
   id: string;
@@ -105,6 +110,20 @@ export function ScoutLeadDetail({ id }: { id: string }) {
   const [rejecting, setRejecting] = useState(false);
   const [showRaw, setShowRaw] = useState(false);
 
+  // Market analysis (SOUKROMNIK only)
+  const [marketData, setMarketData] = useState<{
+    priceDistribution: {
+      buckets: Array<{ min: number; max: number; count: number; isCurrent: boolean }>;
+      stats: { median: number; mean: number; min: number; max: number; count: number; percentile: number };
+    } | null;
+    priceVerdict: { verdict: "LOW" | "OK" | "HIGH"; deviationPercent: number; label: string } | null;
+    similarLeads: Array<{
+      id: string; listingTitle: string | null; vehicleYear: number | null;
+      vehiclePrice: number | null; vehicleMileage: number | null;
+      city: string | null; source: string; sourceUrl: string | null;
+    }>;
+  } | null>(null);
+
   // Activity form
   const [activityTitle, setActivityTitle] = useState("");
   const [activityType, setActivityType] = useState("POZNAMKA");
@@ -130,6 +149,21 @@ export function ScoutLeadDetail({ id }: { id: string }) {
     fetchLead();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  // Fetch market analysis for SOUKROMNIK leads
+  useEffect(() => {
+    if (!lead || lead.category !== "SOUKROMNIK") return;
+    async function fetchMarket() {
+      try {
+        const res = await fetch(`/api/scout-leads/${id}/market-analysis`);
+        if (res.ok) setMarketData(await res.json());
+      } catch {
+        // silent — non-critical feature
+      }
+    }
+    fetchMarket();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lead?.category, id]); // re-fetch when lead loads
 
   async function handleSaveNotes() {
     setSaving(true);
@@ -222,6 +256,9 @@ export function ScoutLeadDetail({ id }: { id: string }) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left column */}
         <div className="lg:col-span-2 space-y-6">
+          {/* Data completeness — always visible */}
+          <LeadDataCompleteness lead={lead as unknown as Record<string, unknown>} category={lead.category} />
+
           {/* Contact info */}
           <Card className="p-6">
             <h3 className="text-sm font-semibold text-gray-500 uppercase mb-4">
@@ -409,8 +446,30 @@ export function ScoutLeadDetail({ id }: { id: string }) {
                     </div>
                   )}
                 </dl>
+                {/* Equipment tags from listing title */}
+                <LeadEquipmentTags title={lead.listingTitle} />
               </Card>
             )}
+
+          {/* Price distribution chart (SOUKROMNIK, >= 5 similar) */}
+          {lead.category === "SOUKROMNIK" && marketData?.priceDistribution ? (
+            <LeadPriceChart
+              buckets={marketData.priceDistribution.buckets}
+              stats={marketData.priceDistribution.stats}
+            />
+          ) : lead.category === "SOUKROMNIK" && marketData && !marketData.priceDistribution ? (
+            <Card className="p-6">
+              <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
+                Cenová distribuce
+              </h3>
+              <p className="text-sm text-gray-400">Nedostatek dat pro cenovou analýzu</p>
+            </Card>
+          ) : null}
+
+          {/* Similar leads table (SOUKROMNIK) */}
+          {lead.category === "SOUKROMNIK" && marketData?.similarLeads && marketData.similarLeads.length > 0 && (
+            <LeadSimilarTable leads={marketData.similarLeads} />
+          )}
 
           {/* Source info */}
           <Card className="p-6">
@@ -523,6 +582,17 @@ export function ScoutLeadDetail({ id }: { id: string }) {
                 </a>
               )}
             </div>
+
+            {/* Price verdict (SOUKROMNIK) */}
+            {marketData?.priceVerdict && (
+              <div className="mt-3">
+                <LeadPriceVerdict
+                  verdict={marketData.priceVerdict.verdict}
+                  label={marketData.priceVerdict.label}
+                  deviationPercent={marketData.priceVerdict.deviationPercent}
+                />
+              </div>
+            )}
 
             {/* Status change buttons */}
             {lead.status !== "WON" &&

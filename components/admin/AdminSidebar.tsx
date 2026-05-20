@@ -29,10 +29,16 @@ const navSections: NavSection[] = [
       { id: "inzerce", href: "/admin/inzerce", icon: "📋", label: "Inzerce" },
       { id: "brokers", href: "/admin/brokers", icon: "👥", label: "Makléři" },
       { id: "leads", href: "/admin/leads", icon: "📨", label: "Leady" },
-      { id: "scout-autobazar", href: "/admin/scout-leads?category=AUTOBAZAR", icon: "🚗", label: "Scout: Autobazary" },
-      { id: "scout-vrakoviste", href: "/admin/scout-leads?category=VRAKOVISTE", icon: "🔧", label: "Scout: Vrakoviště" },
-      { id: "scout-soukromnik", href: "/admin/scout-leads?category=SOUKROMNIK", icon: "👤", label: "Scout: Soukromníci" },
       { id: "users", href: "/admin/users", icon: "👤", label: "Uživatelé" },
+    ],
+    roles: ["ADMIN", "BACKOFFICE", "MANAGER", "REGIONAL_DIRECTOR"],
+  },
+  {
+    title: "LEAD SCOUT",
+    items: [
+      { id: "scout-autobazar", href: "/admin/scout-leads?category=AUTOBAZAR", icon: "🏢", label: "Autobazary" },
+      { id: "scout-vrakoviste", href: "/admin/scout-leads?category=VRAKOVISTE", icon: "🔧", label: "Vrakoviště" },
+      { id: "scout-soukromnik", href: "/admin/scout-leads?category=SOUKROMNIK", icon: "👤", label: "Soukromníci" },
     ],
     roles: ["ADMIN", "BACKOFFICE", "MANAGER", "REGIONAL_DIRECTOR"],
   },
@@ -149,7 +155,7 @@ export function AdminSidebar({ open, onClose }: AdminSidebarProps) {
         {/* Header */}
         <div className="p-6 border-b border-white/[0.08]">
           <div className="flex items-center gap-3">
-            <Image src="/brand/logo-symbol-white.png" alt="" width={40} height={40} className="h-9 w-auto" priority />
+            <Image src="/brand/logo-symbol-white.png" alt="" width={40} height={40} className="h-9 w-auto" style={{ height: '36px', width: 'auto' }} priority />
             <div>
               <span className="text-xl font-extrabold tracking-tight">
                 <span className="text-orange-400">Car</span>
