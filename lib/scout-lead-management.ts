@@ -121,6 +121,50 @@ export async function checkScoutLeadDuplicate(
   return null;
 }
 
+/** Extract enrichment-only fields that should be upserted on duplicate. */
+function buildEnrichmentUpdate(payload: ScoutLeadPayload) {
+  const update: Record<string, unknown> = {};
+
+  // Vehicle enrichment fields — update only non-null incoming values
+  const enrichFields = {
+    vehicleFuel: payload.vehicleFuel,
+    vehicleTransmission: payload.vehicleTransmission,
+    vehiclePower: payload.vehiclePower,
+    vehicleEngineCC: payload.vehicleEngineCC,
+    vehicleBodyType: payload.vehicleBodyType,
+    vehicleColor: payload.vehicleColor,
+    vehicleDoors: payload.vehicleDoors,
+    vehicleDescription: payload.vehicleDescription,
+  };
+
+  for (const [key, val] of Object.entries(enrichFields)) {
+    if (val != null) update[key] = val;
+  }
+
+  // JSON array fields need stringify
+  if (payload.vehicleEquipment && payload.vehicleEquipment.length > 0) {
+    update.vehicleEquipment = JSON.stringify(payload.vehicleEquipment);
+  }
+  if (payload.vehiclePhotos && payload.vehiclePhotos.length > 0) {
+    update.vehiclePhotos = JSON.stringify(payload.vehiclePhotos);
+  }
+
+  // Also update basic vehicle fields if previously null
+  const basicFields = {
+    vehicleBrand: payload.vehicleBrand,
+    vehicleModel: payload.vehicleModel,
+    vehicleYear: payload.vehicleYear,
+    vehiclePrice: payload.vehiclePrice,
+    vehicleMileage: payload.vehicleMileage,
+    listingTitle: payload.listingTitle,
+  };
+  for (const [key, val] of Object.entries(basicFields)) {
+    if (val != null) update[key] = val;
+  }
+
+  return update;
+}
+
 /**
  * Ingest a batch of scout leads from the Python service.
  * Returns counts and per-lead details.
@@ -128,7 +172,7 @@ export async function checkScoutLeadDuplicate(
 export async function ingestScoutLeads(leads: ScoutLeadPayload[]) {
   const results: Array<{
     sourceId: string | null;
-    status: "created" | "duplicate" | "error";
+    status: "created" | "duplicate" | "updated" | "error";
     id?: string;
     existingId?: string;
     message?: string;
@@ -136,18 +180,34 @@ export async function ingestScoutLeads(leads: ScoutLeadPayload[]) {
 
   let accepted = 0;
   let duplicates = 0;
+  let updated = 0;
   let errors = 0;
 
   for (const payload of leads) {
     try {
       const existingId = await checkScoutLeadDuplicate(payload);
       if (existingId) {
-        duplicates++;
-        results.push({
-          sourceId: payload.sourceId ?? null,
-          status: "duplicate",
-          existingId,
-        });
+        // Upsert: update enrichment fields on existing lead
+        const enrichUpdate = buildEnrichmentUpdate(payload);
+        if (Object.keys(enrichUpdate).length > 0) {
+          await prisma.scoutLead.update({
+            where: { id: existingId },
+            data: enrichUpdate,
+          });
+          updated++;
+          results.push({
+            sourceId: payload.sourceId ?? null,
+            status: "updated",
+            existingId,
+          });
+        } else {
+          duplicates++;
+          results.push({
+            sourceId: payload.sourceId ?? null,
+            status: "duplicate",
+            existingId,
+          });
+        }
         continue;
       }
 
@@ -223,7 +283,7 @@ export async function ingestScoutLeads(leads: ScoutLeadPayload[]) {
     }
   }
 
-  return { accepted, duplicates, errors, details: results };
+  return { accepted, duplicates, updated, errors, details: results };
 }
 
 /**
