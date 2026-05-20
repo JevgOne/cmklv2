@@ -8,7 +8,7 @@ export function InzerceFooter() {
       productColumn={{
         title: "Inzerce",
         links: [
-          { href: "/katalog", label: "Katalog vozidel" },
+          { href: "/katalog", label: "Nabídka vozidel" },
           { href: "/pridat", label: "Přidat inzerát" },
           { href: "/moje-inzeraty", label: "Moje inzeráty" },
         ],

@@ -103,7 +103,7 @@ export function WatchdogEmailForm() {
               setEmail(e.target.value);
               if (error) setError("");
             }}
-            className="flex-1"
+            className="flex-1 !bg-white !border-2 !border-gray-300 placeholder:text-gray-400"
           />
           <Button type="submit" variant="primary" size="default" disabled={loading} className="shrink-0">
             {loading ? "..." : "Hlídat"}

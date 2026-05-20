@@ -30,7 +30,7 @@ export function InzerceNavbar() {
             href="/katalog"
             className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors no-underline px-4 py-2 rounded-lg hover:bg-gray-50"
           >
-            Katalog
+            Nabídka vozidel
           </Link>
           <Link
             href="/pridat"
@@ -89,7 +89,7 @@ export function InzerceNavbar() {
             className="block text-base font-medium text-gray-900 hover:text-orange-500 py-3 no-underline border-b border-gray-100"
             onClick={() => setIsOpen(false)}
           >
-            Katalog
+            Nabídka vozidel
           </Link>
           <Link
             href="/pridat"

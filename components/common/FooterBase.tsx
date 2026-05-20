@@ -216,14 +216,6 @@ export function FooterBase({
               </li>
               <li>
                 <a
-                  href={urls.main("/reklamacni-rad")}
-                  className="hover:text-white transition-colors no-underline"
-                >
-                  Reklamační řád
-                </a>
-              </li>
-              <li>
-                <a
                   href={urls.main("/o-nas")}
                   className="hover:text-white transition-colors no-underline"
                 >
