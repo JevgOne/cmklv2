@@ -140,7 +140,9 @@ async function fetchAS24(
   const modelSlug = modelToAS24Slug(brand, model);
   const domain = "www.autoscout24.cz";
 
-  const url = `https://${domain}/lst/${brandSlug}/${modelSlug}?fregfrom=${year - 2}&fregto=${year + 2}&custtype=P&sort=price&ustate=N%2CU&atype=C&size=50&page=1`;
+  // Wider year range for older cars (±5 for pre-2010, ±2 for newer)
+  const yearSpread = year < 2010 ? 5 : 2;
+  const url = `https://${domain}/lst/${brandSlug}/${modelSlug}?fregfrom=${year - yearSpread}&fregto=${year + yearSpread}&custtype=P&sort=price&ustate=N%2CU&atype=C&size=50&page=1`;
 
   const response = await fetchWithTimeout(url);
   if (!response.ok) return [];
@@ -265,8 +267,9 @@ async function fetchSauto(
     const itemName = (item.name || "").toLowerCase();
     if (modelLower && !itemName.includes(modelLower)) continue;
 
-    // Filter by year range (±2)
-    if (item.year && (item.year < year - 2 || item.year > year + 2)) continue;
+    // Filter by year range (wider for older cars)
+    const sautoYearSpread = year < 2010 ? 5 : 2;
+    if (item.year && (item.year < year - sautoYearSpread || item.year > year + sautoYearSpread)) continue;
 
     const price = item.price;
     if (!price || price <= 0) continue;
@@ -296,7 +299,8 @@ async function fetchMobileDe(
   const brandUpper = brandToMobileDe(brand);
   const modelUpper = modelToMobileDe(model);
 
-  const url = `https://services.mobile.de/search-api/search?classification=refdata/classes/Car/makes/${brandUpper}/models/${modelUpper}&firstRegistrationDate.min=${year - 2}-01&firstRegistrationDate.max=${year + 2}-12&sellerType=FOR_SALE_BY_OWNER&price.min=1000&page.size=50`;
+  const mobileYearSpread = year < 2010 ? 5 : 2;
+  const url = `https://services.mobile.de/search-api/search?classification=refdata/classes/Car/makes/${brandUpper}/models/${modelUpper}&firstRegistrationDate.min=${year - mobileYearSpread}-01&firstRegistrationDate.max=${year + mobileYearSpread}-12&sellerType=FOR_SALE_BY_OWNER&price.min=1000&page.size=50`;
 
   const response = await fetchWithTimeout(url, {
     headers: {
@@ -351,7 +355,7 @@ export function computeAnalysis(
     .filter((p) => p > 0)
     .sort((a, b) => a - b);
 
-  if (validPrices.length < 5) {
+  if (validPrices.length < 3) {
     return {
       prices,
       histogram: [],
@@ -449,7 +453,7 @@ async function fetchDBFallback(
     where: {
       vehicleBrand: brand,
       vehicleModel: model,
-      vehicleYear: { gte: year - 2, lte: year + 2 },
+      vehicleYear: { gte: year - (year < 2010 ? 5 : 2), lte: year + (year < 2010 ? 5 : 2) },
       vehiclePrice: { not: null, gt: 0 },
       id: { not: leadId },
     },
@@ -510,14 +514,12 @@ export async function fetchMarketData(
     .filter((r) => r.status === "fulfilled")
     .flatMap((r) => (r as PromiseFulfilledResult<PricePoint[]>).value);
 
-  // Fallback chain
+  // Always enrich with DB data if external sources returned few results
   let dbFallback = false;
-
-  if (allPrices.length < 5) {
-    // Try DB fallback
+  if (allPrices.length < 10) {
     const dbPrices = await fetchDBFallback(leadId, brand, model, year);
-    if (dbPrices.length >= 5) {
-      dbFallback = true;
+    if (dbPrices.length > 0) {
+      dbFallback = allPrices.length === 0;
       allPrices.push(...dbPrices);
     }
   }
