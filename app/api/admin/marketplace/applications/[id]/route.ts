@@ -130,7 +130,7 @@ export async function PUT(
                   <p style="margin: 4px 0;">Heslo: <strong>${tempPassword}</strong></p>
                 </div>
                 <p style="color: #DC2626; font-size: 14px;">Po prvním přihlášení si prosím změňte heslo.</p>
-                <a href="${process.env.NEXTAUTH_URL || "https://carmakler.cz"}/prihlaseni"
+                <a href="${process.env.NEXTAUTH_URL || "https://carmakler.cz"}/login"
                    style="display: inline-block; background: #F97316; color: white; text-decoration: none; padding: 12px 32px; border-radius: 8px; font-weight: bold; margin-top: 16px;">
                   Přihlásit se
                 </a>

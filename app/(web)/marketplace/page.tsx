@@ -379,7 +379,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
           </div>
           <p className="text-sm text-gray-500 mt-6">
             Už máte účet?{" "}
-            <Link href="/prihlaseni" className="text-orange-500 hover:underline font-semibold">
+            <Link href="/login" className="text-orange-500 hover:underline font-semibold">
               Přihlaste se
             </Link>
           </p>

@@ -20,7 +20,7 @@ export default async function InvestorDashboardPage() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
-    redirect("/prihlaseni?callbackUrl=/marketplace/investor");
+    redirect("/login?callbackUrl=/marketplace/investor");
   }
 
   const userId = session.user.id;

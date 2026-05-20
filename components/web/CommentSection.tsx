@@ -197,7 +197,7 @@ export function CommentSection({
         </form>
       ) : (
         <p className="text-xs text-gray-400">
-          <Link href="/prihlaseni" className="text-orange-500 no-underline">Přihlaste se</Link> pro přidání komentáře.
+          <Link href="/login" className="text-orange-500 no-underline">Přihlaste se</Link> pro přidání komentáře.
         </p>
       )}
 

@@ -29,7 +29,7 @@ export function LikeButton({
 
   const handleToggle = async () => {
     if (!session?.user) {
-      router.push(`/prihlaseni?callbackUrl=${encodeURIComponent(window.location.pathname)}`);
+      router.push(`/login?callbackUrl=${encodeURIComponent(window.location.pathname)}`);
       return;
     }
 

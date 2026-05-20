@@ -295,7 +295,7 @@ export function ApplyForm({ initialRole = null }: ApplyFormProps) {
 
           <p className="text-xs text-gray-400 text-center">
             Již máte účet?{" "}
-            <Link href="/prihlaseni" className="text-orange-500 hover:underline">
+            <Link href="/login" className="text-orange-500 hover:underline">
               Přihlaste se
             </Link>
           </p>
