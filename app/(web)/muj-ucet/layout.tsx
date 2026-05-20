@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import { AccountSidebarNav } from "@/components/web/AccountSidebarNav";
+
+export const metadata: Metadata = {
+  title: "Můj účet",
+  robots: { index: false, follow: false },
+};
 
 export default function MujUcetLayout({ children }: { children: React.ReactNode }) {
   return (

@@ -48,14 +48,14 @@ export const metadata: Metadata = {
     description:
       "Prodejte nebo kupte auto bezpečně přes síť ověřených makléřů. Rychle, transparentně a bez starostí.",
     url: BASE_URL,
-    // OG images are generated dynamically via opengraph-image.tsx in each route segment
+    images: [{ url: "/og-default.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "CarMakléř | Prodej aut přes ověřené makléře",
     description:
       "Prodejte nebo kupte auto bezpečně přes síť ověřených makléřů.",
-    // Twitter images are generated dynamically via twitter-image.tsx in each route segment
+    images: ["/og-default.png"],
   },
   icons: {
     icon: [

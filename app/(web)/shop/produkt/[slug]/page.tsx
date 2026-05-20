@@ -29,6 +29,9 @@ export async function generateMetadata({
     description:
       part.description?.slice(0, 155) ||
       `Kupte ${part.name} za ${price} Kč na CarMakléř. Kategorie: ${getCategoryLabel(part.category as PartCategory)}.`,
+    alternates: {
+      canonical: `https://carmakler.cz/dily/${slug}`,
+    },
   };
 }
 

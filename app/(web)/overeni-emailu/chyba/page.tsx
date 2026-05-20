@@ -5,6 +5,7 @@ import { VerifyEmailErrorContent } from "@/components/web/VerifyEmailErrorConten
 export const metadata: Metadata = {
   title: "Chyba ověření emailu",
   description: "Ověření emailového účtu se nezdařilo",
+  robots: { index: false, follow: false },
 };
 
 export default function VerifyEmailErrorPage() {

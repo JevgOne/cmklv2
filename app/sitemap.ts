@@ -415,20 +415,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     partPages = parts
       .filter((p) => p.slug)
-      .flatMap((p) => [
-        {
-          url: `${BASE_URL}/dily/${p.slug}`,
-          lastModified: p.updatedAt,
-          changeFrequency: "daily" as const,
-          priority: 0.7,
-        },
-        {
-          url: `${BASE_URL}/shop/produkt/${p.slug}`,
-          lastModified: p.updatedAt,
-          changeFrequency: "daily" as const,
-          priority: 0.7,
-        },
-      ]);
+      .map((p) => ({
+        url: `${BASE_URL}/dily/${p.slug}`,
+        lastModified: p.updatedAt,
+        changeFrequency: "daily" as const,
+        priority: 0.7,
+      }));
   } catch {
     // DB nedostupná
   }
