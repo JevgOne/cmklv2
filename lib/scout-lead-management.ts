@@ -178,6 +178,8 @@ export async function ingestScoutLeads(leads: ScoutLeadPayload[]) {
           estimatedSize: payload.estimatedSize ?? null,
           googleRating: payload.googleRating ?? null,
           googleReviewCount: payload.googleReviewCount ?? null,
+          estimatedInventory: payload.estimatedInventory ?? null,
+          inventoryTrend: payload.inventoryTrend ?? null,
           vehicleBrand: payload.vehicleBrand ?? null,
           vehicleModel: payload.vehicleModel ?? null,
           vehicleYear: payload.vehicleYear ?? null,

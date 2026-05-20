@@ -2584,6 +2584,8 @@ model ScoutLead {
   estimatedSize     String?  // SMALL | MEDIUM | LARGE
   googleRating      Float?
   googleReviewCount Int?
+  estimatedInventory Int?    // Number of active listings (AUTOBAZAR only)
+  inventoryTrend     String? // UP | DOWN | STABLE
 
   // Vehicle info (SOUKROMNIK only)
   vehicleBrand   String?

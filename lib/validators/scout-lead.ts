@@ -57,6 +57,8 @@ const scoutLeadPayloadSchema = z.object({
     .nullable(),
   googleRating: z.number().min(0).max(5).optional().nullable(),
   googleReviewCount: z.number().int().min(0).optional().nullable(),
+  estimatedInventory: z.number().int().min(0).optional().nullable(),
+  inventoryTrend: z.enum(["UP", "DOWN", "STABLE"]).optional().nullable(),
   vehicleBrand: z.string().optional().nullable(),
   vehicleModel: z.string().optional().nullable(),
   vehicleYear: z
