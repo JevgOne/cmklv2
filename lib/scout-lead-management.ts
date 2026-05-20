@@ -135,6 +135,29 @@ function buildEnrichmentUpdate(payload: ScoutLeadPayload) {
     vehicleColor: payload.vehicleColor,
     vehicleDoors: payload.vehicleDoors,
     vehicleDescription: payload.vehicleDescription,
+    // Extended fields
+    vehicleVin: payload.vehicleVin,
+    vehicleLicensePlate: payload.vehicleLicensePlate,
+    vehicleFirstRegistration: payload.vehicleFirstRegistration,
+    vehicleFirstOwner: payload.vehicleFirstOwner,
+    vehicleCrashedInPast: payload.vehicleCrashedInPast,
+    vehicleServiceBook: payload.vehicleServiceBook,
+    vehicleStkDate: payload.vehicleStkDate,
+    vehicleCountryOfOrigin: payload.vehicleCountryOfOrigin,
+    vehicleCondition: payload.vehicleCondition,
+    vehicleDrive: payload.vehicleDrive,
+    vehicleGearboxLevels: payload.vehicleGearboxLevels,
+    vehicleEuroLevel: payload.vehicleEuroLevel,
+    vehicleConsumption: payload.vehicleConsumption,
+    vehicleCapacity: payload.vehicleCapacity,
+    vehicleAirbags: payload.vehicleAirbags,
+    vehicleAircondition: payload.vehicleAircondition,
+    vehicleColorTone: payload.vehicleColorTone,
+    vehicleColorType: payload.vehicleColorType,
+    vehicleModelDetail: payload.vehicleModelDetail,
+    vehiclePriceWithoutVat: payload.vehiclePriceWithoutVat,
+    vehicleVatDeductible: payload.vehicleVatDeductible,
+    vehicleDistrict: payload.vehicleDistrict,
   };
 
   for (const [key, val] of Object.entries(enrichFields)) {
@@ -147,6 +170,9 @@ function buildEnrichmentUpdate(payload: ScoutLeadPayload) {
   }
   if (payload.vehiclePhotos && payload.vehiclePhotos.length > 0) {
     update.vehiclePhotos = JSON.stringify(payload.vehiclePhotos);
+  }
+  if (payload.vehicleVideos && payload.vehicleVideos.length > 0) {
+    update.vehicleVideos = JSON.stringify(payload.vehicleVideos);
   }
 
   // Also update basic vehicle fields if previously null
@@ -259,6 +285,39 @@ export async function ingestScoutLeads(leads: ScoutLeadPayload[]) {
           vehicleDescription: payload.vehicleDescription ?? null,
           vehiclePhotos: payload.vehiclePhotos
             ? JSON.stringify(payload.vehiclePhotos)
+            : null,
+          // Vehicle identity
+          vehicleVin: payload.vehicleVin ?? null,
+          vehicleLicensePlate: payload.vehicleLicensePlate ?? null,
+          // Vehicle history & condition
+          vehicleFirstRegistration: payload.vehicleFirstRegistration ?? null,
+          vehicleFirstOwner: payload.vehicleFirstOwner ?? null,
+          vehicleCrashedInPast: payload.vehicleCrashedInPast ?? null,
+          vehicleServiceBook: payload.vehicleServiceBook ?? null,
+          vehicleStkDate: payload.vehicleStkDate ?? null,
+          vehicleCountryOfOrigin: payload.vehicleCountryOfOrigin ?? null,
+          vehicleCondition: payload.vehicleCondition ?? null,
+          // Technical specs
+          vehicleDrive: payload.vehicleDrive ?? null,
+          vehicleGearboxLevels: payload.vehicleGearboxLevels ?? null,
+          vehicleEuroLevel: payload.vehicleEuroLevel ?? null,
+          vehicleConsumption: payload.vehicleConsumption ?? null,
+          vehicleCapacity: payload.vehicleCapacity ?? null,
+          vehicleAirbags: payload.vehicleAirbags ?? null,
+          vehicleAircondition: payload.vehicleAircondition ?? null,
+          // Color detail
+          vehicleColorTone: payload.vehicleColorTone ?? null,
+          vehicleColorType: payload.vehicleColorType ?? null,
+          // Model detail
+          vehicleModelDetail: payload.vehicleModelDetail ?? null,
+          // Pricing
+          vehiclePriceWithoutVat: payload.vehiclePriceWithoutVat ?? null,
+          vehicleVatDeductible: payload.vehicleVatDeductible ?? null,
+          // Location extended
+          vehicleDistrict: payload.vehicleDistrict ?? null,
+          // Media
+          vehicleVideos: payload.vehicleVideos
+            ? JSON.stringify(payload.vehicleVideos)
             : null,
           rawPayload: payload.rawPayload ?? undefined,
           score: payload.score ?? 0,

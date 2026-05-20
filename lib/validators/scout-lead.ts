@@ -79,9 +79,43 @@ const scoutLeadPayloadSchema = z.object({
   vehicleBodyType: z.string().optional().nullable(),
   vehicleColor: z.string().optional().nullable(),
   vehicleDoors: z.number().int().min(1).max(7).optional().nullable(),
-  vehicleEquipment: z.array(z.string()).optional().nullable(),
+  vehicleEquipment: z
+    .array(z.union([z.string(), z.object({ name: z.string(), category: z.string().optional() })]))
+    .optional()
+    .nullable(),
   vehicleDescription: z.string().max(5000).optional().nullable(),
   vehiclePhotos: z.array(z.string().min(1)).optional().nullable(),
+  // Vehicle identity
+  vehicleVin: z.string().optional().nullable(),
+  vehicleLicensePlate: z.string().optional().nullable(),
+  // Vehicle history & condition
+  vehicleFirstRegistration: z.string().optional().nullable(),
+  vehicleFirstOwner: z.boolean().optional().nullable(),
+  vehicleCrashedInPast: z.boolean().optional().nullable(),
+  vehicleServiceBook: z.boolean().optional().nullable(),
+  vehicleStkDate: z.string().optional().nullable(),
+  vehicleCountryOfOrigin: z.string().optional().nullable(),
+  vehicleCondition: z.string().optional().nullable(),
+  // Technical specs
+  vehicleDrive: z.string().optional().nullable(),
+  vehicleGearboxLevels: z.string().optional().nullable(),
+  vehicleEuroLevel: z.string().optional().nullable(),
+  vehicleConsumption: z.number().min(0).optional().nullable(),
+  vehicleCapacity: z.number().int().min(1).max(50).optional().nullable(),
+  vehicleAirbags: z.number().int().min(0).optional().nullable(),
+  vehicleAircondition: z.string().optional().nullable(),
+  // Color detail
+  vehicleColorTone: z.string().optional().nullable(),
+  vehicleColorType: z.string().optional().nullable(),
+  // Model detail
+  vehicleModelDetail: z.string().optional().nullable(),
+  // Pricing
+  vehiclePriceWithoutVat: z.number().int().min(0).optional().nullable(),
+  vehicleVatDeductible: z.boolean().optional().nullable(),
+  // Location extended
+  vehicleDistrict: z.string().optional().nullable(),
+  // Media
+  vehicleVideos: z.array(z.string().min(1)).optional().nullable(),
   rawPayload: z.any().optional().nullable(),
   score: z.number().int().min(0).max(100).default(0),
 });

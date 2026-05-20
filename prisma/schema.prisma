@@ -2603,9 +2603,51 @@ model ScoutLead {
   vehicleBodyType     String?   // SEDAN, HATCHBACK, COMBI, SUV, COUPE, CABRIO, VAN, PICKUP
   vehicleColor        String?
   vehicleDoors        Int?
-  vehicleEquipment    String?   // JSON array of equipment strings
+  vehicleEquipment    String?   // JSON array of equipment [{name, category}]
   vehicleDescription  String?   @db.Text
   vehiclePhotos       String?   @db.Text  // JSON array of photo URLs
+
+  // Vehicle identity
+  vehicleVin              String?
+  vehicleLicensePlate     String?
+
+  // Vehicle history & condition
+  vehicleFirstRegistration String?
+  vehicleFirstOwner       Boolean?
+  vehicleCrashedInPast    Boolean?
+  vehicleServiceBook      Boolean?
+  vehicleStkDate          String?
+  vehicleCountryOfOrigin  String?
+  vehicleCondition        String?
+
+  // Technical specs
+  vehicleDrive            String?
+  vehicleGearboxLevels    String?
+  vehicleEuroLevel        String?
+  vehicleConsumption      Float?
+  vehicleCapacity         Int?
+  vehicleAirbags          Int?
+  vehicleAircondition     String?
+
+  // Color detail
+  vehicleColorTone        String?
+  vehicleColorType        String?
+
+  // Model detail
+  vehicleModelDetail      String?
+
+  // Pricing detail
+  vehiclePriceWithoutVat  Int?
+  vehicleVatDeductible    Boolean?
+
+  // Location extended
+  vehicleDistrict         String?
+
+  // Media
+  vehicleVideos           String?   @db.Text  // JSON array of video URLs
+
+  // Completeness tracking
+  completenessScore       Int?      @default(0)
 
   // Raw payload
   rawPayload  Json?    // Full scraped data for debugging/enrichment
@@ -2649,6 +2691,7 @@ model ScoutLead {
   @@index([createdAt])
   @@index([category, country, status])
   @@index([vehicleBrand, vehicleModel, vehicleYear])
+  @@index([vehicleVin])
 }
 
 model ScoutLeadActivity {
