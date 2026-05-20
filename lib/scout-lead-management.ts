@@ -186,6 +186,20 @@ export async function ingestScoutLeads(leads: ScoutLeadPayload[]) {
           vehiclePrice: payload.vehiclePrice ?? null,
           vehicleMileage: payload.vehicleMileage ?? null,
           listingTitle: payload.listingTitle ?? null,
+          vehicleFuel: payload.vehicleFuel ?? null,
+          vehicleTransmission: payload.vehicleTransmission ?? null,
+          vehiclePower: payload.vehiclePower ?? null,
+          vehicleEngineCC: payload.vehicleEngineCC ?? null,
+          vehicleBodyType: payload.vehicleBodyType ?? null,
+          vehicleColor: payload.vehicleColor ?? null,
+          vehicleDoors: payload.vehicleDoors ?? null,
+          vehicleEquipment: payload.vehicleEquipment
+            ? JSON.stringify(payload.vehicleEquipment)
+            : null,
+          vehicleDescription: payload.vehicleDescription ?? null,
+          vehiclePhotos: payload.vehiclePhotos
+            ? JSON.stringify(payload.vehiclePhotos)
+            : null,
           rawPayload: payload.rawPayload ?? undefined,
           score: payload.score ?? 0,
           regionId,
@@ -339,6 +353,8 @@ export async function convertToLead(scoutLeadId: string) {
       model: scoutLead.vehicleModel,
       year: scoutLead.vehicleYear,
       expectedPrice: scoutLead.vehiclePrice,
+      mileage: scoutLead.vehicleMileage,
+      description: scoutLead.vehicleDescription,
       city: scoutLead.city,
       regionId,
       source: "EXTERNAL_APP",

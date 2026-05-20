@@ -71,6 +71,17 @@ const scoutLeadPayloadSchema = z.object({
   vehiclePrice: z.number().int().min(0).optional().nullable(),
   vehicleMileage: z.number().int().min(0).optional().nullable(),
   listingTitle: z.string().optional().nullable(),
+  // Vehicle extended info (enrichment)
+  vehicleFuel: z.string().optional().nullable(),
+  vehicleTransmission: z.string().optional().nullable(),
+  vehiclePower: z.number().int().min(0).optional().nullable(),
+  vehicleEngineCC: z.number().int().min(0).optional().nullable(),
+  vehicleBodyType: z.string().optional().nullable(),
+  vehicleColor: z.string().optional().nullable(),
+  vehicleDoors: z.number().int().min(1).max(7).optional().nullable(),
+  vehicleEquipment: z.array(z.string()).optional().nullable(),
+  vehicleDescription: z.string().max(5000).optional().nullable(),
+  vehiclePhotos: z.array(z.string().url()).optional().nullable(),
   rawPayload: z.any().optional().nullable(),
   score: z.number().int().min(0).max(100).default(0),
 });

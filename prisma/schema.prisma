@@ -2588,12 +2588,24 @@ model ScoutLead {
   inventoryTrend     String? // UP | DOWN | STABLE
 
   // Vehicle info (SOUKROMNIK only)
-  vehicleBrand   String?
-  vehicleModel   String?
-  vehicleYear    Int?
-  vehiclePrice   Int?
-  vehicleMileage Int?
-  listingTitle   String?
+  vehicleBrand        String?
+  vehicleModel        String?
+  vehicleYear         Int?
+  vehiclePrice        Int?
+  vehicleMileage      Int?
+  listingTitle        String?
+
+  // Vehicle extended info (enrichment from scrapers)
+  vehicleFuel         String?   // PETROL, DIESEL, HYBRID, ELECTRIC, LPG, CNG
+  vehicleTransmission String?   // MANUAL, AUTOMATIC
+  vehiclePower        Int?      // kW
+  vehicleEngineCC     Int?      // engine displacement cc
+  vehicleBodyType     String?   // SEDAN, HATCHBACK, COMBI, SUV, COUPE, CABRIO, VAN, PICKUP
+  vehicleColor        String?
+  vehicleDoors        Int?
+  vehicleEquipment    String?   // JSON array of equipment strings
+  vehicleDescription  String?   @db.Text
+  vehiclePhotos       String?   @db.Text  // JSON array of photo URLs
 
   // Raw payload
   rawPayload  Json?    // Full scraped data for debugging/enrichment

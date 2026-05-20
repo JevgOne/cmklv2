@@ -42,6 +42,16 @@ interface ScoutLeadData {
   vehiclePrice: number | null;
   vehicleMileage: number | null;
   listingTitle: string | null;
+  vehicleFuel: string | null;
+  vehicleTransmission: string | null;
+  vehiclePower: number | null;
+  vehicleEngineCC: number | null;
+  vehicleBodyType: string | null;
+  vehicleColor: string | null;
+  vehicleDoors: number | null;
+  vehicleEquipment: string | null;
+  vehicleDescription: string | null;
+  vehiclePhotos: string | null;
   rawPayload: Record<string, unknown> | null;
   score: number;
   status: string;
@@ -96,6 +106,97 @@ const sizeLabels: Record<string, string> = {
   MEDIUM: "Střední",
   LARGE: "Velký",
 };
+
+const fuelLabels: Record<string, string> = {
+  PETROL: "Benzín",
+  DIESEL: "Diesel",
+  HYBRID: "Hybrid",
+  PLUGIN_HYBRID: "Plug-in Hybrid",
+  ELECTRIC: "Elektro",
+  LPG: "LPG",
+  CNG: "CNG",
+};
+
+const transmissionLabels: Record<string, string> = {
+  MANUAL: "Manuální",
+  AUTOMATIC: "Automatická",
+};
+
+const bodyTypeLabels: Record<string, string> = {
+  SEDAN: "Sedan",
+  HATCHBACK: "Hatchback",
+  COMBI: "Kombi",
+  SUV: "SUV",
+  COUPE: "Coupé",
+  CABRIO: "Kabriolet",
+  VAN: "Van",
+  PICKUP: "Pickup",
+};
+
+function VehicleDescriptionCard({ description }: { description: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const isLong = description.length > 500;
+  const display = isLong && !expanded ? description.slice(0, 500) + "..." : description;
+
+  return (
+    <Card className="p-6">
+      <h3 className="text-sm font-semibold text-gray-500 uppercase mb-3">
+        Popis prodejce
+      </h3>
+      <p className="text-sm text-gray-700 whitespace-pre-line">{display}</p>
+      {isLong && (
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="mt-2 text-xs text-orange-600 hover:underline"
+        >
+          {expanded ? "Zobrazit méně" : "Zobrazit celý popis"}
+        </button>
+      )}
+    </Card>
+  );
+}
+
+function VehiclePhotosCard({ photosJson }: { photosJson: string }) {
+  const [showAll, setShowAll] = useState(false);
+  let photos: string[] = [];
+  try {
+    photos = JSON.parse(photosJson);
+  } catch {
+    return null;
+  }
+  if (photos.length === 0) return null;
+
+  const visible = showAll ? photos : photos.slice(0, 4);
+  const remaining = photos.length - 4;
+
+  return (
+    <Card className="p-6">
+      <h3 className="text-sm font-semibold text-gray-500 uppercase mb-3">
+        Fotky ({photos.length})
+      </h3>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        {visible.map((url, i) => (
+          <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="block">
+            <img
+              src={url}
+              alt={`Foto ${i + 1}`}
+              className="w-full h-24 object-cover rounded-lg border border-gray-200 hover:opacity-80 transition"
+              loading="lazy"
+            />
+          </a>
+        ))}
+      </div>
+      {!showAll && remaining > 0 && (
+        <button
+          onClick={() => setShowAll(true)}
+          className="mt-2 text-xs text-orange-600 hover:underline"
+        >
+          +{remaining} dalších fotek
+        </button>
+      )}
+    </Card>
+  );
+}
 
 export function ScoutLeadDetail({ id }: { id: string }) {
   const router = useRouter();
@@ -445,11 +546,82 @@ export function ScoutLeadDetail({ id }: { id: string }) {
                       </dd>
                     </div>
                   )}
+                  {lead.vehicleFuel && (
+                    <div>
+                      <dt className="text-gray-500">Palivo</dt>
+                      <dd>{fuelLabels[lead.vehicleFuel] || lead.vehicleFuel}</dd>
+                    </div>
+                  )}
+                  {lead.vehicleTransmission && (
+                    <div>
+                      <dt className="text-gray-500">Převodovka</dt>
+                      <dd>{transmissionLabels[lead.vehicleTransmission] || lead.vehicleTransmission}</dd>
+                    </div>
+                  )}
+                  {lead.vehiclePower != null && (
+                    <div>
+                      <dt className="text-gray-500">Výkon</dt>
+                      <dd>{lead.vehiclePower} kW</dd>
+                    </div>
+                  )}
+                  {lead.vehicleEngineCC != null && (
+                    <div>
+                      <dt className="text-gray-500">Objem motoru</dt>
+                      <dd>{lead.vehicleEngineCC} ccm</dd>
+                    </div>
+                  )}
+                  {lead.vehicleBodyType && (
+                    <div>
+                      <dt className="text-gray-500">Karoserie</dt>
+                      <dd>{bodyTypeLabels[lead.vehicleBodyType] || lead.vehicleBodyType}</dd>
+                    </div>
+                  )}
+                  {lead.vehicleColor && (
+                    <div>
+                      <dt className="text-gray-500">Barva</dt>
+                      <dd>{lead.vehicleColor}</dd>
+                    </div>
+                  )}
+                  {lead.vehicleDoors != null && (
+                    <div>
+                      <dt className="text-gray-500">Dveře</dt>
+                      <dd>{lead.vehicleDoors}</dd>
+                    </div>
+                  )}
                 </dl>
                 {/* Equipment tags from listing title */}
                 <LeadEquipmentTags title={lead.listingTitle} />
+                {/* Scraped equipment list */}
+                {lead.vehicleEquipment && (() => {
+                  try {
+                    const items: string[] = JSON.parse(lead.vehicleEquipment);
+                    if (items.length > 0) return (
+                      <div className="mt-4">
+                        <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Výbava ze zdroje</h4>
+                        <div className="flex flex-wrap gap-1.5">
+                          {items.map((item, i) => (
+                            <span key={i} className="px-2 py-0.5 text-xs rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                              {item}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  } catch { /* invalid JSON */ }
+                  return null;
+                })()}
               </Card>
             )}
+
+          {/* Vehicle description (SOUKROMNIK) */}
+          {lead.category === "SOUKROMNIK" && lead.vehicleDescription && (
+            <VehicleDescriptionCard description={lead.vehicleDescription} />
+          )}
+
+          {/* Vehicle photos (SOUKROMNIK) */}
+          {lead.category === "SOUKROMNIK" && lead.vehiclePhotos && (
+            <VehiclePhotosCard photosJson={lead.vehiclePhotos} />
+          )}
 
           {/* Price distribution chart (SOUKROMNIK, >= 5 similar) */}
           {lead.category === "SOUKROMNIK" && marketData?.priceDistribution ? (
