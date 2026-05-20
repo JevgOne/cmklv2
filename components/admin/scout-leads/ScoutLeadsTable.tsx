@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Select } from "@/components/ui/Select";
 import { Tabs } from "@/components/ui/Tabs";
@@ -39,7 +39,9 @@ const categoryTabs = [
 const countryOptions = [
   { value: "", label: "Všechny země" },
   { value: "CZ", label: "Česko" },
+  { value: "SK", label: "Slovensko" },
   { value: "DE", label: "Německo" },
+  { value: "AT", label: "Rakousko" },
 ];
 
 const statusOptions = [
@@ -90,13 +92,15 @@ const sourceLabels: Record<string, string> = {
 
 export function ScoutLeadsTable() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [leads, setLeads] = useState<ScoutLead[]>([]);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
 
-  const [category, setCategory] = useState("ALL");
+  const initialCategory = searchParams.get("category") || "ALL";
+  const [category, setCategory] = useState(initialCategory);
   const [country, setCountry] = useState("");
   const [status, setStatus] = useState("");
   const [source, setSource] = useState("");
