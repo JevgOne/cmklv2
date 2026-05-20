@@ -128,21 +128,17 @@ async function fetchWithTimeout(
 }
 
 // --- AutoScout24 fetcher ---
+// AS24 CZ already returns EU-wide listings, so we only fetch from .cz
+// and post-filter by model name to avoid wrong-model results.
 
 async function fetchAS24(
   brand: string,
   model: string,
-  year: number,
-  country: "cz" | "de" | "at"
+  year: number
 ): Promise<PricePoint[]> {
   const brandSlug = brandToAS24Slug(brand);
   const modelSlug = modelToAS24Slug(brand, model);
-  const domain =
-    country === "cz"
-      ? "www.autoscout24.cz"
-      : country === "de"
-        ? "www.autoscout24.de"
-        : "www.autoscout24.at";
+  const domain = "www.autoscout24.cz";
 
   const url = `https://${domain}/lst/${brandSlug}/${modelSlug}?fregfrom=${year - 2}&fregto=${year + 2}&custtype=P&sort=price&ustate=N%2CU&atype=C&size=50&page=1`;
 
@@ -152,63 +148,83 @@ async function fetchAS24(
   const html = await response.text();
   const prices: PricePoint[] = [];
 
-  // Parse article elements with rich data attributes
-  // Pattern: <article ... data-price="12750" data-mileage="85000" data-first-registration="03/2018" ...>
-  //          <h2>Opel Corsa 1.4 Turbo</h2> <a href="/offers/...">
-  const articleRegex = /<article[^>]*?data-price="(\d+)"([^>]*)>[\s\S]*?<\/article>/g;
-  let match;
+  // AS24 is a Next.js app — extract __NEXT_DATA__ JSON with full listing data
+  const jsonMatch = html.match(/__NEXT_DATA__[^{]*({.+?})\s*<\/script>/);
+  if (!jsonMatch) return prices;
 
-  while ((match = articleRegex.exec(html)) !== null) {
-    const rawPrice = parseInt(match[1], 10);
-    if (rawPrice <= 0) continue;
+  try {
+    const data = JSON.parse(jsonMatch[1]);
+    const listings: Array<{
+      price?: { priceFormatted?: string };
+      vehicle?: {
+        make?: string;
+        model?: string;
+        modelVersionInput?: string;
+        mileageInKmFormatted?: string;
+        mileageInKm?: string | number;
+        firstRegistrationDate?: string;
+        fuel?: string;
+        transmission?: string;
+      };
+      url?: string;
+      location?: { city?: string; countryCode?: string };
+    }> = data?.props?.pageProps?.listings || [];
 
-    // AS24 data-price is ALWAYS in EUR (even on .cz domain)
-    const priceCZK = Math.round(rawPrice * EUR_TO_CZK);
+    const modelLower = model.toLowerCase();
 
-    const attrs = match[0]; // full article HTML
+    for (const item of listings) {
+      // Post-filter by model name — skip wrong models (e.g. Astra for Corsa search)
+      const vehicleModel = (item.vehicle?.model || "").toLowerCase();
+      const vehicleVersion = (item.vehicle?.modelVersionInput || "").toLowerCase();
+      if (!vehicleModel.includes(modelLower) && !vehicleVersion.includes(modelLower)) {
+        continue;
+      }
 
-    // Extract year from data-first-registration="MM/YYYY" or "MM-YYYY"
-    const yearMatch = attrs.match(/data-first-registration="[^"]*?(\d{4})/);
-    const itemYear = yearMatch ? parseInt(yearMatch[1], 10) : null;
+      // Parse price from "€ 3 600" format — always EUR on AS24
+      const priceStr = item.price?.priceFormatted || "";
+      const priceNum = parseInt(priceStr.replace(/[^\d]/g, ""), 10);
+      if (!priceNum || priceNum <= 0) continue;
+      const priceCZK = Math.round(priceNum * EUR_TO_CZK);
 
-    // Extract mileage from data-mileage="85000"
-    const mileageMatch = attrs.match(/data-mileage="(\d+)"/);
-    const itemMileage = mileageMatch ? parseInt(mileageMatch[1], 10) : null;
+      // Parse mileage
+      const kmRaw = item.vehicle?.mileageInKmFormatted || item.vehicle?.mileageInKm || "";
+      const kmStr = typeof kmRaw === "number" ? String(kmRaw) : kmRaw;
+      const mileage = parseInt(kmStr.replace(/[^\d]/g, ""), 10) || null;
 
-    // Extract title from <h2> inside the article
-    const titleMatch = attrs.match(/<h2[^>]*>([^<]+)<\/h2>/);
-    const itemTitle = titleMatch ? titleMatch[1].trim() : null;
+      // Parse year from firstRegistrationDate (e.g. "2018-06" or "06/2018")
+      const regDate = item.vehicle?.firstRegistrationDate || "";
+      const yearMatch = regDate.match?.(/\b(19[89]\d|20[0-3]\d)\b/);
+      const listingYear = yearMatch ? parseInt(yearMatch[1], 10) : null;
 
-    // Extract URL from offer link
-    const urlMatch = attrs.match(/href="(\/(?:offers|nabidka|angebote)\/[^"]+)"/);
-    const itemUrl = urlMatch ? `https://${domain}${urlMatch[1]}` : `https://${domain}/lst/${brandSlug}/${modelSlug}`;
+      // Build title
+      const v = item.vehicle;
+      const title = v?.modelVersionInput
+        || [v?.make, v?.model].filter(Boolean).join(" ")
+        || null;
 
-    prices.push({
-      price: priceCZK,
-      year: itemYear,
-      mileage: itemMileage,
-      source: "AUTOSCOUT24",
-      url: itemUrl,
-      title: itemTitle,
-    });
-  }
+      // Build URL — use listing's actual country domain for correct links
+      const countryCode = (item.location?.countryCode || "").toLowerCase();
+      const listingDomain =
+        countryCode === "de" ? "www.autoscout24.de"
+        : countryCode === "at" ? "www.autoscout24.at"
+        : countryCode === "it" ? "www.autoscout24.it"
+        : countryCode === "nl" ? "www.autoscout24.nl"
+        : countryCode === "be" ? "www.autoscout24.be"
+        : countryCode === "fr" ? "www.autoscout24.fr"
+        : "www.autoscout24.cz";
+      const itemUrl = item.url ? `https://${listingDomain}${item.url}` : null;
 
-  // Fallback: simple data-price regex if article parsing found nothing
-  if (prices.length === 0) {
-    const priceRegex = /data-price="(\d+)"/g;
-    while ((match = priceRegex.exec(html)) !== null) {
-      const rawPrice = parseInt(match[1], 10);
-      if (rawPrice <= 0) continue;
-      const priceCZK = Math.round(rawPrice * EUR_TO_CZK);
       prices.push({
         price: priceCZK,
-        year: null,
-        mileage: null,
+        year: listingYear,
+        mileage,
         source: "AUTOSCOUT24",
-        url: `https://${domain}/lst/${brandSlug}/${modelSlug}`,
-        title: null,
+        url: itemUrl,
+        title,
       });
     }
+  } catch {
+    // JSON parse failed — return empty
   }
 
   return prices;
@@ -483,15 +499,14 @@ export async function fetchMarketData(
   }
 
   // Fetch from all internet sources in parallel
-  const [as24CZ, as24DE, as24AT, sauto, mobile] = await Promise.allSettled([
-    fetchAS24(brand, model, year, "cz"),
-    fetchAS24(brand, model, year, "de"),
-    fetchAS24(brand, model, year, "at"),
+  // AS24 CZ already includes EU-wide listings, no need to fetch DE/AT separately
+  const [as24, sauto, mobile] = await Promise.allSettled([
+    fetchAS24(brand, model, year),
     fetchSauto(brand, model, year),
     fetchMobileDe(brand, model, year),
   ]);
 
-  const allPrices = [as24CZ, as24DE, as24AT, sauto, mobile]
+  const allPrices = [as24, sauto, mobile]
     .filter((r) => r.status === "fulfilled")
     .flatMap((r) => (r as PromiseFulfilledResult<PricePoint[]>).value);
 
