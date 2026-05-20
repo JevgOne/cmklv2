@@ -50,6 +50,21 @@ export async function checkScoutLeadDuplicate(
     if (bySource) return bySource.id;
   }
 
+  // 1.5. VIN match (cross-source dedup — same vehicle, different listing)
+  if (payload.vehicleVin && payload.vehicleVin.length === 17) {
+    const byVin = await prisma.scoutLead.findFirst({
+      where: {
+        vehicleVin: payload.vehicleVin,
+        NOT: {
+          source: payload.source,
+          sourceId: payload.sourceId ?? undefined,
+        },
+      },
+      select: { id: true },
+    });
+    if (byVin) return byVin.id;
+  }
+
   const ninetyDaysAgo = new Date();
   ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
 
