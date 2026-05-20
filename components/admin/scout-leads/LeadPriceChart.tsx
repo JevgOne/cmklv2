@@ -75,24 +75,26 @@ export function LeadPriceChart({ buckets, stats, sources }: LeadPriceChartProps)
       {/* Stats summary */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 text-xs text-gray-500">
         <div>
-          <span className="block text-gray-400">Medián</span>
-          <span className="font-semibold text-gray-700">
+          <span className="block text-gray-400">Tržní medián</span>
+          <span className="font-semibold text-gray-700 text-sm">
             {stats.median.toLocaleString("cs-CZ")} Kč
           </span>
         </div>
         <div>
-          <span className="block text-gray-400">Rozsah</span>
+          <span className="block text-gray-400">Průměr</span>
+          <span className="font-semibold text-gray-700 text-sm">
+            {stats.mean.toLocaleString("cs-CZ")} Kč
+          </span>
+        </div>
+        <div>
+          <span className="block text-gray-400">Cenové pásmo</span>
           <span className="font-semibold text-gray-700">
             {stats.min.toLocaleString("cs-CZ")} – {stats.max.toLocaleString("cs-CZ")} Kč
           </span>
         </div>
         <div>
-          <span className="block text-gray-400">Percentil</span>
-          <span className="font-semibold text-gray-700">{stats.percentile}.</span>
-        </div>
-        <div>
           <span className="block text-gray-400">Porovnáno</span>
-          <span className="font-semibold text-gray-700">{stats.count} vozů</span>
+          <span className="font-semibold text-gray-700">{stats.count} vozů ({stats.percentile}. percentil)</span>
         </div>
       </div>
 

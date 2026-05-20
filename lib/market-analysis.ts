@@ -350,12 +350,12 @@ export function computeAnalysis(
   prices: PricePoint[],
   leadPrice: number
 ): Omit<MarketAnalysisResult, "fromCache" | "fetchedAt" | "dbFallback"> {
-  const validPrices = prices
+  const rawPrices = prices
     .map((p) => p.price)
     .filter((p) => p > 0)
     .sort((a, b) => a - b);
 
-  if (validPrices.length < 3) {
+  if (rawPrices.length < 3) {
     return {
       prices,
       histogram: [],
@@ -370,9 +370,20 @@ export function computeAnalysis(
     };
   }
 
+  // Filter outliers using IQR method — removes nonsensical prices
+  const q1 = rawPrices[Math.floor(rawPrices.length * 0.25)];
+  const q3 = rawPrices[Math.floor(rawPrices.length * 0.75)];
+  const iqr = q3 - q1;
+  const lowerBound = q1 - 1.5 * iqr;
+  const upperBound = q3 + 1.5 * iqr;
+  const validPrices = rawPrices.filter((p) => p >= lowerBound && p <= upperBound);
+
+  // Fall back to raw if IQR filtering removed too much
+  const finalPrices = validPrices.length >= 3 ? validPrices : rawPrices;
+
   // Histogram: 10 buckets
-  const min = validPrices[0];
-  const max = validPrices[validPrices.length - 1];
+  const min = finalPrices[0];
+  const max = finalPrices[finalPrices.length - 1];
   const bucketSize = Math.ceil((max - min) / 10) || 1;
 
   const buckets: HistogramBucket[] = Array.from({ length: 10 }, (_, i) => ({
@@ -382,7 +393,7 @@ export function computeAnalysis(
     isCurrent: false,
   }));
 
-  for (const price of validPrices) {
+  for (const price of finalPrices) {
     const idx = Math.min(Math.floor((price - min) / bucketSize), 9);
     buckets[idx].count++;
   }
@@ -394,15 +405,15 @@ export function computeAnalysis(
   }
 
   // Stats
-  const median = validPrices[Math.floor(validPrices.length / 2)];
+  const median = finalPrices[Math.floor(finalPrices.length / 2)];
   const mean = Math.round(
-    validPrices.reduce((a, b) => a + b, 0) / validPrices.length
+    finalPrices.reduce((a, b) => a + b, 0) / finalPrices.length
   );
   const deviation = ((leadPrice - median) / median) * 100;
 
   // Percentile
-  const belowCount = validPrices.filter((p) => p < leadPrice).length;
-  const percentile = Math.round((belowCount / validPrices.length) * 100);
+  const belowCount = finalPrices.filter((p) => p < leadPrice).length;
+  const percentile = Math.round((belowCount / finalPrices.length) * 100);
 
   // Verdict
   let verdict: "LOW" | "OK" | "HIGH";
@@ -418,8 +429,11 @@ export function computeAnalysis(
     label = "V normálu";
   }
 
-  // Top 5 similar offers (closest by price)
-  const similarOffers = prices
+  // Top 5 similar offers (closest by price, from filtered set)
+  const filteredPrices = prices.filter(
+    (p) => p.price >= lowerBound && p.price <= upperBound
+  );
+  const similarOffers = (filteredPrices.length >= 3 ? filteredPrices : prices)
     .filter((p) => p.price > 0)
     .sort(
       (a, b) =>
@@ -428,9 +442,9 @@ export function computeAnalysis(
     .slice(0, 5);
 
   return {
-    prices,
+    prices: filteredPrices.length >= 3 ? filteredPrices : prices,
     histogram: buckets,
-    stats: { median, mean, min, max, count: validPrices.length, percentile },
+    stats: { median, mean, min, max, count: finalPrices.length, percentile },
     verdict: { verdict, deviationPercent: Math.round(deviation), label },
     similarOffers,
     sources: {
