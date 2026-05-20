@@ -1,9 +1,18 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 
-interface SimilarLead {
+interface SimilarOffer {
+  price: number;
+  year: number | null;
+  mileage: number | null;
+  source: string;
+  url: string | null;
+  title: string | null;
+}
+
+// Legacy format from DB-based similar leads
+interface LegacySimilarLead {
   id: string;
   listingTitle: string | null;
   vehicleYear: number | null;
@@ -15,28 +24,45 @@ interface SimilarLead {
 }
 
 const sourceLabels: Record<string, string> = {
-  BAZOS: "Bazoš",
-  SBAZAR: "Sbazar",
+  AUTOSCOUT24: "AutoScout24",
   SAUTO: "Sauto",
-  TIPCARS: "TipCars",
-  AUTOSCOUT24: "AutoScout",
   MOBILE_DE: "Mobile.de",
-  MANUAL: "Manuální",
+  BAZOS: "Bazos",
+  SBAZAR: "Sbazar",
+  TIPCARS: "TipCars",
+  MANUAL: "Manualni",
+};
+
+const sourceColors: Record<string, string> = {
+  AUTOSCOUT24: "bg-blue-50 text-blue-700",
+  SAUTO: "bg-green-50 text-green-700",
+  MOBILE_DE: "bg-purple-50 text-purple-700",
 };
 
 interface LeadSimilarTableProps {
-  leads: SimilarLead[];
+  offers?: SimilarOffer[];
+  leads?: LegacySimilarLead[];
 }
 
-export function LeadSimilarTable({ leads }: LeadSimilarTableProps) {
-  const router = useRouter();
+export function LeadSimilarTable({ offers, leads }: LeadSimilarTableProps) {
+  // Normalize: convert legacy leads to offer format
+  const items: SimilarOffer[] =
+    offers ||
+    (leads || []).map((l) => ({
+      price: l.vehiclePrice || 0,
+      year: l.vehicleYear,
+      mileage: l.vehicleMileage,
+      source: l.source,
+      url: l.sourceUrl,
+      title: l.listingTitle,
+    }));
 
-  if (leads.length === 0) return null;
+  if (items.length === 0) return null;
 
   return (
     <Card className="p-6">
       <h3 className="text-sm font-semibold text-gray-500 uppercase mb-4">
-        Podobné leady
+        Podobne nabidky na trhu
       </h3>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
@@ -46,34 +72,50 @@ export function LeadSimilarTable({ leads }: LeadSimilarTableProps) {
               <th className="py-2 px-3 font-semibold text-gray-600 text-xs">Rok</th>
               <th className="py-2 px-3 font-semibold text-gray-600 text-xs">Cena</th>
               <th className="py-2 px-3 font-semibold text-gray-600 text-xs hidden sm:table-cell">Km</th>
-              <th className="py-2 px-3 font-semibold text-gray-600 text-xs hidden md:table-cell">Město</th>
               <th className="py-2 px-3 font-semibold text-gray-600 text-xs hidden md:table-cell">Zdroj</th>
+              <th className="py-2 px-3 font-semibold text-gray-600 text-xs hidden md:table-cell">Odkaz</th>
             </tr>
           </thead>
           <tbody>
-            {leads.map((lead) => (
+            {items.map((item, index) => (
               <tr
-                key={lead.id}
-                className="border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-colors"
-                onClick={() => router.push(`/admin/scout-leads/${lead.id}`)}
+                key={index}
+                className="border-b border-gray-50 hover:bg-gray-50 transition-colors"
               >
                 <td className="py-2 px-3 max-w-[200px] truncate">
-                  {lead.listingTitle || "—"}
+                  {item.title || "—"}
                 </td>
-                <td className="py-2 px-3 tabular-nums">{lead.vehicleYear || "—"}</td>
+                <td className="py-2 px-3 tabular-nums">{item.year || "—"}</td>
                 <td className="py-2 px-3 font-medium tabular-nums">
-                  {lead.vehiclePrice
-                    ? `${lead.vehiclePrice.toLocaleString("cs-CZ")} Kč`
+                  {item.price > 0
+                    ? `${item.price.toLocaleString("cs-CZ")} Kc`
                     : "—"}
                 </td>
                 <td className="py-2 px-3 tabular-nums hidden sm:table-cell">
-                  {lead.vehicleMileage
-                    ? `${lead.vehicleMileage.toLocaleString("cs-CZ")} km`
+                  {item.mileage
+                    ? `${item.mileage.toLocaleString("cs-CZ")} km`
                     : "—"}
                 </td>
-                <td className="py-2 px-3 hidden md:table-cell">{lead.city || "—"}</td>
                 <td className="py-2 px-3 hidden md:table-cell">
-                  {sourceLabels[lead.source] || lead.source}
+                  <span
+                    className={`px-1.5 py-0.5 text-xs rounded ${sourceColors[item.source] || "bg-gray-50 text-gray-700"}`}
+                  >
+                    {sourceLabels[item.source] || item.source}
+                  </span>
+                </td>
+                <td className="py-2 px-3 hidden md:table-cell">
+                  {item.url ? (
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-orange-600 hover:underline text-xs"
+                    >
+                      Zobrazit
+                    </a>
+                  ) : (
+                    "—"
+                  )}
                 </td>
               </tr>
             ))}

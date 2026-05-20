@@ -20,6 +20,11 @@ interface LeadPriceChartProps {
     count: number;
     percentile: number;
   };
+  sources?: {
+    autoscout24: number;
+    sauto: number;
+    mobile_de: number;
+  };
 }
 
 function formatPrice(value: number): string {
@@ -28,7 +33,7 @@ function formatPrice(value: number): string {
   return String(value);
 }
 
-export function LeadPriceChart({ buckets, stats }: LeadPriceChartProps) {
+export function LeadPriceChart({ buckets, stats, sources }: LeadPriceChartProps) {
   const data = buckets.map((b) => ({
     label: `${formatPrice(b.min)}–${formatPrice(b.max)}`,
     count: b.count,
@@ -90,6 +95,27 @@ export function LeadPriceChart({ buckets, stats }: LeadPriceChartProps) {
           <span className="font-semibold text-gray-700">{stats.count} vozů</span>
         </div>
       </div>
+
+      {/* Source breakdown */}
+      {sources && (sources.autoscout24 > 0 || sources.sauto > 0 || sources.mobile_de > 0) && (
+        <div className="flex flex-wrap gap-2 mt-3">
+          {sources.autoscout24 > 0 && (
+            <span className="px-2 py-0.5 text-xs rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+              AS24: {sources.autoscout24}
+            </span>
+          )}
+          {sources.sauto > 0 && (
+            <span className="px-2 py-0.5 text-xs rounded-full bg-green-50 text-green-700 border border-green-200">
+              Sauto: {sources.sauto}
+            </span>
+          )}
+          {sources.mobile_de > 0 && (
+            <span className="px-2 py-0.5 text-xs rounded-full bg-purple-50 text-purple-700 border border-purple-200">
+              Mobile.de: {sources.mobile_de}
+            </span>
+          )}
+        </div>
+      )}
     </Card>
   );
 }

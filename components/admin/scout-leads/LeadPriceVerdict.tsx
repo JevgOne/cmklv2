@@ -6,6 +6,8 @@ interface LeadPriceVerdictProps {
   verdict: "LOW" | "OK" | "HIGH";
   label: string;
   deviationPercent: number;
+  fromCache?: boolean;
+  sourceCount?: number;
 }
 
 const verdictConfig = {
@@ -29,7 +31,7 @@ const verdictConfig = {
   },
 };
 
-export function LeadPriceVerdict({ verdict, label }: LeadPriceVerdictProps) {
+export function LeadPriceVerdict({ verdict, label, fromCache, sourceCount }: LeadPriceVerdictProps) {
   const config = verdictConfig[verdict];
 
   return (
@@ -38,18 +40,32 @@ export function LeadPriceVerdict({ verdict, label }: LeadPriceVerdictProps) {
         <span className="text-xs font-semibold text-gray-500 uppercase">
           Cenový verdikt
         </span>
-        <span
-          className={cn(
-            "text-xs font-bold px-2 py-0.5 rounded-full",
-            config.bg,
-            config.text
+        <div className="flex items-center gap-1.5">
+          {fromCache && (
+            <span className="text-[10px] text-gray-400 px-1.5 py-0.5 rounded bg-gray-100">
+              cache
+            </span>
           )}
-        >
-          {verdict}
-        </span>
+          <span
+            className={cn(
+              "text-xs font-bold px-2 py-0.5 rounded-full",
+              config.bg,
+              config.text
+            )}
+          >
+            {verdict}
+          </span>
+        </div>
       </div>
       <div className={cn("text-sm font-semibold", config.text)}>{label}</div>
-      <div className="text-xs text-gray-500 mt-0.5">{config.hint}</div>
+      <div className="flex items-center justify-between mt-0.5">
+        <span className="text-xs text-gray-500">{config.hint}</span>
+        {sourceCount != null && sourceCount > 0 && (
+          <span className="text-[10px] text-gray-400">
+            {sourceCount} nabídek
+          </span>
+        )}
+      </div>
     </div>
   );
 }

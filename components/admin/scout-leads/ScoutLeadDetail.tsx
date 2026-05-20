@@ -216,13 +216,14 @@ export function ScoutLeadDetail({ id }: { id: string }) {
     priceDistribution: {
       buckets: Array<{ min: number; max: number; count: number; isCurrent: boolean }>;
       stats: { median: number; mean: number; min: number; max: number; count: number; percentile: number };
+      sources: { autoscout24: number; sauto: number; mobile_de: number };
     } | null;
     priceVerdict: { verdict: "LOW" | "OK" | "HIGH"; deviationPercent: number; label: string } | null;
-    similarLeads: Array<{
-      id: string; listingTitle: string | null; vehicleYear: number | null;
-      vehiclePrice: number | null; vehicleMileage: number | null;
-      city: string | null; source: string; sourceUrl: string | null;
+    similarOffers: Array<{
+      price: number; year: number | null; mileage: number | null;
+      source: string; url: string | null; title: string | null;
     }>;
+    meta: { fromCache: boolean; fetchedAt: string; dbFallback: boolean };
   } | null>(null);
 
   // Activity form
@@ -628,6 +629,7 @@ export function ScoutLeadDetail({ id }: { id: string }) {
             <LeadPriceChart
               buckets={marketData.priceDistribution.buckets}
               stats={marketData.priceDistribution.stats}
+              sources={marketData.priceDistribution.sources}
             />
           ) : lead.category === "SOUKROMNIK" && marketData && !marketData.priceDistribution ? (
             <Card className="p-6">
@@ -638,9 +640,9 @@ export function ScoutLeadDetail({ id }: { id: string }) {
             </Card>
           ) : null}
 
-          {/* Similar leads table (SOUKROMNIK) */}
-          {lead.category === "SOUKROMNIK" && marketData?.similarLeads && marketData.similarLeads.length > 0 && (
-            <LeadSimilarTable leads={marketData.similarLeads} />
+          {/* Similar offers table (SOUKROMNIK) */}
+          {lead.category === "SOUKROMNIK" && marketData?.similarOffers && marketData.similarOffers.length > 0 && (
+            <LeadSimilarTable offers={marketData.similarOffers} />
           )}
 
           {/* Source info */}
@@ -762,6 +764,8 @@ export function ScoutLeadDetail({ id }: { id: string }) {
                   verdict={marketData.priceVerdict.verdict}
                   label={marketData.priceVerdict.label}
                   deviationPercent={marketData.priceVerdict.deviationPercent}
+                  fromCache={marketData.meta?.fromCache}
+                  sourceCount={marketData.priceDistribution?.stats.count}
                 />
               </div>
             )}
