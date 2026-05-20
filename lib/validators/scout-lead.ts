@@ -81,7 +81,7 @@ const scoutLeadPayloadSchema = z.object({
   vehicleDoors: z.number().int().min(1).max(7).optional().nullable(),
   vehicleEquipment: z.array(z.string()).optional().nullable(),
   vehicleDescription: z.string().max(5000).optional().nullable(),
-  vehiclePhotos: z.array(z.string().url()).optional().nullable(),
+  vehiclePhotos: z.array(z.string().min(1)).optional().nullable(),
   rawPayload: z.any().optional().nullable(),
   score: z.number().int().min(0).max(100).default(0),
 });
