@@ -77,6 +77,9 @@ export async function GET(
         ...(yearMin && yearMax
           ? { vehicleYear: { gte: yearMin, lte: yearMax } }
           : {}),
+        ...(lead.vehicleMileage
+          ? { vehicleMileage: { gte: lead.vehicleMileage - 50000, lte: lead.vehicleMileage + 50000 } }
+          : {}),
         vehiclePrice: { not: null, gt: 0 },
         id: { not: lead.id },
       },
