@@ -30,7 +30,7 @@ const sourceLabels: Record<string, string> = {
   BAZOS: "Bazos",
   SBAZAR: "Sbazar",
   TIPCARS: "TipCars",
-  MANUAL: "Manualni",
+  MANUAL: "Manuální",
 };
 
 const sourceColors: Record<string, string> = {
@@ -62,7 +62,7 @@ export function LeadSimilarTable({ offers, leads }: LeadSimilarTableProps) {
   return (
     <Card className="p-6">
       <h3 className="text-sm font-semibold text-gray-500 uppercase mb-4">
-        Podobne nabidky na trhu
+        Podobné nabídky na trhu
       </h3>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
@@ -88,7 +88,7 @@ export function LeadSimilarTable({ offers, leads }: LeadSimilarTableProps) {
                 <td className="py-2 px-3 tabular-nums">{item.year || "—"}</td>
                 <td className="py-2 px-3 font-medium tabular-nums">
                   {item.price > 0
-                    ? `${item.price.toLocaleString("cs-CZ")} Kc`
+                    ? `${item.price.toLocaleString("cs-CZ")} Kč`
                     : "—"}
                 </td>
                 <td className="py-2 px-3 tabular-nums hidden sm:table-cell">

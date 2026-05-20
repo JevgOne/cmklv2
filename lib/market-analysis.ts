@@ -377,7 +377,7 @@ export function computeAnalysis(
     label = `Nad trhem (+${Math.round(deviation)}%)`;
   } else {
     verdict = "OK";
-    label = "V normalu";
+    label = "V normálu";
   }
 
   // Top 5 similar offers (closest by price)
