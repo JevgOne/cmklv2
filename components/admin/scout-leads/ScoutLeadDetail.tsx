@@ -348,23 +348,213 @@ export function ScoutLeadDetail({ id }: { id: string }) {
 
   const isPartner =
     lead.category === "AUTOBAZAR" || lead.category === "VRAKOVISTE";
+  const isSoukromnik = lead.category === "SOUKROMNIK";
   const canConvert =
     lead.status !== "WON" &&
     lead.status !== "REJECTED" &&
     lead.status !== "LOST";
 
+  // Parse photos for hero
+  let photos: string[] = [];
+  if (lead.vehiclePhotos) {
+    try { photos = JSON.parse(lead.vehiclePhotos); } catch { /* */ }
+  }
+  const heroPhoto = photos[0] || null;
+
+  // Parse equipment
+  let equipmentItems: string[] = [];
+  if (lead.vehicleEquipment) {
+    try { equipmentItems = JSON.parse(lead.vehicleEquipment); } catch { /* */ }
+  }
+
+  // Vehicle spec chips
+  const specChips: Array<{ label: string; value: string }> = [];
+  if (lead.vehicleYear) specChips.push({ label: "Rok", value: String(lead.vehicleYear) });
+  if (lead.vehicleMileage != null) specChips.push({ label: "Km", value: `${lead.vehicleMileage.toLocaleString("cs-CZ")} km` });
+  if (lead.vehicleFuel) specChips.push({ label: "Palivo", value: fuelLabels[lead.vehicleFuel] || lead.vehicleFuel });
+  if (lead.vehicleTransmission) specChips.push({ label: "Převodovka", value: transmissionLabels[lead.vehicleTransmission] || lead.vehicleTransmission });
+  if (lead.vehiclePower != null) specChips.push({ label: "Výkon", value: `${lead.vehiclePower} kW` });
+  if (lead.vehicleEngineCC != null) specChips.push({ label: "Motor", value: `${lead.vehicleEngineCC} ccm` });
+  if (lead.vehicleBodyType) specChips.push({ label: "Karoserie", value: bodyTypeLabels[lead.vehicleBodyType] || lead.vehicleBodyType });
+  if (lead.vehicleColor) specChips.push({ label: "Barva", value: lead.vehicleColor });
+  if (lead.vehicleDoors != null) specChips.push({ label: "Dveře", value: String(lead.vehicleDoors) });
+
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left column */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Data completeness — always visible */}
-          <LeadDataCompleteness lead={lead as unknown as Record<string, unknown>} category={lead.category} />
+      {/* === HERO BANNER === */}
+      <div className="relative rounded-2xl overflow-hidden bg-gray-900 mb-6">
+        {/* Background photo */}
+        {heroPhoto && (
+          <img
+            src={heroPhoto}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover opacity-30"
+          />
+        )}
+        <div className="relative px-6 py-8 sm:px-8 sm:py-10">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+            {/* Left: title + meta */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <ScoutLeadStatusBadge status={lead.status} />
+                <span className="px-2.5 py-0.5 text-xs font-medium rounded-full bg-white/10 text-white/80 border border-white/20">
+                  {categoryLabels[lead.category]} / {lead.country}
+                </span>
+                <span className="px-2.5 py-0.5 text-xs font-medium rounded-full bg-white/10 text-white/80 border border-white/20">
+                  {sourceLabels[lead.source] || lead.source}
+                </span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-white">
+                {lead.listingTitle || lead.name}
+              </h1>
+              {isSoukromnik && lead.vehicleBrand && (
+                <p className="text-white/60 text-sm">
+                  {lead.vehicleBrand} {lead.vehicleModel}
+                  {lead.vehicleYear ? ` (${lead.vehicleYear})` : ""}
+                </p>
+              )}
+              {/* Quick contact in hero */}
+              <div className="flex flex-wrap gap-2 pt-1">
+                {lead.phone && (
+                  <a
+                    href={`tel:${lead.phone}`}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-orange-500 text-white text-sm font-medium hover:bg-orange-600 transition"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                    {lead.phone}
+                  </a>
+                )}
+                {lead.email && (
+                  <a
+                    href={`mailto:${lead.email}`}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 text-white text-sm font-medium hover:bg-white/20 transition border border-white/20"
+                  >
+                    {lead.email}
+                  </a>
+                )}
+                {lead.sourceUrl && (
+                  <a
+                    href={lead.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 text-white text-sm font-medium hover:bg-white/20 transition border border-white/20"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                    Zdrojový inzerát
+                  </a>
+                )}
+              </div>
+            </div>
 
-          {/* Contact info */}
+            {/* Right: price + score */}
+            <div className="flex flex-col items-end gap-2 shrink-0">
+              {isSoukromnik && lead.vehiclePrice != null && lead.vehiclePrice > 0 && (
+                <div className="text-3xl sm:text-4xl font-bold text-white tabular-nums">
+                  {lead.vehiclePrice.toLocaleString("cs-CZ")} Kč
+                </div>
+              )}
+              {marketData?.priceVerdict && (
+                <LeadPriceVerdict
+                  verdict={marketData.priceVerdict.verdict}
+                  label={marketData.priceVerdict.label}
+                  deviationPercent={marketData.priceVerdict.deviationPercent}
+                  fromCache={marketData.meta?.fromCache}
+                  sourceCount={marketData.priceDistribution?.stats.count}
+                />
+              )}
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-white/40 text-xs">Score</span>
+                <span className="text-xl font-bold text-orange-400">{lead.score}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Spec chips bar */}
+          {isSoukromnik && specChips.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-5 pt-5 border-t border-white/10">
+              {specChips.map((chip) => (
+                <span
+                  key={chip.label}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-white text-xs border border-white/10"
+                >
+                  <span className="text-white/50">{chip.label}</span>
+                  <span className="font-medium">{chip.value}</span>
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* === DATA COMPLETENESS === */}
+      <LeadDataCompleteness lead={lead as unknown as Record<string, unknown>} category={lead.category} />
+
+      {/* === MAIN CONTENT === */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+        {/* Left column — 2/3 */}
+        <div className="lg:col-span-2 space-y-6">
+
+          {/* Photos gallery (SOUKROMNIK) */}
+          {isSoukromnik && photos.length > 0 && (
+            <VehiclePhotosCard photosJson={lead.vehiclePhotos!} />
+          )}
+
+          {/* Vehicle description (SOUKROMNIK) */}
+          {isSoukromnik && lead.vehicleDescription && (
+            <VehicleDescriptionCard description={lead.vehicleDescription} />
+          )}
+
+          {/* Equipment (SOUKROMNIK) */}
+          {isSoukromnik && (equipmentItems.length > 0 || lead.listingTitle) && (
+            <Card className="p-6">
+              <h3 className="text-sm font-semibold text-gray-500 uppercase mb-3">
+                Výbava
+              </h3>
+              <LeadEquipmentTags title={lead.listingTitle} />
+              {equipmentItems.length > 0 && (
+                <div className="mt-3">
+                  <div className="flex flex-wrap gap-1.5">
+                    {equipmentItems.map((item, i) => (
+                      <span key={i} className="px-2 py-0.5 text-xs rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </Card>
+          )}
+
+          {/* === MARKET ANALYSIS SECTION === */}
+          {isSoukromnik && (
+            <div className="space-y-6">
+              {/* Price chart */}
+              {marketData?.priceDistribution ? (
+                <LeadPriceChart
+                  buckets={marketData.priceDistribution.buckets}
+                  stats={marketData.priceDistribution.stats}
+                  sources={marketData.priceDistribution.sources}
+                />
+              ) : marketData && !marketData.priceDistribution ? (
+                <Card className="p-6">
+                  <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
+                    Cenová distribuce
+                  </h3>
+                  <p className="text-sm text-gray-400">Nedostatek dat pro cenovou analýzu</p>
+                </Card>
+              ) : null}
+
+              {/* Similar offers */}
+              {marketData?.similarOffers && marketData.similarOffers.length > 0 && (
+                <LeadSimilarTable offers={marketData.similarOffers} />
+              )}
+            </div>
+          )}
+
+          {/* Contact + Location (non-SOUKROMNIK or expanded for SOUKROMNIK) */}
           <Card className="p-6">
             <h3 className="text-sm font-semibold text-gray-500 uppercase mb-4">
-              Kontaktní údaje
+              Kontakt a lokace
             </h3>
             <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
               <div>
@@ -375,10 +565,7 @@ export function ScoutLeadDetail({ id }: { id: string }) {
                 <div>
                   <dt className="text-gray-500">Telefon</dt>
                   <dd className="font-medium">
-                    <a
-                      href={`tel:${lead.phone}`}
-                      className="text-orange-600 hover:underline"
-                    >
+                    <a href={`tel:${lead.phone}`} className="text-orange-600 hover:underline">
                       {lead.phone}
                     </a>
                   </dd>
@@ -388,10 +575,7 @@ export function ScoutLeadDetail({ id }: { id: string }) {
                 <div>
                   <dt className="text-gray-500">Email</dt>
                   <dd>
-                    <a
-                      href={`mailto:${lead.email}`}
-                      className="text-orange-600 hover:underline"
-                    >
+                    <a href={`mailto:${lead.email}`} className="text-orange-600 hover:underline">
                       {lead.email}
                     </a>
                   </dd>
@@ -402,11 +586,7 @@ export function ScoutLeadDetail({ id }: { id: string }) {
                   <dt className="text-gray-500">Web</dt>
                   <dd>
                     <a
-                      href={
-                        lead.web.startsWith("http")
-                          ? lead.web
-                          : `https://${lead.web}`
-                      }
+                      href={lead.web.startsWith("http") ? lead.web : `https://${lead.web}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-orange-600 hover:underline"
@@ -422,53 +602,30 @@ export function ScoutLeadDetail({ id }: { id: string }) {
                   <dd>{lead.contactPerson}</dd>
                 </div>
               )}
-            </dl>
-          </Card>
-
-          {/* Location */}
-          {(lead.address || lead.city) && (
-            <Card className="p-6">
-              <h3 className="text-sm font-semibold text-gray-500 uppercase mb-4">
-                Lokace
-              </h3>
-              <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
-                {lead.address && (
-                  <div>
-                    <dt className="text-gray-500">Adresa</dt>
-                    <dd>{lead.address}</dd>
-                  </div>
-                )}
-                {lead.city && (
-                  <div>
-                    <dt className="text-gray-500">Město</dt>
-                    <dd>{lead.city}</dd>
-                  </div>
-                )}
-                {lead.region && (
-                  <div>
-                    <dt className="text-gray-500">Region</dt>
-                    <dd>{lead.region}</dd>
-                  </div>
-                )}
-                {lead.zip && (
-                  <div>
-                    <dt className="text-gray-500">PSČ</dt>
-                    <dd>{lead.zip}</dd>
-                  </div>
-                )}
-              </dl>
-              {lead.latitude && lead.longitude && (
-                <a
-                  href={`https://maps.google.com/?q=${lead.latitude},${lead.longitude}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block mt-3 text-sm text-orange-600 hover:underline"
-                >
-                  Zobrazit na mapě
-                </a>
+              {lead.city && (
+                <div>
+                  <dt className="text-gray-500">Město</dt>
+                  <dd>{lead.city}{lead.region ? `, ${lead.region}` : ""}{lead.zip ? ` ${lead.zip}` : ""}</dd>
+                </div>
               )}
-            </Card>
-          )}
+              {lead.address && (
+                <div>
+                  <dt className="text-gray-500">Adresa</dt>
+                  <dd>{lead.address}</dd>
+                </div>
+              )}
+            </dl>
+            {lead.latitude && lead.longitude && (
+              <a
+                href={`https://maps.google.com/?q=${lead.latitude},${lead.longitude}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block mt-3 text-sm text-orange-600 hover:underline"
+              >
+                Zobrazit na mapě
+              </a>
+            )}
+          </Card>
 
           {/* Business info (AUTOBAZAR/VRAKOVISTE) */}
           {isPartner && (
@@ -503,195 +660,25 @@ export function ScoutLeadDetail({ id }: { id: string }) {
             </Card>
           )}
 
-          {/* Vehicle info (SOUKROMNIK) */}
-          {lead.category === "SOUKROMNIK" &&
-            (lead.vehicleBrand || lead.listingTitle) && (
-              <Card className="p-6">
-                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-4">
-                  Vozidlo
-                </h3>
-                <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
-                  {lead.listingTitle && (
-                    <div className="sm:col-span-2">
-                      <dt className="text-gray-500">Název inzerátu</dt>
-                      <dd className="font-medium">{lead.listingTitle}</dd>
-                    </div>
-                  )}
-                  {lead.vehicleBrand && (
-                    <div>
-                      <dt className="text-gray-500">Značka / Model</dt>
-                      <dd>
-                        {lead.vehicleBrand} {lead.vehicleModel}
-                      </dd>
-                    </div>
-                  )}
-                  {lead.vehicleYear && (
-                    <div>
-                      <dt className="text-gray-500">Rok</dt>
-                      <dd>{lead.vehicleYear}</dd>
-                    </div>
-                  )}
-                  {lead.vehiclePrice != null && (
-                    <div>
-                      <dt className="text-gray-500">Cena</dt>
-                      <dd>
-                        {lead.vehiclePrice.toLocaleString("cs-CZ")} Kč
-                      </dd>
-                    </div>
-                  )}
-                  {lead.vehicleMileage != null && (
-                    <div>
-                      <dt className="text-gray-500">Nájezd</dt>
-                      <dd>
-                        {lead.vehicleMileage.toLocaleString("cs-CZ")} km
-                      </dd>
-                    </div>
-                  )}
-                  {lead.vehicleFuel && (
-                    <div>
-                      <dt className="text-gray-500">Palivo</dt>
-                      <dd>{fuelLabels[lead.vehicleFuel] || lead.vehicleFuel}</dd>
-                    </div>
-                  )}
-                  {lead.vehicleTransmission && (
-                    <div>
-                      <dt className="text-gray-500">Převodovka</dt>
-                      <dd>{transmissionLabels[lead.vehicleTransmission] || lead.vehicleTransmission}</dd>
-                    </div>
-                  )}
-                  {lead.vehiclePower != null && (
-                    <div>
-                      <dt className="text-gray-500">Výkon</dt>
-                      <dd>{lead.vehiclePower} kW</dd>
-                    </div>
-                  )}
-                  {lead.vehicleEngineCC != null && (
-                    <div>
-                      <dt className="text-gray-500">Objem motoru</dt>
-                      <dd>{lead.vehicleEngineCC} ccm</dd>
-                    </div>
-                  )}
-                  {lead.vehicleBodyType && (
-                    <div>
-                      <dt className="text-gray-500">Karoserie</dt>
-                      <dd>{bodyTypeLabels[lead.vehicleBodyType] || lead.vehicleBodyType}</dd>
-                    </div>
-                  )}
-                  {lead.vehicleColor && (
-                    <div>
-                      <dt className="text-gray-500">Barva</dt>
-                      <dd>{lead.vehicleColor}</dd>
-                    </div>
-                  )}
-                  {lead.vehicleDoors != null && (
-                    <div>
-                      <dt className="text-gray-500">Dveře</dt>
-                      <dd>{lead.vehicleDoors}</dd>
-                    </div>
-                  )}
-                </dl>
-                {/* Equipment tags from listing title */}
-                <LeadEquipmentTags title={lead.listingTitle} />
-                {/* Scraped equipment list */}
-                {lead.vehicleEquipment && (() => {
-                  try {
-                    const items: string[] = JSON.parse(lead.vehicleEquipment);
-                    if (items.length > 0) return (
-                      <div className="mt-4">
-                        <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Výbava ze zdroje</h4>
-                        <div className="flex flex-wrap gap-1.5">
-                          {items.map((item, i) => (
-                            <span key={i} className="px-2 py-0.5 text-xs rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                              {item}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  } catch { /* invalid JSON */ }
-                  return null;
-                })()}
-              </Card>
-            )}
-
-          {/* Vehicle description (SOUKROMNIK) */}
-          {lead.category === "SOUKROMNIK" && lead.vehicleDescription && (
-            <VehicleDescriptionCard description={lead.vehicleDescription} />
-          )}
-
-          {/* Vehicle photos (SOUKROMNIK) */}
-          {lead.category === "SOUKROMNIK" && lead.vehiclePhotos && (
-            <VehiclePhotosCard photosJson={lead.vehiclePhotos} />
-          )}
-
-          {/* Price distribution chart (SOUKROMNIK, >= 5 similar) */}
-          {lead.category === "SOUKROMNIK" && marketData?.priceDistribution ? (
-            <LeadPriceChart
-              buckets={marketData.priceDistribution.buckets}
-              stats={marketData.priceDistribution.stats}
-              sources={marketData.priceDistribution.sources}
-            />
-          ) : lead.category === "SOUKROMNIK" && marketData && !marketData.priceDistribution ? (
-            <Card className="p-6">
-              <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
-                Cenová distribuce
-              </h3>
-              <p className="text-sm text-gray-400">Nedostatek dat pro cenovou analýzu</p>
-            </Card>
-          ) : null}
-
-          {/* Similar offers table (SOUKROMNIK) */}
-          {lead.category === "SOUKROMNIK" && marketData?.similarOffers && marketData.similarOffers.length > 0 && (
-            <LeadSimilarTable offers={marketData.similarOffers} />
-          )}
-
-          {/* Source info */}
+          {/* Source info — collapsed */}
           <Card className="p-6">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase mb-4">
-              Zdroj
-            </h3>
-            <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
-              <div>
-                <dt className="text-gray-500">Zdroj</dt>
-                <dd>{sourceLabels[lead.source] || lead.source}</dd>
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-gray-500 uppercase">
+                Zdroj
+              </h3>
+              <div className="flex items-center gap-3 text-xs text-gray-400">
+                <span>{sourceLabels[lead.source] || lead.source}</span>
+                {lead.sourceId && <span className="font-mono">{lead.sourceId}</span>}
+                <span>{new Date(lead.scrapedAt).toLocaleString("cs-CZ")}</span>
               </div>
-              {lead.sourceId && (
-                <div>
-                  <dt className="text-gray-500">Source ID</dt>
-                  <dd className="font-mono text-xs">{lead.sourceId}</dd>
-                </div>
-              )}
-              {lead.sourceUrl && (
-                <div className="sm:col-span-2">
-                  <dt className="text-gray-500">URL</dt>
-                  <dd>
-                    <a
-                      href={lead.sourceUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-orange-600 hover:underline break-all"
-                    >
-                      {lead.sourceUrl}
-                    </a>
-                  </dd>
-                </div>
-              )}
-              <div>
-                <dt className="text-gray-500">Staženo</dt>
-                <dd>
-                  {new Date(lead.scrapedAt).toLocaleString("cs-CZ")}
-                </dd>
-              </div>
-            </dl>
+            </div>
             {lead.rawPayload && (
-              <div className="mt-4">
+              <div className="mt-3">
                 <button
                   onClick={() => setShowRaw(!showRaw)}
-                  className="text-sm text-gray-500 hover:text-gray-700"
+                  className="text-xs text-gray-400 hover:text-gray-600"
                 >
-                  {showRaw
-                    ? "Skrýt raw payload"
-                    : "Zobrazit raw payload"}
+                  {showRaw ? "Skrýt raw data" : "Zobrazit raw data"}
                 </button>
                 {showRaw && (
                   <pre className="mt-2 p-3 bg-gray-50 rounded-lg text-xs overflow-auto max-h-64">
@@ -703,98 +690,11 @@ export function ScoutLeadDetail({ id }: { id: string }) {
           </Card>
         </div>
 
-        {/* Right column */}
+        {/* Right column — 1/3 sidebar */}
         <div className="space-y-6">
-          {/* Status */}
-          <Card className="p-6">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase mb-4">
-              Stav
-            </h3>
+          {/* Actions card — primary */}
+          <Card className="p-6 border-orange-200 bg-orange-50/30">
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <ScoutLeadStatusBadge status={lead.status} />
-                <span className="text-sm text-gray-500">
-                  Score:{" "}
-                  <span className="font-bold text-orange-500">
-                    {lead.score}
-                  </span>
-                </span>
-              </div>
-              <div className="text-sm">
-                <span className="text-gray-500">Kategorie: </span>
-                <span className="font-medium">
-                  {categoryLabels[lead.category]} ({lead.country})
-                </span>
-              </div>
-              {lead.assignedTo && (
-                <div className="text-sm">
-                  <span className="text-gray-500">Přiřazeno: </span>
-                  <span className="font-medium">
-                    {lead.assignedTo.firstName} {lead.assignedTo.lastName}
-                  </span>
-                </div>
-              )}
-              {lead.rejectionReason && (
-                <div className="text-sm text-red-600">
-                  Důvod odmítnutí: {lead.rejectionReason}
-                </div>
-              )}
-              {lead.convertedToPartnerId && (
-                <a
-                  href={`/admin/partners/${lead.convertedToPartnerId}`}
-                  className="block text-sm text-orange-600 hover:underline"
-                >
-                  Zobrazit partnera
-                </a>
-              )}
-              {lead.convertedToLeadId && (
-                <a
-                  href={`/admin/leads/${lead.convertedToLeadId}`}
-                  className="block text-sm text-orange-600 hover:underline"
-                >
-                  Zobrazit lead
-                </a>
-              )}
-            </div>
-
-            {/* Price verdict (SOUKROMNIK) */}
-            {marketData?.priceVerdict && (
-              <div className="mt-3">
-                <LeadPriceVerdict
-                  verdict={marketData.priceVerdict.verdict}
-                  label={marketData.priceVerdict.label}
-                  deviationPercent={marketData.priceVerdict.deviationPercent}
-                  fromCache={marketData.meta?.fromCache}
-                  sourceCount={marketData.priceDistribution?.stats.count}
-                />
-              </div>
-            )}
-
-            {/* Status change buttons */}
-            {lead.status !== "WON" &&
-              lead.status !== "REJECTED" &&
-              lead.status !== "LOST" && (
-                <div className="mt-4 space-y-2">
-                  <select
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
-                    value={lead.status}
-                    onChange={(e) => handleStatusChange(e.target.value)}
-                  >
-                    <option value="NEW">Nový</option>
-                    <option value="CONTACTED">Kontaktován</option>
-                    <option value="QUALIFIED">Kvalifikován</option>
-                    <option value="LOST">Ztracen</option>
-                  </select>
-                </div>
-              )}
-          </Card>
-
-          {/* Actions */}
-          <Card className="p-6">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase mb-4">
-              Akce
-            </h3>
-            <div className="space-y-2">
               {!lead.assignedTo && (
                 <Button
                   variant="primary"
@@ -805,6 +705,11 @@ export function ScoutLeadDetail({ id }: { id: string }) {
                 >
                   {claiming ? "Přebírám..." : "Převzít lead"}
                 </Button>
+              )}
+              {lead.assignedTo && (
+                <div className="text-sm text-center text-gray-600">
+                  Přiřazeno: <span className="font-semibold">{lead.assignedTo.firstName} {lead.assignedTo.lastName}</span>
+                </div>
               )}
               {canConvert && (
                 <Button
@@ -826,7 +731,39 @@ export function ScoutLeadDetail({ id }: { id: string }) {
                   Odmítnout
                 </Button>
               )}
+
+              {/* Status change */}
+              {lead.status !== "WON" &&
+                lead.status !== "REJECTED" &&
+                lead.status !== "LOST" && (
+                  <select
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white"
+                    value={lead.status}
+                    onChange={(e) => handleStatusChange(e.target.value)}
+                  >
+                    <option value="NEW">Nový</option>
+                    <option value="CONTACTED">Kontaktován</option>
+                    <option value="QUALIFIED">Kvalifikován</option>
+                    <option value="LOST">Ztracen</option>
+                  </select>
+                )}
             </div>
+
+            {lead.rejectionReason && (
+              <div className="mt-3 text-sm text-red-600">
+                Odmítnuto: {lead.rejectionReason}
+              </div>
+            )}
+            {lead.convertedToPartnerId && (
+              <a href={`/admin/partners/${lead.convertedToPartnerId}`} className="block mt-2 text-sm text-orange-600 hover:underline">
+                Zobrazit partnera
+              </a>
+            )}
+            {lead.convertedToLeadId && (
+              <a href={`/admin/leads/${lead.convertedToLeadId}`} className="block mt-2 text-sm text-orange-600 hover:underline">
+                Zobrazit lead
+              </a>
+            )}
           </Card>
 
           {/* Reject modal */}
@@ -843,11 +780,7 @@ export function ScoutLeadDetail({ id }: { id: string }) {
                 rows={3}
               />
               <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowReject(false)}
-                >
+                <Button variant="outline" size="sm" onClick={() => setShowReject(false)}>
                   Zrušit
                 </Button>
                 <Button
@@ -865,14 +798,14 @@ export function ScoutLeadDetail({ id }: { id: string }) {
 
           {/* Notes */}
           <Card className="p-6">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase mb-4">
+            <h3 className="text-sm font-semibold text-gray-500 uppercase mb-3">
               Poznámky
             </h3>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Interní poznámky..."
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm mb-3"
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm mb-2"
               rows={4}
             />
             <Button
@@ -881,16 +814,16 @@ export function ScoutLeadDetail({ id }: { id: string }) {
               onClick={handleSaveNotes}
               disabled={saving}
             >
-              {saving ? "Ukládám..." : "Uložit poznámky"}
+              {saving ? "Ukládám..." : "Uložit"}
             </Button>
           </Card>
 
           {/* Add activity */}
           <Card className="p-6">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase mb-4">
+            <h3 className="text-sm font-semibold text-gray-500 uppercase mb-3">
               Přidat aktivitu
             </h3>
-            <div className="space-y-3">
+            <div className="space-y-2">
               <select
                 value={activityType}
                 onChange={(e) => setActivityType(e.target.value)}
@@ -920,7 +853,7 @@ export function ScoutLeadDetail({ id }: { id: string }) {
 
           {/* Activity log */}
           <Card className="p-6">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase mb-4">
+            <h3 className="text-sm font-semibold text-gray-500 uppercase mb-3">
               Historie aktivit
             </h3>
             <ScoutLeadActivityLog activities={lead.activities} />
