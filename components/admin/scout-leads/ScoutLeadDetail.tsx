@@ -52,6 +52,30 @@ interface ScoutLeadData {
   vehicleEquipment: string | null;
   vehicleDescription: string | null;
   vehiclePhotos: string | null;
+  vehicleVin: string | null;
+  vehicleLicensePlate: string | null;
+  vehicleFirstRegistration: string | null;
+  vehicleFirstOwner: boolean | null;
+  vehicleCrashedInPast: boolean | null;
+  vehicleServiceBook: boolean | null;
+  vehicleStkDate: string | null;
+  vehicleCountryOfOrigin: string | null;
+  vehicleCondition: string | null;
+  vehicleDrive: string | null;
+  vehicleGearboxLevels: string | null;
+  vehicleEuroLevel: string | null;
+  vehicleConsumption: number | null;
+  vehicleCapacity: number | null;
+  vehicleAirbags: number | null;
+  vehicleAircondition: string | null;
+  vehicleColorTone: string | null;
+  vehicleColorType: string | null;
+  vehicleModelDetail: string | null;
+  vehiclePriceWithoutVat: number | null;
+  vehicleVatDeductible: boolean | null;
+  vehicleDistrict: string | null;
+  vehicleVideos: string | null;
+  completenessScore: number | null;
   rawPayload: Record<string, unknown> | null;
   score: number;
   status: string;
@@ -131,6 +155,18 @@ const bodyTypeLabels: Record<string, string> = {
   CABRIO: "Kabriolet",
   VAN: "Van",
   PICKUP: "Pickup",
+};
+
+const driveLabels: Record<string, string> = {
+  FWD: "Přední", RWD: "Zadní", AWD: "4x4", "4x4": "4x4",
+};
+
+const aircondLabels: Record<string, string> = {
+  MANUAL: "Manuální klima", AUTOMATIC: "Automatická klima", NONE: "Bez klima",
+};
+
+const conditionLabels: Record<string, string> = {
+  NEW: "Nové", USED: "Ojeté", CRASHED: "Havarované", DEMO: "Předváděcí",
 };
 
 function VehicleDescriptionCard({ description }: { description: string }) {
@@ -361,11 +397,26 @@ export function ScoutLeadDetail({ id }: { id: string }) {
   }
   const heroPhoto = photos[0] || null;
 
-  // Parse equipment
-  let equipmentItems: string[] = [];
+  // Parse equipment (supports both flat ["ABS"] and structured [{"name":"ABS","category":"safety"}])
+  type EquipmentItem = string | { name: string; category?: string };
+  let rawEquipment: EquipmentItem[] = [];
   if (lead.vehicleEquipment) {
-    try { equipmentItems = JSON.parse(lead.vehicleEquipment); } catch { /* */ }
+    try { rawEquipment = JSON.parse(lead.vehicleEquipment); } catch { /* */ }
   }
+  const equipmentGroups: Record<string, string[]> = {};
+  const categoryLabelsEquip: Record<string, string> = {
+    safety: "Bezpečnost", comfort: "Komfort", exterior: "Exteriér",
+    interior: "Interiér", systems: "Systémy", other: "Ostatní",
+  };
+  for (const item of rawEquipment) {
+    if (typeof item === "string") {
+      (equipmentGroups["other"] ??= []).push(item);
+    } else if (item?.name) {
+      const cat = item.category || "other";
+      (equipmentGroups[cat] ??= []).push(item.name);
+    }
+  }
+  const hasEquipment = Object.keys(equipmentGroups).length > 0;
 
   // Vehicle spec chips
   const specChips: Array<{ label: string; value: string }> = [];
@@ -378,6 +429,11 @@ export function ScoutLeadDetail({ id }: { id: string }) {
   if (lead.vehicleBodyType) specChips.push({ label: "Karoserie", value: bodyTypeLabels[lead.vehicleBodyType] || lead.vehicleBodyType });
   if (lead.vehicleColor) specChips.push({ label: "Barva", value: lead.vehicleColor });
   if (lead.vehicleDoors != null) specChips.push({ label: "Dveře", value: String(lead.vehicleDoors) });
+  if (lead.vehicleDrive) specChips.push({ label: "Pohon", value: driveLabels[lead.vehicleDrive] || lead.vehicleDrive });
+  if (lead.vehicleConsumption != null) specChips.push({ label: "Spotřeba", value: `${lead.vehicleConsumption} l/100km` });
+  if (lead.vehicleCapacity != null) specChips.push({ label: "Míst", value: String(lead.vehicleCapacity) });
+  if (lead.vehicleModelDetail) specChips.push({ label: "Verze", value: lead.vehicleModelDetail });
+  if (lead.vehicleAircondition) specChips.push({ label: "Klima", value: aircondLabels[lead.vehicleAircondition] || lead.vehicleAircondition });
 
   return (
     <>
@@ -451,8 +507,20 @@ export function ScoutLeadDetail({ id }: { id: string }) {
             {/* Right: price + score */}
             <div className="flex flex-col items-end gap-2 shrink-0">
               {isSoukromnik && lead.vehiclePrice != null && lead.vehiclePrice > 0 && (
-                <div className="text-3xl sm:text-4xl font-bold text-white tabular-nums">
-                  {lead.vehiclePrice.toLocaleString("cs-CZ")} Kč
+                <div className="text-right">
+                  <div className="text-3xl sm:text-4xl font-bold text-white tabular-nums">
+                    {lead.vehiclePrice.toLocaleString("cs-CZ")} Kč
+                  </div>
+                  {lead.vehiclePriceWithoutVat && (
+                    <div className="text-sm text-white/60 tabular-nums">
+                      {lead.vehiclePriceWithoutVat.toLocaleString("cs-CZ")} Kč bez DPH
+                    </div>
+                  )}
+                  {lead.vehicleVatDeductible && (
+                    <span className="inline-block mt-1 px-2 py-0.5 text-[10px] rounded bg-green-500/20 text-green-300 font-medium">
+                      Odpočet DPH
+                    </span>
+                  )}
                 </div>
               )}
               {marketData?.priceVerdict && (
@@ -501,27 +569,126 @@ export function ScoutLeadDetail({ id }: { id: string }) {
             <VehiclePhotosCard photosJson={lead.vehiclePhotos!} />
           )}
 
+          {/* Videos (SOUKROMNIK) */}
+          {isSoukromnik && lead.vehicleVideos && (() => {
+            let videos: string[] = [];
+            try { videos = JSON.parse(lead.vehicleVideos!); } catch { /* */ }
+            if (videos.length === 0) return null;
+            return (
+              <Card className="p-6">
+                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-3">
+                  Videa ({videos.length})
+                </h3>
+                <div className="space-y-2">
+                  {videos.map((url, i) => (
+                    <a key={i} href={url} target="_blank" rel="noopener noreferrer"
+                       className="flex items-center gap-2 text-sm text-orange-600 hover:underline">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                      </svg>
+                      Video {i + 1}
+                    </a>
+                  ))}
+                </div>
+              </Card>
+            );
+          })()}
+
+          {/* Vehicle condition (SOUKROMNIK) */}
+          {isSoukromnik && (lead.vehicleVin || lead.vehicleFirstOwner != null || lead.vehicleCrashedInPast != null || lead.vehicleServiceBook != null || lead.vehicleStkDate || lead.vehicleCountryOfOrigin || lead.vehicleCondition) && (
+            <Card className="p-6">
+              <h3 className="text-sm font-semibold text-gray-500 uppercase mb-4">
+                Stav vozidla
+              </h3>
+              {lead.vehicleVin && (
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="text-xs text-gray-500">VIN:</span>
+                  <code className="font-mono text-sm bg-gray-100 px-2 py-0.5 rounded">{lead.vehicleVin}</code>
+                  <button
+                    onClick={() => navigator.clipboard.writeText(lead.vehicleVin!)}
+                    className="text-gray-400 hover:text-gray-600"
+                    title="Kopírovat VIN"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                  </button>
+                </div>
+              )}
+              <div className="flex flex-wrap gap-2 mb-3">
+                {lead.vehicleFirstOwner != null && (
+                  <span className={`px-2.5 py-1 text-xs rounded-full font-medium ${lead.vehicleFirstOwner ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
+                    {lead.vehicleFirstOwner ? "✓ První majitel" : "✗ Další majitel"}
+                  </span>
+                )}
+                {lead.vehicleCrashedInPast != null && (
+                  <span className={`px-2.5 py-1 text-xs rounded-full font-medium ${!lead.vehicleCrashedInPast ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                    {lead.vehicleCrashedInPast ? "✗ Bourané" : "✓ Nebouráno"}
+                  </span>
+                )}
+                {lead.vehicleServiceBook != null && (
+                  <span className={`px-2.5 py-1 text-xs rounded-full font-medium ${lead.vehicleServiceBook ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
+                    {lead.vehicleServiceBook ? "✓ Servisní knížka" : "✗ Bez servisní knížky"}
+                  </span>
+                )}
+              </div>
+              <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2 text-sm">
+                {lead.vehicleStkDate && (
+                  <div>
+                    <dt className="text-gray-500 text-xs">STK do</dt>
+                    <dd className="font-medium">{lead.vehicleStkDate}</dd>
+                  </div>
+                )}
+                {lead.vehicleCountryOfOrigin && (
+                  <div>
+                    <dt className="text-gray-500 text-xs">Země původu</dt>
+                    <dd className="font-medium">{lead.vehicleCountryOfOrigin}</dd>
+                  </div>
+                )}
+                {lead.vehicleCondition && (
+                  <div>
+                    <dt className="text-gray-500 text-xs">Stav</dt>
+                    <dd><span className="px-2 py-0.5 text-xs rounded-full bg-blue-50 text-blue-700">{conditionLabels[lead.vehicleCondition] || lead.vehicleCondition}</span></dd>
+                  </div>
+                )}
+                {lead.vehicleFirstRegistration && (
+                  <div>
+                    <dt className="text-gray-500 text-xs">První registrace</dt>
+                    <dd className="font-medium">{lead.vehicleFirstRegistration}</dd>
+                  </div>
+                )}
+              </dl>
+            </Card>
+          )}
+
           {/* Vehicle description (SOUKROMNIK) */}
           {isSoukromnik && lead.vehicleDescription && (
             <VehicleDescriptionCard description={lead.vehicleDescription} />
           )}
 
           {/* Equipment (SOUKROMNIK) */}
-          {isSoukromnik && (equipmentItems.length > 0 || lead.listingTitle) && (
+          {isSoukromnik && (hasEquipment || lead.listingTitle) && (
             <Card className="p-6">
               <h3 className="text-sm font-semibold text-gray-500 uppercase mb-3">
                 Výbava
               </h3>
               <LeadEquipmentTags title={lead.listingTitle} />
-              {equipmentItems.length > 0 && (
-                <div className="mt-3">
-                  <div className="flex flex-wrap gap-1.5">
-                    {equipmentItems.map((item, i) => (
-                      <span key={i} className="px-2 py-0.5 text-xs rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                        {item}
-                      </span>
-                    ))}
-                  </div>
+              {hasEquipment && (
+                <div className="mt-3 space-y-3">
+                  {Object.entries(equipmentGroups).map(([cat, items]) => (
+                    <div key={cat}>
+                      {Object.keys(equipmentGroups).length > 1 && (
+                        <p className="text-xs font-semibold text-gray-500 mb-1.5">
+                          {categoryLabelsEquip[cat] || cat}
+                        </p>
+                      )}
+                      <div className="flex flex-wrap gap-1.5">
+                        {items.map((item, i) => (
+                          <span key={i} className="px-2 py-0.5 text-xs rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                            {item}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </Card>
@@ -551,6 +718,59 @@ export function ScoutLeadDetail({ id }: { id: string }) {
                 <LeadSimilarTable offers={marketData.similarOffers} />
               )}
             </div>
+          )}
+
+          {/* Technical details (SOUKROMNIK) */}
+          {isSoukromnik && (lead.vehicleDrive || lead.vehicleGearboxLevels || lead.vehicleEuroLevel || lead.vehicleConsumption != null || lead.vehicleCapacity != null || lead.vehicleAirbags != null || lead.vehicleAircondition) && (
+            <Card className="p-6">
+              <h3 className="text-sm font-semibold text-gray-500 uppercase mb-4">
+                Technické detaily
+              </h3>
+              <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-3 text-sm">
+                {lead.vehicleDrive && (
+                  <div>
+                    <dt className="text-gray-500">Pohon</dt>
+                    <dd className="font-medium">{driveLabels[lead.vehicleDrive] || lead.vehicleDrive}</dd>
+                  </div>
+                )}
+                {lead.vehicleGearboxLevels && (
+                  <div>
+                    <dt className="text-gray-500">Stupňů</dt>
+                    <dd className="font-medium">{lead.vehicleGearboxLevels}</dd>
+                  </div>
+                )}
+                {lead.vehicleEuroLevel && (
+                  <div>
+                    <dt className="text-gray-500">Euro</dt>
+                    <dd className="font-medium">{lead.vehicleEuroLevel}</dd>
+                  </div>
+                )}
+                {lead.vehicleConsumption != null && (
+                  <div>
+                    <dt className="text-gray-500">Spotřeba</dt>
+                    <dd className="font-medium">{lead.vehicleConsumption} l/100km</dd>
+                  </div>
+                )}
+                {lead.vehicleCapacity != null && (
+                  <div>
+                    <dt className="text-gray-500">Počet míst</dt>
+                    <dd className="font-medium">{lead.vehicleCapacity}</dd>
+                  </div>
+                )}
+                {lead.vehicleAirbags != null && (
+                  <div>
+                    <dt className="text-gray-500">Airbagy</dt>
+                    <dd className="font-medium">{lead.vehicleAirbags}</dd>
+                  </div>
+                )}
+                {lead.vehicleAircondition && (
+                  <div>
+                    <dt className="text-gray-500">Klimatizace</dt>
+                    <dd className="font-medium">{aircondLabels[lead.vehicleAircondition] || lead.vehicleAircondition}</dd>
+                  </div>
+                )}
+              </dl>
+            </Card>
           )}
 
           {/* Contact + Location (non-SOUKROMNIK or expanded for SOUKROMNIK) */}
@@ -604,10 +824,15 @@ export function ScoutLeadDetail({ id }: { id: string }) {
                   <dd>{lead.contactPerson}</dd>
                 </div>
               )}
-              {lead.city && (
+              {(lead.city || lead.vehicleDistrict) && (
                 <div>
                   <dt className="text-gray-500">Město</dt>
-                  <dd>{lead.city}{lead.region ? `, ${lead.region}` : ""}{lead.zip ? ` ${lead.zip}` : ""}</dd>
+                  <dd>
+                    {lead.city}
+                    {lead.vehicleDistrict && lead.vehicleDistrict !== lead.city ? `, ${lead.vehicleDistrict}` : ""}
+                    {lead.region ? `, ${lead.region}` : ""}
+                    {lead.zip ? ` ${lead.zip}` : ""}
+                  </dd>
                 </div>
               )}
               {lead.address && (

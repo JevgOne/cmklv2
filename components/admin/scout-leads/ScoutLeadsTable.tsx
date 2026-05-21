@@ -26,7 +26,24 @@ interface ScoutLead {
     role: string;
   } | null;
   linkedRegion: { id: string; name: string } | null;
+  completenessScore: number | null;
   createdAt: string;
+}
+
+function CompletenessGradeBadge({ score }: { score: number | null }) {
+  const { grade, color } = (() => {
+    if (score == null || score === 0) return { grade: "?", color: "bg-gray-100 text-gray-400" };
+    if (score >= 80) return { grade: "A", color: "bg-green-100 text-green-700" };
+    if (score >= 60) return { grade: "B", color: "bg-blue-100 text-blue-700" };
+    if (score >= 40) return { grade: "C", color: "bg-orange-100 text-orange-700" };
+    if (score >= 20) return { grade: "D", color: "bg-red-100 text-red-600" };
+    return { grade: "F", color: "bg-red-200 text-red-800" };
+  })();
+  return (
+    <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold ${color}`}>
+      {grade}
+    </span>
+  );
 }
 
 const categoryTabs = [
@@ -224,6 +241,9 @@ export function ScoutLeadsTable() {
                   <th className="text-left py-3 px-4 font-semibold text-gray-600 hidden md:table-cell">
                     Score
                   </th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-600 hidden md:table-cell">
+                    Kompletnost
+                  </th>
                   <th className="text-left py-3 px-4 font-semibold text-gray-600">
                     Stav
                   </th>
@@ -272,6 +292,9 @@ export function ScoutLeadsTable() {
                       <span className="font-bold text-orange-500">
                         {lead.score}
                       </span>
+                    </td>
+                    <td className="py-3 px-4 hidden md:table-cell">
+                      <CompletenessGradeBadge score={lead.completenessScore} />
                     </td>
                     <td className="py-3 px-4">
                       <ScoutLeadStatusBadge status={lead.status} />
