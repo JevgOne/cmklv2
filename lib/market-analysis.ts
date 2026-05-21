@@ -55,6 +55,16 @@ export interface MarketAnalysisResult {
   fromCache: boolean;
   fetchedAt: string;
   dbFallback: boolean;
+  matchLevel?: string;
+}
+
+// --- Match Options ---
+
+export interface MarketMatchOptions {
+  fuel?: string | null;
+  transmission?: string | null;
+  mileage?: number | null;
+  yearSpread?: number; // default 1
 }
 
 // --- Constants ---
@@ -134,17 +144,48 @@ async function fetchWithTimeout(
 async function fetchAS24(
   brand: string,
   model: string,
-  year: number
+  year: number,
+  options: MarketMatchOptions = {}
 ): Promise<PricePoint[]> {
   const brandSlug = brandToAS24Slug(brand);
   const modelSlug = modelToAS24Slug(brand, model);
   const domain = "www.autoscout24.cz";
 
-  // Wider year range for older cars (±5 for pre-2010, ±2 for newer)
-  const yearSpread = year < 2010 ? 5 : 2;
-  const url = `https://${domain}/lst/${brandSlug}/${modelSlug}?fregfrom=${year - yearSpread}&fregto=${year + yearSpread}&custtype=P&sort=price&ustate=N%2CU&atype=C&size=50&page=1`;
+  // Year range (default ±1, wider on fallback)
+  const spread = options.yearSpread ?? 1;
+  const url = new URL(`https://${domain}/lst/${brandSlug}/${modelSlug}`);
+  url.searchParams.set("fregfrom", String(year - spread));
+  url.searchParams.set("fregto", String(year + spread));
+  url.searchParams.set("custtype", "P");
+  url.searchParams.set("sort", "price");
+  url.searchParams.set("ustate", "N,U");
+  url.searchParams.set("atype", "C");
+  url.searchParams.set("size", "50");
+  url.searchParams.set("page", "1");
 
-  const response = await fetchWithTimeout(url);
+  // Fuel — exact match
+  if (options.fuel) {
+    const fuelMap: Record<string, string> = {
+      DIESEL: "D", PETROL: "B", HYBRID: "2", ELECTRIC: "E", LPG: "L", CNG: "C",
+    };
+    const f = fuelMap[options.fuel];
+    if (f) url.searchParams.set("fuel", f);
+  }
+
+  // Transmission — exact match
+  if (options.transmission) {
+    const gearMap: Record<string, string> = { AUTOMATIC: "A", MANUAL: "M" };
+    const g = gearMap[options.transmission];
+    if (g) url.searchParams.set("gear", g);
+  }
+
+  // Mileage — ±40k range
+  if (options.mileage) {
+    url.searchParams.set("kmfrom", String(Math.max(0, options.mileage - 40000)));
+    url.searchParams.set("kmto", String(options.mileage + 40000));
+  }
+
+  const response = await fetchWithTimeout(url.toString());
   if (!response.ok) return [];
 
   const html = await response.text();
@@ -237,51 +278,87 @@ async function fetchAS24(
 async function fetchSauto(
   brand: string,
   model: string,
-  year: number
+  year: number,
+  options: MarketMatchOptions = {}
 ): Promise<PricePoint[]> {
   const brandSlug = brandToAS24Slug(brand); // same lowercase normalization
-  const url = `https://www.sauto.cz/api/v1/items/search?manufacturer_model_seo=${brandSlug}&category_id=838&condition_seo=ojete&limit=100&offset=0`;
 
-  const response = await fetchWithTimeout(url, {
-    headers: {
-      "User-Agent": USER_AGENT,
-      Accept: "application/json",
-    },
+  // Build URL with SUPPORTED Sauto API filters
+  const url = new URL("https://www.sauto.cz/api/v1/items/search");
+  url.searchParams.set("manufacturer_model_seo", brandSlug);
+  url.searchParams.set("category_id", "838");
+  url.searchParams.set("condition_seo", "ojete");
+  url.searchParams.set("limit", "100");
+  url.searchParams.set("offset", "0");
+
+  // Fuel — exact match (API supported)
+  if (options.fuel) {
+    const fuelMap: Record<string, string> = {
+      DIESEL: "nafta", PETROL: "benzin", HYBRID: "hybrid",
+      ELECTRIC: "elektro", LPG: "lpg", CNG: "cng",
+    };
+    const f = fuelMap[options.fuel];
+    if (f) url.searchParams.set("fuel_seo", f);
+  }
+
+  // Transmission — exact match (API supported)
+  if (options.transmission) {
+    const gearMap: Record<string, string> = { AUTOMATIC: "automaticka", MANUAL: "manualni" };
+    const g = gearMap[options.transmission];
+    if (g) url.searchParams.set("gearbox_seo", g);
+  }
+
+  // Mileage — ±40k range (API supported)
+  if (options.mileage) {
+    url.searchParams.set("tachometer_from", String(Math.max(0, options.mileage - 40000)));
+    url.searchParams.set("tachometer_to", String(options.mileage + 40000));
+  }
+
+  const response = await fetchWithTimeout(url.toString(), {
+    headers: { "User-Agent": USER_AGENT, Accept: "application/json" },
   });
   if (!response.ok) return [];
 
   const data = await response.json();
   const items: Array<{
+    id?: number;
     price?: number;
-    year?: number;
-    mileage?: number;
+    tachometer?: number;
+    in_operation_date?: string;
+    manufacturing_date?: string;
     name?: string;
-    seo_url?: string;
+    model_cb?: { name?: string; seo_name?: string };
+    fuel_cb?: { name?: string; seo_name?: string };
+    gearbox_cb?: { name?: string; seo_name?: string };
   }> = data?.items || data?.results || [];
 
   const prices: PricePoint[] = [];
   const modelLower = model.toLowerCase();
 
   for (const item of items) {
-    // Filter by model name (API only filters by brand)
+    // Post-filter by model (API doesn't support model filter)
     const itemName = (item.name || "").toLowerCase();
-    if (modelLower && !itemName.includes(modelLower)) continue;
+    const itemModel = (item.model_cb?.name || "").toLowerCase();
+    if (modelLower && !itemName.includes(modelLower) && !itemModel.includes(modelLower)) continue;
 
-    // Filter by year range (wider for older cars)
-    const sautoYearSpread = year < 2010 ? 5 : 2;
-    if (item.year && (item.year < year - sautoYearSpread || item.year > year + sautoYearSpread)) continue;
+    // Parse year from in_operation_date ("2014-06-01") or manufacturing_date ("2013")
+    const dateStr = item.in_operation_date || item.manufacturing_date || "";
+    const yearMatch = dateStr.match(/(19[89]\d|20[0-3]\d)/);
+    const itemYear = yearMatch ? parseInt(yearMatch[1], 10) : null;
+
+    // Post-filter by year range (API doesn't support year filter)
+    const spread = options.yearSpread ?? 1;
+    if (itemYear && (itemYear < year - spread || itemYear > year + spread)) continue;
 
     const price = item.price;
     if (!price || price <= 0) continue;
 
     prices.push({
       price,
-      year: item.year || null,
-      mileage: item.mileage || null,
+      year: itemYear,
+      mileage: item.tachometer || null,
       source: "SAUTO",
-      url: item.seo_url
-        ? `https://www.sauto.cz${item.seo_url}`
-        : null,
+      url: item.id ? `https://www.sauto.cz/osobni/detail/${item.id}` : null,
       title: item.name || null,
     });
   }
@@ -294,15 +371,46 @@ async function fetchSauto(
 async function fetchMobileDe(
   brand: string,
   model: string,
-  year: number
+  year: number,
+  options: MarketMatchOptions = {}
 ): Promise<PricePoint[]> {
   const brandUpper = brandToMobileDe(brand);
   const modelUpper = modelToMobileDe(model);
 
-  const mobileYearSpread = year < 2010 ? 5 : 2;
-  const url = `https://services.mobile.de/search-api/search?classification=refdata/classes/Car/makes/${brandUpper}/models/${modelUpper}&firstRegistrationDate.min=${year - mobileYearSpread}-01&firstRegistrationDate.max=${year + mobileYearSpread}-12&sellerType=FOR_SALE_BY_OWNER&price.min=1000&page.size=50`;
+  // Year range (default ±1, wider on fallback)
+  const spread = options.yearSpread ?? 1;
+  const url = new URL("https://services.mobile.de/search-api/search");
+  url.searchParams.set("classification", `refdata/classes/Car/makes/${brandUpper}/models/${modelUpper}`);
+  url.searchParams.set("firstRegistrationDate.min", `${year - spread}-01`);
+  url.searchParams.set("firstRegistrationDate.max", `${year + spread}-12`);
+  url.searchParams.set("sellerType", "FOR_SALE_BY_OWNER");
+  url.searchParams.set("price.min", "1000");
+  url.searchParams.set("page.size", "50");
 
-  const response = await fetchWithTimeout(url, {
+  // Fuel
+  if (options.fuel) {
+    const fuelMap: Record<string, string> = {
+      DIESEL: "DIESEL", PETROL: "PETROL", HYBRID: "HYBRID",
+      ELECTRIC: "ELECTRIC", LPG: "LPG", CNG: "CNG",
+    };
+    const f = fuelMap[options.fuel];
+    if (f) url.searchParams.set("fuel", f);
+  }
+
+  // Transmission
+  if (options.transmission) {
+    const gearMap: Record<string, string> = { AUTOMATIC: "AUTOMATIC", MANUAL: "MANUAL" };
+    const g = gearMap[options.transmission];
+    if (g) url.searchParams.set("transmission", g);
+  }
+
+  // Mileage ±40k
+  if (options.mileage) {
+    url.searchParams.set("mileage.min", String(Math.max(0, options.mileage - 40000)));
+    url.searchParams.set("mileage.max", String(options.mileage + 40000));
+  }
+
+  const response = await fetchWithTimeout(url.toString(), {
     headers: {
       "User-Agent": USER_AGENT,
       Accept: "application/json",
@@ -429,17 +537,28 @@ export function computeAnalysis(
     label = "V normálu";
   }
 
-  // Top 5 similar offers (closest by price, from filtered set)
+  // Top 5 similar offers — balanced selection (2 below + 3 above, or vice versa)
   const filteredPrices = prices.filter(
     (p) => p.price >= lowerBound && p.price <= upperBound
   );
-  const similarOffers = (filteredPrices.length >= 3 ? filteredPrices : prices)
+  const sortedOffers = (filteredPrices.length >= 3 ? filteredPrices : prices)
     .filter((p) => p.price > 0)
-    .sort(
-      (a, b) =>
-        Math.abs(a.price - leadPrice) - Math.abs(b.price - leadPrice)
-    )
-    .slice(0, 5);
+    .sort((a, b) => a.price - b.price);
+
+  const belowLead = sortedOffers.filter(p => p.price < leadPrice);
+  const aboveLead = sortedOffers.filter(p => p.price >= leadPrice);
+
+  let similarOffers: PricePoint[];
+  if (belowLead.length >= 2 && aboveLead.length >= 3) {
+    similarOffers = [...belowLead.slice(-2), ...aboveLead.slice(0, 3)];
+  } else if (belowLead.length >= 3 && aboveLead.length >= 2) {
+    similarOffers = [...belowLead.slice(-3), ...aboveLead.slice(0, 2)];
+  } else {
+    // Fallback: closest by price
+    similarOffers = [...sortedOffers]
+      .sort((a, b) => Math.abs(a.price - leadPrice) - Math.abs(b.price - leadPrice))
+      .slice(0, 5);
+  }
 
   return {
     prices: filteredPrices.length >= 3 ? filteredPrices : prices,
@@ -461,16 +580,28 @@ async function fetchDBFallback(
   leadId: string,
   brand: string,
   model: string,
-  year: number
+  year: number,
+  options: MarketMatchOptions = {}
 ): Promise<PricePoint[]> {
+  const where: Record<string, unknown> = {
+    vehicleBrand: brand,
+    vehicleModel: model,
+    vehicleYear: { gte: year - (options.yearSpread ?? 1), lte: year + (options.yearSpread ?? 1) },
+    vehiclePrice: { not: null, gt: 0 },
+    id: { not: leadId },
+  };
+
+  if (options.fuel) where.vehicleFuel = options.fuel;
+  if (options.transmission) where.vehicleTransmission = options.transmission;
+  if (options.mileage) {
+    where.vehicleMileage = {
+      gte: Math.max(0, options.mileage - 40000),
+      lte: options.mileage + 40000,
+    };
+  }
+
   const dbSimilar = await prisma.scoutLead.findMany({
-    where: {
-      vehicleBrand: brand,
-      vehicleModel: model,
-      vehicleYear: { gte: year - (year < 2010 ? 5 : 2), lte: year + (year < 2010 ? 5 : 2) },
-      vehiclePrice: { not: null, gt: 0 },
-      id: { not: leadId },
-    },
+    where,
     select: {
       vehiclePrice: true,
       vehicleYear: true,
@@ -499,9 +630,13 @@ export async function fetchMarketData(
   brand: string,
   model: string,
   year: number,
-  leadPrice: number
+  leadPrice: number,
+  options: MarketMatchOptions = {}
 ): Promise<MarketAnalysisResult> {
-  const cacheKey = `market:${brand.toLowerCase()}:${model.toLowerCase()}:${year}`;
+  // Cache key includes fuel+transmission for precision
+  const fuelKey = options.fuel?.toLowerCase() || "any";
+  const transKey = options.transmission?.toLowerCase() || "any";
+  const cacheKey = `market:${brand.toLowerCase()}:${model.toLowerCase()}:${year}:${fuelKey}:${transKey}`;
 
   // Check cache
   const cached = cacheGet(cacheKey);
@@ -513,25 +648,56 @@ export async function fetchMarketData(
       fromCache: true,
       fetchedAt: cached.fetchedAt,
       dbFallback: cached.dbFallback,
+      matchLevel: cached.matchLevel,
     };
   }
 
-  // Fetch from all internet sources in parallel
-  // AS24 CZ already includes EU-wide listings, no need to fetch DE/AT separately
-  const [as24, sauto, mobile] = await Promise.allSettled([
-    fetchAS24(brand, model, year),
-    fetchSauto(brand, model, year),
-    fetchMobileDe(brand, model, year),
-  ]);
+  // Fallback cascade — progressively relax filters if too few results
+  // 1. strict: ±1 year, exact fuel, exact trans, ±40k km
+  // 2. no-mileage: ±1 year, exact fuel, exact trans
+  // 3. year±2: ±2 years, exact fuel, exact trans
+  // 4. fuel-only: ±2 years, exact fuel
+  // 5. broad: ±2 years, no other filters
+  const fallbackLevels: { label: string; opts: MarketMatchOptions }[] = [
+    { label: "strict", opts: { ...options } },
+    { label: "no-mileage", opts: { ...options, mileage: null } },
+    { label: "year±2", opts: { fuel: options.fuel, transmission: options.transmission, mileage: null, yearSpread: 2 } },
+    { label: "fuel-only", opts: { fuel: options.fuel, mileage: null, yearSpread: 2 } },
+    { label: "broad", opts: { yearSpread: 2 } },
+  ];
 
-  const allPrices = [as24, sauto, mobile]
-    .filter((r) => r.status === "fulfilled")
-    .flatMap((r) => (r as PromiseFulfilledResult<PricePoint[]>).value);
+  const allPrices: PricePoint[] = [];
+  let matchLevel = "strict";
+  const seenUrls = new Set<string>();
 
-  // Always enrich with DB data if external sources returned few results
+  for (const level of fallbackLevels) {
+    const [as24, sauto, mobile] = await Promise.allSettled([
+      fetchAS24(brand, model, year, level.opts),
+      fetchSauto(brand, model, year, level.opts),
+      fetchMobileDe(brand, model, year, level.opts),
+    ]);
+
+    const newPrices = [as24, sauto, mobile]
+      .filter((r) => r.status === "fulfilled")
+      .flatMap((r) => (r as PromiseFulfilledResult<PricePoint[]>).value)
+      .filter((p) => {
+        // Deduplicate by URL
+        if (!p.url) return true;
+        if (seenUrls.has(p.url)) return false;
+        seenUrls.add(p.url);
+        return true;
+      });
+
+    allPrices.push(...newPrices);
+    matchLevel = level.label;
+
+    if (allPrices.length >= 5) break;
+  }
+
+  // Enrich with DB data if still few results
   let dbFallback = false;
   if (allPrices.length < 10) {
-    const dbPrices = await fetchDBFallback(leadId, brand, model, year);
+    const dbPrices = await fetchDBFallback(leadId, brand, model, year, options);
     if (dbPrices.length > 0) {
       dbFallback = allPrices.length === 0;
       allPrices.push(...dbPrices);
@@ -544,6 +710,7 @@ export async function fetchMarketData(
     fromCache: false,
     fetchedAt: new Date().toISOString(),
     dbFallback,
+    matchLevel,
   };
 
   // Cache the result (only if we got some data)

@@ -31,6 +31,8 @@ export async function GET(
         vehicleYear: true,
         vehiclePrice: true,
         vehicleMileage: true,
+        vehicleFuel: true,
+        vehicleTransmission: true,
         assignedToId: true,
       },
     });
@@ -62,7 +64,12 @@ export async function GET(
       lead.vehicleBrand,
       lead.vehicleModel,
       year,
-      leadPrice
+      leadPrice,
+      {
+        fuel: lead.vehicleFuel,
+        transmission: lead.vehicleTransmission,
+        mileage: lead.vehicleMileage,
+      }
     );
 
     return NextResponse.json({
@@ -88,6 +95,7 @@ export async function GET(
         fromCache: result.fromCache,
         fetchedAt: result.fetchedAt,
         dbFallback: result.dbFallback,
+        matchLevel: result.matchLevel,
       },
     });
   } catch (error) {
