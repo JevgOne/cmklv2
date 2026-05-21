@@ -9,25 +9,25 @@ interface StatsRowProps {
 
 export function StatsRow({ totalCommission, salesCount, activeVehicles }: StatsRowProps) {
   return (
-    <div data-tour="dashboard-stats" className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4">
-      <Card className="min-w-[140px] snap-start p-4 flex-shrink-0">
-        <div className="text-2xl mb-1">💰</div>
-        <div className="text-lg font-extrabold text-gray-900">
+    <div data-tour="dashboard-stats" className="grid grid-cols-3 gap-2 sm:gap-3">
+      <Card className="p-3 sm:p-4 text-center">
+        <div className="text-xl sm:text-2xl mb-1">💰</div>
+        <div className="text-base sm:text-lg font-extrabold text-gray-900 tabular-nums">
           {formatPrice(totalCommission)}
         </div>
-        <div className="text-xs text-gray-500">Provize tento měsíc</div>
+        <div className="text-xs text-gray-500 mt-0.5">Provize</div>
       </Card>
 
-      <Card className="min-w-[140px] snap-start p-4 flex-shrink-0">
-        <div className="text-2xl mb-1">🚗</div>
-        <div className="text-lg font-extrabold text-gray-900">{salesCount}</div>
-        <div className="text-xs text-gray-500">Prodeje tento měsíc</div>
+      <Card className="p-3 sm:p-4 text-center">
+        <div className="text-xl sm:text-2xl mb-1">🚗</div>
+        <div className="text-base sm:text-lg font-extrabold text-gray-900 tabular-nums">{salesCount}</div>
+        <div className="text-xs text-gray-500 mt-0.5">Prodeje</div>
       </Card>
 
-      <Card className="min-w-[140px] snap-start p-4 flex-shrink-0">
-        <div className="text-2xl mb-1">📋</div>
-        <div className="text-lg font-extrabold text-gray-900">{activeVehicles}</div>
-        <div className="text-xs text-gray-500">Aktivní inzeráty</div>
+      <Card className="p-3 sm:p-4 text-center">
+        <div className="text-xl sm:text-2xl mb-1">📋</div>
+        <div className="text-base sm:text-lg font-extrabold text-gray-900 tabular-nums">{activeVehicles}</div>
+        <div className="text-xs text-gray-500 mt-0.5">Aktivní</div>
       </Card>
     </div>
   );

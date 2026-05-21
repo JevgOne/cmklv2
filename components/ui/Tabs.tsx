@@ -73,7 +73,7 @@ export function Tabs({ tabs, activeTab: controlledTab, defaultTab, onTabChange, 
             tabIndex={isActive ? 0 : -1}
             onClick={() => handleChange(tab.value)}
             className={cn(
-              "px-5 py-2.5 bg-transparent text-sm font-semibold text-gray-600 rounded-[10px] cursor-pointer transition-all duration-200 hover:text-gray-900 border-none",
+              "px-3 sm:px-5 py-2 sm:py-2.5 bg-transparent text-xs sm:text-sm font-semibold text-gray-600 rounded-[10px] cursor-pointer transition-all duration-200 hover:text-gray-900 border-none whitespace-nowrap flex-shrink-0",
               isActive && "bg-white text-gray-900 shadow-sm"
             )}
           >

@@ -42,14 +42,18 @@ export function ContactCard({ contact }: ContactCardProps) {
 
             <div className="text-sm text-gray-500 mt-1">{contact.phone}</div>
 
-            <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">
+            <div className="flex items-center gap-2 mt-2 text-sm text-gray-400 flex-wrap">
               {contact.city && <span>{contact.city}</span>}
+              {contact.city && <span className="text-gray-300">·</span>}
               <span>
                 {contact.totalVehicles} aut
                 {contact.totalSold > 0 && ` / ${contact.totalSold} prodáno`}
               </span>
               {contact.lastContactAt && (
-                <span>Kontakt: {formatDate(contact.lastContactAt)}</span>
+                <>
+                  <span className="text-gray-300">·</span>
+                  <span>{formatDate(contact.lastContactAt)}</span>
+                </>
               )}
             </div>
           </div>
@@ -59,14 +63,14 @@ export function ContactCard({ contact }: ContactCardProps) {
             <a
               href={`tel:${contact.phone}`}
               onClick={(e) => e.stopPropagation()}
-              className="w-9 h-9 bg-success-50 text-success-500 rounded-lg flex items-center justify-center text-sm no-underline"
+              className="w-10 h-10 bg-success-50 text-success-500 rounded-xl flex items-center justify-center no-underline active:scale-95 transition-transform"
               title="Zavolat"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
                 fill="currentColor"
-                className="w-4 h-4"
+                className="w-5 h-5"
               >
                 <path
                   fillRule="evenodd"
@@ -78,14 +82,14 @@ export function ContactCard({ contact }: ContactCardProps) {
             <a
               href={`sms:${contact.phone}`}
               onClick={(e) => e.stopPropagation()}
-              className="w-9 h-9 bg-info-50 text-info-500 rounded-lg flex items-center justify-center text-sm no-underline"
+              className="w-10 h-10 bg-info-50 text-info-500 rounded-xl flex items-center justify-center no-underline active:scale-95 transition-transform"
               title="SMS"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
                 fill="currentColor"
-                className="w-4 h-4"
+                className="w-5 h-5"
               >
                 <path
                   fillRule="evenodd"

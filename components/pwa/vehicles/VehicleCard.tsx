@@ -69,64 +69,66 @@ export function VehicleCard({ vehicle }: VehicleCardProps) {
       href={`/makler/vehicles/${vehicle.id}`}
       className="block no-underline"
     >
-      <Card hover className="flex overflow-hidden">
-        {/* Miniatura */}
-        <div className="w-28 h-28 flex-shrink-0 bg-gray-100 relative">
-          {primaryImage ? (
-            <Image
-              src={primaryImage.url}
-              alt={title}
-              fill
-              className="object-cover"
-              sizes="112px"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-3xl text-gray-300">
-              🚗
+      <Card hover className="overflow-hidden">
+        <div className="flex">
+          {/* Miniatura */}
+          <div className="w-24 sm:w-28 h-24 sm:h-28 flex-shrink-0 bg-gray-100 relative">
+            {primaryImage ? (
+              <Image
+                src={primaryImage.url}
+                alt={title}
+                fill
+                className="object-cover"
+                sizes="112px"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-3xl text-gray-300">
+                🚗
+              </div>
+            )}
+          </div>
+
+          {/* Info */}
+          <div className="flex-1 p-3 min-w-0">
+            <div className="flex items-start justify-between gap-1.5">
+              <h3 className="font-bold text-gray-900 text-sm leading-tight truncate">
+                {title}
+              </h3>
+              <StatusPill variant={statusInfo.variant}>
+                {statusInfo.label}
+              </StatusPill>
             </div>
-          )}
-        </div>
 
-        {/* Info */}
-        <div className="flex-1 p-3 min-w-0">
-          <div className="flex items-start justify-between gap-2">
-            <h3 className="font-bold text-gray-900 text-sm truncate">
-              {title}
-            </h3>
-            <StatusPill variant={statusInfo.variant}>
-              {statusInfo.label}
-            </StatusPill>
-          </div>
+            <div className="flex items-center gap-1.5 mt-1.5 text-sm text-gray-500">
+              <span>{vehicle.year}</span>
+              <span className="text-gray-300">·</span>
+              <span>{formatMileage(vehicle.mileage)}</span>
+              <span className="text-gray-300">·</span>
+              <span>{fuelLabels[vehicle.fuelType] || vehicle.fuelType}</span>
+            </div>
 
-          <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
-            <span>{vehicle.year}</span>
-            <span>·</span>
-            <span>{formatMileage(vehicle.mileage)}</span>
-            <span>·</span>
-            <span>{fuelLabels[vehicle.fuelType] || vehicle.fuelType}</span>
-          </div>
-
-          {exclusiveBadge && (
-            <span
-              className={`inline-block mt-1 text-xs font-medium px-2 py-0.5 rounded-full ${
-                exclusiveBadge.warning
-                  ? "bg-yellow-100 text-yellow-800"
-                  : "bg-orange-100 text-orange-700"
-              }`}
-            >
-              {exclusiveBadge.label}
-            </span>
-          )}
-
-          <div className="mt-2 flex items-center justify-between">
-            <span className="text-sm font-extrabold text-gray-900">
-              {formatPrice(vehicle.price)}
-            </span>
-            {vehicle.status === "ACTIVE" && (
-              <span className="text-xs text-gray-400">
-                {vehicle.viewCount} zobrazení
+            {exclusiveBadge && (
+              <span
+                className={`inline-block mt-1.5 text-xs font-medium px-2 py-0.5 rounded-full ${
+                  exclusiveBadge.warning
+                    ? "bg-yellow-100 text-yellow-800"
+                    : "bg-orange-100 text-orange-700"
+                }`}
+              >
+                {exclusiveBadge.label}
               </span>
             )}
+
+            <div className="mt-2 flex items-center justify-between">
+              <span className="text-base font-extrabold text-gray-900">
+                {formatPrice(vehicle.price)}
+              </span>
+              {vehicle.status === "ACTIVE" && (
+                <span className="text-xs text-gray-400">
+                  {vehicle.viewCount} zobrazení
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </Card>

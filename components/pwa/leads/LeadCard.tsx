@@ -49,8 +49,9 @@ export function LeadCard({ lead }: LeadCardProps) {
               </div>
             )}
 
-            <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">
+            <div className="flex items-center gap-2 mt-2 text-sm text-gray-400">
               {lead.city && <span>{lead.city}</span>}
+              {lead.city && <span className="text-gray-300">·</span>}
               <span>{formatDate(lead.createdAt)}</span>
             </div>
           </div>
@@ -60,20 +61,20 @@ export function LeadCard({ lead }: LeadCardProps) {
             <a
               href={`tel:${lead.phone}`}
               onClick={(e) => e.stopPropagation()}
-              className="w-9 h-9 bg-success-50 text-success-500 rounded-lg flex items-center justify-center text-sm no-underline"
+              className="w-10 h-10 bg-success-50 text-success-500 rounded-xl flex items-center justify-center no-underline active:scale-95 transition-transform"
               title="Zavolat"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
                 <path fillRule="evenodd" d="M2 3.5A1.5 1.5 0 013.5 2h1.148a1.5 1.5 0 011.465 1.175l.716 3.223a1.5 1.5 0 01-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 006.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 011.767-1.052l3.223.716A1.5 1.5 0 0118 15.352V16.5a1.5 1.5 0 01-1.5 1.5H15c-1.149 0-2.263-.15-3.326-.43A13.022 13.022 0 012.43 8.326 13.019 13.019 0 012 5V3.5z" clipRule="evenodd" />
               </svg>
             </a>
             <a
               href={`sms:${lead.phone}`}
               onClick={(e) => e.stopPropagation()}
-              className="w-9 h-9 bg-info-50 text-info-500 rounded-lg flex items-center justify-center text-sm no-underline"
+              className="w-10 h-10 bg-info-50 text-info-500 rounded-xl flex items-center justify-center no-underline active:scale-95 transition-transform"
               title="SMS"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
                 <path fillRule="evenodd" d="M3.43 2.524A41.29 41.29 0 0110 2c2.236 0 4.43.18 6.57.524 1.437.231 2.43 1.49 2.43 2.902v5.148c0 1.413-.993 2.67-2.43 2.902a41.102 41.102 0 01-3.55.414c-.28.02-.521.18-.643.413l-1.712 3.293a.75.75 0 01-1.33 0l-1.713-3.293a.783.783 0 00-.642-.413 41.108 41.108 0 01-3.55-.414C1.993 13.245 1 11.986 1 10.574V5.426c0-1.413.993-2.67 2.43-2.902z" clipRule="evenodd" />
               </svg>
             </a>
@@ -82,10 +83,10 @@ export function LeadCard({ lead }: LeadCardProps) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="w-9 h-9 bg-green-50 text-green-600 rounded-lg flex items-center justify-center text-sm no-underline"
+              className="w-10 h-10 bg-green-50 text-green-600 rounded-xl flex items-center justify-center no-underline active:scale-95 transition-transform"
               title="WhatsApp"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
                 <path d="M16.555 3.444a9.964 9.964 0 00-7.072-2.93C4.723.514 1.005 4.23 1.005 8.989c0 1.493.39 2.952 1.13 4.237L1 19.486l6.39-1.676a9.922 9.922 0 004.096.896h.004c4.757 0 8.674-3.717 8.674-8.476a8.428 8.428 0 00-2.609-6.786z" />
               </svg>
             </a>

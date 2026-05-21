@@ -131,11 +131,42 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-outfit), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* ===== Mobile PWA optimizations ===== */
+/* Remove tap highlight on mobile */
+a, button, [role="button"] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent text selection on interactive elements */
+nav, [role="tablist"] {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Better touch scrolling */
+.overflow-x-auto, .overflow-y-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbar on horizontal scroll areas (mobile) */
+@media (max-width: 640px) {
+  .overflow-x-auto::-webkit-scrollbar {
+    display: none;
+  }
+  .overflow-x-auto {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
 /* Selection color */
