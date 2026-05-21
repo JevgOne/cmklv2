@@ -15,18 +15,21 @@ const verdictConfig = {
     bg: "bg-green-50",
     text: "text-green-700",
     border: "border-green-200",
+    badge: "Pod trhem",
     hint: "Dobrá příležitost",
   },
   OK: {
     bg: "bg-gray-50",
     text: "text-gray-700",
     border: "border-gray-200",
+    badge: "V normě",
     hint: "Odpovídá trhu",
   },
   HIGH: {
     bg: "bg-orange-50",
     text: "text-orange-700",
     border: "border-orange-200",
+    badge: "Nad trhem",
     hint: "Vyšší cena",
   },
 };
@@ -53,7 +56,7 @@ export function LeadPriceVerdict({ verdict, label, fromCache, sourceCount }: Lea
               config.text
             )}
           >
-            {verdict}
+            {config.badge}
           </span>
         </div>
       </div>

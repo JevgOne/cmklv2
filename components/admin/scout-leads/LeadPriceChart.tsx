@@ -141,7 +141,7 @@ export function LeadPriceChart({ buckets, stats, sources }: LeadPriceChartProps)
               stroke="#3B82F6"
               strokeDasharray="5 3"
               strokeWidth={1.5}
-              label={{ value: "Medián", position: "top", fontSize: 10, fill: "#3B82F6" }}
+              label={{ value: "Tržní hodnota", position: "top", fontSize: 10, fill: "#3B82F6" }}
             />
           )}
           {currentBucketLabel && currentBucketLabel !== medianBucketLabel && (
@@ -167,7 +167,7 @@ export function LeadPriceChart({ buckets, stats, sources }: LeadPriceChartProps)
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
         <div className="bg-blue-50 rounded-lg p-3">
           <div className="text-[10px] uppercase tracking-wider text-blue-500 font-semibold">
-            Tržní medián
+            Tržní hodnota
           </div>
           <div className="text-lg font-bold text-blue-700 tabular-nums">
             {stats.median.toLocaleString("cs-CZ")} Kč
@@ -175,7 +175,7 @@ export function LeadPriceChart({ buckets, stats, sources }: LeadPriceChartProps)
         </div>
         <div className="bg-gray-50 rounded-lg p-3">
           <div className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold">
-            Průměr
+            Průměrná cena
           </div>
           <div className="text-lg font-bold text-gray-700 tabular-nums">
             {stats.mean.toLocaleString("cs-CZ")} Kč
@@ -191,12 +191,12 @@ export function LeadPriceChart({ buckets, stats, sources }: LeadPriceChartProps)
         </div>
         <div className="bg-gray-50 rounded-lg p-3">
           <div className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold">
-            Porovnáno
+            Srovnáno
           </div>
           <div className="text-lg font-bold text-gray-700 tabular-nums">
             {stats.count} <span className="text-sm font-normal text-gray-500">vozů</span>
           </div>
-          <div className="text-[10px] text-gray-400">{stats.percentile}. percentil</div>
+          <div className="text-[10px] text-gray-400">Levnější než {stats.percentile} % nabídek</div>
         </div>
       </div>
     </Card>
