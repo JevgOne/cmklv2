@@ -84,7 +84,7 @@ export function LeadPriceChart({ buckets, stats, sources }: LeadPriceChartProps)
           <div className="flex gap-1.5">
             {sources.autoscout24 > 0 && (
               <span className="px-1.5 py-0.5 text-[10px] rounded bg-blue-50 text-blue-600 font-medium">
-                AS24: {sources.autoscout24}
+                AutoScout24: {sources.autoscout24}
               </span>
             )}
             {sources.sauto > 0 && (

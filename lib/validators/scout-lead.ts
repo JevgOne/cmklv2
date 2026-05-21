@@ -83,7 +83,7 @@ const scoutLeadPayloadSchema = z.object({
     .array(z.union([z.string(), z.object({ name: z.string(), category: z.string().optional() })]))
     .optional()
     .nullable(),
-  vehicleDescription: z.string().max(5000).optional().nullable(),
+  vehicleDescription: z.string().max(10000).optional().nullable(),
   vehiclePhotos: z.array(z.string().min(1)).optional().nullable(),
   // Vehicle identity
   vehicleVin: z.string().optional().nullable(),
