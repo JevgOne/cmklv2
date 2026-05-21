@@ -173,6 +173,7 @@ function buildEnrichmentUpdate(payload: ScoutLeadPayload) {
     vehiclePriceWithoutVat: payload.vehiclePriceWithoutVat,
     vehicleVatDeductible: payload.vehicleVatDeductible,
     vehicleDistrict: payload.vehicleDistrict,
+    completenessScore: payload.completenessScore,
   };
 
   for (const [key, val] of Object.entries(enrichFields)) {
@@ -336,6 +337,7 @@ export async function ingestScoutLeads(leads: ScoutLeadPayload[]) {
             : null,
           rawPayload: payload.rawPayload ?? undefined,
           score: payload.score ?? 0,
+          completenessScore: payload.completenessScore ?? 0,
           regionId,
         },
       });

@@ -118,6 +118,7 @@ const scoutLeadPayloadSchema = z.object({
   vehicleVideos: z.array(z.string().min(1)).optional().nullable(),
   rawPayload: z.any().optional().nullable(),
   score: z.number().int().min(0).max(100).default(0),
+  completenessScore: z.number().int().min(0).max(100).optional().nullable(),
 });
 
 export type ScoutLeadPayload = z.infer<typeof scoutLeadPayloadSchema>;
