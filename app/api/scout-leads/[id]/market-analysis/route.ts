@@ -59,10 +59,17 @@ export async function GET(
     const year = lead.vehicleYear || new Date().getFullYear();
     const leadPrice = lead.vehiclePrice || 0;
 
+    // Clean model name: scrapers produce "Macan,Porsche", "Octavia,2.0TDi", etc.
+    // Take first part before comma, remove brand duplicates
+    const brandLower = lead.vehicleBrand.toLowerCase();
+    const cleanModel = (lead.vehicleModel.split(",")[0] || lead.vehicleModel)
+      .replace(new RegExp(`\\b${brandLower}\\b`, "i"), "")
+      .trim() || lead.vehicleModel;
+
     const result = await fetchMarketData(
       lead.id,
       lead.vehicleBrand,
-      lead.vehicleModel,
+      cleanModel,
       year,
       leadPrice,
       {
