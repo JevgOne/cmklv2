@@ -391,6 +391,7 @@ export function QuickStep2() {
       {/* PhotoGuide overlay */}
       {activeGuide && (
         <PhotoGuide
+          slotId={activeGuide.slot.id}
           slotName={activeGuide.slot.label}
           tip={activeGuide.slot.tip}
           categoryLabel="Rychlé fotky"

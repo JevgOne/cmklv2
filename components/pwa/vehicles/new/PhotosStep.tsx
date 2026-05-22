@@ -87,6 +87,22 @@ const PHOTO_CATEGORIES: PhotoCategory[] = [
 const MIN_REGULAR_PHOTOS = 13;
 const EVIDENCE_REQUIRED = 3;
 
+// Guided mode order: exterior → interior → engine → documents → evidence (last)
+const GUIDED_ORDER: { slot: PhotoSlot; category: PhotoCategory }[] = (() => {
+  const order: { slot: PhotoSlot; category: PhotoCategory }[] = [];
+  for (const cat of PHOTO_CATEGORIES) {
+    if (cat.id === "evidence") continue;
+    for (const slot of cat.slots) {
+      order.push({ slot, category: cat });
+    }
+  }
+  const evidenceCat = PHOTO_CATEGORIES.find((c) => c.id === "evidence")!;
+  for (const slot of evidenceCat.slots) {
+    order.push({ slot, category: evidenceCat });
+  }
+  return order;
+})();
+
 interface StoredPhoto {
   slotId: string;
   imageId: string;
@@ -111,6 +127,7 @@ export function PhotosStep() {
   } | null>(null);
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [photoMode, setPhotoMode] = useState<"guided" | "free">("guided");
 
   // Migrace starých slot IDs z draftů
   const SLOT_MIGRATION: Record<string, string> = {
@@ -146,6 +163,21 @@ export function PhotosStep() {
     [photos]
   );
 
+  const findNextUnshot = useCallback(
+    (currentPhotos: StoredPhoto[], afterSlotId?: string) => {
+      const startIdx = afterSlotId
+        ? GUIDED_ORDER.findIndex((g) => g.slot.id === afterSlotId) + 1
+        : 0;
+      for (let i = startIdx; i < GUIDED_ORDER.length; i++) {
+        if (!currentPhotos.some((p) => p.slotId === GUIDED_ORDER[i].slot.id)) {
+          return GUIDED_ORDER[i];
+        }
+      }
+      return null;
+    },
+    []
+  );
+
   const regularPhotoCount = photos.length;
   const evidencePhotoCount = photos.filter((p) =>
     p.slotId.startsWith("evi_")
@@ -154,6 +186,10 @@ export function PhotosStep() {
   const canContinue =
     regularPhotoCount >= MIN_REGULAR_PHOTOS &&
     evidencePhotoCount >= EVIDENCE_REQUIRED;
+
+  const hasMoreGuidedSlots =
+    photoMode === "guided" &&
+    GUIDED_ORDER.some((g) => !photos.some((p) => p.slotId === g.slot.id));
 
   const totalRequired = MIN_REGULAR_PHOTOS + EVIDENCE_REQUIRED;
   const totalFilled = regularPhotoCount;
@@ -203,9 +239,24 @@ export function PhotosStep() {
         persistPhotos(updated);
       }
 
-      setActiveGuide(null);
+      // Auto-advance in guided mode for regular photos
+      if (!isDefect && photoMode === "guided") {
+        const withNew = [
+          ...photos.filter((p) => p.slotId !== slotId),
+          { slotId, imageId, thumbnailUrl, isMain: false },
+        ];
+        const next = findNextUnshot(withNew, slotId);
+        if (next) {
+          const idx = next.category.slots.indexOf(next.slot);
+          setActiveGuide({ slot: next.slot, category: next.category, slotIndex: idx });
+        } else {
+          setActiveGuide(null);
+        }
+      } else {
+        setActiveGuide(null);
+      }
     },
-    [draftId, photos, defectPhotos, persistPhotos]
+    [draftId, photos, defectPhotos, persistPhotos, photoMode, findNextUnshot]
   );
 
   // Handle file input fallback for slots
@@ -308,6 +359,25 @@ export function PhotosStep() {
     });
   }, [defectPhotos.length]);
 
+  const handleGuidedSkip = useCallback(() => {
+    if (!activeGuide) return;
+    const next = findNextUnshot(photos, activeGuide.slot.id);
+    if (next) {
+      const idx = next.category.slots.indexOf(next.slot);
+      setActiveGuide({ slot: next.slot, category: next.category, slotIndex: idx });
+    } else {
+      setActiveGuide(null);
+    }
+  }, [activeGuide, photos, findNextUnshot]);
+
+  const handleStartGuided = useCallback(() => {
+    const next = findNextUnshot(photos);
+    if (next) {
+      const idx = next.category.slots.indexOf(next.slot);
+      setActiveGuide({ slot: next.slot, category: next.category, slotIndex: idx });
+    }
+  }, [photos, findNextUnshot]);
+
   const handleContinue = useCallback(() => {
     updateStep(5);
     router.push(`/makler/vehicles/new/details?draft=${draftId}`);
@@ -329,16 +399,77 @@ export function PhotosStep() {
         <HintBox>
           Kvalitní fotky prodávají! Foťte za denního světla, auto čisté.
           Povinné jsou fotky VIN štítku a tachometru.
-          Klikněte na číslo v diagramu nebo na slot v seznamu.
         </HintBox>
+
+        {/* Mode toggle */}
+        <div className="flex items-center justify-between">
+          <div className="flex bg-gray-100 rounded-lg p-0.5">
+            <button
+              onClick={() => setPhotoMode("guided")}
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                photoMode === "guided"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-500"
+              }`}
+            >
+              Průvodce
+            </button>
+            <button
+              onClick={() => setPhotoMode("free")}
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                photoMode === "free"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-500"
+              }`}
+            >
+              Volný režim
+            </button>
+          </div>
+          <span className="text-xs text-gray-500">
+            {photos.length} / {GUIDED_ORDER.length}
+          </span>
+        </div>
+
+        {/* Guided mode start/resume button */}
+        {hasMoreGuidedSlots && (
+          <button
+            onClick={handleStartGuided}
+            className="w-full bg-orange-500 text-white rounded-xl p-4 flex items-center justify-between hover:bg-orange-600 active:scale-[0.98] transition-all"
+          >
+            <div className="text-left">
+              <p className="font-semibold text-sm">
+                {photos.length === 0 ? "Zahájit focení" : "Pokračovat ve focení"}
+              </p>
+              <p className="text-xs text-orange-100">
+                {photos.length} z {GUIDED_ORDER.length} hotovo
+              </p>
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+        )}
+
+        {/* All slots completed message */}
+        {photoMode === "guided" && !hasMoreGuidedSlots && photos.length > 0 && (
+          <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+            <p className="text-sm font-semibold text-green-700">Všechny fotky nafoceny!</p>
+            <p className="text-xs text-green-600 mt-1">Zkontrolujte je v přehledu níže.</p>
+          </div>
+        )}
 
         {/* Categories */}
         {PHOTO_CATEGORIES.map((category) => (
-          <div key={category.id}>
+          <div
+            key={category.id}
+            className={category.id === "evidence" ? "border-2 border-orange-200 rounded-xl p-3 bg-orange-50/30" : ""}
+          >
             <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-3">
               {category.label}
               {category.id === "evidence" && (
-                <span className="text-orange-500 ml-1">(povinné)</span>
+                <span className="ml-2 px-2 py-0.5 bg-orange-500 text-white text-[10px] font-bold rounded-full">
+                  POVINNÉ
+                </span>
               )}
             </h3>
 
@@ -469,6 +600,22 @@ export function PhotosStep() {
           </div>
         </div>
 
+        {/* Missing evidence warning */}
+        {evidencePhotoCount < EVIDENCE_REQUIRED && photos.length > 0 && (
+          <div className="bg-red-50 border border-red-200 rounded-xl p-3 space-y-1">
+            <p className="text-sm font-semibold text-red-700">
+              Chybí důkazní fotky
+            </p>
+            <ul className="text-xs text-red-600 space-y-0.5">
+              {PHOTO_CATEGORIES.find((c) => c.id === "evidence")!
+                .slots.filter((s) => !photos.some((p) => p.slotId === s.id))
+                .map((s) => (
+                  <li key={s.id}>• {s.label}</li>
+                ))}
+            </ul>
+          </div>
+        )}
+
         {/* Progress */}
         <div className="bg-gray-50 rounded-xl p-4 space-y-2">
           <div className="flex items-center justify-between text-sm">
@@ -507,15 +654,28 @@ export function PhotosStep() {
       {/* PhotoGuide overlay */}
       {activeGuide && (
         <PhotoGuide
+          key={activeGuide.slot.id}
+          slotId={activeGuide.slot.id}
           slotName={activeGuide.slot.label}
           tip={activeGuide.slot.tip}
           categoryLabel={activeGuide.category.label}
-          currentIndex={activeGuide.slotIndex}
-          totalInCategory={activeGuide.category.slots.length || defectPhotos.length + 1}
+          currentIndex={
+            photoMode === "guided"
+              ? GUIDED_ORDER.findIndex((g) => g.slot.id === activeGuide.slot.id)
+              : activeGuide.slotIndex
+          }
+          totalInCategory={
+            photoMode === "guided"
+              ? GUIDED_ORDER.length
+              : activeGuide.category.slots.length || defectPhotos.length + 1
+          }
           positionNumber={activeGuide.category.id === "exterior" ? activeGuide.slotIndex + 1 : undefined}
+          isRequired={activeGuide.slot.required}
+          isGuidedMode={photoMode === "guided"}
           onCapture={(full, thumb) =>
             handleCapture(activeGuide.slot.id, full, thumb)
           }
+          onSkip={photoMode === "guided" && !activeGuide.slot.required ? handleGuidedSkip : undefined}
           onClose={() => setActiveGuide(null)}
         />
       )}

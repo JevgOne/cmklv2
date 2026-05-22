@@ -4,26 +4,81 @@ import { useState, useEffect, useCallback } from "react";
 import { useCamera } from "@/lib/hooks/useCamera";
 import { resizeImage, createThumbnail } from "@/lib/image-utils";
 import { Button } from "@/components/ui";
+import { checkImageQuality, type QualityHint } from "@/lib/image-quality";
 
 interface PhotoGuideProps {
   slotName: string;
+  slotId: string;
   tip: string;
   categoryLabel: string;
   currentIndex: number;
   totalInCategory: number;
   positionNumber?: number;
+  isRequired?: boolean;
+  isGuidedMode?: boolean;
   onCapture: (full: Blob, thumb: Blob) => void;
+  onSkip?: () => void;
   onClose: () => void;
+}
+
+function getOverlayType(slotId: string): "thirds" | "circle" | "frame" | "horizontal" {
+  if (["ext_headlight", "ext_wheel_front", "ext_wheel_rear", "ext_badge"].includes(slotId)) return "circle";
+  if (slotId.startsWith("ext_")) return "thirds";
+  if (slotId.startsWith("evi_") || slotId.startsWith("doc_")) return "frame";
+  return "horizontal";
+}
+
+function CompositionOverlay({ slotId }: { slotId: string }) {
+  const type = getOverlayType(slotId);
+
+  if (type === "circle") {
+    return (
+      <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+        <div className="w-48 h-48 rounded-full border-2 border-dashed border-white/30" />
+      </div>
+    );
+  }
+
+  if (type === "frame") {
+    return (
+      <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+        <div className="w-3/4 h-1/2 border-2 border-dashed border-white/30 rounded-lg" />
+      </div>
+    );
+  }
+
+  if (type === "horizontal") {
+    return (
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/3 left-4 right-4 h-px bg-white/20" />
+        <div className="absolute top-2/3 left-4 right-4 h-px bg-white/20" />
+      </div>
+    );
+  }
+
+  // "thirds" — rule of thirds grid
+  return (
+    <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute top-1/3 left-4 right-4 h-px bg-white/20" />
+      <div className="absolute top-2/3 left-4 right-4 h-px bg-white/20" />
+      <div className="absolute top-4 bottom-4 left-1/3 w-px bg-white/20" />
+      <div className="absolute top-4 bottom-4 left-2/3 w-px bg-white/20" />
+    </div>
+  );
 }
 
 export function PhotoGuide({
   slotName,
+  slotId,
   tip,
   categoryLabel,
   currentIndex,
   totalInCategory,
   positionNumber,
+  isRequired,
+  isGuidedMode,
   onCapture,
+  onSkip,
   onClose,
 }: PhotoGuideProps) {
   const { videoRef, isActive, error, startCamera, stopCamera, captureFrame } =
@@ -32,6 +87,8 @@ export function PhotoGuide({
   const [capturedBlob, setCapturedBlob] = useState<Blob | null>(null);
   const [processing, setProcessing] = useState(false);
   const [cameraSupported, setCameraSupported] = useState(true);
+  const [qualityHints, setQualityHints] = useState<QualityHint[]>([]);
+  const [checkingQuality, setCheckingQuality] = useState(false);
 
   useEffect(() => {
     if (!navigator.mediaDevices?.getUserMedia) {
@@ -51,12 +108,21 @@ export function PhotoGuide({
     setCapturedBlob(blob);
     setPreview(URL.createObjectURL(blob));
     stopCamera();
-  }, [captureFrame, stopCamera]);
+
+    // Run quality check in background
+    setQualityHints([]);
+    setCheckingQuality(true);
+    checkImageQuality(blob, slotId)
+      .then((result) => setQualityHints(result.hints))
+      .catch(() => {})
+      .finally(() => setCheckingQuality(false));
+  }, [captureFrame, stopCamera, slotId]);
 
   const handleRetake = useCallback(() => {
     if (preview) URL.revokeObjectURL(preview);
     setPreview(null);
     setCapturedBlob(null);
+    setQualityHints([]);
     startCamera();
   }, [preview, startCamera]);
 
@@ -174,8 +240,7 @@ export function PhotoGuide({
               muted
               className="w-full h-full object-cover"
             />
-            {/* Car outline overlay */}
-            <div className="absolute inset-8 border-2 border-white/30 rounded-2xl pointer-events-none" />
+            <CompositionOverlay slotId={slotId} />
           </>
         )}
       </div>
@@ -184,6 +249,20 @@ export function PhotoGuide({
       <div className="absolute bottom-0 left-0 right-0 z-10 p-6 bg-gradient-to-t from-black/70 to-transparent">
         {!preview && (
           <p className="text-white/70 text-sm text-center mb-4">{tip}</p>
+        )}
+
+        {/* Quality hints after capture */}
+        {preview && qualityHints.length > 0 && (
+          <div className="mb-3 space-y-1.5">
+            {qualityHints.map((hint, i) => (
+              <div key={i} className="bg-amber-500/90 text-white text-xs rounded-lg px-3 py-2 text-center">
+                {hint.message}
+              </div>
+            ))}
+          </div>
+        )}
+        {preview && checkingQuality && (
+          <p className="text-white/50 text-xs text-center mb-3">Kontrola kvality...</p>
         )}
 
         <div className="flex items-center justify-center gap-6">
@@ -229,6 +308,16 @@ export function PhotoGuide({
             </>
           )}
         </div>
+
+        {/* Skip button for optional slots in guided mode */}
+        {!preview && isGuidedMode && !isRequired && onSkip && (
+          <button
+            onClick={() => { stopCamera(); onSkip(); }}
+            className="w-full text-white/60 text-sm mt-3 text-center underline"
+          >
+            Přeskočit tuto fotku
+          </button>
+        )}
       </div>
     </div>
   );
