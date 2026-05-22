@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { OgLayout, OG_SIZE, getLogoBase64 } from "@/lib/og-image";
+import { OgLayout, OG_SIZE, getLogoBase64, ogImageOptions } from "@/lib/og-image";
 
 export const runtime = "nodejs";
 export const alt = "CarMakléř — kompletní automobilová platforma";
@@ -8,6 +8,7 @@ export const contentType = "image/png";
 
 export default async function Image() {
   const logo = await getLogoBase64();
+  const options = await ogImageOptions();
 
   return new ImageResponse(
     (
@@ -37,6 +38,6 @@ export default async function Image() {
         </div>
       </OgLayout>
     ),
-    { ...size },
+    options,
   );
 }
