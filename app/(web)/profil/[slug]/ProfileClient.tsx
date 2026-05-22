@@ -389,7 +389,9 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
                 {stats.parts > 0 && (
                   <Stat value={stats.parts} label="Díly" />
                 )}
-                <Stat value={stats.totalLikes} label="Lajky" />
+                {stats.totalLikes > 0 && (
+                  <Stat value={stats.totalLikes} label="Lajky" />
+                )}
                 {roleStats.completedFlips !== undefined && (
                   <Stat value={roleStats.completedFlips} label="Flipy" />
                 )}
@@ -438,6 +440,11 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
                     context={reputation.context}
                     interactive={!isOwner}
                   />
+                  {isOwner && (
+                    <p className="text-[11px] text-gray-400 mt-2 text-center">
+                      Návštěvníci vašeho profilu vás mohou ohodnotit kliknutím na tag
+                    </p>
+                  )}
                 </div>
               )}
 

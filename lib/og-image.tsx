@@ -15,6 +15,30 @@ export async function getLogoBase64(): Promise<string> {
   return cachedLogo;
 }
 
+let cachedFonts: { name: string; data: ArrayBuffer; style: "normal"; weight: 400 | 700 | 800 }[] | null = null;
+
+export async function getOutfitFonts() {
+  if (cachedFonts) return cachedFonts;
+  const fontsDir = join(process.cwd(), "public/fonts");
+  const [regular, bold, extraBold] = await Promise.all([
+    readFile(join(fontsDir, "Outfit-Regular.ttf")),
+    readFile(join(fontsDir, "Outfit-Bold.ttf")),
+    readFile(join(fontsDir, "Outfit-ExtraBold.ttf")),
+  ]);
+  cachedFonts = [
+    { name: "Outfit", data: regular.buffer as ArrayBuffer, style: "normal" as const, weight: 400 as const },
+    { name: "Outfit", data: bold.buffer as ArrayBuffer, style: "normal" as const, weight: 700 as const },
+    { name: "Outfit", data: extraBold.buffer as ArrayBuffer, style: "normal" as const, weight: 800 as const },
+  ];
+  return cachedFonts;
+}
+
+/** Pre-built ImageResponse options with brand fonts + standard size. */
+export async function ogImageOptions() {
+  const fonts = await getOutfitFonts();
+  return { ...OG_SIZE, fonts };
+}
+
 /**
  * Base OG image layout — dark gradient background with CarMakler logo.
  * All children must be wrapped in a single container with display:flex.
@@ -38,7 +62,7 @@ export function OgLayout({
         alignItems: "center",
         justifyContent: "center",
         background: "linear-gradient(145deg, #080818 0%, #1a1a2e 30%, #16213e 65%, #0f3460 100%)",
-        fontFamily: "sans-serif",
+        fontFamily: "Outfit, sans-serif",
         position: "relative",
         overflow: "hidden",
       }}

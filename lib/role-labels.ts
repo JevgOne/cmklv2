@@ -6,6 +6,8 @@
  */
 
 export const ROLE_LABELS: Record<string, string> = {
+  MANAGER: "Manažer prodeje",
+  REGIONAL_DIRECTOR: "Regionální ředitel",
   BROKER: "Makléř",
   ADVERTISER: "Inzerent",
   PARTS_SUPPLIER: "Dodavatel dílů",
