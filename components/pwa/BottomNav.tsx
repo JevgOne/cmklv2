@@ -121,10 +121,10 @@ export function BottomNav() {
   useEffect(() => {
     async function fetchUnreadCount() {
       try {
-        const res = await fetch("/api/broker/notifications");
+        const res = await fetch("/api/broker/unread-inquiries");
         if (res.ok) {
           const data = await res.json();
-          setUnreadCount(data.unreadCount ?? 0);
+          setUnreadCount(data.count ?? 0);
         }
       } catch {
         // Ignore — badge just won't show
