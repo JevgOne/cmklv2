@@ -428,10 +428,10 @@ export default async function VehicleDetailPage({
   const isBrokerListing = vehicle.sellerType === "broker" && broker;
   const isPrivateListing = vehicle.sellerType === "private";
 
-  // JSON-LD: Vehicle + BreadcrumbList
+  // JSON-LD: Car (richer than Vehicle) + BreadcrumbList
   const vehicleJsonLd = {
     "@context": "https://schema.org",
-    "@type": "Vehicle",
+    "@type": "Car",
     name: vehicleName,
     brand: { "@type": "Brand", name: vehicle.brand },
     model: vehicle.model,
@@ -444,6 +444,22 @@ export default async function VehicleDetailPage({
     fuelType: fuelLabel,
     vehicleTransmission: transLabel,
     color: vehicle.color || undefined,
+    ...(vehicle.bodyType && { bodyType: bodyLabel }),
+    ...(vehicle.doorsCount && { numberOfDoors: vehicle.doorsCount }),
+    ...(vehicle.seatsCount && { seatingCapacity: vehicle.seatsCount }),
+    ...(vehicle.enginePower && {
+      vehicleEngine: {
+        "@type": "EngineSpecification",
+        ...(vehicle.enginePower && {
+          enginePower: { "@type": "QuantitativeValue", value: vehicle.enginePower, unitCode: "BHP" },
+        }),
+        ...(vehicle.engineCapacity && {
+          engineDisplacement: { "@type": "QuantitativeValue", value: vehicle.engineCapacity, unitCode: "CMQ" },
+        }),
+        fuelType: fuelLabel,
+      },
+    }),
+    ...(!vehicle.vin.startsWith("PRIV") && { vehicleIdentificationNumber: vehicle.vin }),
     offers: {
       "@type": "Offer",
       price: vehicle.price,

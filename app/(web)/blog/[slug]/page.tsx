@@ -345,7 +345,7 @@ export default async function BlogArticlePage({
               )}
               {article.author.slug && (
                 <Link
-                  href={`/makler/${article.author.slug}`}
+                  href={`/profil/${article.author.slug}`}
                   className="inline-flex items-center gap-1.5 text-orange-600 text-sm font-semibold mt-3 no-underline hover:text-orange-700 transition-colors"
                 >
                   Zobrazit profil
