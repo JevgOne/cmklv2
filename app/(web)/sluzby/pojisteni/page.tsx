@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ServicePage } from "@/components/web/ServicePage";
 import { PojisteniCalc } from "@/components/web/PojisteniCalc";
-import { generateServiceJsonLd } from "@/lib/seo";
+import { generateServiceJsonLd, generateFaqJsonLd, generateBreadcrumbJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
@@ -94,6 +94,20 @@ export default function PojisteniPage() {
             url: "https://carmakler.cz/sluzby/pojisteni",
             areaServed: "CZ",
           }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(faq) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: generateBreadcrumbJsonLd([
+            { name: "Domů", url: "https://carmakler.cz" },
+            { name: "Služby", url: "https://carmakler.cz/sluzby" },
+            { name: "Pojištění", url: "https://carmakler.cz/sluzby/pojisteni" },
+          ]),
         }}
       />
       <ServicePage

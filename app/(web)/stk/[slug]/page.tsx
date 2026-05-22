@@ -6,6 +6,8 @@ import { Card } from "@/components/ui/Card";
 import { ServisReviewSection } from "@/components/web/autoservisy/ServisReviewSection";
 import { StkInfoCard } from "@/components/web/StkInfoCard";
 import { StkPriceCalc } from "@/components/web/StkPriceCalc";
+import { pageCanonical } from "@/lib/canonical";
+import { generateBreadcrumbJsonLd } from "@/lib/seo";
 import type { Metadata } from "next";
 
 interface Props {
@@ -20,6 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${servis.name} — STK stanice ${servis.city} | CarMakléř`,
     description: `${servis.name} — STK stanice ${servis.city}. ${servis.reviewCount} recenzí, hodnocení ${servis.averageRating}★${servis.stkWaitDays != null ? `, čekací doba ${servis.stkWaitDays} dní` : ""}. Najděte ověřenou STK stanici na CarMakléř.`,
+    alternates: pageCanonical(`/stk/${slug}`),
   };
 }
 
@@ -88,6 +91,16 @@ export default async function StkDetailPage({ params }: Props) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: generateBreadcrumbJsonLd([
+            { name: "Domů", url: "https://carmakler.cz" },
+            { name: "STK stanice", url: "https://carmakler.cz/stk" },
+            { name: servis.name, url: `https://carmakler.cz/stk/${slug}` },
+          ]),
+        }}
       />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <Breadcrumbs

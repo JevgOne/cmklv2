@@ -4,7 +4,7 @@ export const metadata: Metadata = {
   title: "Podat inzerát",
   description:
     "Podejte inzerát na prodej vašeho vozu na CarMakléř. Jednoduchý formulář, rychlé zveřejnění.",
-  robots: { index: true, follow: true },
+  robots: { index: false, follow: true },
 };
 
 export default function InzeratPridatLayout({

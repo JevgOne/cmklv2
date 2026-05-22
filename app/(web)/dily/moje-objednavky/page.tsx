@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -8,6 +9,11 @@ import { OrderTracker } from "@/components/web/OrderTracker";
 import { Button } from "@/components/ui/Button";
 import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Moje objednávky | Díly",
+  robots: { index: false, follow: false },
+};
 
 type OrderTrackerStatus = "NEW" | "CONFIRMED" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 

@@ -109,6 +109,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.7,
     },
+    {
+      url: `${BASE_URL}/autoservisy`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      url: `${BASE_URL}/stk`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
     // Informační SEO stránky
     {
       url: `${BASE_URL}/jak-prodat-auto`,
@@ -387,6 +399,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // DB nedostupná
   }
 
+  // Dynamické stránky — autoservisy + STK
+  let servisPages: MetadataRoute.Sitemap = [];
+  try {
+    const servisy = await prisma.autoServis.findMany({
+      where: { isPublished: true },
+      select: { slug: true, updatedAt: true, categories: true },
+    });
+
+    servisPages = servisy.map((s) => ({
+      url: s.categories.includes("stk-emise")
+        ? `${BASE_URL}/stk/${s.slug}`
+        : `${BASE_URL}/autoservisy/${s.slug}`,
+      lastModified: s.updatedAt,
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    }));
+  } catch {
+    // DB nedostupná
+  }
+
   // Dynamické stránky — autobazary (partner landing pages)
   let bazarPages: MetadataRoute.Sitemap = [];
   try {
@@ -462,5 +494,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...listingPages,
     ...blogPages,
     ...partPages,
+    ...servisPages,
   ];
 }

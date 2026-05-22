@@ -3,6 +3,12 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { pageCanonical } from "@/lib/canonical";
+import { generateFaqJsonLd, generateBreadcrumbJsonLd } from "@/lib/seo";
+
+const SLUZBY_FAQ = [
+  { question: "Jaké služby CarMakléř nabízí?", answer: "Prověrku vozidla (historie, havárie, stočení km), financování na splátky (schválení do 30 minut) a srovnání pojištění od všech pojišťoven v ČR." },
+  { question: "Jsou služby zdarma?", answer: "Služby pro prodejce jsou součástí provize za prodej. Pro kupující je prověrka vozidla od 299 Kč, financování a srovnání pojištění je zdarma." },
+];
 
 export const metadata: Metadata = {
   title: "Služby — financování, pojištění, prověrka vozidla",
@@ -42,6 +48,20 @@ const services = [
 
 export default function SluzbyPage() {
   return (
+    <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(SLUZBY_FAQ) }}
+    />
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: generateBreadcrumbJsonLd([
+          { name: "Domů", url: "https://carmakler.cz" },
+          { name: "Služby", url: "https://carmakler.cz/sluzby" },
+        ]),
+      }}
+    />
     <main>
       <Breadcrumbs items={[{ label: "Domů", href: "/" }, { label: "Služby" }]} />
 
@@ -75,5 +95,6 @@ export default function SluzbyPage() {
         </div>
       </section>
     </main>
+    </>
   );
 }

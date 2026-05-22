@@ -3,12 +3,22 @@ import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { StkPriceTable } from "@/components/web/StkPriceTable";
 import { StkPriceCalc } from "@/components/web/StkPriceCalc";
 import { ServisyList } from "@/components/web/autoservisy/ServisyList";
+import { generateFaqJsonLd } from "@/lib/seo";
+import { pageCanonical } from "@/lib/canonical";
 import type { Metadata } from "next";
+
+const STK_FAQ = [
+  { question: "Kolik stojí STK?", answer: "Cena STK pro osobní automobil (kategorie M1) je 800 Kč za technickou prohlídku a 400 Kč za měření emisí, celkem 1 200 Kč. Ceny se liší podle kategorie vozidla." },
+  { question: "Jak často musím na STK?", answer: "Nové osobní auto má první STK po 4 letech, poté každé 2 roky. Vozidla starší 10 let musí na STK každý rok. Užitková vozidla nad 3,5 t každý rok." },
+  { question: "Co potřebuji k STK?", answer: "Na STK potřebujete velký technický průkaz (osvědčení o registraci vozidla), malý technický průkaz a platné povinné ručení. Vozidlo musí být čisté a bez zjevných závad." },
+  { question: "Co se kontroluje při STK?", answer: "Kontroluje se stav brzd, řízení, náprav, kol, osvětlení, karoserie, podvozku, výfukového systému a dalších bezpečnostních prvků. Součástí je i měření emisí." },
+];
 
 export const metadata: Metadata = {
   title: "STK stanice — najděte nejbližší stanici technické kontroly | CarMakléř",
   description:
     "Seznam STK stanic v ČR s recenzemi, čekacími dobami a cenami. Najděte nejbližší STK stanici a objednejte se online.",
+  alternates: pageCanonical("/stk"),
 };
 
 export default async function StkListPage() {
@@ -46,6 +56,11 @@ export default async function StkListPage() {
   ];
 
   return (
+    <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(STK_FAQ) }}
+    />
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
       <Breadcrumbs items={[{ label: "STK stanice" }]} />
 
@@ -72,5 +87,6 @@ export default async function StkListPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

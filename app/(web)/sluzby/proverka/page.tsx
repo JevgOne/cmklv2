@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ServicePage } from "@/components/web/ServicePage";
 import { ProverkaForm } from "@/components/web/ProverkaForm";
-import { generateServiceJsonLd } from "@/lib/seo";
+import { generateServiceJsonLd, generateFaqJsonLd, generateBreadcrumbJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
@@ -93,6 +93,20 @@ export default function ProverkaPage() {
             url: "https://carmakler.cz/sluzby/proverka",
             areaServed: "CZ",
           }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(faq) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: generateBreadcrumbJsonLd([
+            { name: "Domů", url: "https://carmakler.cz" },
+            { name: "Služby", url: "https://carmakler.cz/sluzby" },
+            { name: "Prověrka vozidla", url: "https://carmakler.cz/sluzby/proverka" },
+          ]),
         }}
       />
       <ServicePage

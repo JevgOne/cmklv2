@@ -7,6 +7,7 @@ import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { pageCanonical } from "@/lib/canonical";
+import { generateBreadcrumbJsonLd } from "@/lib/seo";
 import { BASE_URL } from "@/lib/seo-data";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -181,6 +182,17 @@ export default async function BlogArticlePage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: generateBreadcrumbJsonLd([
+            { name: "Domů", url: BASE_URL },
+            { name: "Blog", url: `${BASE_URL}/blog` },
+            { name: article.category.name, url: `${BASE_URL}/blog/kategorie/${article.category.slug}` },
+            { name: article.title, url: articleUrl },
+          ]),
+        }}
       />
       <ReadingProgress />
 

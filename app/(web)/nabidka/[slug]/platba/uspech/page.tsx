@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+
+export const metadata: Metadata = {
+  title: "Platba úspěšná",
+  robots: { index: false, follow: false },
+};
 
 export default function PaymentSuccessPage() {
   return (

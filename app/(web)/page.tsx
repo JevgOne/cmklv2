@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { companyInfo } from "@/lib/company-info";
+import { generateWebSiteJsonLd, generateFaqJsonLd } from "@/lib/seo";
 
 export const revalidate = 3600;
 import { Button } from "@/components/ui/Button";
@@ -204,6 +205,12 @@ const proKoho = [
 /*  Page                                                               */
 /* ------------------------------------------------------------------ */
 
+const HOMEPAGE_FAQ = [
+  { question: "Co je CarMakléř?", answer: "CarMakléř je česká platforma pro bezpečný prodej a nákup ojetých vozidel přes síť certifikovaných makléřů." },
+  { question: "Jak CarMakléř funguje?", answer: "Makléř nabere vaše auto, vytvoří profesionální inzerát, zajistí prověrku a zprostředkuje prodej. Vy platíte provizi 5% až po prodeji." },
+  { question: "Je CarMakléř zdarma?", answer: "Ano, služba je bez poplatků předem. Provizi 5% (min. 25 000 Kč) platíte až po úspěšném prodeji." },
+];
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
@@ -244,6 +251,14 @@ export default async function HomePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: generateWebSiteJsonLd() }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(HOMEPAGE_FAQ) }}
       />
       {/* ============================================================ */}
       {/* Section 1 — Hero + Pro koho strip                            */}

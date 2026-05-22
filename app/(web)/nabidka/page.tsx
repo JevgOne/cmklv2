@@ -8,7 +8,14 @@ import { Button } from "@/components/ui/Button";
 import { prisma } from "@/lib/prisma";
 import type { VehicleData } from "@/components/web/VehicleCard";
 import { pageCanonical } from "@/lib/canonical";
+import { generateFaqJsonLd } from "@/lib/seo";
 import { fuelLabels, transmissionLabels } from "@/lib/vehicle-labels";
+
+const NABIDKA_FAQ = [
+  { question: "Jak nakoupit auto přes CarMakléř?", answer: "Vyberte si auto z nabídky, kontaktujte makléře a domluvte si prohlídku. Makléř zajistí vše od prověrky po převod." },
+  { question: "Jsou auta na CarMakléř prověřená?", answer: "Ano, každé vozidlo prochází prověrkou historie, technického stavu a právní čistoty." },
+  { question: "Mohu auto financovat?", answer: "Ano, nabízíme financování s výhodným úrokem. Kalkulačku najdete u každého vozidla." },
+];
 
 export const revalidate = 300; // ISR: 5 minut
 
@@ -224,6 +231,10 @@ export default async function NabidkaPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(catalogJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(NABIDKA_FAQ) }}
       />
       {/* ============================================================ */}
       {/* Hero strip                                                    */}

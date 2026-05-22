@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import { InzeratyNav } from "@/components/web/InzeratyNav";
+
+export const metadata: Metadata = {
+  title: "Moje inzeráty",
+  robots: { index: false, follow: false },
+};
 
 export default function MojeInzeratyLayout({ children }: { children: React.ReactNode }) {
   return (

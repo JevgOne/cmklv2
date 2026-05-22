@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
 import { BASE_URL } from "@/lib/seo-data";
-import { generatePersonJsonLd } from "@/lib/seo";
+import { generatePersonJsonLd, generateBreadcrumbJsonLd } from "@/lib/seo";
 import { ROLE_LABELS } from "@/lib/role-labels";
 import { getSkillTagCounts } from "@/lib/reputation/skill-tags";
 import { getBrokerRatingBreakdown, getBrokerDetailedRatings } from "@/lib/broker-reviews";
@@ -334,6 +334,16 @@ export default async function ProfilePage({
               },
             }),
           }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: generateBreadcrumbJsonLd([
+            { name: "Domů", url: BASE_URL },
+            { name: "Makléři", url: `${BASE_URL}/makleri` },
+            { name: fullName, url: `${BASE_URL}/profil/${slug}` },
+          ]),
         }}
       />
       <ProfileClient initialData={data} slug={slug} />

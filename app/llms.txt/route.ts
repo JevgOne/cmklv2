@@ -35,6 +35,20 @@ Carmakler je ekosystém 4 propojených produktů pod jednou značkou — všechn
 - [Financování](${BASE_URL}/sluzby/financovani): Auto úvěr na míru s předschválením do 24 hodin.
 - [Pojištění](${BASE_URL}/sluzby/pojisteni): Povinné ručení a havarijní pojištění od prověřených partnerů.
 
+## Autoservisy a STK
+
+- [Autoservisy](${BASE_URL}/autoservisy): Katalog ověřených autoservisů s recenzemi od zákazníků. Filtry podle města, specializace a hodnocení.
+- [STK stanice](${BASE_URL}/stk): Seznam stanic technické kontroly s cenami, čekacími dobami a hodnocením.
+- [Ceník](${BASE_URL}/cenik): Provize 5% z prodejní ceny, min. 25 000 Kč. Bez skrytých poplatků.
+
+## Makléři
+
+- [Makléři](${BASE_URL}/makleri): Adresář certifikovaných automakléřů s hodnocením, specializací a počtem prodaných vozidel.
+
+## Blog
+
+- [Blog](${BASE_URL}/blog): Články o prodeji a nákupu aut, údržbě, financování, pojištění a automotive trendech.
+
 ## Klíčové vlastnosti
 
 - Všechny použité díly pocházejí z verifikovaných českých vrakovišť (status AKTIVNI_PARTNER v interním systému).

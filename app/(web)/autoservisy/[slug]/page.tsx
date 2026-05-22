@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { Card } from "@/components/ui/Card";
 import { ServisReviewSection } from "@/components/web/autoservisy/ServisReviewSection";
+import { pageCanonical } from "@/lib/canonical";
+import { generateBreadcrumbJsonLd } from "@/lib/seo";
 import type { Metadata } from "next";
 
 interface Props {
@@ -20,6 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: servis.description
       ? servis.description.slice(0, 160)
       : `${servis.name} — ${servis.city}. ${servis.reviewCount} recenzí, hodnocení ${servis.averageRating}★. Najděte ověřený autoservis na CarMakléř.`,
+    alternates: pageCanonical(`/autoservisy/${slug}`),
   };
 }
 
@@ -102,6 +105,16 @@ export default async function ServisDetailPage({ params }: Props) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: generateBreadcrumbJsonLd([
+            { name: "Domů", url: "https://carmakler.cz" },
+            { name: "Autoservisy", url: "https://carmakler.cz/autoservisy" },
+            { name: servis.name, url: `https://carmakler.cz/autoservisy/${slug}` },
+          ]),
+        }}
       />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <Breadcrumbs

@@ -8,6 +8,7 @@ import { ProductCard } from "@/components/web/ProductCard";
 import { ProductDetailTabs } from "@/app/(web)/shop/produkt/[slug]/ProductDetailTabs";
 import { AddToCartButton } from "@/app/(web)/shop/produkt/[slug]/AddToCartButton";
 import { prisma } from "@/lib/prisma";
+import { pageCanonical } from "@/lib/canonical";
 import { getCategoryLabel, getConditionLabel } from "@/lib/parts-categories";
 import type { PartCategory, PartCondition } from "@/types/parts";
 
@@ -30,6 +31,7 @@ export async function generateMetadata({
     description:
       part.description?.slice(0, 155) ||
       `Kupte ${part.name} za ${price} Kč na CarMakléř. Kategorie: ${getCategoryLabel(part.category as PartCategory)}.`,
+    alternates: pageCanonical(`/dily/${slug}`),
   };
 }
 
