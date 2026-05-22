@@ -12,6 +12,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
     }
 
+    const role = (session.user as { role?: string }).role;
+    if (role !== "ADVERTISER" && role !== "ADMIN") {
+      return NextResponse.json({ error: "Nedostatečná oprávnění" }, { status: 403 });
+    }
+
     const searchParams = Object.fromEntries(request.nextUrl.searchParams);
     const query = inquiryListQuerySchema.parse(searchParams);
 

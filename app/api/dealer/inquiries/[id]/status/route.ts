@@ -15,6 +15,11 @@ export async function PUT(
       return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
     }
 
+    const role = (session.user as { role?: string }).role;
+    if (role !== "ADVERTISER" && role !== "ADMIN") {
+      return NextResponse.json({ error: "Nedostatečná oprávnění" }, { status: 403 });
+    }
+
     const { id } = await params;
     const body = await request.json();
     const data = inquiryStatusSchema.parse(body);

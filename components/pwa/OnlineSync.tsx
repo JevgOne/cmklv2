@@ -104,11 +104,25 @@ export function OnlineSync() {
             }
 
             // STEP 3: DRAFT → PENDING transition (BUG 1 FIX)
-            await fetch(`/api/vehicles/${vehicleId}/status`, {
+            const statusRes = await fetch(`/api/vehicles/${vehicleId}/status`, {
               method: "PATCH",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ status: "PENDING" }),
             });
+
+            if (!statusRes.ok) {
+              console.error(`[OnlineSync] PATCH PENDING failed (${statusRes.status}) for ${vehicleId}`);
+              // Save vehicleId for retry — don't remove action
+              await offlineStorage.updatePendingAction(action.id, {
+                ...payload,
+                _vehicleId: vehicleId,
+                _retries: retries + 1,
+              });
+              if (retries + 1 >= 3) {
+                await offlineStorage.removePendingAction(action.id);
+              }
+              continue;
+            }
 
             // STEP 4: Cleanup — only if everything succeeded
             if (photosOk) {

@@ -10,6 +10,11 @@ export async function GET() {
       return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
     }
 
+    const role = (session.user as { role?: string }).role;
+    if (role !== "ADVERTISER" && role !== "ADMIN") {
+      return NextResponse.json({ error: "Nedostatečná oprávnění" }, { status: 403 });
+    }
+
     const userId = session.user.id;
     const now = new Date();
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);

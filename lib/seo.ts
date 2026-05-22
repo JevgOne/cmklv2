@@ -154,7 +154,7 @@ export function generateServiceJsonLd(service: ServiceJsonLdData): string {
     url: service.url,
     provider: {
       "@type": "Organization",
-      name: service.provider || "CarMakler",
+      name: service.provider || "CarMakléř",
       url: "https://carmakler.cz",
     },
     ...(service.areaServed && { areaServed: service.areaServed }),
@@ -180,11 +180,11 @@ export function generateArticleJsonLd(article: {
     dateModified: article.dateModified,
     author: {
       "@type": "Organization",
-      name: article.author || "CarMakler",
+      name: article.author || "CarMakléř",
     },
     publisher: {
       "@type": "Organization",
-      name: "CarMakler",
+      name: "CarMakléř",
       url: "https://carmakler.cz",
     },
   };
@@ -255,7 +255,7 @@ export function generateWebPageJsonLd(page: WebPageJsonLdData): string {
     url: page.url,
     publisher: {
       "@type": "Organization",
-      name: "CarMakler",
+      name: "CarMakléř",
       url: "https://carmakler.cz",
     },
   };
