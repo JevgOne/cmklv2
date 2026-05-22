@@ -405,8 +405,9 @@ export function ScoutLeadDetail({ id }: { id: string }) {
   }
   const equipmentGroups: Record<string, string[]> = {};
   const categoryLabelsEquip: Record<string, string> = {
-    safety: "Bezpečnost", comfort: "Komfort", exterior: "Exteriér",
-    interior: "Interiér", systems: "Systémy", other: "Ostatní",
+    safety: "Bezpečnost", assist: "Asistence", security: "Zabezpečení",
+    interior: "Interiér", systems: "Systémy", seats: "Sedadla",
+    lights: "Osvětlení", exterior: "Exteriér", drive: "Pohon", other: "Ostatní",
   };
   for (const item of rawEquipment) {
     if (typeof item === "string") {

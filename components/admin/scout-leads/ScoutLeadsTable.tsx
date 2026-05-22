@@ -33,10 +33,10 @@ interface ScoutLead {
 function CompletenessGradeBadge({ score }: { score: number | null }) {
   const { grade, color } = (() => {
     if (score == null || score === 0) return { grade: "?", color: "bg-gray-100 text-gray-400" };
-    if (score >= 80) return { grade: "A", color: "bg-green-100 text-green-700" };
-    if (score >= 60) return { grade: "B", color: "bg-blue-100 text-blue-700" };
-    if (score >= 40) return { grade: "C", color: "bg-orange-100 text-orange-700" };
-    if (score >= 20) return { grade: "D", color: "bg-red-100 text-red-600" };
+    if (score >= 90) return { grade: "A", color: "bg-green-100 text-green-700" };
+    if (score >= 70) return { grade: "B", color: "bg-blue-100 text-blue-700" };
+    if (score >= 50) return { grade: "C", color: "bg-orange-100 text-orange-700" };
+    if (score >= 30) return { grade: "D", color: "bg-red-100 text-red-600" };
     return { grade: "F", color: "bg-red-200 text-red-800" };
   })();
   return (
