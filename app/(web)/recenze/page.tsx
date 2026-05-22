@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { prisma } from "@/lib/prisma";
 import { ReviewList } from "@/components/web/ReviewList";
+import { ReviewForm } from "@/components/web/ReviewForm";
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
@@ -63,41 +64,32 @@ export default async function RecenzePage() {
       {/* Filter + Reviews */}
       <section className="py-10 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {reviews.length === 0 ? (
-            <div className="text-center py-12">
+          {reviews.length > 0 && (
+            <ReviewList
+              reviews={reviews.map((r) => ({
+                id: r.id,
+                rating: r.rating,
+                text: r.text,
+                authorName: r.authorName,
+                authorCity: r.authorCity,
+                type: r.type,
+                createdAt: r.createdAt.toISOString(),
+              }))}
+            />
+          )}
+
+          {reviews.length === 0 && (
+            <div className="text-center py-8 mb-8">
               <div className="text-5xl mb-4">⭐</div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">Zatím žádné recenze</h3>
-              <p className="text-sm text-gray-500 mb-6">Buďte první, kdo nám napíše!</p>
-              <a href="mailto:info@carmakler.cz?subject=Recenze%20CarMakl%C3%A9%C5%99" className="no-underline">
-                <Button variant="primary" size="lg">
-                  Napište nám recenzi
-                </Button>
-              </a>
+              <p className="text-sm text-gray-500">Buďte první, kdo nám napíše!</p>
             </div>
-          ) : (
-            <>
-              <ReviewList
-                reviews={reviews.map((r) => ({
-                  id: r.id,
-                  rating: r.rating,
-                  text: r.text,
-                  authorName: r.authorName,
-                  authorCity: r.authorCity,
-                  type: r.type,
-                  createdAt: r.createdAt.toISOString(),
-                }))}
-              />
-
-              {/* CTA */}
-              <div className="text-center mt-12">
-                <a href="mailto:info@carmakler.cz?subject=Recenze%20CarMakl%C3%A9%C5%99" className="no-underline">
-                  <Button variant="primary" size="lg">
-                    Napište nám recenzi
-                  </Button>
-                </a>
-              </div>
-            </>
           )}
+
+          {/* Formulář pro novou recenzi */}
+          <div className={reviews.length > 0 ? "mt-12" : ""} id="formular">
+            <ReviewForm />
+          </div>
         </div>
       </section>
 
