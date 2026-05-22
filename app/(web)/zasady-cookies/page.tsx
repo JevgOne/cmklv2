@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { BASE_URL } from "@/lib/seo-data";
 import { pageCanonical } from "@/lib/canonical";
+import { generateBreadcrumbJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Zásady cookies",
@@ -66,8 +67,30 @@ const cookies = [
 ];
 
 export default function ZasadyCookiesPage() {
+  const webPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: "Zásady cookies",
+    description: "Informace o používání cookies na platformě CarMakler.",
+    url: `${BASE_URL}/zasady-cookies`,
+    publisher: { "@type": "Organization", name: "CarMakléř", url: BASE_URL },
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: generateBreadcrumbJsonLd([
+            { name: "Domů", url: BASE_URL },
+            { name: "Zásady cookies" },
+          ]),
+        }}
+      />
       <Breadcrumbs
         items={[
           { label: "Domů", href: "/" },
