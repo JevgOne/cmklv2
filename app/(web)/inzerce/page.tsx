@@ -311,7 +311,7 @@ export default async function InzercePage() {
             </Card>
 
             {/* Bazar */}
-            <Card hover className="p-8 relative ring-2 ring-orange-500">
+            <Card hover className="p-8 relative ring-2 ring-orange-500 overflow-visible">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                 <span className="bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full">
                   Nejoblíbenější
