@@ -14,6 +14,8 @@ export function MainFooter() {
           { href: "/sluzby/financovani", label: "Financování" },
           { href: "/sluzby/pojisteni", label: "Pojištění" },
           { href: "/kolik-stoji-moje-auto", label: "Kolik stojí moje auto?" },
+          { href: "/autoservisy", label: "Autoservisy" },
+          { href: "/stk", label: "STK stanice" },
         ],
       }}
       productColumn2={{

@@ -9,6 +9,7 @@ import { ProductDetailTabs } from "@/app/(web)/shop/produkt/[slug]/ProductDetail
 import { AddToCartButton } from "@/app/(web)/shop/produkt/[slug]/AddToCartButton";
 import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
+import { generateBreadcrumbJsonLd } from "@/lib/seo";
 import { getCategoryLabel, getConditionLabel } from "@/lib/parts-categories";
 import type { PartCategory, PartCondition } from "@/types/parts";
 
@@ -177,11 +178,23 @@ export default async function DilyDetailPage({
     },
   };
 
+  const categoryLabel = getCategoryLabel(part.category as PartCategory);
+  const breadcrumbItems = [
+    { name: "Domů", url: "https://carmakler.cz" },
+    { name: "Díly", url: "https://carmakler.cz/dily" },
+    { name: categoryLabel, url: `https://carmakler.cz/dily/katalog?kategorie=${part.category.toLowerCase()}` },
+    { name: part.name },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: generateBreadcrumbJsonLd(breadcrumbItems) }}
       />
       {/* Breadcrumbs */}
       <div className="bg-white border-b border-gray-200">

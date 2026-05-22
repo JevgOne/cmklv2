@@ -5,6 +5,7 @@ import {
   generateOrganizationJsonLd,
   generatePartsItemListJsonLd,
   generateFaqPageJsonLd,
+  generateBreadcrumbJsonLd,
 } from "@/lib/seo";
 import {
   PARTS_BRANDS,
@@ -77,6 +78,11 @@ export default async function PartsBrandPage({
   );
   const faqJsonLd = generateFaqPageJsonLd(seo.faq);
   const organizationJsonLd = generateOrganizationJsonLd();
+  const breadcrumbJsonLd = generateBreadcrumbJsonLd([
+    { name: "Domů", url: `${BASE_URL}` },
+    { name: "Díly", url: `${BASE_URL}/dily` },
+    { name: `Díly ${brandData.name}` },
+  ]);
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -91,6 +97,10 @@ export default async function PartsBrandPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: faqJsonLd }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }}
       />
 
       <PartsBreadcrumbs

@@ -9,6 +9,7 @@ import { ProductCard } from "@/components/web/ProductCard";
 import { ProductDetailTabs } from "./ProductDetailTabs";
 import { AddToCartButton } from "./AddToCartButton";
 import { prisma } from "@/lib/prisma";
+import { generateBreadcrumbJsonLd } from "@/lib/seo";
 import { getCategoryLabel, getConditionLabel } from "@/lib/parts-categories";
 import type { PartCategory, PartCondition } from "@/types/parts";
 
@@ -174,6 +175,16 @@ export default async function ProductDetailPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: generateBreadcrumbJsonLd([
+            { name: "Domů", url: "https://carmakler.cz" },
+            { name: "Shop", url: "https://carmakler.cz/shop" },
+            { name: part.name },
+          ]),
+        }}
       />
       {/* Breadcrumbs */}
       <div className="bg-white border-b border-gray-200">

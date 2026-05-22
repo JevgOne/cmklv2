@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import type { Metadata } from "next";
-import { generateLocalBusinessJsonLd } from "@/lib/seo";
+import { generateLocalBusinessJsonLd, generateBreadcrumbJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
 
 interface Props {
@@ -74,6 +74,16 @@ export default async function BazarProfilePage({ params }: Props) {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: generateBreadcrumbJsonLd([
+            { name: "Domů", url: "https://carmakler.cz" },
+            { name: "Bazary", url: "https://carmakler.cz/nabidka" },
+            { name: partner.name },
+          ]),
+        }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

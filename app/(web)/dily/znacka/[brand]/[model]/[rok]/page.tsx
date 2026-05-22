@@ -5,6 +5,7 @@ import {
   generateOrganizationJsonLd,
   generatePartsItemListJsonLd,
   generateFaqPageJsonLd,
+  generateBreadcrumbJsonLd,
 } from "@/lib/seo";
 import {
   PARTS_BRANDS,
@@ -123,6 +124,13 @@ export default async function PartsBrandModelYearPage({
   );
   const faqJsonLd = generateFaqPageJsonLd(seo.faq);
   const organizationJsonLd = generateOrganizationJsonLd();
+  const breadcrumbJsonLd = generateBreadcrumbJsonLd([
+    { name: "Domů", url: `${BASE_URL}` },
+    { name: "Díly", url: `${BASE_URL}/dily` },
+    { name: brandData.name, url: `${BASE_URL}/dily/znacka/${brand}` },
+    { name: modelData.name, url: `${BASE_URL}/dily/znacka/${brand}/${model}` },
+    { name: rok },
+  ]);
 
   // Najdi generation pro tento rok
   const matchingGen = modelData.generations.find(
@@ -146,6 +154,10 @@ export default async function PartsBrandModelYearPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: faqJsonLd }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }}
       />
 
       <PartsBreadcrumbs

@@ -4,6 +4,7 @@ import {
   generateOrganizationJsonLd,
   generatePartsItemListJsonLd,
   generateFaqPageJsonLd,
+  generateBreadcrumbJsonLd,
 } from "@/lib/seo";
 import {
   PARTS_BRANDS,
@@ -100,6 +101,12 @@ export default async function PartsBrandModelPage({
   );
   const faqJsonLd = generateFaqPageJsonLd(seo.faq);
   const organizationJsonLd = generateOrganizationJsonLd();
+  const breadcrumbJsonLd = generateBreadcrumbJsonLd([
+    { name: "Domů", url: `${BASE_URL}` },
+    { name: "Díly", url: `${BASE_URL}/dily` },
+    { name: brandData.name, url: `${BASE_URL}/dily/znacka/${brand}` },
+    { name: modelData.name },
+  ]);
 
   const topYears = modelData.topYears ?? [2015, 2018, 2020];
   const otherModels = (PARTS_MODELS_BY_BRAND[brand] || []).filter(
@@ -119,6 +126,10 @@ export default async function PartsBrandModelPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: faqJsonLd }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }}
       />
 
       <PartsBreadcrumbs
