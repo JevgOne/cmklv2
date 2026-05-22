@@ -148,7 +148,7 @@ export function AdminLeadsTable({ leads, statusLabels }: AdminLeadsTableProps) {
               {paginated.length === 0 && (
                 <tr>
                   <td colSpan={7} className="px-4 py-12 text-center text-gray-400 text-sm">
-                    Žádné leady odpovídající filtrům
+                    Žádné zprávy odpovídající filtrům
                   </td>
                 </tr>
               )}
@@ -210,7 +210,7 @@ export function AdminLeadsTable({ leads, statusLabels }: AdminLeadsTableProps) {
       )}
 
       <div className="text-center text-xs text-gray-400">
-        Zobrazeno {paginated.length} z {filtered.length} leadů
+        Zobrazeno {paginated.length} z {filtered.length} zpráv
       </div>
     </div>
   );

@@ -83,10 +83,10 @@ export default async function AdminLeadsPage() {
           <div className="flex items-center gap-2 text-[13px] text-gray-500 mb-2">
             <span>Admin</span>
             <span>/</span>
-            <span className="text-gray-900">Leady</span>
+            <span className="text-gray-900">Zprávy</span>
           </div>
           <h1 className="text-[28px] font-extrabold text-gray-900">
-            Lead management
+            Zprávy
           </h1>
         </div>
       </div>
@@ -97,13 +97,13 @@ export default async function AdminLeadsPage() {
           icon="📋"
           iconColor="blue"
           value={totalLeads.toLocaleString("cs-CZ")}
-          label="Celkem leadu"
+          label="Celkem zpráv"
         />
         <StatCard
           icon="👤"
           iconColor="orange"
           value={assignedLeads.toLocaleString("cs-CZ")}
-          label="Aktivnich"
+          label="Aktivních"
         />
         <StatCard
           icon="✅"
@@ -115,7 +115,7 @@ export default async function AdminLeadsPage() {
           icon="❌"
           iconColor="red"
           value={rejectedLeads.toLocaleString("cs-CZ")}
-          label="Odmitnutych"
+          label="Odmítnutých"
         />
       </div>
 
