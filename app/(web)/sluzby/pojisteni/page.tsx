@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ServicePage } from "@/components/web/ServicePage";
-import { PojisteniForm } from "@/components/web/PojisteniForm";
+import { PojisteniCalc } from "@/components/web/PojisteniCalc";
 import { generateServiceJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
 
@@ -105,7 +105,7 @@ export default function PojisteniPage() {
         }}
         steps={steps}
         benefits={benefits}
-        cta={<PojisteniForm />}
+        cta={<PojisteniCalc />}
         faq={faq}
         breadcrumbLabel="Pojištění"
         currentService="pojisteni"
