@@ -30,34 +30,46 @@ export async function POST(request: Request) {
     const body = await request.json();
     const data = contactSchema.parse(body);
 
-    // If contacting a specific broker (from profile page), use that broker
-    // Otherwise try auto-assignment by region
+    // Detect message category from description prefix
+    const isCareerMessage = data.message?.startsWith("[Kariéra");
+
+    // Career messages go to managers/admins, not brokers
     let assignedBrokerId: string | null = data.brokerId || null;
 
-    if (!assignedBrokerId && data.vehicleId) {
-      // If inquiry about a specific vehicle, assign to the vehicle's broker
-      const vehicle = await prisma.vehicle.findUnique({
-        where: { id: data.vehicleId },
-        select: { brokerId: true },
-      });
-      assignedBrokerId = vehicle?.brokerId || null;
-    }
-
-    if (!assignedBrokerId && data.city) {
-      const regionId = await assignRegionByCity(data.city);
-      if (regionId) {
-        assignedBrokerId = await roundRobinAssignBroker(regionId);
-      }
-    }
-
-    // Fallback: assign to broker with fewest leads across all regions
-    if (!assignedBrokerId) {
-      const leastBusyBroker = await prisma.user.findFirst({
-        where: { role: "BROKER", status: "ACTIVE" },
+    if (isCareerMessage) {
+      // Assign to a manager or admin
+      const manager = await prisma.user.findFirst({
+        where: { role: { in: ["MANAGER", "ADMIN"] }, status: "ACTIVE" },
         select: { id: true },
-        orderBy: { assignedLeads: { _count: "asc" } },
+        orderBy: { createdAt: "asc" },
       });
-      assignedBrokerId = leastBusyBroker?.id || null;
+      assignedBrokerId = manager?.id || null;
+    } else {
+      // Regular inquiries — assign to brokers
+      if (!assignedBrokerId && data.vehicleId) {
+        const vehicle = await prisma.vehicle.findUnique({
+          where: { id: data.vehicleId },
+          select: { brokerId: true },
+        });
+        assignedBrokerId = vehicle?.brokerId || null;
+      }
+
+      if (!assignedBrokerId && data.city) {
+        const regionId = await assignRegionByCity(data.city);
+        if (regionId) {
+          assignedBrokerId = await roundRobinAssignBroker(regionId);
+        }
+      }
+
+      // Fallback: assign to broker with fewest leads across all regions
+      if (!assignedBrokerId) {
+        const leastBusyBroker = await prisma.user.findFirst({
+          where: { role: "BROKER", status: "ACTIVE" },
+          select: { id: true },
+          orderBy: { assignedLeads: { _count: "asc" } },
+        });
+        assignedBrokerId = leastBusyBroker?.id || null;
+      }
     }
 
     const lead = await prisma.lead.create({
