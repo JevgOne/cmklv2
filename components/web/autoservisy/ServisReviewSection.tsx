@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { StkReviewExtras } from "@/components/web/StkReviewExtras";
 
 interface ReviewItem {
   id: string;
@@ -38,9 +39,10 @@ interface Props {
   servisName: string;
   initialReviews: ReviewItem[];
   totalReviews: number;
+  isStk?: boolean;
 }
 
-export function ServisReviewSection({ servisId, servisName, initialReviews, totalReviews }: Props) {
+export function ServisReviewSection({ servisId, servisName, initialReviews, totalReviews, isStk }: Props) {
   const [reviews] = useState(initialReviews);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({
@@ -52,6 +54,9 @@ export function ServisReviewSection({ servisId, servisName, initialReviews, tota
     text: "",
     serviceType: "",
     vehicleBrand: "",
+    ratingWaitTime: null as number | null,
+    ratingFairness: null as number | null,
+    passedInspection: null as boolean | null,
   });
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -71,6 +76,9 @@ export function ServisReviewSection({ servisId, servisName, initialReviews, tota
           title: form.title || undefined,
           serviceType: form.serviceType || undefined,
           vehicleBrand: form.vehicleBrand || undefined,
+          ratingWaitTime: form.ratingWaitTime ?? undefined,
+          ratingFairness: form.ratingFairness ?? undefined,
+          passedInspection: form.passedInspection,
         }),
       });
       if (!res.ok) {
@@ -174,6 +182,14 @@ export function ServisReviewSection({ servisId, servisName, initialReviews, tota
               </label>
             </div>
           </div>
+          {isStk && (
+            <StkReviewExtras
+              ratingWaitTime={form.ratingWaitTime}
+              ratingFairness={form.ratingFairness}
+              passedInspection={form.passedInspection}
+              onChange={(field, value) => setForm({ ...form, [field]: value })}
+            />
+          )}
           <div className="flex gap-3 mt-4">
             <Button type="submit" variant="primary" disabled={saving}>
               {saving ? "Odesílám..." : "Odeslat recenzi"}

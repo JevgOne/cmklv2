@@ -178,6 +178,7 @@ export default async function StkDetailPage({ params }: Props) {
               servisName={servis.name}
               initialReviews={reviews}
               totalReviews={servis.reviewCount}
+              isStk
             />
           </div>
 

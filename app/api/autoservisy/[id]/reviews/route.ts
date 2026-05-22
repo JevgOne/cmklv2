@@ -17,6 +17,9 @@ const reviewSchema = z.object({
   ratingComm: z.number().int().min(1).max(5).optional(),
   serviceType: z.string().max(100).optional(),
   vehicleBrand: z.string().max(100).optional(),
+  ratingWaitTime: z.number().int().min(1).max(5).optional(),
+  ratingFairness: z.number().int().min(1).max(5).optional(),
+  passedInspection: z.boolean().nullable().optional(),
 });
 
 export async function GET(
