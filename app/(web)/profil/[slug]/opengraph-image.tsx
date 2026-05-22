@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { OgLayout, OG_SIZE, getLogoBase64, ORANGE } from "@/lib/og-image";
+import { OgLayout, OG_SIZE, getLogoBase64, ORANGE, ogImageOptions } from "@/lib/og-image";
 import { prisma } from "@/lib/prisma";
 import { BASE_URL } from "@/lib/seo-data";
 
@@ -28,6 +28,7 @@ export default async function Image({
 }) {
   const { slug } = await params;
   const logo = await getLogoBase64();
+  const options = await ogImageOptions();
 
   const user = await prisma.user.findFirst({
     where: { slug },
@@ -50,7 +51,7 @@ export default async function Image({
           </div>
         </OgLayout>
       ),
-      { ...size },
+      options,
     );
   }
 
@@ -133,6 +134,6 @@ export default async function Image({
         </div>
       </OgLayout>
     ),
-    { ...size },
+    options,
   );
 }

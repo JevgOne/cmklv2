@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { OgLayout, OG_SIZE, getLogoBase64, ORANGE } from "@/lib/og-image";
+import { OgLayout, OG_SIZE, getLogoBase64, ORANGE, ogImageOptions } from "@/lib/og-image";
 import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -14,6 +14,7 @@ export default async function Image({
 }) {
   const { slug } = await params;
   const logo = await getLogoBase64();
+  const options = await ogImageOptions();
 
   // Try Vehicle first, then Listing
   const vehicle = await prisma.vehicle.findFirst({
@@ -55,7 +56,7 @@ export default async function Image({
           </div>
         </OgLayout>
       ),
-      { ...size },
+      options,
     );
   }
 
@@ -91,6 +92,6 @@ export default async function Image({
         </div>
       </OgLayout>
     ),
-    { ...size },
+    options,
   );
 }

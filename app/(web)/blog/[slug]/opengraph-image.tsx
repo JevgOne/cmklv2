@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { OG_SIZE, getLogoBase64, ORANGE } from "@/lib/og-image";
+import { OG_SIZE, getLogoBase64, ORANGE, ogImageOptions } from "@/lib/og-image";
 import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -14,6 +14,7 @@ export default async function Image({
 }) {
   const { slug } = await params;
   const logo = await getLogoBase64();
+  const options = await ogImageOptions();
 
   const article = await prisma.article.findUnique({
     where: { slug },
@@ -33,7 +34,7 @@ export default async function Image({
       (
         <BlogOgFallback logo={logo} />
       ),
-      { ...size },
+      options,
     );
   }
 
@@ -55,7 +56,7 @@ export default async function Image({
           display: "flex",
           position: "relative",
           overflow: "hidden",
-          fontFamily: "sans-serif",
+          fontFamily: "Outfit, sans-serif",
         }}
       >
         {/* Background: cover image or dark gradient */}
@@ -271,7 +272,7 @@ export default async function Image({
         />
       </div>
     ),
-    { ...size },
+    options,
   );
 }
 
@@ -286,7 +287,7 @@ function BlogOgFallback({ logo }: { logo: string }) {
         alignItems: "center",
         justifyContent: "center",
         background: "linear-gradient(145deg, #080818 0%, #1a1a2e 30%, #16213e 65%, #0f3460 100%)",
-        fontFamily: "sans-serif",
+        fontFamily: "Outfit, sans-serif",
         position: "relative",
         overflow: "hidden",
       }}
