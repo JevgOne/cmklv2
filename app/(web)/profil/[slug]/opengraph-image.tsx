@@ -2,6 +2,7 @@ import { ImageResponse } from "next/og";
 import { OgLayout, OG_SIZE, getLogoBase64, ORANGE, ogImageOptions } from "@/lib/og-image";
 import { prisma } from "@/lib/prisma";
 import { BASE_URL } from "@/lib/seo-data";
+import { getOptimizedUrl } from "@/lib/cloudinary";
 
 export const runtime = "nodejs";
 export const alt = "Profil na CarMakléř";
@@ -57,7 +58,7 @@ export default async function Image({
 
   const fullName = `${user.firstName} ${user.lastName}`;
   const roleLabel = ROLE_LABELS[user.role] ?? "Profil";
-  const avatarSrc = user.avatar || `${BASE_URL}/brand/default-avatar.png`;
+  const avatarSrc = user.avatar ? getOptimizedUrl(user.avatar, 240, "auto") : `${BASE_URL}/brand/default-avatar.png`;
 
   return new ImageResponse(
     (

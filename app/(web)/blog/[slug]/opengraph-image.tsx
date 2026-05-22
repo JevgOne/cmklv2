@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 import { OG_SIZE, getLogoBase64, ORANGE, ogImageOptions } from "@/lib/og-image";
 import { prisma } from "@/lib/prisma";
+import { getOptimizedUrl } from "@/lib/cloudinary";
 
 export const runtime = "nodejs";
 export const alt = "CarMakléř Blog";
@@ -38,6 +39,7 @@ export default async function Image({
     );
   }
 
+  const coverUrl = article.coverImage ? getOptimizedUrl(article.coverImage, 1200, "auto") : null;
   const authorName = `${article.author.firstName} ${article.author.lastName}`;
   const readTime = article.readTime ? `${article.readTime} min čtení` : null;
   const categoryLabel = article.category
@@ -60,9 +62,9 @@ export default async function Image({
         }}
       >
         {/* Background: cover image or dark gradient */}
-        {article.coverImage ? (
+        {coverUrl ? (
           <img
-            src={article.coverImage}
+            src={coverUrl}
             alt=""
             style={{
               position: "absolute",
@@ -85,7 +87,7 @@ export default async function Image({
             width: "100%",
             height: "100%",
             display: "flex",
-            background: article.coverImage
+            background: coverUrl
               ? "linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.75) 50%, rgba(0,0,0,0.92) 100%)"
               : "linear-gradient(145deg, #080818 0%, #1a1a2e 30%, #16213e 65%, #0f3460 100%)",
           }}

@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 import { OgLayout, OG_SIZE, getLogoBase64, ORANGE, ogImageOptions } from "@/lib/og-image";
 import { prisma } from "@/lib/prisma";
+import { getOptimizedUrl } from "@/lib/cloudinary";
 
 export const runtime = "nodejs";
 export const alt = "Vozidlo na CarMakléř";
@@ -62,7 +63,8 @@ export default async function Image({
 
   const name = `${item.brand} ${item.model}${item.variant ? " " + item.variant : ""}`;
   const price = new Intl.NumberFormat("cs-CZ").format(item.price);
-  const carImage = item.images?.[0]?.url;
+  const rawImage = item.images?.[0]?.url;
+  const carImage = rawImage ? getOptimizedUrl(rawImage, 1200, "auto") : undefined;
   const details = [item.year?.toString(), `${price} Kč`, item.city].filter(Boolean).join("  ·  ");
 
   return new ImageResponse(
