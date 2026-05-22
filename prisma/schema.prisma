@@ -816,11 +816,18 @@ model Inquiry {
   reply     String?
   repliedAt DateTime?
 
-  // Status flow
-  status String @default("NEW") // NEW, READ, REPLIED, CLOSED
+  // Status flow: NEW → READ → REPLIED → VIEWING → SOLD → CLOSED | NO_INTEREST
+  status String @default("NEW")
+
+  // Dealer CRM fields
+  viewingDate   DateTime? // Datum plánované prohlídky
+  viewingResult String?   // INTERESTED | THINKING | NO_INTEREST
+  note          String?   // Interní poznámka dealera
+  priority      String?   // HIGH | NORMAL | LOW
 
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([listingId])
   @@index([senderId])
