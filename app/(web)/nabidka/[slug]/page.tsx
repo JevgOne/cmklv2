@@ -886,6 +886,43 @@ export default async function VehicleDetailPage({
           </div>
         </section>
       )}
+
+      {/* Cross-links to related services */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <h2 className="text-[22px] font-extrabold text-gray-900 mb-6">
+          Užitečné služby
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Link href="/sluzby/proverka" className="group flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-orange-300 hover:shadow-md transition-all no-underline">
+            <div className="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center shrink-0 text-lg">🔍</div>
+            <div>
+              <div className="font-semibold text-gray-900 text-sm group-hover:text-orange-600 transition-colors">Prověrka vozidla</div>
+              <div className="text-xs text-gray-500">Ověřte historii a stav</div>
+            </div>
+          </Link>
+          <Link href="/sluzby/financovani" className="group flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-orange-300 hover:shadow-md transition-all no-underline">
+            <div className="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center shrink-0 text-lg">💰</div>
+            <div>
+              <div className="font-semibold text-gray-900 text-sm group-hover:text-orange-600 transition-colors">Financování</div>
+              <div className="text-xs text-gray-500">Výhodné splátky na míru</div>
+            </div>
+          </Link>
+          <Link href="/sluzby/pojisteni" className="group flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-orange-300 hover:shadow-md transition-all no-underline">
+            <div className="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center shrink-0 text-lg">🛡️</div>
+            <div>
+              <div className="font-semibold text-gray-900 text-sm group-hover:text-orange-600 transition-colors">Pojištění</div>
+              <div className="text-xs text-gray-500">Povinné ručení i havarijní</div>
+            </div>
+          </Link>
+          <Link href="/autoservisy" className="group flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-orange-300 hover:shadow-md transition-all no-underline">
+            <div className="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center shrink-0 text-lg">🔧</div>
+            <div>
+              <div className="font-semibold text-gray-900 text-sm group-hover:text-orange-600 transition-colors">Autoservisy</div>
+              <div className="text-xs text-gray-500">Ověřené servisy s recenzemi</div>
+            </div>
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }

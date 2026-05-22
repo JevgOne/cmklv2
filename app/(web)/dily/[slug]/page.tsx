@@ -428,6 +428,36 @@ export default async function DilyDetailPage({
             </div>
           </section>
         )}
+
+        {/* Cross-links */}
+        {compatibleBrands.length > 0 && (
+          <section className="mt-12 p-6 bg-orange-50 rounded-2xl">
+            <h3 className="text-lg font-bold text-gray-900 mb-3">Hledáte {compatibleBrands[0]}?</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Prohlédněte si nabídku vozidel {compatibleBrands[0]} nebo najděte další díly pro tuto značku.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href={`/nabidka/${compatibleBrands[0].toLowerCase().replace(/\s+/g, "-")}`}
+                className="inline-flex items-center px-4 py-2 rounded-lg bg-white text-sm font-medium text-gray-700 hover:text-orange-600 border border-gray-200 hover:border-orange-300 transition-all no-underline"
+              >
+                Vozidla {compatibleBrands[0]}
+              </Link>
+              <Link
+                href={`/dily/znacka/${compatibleBrands[0].toLowerCase().replace(/\s+/g, "-").normalize("NFD").replace(/[\u0300-\u036f]/g, "")}`}
+                className="inline-flex items-center px-4 py-2 rounded-lg bg-white text-sm font-medium text-gray-700 hover:text-orange-600 border border-gray-200 hover:border-orange-300 transition-all no-underline"
+              >
+                Díly {compatibleBrands[0]}
+              </Link>
+              <Link
+                href="/autoservisy"
+                className="inline-flex items-center px-4 py-2 rounded-lg bg-white text-sm font-medium text-gray-700 hover:text-orange-600 border border-gray-200 hover:border-orange-300 transition-all no-underline"
+              >
+                Autoservisy
+              </Link>
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );
