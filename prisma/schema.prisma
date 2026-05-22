@@ -187,6 +187,13 @@ model User {
   addedServisy       AutoServis[]   @relation("ServisAdder")
   servisReviews      ServisReview[] @relation("ServisReviewer")
 
+  // Broker reviews (hodnocení makléřů od klientů)
+  brokerReviews        BrokerReview[]  @relation("BrokerReviews")
+  authoredBrokerReviews BrokerReview[] @relation("BrokerReviewAuthor")
+  brokerAvgRating      Float   @default(0)
+  brokerReviewCount    Int     @default(0)
+  brokerRecommendRate  Float   @default(0)
+
   // Auth
   emailVerified DateTime?
 
@@ -2850,6 +2857,58 @@ model ServisReview {
   updatedAt       DateTime @updatedAt
 
   @@index([servisId])
+  @@index([isPublished])
+  @@index([rating])
+  @@index([authorUserId])
+}
+
+// ============================================
+// BROKER REVIEWS (hodnocení makléřů od klientů)
+// ============================================
+
+model BrokerReview {
+  id              String   @id @default(cuid())
+
+  // Vazba na makléře
+  brokerId        String
+  broker          User     @relation("BrokerReviews", fields: [brokerId], references: [id], onDelete: Cascade)
+
+  // Autor
+  authorName      String
+  authorCity      String?
+  authorUserId    String?
+  author          User?    @relation("BrokerReviewAuthor", fields: [authorUserId], references: [id])
+
+  // Celkové hodnocení
+  rating          Int
+  recommend       Boolean  @default(true)
+  text            String   @db.Text
+
+  // Detailní hodnocení (1-5, nullable)
+  ratingCommunication   Int?
+  ratingSpeed           Int?
+  ratingFairness        Int?
+  ratingProfessionalism Int?
+
+  // Kontext transakce
+  transactionType String?
+  vehicleBrand    String?
+  vehicleModel    String?
+
+  // Verifikace
+  isVerified      Boolean  @default(false)
+  vehicleId       String?
+
+  // Moderace
+  isPublished     Boolean  @default(false)
+  isFeatured      Boolean  @default(false)
+  reportCount     Int      @default(0)
+  adminNote       String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([brokerId])
   @@index([isPublished])
   @@index([rating])
   @@index([authorUserId])

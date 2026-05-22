@@ -99,6 +99,7 @@ const navSections: NavSection[] = [
     items: [
       { id: "team", href: "/admin/team", icon: "👥", label: "Tým" },
       { id: "reviews", href: "/admin/reviews", icon: "⭐", label: "Recenze" },
+      { id: "broker-reviews", href: "/admin/broker-reviews", icon: "👤", label: "Recenze makléřů" },
       { id: "blog", href: "/admin/blog", icon: "📝", label: "Články" },
       { id: "ai-drafts", href: "/admin/blog/ai-drafts", icon: "🤖", label: "AI Návrhy" },
       { id: "comments", href: "/admin/blog/comments", icon: "💬", label: "Komentáře" },

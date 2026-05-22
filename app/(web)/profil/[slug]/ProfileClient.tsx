@@ -14,6 +14,7 @@ import { SkillTags } from "@/components/ui/SkillTags";
 import { AutoBadges } from "@/components/ui/AutoBadges";
 import { ActivitySignal } from "@/components/ui/ActivitySignal";
 import { VehicleCard, type VehicleData } from "@/components/web/VehicleCard";
+import { BrokerReviewSection } from "@/components/web/BrokerReviewSection";
 import { getDefaultCover } from "@/lib/profile/defaultCovers";
 import { categorizeSpecialization } from "@/lib/broker-specializations";
 import { fuelLabels, transmissionLabels } from "@/lib/vehicle-labels";
@@ -60,6 +61,9 @@ export interface ProfileUser {
   warehouseAddress: string | null;
   openingHours: Record<string, string> | null;
   tags: { slug: string; label: string }[] | null;
+  brokerAvgRating: number;
+  brokerReviewCount: number;
+  brokerRecommendRate: number;
 }
 
 export interface ProfileStats {
@@ -81,11 +85,45 @@ export interface ReputationData {
   context: string;
 }
 
+interface BrokerReviewData {
+  id: string;
+  authorName: string;
+  authorCity: string | null;
+  rating: number;
+  recommend: boolean;
+  text: string;
+  transactionType: string | null;
+  vehicleBrand: string | null;
+  vehicleModel: string | null;
+  isVerified: boolean;
+  ratingCommunication: number | null;
+  ratingSpeed: number | null;
+  ratingFairness: number | null;
+  ratingProfessionalism: number | null;
+  createdAt: string;
+}
+
+interface BreakdownItem {
+  stars: number;
+  count: number;
+  percentage: number;
+}
+
+interface DetailedRatings {
+  communication: number | null;
+  speed: number | null;
+  fairness: number | null;
+  professionalism: number | null;
+}
+
 export interface ProfileData {
   user: ProfileUser;
   stats: ProfileStats;
   roleStats: Record<string, number>;
   reputation: ReputationData | null;
+  brokerReviews: BrokerReviewData[];
+  ratingBreakdown: BreakdownItem[];
+  detailedRatings: DetailedRatings;
 }
 
 interface ProfileItem {
@@ -180,7 +218,7 @@ interface ProfileClientProps {
 export function ProfileClient({ initialData, slug }: ProfileClientProps) {
   const { data: session } = useSession();
 
-  const { user, stats, roleStats, reputation } = initialData;
+  const { user, stats, roleStats, reputation, brokerReviews, ratingBreakdown, detailedRatings } = initialData;
   const [activeTab, setActiveTab] = useState<string>(
     (ROLE_TABS[user.role] || ["liked"])[0],
   );
@@ -763,6 +801,21 @@ export function ProfileClient({ initialData, slug }: ProfileClientProps) {
               )}
             </div>
           </Card>
+        )}
+
+        {/* Recenze od klientů */}
+        {["BROKER", "MANAGER", "REGIONAL_DIRECTOR"].includes(user.role) && (
+          <BrokerReviewSection
+            brokerId={user.id}
+            brokerSlug={user.slug}
+            brokerName={`${user.firstName} ${user.lastName}`}
+            avgRating={user.brokerAvgRating}
+            reviewCount={user.brokerReviewCount}
+            recommendRate={user.brokerRecommendRate}
+            reviews={brokerReviews}
+            breakdown={ratingBreakdown}
+            detailedRatings={detailedRatings}
+          />
         )}
 
         <Card className="p-6 sm:p-8">

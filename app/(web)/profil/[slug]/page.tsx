@@ -7,6 +7,7 @@ import { BASE_URL } from "@/lib/seo-data";
 import { generatePersonJsonLd } from "@/lib/seo";
 import { ROLE_LABELS } from "@/lib/role-labels";
 import { getSkillTagCounts } from "@/lib/reputation/skill-tags";
+import { getBrokerRatingBreakdown, getBrokerDetailedRatings } from "@/lib/broker-reviews";
 import { ProfileClient, type ProfileData } from "./ProfileClient";
 
 export const revalidate = 300;
@@ -50,6 +51,9 @@ const getProfileData = cache(
           select: { slug: true, label: true },
           orderBy: { label: "asc" },
         },
+        brokerAvgRating: true,
+        brokerReviewCount: true,
+        brokerRecommendRate: true,
       },
     });
 
@@ -118,7 +122,9 @@ const getProfileData = cache(
     };
     const reputationContext = contextMap[user.role] ?? "BROKER";
 
-    const [trustScore, autoBadges, skillTags] = await Promise.all([
+    const isBrokerRole = ["BROKER", "MANAGER", "REGIONAL_DIRECTOR"].includes(user.role);
+
+    const [trustScore, autoBadges, skillTags, brokerReviews, ratingBreakdown, detailedRatings] = await Promise.all([
       prisma.trustScore.findUnique({ where: { userId: user.id } }),
       prisma.autoBadge.findMany({
         where: { userId: user.id },
@@ -126,6 +132,17 @@ const getProfileData = cache(
         select: { badge: true, context: true, unlockedAt: true },
       }),
       getSkillTagCounts(user.id, reputationContext),
+      isBrokerRole
+        ? prisma.brokerReview.findMany({
+            where: { brokerId: user.id, isPublished: true },
+            orderBy: { createdAt: "desc" },
+            take: 10,
+          })
+        : Promise.resolve([]),
+      isBrokerRole ? getBrokerRatingBreakdown(user.id) : Promise.resolve([]),
+      isBrokerRole
+        ? getBrokerDetailedRatings(user.id)
+        : Promise.resolve({ communication: null, speed: null, fairness: null, professionalism: null }),
     ]);
 
     // Authoritative sold count z DB (real-time), fallback na user.totalSales
@@ -197,6 +214,9 @@ const getProfileData = cache(
         warehouseAddress: user.warehouseAddress,
         openingHours: user.openingHours as Record<string, string> | null,
         tags: user.tags,
+        brokerAvgRating: user.brokerAvgRating,
+        brokerReviewCount: user.brokerReviewCount,
+        brokerRecommendRate: user.brokerRecommendRate,
       },
       stats: {
         vehicles: vehicleCount,
@@ -206,6 +226,13 @@ const getProfileData = cache(
         totalSales: soldCount,
       },
       roleStats,
+      brokerReviews: brokerReviews.map((r) => ({
+        ...r,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString(),
+      })),
+      ratingBreakdown,
+      detailedRatings,
       reputation: trustScore
         ? {
             score: trustScore.score,
@@ -301,6 +328,12 @@ export default async function ProfilePage({
             image: user.avatar || undefined,
             jobTitle: roleLabel,
             address: user.city || undefined,
+            ...(user.brokerReviewCount > 0 && {
+              aggregateRating: {
+                ratingValue: user.brokerAvgRating,
+                reviewCount: user.brokerReviewCount,
+              },
+            }),
           }),
         }}
       />

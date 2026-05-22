@@ -20,6 +20,8 @@ export interface BrokerCardBroker {
   trustScore?: number | null;
   trustTier?: string | null;
   topSkillTags?: { tag: string; emoji: string; count: number }[];
+  brokerAvgRating?: number;
+  brokerReviewCount?: number;
 }
 
 export interface BrokerCardProps {
@@ -84,6 +86,14 @@ export function BrokerCard({ broker }: BrokerCardProps) {
                 (broker.trustScore ?? 0) >= 25 ? "text-amber-600" : "text-gray-500"
               }`}>
                 {broker.trustScore}
+              </span>
+            </>
+          )}
+          {broker.brokerReviewCount != null && broker.brokerReviewCount > 0 && (
+            <>
+              <span className="text-gray-300">·</span>
+              <span className="text-xs font-semibold text-orange-500">
+                ★ {broker.brokerAvgRating?.toFixed(1)} ({broker.brokerReviewCount})
               </span>
             </>
           )}

@@ -695,6 +695,10 @@ export interface PersonJsonLdData {
   worksFor?: string;
   address?: string;
   description?: string;
+  aggregateRating?: {
+    ratingValue: number;
+    reviewCount: number;
+  };
 }
 
 export function generatePersonJsonLd(person: PersonJsonLdData): string {
@@ -718,6 +722,16 @@ export function generatePersonJsonLd(person: PersonJsonLdData): string {
       "@type": "PostalAddress",
       addressLocality: person.address,
       addressCountry: "CZ",
+    };
+  }
+
+  if (person.aggregateRating) {
+    jsonLd.aggregateRating = {
+      "@type": "AggregateRating",
+      ratingValue: person.aggregateRating.ratingValue,
+      reviewCount: person.aggregateRating.reviewCount,
+      bestRating: 5,
+      worstRating: 1,
     };
   }
 
