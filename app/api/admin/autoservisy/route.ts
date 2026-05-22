@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { z } from "zod";
 
 const ALLOWED_ROLES = ["ADMIN", "BACKOFFICE"];
 
@@ -30,6 +31,14 @@ export async function GET(req: NextRequest) {
   return NextResponse.json(servisy);
 }
 
+const updateSchema = z.object({
+  id: z.string().min(1),
+  isVerified: z.boolean().optional(),
+  isPublished: z.boolean().optional(),
+  isFeatured: z.boolean().optional(),
+  isClaimed: z.boolean().optional(),
+});
+
 export async function PUT(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || !ALLOWED_ROLES.includes(session.user.role)) {
@@ -37,11 +46,12 @@ export async function PUT(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { id, ...data } = body;
-
-  if (!id) {
-    return NextResponse.json({ error: "ID je povinné" }, { status: 400 });
+  const parsed = updateSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 400 });
   }
+
+  const { id, ...data } = parsed.data;
 
   try {
     const servis = await prisma.autoServis.update({
