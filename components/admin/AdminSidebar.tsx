@@ -103,6 +103,7 @@ const navSections: NavSection[] = [
       { id: "ai-drafts", href: "/admin/blog/ai-drafts", icon: "🤖", label: "AI Návrhy" },
       { id: "comments", href: "/admin/blog/comments", icon: "💬", label: "Komentáře" },
       { id: "tags", href: "/admin/tagy", icon: "🏷️", label: "Tagy" },
+      { id: "autoservisy", href: "/admin/autoservisy", icon: "🔧", label: "Autoservisy" },
     ],
     roles: ["ADMIN"],
   },

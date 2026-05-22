@@ -182,6 +182,11 @@ model User {
   assignedScoutLeads    ScoutLead[]         @relation("ScoutLeadAssignee")
   scoutLeadActivities   ScoutLeadActivity[]
 
+  // Autoservisy relace
+  ownedServisy       AutoServis[]   @relation("ServisOwner")
+  addedServisy       AutoServis[]   @relation("ServisAdder")
+  servisReviews      ServisReview[] @relation("ServisReviewer")
+
   // Auth
   emailVerified DateTime?
 
@@ -2709,4 +2714,129 @@ model ScoutLeadActivity {
 
   @@index([scoutLeadId])
   @@index([createdAt])
+}
+
+// ============================================
+// AUTOSERVISY — ADRESÁŘ + RECENZE
+// ============================================
+
+model AutoServis {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+
+  // Základní info
+  name            String
+  description     String?  @db.Text
+  ico             String?
+
+  // Adresa
+  address         String?
+  city            String
+  region          String?
+  zip             String?
+  latitude        Float?
+  longitude       Float?
+
+  // Kontakt
+  phone           String?
+  email           String?
+  web             String?
+
+  // Otevírací doba (JSON)
+  openingHours    String?
+
+  // Kategorie
+  categories      String[]
+
+  // Brand/quality signály
+  brands          String[]
+  certifications  String[]
+  images          String[]
+  logo            String?
+
+  // Agregované hodnocení
+  averageRating   Float    @default(0)
+  reviewCount     Int      @default(0)
+  recommendRate   Float    @default(0)
+
+  // Typ servisu
+  tier            String   @default("NEOFICIALNI") // AUTORIZOVANY | NEOFICIALNI
+
+  // Spolupráce s pojišťovnami
+  insurancePartner Boolean @default(false)
+  insuranceNames   String[]
+
+  // Flags
+  isVerified      Boolean  @default(false)
+  isClaimed       Boolean  @default(false)
+  isPublished     Boolean  @default(true)
+  isFeatured      Boolean  @default(false)
+
+  // Claimnutý owner
+  ownerId         String?
+  owner           User?    @relation("ServisOwner", fields: [ownerId], references: [id])
+
+  // Přidáno uživatelem
+  addedById       String?
+  addedBy         User?    @relation("ServisAdder", fields: [addedById], references: [id])
+  source          String   @default("USER")
+
+  // Recenze
+  reviews         ServisReview[]
+
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([city])
+  @@index([isPublished])
+  @@index([averageRating])
+  @@index([reviewCount])
+  @@index([isFeatured])
+  @@index([isVerified])
+  @@index([tier])
+  @@index([insurancePartner])
+}
+
+model ServisReview {
+  id              String   @id @default(cuid())
+  servisId        String
+  servis          AutoServis @relation(fields: [servisId], references: [id], onDelete: Cascade)
+
+  // Autor
+  authorName      String
+  authorCity      String?
+  authorUserId    String?
+  author          User?    @relation("ServisReviewer", fields: [authorUserId], references: [id])
+
+  // Hodnocení
+  rating          Int
+  recommend       Boolean  @default(true)
+  title           String?
+  text            String   @db.Text
+
+  // Detailní hodnocení
+  ratingQuality   Int?
+  ratingPrice     Int?
+  ratingSpeed     Int?
+  ratingComm      Int?
+
+  // Kontext
+  serviceType     String?
+  vehicleBrand    String?
+  visitDate       DateTime?
+
+  // Moderace
+  isPublished     Boolean  @default(false)
+  isVerified      Boolean  @default(false)
+  reportCount     Int      @default(0)
+  adminNote       String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([servisId])
+  @@index([isPublished])
+  @@index([rating])
+  @@index([authorUserId])
 }
