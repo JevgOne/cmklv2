@@ -11,6 +11,8 @@ const serviceItems = [
   { href: "/sluzby/proverka", title: "Prověrka vozidla" },
   { href: "/sluzby/financovani", title: "Financování" },
   { href: "/sluzby/pojisteni", title: "Pojištění" },
+  { href: "/autoservisy", title: "Autoservisy" },
+  { href: "/stk", title: "STK stanice" },
   { href: "/jak-prodat-auto", title: "Jak prodat auto" },
 ];
 
