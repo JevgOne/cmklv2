@@ -19,6 +19,7 @@ interface SearchResults {
   vehicles: SearchItem[];
   parts: SearchItem[];
   services: SearchItem[];
+  suggestions?: string[];
 }
 
 const TYPE_LABELS: Record<string, string> = {
