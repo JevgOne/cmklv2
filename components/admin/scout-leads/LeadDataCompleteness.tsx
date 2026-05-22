@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { calculateCompleteness } from "@/lib/lead-completeness";
+import { calculateCompleteness, gradeFromPercent } from "@/lib/lead-completeness";
 import { Card } from "@/components/ui/Card";
 
 interface LeadDataCompletenessProps {
@@ -10,7 +10,12 @@ interface LeadDataCompletenessProps {
 }
 
 export function LeadDataCompleteness({ lead, category }: LeadDataCompletenessProps) {
-  const { score, max, percent, fields } = calculateCompleteness(lead, category);
+  const calc = calculateCompleteness(lead, category);
+  // Prefer DB completenessScore (scraperový 0-100) if available
+  const dbScore = lead.completenessScore as number | null | undefined;
+  const percent = dbScore != null && dbScore > 0 ? dbScore : calc.percent;
+  const { score, max, fields } = calc;
+  const { grade, color: gradeColor } = gradeFromPercent(percent);
 
   const barColor =
     percent >= 80
@@ -27,6 +32,9 @@ export function LeadDataCompleteness({ lead, category }: LeadDataCompletenessPro
 
       {/* Progress bar */}
       <div className="flex items-center gap-3 mb-4">
+        <span className={cn("inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold shrink-0", gradeColor)}>
+          {grade}
+        </span>
         <div className="flex-1 h-2.5 bg-gray-100 rounded-full overflow-hidden">
           <div
             className={cn("h-full rounded-full transition-all", barColor)}
