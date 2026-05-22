@@ -11,11 +11,11 @@ const CENIK_FAQ = [
 ];
 
 export const metadata: Metadata = {
-  title: "Ceník | Carmakler",
+  title: "Ceník služeb",
   description:
-    "Prodej vozu přes Carmakler za jednoduchou provizi 5 % z prodejní ceny. Žádné skryté poplatky, vše v ceně.",
+    "Prodej vozu přes CarMakléř za jednoduchou provizi 5 % z prodejní ceny. Žádné skryté poplatky, vše v ceně.",
   openGraph: {
-    title: "Ceník služeb | CarMakléř",
+    title: "Ceník služeb",
     description:
       "Provize 5 % z prodejní ceny, min. 25 000 Kč. Vše zahrnuto — fotky, inzerce, smlouvy, přepis.",
   },

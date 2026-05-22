@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   description:
     "Kompletní služby pro nákup i prodej auta. Financování na splátky, srovnání pojištění, prověrka historie vozidla. Vše online, rychle a výhodně.",
   openGraph: {
-    title: "Služby | CarMakléř",
+    title: "Služby",
     description:
       "Financování, pojištění a prověrka vozidla. Online služby pro chytřejší nákup auta.",
   },

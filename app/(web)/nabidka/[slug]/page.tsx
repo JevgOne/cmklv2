@@ -49,7 +49,7 @@ export async function generateMetadata({
     const price = new Intl.NumberFormat("cs-CZ").format(vehicle.price);
     return {
       title: `${name} (${vehicle.year}) — ${price} Kč`,
-      description: `${name}, rok ${vehicle.year}, cena ${price} Kč. ${vehicle.city}. Prověřené vozidlo na CarMakléř.`,
+      description: `${name}, rok ${vehicle.year}, cena ${price} Kč.${vehicle.city ? ` ${vehicle.city}.` : ""} Prověřené vozidlo na CarMakléř.`,
       alternates: pageCanonical(`/nabidka/${slug}`),
       openGraph: {
         title: `${name} — ${price} Kč`,
@@ -69,7 +69,7 @@ export async function generateMetadata({
     const price = new Intl.NumberFormat("cs-CZ").format(listing.price);
     return {
       title: `${name} (${listing.year}) — ${price} Kč`,
-      description: `${name}, rok ${listing.year}, cena ${price} Kč. ${listing.city}. Inzerát na CarMakléř.`,
+      description: `${name}, rok ${listing.year}, cena ${price} Kč.${listing.city ? ` ${listing.city}.` : ""} Inzerát na CarMakléř.`,
       alternates: pageCanonical(`/nabidka/${slug}`),
       openGraph: {
         title: `${name} — ${price} Kč`,
@@ -501,7 +501,7 @@ export default async function VehicleDetailPage({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(vehicleJsonLd) }}
@@ -510,6 +510,7 @@ export default async function VehicleDetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
+      <div className="min-h-screen bg-gray-50">
       {/* Breadcrumb */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
         <nav aria-label="Breadcrumb" className="text-sm text-gray-500 flex items-center gap-2 overflow-hidden">
@@ -924,6 +925,7 @@ export default async function VehicleDetailPage({
         </div>
       </section>
     </div>
+    </>
   );
 }
 
@@ -1033,8 +1035,68 @@ function renderListingDetail(listing: ListingWithRelations, slug: string) {
 
   const sellerName = listing.user.companyName || `${listing.user.firstName} ${listing.user.lastName}`;
 
+  const listingJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Car",
+    name,
+    brand: { "@type": "Brand", name: listing.brand },
+    model: listing.model,
+    vehicleModelDate: String(listing.year),
+    mileageFromOdometer: {
+      "@type": "QuantitativeValue",
+      value: listing.mileage,
+      unitCode: "KMT",
+    },
+    fuelType: fuelLabel,
+    vehicleTransmission: transLabel,
+    ...(bodyLabel && { bodyType: bodyLabel }),
+    ...(listing.doorsCount && { numberOfDoors: listing.doorsCount }),
+    ...(listing.seatsCount && { seatingCapacity: listing.seatsCount }),
+    ...(listing.enginePower && {
+      vehicleEngine: {
+        "@type": "EngineSpecification",
+        enginePower: { "@type": "QuantitativeValue", value: listing.enginePower, unitCode: "BHP" },
+        ...(listing.engineCapacity && {
+          engineDisplacement: { "@type": "QuantitativeValue", value: listing.engineCapacity, unitCode: "CMQ" },
+        }),
+        fuelType: fuelLabel,
+      },
+    }),
+    color: listing.color || undefined,
+    offers: {
+      "@type": "Offer",
+      price: listing.price,
+      priceCurrency: "CZK",
+      availability: listing.status === "ACTIVE"
+        ? "https://schema.org/InStock"
+        : "https://schema.org/SoldOut",
+      seller: { "@type": listing.user.accountType === "COMPANY" ? "Organization" : "Person", name: sellerName },
+    },
+    image: photos.map((p) => p.src),
+    url: `https://carmakler.cz/nabidka/${slug}`,
+  };
+
+  const listingBreadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Domů", item: "https://carmakler.cz" },
+      { "@type": "ListItem", position: 2, name: "Nabídka", item: "https://carmakler.cz/nabidka" },
+      { "@type": "ListItem", position: 3, name, item: `https://carmakler.cz/nabidka/${slug}` },
+    ],
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(listingJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(listingBreadcrumbJsonLd) }}
+      />
+      <div className="min-h-screen bg-gray-50">
       {/* Breadcrumb */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
         <nav aria-label="Breadcrumb" className="text-sm text-gray-500 flex items-center gap-2 overflow-hidden">
@@ -1254,5 +1316,6 @@ function renderListingDetail(listing: ListingWithRelations, slug: string) {
         </div>
       </section>
     </div>
+    </>
   );
 }

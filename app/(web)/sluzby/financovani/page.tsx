@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description:
     "Auto na splátky bez zálohy, úrok od 3,9 %. Online schválení do 30 minut, bez návštěvy pobočky.",
   openGraph: {
-    title: "Financování auta | CarMakléř",
+    title: "Financování auta",
     description:
       "Auto na splátky do 30 minut. Bez zálohy, nízký úrok od 3,9 %.",
   },

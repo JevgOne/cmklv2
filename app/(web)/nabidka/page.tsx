@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   description:
     "Prohlédněte si nabídku prověřených ojetých vozidel od ověřených makléřů i soukromých prodejců. Filtry, řazení a snadné vyhledávání.",
   openGraph: {
-    title: "Nabídka vozidel | CarMakléř",
+    title: "Nabídka vozidel",
     description:
       "Prověřená ojetá vozidla od makléřů i soukromých prodejců. Snadné vyhledávání s filtry.",
   },

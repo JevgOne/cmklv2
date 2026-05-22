@@ -5,7 +5,7 @@ import { SELLER_EVENT_TYPES } from "@/lib/validators/notifications";
 import { SellerNotificationPreferences } from "@/components/web/SellerNotificationPreferences";
 
 export const metadata: Metadata = {
-  title: "Nastaveni notifikaci | Carmakler",
+  title: "Nastavení notifikací",
   description: "Upravte si, jak Vas budeme informovat o Vasem vozidle.",
   // Token-based private page — not indexable. Žádný canonical, místo toho
   // robots noindex.

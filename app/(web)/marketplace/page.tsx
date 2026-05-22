@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description:
     "Investujte do aut a vydělejte 15-25 % ročně. Ověření realizátoři nabízí příležitosti, ověření investoři financují. Bezpečně přes CarMakléř.",
   openGraph: {
-    title: "Marketplace — investice do aut | CarMakléř",
+    title: "Marketplace — investice do aut",
     description:
       "Investujte do aut a vydělejte 15-25 % ročně. Ověření realizátoři, bezpečné transakce přes CarMakléř.",
   },

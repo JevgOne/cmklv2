@@ -348,7 +348,7 @@ export function generateOrganizationJsonLd(): string {
   return JSON.stringify({
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "Carmakler",
+    name: "CarMakléř",
     url: "https://carmakler.cz",
     logo: "https://carmakler.cz/brand/logo-color.png",
     description:
@@ -380,13 +380,13 @@ export function generateWebSiteJsonLd(): string {
   return JSON.stringify({
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "Carmakler",
+    name: "CarMakléř",
     url: "https://carmakler.cz",
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: "https://carmakler.cz/dily/katalog?q={search_term_string}",
+        urlTemplate: "https://carmakler.cz/hledat?q={search_term_string}",
       },
       "query-input": "required name=search_term_string",
     },
@@ -437,7 +437,7 @@ export function generatePartProductJsonLd(part: PartProductJsonLdData): string {
         : "https://schema.org/OutOfStock",
       seller: {
         "@type": "Organization",
-        name: "Carmakler",
+        name: "CarMakléř",
       },
     },
   });
@@ -647,7 +647,7 @@ export function generateJobPostingJsonLd(job: JobPostingJsonLdData): string {
     description: job.description,
     hiringOrganization: {
       "@type": "Organization",
-      name: "Carmakler",
+      name: "CarMakléř",
       sameAs: "https://carmakler.cz",
       logo: "https://carmakler.cz/brand/logo-color.png",
     },
@@ -709,7 +709,7 @@ export function generatePersonJsonLd(person: PersonJsonLdData): string {
     url: person.url,
     worksFor: {
       "@type": "Organization",
-      name: person.worksFor ?? "Carmakler",
+      name: person.worksFor ?? "CarMakléř",
       url: "https://carmakler.cz",
     },
   };

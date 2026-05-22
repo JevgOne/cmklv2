@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: "Kariéra",
   description: "Staňte se automakléřem. Pracujte flexibilně, vydělejte bez stropu. Otevřené pozice v Praze, Brně a po celé ČR.",
   openGraph: {
-    title: "Kariéra | CarMakléř",
+    title: "Kariéra",
     description: "Staňte se automakléřem. Flexibilní práce, provize 5% z každého prodeje.",
   },
   alternates: pageCanonical("/kariera"),

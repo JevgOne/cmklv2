@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   description:
     "Váš makléř zajistí fotky, inzerci na všech portálech, prohlídky i smlouvu. Vy jen inkasujete. Průměrně za 20 dní, provize 5 %.",
   openGraph: {
-    title: "Prodat auto za nejvyšší cenu | CarMakléř",
+    title: "Prodat auto za nejvyšší cenu",
     description:
       "Váš makléř se postará o kompletní prodej — od fotek po přepis. Průměrně za 20 dní.",
   },

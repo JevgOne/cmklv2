@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description:
     "Prohlédněte si nabídku autodílů a příslušenství. Nové i použité díly s garancí kvality.",
   openGraph: {
-    title: "Katalog dílů | CarMakléř",
+    title: "Katalog dílů",
     description:
       "Autodíly a příslušenství — nové, použité i repasované. Rychlé doručení.",
   },

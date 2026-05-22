@@ -12,7 +12,7 @@ interface Props {
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   const { q } = await searchParams;
   return {
-    title: q ? `"${q}" — Hledání | CarMakléř` : "Hledání | CarMakléř",
+    title: q ? `"${q}" — Hledání` : "Hledání",
     robots: { index: false, follow: true },
   };
 }
@@ -35,7 +35,7 @@ export default async function SearchPage({ searchParams }: Props) {
   if (!q || q.trim().length < 2) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
-        <Breadcrumbs items={[{ label: "Hledání" }]} />
+        <Breadcrumbs items={[{ label: "Domů", href: "/" }, { label: "Hledání" }]} />
         <h1 className="text-2xl font-extrabold text-gray-900 mb-4">Hledání</h1>
         <p className="text-gray-500 mb-8">Zadejte hledaný výraz (min. 2 znaky).</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -72,7 +72,7 @@ export default async function SearchPage({ searchParams }: Props) {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
-      <Breadcrumbs items={[{ label: "Hledání" }]} />
+      <Breadcrumbs items={[{ label: "Domů", href: "/" }, { label: "Hledání" }]} />
 
       <h1 className="text-2xl font-extrabold text-gray-900 mb-1">
         Výsledky pro &quot;{q}&quot;

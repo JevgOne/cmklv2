@@ -28,7 +28,7 @@ export async function generateMetadata({
   if (!part) return { title: "Díl nenalezen" };
   const price = new Intl.NumberFormat("cs-CZ").format(part.price);
   return {
-    title: `${part.name} — ${price} Kč | Díly CarMakléř`,
+    title: `${part.name} — ${price} Kč | Díly`,
     description:
       part.description?.slice(0, 155) ||
       `Kupte ${part.name} za ${price} Kč na CarMakléř. Kategorie: ${getCategoryLabel(part.category as PartCategory)}.`,

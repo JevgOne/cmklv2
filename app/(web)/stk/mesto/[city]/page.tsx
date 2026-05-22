@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const capitalized = cityName.charAt(0).toUpperCase() + cityName.slice(1);
 
   return {
-    title: `STK stanice ${capitalized} — kde na STK v ${capitalized} | CarMakléř`,
+    title: `STK stanice ${capitalized} — kde na STK v ${capitalized}`,
     description: `Seznam STK stanic v ${capitalized} s recenzemi a hodnocením. Najděte nejbližší STK stanici, zjistěte čekací doby a objednejte se online.`,
   };
 }
@@ -51,6 +51,7 @@ export default async function StkCityPage({ params }: Props) {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
       <Breadcrumbs
         items={[
+          { label: "Domů", href: "/" },
           { label: "STK stanice", href: "/stk" },
           { label: capitalized },
         ]}

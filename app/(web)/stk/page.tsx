@@ -15,7 +15,7 @@ const STK_FAQ = [
 ];
 
 export const metadata: Metadata = {
-  title: "STK stanice — najděte nejbližší stanici technické kontroly | CarMakléř",
+  title: "STK stanice — najděte nejbližší stanici technické kontroly",
   description:
     "Seznam STK stanic v ČR s recenzemi, čekacími dobami a cenami. Najděte nejbližší STK stanici a objednejte se online.",
   alternates: pageCanonical("/stk"),
@@ -62,7 +62,7 @@ export default async function StkListPage() {
       dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(STK_FAQ) }}
     />
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-      <Breadcrumbs items={[{ label: "STK stanice" }]} />
+      <Breadcrumbs items={[{ label: "Domů", href: "/" }, { label: "STK stanice" }]} />
 
       <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">
         STK stanice

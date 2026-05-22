@@ -121,11 +121,11 @@ async function getPartnerWithParts(slug: string) {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const data = await getPartnerWithParts(slug);
-  if (!data) return { title: "Vrakoviště nenalezeno — Carmakler" };
+  if (!data) return { title: "Vrakoviště nenalezeno" };
 
   const { partner, partsCount } = data;
   const regionPart = partner.region || partner.city || "ČR";
-  const titleBase = `Díly z ${partner.name} — Carmakler`;
+  const titleBase = `Díly z ${partner.name}`;
   const description = `${partsCount > 0 ? `${partsCount} náhradních dílů` : "Náhradní díly"} od ověřeného vrakoviště ${partner.name} (${regionPart}). Originální použité díly s dopravou po celé ČR za 2-5 dnů.`;
 
   return {

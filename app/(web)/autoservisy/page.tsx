@@ -12,7 +12,7 @@ const AUTOSERVISY_FAQ = [
 ];
 
 export const metadata: Metadata = {
-  title: "Autoservisy — ověřené recenze | CarMakléř",
+  title: "Autoservisy — ověřené recenze",
   description:
     "Najděte ověřený autoservis s reálnými recenzemi. Autorizované i nezávislé servisy, spolupráce s pojišťovnami. Hodnocení od skutečných zákazníků.",
   alternates: pageCanonical("/autoservisy"),
@@ -64,7 +64,7 @@ export default async function AutoservisyPage() {
       dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(AUTOSERVISY_FAQ) }}
     />
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-      <Breadcrumbs items={[{ label: "Autoservisy" }]} />
+      <Breadcrumbs items={[{ label: "Domů", href: "/" }, { label: "Autoservisy" }]} />
 
       {/* Hero */}
       <div className="text-center mb-10">

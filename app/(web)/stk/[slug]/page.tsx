@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!servis) return { title: "STK stanice nenalezena" };
 
   return {
-    title: `${servis.name} — STK stanice ${servis.city} | CarMakléř`,
+    title: `${servis.name} — STK stanice ${servis.city}`,
     description: `${servis.name} — STK stanice ${servis.city}. ${servis.reviewCount} recenzí, hodnocení ${servis.averageRating}★${servis.stkWaitDays != null ? `, čekací doba ${servis.stkWaitDays} dní` : ""}. Najděte ověřenou STK stanici na CarMakléř.`,
     alternates: pageCanonical(`/stk/${slug}`),
   };
@@ -105,6 +105,7 @@ export default async function StkDetailPage({ params }: Props) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <Breadcrumbs
           items={[
+            { label: "Domů", href: "/" },
             { label: "STK stanice", href: "/stk" },
             { label: servis.name },
           ]}

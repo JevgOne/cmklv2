@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description:
     `Kontaktujte ${companyInfo.name}. ${companyInfo.address.city}. Telefon ${companyInfo.contact.phone}, e-mail ${companyInfo.contact.email}.`,
   openGraph: {
-    title: "Kontakt | CarMakléř",
+    title: "Kontakt",
     description:
       `Kontaktujte nás. ${companyInfo.address.city}. Telefon ${companyInfo.contact.phone}.`,
   },

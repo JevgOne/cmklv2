@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description:
     "Přečtěte si recenze zákazníků CarMakléř. Ověřené hodnocení prodeje aut přes makléře, nákupu autodílů a investičních příležitostí.",
   openGraph: {
-    title: "Recenze zákazníků | CarMakléř",
+    title: "Recenze zákazníků",
     description:
       "Ověřené recenze zákazníků platformy CarMakléř.",
   },

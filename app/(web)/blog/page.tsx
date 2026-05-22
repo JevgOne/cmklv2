@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   description:
     "Rady, tipy, recenze a analýzy z automobilového světa. Průvodce nákupem a prodejem ojetin od CarMakléř.",
   openGraph: {
-    title: "Blog | CarMakléř",
+    title: "Blog",
     description:
       "Rady, tipy, recenze a analýzy z automobilového světa. Průvodce nákupem a prodejem ojetin.",
   },

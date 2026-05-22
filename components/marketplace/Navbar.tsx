@@ -13,7 +13,7 @@ export function MarketplaceNavbar() {
     <header className="sticky top-0 z-50 bg-gray-950/95 backdrop-blur-md border-b border-gray-800">
       <nav aria-label="Hlavni navigace" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 no-underline shrink-0">
+        <a href={urls.main("/")} className="flex items-center gap-2 no-underline shrink-0">
           <Image src="/brand/logo-symbol-white.png" alt="" width={40} height={40} className="h-9 sm:h-10 w-auto" priority />
           <span className="text-xl sm:text-2xl font-extrabold tracking-tight">
             <span className="text-orange-400">Car</span>
@@ -22,7 +22,7 @@ export function MarketplaceNavbar() {
           <span className="text-sm font-semibold text-orange-400 border border-orange-800 rounded-full px-2 py-0.5">
             Marketplace
           </span>
-        </Link>
+        </a>
 
         {/* Nav Links - desktop */}
         <div className="hidden lg:flex items-center gap-1">

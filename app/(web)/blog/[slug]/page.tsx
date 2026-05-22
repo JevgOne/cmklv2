@@ -210,7 +210,7 @@ export default async function BlogArticlePage({
               { label: "Domů", href: "/" },
               { label: "Blog", href: "/blog" },
               { label: article.category.name, href: `/blog/kategorie/${article.category.slug}` },
-              { label: article.title },
+              { label: article.title, href: `/blog/${slug}` },
             ]}
             className="[&_a]:text-gray-300 [&_a:hover]:text-white [&_span]:text-gray-500 [&_li:last-child_span]:text-gray-400 mb-8"
           />

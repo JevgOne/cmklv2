@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description:
     "Zjistěte, jak funguje CarMakléř — prodej auta přes makléře, nákup prověřených ojetin, e-shop s autodíly a investiční marketplace.",
   openGraph: {
-    title: "Jak to funguje | CarMakléř",
+    title: "Jak to funguje",
     description:
       "Zjistěte, jak funguje CarMakléř — prodej auta přes makléře, nákup prověřených ojetin, e-shop s autodíly a investiční marketplace.",
   },

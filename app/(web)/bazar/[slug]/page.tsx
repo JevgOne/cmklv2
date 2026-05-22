@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!partner) return { title: "Partner nenalezen" };
 
   return {
-    title: `${partner.name} | Ověřený partner CarMakléř`,
+    title: `${partner.name} — ověřený partner`,
     description: partner.description || `Autobazar ${partner.name} v ${partner.city || "ČR"} — ověřený partner CarMakléř.`,
     alternates: pageCanonical(`/bazar/${slug}`),
   };

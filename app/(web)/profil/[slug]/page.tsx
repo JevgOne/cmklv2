@@ -276,7 +276,7 @@ export async function generateMetadata({
 
   if (!data) {
     return {
-      title: "Profil nenalezen — CarMakléř",
+      title: "Profil nenalezen",
       alternates: pageCanonical(`/profil/${slug}`),
       robots: { index: false, follow: false },
     };

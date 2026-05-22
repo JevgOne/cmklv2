@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     "Vyplňte žádost o přístup k marketplace. Investujte do aut nebo nabízejte flip příležitosti. Ověříme váš profil do 48 hodin.",
   robots: { index: true, follow: true },
   openGraph: {
-    title: "Žádost o přístup k Marketplace | CarMakléř",
+    title: "Žádost o přístup k Marketplace",
     description:
       "Staňte se součástí Marketplace investiční platformy pro flipping vozidel. Ověřeni dealeři + investoři.",
   },

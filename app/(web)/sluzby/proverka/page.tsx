@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description:
     "Zjistěte pravdu o autě, než ho koupíte. Kontrola havárií, stočení km, zástav a servisní historie. Report do 30 minut.",
   openGraph: {
-    title: "Prověrka vozidla | CarMakléř",
+    title: "Prověrka vozidla",
     description:
       "Kompletní prověrka historie a technického stavu vozidla. Kupte auto s jistotou.",
   },

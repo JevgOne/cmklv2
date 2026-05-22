@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Email ověřen — CarMakléř",
+  title: "Email ověřen",
   robots: { index: false, follow: false },
 };
 

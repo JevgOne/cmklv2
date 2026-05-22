@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!servis) return { title: "Servis nenalezen" };
 
   return {
-    title: `${servis.name} — autoservis ${servis.city} | CarMakléř`,
+    title: `${servis.name} — autoservis ${servis.city}`,
     description: servis.description
       ? servis.description.slice(0, 160)
       : `${servis.name} — ${servis.city}. ${servis.reviewCount} recenzí, hodnocení ${servis.averageRating}★. Najděte ověřený autoservis na CarMakléř.`,
@@ -119,6 +119,7 @@ export default async function ServisDetailPage({ params }: Props) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <Breadcrumbs
           items={[
+            { label: "Domů", href: "/" },
             { label: "Autoservisy", href: "/autoservisy" },
             { label: servis.name },
           ]}
