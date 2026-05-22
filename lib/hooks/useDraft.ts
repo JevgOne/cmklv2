@@ -19,6 +19,12 @@ import type {
 import { offlineStorage } from "@/lib/offline/storage";
 
 // ============================================
+// Types
+// ============================================
+
+export type SaveStatus = "idle" | "saving" | "saved" | "offline";
+
+// ============================================
 // Context
 // ============================================
 
@@ -26,6 +32,7 @@ interface DraftContextValue {
   draft: VehicleDraft | null;
   loading: boolean;
   error: string | null;
+  saveStatus: SaveStatus;
   createDraft: () => Promise<string>;
   loadDraft: (id: string) => Promise<void>;
   saveDraft: () => Promise<void>;
@@ -52,8 +59,31 @@ export function DraftProvider({ children }: DraftProviderProps) {
   const [draft, setDraft] = useState<VehicleDraft | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const draftRef = useRef<VehicleDraft | null>(null);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const savedFadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Track online/offline status
+  useEffect(() => {
+    const handleOnline = () => {
+      setSaveStatus((prev) => (prev === "offline" ? "idle" : prev));
+    };
+    const handleOffline = () => {
+      setSaveStatus("offline");
+    };
+
+    if (typeof window !== "undefined" && !navigator.onLine) {
+      setSaveStatus("offline");
+    }
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
 
   // Udržuje ref synchronizovaný se statem
   useEffect(() => {
@@ -61,11 +91,28 @@ export function DraftProvider({ children }: DraftProviderProps) {
   }, [draft]);
 
   const persistDraft = useCallback(async (d: VehicleDraft) => {
+    // Don't override offline status
+    setSaveStatus((prev) => (prev === "offline" ? "offline" : "saving"));
     try {
       const { id, ...rest } = d;
       await offlineStorage.saveDraft(id, rest as unknown as Record<string, unknown>);
+
+      setSaveStatus((prev) => {
+        if (prev === "offline") return "offline";
+        return "saved";
+      });
+
+      // Clear previous fade timer
+      if (savedFadeTimerRef.current) {
+        clearTimeout(savedFadeTimerRef.current);
+      }
+      // Fade "saved" back to "idle" after 2s
+      savedFadeTimerRef.current = setTimeout(() => {
+        setSaveStatus((prev) => (prev === "saved" ? "idle" : prev));
+      }, 2000);
     } catch (err) {
       console.error("Chyba při ukládání draftu:", err);
+      setSaveStatus("offline");
     }
   }, []);
 
@@ -173,6 +220,9 @@ export function DraftProvider({ children }: DraftProviderProps) {
       if (saveTimerRef.current) {
         clearTimeout(saveTimerRef.current);
       }
+      if (savedFadeTimerRef.current) {
+        clearTimeout(savedFadeTimerRef.current);
+      }
       const current = draftRef.current;
       if (current) {
         persistDraft({ ...current, updatedAt: Date.now() });
@@ -184,6 +234,7 @@ export function DraftProvider({ children }: DraftProviderProps) {
     draft,
     loading,
     error,
+    saveStatus,
     createDraft,
     loadDraft,
     saveDraft,

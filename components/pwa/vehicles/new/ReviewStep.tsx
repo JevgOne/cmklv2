@@ -1,109 +1,235 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Alert";
+import { Badge } from "@/components/ui/Badge";
 import { StepLayout } from "./StepLayout";
 import { useDraftContext } from "@/lib/hooks/useDraft";
 import { offlineStorage } from "@/lib/offline/storage";
 import { uploadDraftPhotos } from "@/lib/offline/upload-photos";
 import { formatPrice, formatMileage } from "@/lib/utils";
+import {
+  calculateQualityScore,
+  getScoreLevel,
+  getScoreColor,
+  getScoreBgColor,
+  getScoreLabel,
+  type QualityScoreResult,
+} from "@/lib/listing-quality";
 import type { VehicleDraft } from "@/types/vehicle-draft";
 
-interface ChecklistItem {
-  id: string;
-  label: string;
-  passed: boolean;
-  step: number;
-  route: string;
+// ============================================
+// Circular Score Indicator
+// ============================================
+
+function QualityCircle({ score, size = 120 }: { score: number; size?: number }) {
+  const level = getScoreLevel(score);
+  const colorClass = getScoreBgColor(level);
+  const textColor = getScoreColor(level);
+  const label = getScoreLabel(level);
+
+  const radius = (size - 12) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (score / 100) * circumference;
+  const center = size / 2;
+
+  // Map Tailwind classes to stroke colors
+  const strokeColor =
+    level === "excellent" ? "#22c55e" :
+    level === "good" ? "#3b82f6" :
+    level === "fair" ? "#f97316" :
+    "#ef4444";
+
+  return (
+    <div className="flex flex-col items-center gap-1">
+      <div className="relative" style={{ width: size, height: size }}>
+        <svg width={size} height={size} className="-rotate-90">
+          <circle
+            cx={center}
+            cy={center}
+            r={radius}
+            fill="none"
+            stroke="#e5e7eb"
+            strokeWidth={8}
+          />
+          <circle
+            cx={center}
+            cy={center}
+            r={radius}
+            fill="none"
+            stroke={strokeColor}
+            strokeWidth={8}
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            className="transition-all duration-700 ease-out"
+          />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span className={`text-3xl font-bold ${textColor}`}>{score}</span>
+          <span className="text-[10px] text-gray-400 uppercase tracking-wide">/ 100</span>
+        </div>
+      </div>
+      <span className={`text-sm font-semibold ${textColor}`}>{label}</span>
+    </div>
+  );
 }
 
-function buildChecklist(draft: VehicleDraft): ChecklistItem[] {
-  const contact = draft.contact ?? {};
-  const vin = draft.vin ?? {};
-  const details = draft.details ?? {};
-  const photos = draft.photos ?? {};
-  const pricing = draft.pricing ?? {};
+// ============================================
+// Score Breakdown Bar
+// ============================================
 
-  return [
-    {
-      id: "vin",
-      label: "VIN zadáno",
-      passed: !!vin.vin && vin.vin.length === 17,
-      step: 3,
-      route: "vin",
-    },
-    {
-      id: "brand_model",
-      label: "Značka a model",
-      passed: !!details.brand && !!details.model,
-      step: 5,
-      route: "details",
-    },
-    {
-      id: "year_mileage",
-      label: "Rok a nájezd",
-      passed: !!details.year && !!details.mileage,
-      step: 5,
-      route: "details",
-    },
-    {
-      id: "fuel_trans",
-      label: "Palivo a převodovka",
-      passed: !!details.fuelType && !!details.transmission,
-      step: 5,
-      route: "details",
-    },
-    {
-      id: "equipment",
-      label: "Výbava (alespoň 1 položka)",
-      passed: !!details.equipment && details.equipment.length > 0,
-      step: 6,
-      route: "equipment",
-    },
-    {
-      id: "photos_min",
-      label: "Fotky (min. 12 + 3 dokumenty)",
-      passed: countPhotosByType(photos) >= 15,
-      step: 4,
-      route: "photos",
-    },
-    {
-      id: "price",
-      label: "Cena nastavena",
-      passed: !!pricing.price && pricing.price > 0,
-      step: 7,
-      route: "pricing",
-    },
-    {
-      id: "city",
-      label: "Lokace / město",
-      passed: !!pricing.city,
-      step: 7,
-      route: "pricing",
-    },
-    {
-      id: "description",
-      label: "Popis vozidla",
-      passed: !!details.description && details.description.length > 20,
-      step: 5,
-      route: "details",
-    },
-    {
-      id: "seller",
-      label: "Kontakt na prodejce",
-      passed: !!contact.sellerName && !!contact.sellerPhone,
-      step: 1,
-      route: "contact",
-    },
+function BreakdownBar({ label, score, max, color }: { label: string; score: number; max: number; color: string }) {
+  const pct = Math.round((score / max) * 100);
+  return (
+    <div className="space-y-1">
+      <div className="flex items-center justify-between text-xs">
+        <span className="text-gray-600">{label}</span>
+        <span className="font-semibold text-gray-900">{score}/{max}</span>
+      </div>
+      <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+        <div
+          className={`h-full rounded-full transition-all duration-500 ${color}`}
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ============================================
+// Photo Carousel
+// ============================================
+
+function PhotoCarousel({ draftId, photos }: { draftId: string; photos: Array<{ slotId: string; imageId: string; thumbnailUrl: string; isMain?: boolean }> }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [thumbnails, setThumbnails] = useState<Map<string, string>>(new Map());
+
+  useEffect(() => {
+    // Use existing thumbnail URLs from state
+    const map = new Map<string, string>();
+    for (const p of photos) {
+      if (p.thumbnailUrl) map.set(p.imageId, p.thumbnailUrl);
+    }
+    setThumbnails(map);
+  }, [photos]);
+
+  if (photos.length === 0) {
+    return (
+      <div className="h-48 bg-gray-100 flex items-center justify-center">
+        <span className="text-sm text-gray-400">Žádné fotky</span>
+      </div>
+    );
+  }
+
+  const mainPhoto = photos.find((p) => p.isMain) ?? photos[0];
+  const displayPhotos = [
+    mainPhoto,
+    ...photos.filter((p) => p !== mainPhoto),
   ];
+
+  const current = displayPhotos[activeIndex];
+  const thumbUrl = current ? (thumbnails.get(current.imageId) || current.thumbnailUrl) : undefined;
+
+  return (
+    <div className="relative">
+      {/* Main image */}
+      <div className="h-56 bg-gray-100 relative overflow-hidden">
+        {thumbUrl ? (
+          <img src={thumbUrl} alt="Foto" className="w-full h-full object-cover" />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="animate-spin w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full" />
+          </div>
+        )}
+
+        {/* Counter badge */}
+        <div className="absolute top-3 right-3 bg-black/60 text-white text-xs px-2.5 py-1 rounded-full">
+          {activeIndex + 1} / {displayPhotos.length}
+        </div>
+
+        {/* Nav arrows */}
+        {displayPhotos.length > 1 && (
+          <>
+            <button
+              onClick={() => setActiveIndex((i) => (i - 1 + displayPhotos.length) % displayPhotos.length)}
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/40 rounded-full flex items-center justify-center text-white"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+              </svg>
+            </button>
+            <button
+              onClick={() => setActiveIndex((i) => (i + 1) % displayPhotos.length)}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/40 rounded-full flex items-center justify-center text-white"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+              </svg>
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* Thumbnail strip */}
+      {displayPhotos.length > 1 && (
+        <div className="flex gap-1 p-2 overflow-x-auto bg-gray-50">
+          {displayPhotos.slice(0, 8).map((p, i) => {
+            const url = thumbnails.get(p.imageId) || p.thumbnailUrl;
+            return (
+              <button
+                key={p.imageId}
+                onClick={() => setActiveIndex(i)}
+                className={`flex-shrink-0 w-12 h-12 rounded-md overflow-hidden border-2 transition-colors ${
+                  i === activeIndex ? "border-orange-500" : "border-transparent"
+                }`}
+              >
+                {url ? (
+                  <img src={url} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-gray-200" />
+                )}
+              </button>
+            );
+          })}
+          {displayPhotos.length > 8 && (
+            <div className="flex-shrink-0 w-12 h-12 rounded-md bg-gray-200 flex items-center justify-center text-xs text-gray-500 font-medium">
+              +{displayPhotos.length - 8}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
 }
 
-function countPhotosByType(photos: VehicleDraft["photos"]): number {
-  return photos?.photos?.length ?? 0;
+// ============================================
+// Section Header with Edit Button
+// ============================================
+
+function SectionHeader({ title, onEdit }: { title: string; onEdit: () => void }) {
+  return (
+    <div className="flex items-center justify-between mb-2">
+      <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wide">{title}</h3>
+      <button
+        onClick={onEdit}
+        className="text-xs text-orange-500 font-medium hover:text-orange-600 flex items-center gap-1"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5">
+          <path d="M2.695 14.763l-1.262 3.154a.5.5 0 00.65.65l3.155-1.262a4 4 0 001.343-.885L17.5 5.5a2.121 2.121 0 00-3-3L3.58 13.42a4 4 0 00-.885 1.343z" />
+        </svg>
+        Upravit
+      </button>
+    </div>
+  );
 }
+
+// ============================================
+// COMPONENT
+// ============================================
 
 export function ReviewStep() {
   const router = useRouter();
@@ -114,21 +240,26 @@ export function ReviewStep() {
   const [submitStatus, setSubmitStatus] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const checklist = useMemo(
-    () => (draft ? buildChecklist(draft) : []),
+  const qualityResult = useMemo<QualityScoreResult | null>(
+    () => (draft ? calculateQualityScore(draft) : null),
     [draft]
   );
 
-  const allPassed = checklist.every((item) => item.passed);
-  const passedCount = checklist.filter((item) => item.passed).length;
-
   const details = draft?.details ?? {};
   const pricing = draft?.pricing ?? {};
-  const photos = draft?.photos ?? {};
+  const contact = draft?.contact ?? {};
+  const allPhotos = (draft?.photos?.photos ?? []) as unknown as Array<{ slotId: string; imageId: string; thumbnailUrl: string; isMain?: boolean }>;
 
   const vehicleTitle = [details.brand, details.model, details.variant]
     .filter(Boolean)
     .join(" ");
+
+  const handleGoToStep = useCallback(
+    (route: string) => {
+      router.push(`/makler/vehicles/new/${route}?draft=${draftId}`);
+    },
+    [router, draftId]
+  );
 
   const handleBack = () => {
     router.push(`/makler/vehicles/new/pricing?draft=${draftId}`);
@@ -140,9 +271,9 @@ export function ReviewStep() {
   };
 
   const handleSubmit = async () => {
-    if (!draft || !allPassed) return;
+    if (!draft || !qualityResult?.canSubmit) return;
 
-    // BUG 3 FIX: Prevent duplicate submission
+    // Prevent duplicate submission
     if (draft.status === "submitted" || draft.status === "pending_sync") {
       setSubmitError("Toto vozidlo již bylo odesláno.");
       return;
@@ -210,12 +341,12 @@ export function ReviewStep() {
         const result = (await response.json()) as { id: string };
 
         // Upload photos from IndexedDB to Cloudinary
-        const allPhotos = draft.photos?.photos ?? [];
-        if (allPhotos.length > 0) {
+        const photoRecords = draft.photos?.photos ?? [];
+        if (photoRecords.length > 0) {
           setSubmitStatus("Nahrávám fotky...");
           const imageUrls = await uploadDraftPhotos(
             draft.id,
-            allPhotos,
+            photoRecords,
             (done, total) => setSubmitStatus(`Nahrávám fotky... (${done}/${total})`)
           );
           if (imageUrls.length > 0) {
@@ -228,7 +359,7 @@ export function ReviewStep() {
           }
         }
 
-        // BUG 5 FIX: Upload inspection photos (defects + wheels)
+        // Upload inspection photos (defects + wheels)
         const inspectionImageIds: string[] = [];
         if (draft.inspection?.defects?.length) {
           for (const defect of draft.inspection.defects) {
@@ -255,7 +386,7 @@ export function ReviewStep() {
           }
         }
 
-        // BUG 1 FIX: Transition DRAFT → PENDING
+        // Transition DRAFT → PENDING
         setSubmitStatus("Odesílám ke schválení...");
         const statusRes = await fetch(`/api/vehicles/${result.id}/status`, {
           method: "PATCH",
@@ -269,7 +400,6 @@ export function ReviewStep() {
         updateStatus("submitted");
         await saveDraft();
 
-        // Uložit vehicle ID
         await offlineStorage.saveDraft(draft.id, {
           ...draft,
           serverId: result.id,
@@ -278,7 +408,7 @@ export function ReviewStep() {
 
         router.push(`/makler/vehicles/new/success?draft=${draftId}&vehicleId=${result.id}`);
       } else {
-        // Offline: uložit jako pending sync
+        // Offline: queue as pending action
         updateStatus("pending_sync");
         await saveDraft();
         const od = draft.details ?? {};
@@ -325,7 +455,7 @@ export function ReviewStep() {
         router.push(`/makler/vehicles/new/success?draft=${draftId}&offline=1`);
       }
     } catch (err) {
-      // BUG 3 FIX: Rollback draft status on failure so user can retry
+      // Rollback draft status on failure
       updateStatus("draft");
       await saveDraft();
       setSubmitError(
@@ -336,164 +466,196 @@ export function ReviewStep() {
     }
   };
 
-  const handleGoToStep = (route: string) => {
-    router.push(`/makler/vehicles/new/${route}?draft=${draftId}`);
-  };
-
   if (!draft) return null;
 
   return (
     <StepLayout
       step={8}
-      title="Kontrola"
+      title="Kontrola a odeslání"
       onBack={handleBack}
       showSave
     >
       <div className="space-y-6">
-        {/* Náhled inzerátu */}
-        <Card className="overflow-hidden">
-          {/* Carousel placeholder */}
-          <div className="h-48 bg-gray-100 flex items-center justify-center">
-            {photos.photos && photos.photos.length > 0 ? (
-              <div className="text-center">
-                <span className="text-3xl text-gray-400 block">
-                  {photos.photos.length}
-                </span>
-                <span className="text-xs text-gray-400">
-                  fotek
-                </span>
+        {/* ======== Quality Score ======== */}
+        {qualityResult && (
+          <Card className="p-6">
+            <div className="flex items-start gap-6">
+              <QualityCircle score={qualityResult.total} />
+              <div className="flex-1 space-y-2.5 pt-1">
+                <BreakdownBar label="Fotky" score={qualityResult.breakdown.photos.score} max={35} color="bg-blue-500" />
+                <BreakdownBar label="Data" score={qualityResult.breakdown.data.score} max={30} color="bg-green-500" />
+                <BreakdownBar label="Popis" score={qualityResult.breakdown.description.score} max={20} color="bg-purple-500" />
+                <BreakdownBar label="Výbava" score={qualityResult.breakdown.equipment.score} max={15} color="bg-orange-500" />
               </div>
-            ) : (
-              <span className="text-sm text-gray-400">Žádné fotky</span>
+            </div>
+
+            {!qualityResult.canSubmit && (
+              <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-3 text-center">
+                <p className="text-sm font-semibold text-red-700">
+                  Minimum pro odeslání: 60 bodů (aktuálně {qualityResult.total})
+                </p>
+              </div>
             )}
-          </div>
-          <div className="p-4 space-y-2">
-            <h2 className="text-lg font-bold text-gray-900">
-              {vehicleTitle || "Bez názvu"}
-            </h2>
-            <div className="flex flex-wrap gap-2 text-xs text-gray-500">
-              {details.year && <span>{details.year}</span>}
-              {details.mileage && (
-                <>
-                  <span>|</span>
-                  <span>{formatMileage(details.mileage)}</span>
-                </>
-              )}
-              {details.fuelType && (
-                <>
-                  <span>|</span>
-                  <span>{details.fuelType}</span>
-                </>
-              )}
-              {details.transmission && (
-                <>
-                  <span>|</span>
-                  <span>{details.transmission}</span>
-                </>
-              )}
-              {details.enginePower && (
-                <>
-                  <span>|</span>
-                  <span>{details.enginePower} kW</span>
-                </>
+          </Card>
+        )}
+
+        {/* ======== Listing Preview ======== */}
+        <Card className="overflow-hidden">
+          <SectionHeader title="Náhled inzerátu" onEdit={() => handleGoToStep("photos")} />
+
+          {/* Photo carousel */}
+          <PhotoCarousel draftId={draftId} photos={allPhotos} />
+
+          <div className="p-4 space-y-3">
+            {/* Title + Price */}
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h2 className="text-lg font-bold text-gray-900">
+                  {vehicleTitle || "Bez názvu"}
+                </h2>
+                {details.year && (
+                  <p className="text-sm text-gray-500">{details.year}</p>
+                )}
+              </div>
+              {pricing.price ? (
+                <div className="text-xl font-bold text-orange-500 whitespace-nowrap">
+                  {formatPrice(pricing.price)}
+                </div>
+              ) : (
+                <span className="text-sm text-gray-400">Cena nenastavena</span>
               )}
             </div>
-            {pricing.price ? (
-              <div className="text-xl font-bold text-orange-500">
-                {formatPrice(pricing.price)}
-              </div>
-            ) : (
-              <div className="text-sm text-gray-400">Cena nenastavena</div>
-            )}
+
+            {/* Tech params grid */}
+            <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm">
+              {details.mileage != null && (
+                <ParamRow label="Nájezd" value={formatMileage(details.mileage)} />
+              )}
+              {details.fuelType && <ParamRow label="Palivo" value={details.fuelType} />}
+              {details.transmission && <ParamRow label="Převodovka" value={details.transmission} />}
+              {details.enginePower && <ParamRow label="Výkon" value={`${details.enginePower} kW`} />}
+              {details.engineCapacity && <ParamRow label="Objem" value={`${details.engineCapacity} ccm`} />}
+              {details.bodyType && <ParamRow label="Karoserie" value={details.bodyType} />}
+              {details.color && <ParamRow label="Barva" value={details.color} />}
+              {details.drivetrain && <ParamRow label="Pohon" value={details.drivetrain} />}
+              {details.doorsCount && <ParamRow label="Dveře" value={`${details.doorsCount}`} />}
+              {details.seatsCount && <ParamRow label="Sedadla" value={`${details.seatsCount}`} />}
+            </div>
+
+            {/* Location */}
             {pricing.city && (
-              <div className="text-xs text-gray-400">{pricing.city}</div>
+              <div className="flex items-center gap-1.5 text-sm text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                  <path fillRule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 103 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 002.273 1.765 11.842 11.842 0 00.976.544l.062.029.018.008.006.003zM10 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" clipRule="evenodd" />
+                </svg>
+                {pricing.city}{pricing.district ? `, ${pricing.district}` : ""}
+              </div>
             )}
           </div>
         </Card>
 
-        {/* Checklist kompletnosti */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wide">
-              Kontrola kompletnosti
-            </h3>
-            <span
-              className={`text-sm font-semibold ${
-                allPassed ? "text-green-600" : "text-orange-500"
-              }`}
-            >
-              {passedCount} / {checklist.length}
-            </span>
+        {/* ======== Highlights ======== */}
+        {details.highlights && details.highlights.length > 0 && (
+          <div>
+            <SectionHeader title="Highlights" onEdit={() => handleGoToStep("details")} />
+            <div className="flex flex-wrap gap-2">
+              {details.highlights.map((h, i) => (
+                <Badge key={i} variant="success">{h}</Badge>
+              ))}
+            </div>
           </div>
+        )}
 
-          <div className="space-y-1.5">
-            {checklist.map((item) => (
-              <button
-                key={item.id}
-                onClick={!item.passed ? () => handleGoToStep(item.route) : undefined}
-                disabled={item.passed}
-                className={`w-full flex items-center gap-3 p-3 rounded-lg text-left transition-colors ${
-                  item.passed
-                    ? "bg-green-50"
-                    : "bg-red-50 hover:bg-red-100 cursor-pointer"
-                }`}
-              >
-                {item.passed ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="w-5 h-5 text-green-600 flex-shrink-0"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="w-5 h-5 text-red-500 flex-shrink-0"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                )}
-                <span
-                  className={`text-sm font-medium ${
-                    item.passed ? "text-green-700" : "text-red-700"
-                  }`}
-                >
-                  {item.label}
+        {/* ======== Description ======== */}
+        {details.description && (
+          <div>
+            <SectionHeader title="Popis" onEdit={() => handleGoToStep("details")} />
+            <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line line-clamp-6">
+              {details.description}
+            </p>
+          </div>
+        )}
+
+        {/* ======== Equipment ======== */}
+        {details.equipment && details.equipment.length > 0 && (
+          <div>
+            <SectionHeader title="Výbava" onEdit={() => handleGoToStep("equipment")} />
+            <div className="flex flex-wrap gap-1.5">
+              {details.equipment.map((item, i) => (
+                <span key={i} className="px-2.5 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
+                  {item}
                 </span>
-                {!item.passed && (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    className="w-4 h-4 text-red-400 ml-auto"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M8.25 4.5l7.5 7.5-7.5 7.5"
-                    />
-                  </svg>
-                )}
-              </button>
-            ))}
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ======== Contact ======== */}
+        <div>
+          <SectionHeader title="Kontakt" onEdit={() => handleGoToStep("contact")} />
+          <div className="text-sm text-gray-700 space-y-1">
+            {contact.sellerName && <p>{contact.sellerName}</p>}
+            {contact.sellerPhone && <p>{contact.sellerPhone}</p>}
+            {contact.sellerEmail && <p className="text-gray-500">{contact.sellerEmail}</p>}
           </div>
         </div>
 
-        {/* Already submitted guard */}
+        {/* ======== Consistency Warnings ======== */}
+        {qualityResult && qualityResult.consistencyWarnings.length > 0 && (
+          <div className="space-y-2">
+            <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wide">
+              Upozornění na nesrovnalosti
+            </h3>
+            {qualityResult.consistencyWarnings.map((w) => (
+              <button
+                key={w.id}
+                onClick={() => handleGoToStep(w.route)}
+                className="w-full bg-amber-50 border border-amber-200 rounded-lg p-3 text-left hover:bg-amber-100 transition-colors"
+              >
+                <div className="flex items-start gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5">
+                    <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                  </svg>
+                  <div>
+                    <p className="text-sm text-amber-800">{w.message}</p>
+                    <p className="text-xs text-amber-600 mt-0.5">-{w.penalty} bodů</p>
+                  </div>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-amber-400 ml-auto flex-shrink-0 mt-1">
+                    <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                  </svg>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* ======== Recommendations ======== */}
+        {qualityResult && qualityResult.recommendations.length > 0 && (
+          <div className="space-y-2">
+            <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wide">
+              Jak získat více bodů
+            </h3>
+            {qualityResult.recommendations.map((rec, i) => (
+              <button
+                key={i}
+                onClick={() => handleGoToStep(rec.route)}
+                className="w-full bg-blue-50 border border-blue-200 rounded-lg p-3 text-left hover:bg-blue-100 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">
+                    +{rec.points}b
+                  </span>
+                  <span className="text-sm text-blue-800 flex-1">{rec.message}</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-blue-400 flex-shrink-0">
+                    <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                  </svg>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* ======== Status Alerts ======== */}
         {draft.status === "submitted" && (
           <Alert variant="info">
             <span className="text-sm">
@@ -510,21 +672,20 @@ export function ReviewStep() {
           </Alert>
         )}
 
-        {/* Chybový stav */}
         {submitError && (
           <Alert variant="error">
             <span className="text-sm">{submitError}</span>
           </Alert>
         )}
 
-        {/* Akční tlačítka */}
+        {/* ======== Action Buttons ======== */}
         <div className="space-y-3 pt-4 border-t border-gray-100">
           <Button
             variant="primary"
             className="w-full"
             size="lg"
             onClick={handleSubmit}
-            disabled={!allPassed || submitting}
+            disabled={!qualityResult?.canSubmit || submitting}
           >
             {submitting
               ? (submitStatus || "Odesílám...")
@@ -542,5 +703,18 @@ export function ReviewStep() {
         </div>
       </div>
     </StepLayout>
+  );
+}
+
+// ============================================
+// Helper Components
+// ============================================
+
+function ParamRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between">
+      <span className="text-gray-500">{label}</span>
+      <span className="font-medium text-gray-900">{value}</span>
+    </div>
   );
 }

@@ -1,10 +1,24 @@
 "use client";
 
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useDraftContext } from "@/lib/hooks/useDraft";
 import { StepLayout } from "@/components/pwa/vehicles/new/StepLayout";
 import { Input, Textarea, Checkbox, Button } from "@/components/ui";
+import {
+  buildDescriptionTemplate,
+  renderDescription,
+  buildAiPrompt,
+  parseAiResponse,
+  type DescriptionTemplate,
+} from "@/lib/description-template";
+
+const DEFAULT_HIGHLIGHTS = [
+  "Servisní historie", "Garanční prohlídky", "Pravidelný servis",
+  "Nekuřácké", "Garážované", "Jeden majitel", "Málo najeto",
+  "Nové pneumatiky", "Nové brzdy", "Po velkém servisu",
+  "Zachovalý stav", "Bez nehody",
+];
 
 // ============================================
 // CZECH CITIES LIST (for datalist autocomplete)
@@ -72,11 +86,18 @@ export function PricingStep() {
   const [city, setCity] = useState("");
   const [district, setDistrict] = useState("");
   const [address, setAddress] = useState("");
-  const [description, setDescription] = useState("");
   const [source, setSource] = useState<VehicleSource>("private");
-  const [isGenerating, setIsGenerating] = useState(false);
   const [estimating, setEstimating] = useState(false);
   const [estimate, setEstimate] = useState<PriceEstimate | null>(null);
+  const [highlights, setHighlights] = useState<string[]>([]);
+  const [customHighlight, setCustomHighlight] = useState("");
+
+  // Template-based description
+  const [intro, setIntro] = useState("");
+  const [outro, setOutro] = useState("");
+  const [isGeneratingAi, setIsGeneratingAi] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const templateInitialized = useRef(false);
 
   // Load from draft
   useEffect(() => {
@@ -90,10 +111,36 @@ export function PricingStep() {
     }
     if (draft?.details) {
       const d = draft.details;
-      if (d.description) setDescription(d.description as string);
       if (d.vehicleSource) setSource(d.vehicleSource as VehicleSource);
+      if (d.highlights) setHighlights(d.highlights as string[]);
     }
   }, [draft?.pricing, draft?.details]);
+
+  // Load saved intro/outro from draft description (parse back)
+  useEffect(() => {
+    if (templateInitialized.current) return;
+    if (!draft?.details) return;
+    const d = draft.details;
+    if (d.descriptionIntro) setIntro(d.descriptionIntro as string);
+    if (d.descriptionOutro) setOutro(d.descriptionOutro as string);
+    templateInitialized.current = true;
+  }, [draft?.details]);
+
+  // Build template from current data
+  const template: DescriptionTemplate = useMemo(() => {
+    const currentHighlights = highlights.length > 0 ? highlights : (draft?.details?.highlights as string[] | undefined) ?? [];
+    const updatedDetails = { ...(draft?.details ?? {}), highlights: currentHighlights };
+    const built = buildDescriptionTemplate(updatedDetails, draft?.inspection ?? {});
+    return { ...built, intro, outro };
+  }, [draft?.details, draft?.inspection, highlights, intro, outro]);
+
+  // Rendered description preview
+  const renderedDescription = useMemo(
+    () => renderDescription(template),
+    [template],
+  );
+
+  const isDescriptionValid = renderedDescription.length >= 50;
 
   const price = useMemo(
     () => parsePriceInput(priceFormatted),
@@ -105,9 +152,6 @@ export function PricingStep() {
     [price]
   );
 
-  const descriptionLength = description.length;
-  const isDescriptionValid = descriptionLength >= 50;
-
   const canContinue =
     price > 0 && city.trim().length > 0 && isDescriptionValid;
 
@@ -117,6 +161,19 @@ export function PricingStep() {
     },
     []
   );
+
+  const toggleHighlight = useCallback((hl: string) => {
+    setHighlights((prev) =>
+      prev.includes(hl) ? prev.filter((h) => h !== hl) : [...prev, hl]
+    );
+  }, []);
+
+  const addCustomHighlight = useCallback(() => {
+    const trimmed = customHighlight.trim();
+    if (!trimmed) return;
+    setHighlights((prev) => (prev.includes(trimmed) ? prev : [...prev, trimmed]));
+    setCustomHighlight("");
+  }, [customHighlight]);
 
   const handleSave = useCallback(() => {
     updateSection("pricing", {
@@ -129,7 +186,10 @@ export function PricingStep() {
     });
     updateSection("details", {
       ...(draft?.details ?? {}),
-      description,
+      description: renderedDescription,
+      descriptionIntro: intro,
+      descriptionOutro: outro,
+      highlights,
       vehicleSource: source,
     });
   }, [
@@ -140,51 +200,62 @@ export function PricingStep() {
     dph,
     city,
     district,
-    description,
+    renderedDescription,
+    intro,
+    outro,
+    highlights,
     source,
     commission,
   ]);
 
-  const handleGenerateDescription = useCallback(async () => {
+  const handleGenerateAi = useCallback(async () => {
     if (!draft?.details) return;
     const d = draft.details;
-    if (!d.brand || !d.model || !d.year || !d.mileage || !d.condition) return;
+    if (!d.brand || !d.model || !d.year) return;
 
-    setIsGenerating(true);
+    setIsGeneratingAi(true);
     try {
+      const { systemPrompt, userPrompt } = buildAiPrompt({
+        ...d,
+        highlights,
+      } as Partial<import("@/types/vehicle-draft").DetailsData>);
+
       const res = await fetch("/api/assistant/generate-description", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          brand: d.brand,
-          model: d.model,
-          year: d.year,
-          mileage: d.mileage,
-          condition: d.condition,
+          brand: d.brand as string,
+          model: d.model as string,
+          year: d.year as number,
+          mileage: (d.mileage as number) || 0,
+          condition: (d.condition as string) || "GOOD",
           fuelType: d.fuelType,
           transmission: d.transmission,
           enginePower: d.enginePower,
           bodyType: d.bodyType,
           color: d.color,
           equipment: d.equipment ?? [],
-          highlights: d.highlights ?? [],
+          highlights,
+          templateMode: true,
+          customSystemPrompt: systemPrompt,
+          customUserPrompt: userPrompt,
         }),
       });
 
-      if (!res.ok) {
-        throw new Error("Chyba při generování popisu");
-      }
+      if (!res.ok) throw new Error("Chyba při generování popisu");
 
       const data = await res.json();
       if (data.description) {
-        setDescription(data.description);
+        const parsed = parseAiResponse(data.description);
+        setIntro(parsed.intro);
+        setOutro(parsed.outro);
       }
     } catch (error) {
       console.error("Chyba při generování AI popisu:", error);
     } finally {
-      setIsGenerating(false);
+      setIsGeneratingAi(false);
     }
-  }, [draft?.details]);
+  }, [draft?.details, highlights]);
 
   const canEstimate = !!(
     draft?.details?.brand &&
@@ -238,7 +309,7 @@ export function PricingStep() {
   }, [handleSave, router, draft?.id]);
 
   return (
-    <StepLayout step={7} title="Cena a lokace">
+    <StepLayout step={7} title="Cena a popis">
       <div className="space-y-6">
         {/* Price */}
         <div>
@@ -420,53 +491,208 @@ export function PricingStep() {
           </div>
         </div>
 
-        {/* Description */}
+        {/* Highlights */}
         <div>
-          <Textarea
-            label="Popis inzerátu"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            onBlur={handleSave}
-            placeholder="Např.: Prodám spolehlivé rodinné auto v dobrém stavu. Pravidelně servisováno u autorizovaného servisu. Nové brzdy, rozvody vyměněny při 120 000 km. Nekouřeno, garáž. Druhý majitel, vůz pouze z ČR."
-            className="min-h-[150px]"
-          />
-          <div className="flex items-center justify-between mt-1">
-            <span
-              className={`text-xs ${
-                isDescriptionValid ? "text-green-600" : "text-gray-400"
-              }`}
+          <label className="text-[13px] font-semibold text-gray-700 uppercase tracking-wide block mb-3">
+            Hlavní přednosti
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {DEFAULT_HIGHLIGHTS.map((hl) => {
+              const selected = highlights.includes(hl);
+              return (
+                <button
+                  key={hl}
+                  type="button"
+                  onClick={() => toggleHighlight(hl)}
+                  className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium transition-all border ${
+                    selected
+                      ? "bg-orange-50 border-orange-300 text-orange-700"
+                      : "bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100"
+                  }`}
+                >
+                  {selected && (
+                    <svg className="w-4 h-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                  {hl}
+                </button>
+              );
+            })}
+            {highlights
+              .filter((hl) => !DEFAULT_HIGHLIGHTS.includes(hl))
+              .map((hl) => (
+                <button
+                  key={hl}
+                  type="button"
+                  onClick={() => toggleHighlight(hl)}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium bg-orange-50 border border-orange-300 text-orange-700"
+                >
+                  {hl}
+                  <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                  </svg>
+                </button>
+              ))}
+          </div>
+          <div className="flex gap-2 mt-2">
+            <Input
+              value={customHighlight}
+              onChange={(e) => setCustomHighlight(e.target.value)}
+              placeholder="Vlastní přednost"
+              className="!py-2 !text-sm"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  addCustomHighlight();
+                }
+              }}
+            />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={addCustomHighlight}
+              disabled={!customHighlight.trim()}
             >
-              {descriptionLength} / min. 50 znaků
-            </span>
-            {!isDescriptionValid && descriptionLength > 0 && (
-              <span className="text-xs text-orange-500">
-                Ještě {50 - descriptionLength} znaků
-              </span>
-            )}
+              Přidat
+            </Button>
+          </div>
+        </div>
+
+        {/* Template-based Description */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <label className="text-[13px] font-semibold text-gray-700 uppercase tracking-wide">
+              Popis inzerátu
+            </label>
+            <button
+              type="button"
+              onClick={() => setShowPreview(!showPreview)}
+              className="text-xs font-medium text-orange-600 hover:text-orange-700"
+            >
+              {showPreview ? "Upravit" : "Náhled"}
+            </button>
           </div>
 
-          <button
-            onClick={handleGenerateDescription}
-            disabled={isGenerating || !draft?.details?.brand || !draft?.details?.model}
-            className="mt-3 flex items-center gap-2 px-4 py-2.5 bg-orange-50 text-orange-700 rounded-lg text-sm font-medium hover:bg-orange-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isGenerating ? (
-              <>
-                <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-                Generuji popis...
-              </>
-            ) : (
-              <>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-4 h-4">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
-                </svg>
-                Vygenerovat popis AI
-              </>
-            )}
-          </button>
+          {showPreview ? (
+            /* Preview mode — rendered description */
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+              <p className="text-xs text-gray-400 uppercase tracking-wide font-semibold mb-3">Náhled inzerátu</p>
+              <div className="text-sm text-gray-700 whitespace-pre-line leading-relaxed">
+                {renderedDescription || <span className="text-gray-400 italic">Popis se sestaví automaticky z dat vozidla.</span>}
+              </div>
+              <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-200">
+                <span className={`text-xs ${isDescriptionValid ? "text-green-600" : "text-gray-400"}`}>
+                  {renderedDescription.length} znaků
+                </span>
+                {isDescriptionValid && (
+                  <span className="text-xs text-green-600 font-medium">Připraveno</span>
+                )}
+              </div>
+            </div>
+          ) : (
+            /* Edit mode — intro + auto sections info + outro */
+            <div className="space-y-4">
+              {/* AI Generate button */}
+              <button
+                type="button"
+                onClick={handleGenerateAi}
+                disabled={isGeneratingAi || !draft?.details?.brand || !draft?.details?.model}
+                className="flex items-center gap-2 px-4 py-2.5 bg-orange-50 text-orange-700 rounded-lg text-sm font-medium hover:bg-orange-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full justify-center"
+              >
+                {isGeneratingAi ? (
+                  <>
+                    <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    Generuji úvod a závěr...
+                  </>
+                ) : (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-4 h-4">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+                    </svg>
+                    Vygenerovat úvod a závěr AI
+                  </>
+                )}
+              </button>
+
+              {/* Intro — editable */}
+              <div>
+                <label className="text-xs font-medium text-gray-500 mb-1 block">
+                  Úvodní odstavec <span className="text-orange-500">(editovatelný)</span>
+                </label>
+                <Textarea
+                  value={intro}
+                  onChange={(e) => setIntro(e.target.value)}
+                  onBlur={handleSave}
+                  placeholder="Úvodní text inzerátu — představte vůz a jeho hlavní přednosti. Nebo nechte AI vygenerovat."
+                  className="min-h-[80px]"
+                />
+              </div>
+
+              {/* Auto-filled sections — read-only info */}
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-3">
+                <p className="text-xs text-gray-400 uppercase tracking-wide font-semibold">
+                  Automaticky doplněné sekce
+                </p>
+                {template.sections.map((section) => (
+                  <div key={section.title}>
+                    <p className="text-xs font-bold text-gray-600 mb-1">{section.title}:</p>
+                    {section.lines.length > 0 ? (
+                      <ul className="text-xs text-gray-500 space-y-0.5">
+                        {section.lines.slice(0, 5).map((line, i) => (
+                          <li key={i} className="flex items-start gap-1">
+                            <span className="text-gray-300 mt-px">&#x2022;</span>
+                            <span>{line}</span>
+                          </li>
+                        ))}
+                        {section.lines.length > 5 && (
+                          <li className="text-gray-400 italic">
+                            ...a dalších {section.lines.length - 5}
+                          </li>
+                        )}
+                      </ul>
+                    ) : (
+                      <p className="text-xs text-gray-400 italic">Žádná data</p>
+                    )}
+                  </div>
+                ))}
+                {template.sections.length === 0 && (
+                  <p className="text-xs text-gray-400 italic">
+                    Vyplňte detaily vozidla v předchozích krocích pro automatické doplnění.
+                  </p>
+                )}
+              </div>
+
+              {/* Outro — editable */}
+              <div>
+                <label className="text-xs font-medium text-gray-500 mb-1 block">
+                  Závěrečný odstavec <span className="text-orange-500">(editovatelný)</span>
+                </label>
+                <Textarea
+                  value={outro}
+                  onChange={(e) => setOutro(e.target.value)}
+                  onBlur={handleSave}
+                  placeholder="Závěrečný text — výzva k akci, nabídka prohlídky, kontaktu."
+                  className="min-h-[60px]"
+                />
+              </div>
+
+              {/* Status */}
+              <div className="flex items-center justify-between">
+                <span className={`text-xs ${isDescriptionValid ? "text-green-600" : "text-gray-400"}`}>
+                  {renderedDescription.length} / min. 50 znaků
+                </span>
+                {!isDescriptionValid && renderedDescription.length > 0 && (
+                  <span className="text-xs text-orange-500">
+                    Doplňte úvod nebo závěr
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Vehicle Source */}

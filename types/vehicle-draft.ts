@@ -222,6 +222,8 @@ export interface DetailsData {
   equipment: string[];
   highlights: string[];
   description?: string;
+  descriptionIntro?: string;
+  descriptionOutro?: string;
 }
 
 /** Step 6: Cena a provize */

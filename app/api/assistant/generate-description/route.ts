@@ -18,6 +18,10 @@ const generateDescriptionSchema = z.object({
   color: z.string().optional(),
   equipment: z.array(z.string()).optional(),
   highlights: z.array(z.string()).optional(),
+  // Template mode: custom prompts for intro+outro only
+  templateMode: z.boolean().optional(),
+  customSystemPrompt: z.string().optional(),
+  customUserPrompt: z.string().optional(),
 });
 
 export async function POST(request: Request) {
@@ -40,8 +44,10 @@ export async function POST(request: Request) {
 
     const data = parsed.data;
 
-    // System prompt pro generování popisů
-    const systemPrompt = `Jsi expert na psaní inzerátů na prodej ojetých vozidel v češtině. Piš profesionální, důvěryhodné a lákavé popisy.
+    // Use custom prompts for template mode, or fallback to classic mode
+    const systemPrompt = data.templateMode && data.customSystemPrompt
+      ? data.customSystemPrompt
+      : `Jsi expert na psaní inzerátů na prodej ojetých vozidel v češtině. Piš profesionální, důvěryhodné a lákavé popisy.
 
 PRAVIDLA:
 - Piš česky, profesionálním ale přátelským tónem
@@ -55,7 +61,9 @@ PRAVIDLA:
 - Nepoužívej emoji
 - Nepiš nadpisy ani odrážky — pouze plynulý text`;
 
-    const userPrompt = `Vygeneruj popis inzerátu pro toto vozidlo:
+    const userPrompt = data.templateMode && data.customUserPrompt
+      ? data.customUserPrompt
+      : `Vygeneruj popis inzerátu pro toto vozidlo:
 
 Značka: ${data.brand}
 Model: ${data.model}

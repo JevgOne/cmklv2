@@ -12,6 +12,8 @@ import { DefectCapture } from "./DefectCapture";
 import { offlineStorage } from "@/lib/offline/storage";
 import { useDraftContext } from "@/lib/hooks/useDraft";
 import { HintBox } from "./HintBox";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
 import type {
   InspectionData,
   BodyCondition,
@@ -87,6 +89,16 @@ export function InspectionStep() {
   const engine = inspection.engine ?? { ...DEFAULT_ENGINE };
   const testDrive = inspection.testDrive ?? { ...DEFAULT_TEST_DRIVE };
   const defects = inspection.defects ?? [];
+  const tiresData = inspection.tires ?? {
+    type: "SUMMER" as const,
+    brand: "",
+    treadDepth: 4,
+    secondSet: false,
+  };
+  const localSpecs = inspection.localSpecs ?? {
+    czHomologation: true,
+    isImport: false,
+  };
 
   const [rejectOpen, setRejectOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
@@ -358,6 +370,193 @@ export function InspectionStep() {
                 <span className="text-[10px] text-gray-400">{slot}</span>
               </button>
             ))}
+          </div>
+        </Section>
+
+        {/* Počet klíčů */}
+        <Section title="Počet klíčů">
+          <div className="flex gap-2">
+            {([1, 2, 3] as const).map((count) => (
+              <button
+                key={count}
+                type="button"
+                onClick={() => update({ keyCount: count })}
+                className={`flex-1 py-3 rounded-xl text-center transition-all ${
+                  inspection.keyCount === count
+                    ? "bg-orange-50 ring-2 ring-orange-500"
+                    : "bg-gray-50 hover:bg-gray-100"
+                }`}
+              >
+                <span className="text-2xl block">{count === 3 ? "3+" : count}</span>
+                <span className="text-xs font-medium text-gray-600 mt-1 block">
+                  {count === 1 ? "klíč" : count === 2 ? "klíče" : "a více"}
+                </span>
+              </button>
+            ))}
+          </div>
+        </Section>
+
+        {/* Pneumatiky — detailní stav */}
+        <Section title="Stav pneumatik">
+          <div className="space-y-4">
+            <div>
+              <label className="text-[13px] font-semibold text-gray-700 uppercase tracking-wide block mb-2">
+                Typ pneumatik
+              </label>
+              <div className="flex gap-2">
+                {([
+                  { value: "SUMMER", label: "Letní" },
+                  { value: "WINTER", label: "Zimní" },
+                  { value: "ALL_SEASON", label: "Celoroční" },
+                ] as const).map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() =>
+                      update({ tires: { ...tiresData, type: opt.value } })
+                    }
+                    className={`flex-1 py-2.5 px-3 rounded-lg text-sm font-medium border-2 transition-all ${
+                      tiresData.type === opt.value
+                        ? "border-orange-500 bg-orange-50 text-orange-700"
+                        : "border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100"
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <Input
+              label="Značka pneumatik"
+              value={tiresData.brand ?? ""}
+              onChange={(e) =>
+                update({ tires: { ...tiresData, brand: e.target.value } })
+              }
+              placeholder="Např. Michelin, Continental"
+            />
+
+            <div>
+              <label className="text-[13px] font-semibold text-gray-700 uppercase tracking-wide block mb-2">
+                Hloubka dezénu: {tiresData.treadDepth ?? 0} mm
+              </label>
+              <input
+                type="range"
+                min={0}
+                max={8}
+                step={0.5}
+                value={tiresData.treadDepth ?? 4}
+                onChange={(e) =>
+                  update({ tires: { ...tiresData, treadDepth: parseFloat(e.target.value) } })
+                }
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-orange-500"
+              />
+              <div className="flex justify-between text-[10px] text-gray-400 mt-1">
+                <span>0 mm (vyměnit)</span>
+                <span>4 mm (OK)</span>
+                <span>8 mm (nové)</span>
+              </div>
+            </div>
+
+            <Input
+              label="DOT — rok výroby"
+              type="number"
+              value={tiresData.dotYear ?? ""}
+              onChange={(e) =>
+                update({ tires: { ...tiresData, dotYear: e.target.value ? parseInt(e.target.value, 10) : undefined } })
+              }
+              placeholder="Např. 2023"
+              min={2010}
+              max={new Date().getFullYear()}
+            />
+
+            <div className="space-y-3">
+              <Checkbox
+                label="Druhá sada pneumatik"
+                checked={tiresData.secondSet}
+                onChange={(e) =>
+                  update({ tires: { ...tiresData, secondSet: e.target.checked } })
+                }
+              />
+              {tiresData.secondSet && (
+                <Select
+                  label="Typ druhé sady"
+                  value={tiresData.secondSetType ?? ""}
+                  onChange={(e) =>
+                    update({ tires: { ...tiresData, secondSetType: e.target.value as "SUMMER" | "WINTER" | "ALL_SEASON" } })
+                  }
+                  options={[
+                    { value: "SUMMER", label: "Letní" },
+                    { value: "WINTER", label: "Zimní" },
+                    { value: "ALL_SEASON", label: "Celoroční" },
+                  ]}
+                  placeholder="Vyberte typ"
+                />
+              )}
+            </div>
+          </div>
+        </Section>
+
+        {/* Lokální specifikace */}
+        <Section title="Lokální specifikace">
+          <div className="space-y-3">
+            <Checkbox
+              label="Homologace pro ČR"
+              checked={localSpecs.czHomologation}
+              onChange={(e) =>
+                update({ localSpecs: { ...localSpecs, czHomologation: e.target.checked } })
+              }
+            />
+            <Input
+              label="Počet registrací v ČR"
+              type="number"
+              value={localSpecs.registrationCountCZ ?? ""}
+              onChange={(e) =>
+                update({ localSpecs: { ...localSpecs, registrationCountCZ: e.target.value ? parseInt(e.target.value, 10) : undefined } })
+              }
+              placeholder="Např. 2"
+              min={0}
+              max={20}
+            />
+            <Checkbox
+              label="Dovezeno ze zahraničí"
+              checked={localSpecs.isImport}
+              onChange={(e) =>
+                update({ localSpecs: { ...localSpecs, isImport: e.target.checked } })
+              }
+            />
+            {localSpecs.isImport && (
+              <div className="grid grid-cols-2 gap-3">
+                <Select
+                  label="Země dovozu"
+                  value={localSpecs.importCountry ?? ""}
+                  onChange={(e) =>
+                    update({ localSpecs: { ...localSpecs, importCountry: e.target.value } })
+                  }
+                  options={[
+                    { value: "DE", label: "Německo" },
+                    { value: "AT", label: "Rakousko" },
+                    { value: "SK", label: "Slovensko" },
+                    { value: "PL", label: "Polsko" },
+                    { value: "IT", label: "Itálie" },
+                    { value: "FR", label: "Francie" },
+                    { value: "NL", label: "Nizozemsko" },
+                    { value: "BE", label: "Belgie" },
+                    { value: "US", label: "USA" },
+                    { value: "OTHER", label: "Jiný" },
+                  ]}
+                  placeholder="Země"
+                />
+                <Input
+                  label="Datum dovozu"
+                  type="date"
+                  value={localSpecs.importDate ?? ""}
+                  onChange={(e) =>
+                    update({ localSpecs: { ...localSpecs, importDate: e.target.value } })
+                  }
+                />
+              </div>
+            )}
           </div>
         </Section>
 
