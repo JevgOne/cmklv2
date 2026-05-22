@@ -51,7 +51,7 @@ function createSecretHash(vin: string, apiKey: string, apiSecret: string): strin
   return crypto.createHash("sha1").update(input, "utf8").digest("hex").substring(0, 10);
 }
 
-async function decodeWithVincario(
+export async function decodeWithVincario(
   vin: string,
   apiKey: string,
   apiSecret: string
@@ -137,7 +137,7 @@ interface NhtsaResponse {
   }>;
 }
 
-async function decodeWithNhtsa(vin: string): Promise<VinDecoderResult> {
+export async function decodeWithNhtsa(vin: string): Promise<VinDecoderResult> {
   const url = `https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${vin}?format=json`;
 
   const controller = new AbortController();
@@ -264,7 +264,7 @@ function decodeYearFromVin(vin: string): number | undefined {
 // Normalizace hodnot
 // ============================================
 
-function normalizeFuelType(raw?: string): string | undefined {
+export function normalizeFuelType(raw?: string): string | undefined {
   if (!raw) return undefined;
   const lower = raw.toLowerCase();
   if (lower.includes("diesel")) return "DIESEL";
@@ -277,7 +277,7 @@ function normalizeFuelType(raw?: string): string | undefined {
   return raw;
 }
 
-function normalizeTransmission(raw?: string): string | undefined {
+export function normalizeTransmission(raw?: string): string | undefined {
   if (!raw) return undefined;
   const lower = raw.toLowerCase();
   if (lower.includes("manual")) return "MANUAL";
@@ -287,7 +287,7 @@ function normalizeTransmission(raw?: string): string | undefined {
   return raw;
 }
 
-function normalizeBodyType(raw?: string): string | undefined {
+export function normalizeBodyType(raw?: string): string | undefined {
   if (!raw) return undefined;
   const lower = raw.toLowerCase();
   if (lower.includes("sedan")) return "SEDAN";
@@ -301,7 +301,7 @@ function normalizeBodyType(raw?: string): string | undefined {
   return raw;
 }
 
-function normalizeDriveType(raw?: string): string | undefined {
+export function normalizeDriveType(raw?: string): string | undefined {
   if (!raw) return undefined;
   const lower = raw.toLowerCase();
   if (lower.includes("4") || lower.includes("all") || lower.includes("awd")) return "4x4";

@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Alert";
 import { Card } from "@/components/ui/Card";
 import { HintBox } from "./HintBox";
-import type { VinDecoderResult } from "@/types/vehicle-draft";
+import type { SmartLookupResult, DataSource } from "@/types/vehicle-draft";
 
 const VIN_REGEX = /^[A-HJ-NPR-Z0-9]{0,17}$/;
 const VIN_FULL_REGEX = /^[A-HJ-NPR-Z0-9]{17}$/;
@@ -25,6 +25,14 @@ interface DuplicateInfo {
   broker: string | null;
 }
 
+interface DuplicateResponse {
+  exists: boolean;
+  canReuse?: boolean;
+  isBlocking?: boolean;
+  vehicle?: DuplicateInfo;
+  archiveData?: Record<string, unknown>;
+}
+
 export function VinStep() {
   const router = useRouter();
   const { draft, updateSection, saveDraft } = useDraftContext();
@@ -35,13 +43,14 @@ export function VinStep() {
   const [duplicateChecking, setDuplicateChecking] = useState(false);
   const [duplicate, setDuplicate] = useState<DuplicateInfo | null>(null);
   const [duplicateChecked, setDuplicateChecked] = useState(false);
-  const [decoding, setDecoding] = useState(false);
-  const [decoded, setDecoded] = useState<VinDecoderResult | null>(
-    (draft?.vin?.decodedData as VinDecoderResult | undefined) ?? null
+  const [lookingUp, setLookingUp] = useState(false);
+  const [smartResult, setSmartResult] = useState<SmartLookupResult | null>(
+    ((draft?.vin as Record<string, unknown>)?.smartLookupResult as SmartLookupResult | undefined) ?? null
   );
-  const [decodeError, setDecodeError] = useState<string | null>(null);
+  const [lookupError, setLookupError] = useState<string | null>(null);
   const [manualEntryNote, setManualEntryNote] = useState(false);
   const [offlineNote, setOfflineNote] = useState(false);
+  const [canReuse, setCanReuse] = useState(false);
   const [scanModalOpen, setScanModalOpen] = useState(false);
   const [hasCamera, setHasCamera] = useState(false);
   const [autoDecodeQueued, setAutoDecodeQueued] = useState(false);
@@ -67,7 +76,7 @@ export function VinStep() {
       if (!VIN_REGEX.test(value)) return;
 
       setVin(value);
-      setDecodeError(null);
+      setLookupError(null);
       setManualEntryNote(false);
       setOfflineNote(false);
 
@@ -82,7 +91,8 @@ export function VinStep() {
       // Reset duplikát check pokud se změní VIN
       setDuplicate(null);
       setDuplicateChecked(false);
-      setDecoded(null);
+      setSmartResult(null);
+      setCanReuse(false);
     },
     []
   );
@@ -103,11 +113,19 @@ export function VinStep() {
 
     fetch(`/api/vin/check-duplicate?vin=${vin}`, { signal: controller.signal })
       .then((res) => res.json())
-      .then((data: { exists: boolean; vehicle?: DuplicateInfo }) => {
+      .then((data: DuplicateResponse) => {
         if (data.exists && data.vehicle) {
-          setDuplicate(data.vehicle);
+          // ARCHIVED = can reuse, not a blocker
+          if (data.canReuse) {
+            setDuplicate(null);
+            setCanReuse(true);
+          } else {
+            setDuplicate(data.vehicle);
+            setCanReuse(false);
+          }
         } else {
           setDuplicate(null);
+          setCanReuse(false);
         }
         setDuplicateChecked(true);
       })
@@ -125,12 +143,12 @@ export function VinStep() {
     };
   }, [vin, isOnline]);
 
-  // Dekódování VIN
-  const handleDecode = useCallback(async () => {
+  // Smart VIN Lookup — pipeline: DB → CEBIA → Vincario → NHTSA
+  const handleSmartLookup = useCallback(async () => {
     if (!VIN_FULL_REGEX.test(vin)) return;
 
-    setDecoding(true);
-    setDecodeError(null);
+    setLookingUp(true);
+    setLookupError(null);
     setOfflineNote(false);
 
     if (!isOnline) {
@@ -138,84 +156,60 @@ export function VinStep() {
       try {
         const cached = await offlineStorage.getCachedVin(vin);
         if (cached) {
-          const cachedData = cached.data as unknown as VinDecoderResult;
-          setDecoded(cachedData);
+          const cachedData = cached.data as unknown as SmartLookupResult;
+          setSmartResult(cachedData);
           updateSection("vin", {
             vin,
             vinVerified: true,
-            decodedData: cachedData,
-          });
+            decodedData: flattenSmartLookup(cachedData),
+            smartLookupResult: cachedData,
+          } as Record<string, unknown>);
         } else {
           setOfflineNote(true);
-          // Uložit VIN bez dekódování
-          updateSection("vin", {
-            vin,
-            vinVerified: false,
-          });
+          updateSection("vin", { vin, vinVerified: false });
         }
       } catch {
         setOfflineNote(true);
-        updateSection("vin", {
-          vin,
-          vinVerified: false,
-        });
+        updateSection("vin", { vin, vinVerified: false });
       }
-      setDecoding(false);
+      setLookingUp(false);
       return;
     }
 
     try {
-      const res = await fetch(`/api/vin/decode?vin=${vin}`);
+      const res = await fetch(`/api/vin/smart-lookup?vin=${vin}`);
       const json = await res.json();
 
-      if (!res.ok) {
-        // API selhalo — uložit VIN bez dekódování, umožnit manuální zadání
-        setManualEntryNote(true);
-        updateSection("vin", {
-          vin,
-          vinVerified: false,
-        });
-        return;
-      }
+      const result: SmartLookupResult & { manual?: boolean } = json;
 
-      const result: VinDecoderResult = json.data;
-      const isManual = json.manual === true;
-
-      if (isManual || !result.brand) {
-        // API nevrátilo data — manuální zadání v dalším kroku
+      if (result.manual || !result.fields?.brand) {
         setManualEntryNote(true);
-        updateSection("vin", {
-          vin,
-          vinVerified: false,
-        });
+        updateSection("vin", { vin, vinVerified: false });
       } else {
-        setDecoded(result);
+        setSmartResult(result);
         setManualEntryNote(false);
 
         // Cache do IndexedDB
         try {
           await offlineStorage.cacheVin(vin, result as unknown as Record<string, unknown>);
         } catch {
-          // Cache selhala, ale dekódování proběhlo
+          // Cache selhala, ale lookup proběhl
         }
 
-        // Uložit do draftu
+        // Save to draft — both smart lookup result and flattened decoded data for backward compat
         updateSection("vin", {
           vin,
           vinVerified: true,
-          decodedData: result,
-        });
+          decodedData: flattenSmartLookup(result),
+          smartLookupResult: result,
+        } as Record<string, unknown>);
       }
     } catch (err) {
-      // Fetch selhalo — umožnit pokračování s manuálním zadáním
-      console.error("VIN decode error:", err);
+      console.error("VIN smart lookup error:", err);
       setManualEntryNote(true);
-      updateSection("vin", {
-        vin,
-        vinVerified: false,
-      });
+      updateSection("vin", { vin, vinVerified: false });
     } finally {
-      setDecoding(false);
+      setLookingUp(false);
     }
   }, [vin, isOnline, updateSection]);
 
@@ -223,9 +217,9 @@ export function VinStep() {
   useEffect(() => {
     if (autoDecodeQueued && duplicateChecked && !duplicate && VIN_FULL_REGEX.test(vin)) {
       setAutoDecodeQueued(false);
-      handleDecode();
+      handleSmartLookup();
     }
-  }, [autoDecodeQueued, duplicateChecked, duplicate, vin, handleDecode]);
+  }, [autoDecodeQueued, duplicateChecked, duplicate, vin, handleSmartLookup]);
 
   // Pokračovat na další krok
   const handleNext = useCallback(async () => {
@@ -233,13 +227,14 @@ export function VinStep() {
 
     updateSection("vin", {
       vin,
-      vinVerified: decoded !== null,
-      decodedData: decoded ?? undefined,
-    });
+      vinVerified: smartResult !== null,
+      decodedData: smartResult ? flattenSmartLookup(smartResult) : undefined,
+      smartLookupResult: smartResult ?? undefined,
+    } as Record<string, unknown>);
 
     await saveDraft();
     router.push(`/makler/vehicles/new/contact?draft=${draft?.id}`);
-  }, [vin, decoded, updateSection, saveDraft, router, draft?.id]);
+  }, [vin, smartResult, updateSection, saveDraft, router, draft?.id]);
 
   const isValid = VIN_FULL_REGEX.test(vin);
   const canProceed = isValid && !duplicate;
@@ -339,23 +334,37 @@ export function VinStep() {
           </div>
         )}
 
+        {/* Reuse archived data info */}
+        {canReuse && !smartResult && (
+          <Alert variant="info">
+            <div className="space-y-1">
+              <p className="text-sm font-semibold">
+                Toto VIN jsme již zpracovali
+              </p>
+              <p className="text-sm">
+                V systému máme historická data k tomuto vozidlu. Po dekódování budou automaticky použita.
+              </p>
+            </div>
+          </Alert>
+        )}
+
         {/* Dekódovat tlačítko */}
         <div className="flex gap-3">
           <Button
             variant="primary"
-            onClick={handleDecode}
-            disabled={!isValid || decoding || !!duplicate}
+            onClick={handleSmartLookup}
+            disabled={!isValid || lookingUp || !!duplicate}
             className="flex-1"
           >
-            {decoding ? (
+            {lookingUp ? (
               <span className="flex items-center gap-2">
                 <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Dekóduji...
+                Načítám data...
               </span>
-            ) : decoded ? (
-              "Dekódovat znovu"
+            ) : smartResult ? (
+              "Načíst znovu"
             ) : (
-              "Dekódovat VIN"
+              "Načíst data z VIN"
             )}
           </Button>
 
@@ -385,21 +394,22 @@ export function VinStep() {
             setVinValid(true);
             setDuplicate(null);
             setDuplicateChecked(false);
-            setDecoded(null);
+            setSmartResult(null);
+            setCanReuse(false);
             setAutoDecodeQueued(true);
             setScanModalOpen(false);
           }}
         />
 
-        {/* Decode error */}
-        {decodeError && (
+        {/* Lookup error */}
+        {lookupError && (
           <Alert variant="error">
-            <span className="text-sm">{decodeError}</span>
+            <span className="text-sm">{lookupError}</span>
           </Alert>
         )}
 
         {/* Manual entry note — APIs nevrátily data */}
-        {manualEntryNote && !decoded && (
+        {manualEntryNote && !smartResult && (
           <Alert variant="info">
             <div className="space-y-1">
               <p className="text-sm font-semibold">
@@ -422,25 +432,79 @@ export function VinStep() {
           </Alert>
         )}
 
-        {/* Dekódovaná data */}
-        {decoded && (
+        {/* CEBIA warnings */}
+        {smartResult?.cebiaReport?.status === "WARNING" && (
+          <Alert variant="error">
+            <div className="space-y-2">
+              <p className="font-semibold text-sm">
+                CEBIA — upozornění k historii vozidla
+              </p>
+              {smartResult.cebiaReport.stolen && (
+                <p className="text-sm text-red-700 font-medium">
+                  Vozidlo je hlášeno jako odcizené!
+                </p>
+              )}
+              {smartResult.cebiaReport.mileageOk === false && (
+                <p className="text-sm text-red-700">
+                  Nesrovnalost v historii nájezdu kilometrů
+                </p>
+              )}
+              {smartResult.cebiaReport.damageFree === false && (
+                <p className="text-sm text-amber-700">
+                  Záznam o škodné události
+                </p>
+              )}
+              {smartResult.cebiaReport.financingFree === false && (
+                <p className="text-sm text-amber-700">
+                  Vozidlo je zatíženo financováním
+                </p>
+              )}
+            </div>
+          </Alert>
+        )}
+
+        {/* CEBIA OK badge */}
+        {smartResult?.cebiaReport && smartResult.cebiaReport.status === "OK" && (
+          <div className="flex items-center gap-2 text-sm text-success-500 font-medium">
+            <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                fillRule="evenodd"
+                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                clipRule="evenodd"
+              />
+            </svg>
+            CEBIA — historie vozidla v pořádku
+          </div>
+        )}
+
+        {/* Smart lookup result — with source badges */}
+        {smartResult && Object.keys(smartResult.fields).length > 0 && (
           <Card className="p-4">
-            <h3 className="text-sm font-bold text-gray-900 mb-3">
-              Dekódovaná data
-            </h3>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-bold text-gray-900">
+                Nalezena data
+              </h3>
+              <div className="flex gap-1.5">
+                {smartResult.sources.map((src) => (
+                  <SourceBadge key={src} source={src} />
+                ))}
+              </div>
+            </div>
             <div className="grid grid-cols-2 gap-3">
-              <DataField label="Značka" value={decoded.brand} />
-              <DataField label="Model" value={decoded.model} />
-              <DataField label="Varianta" value={decoded.variant} />
-              <DataField label="Rok výroby" value={decoded.year?.toString()} />
-              <DataField label="Palivo" value={formatFuelType(decoded.fuelType)} />
-              <DataField label="Převodovka" value={formatTransmission(decoded.transmission)} />
-              <DataField label="Výkon" value={decoded.enginePower ? `${decoded.enginePower} kW` : undefined} />
-              <DataField label="Objem" value={decoded.engineCapacity ? `${decoded.engineCapacity} ccm` : undefined} />
-              <DataField label="Karoserie" value={formatBodyType(decoded.bodyType)} />
-              <DataField label="Pohon" value={formatDriveType(decoded.drivetrain)} />
-              <DataField label="Dveře" value={decoded.doorsCount?.toString()} />
-              <DataField label="Míst" value={decoded.seatsCount?.toString()} />
+              <SmartField label="Značka" field={smartResult.fields.brand} />
+              <SmartField label="Model" field={smartResult.fields.model} />
+              <SmartField label="Varianta" field={smartResult.fields.variant} />
+              <SmartField label="Rok výroby" field={smartResult.fields.year} format={(v) => String(v)} />
+              <SmartField label="Palivo" field={smartResult.fields.fuelType} format={formatFuelType} />
+              <SmartField label="Převodovka" field={smartResult.fields.transmission} format={formatTransmission} />
+              <SmartField label="Výkon" field={smartResult.fields.enginePower} format={(v) => `${v} kW`} />
+              <SmartField label="Objem" field={smartResult.fields.engineCapacity} format={(v) => `${v} ccm`} />
+              <SmartField label="Karoserie" field={smartResult.fields.bodyType} format={formatBodyType} />
+              <SmartField label="Pohon" field={smartResult.fields.drivetrain} format={formatDriveType} />
+              <SmartField label="Dvere" field={smartResult.fields.doorsCount} format={(v) => String(v)} />
+              <SmartField label="Míst" field={smartResult.fields.seatsCount} format={(v) => String(v)} />
+              <SmartField label="Najeto" field={smartResult.fields.mileage} format={(v) => `${Number(v).toLocaleString("cs-CZ")} km`} />
+              <SmartField label="Stav" field={smartResult.fields.condition} format={formatCondition} />
             </div>
           </Card>
         )}
@@ -480,20 +544,96 @@ export function VinStep() {
 // Helpers
 // ============================================
 
-function DataField({ label, value }: { label: string; value?: string }) {
-  if (!value) return null;
+/** Flatten SmartLookupResult to VinDecoderResult shape for backward compat */
+function flattenSmartLookup(result: SmartLookupResult): Record<string, unknown> {
+  const f = result.fields;
+  return {
+    vin: "",
+    brand: f.brand?.value,
+    model: f.model?.value,
+    variant: f.variant?.value,
+    year: f.year?.value,
+    fuelType: f.fuelType?.value,
+    transmission: f.transmission?.value,
+    enginePower: f.enginePower?.value,
+    engineCapacity: f.engineCapacity?.value,
+    bodyType: f.bodyType?.value,
+    drivetrain: f.drivetrain?.value,
+    color: f.color?.value,
+    doorsCount: f.doorsCount?.value,
+    seatsCount: f.seatsCount?.value,
+  };
+}
+
+/** Source badge component */
+function SourceBadge({ source }: { source: DataSource }) {
+  const labels: Record<DataSource, string> = {
+    db: "Naše DB",
+    cebia: "CEBIA",
+    vincario: "VIN dekoder",
+    nhtsa: "NHTSA",
+  };
+  const colors: Record<DataSource, string> = {
+    db: "bg-blue-100 text-blue-700",
+    cebia: "bg-green-100 text-green-700",
+    vincario: "bg-purple-100 text-purple-700",
+    nhtsa: "bg-gray-100 text-gray-600",
+  };
+  return (
+    <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${colors[source]}`}>
+      {labels[source]}
+    </span>
+  );
+}
+
+/** Per-field source dot indicator */
+function FieldSourceDot({ source }: { source: DataSource }) {
+  const colors: Record<DataSource, string> = {
+    db: "bg-blue-500",
+    cebia: "bg-green-500",
+    vincario: "bg-purple-500",
+    nhtsa: "bg-gray-400",
+  };
+  const labels: Record<DataSource, string> = {
+    db: "DB",
+    cebia: "CEBIA",
+    vincario: "VIN",
+    nhtsa: "NHTSA",
+  };
+  return (
+    <span className="inline-flex items-center gap-0.5 text-[9px] font-medium text-gray-400">
+      <span className={`w-1.5 h-1.5 rounded-full ${colors[source]}`} />
+      {labels[source]}
+    </span>
+  );
+}
+
+/** Smart field with source indicator */
+function SmartField<T>({
+  label,
+  field,
+  format,
+}: {
+  label: string;
+  field?: { value: T; source: DataSource };
+  format?: (v: T) => string;
+}) {
+  if (!field) return null;
+  const displayValue = format ? format(field.value) : String(field.value);
   return (
     <div>
-      <span className="text-xs text-gray-400 uppercase tracking-wide">{label}</span>
-      <p className="text-sm font-semibold text-gray-900 mt-0.5">{value}</p>
+      <div className="flex items-center gap-1.5">
+        <span className="text-xs text-gray-400 uppercase tracking-wide">{label}</span>
+        <FieldSourceDot source={field.source} />
+      </div>
+      <p className="text-sm font-semibold text-gray-900 mt-0.5">{displayValue}</p>
     </div>
   );
 }
 
-function formatFuelType(value?: string): string | undefined {
-  if (!value) return undefined;
+function formatFuelType(value: string): string {
   const map: Record<string, string> = {
-    PETROL: "Benzín",
+    PETROL: "Benzin",
     DIESEL: "Diesel",
     ELECTRIC: "Elektro",
     HYBRID: "Hybrid",
@@ -504,8 +644,7 @@ function formatFuelType(value?: string): string | undefined {
   return map[value] ?? value;
 }
 
-function formatTransmission(value?: string): string | undefined {
-  if (!value) return undefined;
+function formatTransmission(value: string): string {
   const map: Record<string, string> = {
     MANUAL: "Manuální",
     AUTOMATIC: "Automatická",
@@ -515,14 +654,13 @@ function formatTransmission(value?: string): string | undefined {
   return map[value] ?? value;
 }
 
-function formatBodyType(value?: string): string | undefined {
-  if (!value) return undefined;
+function formatBodyType(value: string): string {
   const map: Record<string, string> = {
     SEDAN: "Sedan",
     HATCHBACK: "Hatchback",
     COMBI: "Kombi",
     SUV: "SUV",
-    COUPE: "Coupé",
+    COUPE: "Coupe",
     CABRIO: "Kabriolet",
     VAN: "Van / MPV",
     PICKUP: "Pickup",
@@ -530,12 +668,23 @@ function formatBodyType(value?: string): string | undefined {
   return map[value] ?? value;
 }
 
-function formatDriveType(value?: string): string | undefined {
-  if (!value) return undefined;
+function formatDriveType(value: string): string {
   const map: Record<string, string> = {
     FRONT: "Přední",
     REAR: "Zadní",
     "4x4": "4x4",
+  };
+  return map[value] ?? value;
+}
+
+function formatCondition(value: string): string {
+  const map: Record<string, string> = {
+    NEW: "Nové",
+    LIKE_NEW: "Jako nové",
+    EXCELLENT: "Výborné",
+    GOOD: "Dobré",
+    FAIR: "Uspokojivé",
+    DAMAGED: "Poškozené",
   };
   return map[value] ?? value;
 }

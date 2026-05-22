@@ -47,6 +47,20 @@ export async function GET(request: NextRequest) {
         id: true,
         brand: true,
         model: true,
+        variant: true,
+        year: true,
+        mileage: true,
+        fuelType: true,
+        transmission: true,
+        enginePower: true,
+        engineCapacity: true,
+        bodyType: true,
+        color: true,
+        doorsCount: true,
+        seatsCount: true,
+        drivetrain: true,
+        condition: true,
+        ownerCount: true,
         status: true,
         broker: {
           select: {
@@ -58,22 +72,64 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    if (existing) {
+    if (!existing) {
+      return NextResponse.json({ exists: false });
+    }
+
+    const brokerName = existing.broker
+      ? `${existing.broker.firstName} ${existing.broker.lastName}`
+      : null;
+
+    // ARCHIVED = can reuse data
+    const isArchived = existing.status === "ARCHIVED";
+    // Active statuses = blocker
+    const isBlocking = ["ACTIVE", "RESERVED", "SOLD", "PENDING", "DRAFT"].includes(existing.status);
+
+    if (isArchived) {
       return NextResponse.json({
         exists: true,
+        canReuse: true,
         vehicle: {
           id: existing.id,
           brand: existing.brand,
           model: existing.model,
           status: existing.status,
-          broker: existing.broker
-            ? `${existing.broker.firstName} ${existing.broker.lastName}`
-            : null,
+          broker: brokerName,
+        },
+        archiveData: {
+          id: existing.id,
+          brand: existing.brand,
+          model: existing.model,
+          variant: existing.variant,
+          year: existing.year,
+          mileage: existing.mileage,
+          fuelType: existing.fuelType,
+          transmission: existing.transmission,
+          enginePower: existing.enginePower,
+          engineCapacity: existing.engineCapacity,
+          bodyType: existing.bodyType,
+          color: existing.color,
+          doorsCount: existing.doorsCount,
+          seatsCount: existing.seatsCount,
+          drivetrain: existing.drivetrain,
+          condition: existing.condition,
+          ownerCount: existing.ownerCount,
         },
       });
     }
 
-    return NextResponse.json({ exists: false });
+    return NextResponse.json({
+      exists: true,
+      canReuse: false,
+      isBlocking,
+      vehicle: {
+        id: existing.id,
+        brand: existing.brand,
+        model: existing.model,
+        status: existing.status,
+        broker: brokerName,
+      },
+    });
   } catch (error) {
     console.error("GET /api/vin/check-duplicate error:", error);
     return NextResponse.json(

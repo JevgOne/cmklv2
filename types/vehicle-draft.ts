@@ -104,6 +104,28 @@ export interface InspectionData {
     PZ: string | null;
   };
 
+  // Počet klíčů
+  keyCount?: 1 | 2 | 3;
+
+  // Detailní stav pneumatik
+  tires?: {
+    type: "SUMMER" | "WINTER" | "ALL_SEASON";
+    brand?: string;
+    treadDepth?: number; // mm (0-8)
+    dotYear?: number; // rok výroby (DOT)
+    secondSet: boolean;
+    secondSetType?: "SUMMER" | "WINTER" | "ALL_SEASON";
+  };
+
+  // Lokální specifikace
+  localSpecs?: {
+    czHomologation: boolean;
+    registrationCountCZ?: number;
+    isImport: boolean;
+    importCountry?: string;
+    importDate?: string; // ISO date
+  };
+
   // Celkový dojem
   overallRating: number; // 1-5
   notes?: string;
@@ -244,6 +266,52 @@ export interface VehicleDraft {
 
   // ServerId po synchronizaci
   serverId?: string;
+}
+
+// ============================================
+// Smart Lookup — per-field source tracking
+// ============================================
+
+export type DataSource = "db" | "cebia" | "vincario" | "nhtsa";
+export type Confidence = "high" | "medium" | "low";
+
+export interface FieldWithSource<T> {
+  value: T;
+  source: DataSource;
+  confidence: Confidence;
+  editable: boolean;
+}
+
+export interface SmartLookupResult {
+  fields: {
+    brand?: FieldWithSource<string>;
+    model?: FieldWithSource<string>;
+    variant?: FieldWithSource<string>;
+    year?: FieldWithSource<number>;
+    fuelType?: FieldWithSource<string>;
+    transmission?: FieldWithSource<string>;
+    enginePower?: FieldWithSource<number>;
+    engineCapacity?: FieldWithSource<number>;
+    bodyType?: FieldWithSource<string>;
+    drivetrain?: FieldWithSource<string>;
+    color?: FieldWithSource<string>;
+    doorsCount?: FieldWithSource<number>;
+    seatsCount?: FieldWithSource<number>;
+    mileage?: FieldWithSource<number>;
+    condition?: FieldWithSource<string>;
+    ownerCount?: FieldWithSource<number>;
+  };
+  sources: DataSource[];
+  cebiaReport?: {
+    status: "OK" | "WARNING" | "ERROR";
+    reportUrl: string | null;
+    stolen?: boolean;
+    mileageOk?: boolean;
+    damageFree?: boolean;
+    financingFree?: boolean;
+    registrationHistory?: number;
+  };
+  existingVehicleId?: string | null;
 }
 
 // ============================================
