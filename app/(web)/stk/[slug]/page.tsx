@@ -57,8 +57,6 @@ export default async function StkDetailPage({ params }: Props) {
     updatedAt: r.updatedAt.toISOString(),
   }));
 
-  const isStk = servis.categories.includes("stk-emise");
-
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "AutoRepair",
@@ -186,7 +184,7 @@ export default async function StkDetailPage({ params }: Props) {
           {/* Right sidebar */}
           <div className="space-y-6">
             {/* STK info */}
-            {isStk && (
+            {(
               <StkInfoCard
                 stkLines={servis.stkLines}
                 stkWaitDays={servis.stkWaitDays}
