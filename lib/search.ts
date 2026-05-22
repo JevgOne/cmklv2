@@ -203,3 +203,207 @@ export async function getSearchSuggestions(
 
   return suggestions.map((s) => s.suggestion);
 }
+
+/* ------------------------------------------------------------------ */
+/*  Global cross-platform search                                        */
+/* ------------------------------------------------------------------ */
+
+export interface GlobalSearchItem {
+  id: string;
+  type: "vehicle" | "listing" | "part" | "service" | "broker" | "article";
+  title: string;
+  subtitle: string;
+  url: string;
+  image?: string | null;
+  price?: number | null;
+  rating?: number | null;
+  rank: number;
+}
+
+export interface GlobalSearchResponse {
+  vehicles: GlobalSearchItem[];
+  parts: GlobalSearchItem[];
+  services: GlobalSearchItem[];
+  totalByType: Record<string, number>;
+  suggestions: string[];
+}
+
+export async function globalSearch(
+  query: string,
+  options: { limitPerType?: number; type?: string } = {}
+): Promise<GlobalSearchResponse> {
+  const { limitPerType = 5, type = "all" } = options;
+  const tsQuery = sanitizeQuery(query);
+
+  if (!tsQuery) {
+    return { vehicles: [], parts: [], services: [], totalByType: {}, suggestions: [] };
+  }
+
+  const [vehicles, listings, parts, services] = await Promise.all([
+    type === "all" || type === "vehicles" ? searchVehiclesGlobal(tsQuery, limitPerType) : [],
+    type === "all" || type === "vehicles" ? searchListingsGlobal(tsQuery, limitPerType) : [],
+    type === "all" || type === "parts" ? searchPartsGlobal(tsQuery, limitPerType) : [],
+    type === "all" || type === "services" ? searchServicesGlobal(tsQuery, limitPerType) : [],
+  ]);
+
+  // Merge vehicles + listings, sort by rank, limit
+  const mergedVehicles = [...vehicles, ...listings]
+    .sort((a, b) => b.rank - a.rank)
+    .slice(0, limitPerType);
+
+  const suggestions = await getSearchSuggestions(query);
+
+  return {
+    vehicles: mergedVehicles,
+    parts,
+    services,
+    totalByType: {
+      vehicles: vehicles.length + listings.length,
+      parts: parts.length,
+      services: services.length,
+    },
+    suggestions,
+  };
+}
+
+async function searchVehiclesGlobal(tsQuery: string, limit: number): Promise<GlobalSearchItem[]> {
+  const rows = await prisma.$queryRawUnsafe<
+    Array<{
+      id: string;
+      brand: string;
+      model: string;
+      variant: string | null;
+      year: number;
+      mileage: number;
+      slug: string | null;
+      rank: number;
+      image: string | null;
+    }>
+  >(
+    `SELECT v."id", v."brand", v."model", v."variant", v."year", v."mileage", v."slug",
+            ts_rank(v."searchVector", to_tsquery('simple', $1)) AS rank,
+            (SELECT vi."url" FROM "VehicleImage" vi WHERE vi."vehicleId" = v."id" AND vi."isPrimary" = true LIMIT 1) AS image
+     FROM "Vehicle" v
+     WHERE v."status" = 'ACTIVE'
+       AND v."slug" IS NOT NULL
+       AND v."searchVector" @@ to_tsquery('simple', $1)
+     ORDER BY rank DESC
+     LIMIT $2`,
+    tsQuery,
+    limit
+  );
+
+  return rows.map((v) => ({
+    id: v.id,
+    type: "vehicle" as const,
+    title: `${v.brand} ${v.model}${v.variant ? ` ${v.variant}` : ""}`,
+    subtitle: `${v.year} · ${v.mileage.toLocaleString("cs-CZ")} km`,
+    url: `/nabidka/${v.slug}`,
+    image: v.image,
+    rank: Number(v.rank),
+  }));
+}
+
+async function searchListingsGlobal(tsQuery: string, limit: number): Promise<GlobalSearchItem[]> {
+  const rows = await prisma.$queryRawUnsafe<
+    Array<{
+      id: string;
+      brand: string;
+      model: string;
+      variant: string | null;
+      year: number;
+      slug: string;
+      price: number;
+      rank: number;
+      image: string | null;
+    }>
+  >(
+    `SELECT l."id", l."brand", l."model", l."variant", l."year", l."slug", l."price",
+            ts_rank(l."searchVector", to_tsquery('simple', $1)) AS rank,
+            (SELECT li."url" FROM "ListingImage" li WHERE li."listingId" = l."id" AND li."isPrimary" = true LIMIT 1) AS image
+     FROM "Listing" l
+     WHERE l."status" = 'ACTIVE'
+       AND l."searchVector" @@ to_tsquery('simple', $1)
+     ORDER BY rank DESC
+     LIMIT $2`,
+    tsQuery,
+    limit
+  );
+
+  return rows.map((l) => ({
+    id: l.id,
+    type: "listing" as const,
+    title: `${l.brand} ${l.model}${l.variant ? ` ${l.variant}` : ""}`,
+    subtitle: `${l.year} · ${l.price.toLocaleString("cs-CZ")} Kč`,
+    url: `/nabidka/${l.slug}`,
+    image: l.image,
+    price: l.price,
+    rank: Number(l.rank),
+  }));
+}
+
+async function searchPartsGlobal(tsQuery: string, limit: number): Promise<GlobalSearchItem[]> {
+  const rows = await prisma.$queryRawUnsafe<
+    Array<{
+      id: string;
+      name: string;
+      category: string;
+      slug: string;
+      price: number;
+      rank: number;
+      image: string | null;
+    }>
+  >(
+    `SELECT p."id", p."name", p."category", p."slug", p."price",
+            ts_rank(p."searchVector", to_tsquery('simple', $1)) AS rank,
+            (SELECT pi."url" FROM "PartImage" pi WHERE pi."partId" = p."id" AND pi."isPrimary" = true LIMIT 1) AS image
+     FROM "Part" p
+     WHERE p."status" = 'ACTIVE'
+       AND p."searchVector" @@ to_tsquery('simple', $1)
+     ORDER BY rank DESC
+     LIMIT $2`,
+    tsQuery,
+    limit
+  );
+
+  return rows.map((p) => ({
+    id: p.id,
+    type: "part" as const,
+    title: p.name,
+    subtitle: `${p.price.toLocaleString("cs-CZ")} Kč`,
+    url: `/shop/dil/${p.slug}`,
+    image: p.image,
+    price: p.price,
+    rank: Number(p.rank),
+  }));
+}
+
+async function searchServicesGlobal(tsQuery: string, limit: number): Promise<GlobalSearchItem[]> {
+  // AutoServis doesn't have tsvector yet (Fáze 2), use ILIKE fallback
+  const cleaned = tsQuery.replace(/:?\*/g, "").replace(/\s*&\s*/g, " ").trim();
+  if (!cleaned) return [];
+
+  const rows = await prisma.autoServis.findMany({
+    where: {
+      isPublished: true,
+      OR: [
+        { name: { contains: cleaned, mode: "insensitive" } },
+        { city: { contains: cleaned, mode: "insensitive" } },
+        { description: { contains: cleaned, mode: "insensitive" } },
+      ],
+    },
+    orderBy: { averageRating: "desc" },
+    take: limit,
+  });
+
+  return rows.map((s) => ({
+    id: s.id,
+    type: "service" as const,
+    title: s.name,
+    subtitle: `${s.city} · ${s.averageRating > 0 ? `★ ${s.averageRating.toFixed(1)}` : "Nový"}`,
+    url: `/autoservisy/${s.slug}`,
+    image: s.logo,
+    rating: s.averageRating,
+    rank: 0.1,
+  }));
+}

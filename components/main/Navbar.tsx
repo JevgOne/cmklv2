@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { MainMobileMenu } from "./MobileMenu";
 import { CartIcon } from "@/components/web/CartIcon";
+import { SearchOverlayTrigger } from "@/components/web/SearchOverlayTrigger";
 import { PlatformSwitcher } from "@/components/ui/PlatformSwitcher";
 import { AuthButton } from "@/components/ui/AuthButton";
 
@@ -220,6 +221,7 @@ export function MainNavbar() {
         </div>
 
         <div className="hidden lg:flex items-center gap-3 shrink-0">
+          <SearchOverlayTrigger />
           <CartIcon />
           <AuthButton />
           <Link
