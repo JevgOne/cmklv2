@@ -1,9 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { ServisyList } from "@/components/web/autoservisy/ServisyList";
+import { MapListView } from "@/components/web/map/MapListView";
 import { generateFaqJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
 import type { Metadata } from "next";
+import type { MapMarker } from "@/lib/map-config";
 
 const AUTOSERVISY_FAQ = [
   { question: "Jak vybrat spolehlivý autoservis?", answer: "Podívejte se na recenze od skutečných zákazníků, ověřte specializaci servisu na váš typ vozidla a zkontrolujte, zda servis spolupracuje s pojišťovnami. Na CarMakléř najdete hodnocení kvality, ceny, rychlosti a komunikace." },
@@ -35,7 +37,7 @@ export default async function AutoservisyPage() {
     prisma.autoServis.findMany({
       where: { isPublished: true },
       orderBy: [{ isFeatured: "desc" }, { averageRating: "desc" }, { reviewCount: "desc" }],
-      take: 20,
+      take: 50,
     }),
     prisma.autoServis.count({ where: { isPublished: true } }),
     prisma.autoServis.findMany({
@@ -52,6 +54,22 @@ export default async function AutoservisyPage() {
     updatedAt: s.updatedAt.toISOString(),
   }));
 
+  const mapMarkers: MapMarker[] = servisy
+    .filter((s) => s.latitude && s.longitude)
+    .map((s) => ({
+      id: s.id,
+      slug: s.slug,
+      lat: s.latitude!,
+      lng: s.longitude!,
+      name: s.name,
+      city: s.city,
+      rating: s.averageRating,
+      reviewCount: s.reviewCount,
+      phone: s.phone || undefined,
+      categories: s.categories,
+      type: s.categories.includes("stk-emise") ? "stk" as const : "servis" as const,
+    }));
+
   const cityOptions = [
     { value: "", label: "Všechna města" },
     ...cities.map((c) => ({ value: c.city, label: c.city })),
@@ -59,30 +77,38 @@ export default async function AutoservisyPage() {
 
   return (
     <>
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(AUTOSERVISY_FAQ) }}
-    />
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-      <Breadcrumbs items={[{ label: "Domů", href: "/" }, { label: "Autoservisy" }]} />
-
-      {/* Hero */}
-      <div className="text-center mb-10">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-3">
-          Najděte ověřený <span className="text-orange-500">autoservis</span>
-        </h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          {totalCount} servisů s reálnými recenzemi od zákazníků. Autorizované i nezávislé dílny.
-        </p>
-      </div>
-
-      <ServisyList
-        initialServisy={serialized}
-        totalCount={totalCount}
-        cityOptions={cityOptions}
-        categoryOptions={CATEGORY_OPTIONS}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(AUTOSERVISY_FAQ) }}
       />
-    </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        <Breadcrumbs items={[{ label: "Domů", href: "/" }, { label: "Autoservisy" }]} />
+
+        {/* Hero */}
+        <div className="text-center mb-10">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-3">
+            Najděte ověřený <span className="text-orange-500">autoservis</span>
+          </h1>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            {totalCount} servisů s reálnými recenzemi od zákazníků. Autorizované i nezávislé dílny.
+          </p>
+        </div>
+
+        {/* Map */}
+        {mapMarkers.length > 0 && (
+          <div className="mb-12">
+            <MapListView markers={mapMarkers} type="servis" />
+          </div>
+        )}
+
+        {/* Full list with filters */}
+        <ServisyList
+          initialServisy={serialized}
+          totalCount={totalCount}
+          cityOptions={cityOptions}
+          categoryOptions={CATEGORY_OPTIONS}
+        />
+      </div>
     </>
   );
 }

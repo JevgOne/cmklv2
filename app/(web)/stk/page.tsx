@@ -2,10 +2,11 @@ import { prisma } from "@/lib/prisma";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { StkPriceTable } from "@/components/web/StkPriceTable";
 import { StkPriceCalc } from "@/components/web/StkPriceCalc";
-import { ServisyList } from "@/components/web/autoservisy/ServisyList";
+import { MapListView } from "@/components/web/map/MapListView";
 import { generateFaqJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
 import type { Metadata } from "next";
+import type { MapMarker } from "@/lib/map-config";
 
 const STK_FAQ = [
   { question: "Kolik stojí STK?", answer: "Cena STK pro osobní automobil (kategorie M1) je 800 Kč za technickou prohlídku a 400 Kč za měření emisí, celkem 1 200 Kč. Ceny se liší podle kategorie vozidla." },
@@ -33,60 +34,53 @@ export default async function StkListPage() {
     ],
   });
 
-  const serialized = servisy.map((s) => ({
-    id: s.id,
-    slug: s.slug,
-    name: s.name,
-    city: s.city,
-    categories: s.categories,
-    averageRating: s.averageRating,
-    reviewCount: s.reviewCount,
-    recommendRate: s.recommendRate,
-    tier: s.tier,
-    insurancePartner: s.insurancePartner,
-    insuranceNames: s.insuranceNames,
-    isVerified: s.isVerified,
-    logo: s.logo,
-  }));
-
-  const cities = [...new Set(servisy.map((s) => s.city))].sort();
-  const cityOptions = [
-    { value: "", label: "Všechna města" },
-    ...cities.map((c) => ({ value: c, label: c })),
-  ];
+  const mapMarkers: MapMarker[] = servisy
+    .filter((s) => s.latitude && s.longitude)
+    .map((s) => ({
+      id: s.id,
+      slug: s.slug,
+      lat: s.latitude!,
+      lng: s.longitude!,
+      name: s.name,
+      city: s.city,
+      rating: s.averageRating,
+      reviewCount: s.reviewCount,
+      phone: s.phone || undefined,
+      categories: s.categories,
+      type: "stk" as const,
+    }));
 
   return (
     <>
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(STK_FAQ) }}
-    />
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-      <Breadcrumbs items={[{ label: "Domů", href: "/" }, { label: "STK stanice" }]} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(STK_FAQ) }}
+      />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        <Breadcrumbs items={[{ label: "Domů", href: "/" }, { label: "STK stanice" }]} />
 
-      <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">
-        STK stanice
-      </h1>
-      <p className="text-gray-500 mb-8">
-        Najděte nejbližší stanici technické kontroly s recenzemi a hodnocením
-      </p>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">
+          STK stanice v České republice
+        </h1>
+        <p className="text-gray-500 mb-8">
+          {mapMarkers.length > 0
+            ? `${mapMarkers.length} stanic na mapě — najděte nejbližší STK s recenzemi a hodnocením`
+            : "Najděte nejbližší stanici technické kontroly s recenzemi a hodnocením"}
+        </p>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
-          <ServisyList
-            initialServisy={serialized}
-            totalCount={serialized.length}
-            cityOptions={cityOptions}
-            categoryOptions={[]}
-          />
-        </div>
+        {/* Map + List */}
+        {mapMarkers.length > 0 && (
+          <div className="mb-12">
+            <MapListView markers={mapMarkers} type="stk" />
+          </div>
+        )}
 
-        <div className="space-y-6">
+        {/* Price calculator + table */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <StkPriceCalc />
           <StkPriceTable />
         </div>
       </div>
-    </div>
     </>
   );
 }

@@ -2782,6 +2782,10 @@ model AutoServis {
   stkTrailers       Boolean  @default(false)
   stkHeavy          Boolean  @default(false)
 
+  // Oficiální data (MDČR import)
+  officialStationId String?   @unique
+  lastVerifiedAt    DateTime?
+
   // Flags
   isVerified      Boolean  @default(false)
   isClaimed       Boolean  @default(false)
@@ -2812,6 +2816,8 @@ model AutoServis {
   @@index([isVerified])
   @@index([tier])
   @@index([insurancePartner])
+  @@index([latitude, longitude])
+  @@index([region])
 }
 
 model ServisReview {
