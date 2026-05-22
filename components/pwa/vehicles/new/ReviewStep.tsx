@@ -141,8 +141,20 @@ export function ReviewStep() {
 
   const handleSubmit = async () => {
     if (!draft || !allPassed) return;
+
+    // BUG 3 FIX: Prevent duplicate submission
+    if (draft.status === "submitted" || draft.status === "pending_sync") {
+      setSubmitError("Toto vozidlo již bylo odesláno.");
+      return;
+    }
+
+    if (submitting) return;
     setSubmitting(true);
     setSubmitError(null);
+
+    // Mark draft as pending_sync BEFORE POST (survives page refresh)
+    updateStatus("pending_sync");
+    await saveDraft();
 
     try {
       if (navigator.onLine) {
@@ -216,6 +228,44 @@ export function ReviewStep() {
           }
         }
 
+        // BUG 5 FIX: Upload inspection photos (defects + wheels)
+        const inspectionImageIds: string[] = [];
+        if (draft.inspection?.defects?.length) {
+          for (const defect of draft.inspection.defects) {
+            if (defect.imageId) inspectionImageIds.push(defect.imageId);
+          }
+        }
+        if (draft.inspection?.wheelPhotos) {
+          const wp = draft.inspection.wheelPhotos;
+          for (const key of ["LP", "PP", "LZ", "PZ"] as const) {
+            if (wp[key]) inspectionImageIds.push(wp[key]);
+          }
+        }
+        if (inspectionImageIds.length > 0) {
+          setSubmitStatus("Nahrávám inspekční fotky...");
+          const { uploadImagesByIds, replaceLocalIdsWithUrls } = await import("@/lib/offline/upload-photos");
+          const inspectionUploaded = await uploadImagesByIds(draft.id, inspectionImageIds);
+          if (inspectionUploaded.size > 0 && draft.inspection) {
+            const updatedInspection = replaceLocalIdsWithUrls(draft.inspection, inspectionUploaded);
+            await fetch(`/api/vehicles/${result.id}`, {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ inspectionData: JSON.stringify(updatedInspection) }),
+            });
+          }
+        }
+
+        // BUG 1 FIX: Transition DRAFT → PENDING
+        setSubmitStatus("Odesílám ke schválení...");
+        const statusRes = await fetch(`/api/vehicles/${result.id}/status`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: "PENDING" }),
+        });
+        if (!statusRes.ok) {
+          console.error("Failed to transition to PENDING:", await statusRes.text());
+        }
+
         updateStatus("submitted");
         await saveDraft();
 
@@ -275,6 +325,9 @@ export function ReviewStep() {
         router.push(`/makler/vehicles/new/success?draft=${draftId}&offline=1`);
       }
     } catch (err) {
+      // BUG 3 FIX: Rollback draft status on failure so user can retry
+      updateStatus("draft");
+      await saveDraft();
       setSubmitError(
         err instanceof Error ? err.message : "Neznámá chyba při odesílání"
       );
@@ -439,6 +492,23 @@ export function ReviewStep() {
             ))}
           </div>
         </div>
+
+        {/* Already submitted guard */}
+        {draft.status === "submitted" && (
+          <Alert variant="info">
+            <span className="text-sm">
+              Toto vozidlo bylo odesláno ke schválení.
+              {draft.serverId && (
+                <> <a href={`/makler/vehicles/${draft.serverId}`} className="font-medium text-orange-500 underline">Zobrazit detail</a></>
+              )}
+            </span>
+          </Alert>
+        )}
+        {draft.status === "pending_sync" && (
+          <Alert variant="warning">
+            <span className="text-sm">Vozidlo čeká na odeslání (offline). Bude odesláno automaticky.</span>
+          </Alert>
+        )}
 
         {/* Chybový stav */}
         {submitError && (

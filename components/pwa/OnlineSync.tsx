@@ -33,59 +33,103 @@ export function OnlineSync() {
             isMain?: boolean;
             order?: number;
           }>;
+          const retries = (payload._retries as number) || 0;
 
           // Remove internal fields from payload before sending to API
-          const { _draftId, _photos, ...vehiclePayload } = payload;
+          const { _draftId, _photos, _retries, _vehicleId, ...vehiclePayload } = payload;
 
           try {
-            // 1. Create vehicle
-            const res = await fetch("/api/vehicles", {
-              method: "POST",
+            let vehicleId = _vehicleId as string | undefined;
+
+            // STEP 1: Create vehicle (skip if already created in prior attempt)
+            if (!vehicleId) {
+              const res = await fetch("/api/vehicles", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(vehiclePayload),
+              });
+
+              if (!res.ok) {
+                if (res.status === 409) {
+                  // VIN duplicate — vehicle already exists, remove action
+                  console.log(`[OnlineSync] VIN duplicate, removing action ${action.id}`);
+                  await offlineStorage.removePendingAction(action.id);
+                  continue;
+                }
+                // Other error — retry up to 3 times
+                if (retries >= 3) {
+                  console.error(`[OnlineSync] Max retries reached for action ${action.id}`);
+                  await offlineStorage.removePendingAction(action.id);
+                  continue;
+                }
+                // Increment retry counter
+                await offlineStorage.updatePendingAction(action.id, {
+                  ...payload,
+                  _retries: retries + 1,
+                });
+                continue;
+              }
+
+              const result = (await res.json()) as { id: string };
+              vehicleId = result.id;
+            }
+
+            // STEP 2: Upload photos from IndexedDB
+            let photosOk = true;
+            if (draftId && photos.length > 0) {
+              try {
+                const imageUrls = await uploadDraftPhotos(draftId, photos);
+                if (imageUrls.length > 0) {
+                  await fetch(`/api/vehicles/${vehicleId}/images`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ images: imageUrls }),
+                  });
+                }
+              } catch (photoErr) {
+                console.error("[OnlineSync] Photo upload failed:", photoErr);
+                photosOk = false;
+                // Save vehicleId for retry — skip vehicle creation next time
+                await offlineStorage.updatePendingAction(action.id, {
+                  ...payload,
+                  _vehicleId: vehicleId,
+                  _retries: retries + 1,
+                });
+                if (retries + 1 >= 3) {
+                  // Max retries — remove action, vehicle exists but without photos
+                  await offlineStorage.removePendingAction(action.id);
+                }
+                continue;
+              }
+            }
+
+            // STEP 3: DRAFT → PENDING transition (BUG 1 FIX)
+            await fetch(`/api/vehicles/${vehicleId}/status`, {
+              method: "PATCH",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(vehiclePayload),
+              body: JSON.stringify({ status: "PENDING" }),
             });
 
-            if (!res.ok) {
-              console.error(
-                `[OnlineSync] Failed to submit vehicle: ${res.status}`
-              );
-              continue;
-            }
+            // STEP 4: Cleanup — only if everything succeeded
+            if (photosOk) {
+              await offlineStorage.removePendingAction(action.id);
 
-            const vehicle = (await res.json()) as { id: string };
-
-            // 2. Upload photos from IndexedDB
-            if (draftId && photos.length > 0) {
-              const imageUrls = await uploadDraftPhotos(draftId, photos);
-              if (imageUrls.length > 0) {
-                await fetch(`/api/vehicles/${vehicle.id}/images`, {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ images: imageUrls }),
-                });
+              if (draftId) {
+                const draft = await offlineStorage.getDraft(draftId);
+                if (draft) {
+                  await offlineStorage.saveDraft(draftId, {
+                    ...draft.data,
+                    serverId: vehicleId,
+                    status: "submitted",
+                  });
+                }
               }
             }
 
-            // 3. Remove pending action
-            await offlineStorage.removePendingAction(action.id);
-
-            // 4. Update draft status
-            if (draftId) {
-              const draft = await offlineStorage.getDraft(draftId);
-              if (draft) {
-                await offlineStorage.saveDraft(draftId, {
-                  ...draft.data,
-                  serverId: vehicle.id,
-                  status: "submitted",
-                });
-              }
-            }
-
-            console.log(
-              `[OnlineSync] Vehicle synced: ${vehicle.id}`
-            );
+            console.log(`[OnlineSync] Vehicle synced: ${vehicleId}`);
           } catch (err) {
             console.error(`[OnlineSync] Sync error for action ${action.id}:`, err);
+            // Pending action stays — will retry on next online event
           }
         }
       } finally {

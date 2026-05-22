@@ -95,6 +95,14 @@ export class OfflineStorage {
     await db.delete("pendingActions", id);
   }
 
+  async updatePendingAction(id: string, payload: Record<string, unknown>): Promise<void> {
+    const db = await getDB();
+    const existing = await db.get("pendingActions", id);
+    if (existing) {
+      await db.put("pendingActions", { ...existing, payload });
+    }
+  }
+
   // ============================================
   // VIN CACHE
   // ============================================

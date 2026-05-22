@@ -91,9 +91,9 @@ export function SuccessView({ offline = false, vehicleId }: SuccessViewProps) {
           variant={offline ? "primary" : "outline"}
           className="w-full"
           size="lg"
-          onClick={() => router.push("/makler/dashboard")}
+          onClick={() => router.push("/makler/vehicles")}
         >
-          Zpet na Dashboard
+          Moje vozy
         </Button>
         <Button
           variant="outline"
@@ -101,6 +101,13 @@ export function SuccessView({ offline = false, vehicleId }: SuccessViewProps) {
           onClick={() => router.push("/makler/vehicles/new")}
         >
           Nabrat dalsi auto
+        </Button>
+        <Button
+          variant="ghost"
+          className="w-full text-gray-500"
+          onClick={() => router.push("/makler/dashboard")}
+        >
+          Dashboard
         </Button>
       </div>
     </div>
