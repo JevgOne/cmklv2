@@ -30,8 +30,10 @@ const EMPTY_FORM = {
 
 const TYPE_LABELS: Record<string, string> = {
   GENERAL: "Obecná",
-  SELLER: "Prodejce",
-  BUYER: "Kupující",
+  SALE: "Prodej auta",
+  PURCHASE: "Nákup auta",
+  PARTS: "Autodíly",
+  MARKETPLACE: "Marketplace",
 };
 
 function Stars({ count }: { count: number }) {
@@ -206,8 +208,10 @@ export function ReviewsManager({ initialReviews }: ReviewsManagerProps) {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
               >
                 <option value="GENERAL">Obecná</option>
-                <option value="SELLER">Prodejce</option>
-                <option value="BUYER">Kupující</option>
+                <option value="SALE">Prodej auta</option>
+                <option value="PURCHASE">Nákup auta</option>
+                <option value="PARTS">Autodíly</option>
+                <option value="MARKETPLACE">Marketplace</option>
               </select>
             </div>
             <div className="flex items-center gap-6 pt-4">

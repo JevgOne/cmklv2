@@ -11,7 +11,7 @@ const reviewSchema = z.object({
   authorCity: z.string().max(100).nullable().optional(),
   text: z.string().min(10).max(2000),
   rating: z.number().int().min(1).max(5).default(5),
-  type: z.enum(["GENERAL", "SELLER", "BUYER"]).default("GENERAL"),
+  type: z.enum(["GENERAL", "SALE", "PURCHASE", "PARTS", "MARKETPLACE"]).default("GENERAL"),
   isPublished: z.boolean().default(false),
   isFeatured: z.boolean().default(false),
   source: z.string().max(50).nullable().optional(),

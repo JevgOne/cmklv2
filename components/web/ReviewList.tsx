@@ -17,8 +17,8 @@ interface ReviewItem {
 
 const tabs = [
   { value: "all", label: "Všechny" },
-  { value: "SELLER", label: "Prodejci" },
-  { value: "BUYER", label: "Kupující" },
+  { value: "SALE", label: "Prodejci" },
+  { value: "PURCHASE", label: "Kupující" },
 ];
 
 function Stars({ count }: { count: number }) {
@@ -82,8 +82,12 @@ export function ReviewList({ reviews }: { reviews: ReviewItem[] }) {
                   {" "}· {formatDate(review.createdAt)}
                 </span>
               </div>
-              <Badge variant={review.type === "SELLER" ? "verified" : "new"}>
-                {review.type === "SELLER" ? "Ověřený prodej" : review.type === "BUYER" ? "Ověřený nákup" : "Recenze"}
+              <Badge variant={review.type === "SALE" ? "verified" : review.type === "PURCHASE" ? "new" : "default"}>
+                {review.type === "SALE" ? "Prodej auta"
+                  : review.type === "PURCHASE" ? "Nákup auta"
+                  : review.type === "PARTS" ? "Autodíly"
+                  : review.type === "MARKETPLACE" ? "Marketplace"
+                  : "Recenze"}
               </Badge>
             </div>
           </Card>
