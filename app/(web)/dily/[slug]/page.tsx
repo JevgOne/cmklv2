@@ -183,7 +183,7 @@ export default async function DilyDetailPage({
     { name: "Domů", url: "https://carmakler.cz" },
     { name: "Díly", url: "https://carmakler.cz/dily" },
     { name: categoryLabel, url: `https://carmakler.cz/dily/katalog?kategorie=${part.category.toLowerCase()}` },
-    { name: part.name },
+    { name: part.name, url: `https://carmakler.cz/dily/${part.slug || part.id}` },
   ];
 
   return (

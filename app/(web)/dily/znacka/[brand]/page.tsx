@@ -81,7 +81,7 @@ export default async function PartsBrandPage({
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: "Domů", url: `${BASE_URL}` },
     { name: "Díly", url: `${BASE_URL}/dily` },
-    { name: `Díly ${brandData.name}` },
+    { name: `Díly ${brandData.name}`, url: `${BASE_URL}/dily/znacka/${brand}` },
   ]);
 
   return (

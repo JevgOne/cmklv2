@@ -129,7 +129,7 @@ export default async function PartsBrandModelYearPage({
     { name: "Díly", url: `${BASE_URL}/dily` },
     { name: brandData.name, url: `${BASE_URL}/dily/znacka/${brand}` },
     { name: modelData.name, url: `${BASE_URL}/dily/znacka/${brand}/${model}` },
-    { name: rok },
+    { name: rok, url: `${BASE_URL}/dily/znacka/${brand}/${model}/${rok}` },
   ]);
 
   // Najdi generation pro tento rok

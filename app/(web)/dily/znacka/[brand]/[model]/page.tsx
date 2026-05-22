@@ -105,7 +105,7 @@ export default async function PartsBrandModelPage({
     { name: "Domů", url: `${BASE_URL}` },
     { name: "Díly", url: `${BASE_URL}/dily` },
     { name: brandData.name, url: `${BASE_URL}/dily/znacka/${brand}` },
-    { name: modelData.name },
+    { name: modelData.name, url: `${BASE_URL}/dily/znacka/${brand}/${model}` },
   ]);
 
   const topYears = modelData.topYears ?? [2015, 2018, 2020];

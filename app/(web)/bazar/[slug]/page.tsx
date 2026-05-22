@@ -80,7 +80,7 @@ export default async function BazarProfilePage({ params }: Props) {
           __html: generateBreadcrumbJsonLd([
             { name: "Domů", url: "https://carmakler.cz" },
             { name: "Bazary", url: "https://carmakler.cz/nabidka" },
-            { name: partner.name },
+            { name: partner.name, url: `https://carmakler.cz/bazar/${slug}` },
           ]),
         }}
       />

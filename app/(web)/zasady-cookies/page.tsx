@@ -87,7 +87,7 @@ export default function ZasadyCookiesPage() {
         dangerouslySetInnerHTML={{
           __html: generateBreadcrumbJsonLd([
             { name: "Domů", url: BASE_URL },
-            { name: "Zásady cookies" },
+            { name: "Zásady cookies", url: `${BASE_URL}/zasady-cookies` },
           ]),
         }}
       />

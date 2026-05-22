@@ -182,7 +182,7 @@ export default async function ProductDetailPage({
           __html: generateBreadcrumbJsonLd([
             { name: "Domů", url: "https://carmakler.cz" },
             { name: "Shop", url: "https://carmakler.cz/shop" },
-            { name: part.name },
+            { name: part.name, url: `https://carmakler.cz/shop/produkt/${slug}` },
           ]),
         }}
       />
