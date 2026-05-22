@@ -297,7 +297,6 @@ export async function generateMetadata({
       title: `${fullName} — CarMakléř`,
       description,
       url: `${BASE_URL}/profil/${slug}`,
-      images: user.avatar ? [{ url: user.avatar }] : undefined,
       type: "profile",
     },
   };
