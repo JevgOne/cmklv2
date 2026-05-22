@@ -103,5 +103,5 @@ Spuštěny 3 paralelní review agents (reuse / quality / efficiency).
 
 ## Commit
 
-**Hash:** _to be filled after commit_
+**Hash:** `42691c5`
 **Message:** `feat(#88a): Wolt model — partner commission slider + Stripe split + audit log`

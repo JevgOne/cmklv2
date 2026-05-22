@@ -1145,22 +1145,33 @@ kvůli edge cases + UX bug risk.
 > #161 §20 LEAD DECISIONS. Implementator nesmí začít bez vyplněné §7.
 
 ### Q1 decision:
-> *(pending)*
+> **ACCEPT recommendation: MARKER only, stejná PWA.** WHOLESALE_SUPPLIER je authorization marker, ne separate flow. Sdílí `Part` model, `/parts/*` API, `/parts/*` PWA wizard i `components/admin/feeds/*` admin UI s PARTS_SUPPLIER. Rozdíl pouze ve zdroji dílů (manual wizard vs feed import) a filter v admin feed UI. Manual wizard zůstává dostupný pro oba. Žádný refactor rolí, žádná duplicitní PWA.
 
 ### Q2 decision:
-> *(pending)*
+> **ACCEPT recommendation: `Part.warranty` = `String?` s max 50 znaků.** Verbatim podle TASK-QUEUE.md spec. Permissive pro „24 měsíců" / „doživotní" / „1 rok / 30 000 km" / „2 years" z feed importů. Žádná normalizace na import callu. Filter „warranty ≥ X měsíců" out of scope — pokud bude potřeba v budoucnu, Fáze B může přidat paralelní `warrantyMonths Int?`.
 
 ### Q3 decision:
-> *(pending)*
+> **ACCEPT recommendation: `Part.manufacturer` = `String?` (max 100), + B-tree index, search přes ILIKE contains v existujícím `GET /api/parts`.** Free text pattern konzistentní s existujícím `name`, `oemNumber`, `partNumber`. Enum zamítnut (restriktivní pro ČR-specific brands), Manufacturer entity zamítnut (over-engineering). **Tsvector trigger modifikace JE OUT OF SCOPE** — respektuje memory `project_recurring_tsvector_drift.md`, nesahej na tsvector triggers v gap-fixu. Pokud v budoucnu bude potřeba fulltext manufacturer search, je to samostatný task.
 
 ### Q4 decision:
-> *(pending)*
+> **ACCEPT recommendation: ODLOŽIT Fázi B kompletně.** #182 = gap-fix scope, Fáze A řeší všechny 3 QA-flagged issues. Fáze B položky (B2B pricing tiers, TecDoc, drop-shipping, WHOLESALE dashboard variant, bulk CSV rozšíření) jsou business decisions čekající na real partner pilot a/nebo licencování — dispatch jako samostatné tasky (#183+) po merge #182 podle business priority. **Scope creep risk** je blokující pro dodání gap-fixu.
 
 ### Q5 decision:
-> *(pending)*
+> **ACCEPT recommendation: VŽDY zobrazit manufacturer + warranty, obě optional, bez conditional renderingu na partType.** Lineární formulář. Vrakoviště může znát výrobce u použitého dílu (sourceVIN → „LUK spojka z Octavie"). Warranty pro používané díly nepovinná, ale dodavatel může dát „3 měsíce funkční záruka". Žádná kognitivní zátěž z conditional hide/show. Validation: `z.string().optional()`, prázdné pole = žádná hodnota v DB.
 
 ### Additional constraints / amendments:
-> *(pending — lead může přidat vlastní úpravy scope, STOP rules, atd.)*
+
+1. **Workflow:** Po dispatch implementátora platí stejný pipeline jako #161 — IMPL → kontrolor QA → evzen-the-king shoda-check → test-chrome headed browser → deploy → evzen-the-king deploy shoda-check → user presentation. **Žádné shortcuts.**
+
+2. **STOP-1 tsvector drift ritual je MANDATORY** — implementator očekává migration fail s tsvector/trgm drift, MUSÍ zvednout STOP-1 signál leadovi s návrhem Option A (`migrate reset --force` per memory `project_recurring_tsvector_drift.md`, precedent #155, #162). **Nesmí self-resolve** přes `db push` ani `migrate resolve`. Čeká na explicit ACK od lead.
+
+3. **Seed additions:** `prisma/seed.ts` musí obsahovat 1 WHOLESALE_SUPPLIER user (role="WHOLESALE_SUPPLIER", email predictable pro dev) + 2-3 sample Parts s vyplněnými manufacturer/warranty. Nezasahovat do existujících seed blocků pro #88a, #161, TASK-019.
+
+4. **E2E test minimum:** `e2e/parts-wholesale.spec.ts` — 1 test, headed by design, pokryje login WHOLESALE_SUPPLIER → `/parts/new` → wizard 3 kroky → manufacturer + warranty vyplněno → submit → GET `/dily/[slug]` render obsahuje oba fields. Ne pokrývej edge cases → test-chrome teammate dělá final headed browser validation.
+
+5. **Nedotknout se (reinforced):** #88a commission split logic, #161 Stripe Connect Express tables + routes, #19 order emails, TASK-019 inzertní platforma soubory. Jakákoli modifikace mimo `prisma/schema.prisma` (Part-related části), `lib/validators/parts.ts`, `app/api/parts/*`, `app/(web)/dily/*`, `app/(pwa-parts)/*`, `middleware.ts` (jen PARTS_SUPPLIER_ROLES pole), `prisma/seed.ts` (jen přidání), `components/pwa-parts/*` (jen wizard kroky) = STOP a eskaluj.
+
+6. **Commit hygiene:** File manifest §3.11 + delivery pipeline §3.12 (6 commitů) = závazný. Každý commit má svůj scope a smysl — žádné megacommity. `simplify` běží na změněných souborech PO hlavních commitech a cleanup jde samostatným commitem na konci.
 
 ---
 

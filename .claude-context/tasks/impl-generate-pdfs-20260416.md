@@ -68,7 +68,13 @@ PDF artefakty v `~/Desktop/` se do repa NEcommitují (mimo working tree + tradi�
 
 ## §5 — Commit hash
 
-Viz closing zpráva leadovi.
+`0d27c7b` — chore: mark TASK-020 and TASK-042 as done + generate presentation PDFs
+
+Commit obsahuje:
+- `TASK-QUEUE.md` (řádky 1742, 6207)
+- `.claude-context/tasks/impl-generate-pdfs-20260416.md` (nový)
+
+**Nepushnuto** (dle zadání).
 
 ---
 
