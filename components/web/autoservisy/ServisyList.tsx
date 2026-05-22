@@ -95,12 +95,12 @@ export function ServisyList({ initialServisy, totalCount, cityOptions, categoryO
         <Select
           options={cityOptions}
           value={city}
-          onChange={(v) => { setCity(v); applyFilters({ city: v }); }}
+          onChange={(e) => { setCity(e.target.value); applyFilters({ city: e.target.value }); }}
         />
         <Select
           options={categoryOptions}
           value={category}
-          onChange={(v) => { setCategory(v); applyFilters({ category: v }); }}
+          onChange={(e) => { setCategory(e.target.value); applyFilters({ category: e.target.value }); }}
         />
         <Select
           options={[
@@ -109,7 +109,7 @@ export function ServisyList({ initialServisy, totalCount, cityOptions, categoryO
             { value: "NEOFICIALNI", label: "Nezávislé" },
           ]}
           value={tier}
-          onChange={(v) => { setTier(v); applyFilters({ tier: v }); }}
+          onChange={(e) => { setTier(e.target.value); applyFilters({ tier: e.target.value }); }}
         />
         <label className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 text-sm cursor-pointer hover:bg-gray-50">
           <input
