@@ -1,51 +1,85 @@
 import { Card } from "@/components/ui/Card";
-import { STK_PRICES } from "@/lib/stk-pricing";
+import { STK_PRICES, STK_PRICE_GROUPS } from "@/lib/stk-pricing";
+import type { StkPriceGroup } from "@/lib/stk-pricing";
 
 function formatPrice(n: number): string {
   return n.toLocaleString("cs-CZ");
 }
 
+const GROUP_ORDER: StkPriceGroup[] = ["personal", "motorcycle", "commercial", "trailer"];
+
 export function StkPriceTable() {
   return (
     <Card className="overflow-hidden">
-      <div className="p-6 pb-0">
+      <div className="p-5 pb-3">
         <h2 className="text-sm font-semibold text-gray-500 uppercase mb-1">
           Ceník STK 2026
         </h2>
-        <p className="text-xs text-gray-400 mb-4">
+        <p className="text-xs text-gray-400">
           Regulované ceny dle vyhlášky č. 302/2001 Sb.
         </p>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-gray-200 bg-gray-50">
-              <th className="text-left px-6 py-3 font-medium text-gray-500">Kategorie</th>
-              <th className="text-left px-4 py-3 font-medium text-gray-500">Typ vozidla</th>
-              <th className="text-right px-4 py-3 font-medium text-gray-500">STK</th>
-              <th className="text-right px-4 py-3 font-medium text-gray-500">Emise</th>
-              <th className="text-right px-6 py-3 font-medium text-gray-500">Celkem</th>
-            </tr>
-          </thead>
-          <tbody>
-            {STK_PRICES.map((row) => (
-              <tr
-                key={row.category}
-                className={`border-b border-gray-100 ${
-                  row.category === "M1" ? "bg-orange-50/50" : ""
-                }`}
-              >
-                <td className="px-6 py-2.5 font-mono text-xs text-gray-400">{row.category}</td>
-                <td className="px-4 py-2.5 text-gray-700">{row.label}</td>
-                <td className="px-4 py-2.5 text-right text-gray-900">{formatPrice(row.stk)} Kč</td>
-                <td className="px-4 py-2.5 text-right text-gray-900">
-                  {row.emise !== null ? `${formatPrice(row.emise)} Kč` : "—"}
-                </td>
-                <td className="px-6 py-2.5 text-right font-bold text-gray-900">{formatPrice(row.total)} Kč</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+
+      <div className="px-5 pb-5 space-y-4">
+        {GROUP_ORDER.map((groupKey) => {
+          const group = STK_PRICE_GROUPS[groupKey];
+          const rows = STK_PRICES.filter((r) => r.group === groupKey);
+
+          return (
+            <div key={groupKey}>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-base">{group.icon}</span>
+                <span className="text-sm font-semibold text-gray-700">
+                  {group.label}
+                </span>
+              </div>
+
+              <div className="bg-gray-50 rounded-lg divide-y divide-gray-100 overflow-hidden">
+                {rows.map((row) => (
+                  <div
+                    key={row.category}
+                    className={`px-4 py-3 ${
+                      row.highlight
+                        ? "bg-orange-50 border-l-4 border-orange-400"
+                        : ""
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-sm font-medium text-gray-900">
+                          {row.label}
+                        </span>
+                        <span className="text-xs text-gray-400">
+                          ({row.category})
+                        </span>
+                        {row.highlight && (
+                          <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium whitespace-nowrap">
+                            Nejčastější
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-sm font-bold text-gray-900 whitespace-nowrap ml-3">
+                        {formatPrice(row.total)} Kč
+                      </span>
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      STK {formatPrice(row.stk)} Kč
+                      {row.emise !== null && (
+                        <> · Emise {formatPrice(row.emise)} Kč</>
+                      )}
+                    </div>
+                  </div>
+                ))}
+
+                {groupKey === "trailer" && (
+                  <div className="px-4 py-2.5 bg-blue-50 text-xs text-blue-700 italic">
+                    Přívěsy nepodléhají emisní kontrole — u přívěsů se platí pouze STK.
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </Card>
   );
