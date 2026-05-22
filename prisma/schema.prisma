@@ -2766,6 +2766,15 @@ model AutoServis {
   insurancePartner Boolean @default(false)
   insuranceNames   String[]
 
+  // STK-specifická pole
+  stkLines          Int?
+  stkWaitDays       Int?
+  stkOnlineBooking  Boolean  @default(false)
+  stkEmissions      Boolean  @default(true)
+  stkMotorcycles    Boolean  @default(false)
+  stkTrailers       Boolean  @default(false)
+  stkHeavy          Boolean  @default(false)
+
   // Flags
   isVerified      Boolean  @default(false)
   isClaimed       Boolean  @default(false)
@@ -2825,6 +2834,11 @@ model ServisReview {
   serviceType     String?
   vehicleBrand    String?
   visitDate       DateTime?
+
+  // STK-specifické hodnocení
+  ratingWaitTime    Int?
+  ratingFairness    Int?
+  passedInspection  Boolean?
 
   // Moderace
   isPublished     Boolean  @default(false)
