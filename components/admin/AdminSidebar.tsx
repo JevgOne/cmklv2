@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
@@ -127,6 +128,23 @@ export function AdminSidebar({ open, onClose }: AdminSidebarProps) {
   const searchParams = useSearchParams();
   const { data: session } = useSession();
   const userRole = session?.user?.role;
+  const [workflowCount, setWorkflowCount] = useState<number>(0);
+
+  const fetchWorkflowCount = useCallback(async () => {
+    try {
+      const res = await fetch("/api/workflow/stats");
+      if (res.ok) {
+        const stats = await res.json();
+        setWorkflowCount(stats.stats?.totalOpen || 0);
+      }
+    } catch { /* silent */ }
+  }, []);
+
+  useEffect(() => {
+    fetchWorkflowCount();
+    const interval = setInterval(fetchWorkflowCount, 60_000);
+    return () => clearInterval(interval);
+  }, [fetchWorkflowCount]);
 
   const visibleSections = navSections.filter(
     (section) => !section.roles || (userRole && section.roles.includes(userRole))
@@ -225,7 +243,12 @@ export function AdminSidebar({ open, onClose }: AdminSidebarProps) {
                   >
                     <span className="text-base">{item.icon}</span>
                     <span>{item.label}</span>
-                    {item.badge && (
+                    {item.id === "workflow" && workflowCount > 0 && (
+                      <span className="ml-auto bg-orange-500 text-white text-[11px] font-bold min-w-[22px] h-[22px] px-1.5 rounded-full flex items-center justify-center">
+                        {workflowCount > 99 ? "99+" : workflowCount}
+                      </span>
+                    )}
+                    {item.badge && item.id !== "workflow" && (
                       <span className="ml-auto bg-error-500 text-white text-[11px] font-bold px-2 py-0.5 rounded-full">
                         {item.badge}
                       </span>
