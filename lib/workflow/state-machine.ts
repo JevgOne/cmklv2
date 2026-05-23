@@ -26,7 +26,7 @@ const ROLE_PERMISSIONS: Record<string, string[]> = {
   "WAITING_INFO->IN_PROGRESS": ["ADMIN", "MANAGER", "REGIONAL_DIRECTOR", "BROKER"],
   "WAITING_APPROVAL->RESOLVED": ["ADMIN", "MANAGER", "REGIONAL_DIRECTOR"],
   "WAITING_APPROVAL->IN_PROGRESS": ["ADMIN", "MANAGER", "REGIONAL_DIRECTOR"],
-  "RESOLVED->CLOSED": ["ADMIN", "MANAGER", "REGIONAL_DIRECTOR", "BROKER"],
+  "RESOLVED->CLOSED": ["ADMIN", "MANAGER", "REGIONAL_DIRECTOR"],
   "RESOLVED->IN_PROGRESS": ["ADMIN", "MANAGER", "REGIONAL_DIRECTOR"],
   "CLOSED->CREATED": ["ADMIN", "BROKER"],
 };
@@ -52,9 +52,6 @@ export function canTransition(
   if (from === "QUEUED" && to === "ASSIGNED") {
     return ["ADMIN", "MANAGER", "REGIONAL_DIRECTOR", "BROKER"].includes(userRole);
   }
-
-  // CLOSED — creator může zavřít vyřešený
-  if (from === "RESOLVED" && to === "CLOSED" && isCreator) return true;
 
   // REOPEN — creator může znovu otevřít
   if (from === "CLOSED" && to === "CREATED" && isCreator) return true;
