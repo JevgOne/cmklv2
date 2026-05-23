@@ -50,6 +50,13 @@ const navSections: NavSection[] = [
     roles: ["ADMIN", "BACKOFFICE", "MANAGER", "REGIONAL_DIRECTOR"],
   },
   {
+    title: "WORKFLOW",
+    items: [
+      { id: "workflow", href: "/admin/workflow", icon: "📋", label: "Požadavky" },
+    ],
+    roles: ["ADMIN", "BACKOFFICE", "MANAGER", "REGIONAL_DIRECTOR"],
+  },
+  {
     title: "MANAŽER",
     items: [
       { id: "manager-dashboard", href: "/admin/manager", icon: "📊", label: "Můj tým" },

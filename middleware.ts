@@ -237,6 +237,7 @@ export async function middleware(request: NextRequest) {
     "/makler/financing-calculator",
     "/makler/settings",
     "/makler/provize",
+    "/makler/pozadavky",
   ];
   if (protectedMaklerPaths.some((p) => pathname.startsWith(p))) {
     const token = await getToken({
