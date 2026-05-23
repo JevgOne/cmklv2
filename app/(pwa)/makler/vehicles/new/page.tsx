@@ -38,11 +38,6 @@ export default function NewVehiclePage() {
   const [loading, setLoading] = useState(true);
   const [confirmId, setConfirmId] = useState<string | null>(null);
 
-  // Lead→Vehicle prefill: auto-create draft from lead data
-  if (leadId) {
-    return <LeadPrefillRedirect leadId={leadId} />;
-  }
-
   const handleDeleteDraft = useCallback(async (id: string) => {
     try {
       await offlineStorage.deleteDraft(id);
@@ -80,6 +75,11 @@ export default function NewVehiclePage() {
     }
     loadDrafts();
   }, []);
+
+  // Lead→Vehicle prefill: auto-create draft from lead data (after all hooks)
+  if (leadId) {
+    return <LeadPrefillRedirect leadId={leadId} />;
+  }
 
   const handleNewVehicle = async () => {
     const id = await createDraft();
