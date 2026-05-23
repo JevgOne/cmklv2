@@ -153,8 +153,8 @@ export function AdminWorkflowDetail({
           body: JSON.stringify({ status: newStatus, resolution: res }),
         });
         if (!response.ok) throw new Error("Chyba");
-        const updated = await response.json();
-        setData((prev) => ({ ...prev, ...updated }));
+        const result = await response.json();
+        setData((prev) => ({ ...prev, ...result.request }));
         setShowResolution(false);
         setResolution("");
       } finally {
@@ -174,8 +174,8 @@ export function AdminWorkflowDetail({
           body: JSON.stringify({ assignedToId }),
         });
         if (!res.ok) throw new Error("Chyba");
-        const updated = await res.json();
-        setData((prev) => ({ ...prev, ...updated }));
+        const result = await res.json();
+        setData((prev) => ({ ...prev, ...result.request }));
       } finally {
         setAssigning(false);
       }
@@ -193,8 +193,8 @@ export function AdminWorkflowDetail({
           body: JSON.stringify({ priority }),
         });
         if (!res.ok) throw new Error("Chyba");
-        const updated = await res.json();
-        setData((prev) => ({ ...prev, ...updated }));
+        const result = await res.json();
+        setData((prev) => ({ ...prev, ...result.request }));
       } finally {
         setChangingPriority(false);
       }
