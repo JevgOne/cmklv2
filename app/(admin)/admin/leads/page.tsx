@@ -83,10 +83,10 @@ export default async function AdminLeadsPage() {
           <div className="flex items-center gap-2 text-[13px] text-gray-500 mb-2">
             <span>Admin</span>
             <span>/</span>
-            <span className="text-gray-900">Zprávy</span>
+            <span className="text-gray-900">Poptávky</span>
           </div>
           <h1 className="text-[28px] font-extrabold text-gray-900">
-            Zprávy
+            Poptávky
           </h1>
         </div>
       </div>

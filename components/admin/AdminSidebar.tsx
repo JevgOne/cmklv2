@@ -28,7 +28,7 @@ const navSections: NavSection[] = [
       { id: "vehicles", href: "/admin/vehicles", icon: "🚗", label: "Vozidla" },
       { id: "inzerce", href: "/admin/inzerce", icon: "📋", label: "Inzerce" },
       { id: "brokers", href: "/admin/brokers", icon: "👥", label: "Makléři" },
-      { id: "leads", href: "/admin/leads", icon: "📨", label: "Zprávy" },
+      { id: "leads", href: "/admin/leads", icon: "📨", label: "Poptávky" },
       { id: "users", href: "/admin/users", icon: "👤", label: "Uživatelé" },
     ],
     roles: ["ADMIN", "BACKOFFICE", "MANAGER", "REGIONAL_DIRECTOR"],
