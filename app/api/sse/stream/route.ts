@@ -13,31 +13,30 @@ export async function GET() {
   const userId = session.user.id;
   const userRole = session.user.role;
 
+  let heartbeatInterval: ReturnType<typeof setInterval>;
+  let sseClient: ReturnType<typeof sseManager.addClient>;
+
   const stream = new ReadableStream({
     start(controller) {
-      const client = sseManager.addClient(userId, userRole, controller);
+      sseClient = sseManager.addClient(userId, userRole, controller);
 
       // Initial connection confirmation
       const welcome = `event: connected\ndata: ${JSON.stringify({ userId })}\n\n`;
       controller.enqueue(new TextEncoder().encode(welcome));
 
       // Heartbeat every 30s to keep connection alive
-      const heartbeat = setInterval(() => {
+      heartbeatInterval = setInterval(() => {
         try {
           controller.enqueue(new TextEncoder().encode(": heartbeat\n\n"));
         } catch {
-          clearInterval(heartbeat);
-          sseManager.removeClient(client);
+          clearInterval(heartbeatInterval);
+          sseManager.removeClient(sseClient);
         }
       }, 30000);
-
-      // Cleanup when client disconnects (stream is cancelled)
-      const originalCancel = stream.cancel?.bind(stream);
-      stream.cancel = (reason) => {
-        clearInterval(heartbeat);
-        sseManager.removeClient(client);
-        return originalCancel?.(reason) ?? Promise.resolve();
-      };
+    },
+    cancel() {
+      clearInterval(heartbeatInterval);
+      sseManager.removeClient(sseClient);
     },
   });
 

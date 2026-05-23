@@ -124,6 +124,7 @@ jobs:
       - name: Build
         run: npm run build
         env:
+          NODE_OPTIONS: "--max-old-space-size=4096"
           # Dummy env vars pro build (ne realne klice)
           DATABASE_URL: "postgresql://dummy:dummy@localhost:5432/dummy"
           NEXTAUTH_SECRET: "ci-build-secret-not-real"
