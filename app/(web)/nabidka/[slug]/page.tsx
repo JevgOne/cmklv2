@@ -210,49 +210,48 @@ export default async function VehicleDetailPage({
     broker: { select: { id: true, firstName: true, lastName: true } },
   } as const;
 
-  // Tier 1: Same brand + model
-  let similarDb = await prisma.vehicle.findMany({
-    where: { status: "ACTIVE", id: { not: vehicle.id }, brand: vehicle.brand, model: vehicle.model, year: { gte: yearMin, lte: yearMax } },
-    include: similarInclude,
-    take: similarLimit,
-    orderBy: { createdAt: "desc" },
-  });
-
-  // Tier 2: Same brand + similar price
-  if (similarDb.length < similarLimit) {
-    const existingIds = [vehicle.id, ...similarDb.map((r) => r.id)];
-    const tier2 = await prisma.vehicle.findMany({
-      where: { status: "ACTIVE", id: { notIn: existingIds }, brand: vehicle.brand, price: { gte: priceMin, lte: priceMax }, year: { gte: yearMin, lte: yearMax } },
+  // Parallel similarity queries — all tiers run concurrently, then deduplicate by priority
+  const baseWhere = { status: "ACTIVE" as const, id: { not: vehicle.id } };
+  const [tier1, tier2, tier3, tier4] = await Promise.all([
+    // Tier 1: Same brand + model
+    prisma.vehicle.findMany({
+      where: { ...baseWhere, brand: vehicle.brand, model: vehicle.model, year: { gte: yearMin, lte: yearMax } },
       include: similarInclude,
-      take: similarLimit - similarDb.length,
+      take: similarLimit,
       orderBy: { createdAt: "desc" },
-    });
-    similarDb = [...similarDb, ...tier2];
-  }
-
-  // Tier 3: Same body type + similar price
-  if (similarDb.length < similarLimit && vehicle.bodyType) {
-    const existingIds = [vehicle.id, ...similarDb.map((r) => r.id)];
-    const tier3 = await prisma.vehicle.findMany({
-      where: { status: "ACTIVE", id: { notIn: existingIds }, bodyType: vehicle.bodyType, price: { gte: priceMin, lte: priceMax }, year: { gte: yearMin, lte: yearMax } },
+    }),
+    // Tier 2: Same brand + similar price
+    prisma.vehicle.findMany({
+      where: { ...baseWhere, brand: vehicle.brand, price: { gte: priceMin, lte: priceMax }, year: { gte: yearMin, lte: yearMax } },
       include: similarInclude,
-      take: similarLimit - similarDb.length,
+      take: similarLimit,
       orderBy: { createdAt: "desc" },
-    });
-    similarDb = [...similarDb, ...tier3];
-  }
-
-  // Tier 4: Fallback - same price range
-  if (similarDb.length < similarLimit) {
-    const existingIds = [vehicle.id, ...similarDb.map((r) => r.id)];
-    const tier4 = await prisma.vehicle.findMany({
-      where: { status: "ACTIVE", id: { notIn: existingIds }, price: { gte: priceMin, lte: priceMax } },
+    }),
+    // Tier 3: Same body type + similar price
+    vehicle.bodyType
+      ? prisma.vehicle.findMany({
+          where: { ...baseWhere, bodyType: vehicle.bodyType, price: { gte: priceMin, lte: priceMax }, year: { gte: yearMin, lte: yearMax } },
+          include: similarInclude,
+          take: similarLimit,
+          orderBy: { createdAt: "desc" },
+        })
+      : Promise.resolve([]),
+    // Tier 4: Fallback — same price range
+    prisma.vehicle.findMany({
+      where: { ...baseWhere, price: { gte: priceMin, lte: priceMax } },
       include: similarInclude,
-      take: similarLimit - similarDb.length,
+      take: similarLimit,
       orderBy: { createdAt: "desc" },
-    });
-    similarDb = [...similarDb, ...tier4];
-  }
+    }),
+  ]);
+
+  // Deduplicate by ID, priority order: tier1 > tier2 > tier3 > tier4
+  const seen = new Set<string>();
+  const similarDb = [...tier1, ...tier2, ...tier3, ...tier4].filter((v) => {
+    if (seen.has(v.id)) return false;
+    seen.add(v.id);
+    return true;
+  }).slice(0, similarLimit);
 
   // Map podobná vozidla na VehicleData
   const similarCars: VehicleData[] = similarDb.map((v) => {

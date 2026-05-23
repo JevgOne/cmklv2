@@ -5,6 +5,8 @@ import { Card } from "@/components/ui/Card";
 import { StkPriceCalc } from "@/components/web/StkPriceCalc";
 import type { Metadata } from "next";
 
+export const revalidate = 600; // 10min — detail page
+
 interface Props {
   params: Promise<{ city: string }>;
 }

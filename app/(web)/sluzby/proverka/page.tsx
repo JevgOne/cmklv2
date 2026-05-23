@@ -4,6 +4,8 @@ import { ProverkaForm } from "@/components/web/ProverkaForm";
 import { generateServiceJsonLd, generateFaqJsonLd, generateBreadcrumbJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
 
+export const revalidate = 86400; // 24h — static info page
+
 export const metadata: Metadata = {
   title: "Prověrka vozidla — kupte auto bez rizika",
   description:

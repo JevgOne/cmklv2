@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Alert } from "@/components/ui/Alert";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
+
+export const revalidate = 3600; // 1h — landing page
 import { getMarketplaceStats } from "@/lib/stats";
 import { pageCanonical } from "@/lib/canonical";
 

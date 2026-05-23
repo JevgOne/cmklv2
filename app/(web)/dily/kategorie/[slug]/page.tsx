@@ -4,6 +4,8 @@ import Link from "next/link";
 import { FAQ } from "@/components/web/FAQ";
 import { generateBreadcrumbJsonLd, generateFaqJsonLd } from "@/lib/seo";
 import { PARTS_CATEGORIES, PARTS_BRANDS, BASE_URL } from "@/lib/seo-data";
+
+export const revalidate = 600; // 10min — category page
 import { pageCanonical } from "@/lib/canonical";
 
 export function generateStaticParams() {

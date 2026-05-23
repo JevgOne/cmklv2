@@ -4,6 +4,8 @@ import { StkPriceTable } from "@/components/web/StkPriceTable";
 import { StkPriceCalc } from "@/components/web/StkPriceCalc";
 import { MapListView } from "@/components/web/map/MapListView";
 import { generateFaqJsonLd } from "@/lib/seo";
+
+export const revalidate = 3600; // 1h — catalog page
 import { pageCanonical } from "@/lib/canonical";
 import type { Metadata } from "next";
 import type { MapMarker } from "@/lib/map-config";

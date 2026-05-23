@@ -4,6 +4,8 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { CareerForm } from "@/components/web/CareerForm";
 import { ScrollToFormButton } from "@/components/web/ScrollToFormButton";
+
+export const revalidate = 86400; // 24h — static info page
 import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { FAQ } from "@/components/web/FAQ";
 import { pageCanonical } from "@/lib/canonical";
+
+export const revalidate = 86400; // 24h — static info page
 import {
   generateBreadcrumbJsonLd,
   generateFaqJsonLd,

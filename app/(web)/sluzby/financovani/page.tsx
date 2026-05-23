@@ -4,6 +4,8 @@ import { FinancovaniCalc } from "@/components/web/FinancovaniCalc";
 import { generateServiceJsonLd, generateFaqJsonLd, generateBreadcrumbJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
 
+export const revalidate = 86400; // 24h — static info page
+
 export const metadata: Metadata = {
   title: "Financování auta — schválení do 30 minut",
   description:

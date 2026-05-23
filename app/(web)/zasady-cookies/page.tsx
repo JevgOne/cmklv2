@@ -5,6 +5,8 @@ import { BASE_URL } from "@/lib/seo-data";
 import { pageCanonical } from "@/lib/canonical";
 import { generateBreadcrumbJsonLd } from "@/lib/seo";
 
+export const revalidate = 86400; // 24h — static legal page
+
 export const metadata: Metadata = {
   title: "Zásady cookies",
   description: "Informace o používání cookies na platformě CarMakler. Přehled cookies, účely a způsob správy.",

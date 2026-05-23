@@ -3,6 +3,8 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { ContactPageForm } from "@/components/web/ContactPageForm";
+
+export const revalidate = 86400; // 24h — static info page
 import { companyInfo } from "@/lib/company-info";
 import { pageCanonical } from "@/lib/canonical";
 

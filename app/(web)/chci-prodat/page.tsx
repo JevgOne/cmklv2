@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/Card";
 import { SellCarForm } from "@/components/web/SellCarForm";
 import { FAQ } from "@/components/web/FAQ";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
+
 import { getBrokerStats } from "@/lib/stats";
 import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";

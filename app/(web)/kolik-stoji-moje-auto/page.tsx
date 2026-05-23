@@ -5,6 +5,8 @@ import { generateBreadcrumbJsonLd } from "@/lib/seo";
 import { BASE_URL } from "@/lib/seo-data";
 import { pageCanonical } from "@/lib/canonical";
 
+export const revalidate = 86400; // 24h — static info page
+
 export const metadata: Metadata = {
   title: "Kolik stojí moje auto? | Kalkulačka ceny vozidla",
   description:

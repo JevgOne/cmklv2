@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { PartsSearch } from "@/components/web/PartsSearch";
 import { ProductCard } from "@/components/web/ProductCard";
+
+export const revalidate = 3600; // 1h — catalog page
 import { prisma } from "@/lib/prisma";
 import { PART_CATEGORIES } from "@/lib/parts-categories";
 import { generateWebPageJsonLd } from "@/lib/seo";

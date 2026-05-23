@@ -4,6 +4,8 @@ import { PojisteniCalc } from "@/components/web/PojisteniCalc";
 import { generateServiceJsonLd, generateFaqJsonLd, generateBreadcrumbJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
 
+export const revalidate = 86400; // 24h — static info page
+
 export const metadata: Metadata = {
   title: "Pojištění auta — srovnání všech pojišťoven",
   description:

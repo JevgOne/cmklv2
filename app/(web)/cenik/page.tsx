@@ -3,6 +3,8 @@ import Link from "next/link";
 import { pageCanonical } from "@/lib/canonical";
 import { generateFaqJsonLd } from "@/lib/seo";
 
+export const revalidate = 86400; // 24h — static info page
+
 const CENIK_FAQ = [
   { question: "Kolik stojí prodej auta přes CarMakléř?", answer: "Provize činí 5 % z konečné prodejní ceny vozidla, minimálně 25 000 Kč vč. DPH. Pokud se auto neprodá, neplatíte nic." },
   { question: "Co je zahrnuto v provizi?", answer: "V ceně je profesionální focení, inzerce na všech portálech, komunikace se zájemci, prohlídky, testovací jízdy, kupní smlouva, přepis vozu a bezpečná platba na účet." },

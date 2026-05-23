@@ -106,8 +106,9 @@ export default async function NabidkaPage({
     ? [{ isPremium: "desc" as const }, { price: "desc" as const }]
     : [{ isPremium: "desc" as const }, { createdAt: "desc" as const }];
 
-  // Fetch enough records for current page (DB-level cap instead of unlimited)
-  const fetchLimit = (page * limit) + limit;
+  // Fetch enough records for current page from each table
+  // We need page*limit per table to guarantee correct cross-table pagination
+  const fetchLimit = page * limit;
 
   // Fetch both Vehicle and Listing counts
   const [dbVehicles, vehicleTotal, dbListings, listingTotal] = await Promise.all([

@@ -4,6 +4,8 @@ import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { BASE_URL } from "@/lib/seo-data";
 import { pageCanonical } from "@/lib/canonical";
 
+export const revalidate = 86400; // 24h — static legal page
+
 export const metadata: Metadata = {
   title: "Obchodní podmínky",
   description:

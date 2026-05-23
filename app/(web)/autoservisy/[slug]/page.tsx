@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { Card } from "@/components/ui/Card";
 import { ServisReviewSection } from "@/components/web/autoservisy/ServisReviewSection";
+
+export const revalidate = 3600; // 1h — detail page
 import { pageCanonical } from "@/lib/canonical";
 import { generateBreadcrumbJsonLd } from "@/lib/seo";
 import type { Metadata } from "next";

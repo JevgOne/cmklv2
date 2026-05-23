@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import type { Metadata } from "next";
+
+export const revalidate = 600; // 10min — detail page
 import { generateLocalBusinessJsonLd, generateBreadcrumbJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
 

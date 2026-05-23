@@ -5,6 +5,8 @@ import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { pageCanonical } from "@/lib/canonical";
 import { generateFaqJsonLd, generateBreadcrumbJsonLd } from "@/lib/seo";
 
+export const revalidate = 86400; // 24h — static info page
+
 const SLUZBY_FAQ = [
   { question: "Jaké služby CarMakléř nabízí?", answer: "Prověrku vozidla (historie, havárie, stočení km), financování na splátky (schválení do 30 minut) a srovnání pojištění od všech pojišťoven v ČR." },
   { question: "Jsou služby zdarma?", answer: "Služby pro prodejce jsou součástí provize za prodej. Pro kupující je prověrka vozidla od 299 Kč, financování a srovnání pojištění je zdarma." },

@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { Card } from "@/components/ui/Card";
 import { ServisReviewSection } from "@/components/web/autoservisy/ServisReviewSection";
+
+export const revalidate = 600; // 10min — detail page
 import { StkInfoCard } from "@/components/web/StkInfoCard";
 import { StkPriceCalc } from "@/components/web/StkPriceCalc";
 import { pageCanonical } from "@/lib/canonical";

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
 import { BASE_URL } from "@/lib/seo-data";
+
 import { formatPrice, formatRelativeCz, parseCities } from "@/lib/utils";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { LandingHero } from "@/components/web/LandingHero";
