@@ -25,13 +25,18 @@ export default async function AdminWorkflowDetailPage({
       where: { id },
       include: {
         createdBy: {
-          select: { id: true, firstName: true, lastName: true, avatar: true },
+          select: { id: true, firstName: true, lastName: true, avatar: true, role: true, email: true, phone: true },
         },
         assignedTo: {
-          select: { id: true, firstName: true, lastName: true, avatar: true },
+          select: { id: true, firstName: true, lastName: true, avatar: true, role: true },
         },
         vehicle: {
           select: { id: true, brand: true, model: true },
+        },
+        watchers: {
+          include: {
+            user: { select: { id: true, firstName: true, lastName: true } },
+          },
         },
         steps: {
           include: {
@@ -70,6 +75,20 @@ export default async function AdminWorkflowDetailPage({
   ]);
 
   if (!request) notFound();
+
+  // Related requests — same creator or same vehicle
+  const relatedRequests = await prisma.workflowRequest.findMany({
+    where: {
+      id: { not: request.id },
+      OR: [
+        { createdById: request.createdById },
+        ...(request.vehicleId ? [{ vehicleId: request.vehicleId }] : []),
+      ],
+    },
+    select: { id: true, title: true, type: true, status: true, createdAt: true },
+    orderBy: { createdAt: "desc" },
+    take: 5,
+  });
 
   const serialized: WorkflowRequestDetail = {
     id: request.id,
@@ -127,12 +146,35 @@ export default async function AdminWorkflowDetailPage({
     name: [u.firstName, u.lastName].filter(Boolean).join(" ") || "—",
   }));
 
+  // Compute response time (time from creation to first ASSIGNED step)
+  const firstAssignStep = request.steps.find((s) => s.action === "ASSIGNED");
+  const responseTimeMs = firstAssignStep
+    ? firstAssignStep.createdAt.getTime() - request.createdAt.getTime()
+    : null;
+
   return (
     <AdminWorkflowDetail
       request={serialized}
       userId={session.user.id}
       userRole={session.user.role}
       assignableUsers={assignableUsers}
+      creatorContact={{
+        email: request.createdBy.email ?? undefined,
+        phone: request.createdBy.phone ?? undefined,
+        role: request.createdBy.role,
+      }}
+      watchers={request.watchers.map((w) => ({
+        id: w.user.id,
+        name: [w.user.firstName, w.user.lastName].filter(Boolean).join(" ") || "—",
+      }))}
+      relatedRequests={relatedRequests.map((r) => ({
+        id: r.id,
+        title: r.title,
+        type: r.type,
+        status: r.status,
+        createdAt: r.createdAt.toISOString(),
+      }))}
+      responseTimeMs={responseTimeMs}
     />
   );
 }
