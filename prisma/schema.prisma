@@ -163,6 +163,14 @@ model User {
   // Interní komentáře u vozidel
   vehicleComments VehicleComment[] @relation("VehicleCommentAuthor")
 
+  // Workflow systém
+  workflowRequestsCreated  WorkflowRequest[]  @relation("WorkflowCreator")
+  workflowRequestsAssigned WorkflowRequest[]  @relation("WorkflowAssignee")
+  workflowSteps            WorkflowStep[]     @relation("WorkflowStepActor")
+  workflowComments         WorkflowComment[]  @relation("WorkflowCommentAuthor")
+  workflowDocuments        WorkflowDocument[] @relation("WorkflowDocUploader")
+  workflowWatching         WorkflowWatcher[]  @relation("WorkflowWatchers")
+
   // Reputační systém
   trustScore        TrustScore?
   skillTagsReceived SkillTag[]     @relation("SkillTagTarget")
@@ -380,6 +388,9 @@ model Vehicle {
 
   // Interní komentáře (admin↔makléř)
   internalComments VehicleComment[] @relation("VehicleInternalComments")
+
+  // Workflow požadavky
+  workflowRequests WorkflowRequest[] @relation("WorkflowVehicle")
 
   // Profil lajky/komentáře
   profileLikes    ProfileLike[]    @relation("VehicleLikes")
@@ -2948,4 +2959,158 @@ model BrokerReview {
   @@index([isPublished])
   @@index([rating])
   @@index([authorUserId])
+}
+
+// ──────────────────────────────────────────
+// Workflow System
+// ──────────────────────────────────────────
+
+model WorkflowRequest {
+  id          String  @id @default(cuid())
+
+  // Typ a kategorie
+  type        String  // FINANCING, INSURANCE, DOCUMENT, APPROVAL, SUPPORT, INSPECTION, CLIENT_VERIFICATION, HANDOVER, PRICE_CHANGE, OTHER
+  category    String?
+
+  // Obsah
+  title       String
+  description String  @db.Text
+  priority    String  @default("NORMAL") // LOW, NORMAL, HIGH, URGENT
+
+  // Stav
+  status      String  @default("CREATED") // CREATED, ASSIGNED, IN_PROGRESS, WAITING_INFO, WAITING_APPROVAL, RESOLVED, CLOSED, CANCELLED
+
+  // Kdo vytvořil
+  createdById String
+  createdBy   User   @relation("WorkflowCreator", fields: [createdById], references: [id])
+
+  // Přiřazeno komu (osoba)
+  assignedToId String?
+  assignedTo   User?  @relation("WorkflowAssignee", fields: [assignedToId], references: [id])
+
+  // Přiřazeno oddělení/roli
+  assignedRole String? // BACKOFFICE, MANAGER, REGIONAL_DIRECTOR, ADMIN
+
+  // Kontext — polymorfní vazby
+  vehicleId   String?
+  vehicle     Vehicle? @relation("WorkflowVehicle", fields: [vehicleId], references: [id])
+  contactId   String?
+  contractId  String?
+  leadId      String?
+
+  // SLA
+  dueAt       DateTime?
+  slaBreached Boolean   @default(false)
+
+  // Metadata
+  metadata    String? // JSON
+
+  // Řešení
+  resolution   String?   @db.Text
+  resolvedAt   DateTime?
+  resolvedById String?
+
+  // Relace
+  steps     WorkflowStep[]
+  comments  WorkflowComment[]
+  documents WorkflowDocument[]
+  watchers  WorkflowWatcher[]
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([createdById])
+  @@index([assignedToId])
+  @@index([assignedRole])
+  @@index([status])
+  @@index([type])
+  @@index([priority])
+  @@index([vehicleId])
+  @@index([dueAt])
+  @@index([slaBreached])
+  @@index([createdAt])
+}
+
+model WorkflowStep {
+  id        String          @id @default(cuid())
+  requestId String
+  request   WorkflowRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation("WorkflowStepActor", fields: [userId], references: [id])
+
+  action String // CREATED, ASSIGNED, STATUS_CHANGED, PRIORITY_CHANGED, COMMENTED, DOCUMENT_ADDED, REASSIGNED, ESCALATED, RESOLVED, CLOSED, REOPENED
+
+  fromStatus   String?
+  toStatus     String?
+  fromAssignee String?
+  toAssignee   String?
+  note         String? @db.Text
+
+  createdAt DateTime @default(now())
+
+  @@index([requestId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model WorkflowComment {
+  id        String          @id @default(cuid())
+  requestId String
+  request   WorkflowRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation("WorkflowCommentAuthor", fields: [userId], references: [id])
+
+  content    String  @db.Text
+  isInternal Boolean @default(false)
+
+  // Thread support
+  parentId String?
+  parent   WorkflowComment?  @relation("WorkflowCommentReplies", fields: [parentId], references: [id])
+  replies  WorkflowComment[] @relation("WorkflowCommentReplies")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([requestId])
+  @@index([userId])
+  @@index([parentId])
+  @@index([createdAt])
+}
+
+model WorkflowDocument {
+  id        String          @id @default(cuid())
+  requestId String
+  request   WorkflowRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  uploadedById String
+  uploadedBy   User   @relation("WorkflowDocUploader", fields: [uploadedById], references: [id])
+
+  name     String
+  fileName String
+  url      String
+  mimeType String
+  size     Int
+  category String? // ID_CARD, INCOME_PROOF, CONTRACT, INSURANCE, PHOTO, OTHER
+
+  createdAt DateTime @default(now())
+
+  @@index([requestId])
+  @@index([uploadedById])
+  @@index([category])
+}
+
+model WorkflowWatcher {
+  id        String          @id @default(cuid())
+  requestId String
+  request   WorkflowRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User            @relation("WorkflowWatchers", fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@unique([requestId, userId])
+  @@index([userId])
 }
