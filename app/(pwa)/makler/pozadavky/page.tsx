@@ -50,7 +50,18 @@ export default async function PozadavkyPage() {
             select: { id: true, firstName: true, lastName: true, avatar: true },
           },
           vehicle: {
-            select: { id: true, brand: true, model: true },
+            select: {
+              id: true,
+              brand: true,
+              model: true,
+              year: true,
+              vin: true,
+              images: {
+                where: { isPrimary: true },
+                select: { url: true },
+                take: 1,
+              },
+            },
           },
           _count: {
             select: { comments: true, documents: true },
@@ -78,6 +89,16 @@ export default async function PozadavkyPage() {
       }),
     ]);
 
+  // Batch-load contacts for requests that have contactId
+  const contactIds = requests.map((r) => r.contactId).filter((id): id is string => !!id);
+  const contacts = contactIds.length > 0
+    ? await prisma.sellerContact.findMany({
+        where: { id: { in: contactIds } },
+        select: { id: true, name: true, phone: true },
+      })
+    : [];
+  const contactMap = new Map(contacts.map((c) => [c.id, c]));
+
   const serialized: WorkflowRequestSummary[] = requests.map((r) => ({
     id: r.id,
     type: r.type as WorkflowRequestSummary["type"],
@@ -91,6 +112,19 @@ export default async function PozadavkyPage() {
     assignedRole: r.assignedRole,
     vehicleId: r.vehicleId,
     vehicleLabel: r.vehicle ? `${r.vehicle.brand} ${r.vehicle.model}` : null,
+    vehicleContext: r.vehicle
+      ? {
+          id: r.vehicle.id,
+          brand: r.vehicle.brand,
+          model: r.vehicle.model,
+          year: r.vehicle.year,
+          vin: r.vehicle.vin,
+          thumbnailUrl: r.vehicle.images[0]?.url ?? null,
+        }
+      : null,
+    contactContext: r.contactId && contactMap.has(r.contactId)
+      ? contactMap.get(r.contactId)!
+      : null,
     dueAt: r.dueAt?.toISOString() ?? null,
     slaBreached: r.slaBreached,
     createdAt: r.createdAt.toISOString(),

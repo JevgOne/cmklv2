@@ -46,7 +46,18 @@ export default async function PozadavekDetailPage({
         select: { id: true, firstName: true, lastName: true, avatar: true },
       },
       vehicle: {
-        select: { id: true, brand: true, model: true },
+        select: {
+          id: true,
+          brand: true,
+          model: true,
+          year: true,
+          vin: true,
+          images: {
+            where: { isPrimary: true },
+            select: { url: true },
+            take: 1,
+          },
+        },
       },
       steps: {
         include: {
@@ -77,6 +88,14 @@ export default async function PozadavekDetailPage({
 
   if (!request) notFound();
 
+  // Load contact if linked
+  const contact = request.contactId
+    ? await prisma.sellerContact.findUnique({
+        where: { id: request.contactId },
+        select: { id: true, name: true, phone: true },
+      })
+    : null;
+
   // Filter internal comments for brokers
   const isBroker = session.user.role === "BROKER";
 
@@ -95,6 +114,17 @@ export default async function PozadavekDetailPage({
     vehicleLabel: request.vehicle
       ? `${request.vehicle.brand} ${request.vehicle.model}`
       : null,
+    vehicleContext: request.vehicle
+      ? {
+          id: request.vehicle.id,
+          brand: request.vehicle.brand,
+          model: request.vehicle.model,
+          year: request.vehicle.year,
+          vin: request.vehicle.vin,
+          thumbnailUrl: request.vehicle.images[0]?.url ?? null,
+        }
+      : null,
+    contactContext: contact ?? null,
     dueAt: request.dueAt?.toISOString() ?? null,
     slaBreached: request.slaBreached,
     createdAt: request.createdAt.toISOString(),

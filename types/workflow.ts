@@ -8,6 +8,21 @@ export interface WorkflowUser {
   avatar?: string | null;
 }
 
+export interface WorkflowVehicleContext {
+  id: string;
+  brand: string;
+  model: string;
+  year: number;
+  vin: string;
+  thumbnailUrl: string | null;
+}
+
+export interface WorkflowContactContext {
+  id: string;
+  name: string;
+  phone: string;
+}
+
 export interface WorkflowRequestSummary {
   id: string;
   type: WorkflowType;
@@ -21,6 +36,8 @@ export interface WorkflowRequestSummary {
   assignedRole: string | null;
   vehicleId: string | null;
   vehicleLabel?: string | null;
+  vehicleContext?: WorkflowVehicleContext | null;
+  contactContext?: WorkflowContactContext | null;
   dueAt: string | null;
   slaBreached: boolean;
   createdAt: string;

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { WORKFLOW_TYPES } from "@/lib/workflow/types";
 import { WorkflowStatusBadge } from "./WorkflowStatusBadge";
 import { WorkflowPriorityBadge } from "./WorkflowPriorityBadge";
@@ -11,30 +12,44 @@ interface WorkflowCardProps {
   basePath?: string;
 }
 
+const ROLE_LABELS: Record<string, string> = {
+  ADMIN: "admin",
+  MANAGER: "manažer",
+  REGIONAL_DIRECTOR: "reg. ředitel",
+  BROKER: "makléř",
+};
+
 function getUserName(user: { firstName: string | null; lastName: string | null } | null): string {
   if (!user) return "Nepřiřazeno";
   return [user.firstName, user.lastName].filter(Boolean).join(" ") || "Neznámý";
 }
 
-function formatSlaRemaining(dueAt: string | null, slaBreached: boolean): string | null {
+function formatSlaRemaining(dueAt: string | null, slaBreached: boolean): { text: string; urgent: boolean } | null {
   if (!dueAt) return null;
-  if (slaBreached) return "SLA překročeno";
 
   const now = Date.now();
   const due = new Date(dueAt).getTime();
   const diffMs = due - now;
 
-  if (diffMs <= 0) return "SLA překročeno";
+  if (slaBreached || diffMs <= 0) {
+    const overMs = Math.abs(diffMs);
+    const overHours = Math.floor(overMs / 3600000);
+    if (overHours > 24) {
+      return { text: `Překročeno o ${Math.floor(overHours / 24)}d`, urgent: true };
+    }
+    return { text: overHours > 0 ? `Překročeno o ${overHours}h` : "Překročeno", urgent: true };
+  }
 
   const hours = Math.floor(diffMs / 3600000);
   const mins = Math.floor((diffMs % 3600000) / 60000);
 
   if (hours > 24) {
-    const days = Math.floor(hours / 24);
-    return `${days}d zbývá`;
+    return { text: `${Math.floor(hours / 24)}d zbývá`, urgent: false };
   }
-  if (hours > 0) return `${hours}h ${mins}m zbývá`;
-  return `${mins}m zbývá`;
+  if (hours > 0) {
+    return { text: `${hours}h ${mins}m zbývá`, urgent: hours <= 2 };
+  }
+  return { text: `${mins}m zbývá`, urgent: true };
 }
 
 function formatDate(dateStr: string): string {
@@ -46,16 +61,23 @@ function formatDate(dateStr: string): string {
   });
 }
 
+function truncateVin(vin: string): string {
+  if (vin.length <= 8) return vin;
+  return `${vin.slice(0, 3)}...${vin.slice(-4)}`;
+}
+
 export function WorkflowCard({ request, basePath = "/makler/pozadavky" }: WorkflowCardProps) {
   const typeConfig = WORKFLOW_TYPES[request.type] || WORKFLOW_TYPES.OTHER;
-  const slaText = formatSlaRemaining(request.dueAt, request.slaBreached);
+  const sla = formatSlaRemaining(request.dueAt, request.slaBreached);
+  const vehicle = request.vehicleContext;
+  const contact = request.contactContext;
 
   return (
     <Link
       href={`${basePath}/${request.id}`}
       className="block bg-white rounded-xl border border-gray-100 p-4 hover:border-orange-200 hover:shadow-sm transition-all no-underline"
     >
-      {/* Header: type + category */}
+      {/* Row 1: Type + title + priority */}
       <div className="flex items-start justify-between gap-2 mb-2">
         <div className="flex items-center gap-2 min-w-0">
           <span className="text-lg flex-shrink-0">{typeConfig.icon}</span>
@@ -72,27 +94,95 @@ export function WorkflowCard({ request, basePath = "/makler/pozadavky" }: Workfl
         <WorkflowPriorityBadge priority={request.priority} />
       </div>
 
-      {/* Vehicle context */}
-      {request.vehicleLabel && (
-        <div className="text-xs text-gray-500 mb-2 truncate">
-          {request.vehicleLabel}
+      {/* Row 2: Vehicle context */}
+      {vehicle && (
+        <div className="flex items-center gap-2 mb-2 p-2 bg-gray-50 rounded-lg">
+          {vehicle.thumbnailUrl ? (
+            <div className="relative w-10 h-10 rounded-md overflow-hidden flex-shrink-0 bg-gray-200">
+              <Image
+                src={vehicle.thumbnailUrl}
+                alt={`${vehicle.brand} ${vehicle.model}`}
+                fill
+                className="object-cover"
+                sizes="40px"
+              />
+            </div>
+          ) : (
+            <div className="w-10 h-10 rounded-md bg-gray-200 flex items-center justify-center flex-shrink-0 text-sm">
+              🚗
+            </div>
+          )}
+          <div className="min-w-0 flex-1">
+            <div className="text-xs font-medium text-gray-900 truncate">
+              {vehicle.brand} {vehicle.model} {vehicle.year}
+            </div>
+            <div className="text-[10px] text-gray-400 font-mono">
+              VIN: {truncateVin(vehicle.vin)}
+            </div>
+          </div>
+          <span
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              window.location.href = `/makler/vehicles/${vehicle.id}`;
+            }}
+            className="text-[10px] text-orange-500 font-medium flex-shrink-0 hover:underline cursor-pointer"
+          >
+            Detail →
+          </span>
         </div>
       )}
 
-      {/* Footer: status + assignee + SLA */}
-      <div className="flex items-center justify-between gap-2 mt-3">
+      {/* Row 3: Contact context */}
+      {contact && (
+        <div className="flex items-center gap-2 mb-2 text-xs">
+          <span className="text-gray-400">👤</span>
+          <span className="text-gray-700 font-medium">{contact.name}</span>
+          <span
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              window.location.href = `tel:${contact.phone}`;
+            }}
+            className="text-orange-500 font-medium hover:underline cursor-pointer"
+          >
+            {contact.phone}
+          </span>
+        </div>
+      )}
+
+      {/* Row 4: Od koho → Pro koho */}
+      <div className="flex items-center gap-1 mb-2 text-xs text-gray-500">
+        <span className="font-medium text-gray-700">{getUserName(request.createdBy)}</span>
+        <span className="text-gray-300">→</span>
+        <span className="font-medium text-gray-700">
+          {getUserName(request.assignedTo)}
+        </span>
+        {request.assignedRole && !request.assignedTo && (
+          <span className="text-gray-400">
+            ({ROLE_LABELS[request.assignedRole] || request.assignedRole})
+          </span>
+        )}
+        {request.assignedTo && request.assignedRole && (
+          <span className="text-gray-400">
+            ({ROLE_LABELS[request.assignedRole] || request.assignedRole})
+          </span>
+        )}
+      </div>
+
+      {/* Row 5: Status + SLA */}
+      <div className="flex items-center justify-between gap-2">
         <WorkflowStatusBadge status={request.status} />
-        <div className="flex items-center gap-3 text-xs text-gray-400">
-          <span>{getUserName(request.assignedTo)}</span>
-          {slaText && (
-            <span className={request.slaBreached ? "text-red-500 font-semibold" : "text-gray-400"}>
-              {slaText}
+        <div className="flex items-center gap-3 text-xs">
+          {sla && (
+            <span className={`font-medium ${sla.urgent ? "text-red-500" : "text-gray-400"}`}>
+              {sla.text}
             </span>
           )}
         </div>
       </div>
 
-      {/* Meta: date + counts */}
+      {/* Row 6: Meta — date + counts */}
       <div className="flex items-center gap-3 mt-2 text-xs text-gray-300">
         <span>{formatDate(request.createdAt)}</span>
         {request._count && request._count.comments > 0 && (
