@@ -62,6 +62,17 @@ const cspDirectives = [
 
 const nextConfig: NextConfig = {
   turbopack: {},
+  experimental: {
+    optimizePackageImports: [
+      "framer-motion",
+      "recharts",
+      "date-fns",
+      "@anthropic-ai/sdk",
+      "lucide-react",
+      "zod",
+      "react-hook-form",
+    ],
+  },
   images: {
     remotePatterns: [
       {

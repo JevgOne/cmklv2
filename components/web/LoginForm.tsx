@@ -50,20 +50,17 @@ export function LoginForm() {
         return;
       }
 
-      // Získání session pro určení role
-      const res = await fetch("/api/auth/session");
-      const session = await res.json();
-
-      // Zkontrolovat ověření emailu (soft enforcement)
-      if (session?.user && !session.user.isEmailVerified) {
-        setEmailNotVerified(true);
-        // Nepřerušovat login — pokračovat na dashboard
+      // callbackUrl from middleware redirect takes priority
+      const callbackUrl = searchParams.get("callbackUrl");
+      if (callbackUrl) {
+        router.push(callbackUrl);
+        return;
       }
 
-      // callbackUrl from middleware redirect takes priority, otherwise role-based
-      const callbackUrl = searchParams.get("callbackUrl");
-      const role = session?.user?.role;
-      router.push(callbackUrl || getRedirectByRole(role));
+      // Get role-based redirect from server (faster than full session fetch)
+      const res = await fetch("/api/auth/redirect");
+      const { url } = await res.json();
+      router.push(url);
     } catch {
       setError("Došlo k neočekávané chybě. Zkuste to prosím znovu.");
       setLoading(false);

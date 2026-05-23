@@ -1,17 +1,20 @@
+import dynamic from "next/dynamic";
 import { headers } from "next/headers";
 import type { SubdomainType } from "@/lib/subdomain";
 
 import { MainNavbar } from "@/components/main/Navbar";
 import { MainFooter } from "@/components/main/Footer";
-import { InzerceNavbar } from "@/components/inzerce/Navbar";
-import { InzerceFooter } from "@/components/inzerce/Footer";
-import { ShopNavbar } from "@/components/shop/Navbar";
-import { ShopFooter } from "@/components/shop/Footer";
-import { MarketplaceNavbar } from "@/components/marketplace/Navbar";
-import { MarketplaceFooter } from "@/components/marketplace/Footer";
 import { CompareProvider } from "@/components/web/CompareContext";
 import { CompareBar } from "@/components/web/CompareBar";
 import { CookieConsent } from "@/components/web/CookieConsent";
+
+// Lazy-load non-main navbars/footers — only loaded when that subdomain is active
+const InzerceNavbar = dynamic(() => import("@/components/inzerce/Navbar").then(m => m.InzerceNavbar));
+const InzerceFooter = dynamic(() => import("@/components/inzerce/Footer").then(m => m.InzerceFooter));
+const ShopNavbar = dynamic(() => import("@/components/shop/Navbar").then(m => m.ShopNavbar));
+const ShopFooter = dynamic(() => import("@/components/shop/Footer").then(m => m.ShopFooter));
+const MarketplaceNavbar = dynamic(() => import("@/components/marketplace/Navbar").then(m => m.MarketplaceNavbar));
+const MarketplaceFooter = dynamic(() => import("@/components/marketplace/Footer").then(m => m.MarketplaceFooter));
 
 function getNavbarAndFooter(subdomain: SubdomainType) {
   switch (subdomain) {
