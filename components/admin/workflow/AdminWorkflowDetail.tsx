@@ -41,6 +41,7 @@ const statusConfig: Record<string, { label: string; color: string; bg: string; d
   WAITING_APPROVAL: { label: "Ke schválení", color: "text-purple-700", bg: "bg-purple-50", dot: "bg-purple-500" },
   RESOLVED: { label: "Vyřešeno", color: "text-green-700", bg: "bg-green-50", dot: "bg-green-500" },
   CLOSED: { label: "Uzavřeno", color: "text-gray-500", bg: "bg-gray-100", dot: "bg-gray-400" },
+  ESCALATED: { label: "Eskalováno", color: "text-pink-700", bg: "bg-pink-50", dot: "bg-pink-500" },
   CANCELLED: { label: "Zrušeno", color: "text-red-600", bg: "bg-red-50", dot: "bg-red-400" },
 };
 
@@ -53,6 +54,7 @@ const transitionButtonStyles: Record<string, string> = {
   WAITING_APPROVAL: "bg-purple-100 text-purple-700 hover:bg-purple-200",
   ASSIGNED: "bg-blue-100 text-blue-700 hover:bg-blue-200",
   QUEUED: "bg-yellow-100 text-yellow-700 hover:bg-yellow-200",
+  ESCALATED: "bg-pink-600 text-white hover:bg-pink-700",
 };
 
 function getUserName(user: { firstName: string | null; lastName: string | null } | null): string {
@@ -133,6 +135,8 @@ export function AdminWorkflowDetail({
   const [changingPriority, setChangingPriority] = useState(false);
   const [showResolution, setShowResolution] = useState(false);
   const [resolution, setResolution] = useState("");
+  const [showEscalation, setShowEscalation] = useState(false);
+  const [escalationReason, setEscalationReason] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
 
   const typeConfig = WORKFLOW_TYPES[data.type] || WORKFLOW_TYPES.OTHER;
@@ -144,19 +148,21 @@ export function AdminWorkflowDetail({
   const meta = (data.metadata || {}) as Record<string, string>;
 
   const handleStatusChange = useCallback(
-    async (newStatus: WorkflowStatus, res?: string) => {
+    async (newStatus: WorkflowStatus, res?: string, escReason?: string) => {
       setActionLoading(true);
       try {
         const response = await fetch(`/api/workflow/${data.id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status: newStatus, resolution: res }),
+          body: JSON.stringify({ status: newStatus, resolution: res, escalationReason: escReason }),
         });
         if (!response.ok) throw new Error("Chyba");
         const result = await response.json();
         setData((prev) => ({ ...prev, ...result.request }));
         setShowResolution(false);
         setResolution("");
+        setShowEscalation(false);
+        setEscalationReason("");
       } finally {
         setActionLoading(false);
       }
@@ -224,7 +230,15 @@ export function AdminWorkflowDetail({
       setShowResolution(true);
       return;
     }
-    await handleStatusChange(to, to === "RESOLVED" ? resolution : undefined);
+    if (to === "ESCALATED" && !showEscalation) {
+      setShowEscalation(true);
+      return;
+    }
+    await handleStatusChange(
+      to,
+      to === "RESOLVED" ? resolution : undefined,
+      to === "ESCALATED" ? escalationReason : undefined,
+    );
   };
 
   const tabs: { key: Tab; label: string; count?: number; icon: string }[] = [
@@ -285,8 +299,44 @@ export function AdminWorkflowDetail({
         </div>
       </div>
 
+      {/* Escalation banner */}
+      {data.status === "ESCALATED" && (() => {
+        const escalatedStep = [...data.steps].reverse().find((s) => s.action === "ESCALATED");
+        return (
+          <div className="rounded-2xl border-2 border-pink-300 bg-pink-50 p-5 mb-6">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-pink-100 flex items-center justify-center text-xl flex-shrink-0">
+                🔺
+              </div>
+              <div className="flex-1">
+                <h3 className="text-sm font-bold text-pink-800 mb-1">Požadavek byl eskalován</h3>
+                {escalatedStep && (
+                  <>
+                    <p className="text-sm text-pink-700 mb-2">
+                      <span className="font-semibold">
+                        {escalatedStep.user ? getUserName(escalatedStep.user) : "Neznámý"}
+                      </span>
+                      {" — "}
+                      {new Date(escalatedStep.createdAt).toLocaleDateString("cs-CZ", {
+                        day: "numeric", month: "long", hour: "2-digit", minute: "2-digit",
+                      })}
+                    </p>
+                    {escalatedStep.note && (
+                      <div className="bg-white/70 rounded-xl px-4 py-3 border border-pink-200">
+                        <div className="text-[11px] font-bold text-pink-600 uppercase mb-1">Důvod eskalace</div>
+                        <p className="text-sm text-gray-800 leading-relaxed">{escalatedStep.note}</p>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
       {/* AKCE — separate prominent card */}
-      {(allowedTransitions.length > 0 || showResolution) && (
+      {(allowedTransitions.length > 0 || showResolution || showEscalation) && (
         <div className="bg-white rounded-2xl border-2 border-orange-200 p-5 mb-6">
           <h3 className="text-xs font-bold text-orange-600 uppercase tracking-wider mb-3">Akce</h3>
           {showResolution ? (
@@ -309,6 +359,32 @@ export function AdminWorkflowDetail({
                 </button>
                 <button
                   onClick={() => { setShowResolution(false); setResolution(""); }}
+                  className="px-5 py-2.5 rounded-xl bg-gray-100 text-gray-600 text-sm font-bold hover:bg-gray-200 transition-colors"
+                >
+                  Zrušit
+                </button>
+              </div>
+            </div>
+          ) : showEscalation ? (
+            <div className="space-y-3">
+              <textarea
+                value={escalationReason}
+                onChange={(e) => setEscalationReason(e.target.value)}
+                placeholder="Proč eskalujete? Popište důvod, proč požadavek nemůžete vyřešit..."
+                rows={3}
+                className="w-full resize-none rounded-xl border border-pink-200 bg-pink-50/50 px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-pink-400 focus:ring-2 focus:ring-pink-100 focus:outline-none"
+                autoFocus
+              />
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleTransition("ESCALATED" as WorkflowStatus)}
+                  disabled={actionLoading || !escalationReason.trim()}
+                  className="flex-1 py-2.5 rounded-xl bg-pink-600 text-white text-sm font-bold disabled:opacity-40 hover:bg-pink-700 transition-colors shadow-sm"
+                >
+                  {actionLoading ? "Eskaluji..." : "Potvrdit eskalaci"}
+                </button>
+                <button
+                  onClick={() => { setShowEscalation(false); setEscalationReason(""); }}
                   className="px-5 py-2.5 rounded-xl bg-gray-100 text-gray-600 text-sm font-bold hover:bg-gray-200 transition-colors"
                 >
                   Zrušit

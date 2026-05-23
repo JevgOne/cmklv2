@@ -22,11 +22,12 @@ export const createWorkflowRequestSchema = z.object({
 export const updateWorkflowRequestSchema = z.object({
   status: z.enum([
     "QUEUED", "ASSIGNED", "IN_PROGRESS", "WAITING_INFO", "WAITING_APPROVAL",
-    "RESOLVED", "CLOSED", "CANCELLED",
+    "ESCALATED", "RESOLVED", "CLOSED", "CANCELLED",
   ]).optional(),
   assignedToId: z.string().optional().nullable(),
   priority: z.enum(["LOW", "NORMAL", "HIGH", "URGENT"]).optional(),
   resolution: z.string().optional(),
+  escalationReason: z.string().optional(),
 });
 
 export const createWorkflowCommentSchema = z.object({

@@ -52,11 +52,11 @@ export function WorkflowDetail({ request, userId, userRole }: WorkflowDetailProp
   });
 
   const handleStatusChange = useCallback(
-    async (newStatus: WorkflowStatus, resolution?: string) => {
+    async (newStatus: WorkflowStatus, resolution?: string, escalationReason?: string) => {
       const res = await fetch(`/api/workflow/${data.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus, resolution }),
+        body: JSON.stringify({ status: newStatus, resolution, escalationReason }),
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));

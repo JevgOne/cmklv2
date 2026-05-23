@@ -11,6 +11,7 @@ const statusLabels: Record<string, string> = {
   IN_PROGRESS: "Řeší se",
   WAITING_INFO: "Čeká na info",
   WAITING_APPROVAL: "Ke schválení",
+  ESCALATED: "Eskalovat",
   RESOLVED: "Vyřešeno",
   CLOSED: "Uzavřeno",
   CANCELLED: "Zrušeno",
@@ -20,7 +21,7 @@ interface WorkflowActionsProps {
   currentStatus: WorkflowStatus;
   userRole: string;
   isCreator: boolean;
-  onStatusChange: (newStatus: WorkflowStatus, resolution?: string) => Promise<void>;
+  onStatusChange: (newStatus: WorkflowStatus, resolution?: string, escalationReason?: string) => Promise<void>;
 }
 
 export function WorkflowActions({
@@ -32,6 +33,8 @@ export function WorkflowActions({
   const [loading, setLoading] = useState(false);
   const [showResolution, setShowResolution] = useState(false);
   const [resolution, setResolution] = useState("");
+  const [showEscalation, setShowEscalation] = useState(false);
+  const [escalationReason, setEscalationReason] = useState("");
 
   const allowedTransitions = getAllowedTransitions(currentStatus, userRole, isCreator);
 
@@ -42,12 +45,22 @@ export function WorkflowActions({
       setShowResolution(true);
       return;
     }
+    if (to === "ESCALATED" && !showEscalation) {
+      setShowEscalation(true);
+      return;
+    }
 
     setLoading(true);
     try {
-      await onStatusChange(to, to === "RESOLVED" ? resolution : undefined);
+      await onStatusChange(
+        to,
+        to === "RESOLVED" ? resolution : undefined,
+        to === "ESCALATED" ? escalationReason : undefined,
+      );
       setShowResolution(false);
       setResolution("");
+      setShowEscalation(false);
+      setEscalationReason("");
     } finally {
       setLoading(false);
     }
@@ -57,6 +70,8 @@ export function WorkflowActions({
     switch (status) {
       case "IN_PROGRESS":
         return "bg-orange-500 text-white hover:bg-orange-600";
+      case "ESCALATED":
+        return "bg-pink-100 text-pink-700 hover:bg-pink-200";
       case "RESOLVED":
         return "bg-green-500 text-white hover:bg-green-600";
       case "CLOSED":
@@ -97,7 +112,35 @@ export function WorkflowActions({
         </div>
       )}
 
-      {!showResolution && (
+      {showEscalation && (
+        <div className="space-y-2">
+          <textarea
+            value={escalationReason}
+            onChange={(e) => setEscalationReason(e.target.value)}
+            placeholder="Proč eskalujete? Popište důvod..."
+            rows={3}
+            className="w-full resize-none rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-pink-300 focus:ring-1 focus:ring-pink-300 focus:outline-none"
+            autoFocus
+          />
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleTransition("ESCALATED" as WorkflowStatus)}
+              disabled={loading || !escalationReason.trim()}
+              className="flex-1 py-2 rounded-xl bg-pink-600 text-white text-sm font-semibold disabled:opacity-40 hover:bg-pink-700 transition-colors"
+            >
+              {loading ? "Eskaluji..." : "Potvrdit eskalaci"}
+            </button>
+            <button
+              onClick={() => { setShowEscalation(false); setEscalationReason(""); }}
+              className="px-4 py-2 rounded-xl bg-gray-100 text-gray-600 text-sm font-semibold hover:bg-gray-200 transition-colors"
+            >
+              Zrušit
+            </button>
+          </div>
+        </div>
+      )}
+
+      {!showResolution && !showEscalation && (
         <div className="flex flex-wrap gap-2">
           {allowedTransitions.map((status) => (
             <button

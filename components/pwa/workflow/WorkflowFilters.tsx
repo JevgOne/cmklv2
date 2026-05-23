@@ -23,6 +23,7 @@ const statusLabels: Record<string, string> = {
   IN_PROGRESS: "Řeší se",
   WAITING_INFO: "Čeká na info",
   WAITING_APPROVAL: "Ke schválení",
+  ESCALATED: "Eskalováno",
   RESOLVED: "Vyřešeno",
   CLOSED: "Uzavřeno",
   CANCELLED: "Zrušeno",

@@ -137,10 +137,47 @@ export async function PATCH(
         if (data.resolution) updateData.resolution = data.resolution;
       }
 
-      await addWorkflowStep(id, session.user.id, "STATUS_CHANGED", {
-        fromStatus: existing.status,
-        toStatus: data.status,
-      });
+      if (data.status === "ESCALATED") {
+        // Unassign so an ADMIN can pick it up
+        updateData.assignedToId = null;
+
+        await addWorkflowStep(id, session.user.id, "ESCALATED", {
+          fromStatus: existing.status,
+          toStatus: "ESCALATED",
+          note: data.escalationReason || "Eskalováno bez důvodu",
+        });
+
+        // Notify all ADMINs about the escalation
+        const admins = await prisma.user.findMany({
+          where: { role: "ADMIN", status: "ACTIVE" },
+          select: { id: true },
+        });
+
+        const escalator = await prisma.user.findUnique({
+          where: { id: session.user.id },
+          select: { firstName: true, lastName: true },
+        });
+        const escalatorName = escalator
+          ? `${escalator.firstName} ${escalator.lastName}`
+          : "Neznámý";
+
+        await Promise.all(
+          admins.map((admin) =>
+            createNotification({
+              userId: admin.id,
+              type: "SYSTEM",
+              title: `Eskalace: ${existing.title}`,
+              body: `${escalatorName} eskaloval požadavek. Důvod: ${data.escalationReason || "—"}`,
+              link: `/admin/workflow/${id}`,
+            }),
+          ),
+        );
+      } else {
+        await addWorkflowStep(id, session.user.id, "STATUS_CHANGED", {
+          fromStatus: existing.status,
+          toStatus: data.status,
+        });
+      }
 
       await notifyWatchers(
         id,

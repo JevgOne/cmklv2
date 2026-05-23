@@ -10,6 +10,7 @@ const statusConfig: Record<WorkflowStatus, { label: string; bg: string; text: st
   WAITING_APPROVAL: { label: "Ke schválení", bg: "bg-purple-50", text: "text-purple-700", dot: "bg-purple-500" },
   RESOLVED: { label: "Vyřešeno", bg: "bg-green-50", text: "text-green-700", dot: "bg-green-500" },
   CLOSED: { label: "Uzavřeno", bg: "bg-gray-100", text: "text-gray-500", dot: "bg-gray-400" },
+  ESCALATED: { label: "Eskalováno", bg: "bg-pink-50", text: "text-pink-700", dot: "bg-pink-500" },
   CANCELLED: { label: "Zrušeno", bg: "bg-red-50", text: "text-red-600", dot: "bg-red-400" },
 };
 

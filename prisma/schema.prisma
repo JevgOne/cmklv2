@@ -2981,7 +2981,7 @@ model WorkflowRequest {
   priority    String  @default("NORMAL") // LOW, NORMAL, HIGH, URGENT
 
   // Stav
-  status      String  @default("CREATED") // CREATED, QUEUED, ASSIGNED, IN_PROGRESS, WAITING_INFO, WAITING_APPROVAL, RESOLVED, CLOSED, CANCELLED
+  status      String  @default("CREATED") // CREATED, QUEUED, ASSIGNED, IN_PROGRESS, WAITING_INFO, WAITING_APPROVAL, ESCALATED, RESOLVED, CLOSED, CANCELLED
 
   // Kdo vytvořil
   createdById String
