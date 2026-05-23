@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 
 const ALLOWED_ROLES = ["BROKER", "MANAGER", "REGIONAL_DIRECTOR", "ADMIN", "PARTS_SUPPLIER"];
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
@@ -24,19 +24,38 @@ export async function GET() {
     }
 
     const userId = session.user.id;
+    const { searchParams } = new URL(request.url);
+    const take = Math.min(Number(searchParams.get("take")) || 5, 50);
+    const cursor = searchParams.get("cursor") || undefined;
+    const unreadOnly = searchParams.get("unreadOnly") === "true";
+
+    const where = {
+      userId,
+      ...(unreadOnly && { read: false }),
+    };
 
     const [notifications, unreadCount] = await Promise.all([
       prisma.notification.findMany({
-        where: { userId },
+        where,
         orderBy: { createdAt: "desc" },
-        take: 5,
+        take: take + 1, // +1 pro detekci dalších stránek
+        ...(cursor && { cursor: { id: cursor }, skip: 1 }),
       }),
       prisma.notification.count({
         where: { userId, read: false },
       }),
     ]);
 
-    return NextResponse.json({ notifications, unreadCount });
+    const hasMore = notifications.length > take;
+    const items = hasMore ? notifications.slice(0, take) : notifications;
+    const nextCursor = hasMore ? items[items.length - 1]?.id : undefined;
+
+    return NextResponse.json({
+      notifications: items,
+      unreadCount,
+      nextCursor,
+      hasMore,
+    });
   } catch (error) {
     console.error("GET /api/broker/notifications error:", error);
     return NextResponse.json(
@@ -47,7 +66,8 @@ export async function GET() {
 }
 
 const markReadSchema = z.object({
-  ids: z.array(z.string().min(1)).min(1, "Zadejte alespon jedno ID"),
+  ids: z.array(z.string().min(1)).optional(),
+  markAllRead: z.boolean().optional(),
 });
 
 export async function PATCH(request: NextRequest) {
@@ -68,15 +88,27 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { ids } = markReadSchema.parse(body);
+    const data = markReadSchema.parse(body);
 
-    await prisma.notification.updateMany({
-      where: {
-        id: { in: ids },
-        userId: session.user.id,
-      },
-      data: { read: true },
-    });
+    if (data.markAllRead) {
+      await prisma.notification.updateMany({
+        where: { userId: session.user.id, read: false },
+        data: { read: true },
+      });
+    } else if (data.ids && data.ids.length > 0) {
+      await prisma.notification.updateMany({
+        where: {
+          id: { in: data.ids },
+          userId: session.user.id,
+        },
+        data: { read: true },
+      });
+    } else {
+      return NextResponse.json(
+        { error: "Zadejte ids nebo markAllRead" },
+        { status: 400 }
+      );
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

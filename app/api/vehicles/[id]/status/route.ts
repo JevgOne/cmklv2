@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { createNotification } from "@/lib/notifications";
 
 /* ------------------------------------------------------------------ */
 /*  PATCH /api/vehicles/[id]/status — Změna stavu vozidla              */
@@ -135,6 +136,26 @@ export async function PATCH(
         },
       });
     });
+
+    // Notifikace admin/backoffice při DRAFT→PENDING
+    if (data.status === "PENDING" && (vehicle.status === "DRAFT" || vehicle.status === "DRAFT_QUICK" || vehicle.status === "REJECTED")) {
+      const admins = await prisma.user.findMany({
+        where: { role: { in: ["ADMIN", "BACKOFFICE"] }, status: "ACTIVE" },
+        select: { id: true },
+      });
+      const vehicleName = `${updated.brand} ${updated.model}`;
+      await Promise.all(
+        admins.map((admin) =>
+          createNotification({
+            userId: admin.id,
+            type: "VEHICLE",
+            title: "Nové vozidlo ke schválení",
+            body: `${vehicleName} čeká na schválení.`,
+            link: `/admin/vehicles/${updated.id}`,
+          })
+        )
+      );
+    }
 
     return NextResponse.json({ vehicle: updated });
   } catch (error) {

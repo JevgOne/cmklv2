@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { VehicleDetailHub } from "@/components/pwa/vehicles/VehicleDetailHub";
+import { VehicleComments } from "@/components/pwa/vehicles/VehicleComments";
 
 export default async function VehicleDetailPage({
   params,
@@ -128,6 +129,22 @@ export default async function VehicleDetailPage({
   // Serializace dat pro client component (DateTime -> string)
   const serializedVehicle = JSON.parse(JSON.stringify(vehicle));
 
+  // Komentáře (jen veřejné pro makléře)
+  const vehicleComments = await prisma.vehicleComment.findMany({
+    where: { vehicleId: id, isInternal: false },
+    orderBy: { createdAt: "asc" },
+    include: {
+      user: {
+        select: { firstName: true, lastName: true, role: true, avatar: true },
+      },
+    },
+  });
+
+  const serializedComments = vehicleComments.map((c) => ({
+    ...c,
+    createdAt: c.createdAt.toISOString(),
+  }));
+
   const latestPayment = vehicle.payments[0]
     ? {
         status: vehicle.payments[0].status,
@@ -138,11 +155,21 @@ export default async function VehicleDetailPage({
     : undefined;
 
   return (
-    <VehicleDetailHub
-      vehicle={serializedVehicle}
-      stats={stats}
-      exclusiveContract={exclusiveContract}
-      payment={latestPayment}
-    />
+    <>
+      <VehicleDetailHub
+        vehicle={serializedVehicle}
+        stats={stats}
+        exclusiveContract={exclusiveContract}
+        payment={latestPayment}
+      />
+      {(serializedComments.length > 0 || isOwner) && (
+        <div className="px-4 pb-6 -mt-2">
+          <VehicleComments
+            vehicleId={id}
+            initialComments={serializedComments}
+          />
+        </div>
+      )}
+    </>
   );
 }

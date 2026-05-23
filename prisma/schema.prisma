@@ -160,6 +160,9 @@ model User {
   profileComments ProfileComment[] @relation("UserProfileComments")
   profileBadges   ProfileBadge[]   @relation("UserBadges")
 
+  // Interní komentáře u vozidel
+  vehicleComments VehicleComment[] @relation("VehicleCommentAuthor")
+
   // Reputační systém
   trustScore        TrustScore?
   skillTagsReceived SkillTag[]     @relation("SkillTagTarget")
@@ -375,6 +378,9 @@ model Vehicle {
   escalations     Escalation[]
   partnerLeads    PartnerLead[]
 
+  // Interní komentáře (admin↔makléř)
+  internalComments VehicleComment[] @relation("VehicleInternalComments")
+
   // Profil lajky/komentáře
   profileLikes    ProfileLike[]    @relation("VehicleLikes")
   profileComments ProfileComment[] @relation("VehicleComments")
@@ -533,6 +539,23 @@ model Notification {
 
   @@index([userId])
   @@index([read])
+  @@index([createdAt])
+}
+
+model VehicleComment {
+  id        String  @id @default(cuid())
+  vehicleId String
+  vehicle   Vehicle @relation("VehicleInternalComments", fields: [vehicleId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User    @relation("VehicleCommentAuthor", fields: [userId], references: [id])
+
+  content    String  @db.Text
+  isInternal Boolean @default(false) // true = jen ADMIN/BACKOFFICE/MANAGER vidí
+
+  createdAt DateTime @default(now())
+
+  @@index([vehicleId])
+  @@index([userId])
   @@index([createdAt])
 }
 

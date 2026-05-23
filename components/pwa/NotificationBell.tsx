@@ -17,7 +17,7 @@ interface NotificationBellProps {
   showAllHref?: string;
 }
 
-export function NotificationBell({ showAllHref = "/makler/dashboard" }: NotificationBellProps) {
+export function NotificationBell({ showAllHref = "/makler/notifications" }: NotificationBellProps) {
   const router = useRouter();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);

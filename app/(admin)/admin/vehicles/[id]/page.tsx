@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { StatusPill } from "@/components/ui/StatusPill";
 import { TrustScore } from "@/components/ui/TrustScore";
+import { VehicleComments } from "@/components/admin/vehicles/VehicleComments";
 
 const conditionLabels: Record<string, string> = {
   NEW: "Nové",
@@ -71,6 +72,21 @@ export default async function AdminVehicleDetailPage({
   if (!vehicle) {
     notFound();
   }
+
+  const comments = await prisma.vehicleComment.findMany({
+    where: { vehicleId: id },
+    orderBy: { createdAt: "asc" },
+    include: {
+      user: {
+        select: { firstName: true, lastName: true, role: true, avatar: true },
+      },
+    },
+  });
+
+  const serializedComments = comments.map((c) => ({
+    ...c,
+    createdAt: c.createdAt.toISOString(),
+  }));
 
   const statusVariantMap: Record<string, "active" | "pending" | "rejected" | "draft" | "sold"> = {
     DRAFT: "draft",
@@ -247,6 +263,15 @@ export default async function AdminVehicleDetailPage({
           <p className="text-sm text-gray-700 whitespace-pre-line">{vehicle.description}</p>
         </Card>
       )}
+
+      {/* Komentáře */}
+      <Card className="p-6">
+        <VehicleComments
+          vehicleId={id}
+          initialComments={serializedComments}
+          currentUserRole={session.user.role}
+        />
+      </Card>
     </div>
   );
 }

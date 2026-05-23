@@ -30,9 +30,19 @@ interface StoredDraft {
 }
 
 export default function NewVehiclePage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const leadId = searchParams.get("leadId");
+
+  // Lead→Vehicle prefill: early return before any stateful hooks
+  if (leadId) {
+    return <LeadPrefillRedirect leadId={leadId} />;
+  }
+
+  return <NewVehicleContent />;
+}
+
+function NewVehicleContent() {
+  const router = useRouter();
   const { createDraft } = useDraftContext();
   const [drafts, setDrafts] = useState<StoredDraft[]>([]);
   const [loading, setLoading] = useState(true);
@@ -64,7 +74,6 @@ export default function NewVehiclePage() {
             updatedAt: d.updatedAt,
           };
         });
-        // Seřadit od nejnovějšího
         mapped.sort((a, b) => b.updatedAt - a.updatedAt);
         setDrafts(mapped);
       } catch {
@@ -75,11 +84,6 @@ export default function NewVehiclePage() {
     }
     loadDrafts();
   }, []);
-
-  // Lead→Vehicle prefill: auto-create draft from lead data (after all hooks)
-  if (leadId) {
-    return <LeadPrefillRedirect leadId={leadId} />;
-  }
 
   const handleNewVehicle = async () => {
     const id = await createDraft();

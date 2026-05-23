@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { createManagerNotification } from "@/lib/notifications";
 
 const approveSchema = z.object({
   action: z.enum(["approve", "reject"]),
@@ -88,6 +89,18 @@ export async function POST(
         },
       });
     });
+
+    // Notifikace makléři
+    if (vehicle.brokerId) {
+      const vehicleName = `${vehicle.brand} ${vehicle.model}`;
+      await createManagerNotification({
+        brokerId: vehicle.brokerId,
+        vehicleId: vehicle.id,
+        action: data.action === "approve" ? "approved" : "rejected",
+        vehicleName,
+        reason: data.reason,
+      });
+    }
 
     return NextResponse.json({ success: true, vehicle: updated });
   } catch (error) {
