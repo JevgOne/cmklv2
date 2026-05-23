@@ -6462,3 +6462,27 @@ Datum: 2026-04-26
 Připravit TecDoc service layer, env variables, API wrapper. Čeká na registraci uživatele (instrukce na ~/Desktop/CARMAKLER-TODO-registrace.md). Zatím mock service s hardcoded díly.
 
 ---
+
+## TASK-NEW-008: PWA Guided Vehicle Onboarding — Standardizovaný nábor vozidel
+Priorita: 1
+Stav: zpracovává se (plánovač)
+Datum: 2026-05-22
+
+### Zadání:
+Přepracovat PWA workflow nabírání vozidel. Smart VIN prefill (DB → Cebia), dynamický formulář jen s chybějícími poli, guided photo checklist s pokyny na úhly/pořadí/detaily, quality gate (minimum fotek + povinná pole), AI generování standardizovaného popisu. Cíl: konzistentní kvalita všech inzerátů.
+
+Plán: `.claude-context/tasks/plan-pwa-guided-onboarding.md`
+
+---
+
+## TASK-NEW-009: Interní Workflow Systém — Požadavky, úkoly, komunikace
+Priorita: 1
+Stav: zpracovává se (plánovač)
+Datum: 2026-05-22
+
+### Zadání:
+Interní workflow systém v PWA: vytváření požadavků, automatické předávání oddělením, interní chat/komunikace, stavový automat, prioritizace, historie změn, notifikace v reálném čase (Pusher), správa dokumentů, role-based access. Workflow pro financování, pojištění, schvalování, podporu. Architektura musí počítat s budoucím rozšířením (ověřování klientů, dokumenty k úvěrům).
+
+Plán: `.claude-context/tasks/plan-internal-workflow-system.md`
+
+---
