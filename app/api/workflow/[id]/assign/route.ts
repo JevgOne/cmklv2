@@ -38,7 +38,7 @@ export async function POST(
     const updateData: Record<string, unknown> = {
       assignedToId: data.assignedToId,
     };
-    if (existing.status === "CREATED") {
+    if (existing.status === "CREATED" || existing.status === "QUEUED") {
       updateData.status = "ASSIGNED";
     }
 
@@ -58,7 +58,7 @@ export async function POST(
       type: "SYSTEM",
       title: `Přiřazen požadavek: ${existing.title}`,
       body: `${session.user.firstName} ${session.user.lastName} vám přiřadil požadavek.`,
-      link: `/makler/workflow/${id}`,
+      link: `/makler/pozadavky/${id}`,
     });
 
     // Auto-watch

@@ -178,7 +178,7 @@ export async function PATCH(
           type: "SYSTEM",
           title: `Přiřazen požadavek: ${existing.title}`,
           body: `Byl vám přiřazen požadavek.`,
-          link: `/makler/workflow/${id}`,
+          link: `/makler/pozadavky/${id}`,
         });
 
         // Auto-watch assignee
