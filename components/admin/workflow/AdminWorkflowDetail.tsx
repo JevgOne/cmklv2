@@ -314,7 +314,7 @@ export function AdminWorkflowDetail({
                   <>
                     <p className="text-sm text-pink-700 mb-2">
                       <span className="font-semibold">
-                        {escalatedStep.user ? getUserName(escalatedStep.user) : "Neznámý"}
+                        {escalatedStep.performedBy ? getUserName(escalatedStep.performedBy) : "Neznámý"}
                       </span>
                       {" — "}
                       {new Date(escalatedStep.createdAt).toLocaleDateString("cs-CZ", {
