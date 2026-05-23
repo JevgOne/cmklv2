@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { pusher } from "@/lib/pusher";
+import { sseManager } from "@/lib/sse/manager";
 import { createNotification } from "@/lib/notifications";
 
 interface NotifyWorkflowParams {
@@ -16,9 +16,7 @@ interface NotifyWorkflowParams {
 }
 
 /**
- * Unified workflow notification — in-app + Pusher + notify admins.
- *
- * Pattern from marketplace/notifications.ts: check prefs → in-app → Pusher event
+ * Unified workflow notification — in-app + SSE real-time + notify admins.
  */
 export async function notifyWorkflow(params: NotifyWorkflowParams): Promise<void> {
   const {
@@ -57,14 +55,12 @@ export async function notifyWorkflow(params: NotifyWorkflowParams): Promise<void
         link,
       });
 
-      if (pusher) {
-        await pusher.trigger(`private-user-${assignedToId}`, event, payload);
-      }
+      sseManager.sendToUser(assignedToId, event, payload);
     }
 
     // 2. Notify the role channel (department)
-    if (assignedRole && pusher) {
-      await pusher.trigger(`private-role-${assignedRole}`, "workflow:created", payload);
+    if (assignedRole) {
+      sseManager.sendToRole(assignedRole, "workflow:created", payload);
     }
 
     // 3. Always notify ADMINs (system-wide visibility)
@@ -88,16 +84,14 @@ export async function notifyWorkflow(params: NotifyWorkflowParams): Promise<void
           link,
         });
 
-        if (pusher) {
-          await pusher.trigger(`private-user-${admin.id}`, event, payload);
-        }
+        sseManager.sendToUser(admin.id, event, payload);
       }),
     );
 
-    // 4. Pusher event on the workflow channel (for real-time detail page updates)
-    if (pusher) {
-      await pusher.trigger(`private-workflow-${requestId}`, event, payload);
-    }
+    // 4. SSE event on the workflow channel (for real-time detail page updates)
+    // For workflow-specific updates, send to all connected clients
+    // (they filter by requestId on the client side)
+    sseManager.sendToAll(event, payload);
   } catch (error) {
     // Fire-and-forget — don't break the main flow
     console.error("notifyWorkflow error:", error);

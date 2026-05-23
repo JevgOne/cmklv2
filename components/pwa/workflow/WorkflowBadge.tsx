@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePusher } from "@/hooks/usePusher";
+import { useSSE } from "@/hooks/useSSE";
 
 interface WorkflowBadgeProps {
   userId: string;
@@ -23,19 +23,11 @@ export function WorkflowBadge({ userId, userRole }: WorkflowBadgeProps) {
       .catch(() => {});
   }, []);
 
-  // Real-time: increment on new assignment
-  usePusher(
-    userId ? `private-user-${userId}` : null,
-    "workflow:assigned",
-    () => setCount((c) => c + 1),
-  );
-
-  // Real-time: new items in role queue
-  usePusher(
-    userRole ? `private-role-${userRole}` : null,
-    "workflow:created",
-    () => setCount((c) => c + 1),
-  );
+  // Real-time: increment on new assignment or role queue items
+  useSSE({
+    "workflow:assigned": () => setCount((c) => c + 1),
+    "workflow:created": () => setCount((c) => c + 1),
+  });
 
   return (
     <Link

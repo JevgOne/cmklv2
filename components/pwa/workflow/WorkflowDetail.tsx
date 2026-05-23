@@ -11,7 +11,7 @@ import { WorkflowComments } from "./WorkflowComments";
 import { WorkflowCommentForm } from "./WorkflowCommentForm";
 import { WorkflowDocuments } from "./WorkflowDocuments";
 import { WorkflowActions } from "./WorkflowActions";
-import { usePusher } from "@/hooks/usePusher";
+import { useSSE } from "@/hooks/useSSE";
 import type { WorkflowRequestDetail } from "@/types/workflow";
 
 interface WorkflowDetailProps {
@@ -38,17 +38,16 @@ export function WorkflowDetail({ request, userId, userRole }: WorkflowDetailProp
   const isQueued = data.status === "QUEUED";
 
   // Real-time: update detail when workflow changes
-  usePusher(
-    data.id ? `private-workflow-${data.id}` : null,
-    "workflow:updated",
-    () => router.refresh(),
-  );
-
-  usePusher(
-    data.id ? `private-workflow-${data.id}` : null,
-    "workflow:comment",
-    () => router.refresh(),
-  );
+  useSSE({
+    "workflow:updated": (event) => {
+      const e = event as { requestId?: string };
+      if (e.requestId === data.id) router.refresh();
+    },
+    "workflow:comment": (event) => {
+      const e = event as { requestId?: string };
+      if (e.requestId === data.id) router.refresh();
+    },
+  });
 
   const handleStatusChange = useCallback(
     async (newStatus: WorkflowStatus, resolution?: string) => {

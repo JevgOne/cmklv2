@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { WorkflowCard } from "./WorkflowCard";
 import { WorkflowFilters } from "./WorkflowFilters";
 import { WorkflowStatsBar } from "./WorkflowStats";
-import { usePusher } from "@/hooks/usePusher";
+import { useSSE } from "@/hooks/useSSE";
 import type { WorkflowRequestSummary, WorkflowStats, WorkflowFiltersState } from "@/types/workflow";
 
 interface WorkflowListProps {
@@ -26,22 +26,16 @@ export function WorkflowList({ initialRequests, initialStats, userId, userRole }
     tab: "my",
   });
 
-  // Real-time: refresh list when new workflow assigned to me
-  const handleNewAssignment = useCallback(() => {
+  // Real-time: refresh list on workflow events
+  const handleRefresh = useCallback(() => {
     router.refresh();
   }, [router]);
 
-  usePusher(
-    userId ? `private-user-${userId}` : null,
-    "workflow:assigned",
-    handleNewAssignment,
-  );
-
-  usePusher(
-    userRole ? `private-role-${userRole}` : null,
-    "workflow:created",
-    handleNewAssignment,
-  );
+  useSSE({
+    "workflow:assigned": handleRefresh,
+    "workflow:created": handleRefresh,
+    "workflow:updated": handleRefresh,
+  });
 
   const filtered = requests.filter((r) => {
     if (filters.type && r.type !== filters.type) return false;
