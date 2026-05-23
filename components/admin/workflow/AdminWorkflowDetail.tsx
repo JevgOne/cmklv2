@@ -463,7 +463,14 @@ export function AdminWorkflowDetail({
                   />
                 </div>
               )}
-              {activeTab === "documents" && <WorkflowDocuments documents={data.documents} />}
+              {activeTab === "documents" && (
+                <WorkflowDocuments
+                  documents={data.documents}
+                  requestId={data.id}
+                  canUpload
+                  onDocumentAdded={(doc) => setData((prev) => ({ ...prev, documents: [doc, ...prev.documents] }))}
+                />
+              )}
             </div>
           </div>
         </div>
