@@ -7,7 +7,7 @@ import type { WorkflowRequestSummary, WorkflowStats } from "@/types/workflow";
 
 export const dynamic = "force-dynamic";
 
-const ADMIN_ROLES = ["ADMIN", "BACKOFFICE", "MANAGER", "REGIONAL_DIRECTOR"];
+const ADMIN_ROLES = ["ADMIN", "MANAGER", "REGIONAL_DIRECTOR"];
 
 export default async function AdminWorkflowPage() {
   const session = await getServerSession(authOptions);
@@ -41,7 +41,7 @@ export default async function AdminWorkflowPage() {
       prisma.workflowRequest.count({
         where: {
           status: {
-            in: ["CREATED", "ASSIGNED", "IN_PROGRESS", "WAITING_INFO", "WAITING_APPROVAL"],
+            in: ["CREATED", "QUEUED", "ASSIGNED", "IN_PROGRESS", "WAITING_INFO", "WAITING_APPROVAL"],
           },
         },
       }),
@@ -53,7 +53,7 @@ export default async function AdminWorkflowPage() {
       }),
       prisma.user.findMany({
         where: {
-          role: { in: ["BACKOFFICE", "ADMIN", "MANAGER", "REGIONAL_DIRECTOR"] },
+          role: { in: ["ADMIN", "MANAGER", "REGIONAL_DIRECTOR"] },
           status: "ACTIVE",
         },
         select: { id: true, firstName: true, lastName: true },
@@ -90,7 +90,7 @@ export default async function AdminWorkflowPage() {
     byPriority: {},
   };
 
-  const backofficeUsers = boUsers.map((u) => ({
+  const assignableUsers = boUsers.map((u) => ({
     id: u.id,
     name: [u.firstName, u.lastName].filter(Boolean).join(" ") || "—",
   }));
@@ -103,7 +103,7 @@ export default async function AdminWorkflowPage() {
       <AdminWorkflowDashboard
         requests={serialized}
         stats={stats}
-        backofficeUsers={backofficeUsers}
+        assignableUsers={assignableUsers}
       />
     </div>
   );

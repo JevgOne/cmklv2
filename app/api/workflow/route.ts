@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { createWorkflowRequestSchema } from "@/lib/validators/workflow";
 import { createWorkflowRequest } from "@/lib/workflow/actions";
 
-const ALLOWED_ROLES = ["ADMIN", "BACKOFFICE", "MANAGER", "REGIONAL_DIRECTOR", "BROKER"];
+const ALLOWED_ROLES = ["ADMIN", "MANAGER", "REGIONAL_DIRECTOR", "BROKER"];
 
 export async function GET(request: NextRequest) {
   try {
@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
     if (vehicleId) where.vehicleId = vehicleId;
 
     // Scope filtering
-    const isAdmin = ["ADMIN", "BACKOFFICE"].includes(session.user.role);
+    const isAdmin = session.user.role === "ADMIN";
     if (scope === "my") {
       where.createdById = session.user.id;
     } else if (scope === "assigned") {

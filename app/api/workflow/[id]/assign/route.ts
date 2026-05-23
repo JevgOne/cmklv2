@@ -7,7 +7,7 @@ import { assignWorkflowRequestSchema } from "@/lib/validators/workflow";
 import { addWorkflowStep } from "@/lib/workflow/actions";
 import { createNotification } from "@/lib/notifications";
 
-const ASSIGN_ROLES = ["ADMIN", "BACKOFFICE", "MANAGER", "REGIONAL_DIRECTOR"];
+const ASSIGN_ROLES = ["ADMIN", "MANAGER", "REGIONAL_DIRECTOR"];
 
 export async function POST(
   request: NextRequest,

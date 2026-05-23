@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "Vytvoření nového workflow požadavku.",
 };
 
-const ALLOWED_ROLES = ["BROKER", "MANAGER", "REGIONAL_DIRECTOR", "ADMIN", "BACKOFFICE"];
+const ALLOWED_ROLES = ["BROKER", "MANAGER", "REGIONAL_DIRECTOR", "ADMIN"];
 
 export default async function NovyPozadavekPage() {
   const session = await getServerSession(authOptions);

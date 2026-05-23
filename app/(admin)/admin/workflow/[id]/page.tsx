@@ -7,7 +7,7 @@ import type { WorkflowRequestDetail } from "@/types/workflow";
 
 export const dynamic = "force-dynamic";
 
-const ADMIN_ROLES = ["ADMIN", "BACKOFFICE", "MANAGER", "REGIONAL_DIRECTOR"];
+const ADMIN_ROLES = ["ADMIN", "MANAGER", "REGIONAL_DIRECTOR"];
 
 export default async function AdminWorkflowDetailPage({
   params,
@@ -61,7 +61,7 @@ export default async function AdminWorkflowDetailPage({
     }),
     prisma.user.findMany({
       where: {
-        role: { in: ["BACKOFFICE", "ADMIN", "MANAGER", "REGIONAL_DIRECTOR"] },
+        role: { in: ["ADMIN", "MANAGER", "REGIONAL_DIRECTOR"] },
         status: "ACTIVE",
       },
       select: { id: true, firstName: true, lastName: true },
@@ -122,7 +122,7 @@ export default async function AdminWorkflowDetailPage({
     })),
   };
 
-  const backofficeUsers = boUsers.map((u) => ({
+  const assignableUsers = boUsers.map((u) => ({
     id: u.id,
     name: [u.firstName, u.lastName].filter(Boolean).join(" ") || "—",
   }));
@@ -132,7 +132,7 @@ export default async function AdminWorkflowDetailPage({
       request={serialized}
       userId={session.user.id}
       userRole={session.user.role}
-      backofficeUsers={backofficeUsers}
+      assignableUsers={assignableUsers}
     />
   );
 }

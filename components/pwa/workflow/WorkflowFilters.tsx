@@ -18,6 +18,7 @@ const tabs = [
 
 const statusLabels: Record<string, string> = {
   CREATED: "Vytvořeno",
+  QUEUED: "Ve frontě",
   ASSIGNED: "Přiřazeno",
   IN_PROGRESS: "Řeší se",
   WAITING_INFO: "Čeká na info",

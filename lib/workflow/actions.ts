@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { createNotification } from "@/lib/notifications";
 import { autoAssignRequest } from "./router";
 import { calculateDueDate } from "./sla";
+import { notifyWorkflow } from "./notifications";
 import type { CreateWorkflowRequest } from "@/lib/validators/workflow";
 
 export async function createWorkflowRequest(
@@ -12,6 +13,9 @@ export async function createWorkflowRequest(
   const assignment = await autoAssignRequest(data.type, createdById);
   const dueAt = calculateDueDate(data.type, data.priority ?? "NORMAL");
 
+  // Determine initial status: ASSIGNED if person found, QUEUED if only role
+  const initialStatus = assignment.assignedToId ? "ASSIGNED" : "QUEUED";
+
   const request = await prisma.workflowRequest.create({
     data: {
       type: data.type,
@@ -19,7 +23,7 @@ export async function createWorkflowRequest(
       title: data.title,
       description: data.description,
       priority: data.priority ?? "NORMAL",
-      status: assignment.assignedToId ? "ASSIGNED" : "CREATED",
+      status: initialStatus,
       createdById,
       assignedToId: assignment.assignedToId ?? null,
       assignedRole: assignment.assignedRole,
@@ -27,6 +31,7 @@ export async function createWorkflowRequest(
       contactId: data.contactId ?? null,
       contractId: data.contractId ?? null,
       leadId: data.leadId ?? null,
+      inquiryId: data.inquiryId ?? null,
       metadata: data.metadata ? JSON.stringify(data.metadata) : null,
       dueAt,
     },
@@ -41,11 +46,11 @@ export async function createWorkflowRequest(
       requestId: request.id,
       userId: createdById,
       action: "CREATED",
-      toStatus: request.status,
+      toStatus: initialStatus,
     },
   });
 
-  // Pokud auto-assigned, přidej ASSIGNED step
+  // If auto-assigned to a person, add ASSIGNED step
   if (assignment.assignedToId) {
     await prisma.workflowStep.create({
       data: {
@@ -56,16 +61,33 @@ export async function createWorkflowRequest(
         note: `Automaticky přiřazeno (${assignment.assignedRole})`,
       },
     });
+  }
 
-    // Notifikace assignee
-    await createNotification({
-      userId: assignment.assignedToId,
-      type: "SYSTEM",
-      title: `Nový požadavek: ${data.title}`,
-      body: `${request.createdBy.firstName} ${request.createdBy.lastName} vytvořil požadavek typu ${data.type}.`,
-      link: `/makler/workflow/${request.id}`,
+  // If queued (no person), add QUEUED step
+  if (!assignment.assignedToId) {
+    await prisma.workflowStep.create({
+      data: {
+        requestId: request.id,
+        userId: createdById,
+        action: "QUEUED",
+        note: `Zařazeno do fronty (${assignment.assignedRole})`,
+      },
     });
   }
+
+  // Multi-role notifications: assignee + department + admins
+  const createdByName = `${request.createdBy.firstName} ${request.createdBy.lastName}`;
+  await notifyWorkflow({
+    event: assignment.assignedToId ? "workflow:assigned" : "workflow:created",
+    requestId: request.id,
+    type: data.type,
+    title: data.title,
+    priority: data.priority ?? "NORMAL",
+    assignedToId: assignment.assignedToId,
+    assignedRole: assignment.assignedRole,
+    createdByName,
+    status: initialStatus,
+  });
 
   // Auto-watch: creator
   await prisma.workflowWatcher.create({
@@ -115,7 +137,7 @@ export async function notifyWatchers(
         type: "SYSTEM",
         title,
         body,
-        link: `/makler/workflow/${requestId}`,
+        link: `/makler/pozadavky/${requestId}`,
       }),
     ),
   );

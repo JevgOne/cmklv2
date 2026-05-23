@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { createWorkflowCommentSchema } from "@/lib/validators/workflow";
 import { addWorkflowStep, notifyWatchers } from "@/lib/workflow/actions";
 
-const ALLOWED_ROLES = ["ADMIN", "BACKOFFICE", "MANAGER", "REGIONAL_DIRECTOR", "BROKER"];
+const ALLOWED_ROLES = ["ADMIN", "MANAGER", "REGIONAL_DIRECTOR", "BROKER"];
 
 export async function GET(
   _request: NextRequest,
@@ -71,7 +71,7 @@ export async function POST(
     }
 
     // Broker nemůže psát interní komentáře
-    const isAdmin = ["ADMIN", "BACKOFFICE", "MANAGER", "REGIONAL_DIRECTOR"].includes(session.user.role);
+    const isAdmin = ["ADMIN", "MANAGER", "REGIONAL_DIRECTOR"].includes(session.user.role);
     const isInternal = isAdmin ? data.isInternal : false;
 
     const comment = await prisma.workflowComment.create({

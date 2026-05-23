@@ -3,6 +3,7 @@ import type { WorkflowStatus } from "@/lib/workflow/types";
 
 const statusConfig: Record<WorkflowStatus, { label: string; bg: string; text: string; dot: string }> = {
   CREATED: { label: "Vytvořeno", bg: "bg-gray-100", text: "text-gray-700", dot: "bg-gray-400" },
+  QUEUED: { label: "Ve frontě", bg: "bg-yellow-50", text: "text-yellow-700", dot: "bg-yellow-500" },
   ASSIGNED: { label: "Přiřazeno", bg: "bg-blue-50", text: "text-blue-700", dot: "bg-blue-500" },
   IN_PROGRESS: { label: "Řeší se", bg: "bg-orange-50", text: "text-orange-700", dot: "bg-orange-500" },
   WAITING_INFO: { label: "Čeká na info", bg: "bg-amber-50", text: "text-amber-700", dot: "bg-amber-500" },

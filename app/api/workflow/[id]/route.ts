@@ -8,7 +8,7 @@ import { canTransition } from "@/lib/workflow/state-machine";
 import { addWorkflowStep, notifyWatchers } from "@/lib/workflow/actions";
 import { createNotification } from "@/lib/notifications";
 
-const ALLOWED_ROLES = ["ADMIN", "BACKOFFICE", "MANAGER", "REGIONAL_DIRECTOR", "BROKER"];
+const ALLOWED_ROLES = ["ADMIN", "MANAGER", "REGIONAL_DIRECTOR", "BROKER"];
 
 export async function GET(
   _request: NextRequest,
@@ -69,7 +69,7 @@ export async function GET(
     }
 
     // Access check: admin/backoffice see all, others only their own/assigned/watched
-    const isAdmin = ["ADMIN", "BACKOFFICE"].includes(session.user.role);
+    const isAdmin = session.user.role === "ADMIN";
     const isCreator = workflowRequest.createdById === session.user.id;
     const isAssignee = workflowRequest.assignedToId === session.user.id;
     const isWatcher = workflowRequest.watchers.some((w) => w.userId === session.user.id);

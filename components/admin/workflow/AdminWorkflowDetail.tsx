@@ -18,7 +18,7 @@ interface AdminWorkflowDetailProps {
   request: WorkflowRequestDetail;
   userId: string;
   userRole: string;
-  backofficeUsers: { id: string; name: string }[];
+  assignableUsers: { id: string; name: string }[];
 }
 
 type Tab = "timeline" | "comments" | "documents";
@@ -39,7 +39,7 @@ export function AdminWorkflowDetail({
   request,
   userId,
   userRole,
-  backofficeUsers,
+  assignableUsers,
 }: AdminWorkflowDetailProps) {
   const router = useRouter();
   const [data, setData] = useState(request);
@@ -276,7 +276,7 @@ export function AdminWorkflowDetail({
               className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 text-gray-700 bg-white disabled:opacity-50"
             >
               <option value="">Nepřiřazeno</option>
-              {backofficeUsers.map((u) => (
+              {assignableUsers.map((u) => (
                 <option key={u.id} value={u.id}>
                   {u.name}
                 </option>

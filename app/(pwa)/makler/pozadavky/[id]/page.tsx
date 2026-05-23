@@ -23,7 +23,7 @@ export async function generateMetadata({
   };
 }
 
-const ALLOWED_ROLES = ["BROKER", "MANAGER", "REGIONAL_DIRECTOR", "ADMIN", "BACKOFFICE"];
+const ALLOWED_ROLES = ["BROKER", "MANAGER", "REGIONAL_DIRECTOR", "ADMIN"];
 
 export default async function PozadavekDetailPage({
   params,

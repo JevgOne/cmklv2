@@ -3,7 +3,9 @@ import { z } from "zod";
 export const createWorkflowRequestSchema = z.object({
   type: z.enum([
     "FINANCING", "INSURANCE", "DOCUMENT", "APPROVAL", "SUPPORT",
-    "INSPECTION", "CLIENT_VERIFICATION", "HANDOVER", "PRICE_CHANGE", "OTHER",
+    "INSPECTION", "CLIENT_VERIFICATION", "HANDOVER", "PRICE_CHANGE",
+    "COMPLAINT", "ONBOARDING", "INTERNAL_TASK", "QUESTION", "BUG_REPORT",
+    "OTHER",
   ]),
   category: z.string().optional().nullable(),
   title: z.string().min(3, "Název musí mít alespoň 3 znaky").max(200),
@@ -13,12 +15,13 @@ export const createWorkflowRequestSchema = z.object({
   contactId: z.string().optional().nullable(),
   contractId: z.string().optional().nullable(),
   leadId: z.string().optional().nullable(),
+  inquiryId: z.string().optional().nullable(),
   metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 export const updateWorkflowRequestSchema = z.object({
   status: z.enum([
-    "ASSIGNED", "IN_PROGRESS", "WAITING_INFO", "WAITING_APPROVAL",
+    "QUEUED", "ASSIGNED", "IN_PROGRESS", "WAITING_INFO", "WAITING_APPROVAL",
     "RESOLVED", "CLOSED", "CANCELLED",
   ]).optional(),
   assignedToId: z.string().optional().nullable(),

@@ -471,6 +471,9 @@ model VehicleInquiry {
   offeredPrice Int?
   agreedPrice  Int?
 
+  // Workflow
+  workflowRequests WorkflowRequest[]
+
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -2969,7 +2972,7 @@ model WorkflowRequest {
   id          String  @id @default(cuid())
 
   // Typ a kategorie
-  type        String  // FINANCING, INSURANCE, DOCUMENT, APPROVAL, SUPPORT, INSPECTION, CLIENT_VERIFICATION, HANDOVER, PRICE_CHANGE, OTHER
+  type        String  // FINANCING, INSURANCE, DOCUMENT, APPROVAL, SUPPORT, INSPECTION, CLIENT_VERIFICATION, HANDOVER, PRICE_CHANGE, COMPLAINT, ONBOARDING, INTERNAL_TASK, QUESTION, BUG_REPORT, OTHER
   category    String?
 
   // Obsah
@@ -2978,7 +2981,7 @@ model WorkflowRequest {
   priority    String  @default("NORMAL") // LOW, NORMAL, HIGH, URGENT
 
   // Stav
-  status      String  @default("CREATED") // CREATED, ASSIGNED, IN_PROGRESS, WAITING_INFO, WAITING_APPROVAL, RESOLVED, CLOSED, CANCELLED
+  status      String  @default("CREATED") // CREATED, QUEUED, ASSIGNED, IN_PROGRESS, WAITING_INFO, WAITING_APPROVAL, RESOLVED, CLOSED, CANCELLED
 
   // Kdo vytvořil
   createdById String
@@ -2989,7 +2992,7 @@ model WorkflowRequest {
   assignedTo   User?  @relation("WorkflowAssignee", fields: [assignedToId], references: [id])
 
   // Přiřazeno oddělení/roli
-  assignedRole String? // BACKOFFICE, MANAGER, REGIONAL_DIRECTOR, ADMIN
+  assignedRole String? // MANAGER, REGIONAL_DIRECTOR, ADMIN
 
   // Kontext — polymorfní vazby
   vehicleId   String?
@@ -2997,6 +3000,8 @@ model WorkflowRequest {
   contactId   String?
   contractId  String?
   leadId      String?
+  inquiryId   String?
+  inquiry     VehicleInquiry? @relation(fields: [inquiryId], references: [id])
 
   // SLA
   dueAt       DateTime?
@@ -3027,6 +3032,7 @@ model WorkflowRequest {
   @@index([type])
   @@index([priority])
   @@index([vehicleId])
+  @@index([inquiryId])
   @@index([dueAt])
   @@index([slaBreached])
   @@index([createdAt])

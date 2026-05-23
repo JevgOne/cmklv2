@@ -12,11 +12,12 @@ import type { WorkflowType, WorkflowStatus, WorkflowPriority } from "@/lib/workf
 interface AdminWorkflowDashboardProps {
   requests: WorkflowRequestSummary[];
   stats: WorkflowStats;
-  backofficeUsers: { id: string; name: string }[];
+  assignableUsers: { id: string; name: string }[];
 }
 
 const statusLabels: Record<string, string> = {
   CREATED: "Vytvořeno",
+  QUEUED: "Ve frontě",
   ASSIGNED: "Přiřazeno",
   IN_PROGRESS: "Řeší se",
   WAITING_INFO: "Čeká na info",
@@ -50,7 +51,7 @@ function formatDate(dateStr: string): string {
 export function AdminWorkflowDashboard({
   requests,
   stats,
-  backofficeUsers,
+  assignableUsers,
 }: AdminWorkflowDashboardProps) {
   const [filterType, setFilterType] = useState<WorkflowType | "">("");
   const [filterStatus, setFilterStatus] = useState<WorkflowStatus | "">("");
@@ -129,7 +130,7 @@ export function AdminWorkflowDashboard({
             className="text-sm border border-gray-200 rounded-lg px-3 py-2 text-gray-700 bg-white"
           >
             <option value="">Všichni přiřazení</option>
-            {backofficeUsers.map((u) => (
+            {assignableUsers.map((u) => (
               <option key={u.id} value={u.id}>
                 {u.name}
               </option>

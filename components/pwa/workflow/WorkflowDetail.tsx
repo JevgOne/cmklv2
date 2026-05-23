@@ -199,7 +199,7 @@ export function WorkflowDetail({ request, userId, userRole }: WorkflowDetailProp
             <WorkflowComments comments={data.comments} currentUserId={userId} />
             <WorkflowCommentForm
               onSubmit={handleAddComment}
-              showInternalToggle={["ADMIN", "BACKOFFICE", "MANAGER", "REGIONAL_DIRECTOR"].includes(userRole)}
+              showInternalToggle={["ADMIN", "MANAGER", "REGIONAL_DIRECTOR"].includes(userRole)}
             />
           </div>
         )}
