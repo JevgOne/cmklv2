@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useOnlineStatusContext } from "./OnlineStatusProvider";
 import { GlobalSearch } from "./GlobalSearch";
 import { NotificationBell } from "./NotificationBell";
+import { WorkflowTopBarBadge } from "./workflow/WorkflowTopBarBadge";
 
 export function TopBar() {
   const { isOnline } = useOnlineStatusContext();
@@ -73,6 +74,9 @@ export function TopBar() {
                 />
               </svg>
             </button>
+
+            {/* Workflow badge */}
+            <WorkflowTopBarBadge />
 
             {/* Notifications */}
             <NotificationBell showAllHref="/makler/dashboard" />

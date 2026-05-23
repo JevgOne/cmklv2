@@ -17,6 +17,7 @@ import { VehiclePriceHistory } from "./VehiclePriceHistory";
 import { VehicleTimeline } from "./VehicleTimeline";
 import { EscalationForm } from "@/components/pwa/EscalationForm";
 import { WorkflowChecklist } from "@/components/pwa/vehicles/WorkflowChecklist";
+import { VehicleWorkflowButtons } from "@/components/pwa/workflow/VehicleWorkflowButtons";
 import { formatPrice, formatMileage } from "@/lib/utils";
 
 // ---- Types ----
@@ -341,6 +342,12 @@ export function VehicleDetailHub({ vehicle, stats, exclusiveContract, payment }:
             hasInteriorPhotos: vehicle.images.length >= 13,
             hasEvidencePhotos: vehicle.images.length >= 16,
           }}
+        />
+
+        {/* Workflow quick actions */}
+        <VehicleWorkflowButtons
+          vehicleId={vehicle.id}
+          vehicleLabel={title}
         />
 
         {/* Seller info */}

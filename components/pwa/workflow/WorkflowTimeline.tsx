@@ -5,6 +5,7 @@ import type { WorkflowStep } from "@/types/workflow";
 
 const actionConfig: Record<string, { icon: string; color: string }> = {
   CREATED: { icon: "🟢", color: "bg-green-500" },
+  QUEUED: { icon: "🟡", color: "bg-yellow-500" },
   ASSIGNED: { icon: "🔵", color: "bg-blue-500" },
   STATUS_CHANGED: { icon: "🟡", color: "bg-amber-500" },
   PRIORITY_CHANGED: { icon: "🟠", color: "bg-orange-500" },
@@ -19,6 +20,7 @@ const actionConfig: Record<string, { icon: string; color: string }> = {
 
 const actionLabels: Record<string, string> = {
   CREATED: "Vytvořeno",
+  QUEUED: "Zařazeno do fronty",
   ASSIGNED: "Přiřazeno",
   STATUS_CHANGED: "Změna stavu",
   PRIORITY_CHANGED: "Změna priority",

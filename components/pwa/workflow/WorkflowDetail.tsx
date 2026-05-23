@@ -11,6 +11,7 @@ import { WorkflowComments } from "./WorkflowComments";
 import { WorkflowCommentForm } from "./WorkflowCommentForm";
 import { WorkflowDocuments } from "./WorkflowDocuments";
 import { WorkflowActions } from "./WorkflowActions";
+import { usePusher } from "@/hooks/usePusher";
 import type { WorkflowRequestDetail } from "@/types/workflow";
 
 interface WorkflowDetailProps {
@@ -30,9 +31,24 @@ export function WorkflowDetail({ request, userId, userRole }: WorkflowDetailProp
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<Tab>("timeline");
   const [data, setData] = useState(request);
+  const [claiming, setClaiming] = useState(false);
 
   const typeConfig = WORKFLOW_TYPES[data.type] || WORKFLOW_TYPES.OTHER;
   const isCreator = data.createdBy.id === userId;
+  const isQueued = data.status === "QUEUED";
+
+  // Real-time: update detail when workflow changes
+  usePusher(
+    data.id ? `private-workflow-${data.id}` : null,
+    "workflow:updated",
+    () => router.refresh(),
+  );
+
+  usePusher(
+    data.id ? `private-workflow-${data.id}` : null,
+    "workflow:comment",
+    () => router.refresh(),
+  );
 
   const handleStatusChange = useCallback(
     async (newStatus: WorkflowStatus, resolution?: string) => {
@@ -46,10 +62,27 @@ export function WorkflowDetail({ request, userId, userRole }: WorkflowDetailProp
         throw new Error(err.error || "Chyba při změně stavu");
       }
       const updated = await res.json();
-      setData((prev) => ({ ...prev, ...updated }));
+      setData((prev) => ({ ...prev, ...updated.request }));
     },
     [data.id],
   );
+
+  const handleClaim = useCallback(async () => {
+    setClaiming(true);
+    try {
+      const res = await fetch(`/api/workflow/${data.id}/assign`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ assignedToId: userId }),
+      });
+      if (!res.ok) throw new Error("Chyba při převzetí");
+      router.refresh();
+    } catch {
+      // silent
+    } finally {
+      setClaiming(false);
+    }
+  }, [data.id, userId, router]);
 
   const handleAddComment = useCallback(
     async (content: string, isInternal: boolean) => {
@@ -59,10 +92,10 @@ export function WorkflowDetail({ request, userId, userRole }: WorkflowDetailProp
         body: JSON.stringify({ content, isInternal }),
       });
       if (!res.ok) throw new Error("Chyba při přidávání komentáře");
-      const newComment = await res.json();
+      const result = await res.json();
       setData((prev) => ({
         ...prev,
-        comments: [...prev.comments, newComment],
+        comments: [...prev.comments, result.comment],
       }));
     },
     [data.id],
@@ -101,6 +134,24 @@ export function WorkflowDetail({ request, userId, userRole }: WorkflowDetailProp
           </div>
         </div>
       </div>
+
+      {/* Claim banner for QUEUED requests */}
+      {isQueued && (
+        <div className="px-4 py-3 bg-yellow-50 border-b border-yellow-200">
+          <div className="flex items-center justify-between gap-3">
+            <div className="text-sm text-yellow-800">
+              Tento požadavek čeká ve frontě — zatím nebyl nikomu přiřazen.
+            </div>
+            <button
+              onClick={handleClaim}
+              disabled={claiming}
+              className="flex-shrink-0 px-4 py-2 rounded-xl bg-orange-500 text-white text-sm font-semibold hover:bg-orange-600 disabled:opacity-40 transition-colors"
+            >
+              {claiming ? "Přebírám..." : "Převzít"}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Info section */}
       <div className="px-4 py-4 border-b border-gray-100 space-y-3">

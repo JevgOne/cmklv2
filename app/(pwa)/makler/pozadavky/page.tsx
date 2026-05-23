@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { WorkflowList } from "@/components/pwa/workflow/WorkflowList";
+import { WorkflowQuickFAB } from "@/components/pwa/workflow/WorkflowQuickFAB";
 import type { WorkflowRequestSummary, WorkflowStats } from "@/types/workflow";
 
 export const metadata: Metadata = {
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 const ALLOWED_ROLES = ["BROKER", "MANAGER", "REGIONAL_DIRECTOR", "ADMIN"];
+const ACTIVE_STATUSES = ["CREATED", "QUEUED", "ASSIGNED", "IN_PROGRESS", "WAITING_INFO", "WAITING_APPROVAL"];
 
 export default async function PozadavkyPage() {
   const session = await getServerSession(authOptions);
@@ -22,17 +24,24 @@ export default async function PozadavkyPage() {
   }
 
   const userId = session.user.id;
+  const userRole = session.user.role;
+  const isAdmin = userRole === "ADMIN";
+
+  // Scope: ADMIN sees all, others see own + assigned + role queue
+  const scopeFilter = isAdmin
+    ? {}
+    : {
+        OR: [
+          { createdById: userId },
+          { assignedToId: userId },
+          { assignedRole: userRole },
+        ],
+      };
 
   const [requests, totalCount, openCount, myAssignedCount, slaBreachedCount] =
     await Promise.all([
       prisma.workflowRequest.findMany({
-        where: {
-          OR: [
-            { createdById: userId },
-            { assignedToId: userId },
-            { assignedRole: session.user.role },
-          ],
-        },
+        where: scopeFilter,
         include: {
           createdBy: {
             select: { id: true, firstName: true, lastName: true, avatar: true },
@@ -50,25 +59,11 @@ export default async function PozadavkyPage() {
         orderBy: [{ createdAt: "desc" }],
         take: 50,
       }),
+      prisma.workflowRequest.count({ where: scopeFilter }),
       prisma.workflowRequest.count({
         where: {
-          OR: [
-            { createdById: userId },
-            { assignedToId: userId },
-            { assignedRole: session.user.role },
-          ],
-        },
-      }),
-      prisma.workflowRequest.count({
-        where: {
-          OR: [
-            { createdById: userId },
-            { assignedToId: userId },
-            { assignedRole: session.user.role },
-          ],
-          status: {
-            in: ["CREATED", "ASSIGNED", "IN_PROGRESS", "WAITING_INFO", "WAITING_APPROVAL"],
-          },
+          ...scopeFilter,
+          status: { in: ACTIVE_STATUSES },
         },
       }),
       prisma.workflowRequest.count({
@@ -76,10 +71,7 @@ export default async function PozadavkyPage() {
       }),
       prisma.workflowRequest.count({
         where: {
-          OR: [
-            { createdById: userId },
-            { assignedToId: userId },
-          ],
+          ...scopeFilter,
           slaBreached: true,
           status: { notIn: ["CLOSED", "CANCELLED"] },
         },
@@ -115,5 +107,15 @@ export default async function PozadavkyPage() {
     byPriority: {},
   };
 
-  return <WorkflowList initialRequests={serialized} initialStats={stats} userId={userId} />;
+  return (
+    <>
+      <WorkflowList
+        initialRequests={serialized}
+        initialStats={stats}
+        userId={userId}
+        userRole={userRole}
+      />
+      <WorkflowQuickFAB />
+    </>
+  );
 }

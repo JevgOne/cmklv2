@@ -1,19 +1,21 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { WorkflowCard } from "./WorkflowCard";
 import { WorkflowFilters } from "./WorkflowFilters";
 import { WorkflowStatsBar } from "./WorkflowStats";
+import { usePusher } from "@/hooks/usePusher";
 import type { WorkflowRequestSummary, WorkflowStats, WorkflowFiltersState } from "@/types/workflow";
 
 interface WorkflowListProps {
   initialRequests: WorkflowRequestSummary[];
   initialStats: WorkflowStats;
   userId: string;
+  userRole: string;
 }
 
-export function WorkflowList({ initialRequests, initialStats, userId }: WorkflowListProps) {
+export function WorkflowList({ initialRequests, initialStats, userId, userRole }: WorkflowListProps) {
   const router = useRouter();
   const [requests, setRequests] = useState(initialRequests);
   const [stats] = useState(initialStats);
@@ -23,6 +25,23 @@ export function WorkflowList({ initialRequests, initialStats, userId }: Workflow
     priority: "",
     tab: "my",
   });
+
+  // Real-time: refresh list when new workflow assigned to me
+  const handleNewAssignment = useCallback(() => {
+    router.refresh();
+  }, [router]);
+
+  usePusher(
+    userId ? `private-user-${userId}` : null,
+    "workflow:assigned",
+    handleNewAssignment,
+  );
+
+  usePusher(
+    userRole ? `private-role-${userRole}` : null,
+    "workflow:created",
+    handleNewAssignment,
+  );
 
   const filtered = requests.filter((r) => {
     if (filters.type && r.type !== filters.type) return false;

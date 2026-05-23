@@ -13,6 +13,7 @@ import { LevelBadge } from "@/components/pwa/gamification/LevelBadge";
 import { Card } from "@/components/ui/Card";
 import { DashboardTourWrapper } from "./DashboardTourWrapper";
 import { UnlockProgressSection } from "@/components/pwa/dashboard/UnlockProgressSection";
+import { WorkflowWidget } from "@/components/pwa/dashboard/WorkflowWidget";
 import { canAccess, getNextLevelInfo } from "@/lib/feature-gates";
 
 export default async function DashboardPage() {
@@ -260,6 +261,9 @@ export default async function DashboardPage() {
 
       {/* Drafty z IndexedDB */}
       <DraftsList />
+
+      {/* Workflow požadavky */}
+      <WorkflowWidget userId={userId} userRole={session.user.role} />
 
       {/* Materialy */}
       {canSeeMaterials ? (
