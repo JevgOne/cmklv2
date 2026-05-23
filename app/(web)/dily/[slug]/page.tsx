@@ -89,10 +89,14 @@ function getPartTypeBadgeVariant(partType: string): "success" | "default" {
 
 export default async function DilyDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const { slug } = await params;
+  const { tab } = await searchParams;
+  const activeTab = tab || "popis";
 
   const part = await prisma.part.findFirst({
     where: { OR: [{ slug }, { id: slug }] },
@@ -398,6 +402,8 @@ export default async function DilyDetailPage({
             universalFit={part.universalFit}
             weight={part.weight}
             dimensions={part.dimensions}
+            activeTab={activeTab}
+            slug={slug}
           />
         </div>
 

@@ -11,7 +11,11 @@ import { generateBreadcrumbJsonLd } from "@/lib/seo";
 import { BASE_URL } from "@/lib/seo-data";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { ArticleReactions } from "@/components/web/blog/ArticleReactions";
+import dynamic from "next/dynamic";
+const ArticleReactions = dynamic(
+  () => import("@/components/web/blog/ArticleReactions").then((m) => ({ default: m.ArticleReactions })),
+  { loading: () => <div className="h-12" /> }
+);
 import { ArticleComments } from "@/components/web/blog/ArticleComments";
 import { NewsletterSignup } from "@/components/web/blog/NewsletterSignup";
 import { ShareButtons } from "./ShareButtons";

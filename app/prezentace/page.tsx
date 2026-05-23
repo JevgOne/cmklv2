@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
-import { PrezentacePage } from "@/components/web/PrezentacePage";
+import dynamic from "next/dynamic";
+const PrezentacePage = dynamic(
+  () => import("@/components/web/PrezentacePage").then((m) => ({ default: m.PrezentacePage })),
+  { loading: () => <div className="min-h-screen animate-pulse bg-gray-50" /> }
+);
 
 export const metadata: Metadata = {
   title: "Prezentace pro partnery",

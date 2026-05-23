@@ -128,10 +128,13 @@ const bodyTypeLabels: Record<string, string> = {
 
 export default async function VehicleDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const { slug } = await params;
+  const { tab: activeTab } = await searchParams;
 
   // Načtení vozidla dle slug
   const vehicle = await prisma.vehicle.findFirst({
@@ -185,7 +188,7 @@ export default async function VehicleDetailPage({
       .catch(() => {});
 
     // Render Listing detail
-    return renderListingDetail(listing, slug);
+    return renderListingDetail(listing, slug, activeTab);
   }
 
   // Inkrementace počtu zobrazení (fire-and-forget)
@@ -700,6 +703,8 @@ export default async function VehicleDetailPage({
           equipment={equipment}
           description={vehicle.description || "Bez popisu."}
           history={history}
+          activeTab={activeTab}
+          slug={slug}
         />
       </section>
 
@@ -982,7 +987,7 @@ interface ListingWithRelations {
   };
 }
 
-function renderListingDetail(listing: ListingWithRelations, slug: string) {
+function renderListingDetail(listing: ListingWithRelations, slug: string, activeTab?: string) {
   const name = `${listing.brand} ${listing.model}${listing.variant ? " " + listing.variant : ""}`;
   const formattedPrice = new Intl.NumberFormat("cs-CZ").format(listing.price);
   const formattedKm = new Intl.NumberFormat("cs-CZ").format(listing.mileage);
@@ -1207,6 +1212,8 @@ function renderListingDetail(listing: ListingWithRelations, slug: string) {
             event: "Inzerát vytvořen",
             detail: null,
           }]}
+          activeTab={activeTab}
+          slug={slug}
         />
       </section>
 

@@ -8,7 +8,12 @@ import { generatePersonJsonLd, generateBreadcrumbJsonLd } from "@/lib/seo";
 import { ROLE_LABELS } from "@/lib/role-labels";
 import { getSkillTagCounts } from "@/lib/reputation/skill-tags";
 import { getBrokerRatingBreakdown, getBrokerDetailedRatings } from "@/lib/broker-reviews";
-import { ProfileClient, type ProfileData } from "./ProfileClient";
+import dynamic from "next/dynamic";
+import type { ProfileData } from "./ProfileClient";
+const ProfileClient = dynamic(
+  () => import("./ProfileClient").then((m) => ({ default: m.ProfileClient })),
+  { loading: () => <div className="min-h-screen animate-pulse bg-gray-50" /> }
+);
 
 export const revalidate = 300;
 

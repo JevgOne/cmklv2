@@ -1,11 +1,5 @@
-"use client";
-
-import { useState } from "react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
-
-/* ------------------------------------------------------------------ */
-/*  Props                                                               */
-/* ------------------------------------------------------------------ */
 
 interface ProductDetailTabsProps {
   description: string | null;
@@ -16,21 +10,15 @@ interface ProductDetailTabsProps {
   universalFit: boolean;
   weight: number | null;
   dimensions: string | null;
+  activeTab?: string;
+  slug: string;
 }
-
-/* ------------------------------------------------------------------ */
-/*  Tab data                                                           */
-/* ------------------------------------------------------------------ */
 
 const tabList = [
   { value: "popis", label: "Popis" },
   { value: "kompatibilita", label: "Kompatibilita" },
   { value: "zaruka", label: "Záruka" },
 ];
-
-/* ------------------------------------------------------------------ */
-/*  Component                                                          */
-/* ------------------------------------------------------------------ */
 
 export function ProductDetailTabs({
   description,
@@ -41,25 +29,32 @@ export function ProductDetailTabs({
   universalFit,
   weight,
   dimensions,
+  activeTab = "popis",
+  slug,
 }: ProductDetailTabsProps) {
-  const [active, setActive] = useState("popis");
+  const active = tabList.some((t) => t.value === activeTab) ? activeTab : "popis";
 
   return (
     <div>
-      {/* Tab buttons */}
+      {/* Tab buttons — Link-based SSR */}
       <div className="flex gap-1 bg-gray-100 p-1 rounded-lg w-full sm:w-fit overflow-x-auto">
-        {tabList.map((tab) => (
-          <button
-            key={tab.value}
-            onClick={() => setActive(tab.value)}
-            className={cn(
-              "px-4 sm:px-5 py-2.5 bg-transparent text-sm font-semibold text-gray-600 rounded-[10px] cursor-pointer transition-all duration-200 hover:text-gray-900 border-none whitespace-nowrap min-h-[44px] flex items-center",
-              active === tab.value && "bg-white text-gray-900 shadow-sm",
-            )}
-          >
-            {tab.label}
-          </button>
-        ))}
+        {tabList.map((tab) => {
+          const isActive = active === tab.value;
+          return (
+            <Link
+              key={tab.value}
+              href={`/shop/produkt/${slug}?tab=${tab.value}`}
+              replace
+              scroll={false}
+              className={cn(
+                "px-4 sm:px-5 py-2.5 text-sm font-semibold text-gray-600 rounded-[10px] transition-all duration-200 hover:text-gray-900 whitespace-nowrap min-h-[44px] flex items-center no-underline",
+                isActive && "bg-white text-gray-900 shadow-sm",
+              )}
+            >
+              {tab.label}
+            </Link>
+          );
+        })}
       </div>
 
       {/* Tab content */}

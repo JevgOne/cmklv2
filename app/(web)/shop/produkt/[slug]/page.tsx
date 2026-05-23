@@ -81,10 +81,13 @@ function conditionToStars(condition: string): number {
 
 export default async function ProductDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const { slug } = await params;
+  const { tab: activeTab } = await searchParams;
 
   const part = await prisma.part.findFirst({
     where: { OR: [{ slug }, { id: slug }] },
@@ -408,6 +411,8 @@ export default async function ProductDetailPage({
             universalFit={part.universalFit}
             weight={part.weight}
             dimensions={part.dimensions}
+            activeTab={activeTab}
+            slug={slug}
           />
         </div>
 
