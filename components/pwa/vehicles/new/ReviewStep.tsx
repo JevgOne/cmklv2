@@ -406,6 +406,22 @@ export function ReviewStep() {
           status: "submitted",
         } as unknown as Record<string, unknown>);
 
+        // Lead→Vehicle: update lead status to VEHICLE_ADDED
+        if (draft.contact?.leadId) {
+          try {
+            await fetch(`/api/leads/${draft.contact.leadId}/status`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                status: "VEHICLE_ADDED",
+                vehicleId: result.id,
+              }),
+            });
+          } catch {
+            // Non-critical — vehicle was created successfully
+          }
+        }
+
         router.push(`/makler/vehicles/new/success?draft=${draftId}&vehicleId=${result.id}`);
       } else {
         // Offline: queue as pending action

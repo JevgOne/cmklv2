@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { StatusPill } from "@/components/ui/StatusPill";
 import { useDraftContext } from "@/lib/hooks/useDraft";
 import { offlineStorage } from "@/lib/offline/storage";
+import { LeadPrefillRedirect } from "@/components/pwa/vehicles/new/LeadPrefillRedirect";
 import type { VehicleDraft } from "@/types/vehicle-draft";
 
 const STEP_ROUTES: Record<number, string> = {
@@ -30,10 +31,17 @@ interface StoredDraft {
 
 export default function NewVehiclePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const leadId = searchParams.get("leadId");
   const { createDraft } = useDraftContext();
   const [drafts, setDrafts] = useState<StoredDraft[]>([]);
   const [loading, setLoading] = useState(true);
   const [confirmId, setConfirmId] = useState<string | null>(null);
+
+  // Lead→Vehicle prefill: auto-create draft from lead data
+  if (leadId) {
+    return <LeadPrefillRedirect leadId={leadId} />;
+  }
 
   const handleDeleteDraft = useCallback(async (id: string) => {
     try {

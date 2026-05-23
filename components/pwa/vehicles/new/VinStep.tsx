@@ -254,6 +254,25 @@ export function VinStep() {
           Po zadání VIN systém automaticky vyplní značku, model a další údaje.
         </HintBox>
 
+        {/* Lead prefill banner */}
+        {draft?.contact?.leadId && (
+          <div className="bg-blue-50 border-l-4 border-blue-400 p-3 rounded-lg">
+            <p className="text-sm text-blue-800 font-medium">
+              Nabíráte auto z leadu
+            </p>
+            {(draft.details?.brand || draft.details?.model) && (
+              <p className="text-sm text-blue-600">
+                {draft.details.brand} {draft.details.model}
+                {draft.details.year ? ` (${draft.details.year})` : ""}
+                {draft.details.mileage ? ` · ${draft.details.mileage.toLocaleString("cs-CZ")} km` : ""}
+              </p>
+            )}
+            <p className="text-xs text-blue-500 mt-1">
+              Kontakt a parametry předvyplněny. Zadejte VIN pro doplnění technických dat.
+            </p>
+          </div>
+        )}
+
         {/* VIN Input */}
         <div>
           <Input

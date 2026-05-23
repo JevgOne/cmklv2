@@ -27,6 +27,9 @@ export interface ContactData {
   notes?: string;
   appointmentDate?: string; // ISO date
   appointmentTime?: string; // HH:mm
+
+  // Lead→Vehicle konverze
+  leadId?: string;
 }
 
 export type LeadSource =
