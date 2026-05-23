@@ -32,6 +32,11 @@ export function CreateWorkflowForm({
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<WorkflowPriority>("NORMAL");
   const [vehicleId] = useState(prefilledVehicleId || "");
+  const [page, setPage] = useState("");
+  const [device, setDevice] = useState("");
+  const [browser, setBrowser] = useState("");
+  const [stepsToReproduce, setStepsToReproduce] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -44,6 +49,14 @@ export function CreateWorkflowForm({
     setError("");
 
     try {
+      // Build metadata from context fields
+      const metadata: Record<string, string> = {};
+      if (page.trim()) metadata.page = page.trim();
+      if (device.trim()) metadata.device = device.trim();
+      if (browser.trim()) metadata.browser = browser.trim();
+      if (stepsToReproduce.trim()) metadata.stepsToReproduce = stepsToReproduce.trim();
+      if (errorMessage.trim()) metadata.errorMessage = errorMessage.trim();
+
       const res = await fetch("/api/workflow", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -54,6 +67,7 @@ export function CreateWorkflowForm({
           description: description.trim(),
           priority,
           vehicleId: vehicleId || null,
+          metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
         }),
       });
 
@@ -63,7 +77,7 @@ export function CreateWorkflowForm({
       }
 
       const data = await res.json();
-      router.push(`/makler/pozadavky/${data.id}`);
+      router.push(`/makler/pozadavky/${data.request?.id || data.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Neočekávaná chyba");
     } finally {
@@ -186,6 +200,86 @@ export function CreateWorkflowForm({
               rows={4}
               className="w-full resize-none rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-300 focus:ring-1 focus:ring-orange-300 focus:outline-none"
             />
+          </div>
+
+          {/* Context fields — kde se to stalo, zařízení atd. */}
+          <div className="space-y-3 bg-gray-50 rounded-xl p-4">
+            <h3 className="text-sm font-bold text-gray-700">Kontext</h3>
+
+            {/* Page / URL — for all types */}
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1">
+                Kde se to stalo (stránka/sekce)
+              </label>
+              <input
+                type="text"
+                value={page}
+                onChange={(e) => setPage(e.target.value)}
+                placeholder="Např. Dashboard, Detail vozu, Nahrávání fotek..."
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-300 focus:ring-1 focus:ring-orange-300 focus:outline-none"
+              />
+            </div>
+
+            {/* Bug-specific fields */}
+            {(type === "BUG_REPORT" || type === "SUPPORT") && (
+              <>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">
+                      Zařízení
+                    </label>
+                    <input
+                      type="text"
+                      value={device}
+                      onChange={(e) => setDevice(e.target.value)}
+                      placeholder="iPhone 14, notebook..."
+                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-300 focus:ring-1 focus:ring-orange-300 focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">
+                      Prohlížeč / OS
+                    </label>
+                    <input
+                      type="text"
+                      value={browser}
+                      onChange={(e) => setBrowser(e.target.value)}
+                      placeholder="Safari, Chrome, iOS 18..."
+                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-300 focus:ring-1 focus:ring-orange-300 focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">
+                    Chybová zpráva (pokud existuje)
+                  </label>
+                  <input
+                    type="text"
+                    value={errorMessage}
+                    onChange={(e) => setErrorMessage(e.target.value)}
+                    placeholder="Přesný text chybové zprávy..."
+                    className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-300 focus:ring-1 focus:ring-orange-300 focus:outline-none"
+                  />
+                </div>
+              </>
+            )}
+
+            {/* Steps to reproduce — for bugs */}
+            {type === "BUG_REPORT" && (
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1">
+                  Kroky k reprodukci
+                </label>
+                <textarea
+                  value={stepsToReproduce}
+                  onChange={(e) => setStepsToReproduce(e.target.value)}
+                  placeholder={"1. Otevřel jsem...\n2. Klikl na...\n3. Stalo se..."}
+                  rows={3}
+                  className="w-full resize-none rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-300 focus:ring-1 focus:ring-orange-300 focus:outline-none"
+                />
+              </div>
+            )}
           </div>
 
           {/* Priority */}

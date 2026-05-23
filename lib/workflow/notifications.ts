@@ -42,17 +42,25 @@ export async function notifyWorkflow(params: NotifyWorkflowParams): Promise<void
     ...extra,
   };
 
-  const link = `/makler/pozadavky/${requestId}`;
+  const brokerLink = `/makler/pozadavky/${requestId}`;
+  const adminLink = `/admin/workflow/${requestId}`;
 
   try {
     // 1. Notify assignee (specific person)
     if (assignedToId) {
+      // Check assignee's role to determine correct link
+      const assignee = await prisma.user.findUnique({
+        where: { id: assignedToId },
+        select: { role: true },
+      });
+      const assigneeLink = assignee?.role === "ADMIN" ? adminLink : brokerLink;
+
       await createNotification({
         userId: assignedToId,
         type: "SYSTEM",
         title: `Nový požadavek: ${title}`,
         body: `${createdByName} vytvořil požadavek typu ${type}.`,
-        link,
+        link: assigneeLink,
       });
 
       sseManager.sendToUser(assignedToId, event, payload);
@@ -81,7 +89,7 @@ export async function notifyWorkflow(params: NotifyWorkflowParams): Promise<void
           type: "SYSTEM",
           title: `Nový požadavek: ${title}`,
           body: `${createdByName} → ${assignedRole ?? "nepřiřazeno"}`,
-          link,
+          link: adminLink,
         });
 
         sseManager.sendToUser(admin.id, event, payload);

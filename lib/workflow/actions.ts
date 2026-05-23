@@ -130,15 +130,23 @@ export async function notifyWatchers(
     select: { userId: true },
   });
 
+  // Fetch watchers with role to determine correct link
+  const watchersWithRole = await prisma.user.findMany({
+    where: { id: { in: watchers.map((w) => w.userId) } },
+    select: { id: true, role: true },
+  });
+  const roleMap = new Map(watchersWithRole.map((u) => [u.id, u.role]));
+
   await Promise.all(
-    watchers.map((w) =>
-      createNotification({
+    watchers.map((w) => {
+      const isAdmin = roleMap.get(w.userId) === "ADMIN";
+      return createNotification({
         userId: w.userId,
         type: "SYSTEM",
         title,
         body,
-        link: `/makler/pozadavky/${requestId}`,
-      }),
-    ),
+        link: isAdmin ? `/admin/workflow/${requestId}` : `/makler/pozadavky/${requestId}`,
+      });
+    }),
   );
 }

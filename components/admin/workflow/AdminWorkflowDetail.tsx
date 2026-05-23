@@ -172,6 +172,58 @@ export function AdminWorkflowDetail({
               </div>
             )}
 
+            {/* Structured metadata — context info */}
+            {data.metadata && Object.keys(data.metadata).length > 0 && (
+              <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-2">
+                <div className="text-xs font-bold text-blue-700 uppercase mb-2">Kontext</div>
+                {(data.metadata as Record<string, string>).page && (
+                  <div className="flex items-start gap-2 text-sm">
+                    <span className="text-blue-400 shrink-0">📍</span>
+                    <div>
+                      <span className="text-xs text-blue-600 font-medium">Kde se to stalo:</span>
+                      <p className="text-gray-700">{(data.metadata as Record<string, string>).page}</p>
+                    </div>
+                  </div>
+                )}
+                {(data.metadata as Record<string, string>).device && (
+                  <div className="flex items-start gap-2 text-sm">
+                    <span className="text-blue-400 shrink-0">📱</span>
+                    <div>
+                      <span className="text-xs text-blue-600 font-medium">Zařízení:</span>
+                      <p className="text-gray-700">{(data.metadata as Record<string, string>).device}</p>
+                    </div>
+                  </div>
+                )}
+                {(data.metadata as Record<string, string>).browser && (
+                  <div className="flex items-start gap-2 text-sm">
+                    <span className="text-blue-400 shrink-0">🌐</span>
+                    <div>
+                      <span className="text-xs text-blue-600 font-medium">Prohlížeč / OS:</span>
+                      <p className="text-gray-700">{(data.metadata as Record<string, string>).browser}</p>
+                    </div>
+                  </div>
+                )}
+                {(data.metadata as Record<string, string>).errorMessage && (
+                  <div className="flex items-start gap-2 text-sm">
+                    <span className="text-blue-400 shrink-0">⚠️</span>
+                    <div>
+                      <span className="text-xs text-blue-600 font-medium">Chybová zpráva:</span>
+                      <p className="text-gray-700 font-mono text-xs bg-white rounded px-2 py-1 mt-0.5">{(data.metadata as Record<string, string>).errorMessage}</p>
+                    </div>
+                  </div>
+                )}
+                {(data.metadata as Record<string, string>).stepsToReproduce && (
+                  <div className="flex items-start gap-2 text-sm">
+                    <span className="text-blue-400 shrink-0">📋</span>
+                    <div>
+                      <span className="text-xs text-blue-600 font-medium">Kroky k reprodukci:</span>
+                      <p className="text-gray-700 whitespace-pre-wrap mt-0.5">{(data.metadata as Record<string, string>).stepsToReproduce}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             {data.resolution && (
               <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-3">
                 <div className="text-xs font-bold text-green-700 mb-1">Řešení</div>

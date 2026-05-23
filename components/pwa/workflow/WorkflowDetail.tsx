@@ -235,6 +235,39 @@ export function WorkflowDetail({ request, userId, userRole }: WorkflowDetailProp
           </div>
         ) : null}
 
+        {/* Structured metadata — context info */}
+        {data.metadata && Object.keys(data.metadata).length > 0 && (
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 space-y-2">
+            <div className="text-xs font-bold text-blue-700 uppercase">Kontext</div>
+            {(data.metadata as Record<string, string>).page && (
+              <div className="text-sm">
+                <span className="text-blue-500 text-xs font-medium">Kde: </span>
+                <span className="text-gray-700">{(data.metadata as Record<string, string>).page}</span>
+              </div>
+            )}
+            {((data.metadata as Record<string, string>).device || (data.metadata as Record<string, string>).browser) && (
+              <div className="text-sm">
+                <span className="text-blue-500 text-xs font-medium">Prostředí: </span>
+                <span className="text-gray-700">
+                  {[(data.metadata as Record<string, string>).device, (data.metadata as Record<string, string>).browser].filter(Boolean).join(" / ")}
+                </span>
+              </div>
+            )}
+            {(data.metadata as Record<string, string>).errorMessage && (
+              <div className="text-sm">
+                <span className="text-blue-500 text-xs font-medium">Chyba: </span>
+                <span className="text-gray-700 font-mono text-xs">{(data.metadata as Record<string, string>).errorMessage}</span>
+              </div>
+            )}
+            {(data.metadata as Record<string, string>).stepsToReproduce && (
+              <div className="text-sm">
+                <span className="text-blue-500 text-xs font-medium">Reprodukce: </span>
+                <p className="text-gray-700 whitespace-pre-wrap mt-0.5">{(data.metadata as Record<string, string>).stepsToReproduce}</p>
+              </div>
+            )}
+          </div>
+        )}
+
         {data.contactContext && (
           <div className="flex items-center gap-3 bg-gray-50 rounded-xl p-3">
             <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0 text-sm">
