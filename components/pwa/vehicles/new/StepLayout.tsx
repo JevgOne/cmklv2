@@ -91,37 +91,25 @@ export function StepLayout({
     }
   };
 
-  // Save status indicator
-  const SaveIndicator = () => {
-    if (saveStatus === "saving") {
-      return (
-        <div className="flex items-center gap-1.5 text-xs text-gray-400">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500" />
-          </span>
-          <span>Ukládám...</span>
-        </div>
-      );
-    }
-    if (saveStatus === "saved") {
-      return (
-        <div className="flex items-center gap-1.5 text-xs text-green-600">
-          <span className="inline-flex rounded-full h-2 w-2 bg-green-500" />
-          <span>Uloženo</span>
-        </div>
-      );
-    }
-    if (saveStatus === "offline") {
-      return (
-        <div className="flex items-center gap-1.5 text-xs text-red-600 font-medium">
-          <span className="inline-flex rounded-full h-2 w-2 bg-red-500" />
-          <span>Offline</span>
-        </div>
-      );
-    }
-    return null;
-  };
+  const saveIndicator = saveStatus === "saving" ? (
+    <div className="flex items-center gap-1.5 text-xs text-gray-400">
+      <span className="relative flex h-2 w-2">
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75" />
+        <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500" />
+      </span>
+      <span>Ukládám...</span>
+    </div>
+  ) : saveStatus === "saved" ? (
+    <div className="flex items-center gap-1.5 text-xs text-green-600">
+      <span className="inline-flex rounded-full h-2 w-2 bg-green-500" />
+      <span>Uloženo</span>
+    </div>
+  ) : saveStatus === "offline" ? (
+    <div className="flex items-center gap-1.5 text-xs text-red-600 font-medium">
+      <span className="inline-flex rounded-full h-2 w-2 bg-red-500" />
+      <span>Offline</span>
+    </div>
+  ) : null;
 
   return (
     <>
@@ -156,7 +144,7 @@ export function StepLayout({
               {/* Název kroku + save indicator */}
               <div className="flex flex-col items-center">
                 <h1 className="text-lg font-bold text-gray-900">{title}</h1>
-                <SaveIndicator />
+                {saveIndicator}
               </div>
 
               {/* Křížek - zavřít a uložit */}

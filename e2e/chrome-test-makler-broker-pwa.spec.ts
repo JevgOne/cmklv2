@@ -25,7 +25,7 @@ async function loginAsBroker(page: any) {
   await page.fill("#email", BROKER_EMAIL);
   await page.fill("#password", BROKER_PASS);
   await page.click('button[type="submit"]');
-  await page.waitForURL(url => !url.toString().includes("/login"), { timeout: 15000 });
+  await page.waitForURL((url: URL) => !url.toString().includes("/login"), { timeout: 15000 });
 }
 
 // ────────────────────────────────────────────────────────────────
@@ -46,7 +46,7 @@ test("Login: BROKER → /makler/dashboard", async ({ page }) => {
   console.log(`Email: ${BROKER_EMAIL}`);
 
   await page.click('button[type="submit"]');
-  await page.waitForURL(url => !url.toString().includes("/login"), { timeout: 15000 });
+  await page.waitForURL((url: URL) => !url.toString().includes("/login"), { timeout: 15000 });
 
   const url = page.url();
   console.log(`Redirected to: ${url}`);

@@ -16,7 +16,7 @@ async function loginAs(page: any, email: string, password: string) {
   await page.fill("#password", password);
   await page.click('button[type="submit"]');
   // Wait for navigation away from /login (not just any URL match)
-  await page.waitForURL(url => !url.toString().includes("/login"), { timeout: 15000 });
+  await page.waitForURL((url: URL) => !url.toString().includes("/login"), { timeout: 15000 });
 }
 
 async function collectErrors(page: any): Promise<string[]> {
@@ -49,7 +49,7 @@ test("Login: PARTNER_BAZAR login → redirects to /partner/", async ({ page }) =
   console.log(`Password filled: ${passVal ? "***" : "EMPTY"}`);
 
   await page.click('button[type="submit"]');
-  await page.waitForURL(url => !url.toString().includes("/login"), { timeout: 15000 });
+  await page.waitForURL((url: URL) => !url.toString().includes("/login"), { timeout: 15000 });
 
   const url = page.url();
   console.log(`Redirected to: ${url}`);

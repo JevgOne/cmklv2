@@ -105,7 +105,7 @@ test.describe("/chci-prodat — Nejste si jistí? pill linky", () => {
     console.log('"Nejste si jistí?" heading:', count);
 
     if (count > 0) {
-      await nejsteEl.scrollIntoView();
+      await nejsteEl.scrollIntoViewIfNeeded();
       await page.waitForTimeout(500);
     }
 
@@ -154,7 +154,7 @@ test.describe("/nabidka/[slug] — Doplňkové služby proklikání", () => {
     for (const svc of serviceLinks) {
       const link = page.locator(`a[href="${svc}"]`).first();
       if (await link.count() > 0) {
-        await link.scrollIntoView();
+        await link.scrollIntoViewIfNeeded();
         await page.waitForTimeout(200);
         await link.click();
         await page.waitForLoadState("domcontentloaded");
@@ -172,7 +172,7 @@ test.describe("/nabidka/[slug] — Doplňkové služby proklikání", () => {
     // Screenshot doplnkove section
     const doplnkoveEl = page.locator('h2:has-text("Doplňkové"), h3:has-text("Doplňkové")').first();
     if (await doplnkoveEl.count() > 0) {
-      await doplnkoveEl.scrollIntoView();
+      await doplnkoveEl.scrollIntoViewIfNeeded();
       await page.waitForTimeout(500);
       await page.screenshot({ path: "test-results/nabidka-doplnkove-sluzby.png" });
     }
@@ -193,7 +193,7 @@ test.describe("/profil/[slug] — CTA proklikání", () => {
     console.log("Chci-prodat links:", count);
 
     if (count > 0) {
-      await ctaLink.scrollIntoView();
+      await ctaLink.scrollIntoViewIfNeeded();
       await page.screenshot({ path: "test-results/profil-cta.png" });
       await ctaLink.click();
       await page.waitForLoadState("domcontentloaded");

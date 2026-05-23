@@ -29,7 +29,7 @@ async function login(page: any, email: string, password: string, outFile: string
 
   const url = page.url();
   const cookies = await page.context().cookies();
-  const sessionCookie = cookies.find(c => c.name === "next-auth.session-token");
+  const sessionCookie = cookies.find((c: { name: string; value: string; expires: number }) => c.name === "next-auth.session-token");
 
   if (sessionCookie) {
     const content = `# Netscape HTTP Cookie File\n#HttpOnly_localhost\tFALSE\t/\tFALSE\t${Math.floor(sessionCookie.expires)}\tnext-auth.session-token\t${sessionCookie.value}\n`;
@@ -45,7 +45,7 @@ async function login(page: any, email: string, password: string, outFile: string
     await page.locator("button[type='submit']").first().click();
     await page.waitForTimeout(5000);
     const cookies2 = await page.context().cookies();
-    const session2 = cookies2.find(c => c.name === "next-auth.session-token");
+    const session2 = cookies2.find((c: { name: string; value: string; expires: number }) => c.name === "next-auth.session-token");
     if (session2) {
       const content = `# Netscape HTTP Cookie File\n#HttpOnly_localhost\tFALSE\t/\tFALSE\t${Math.floor(session2.expires)}\tnext-auth.session-token\t${session2.value}\n`;
       fs.writeFileSync(outFile, content, "utf8");

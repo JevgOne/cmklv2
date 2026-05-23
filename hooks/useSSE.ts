@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef } from "react";
 
 type SSEHandler = (data: unknown) => void;
 
@@ -14,7 +14,10 @@ type SSEHandler = (data: unknown) => void;
  */
 export function useSSE(handlers: Record<string, SSEHandler>): void {
   const handlersRef = useRef(handlers);
-  handlersRef.current = handlers;
+
+  useEffect(() => {
+    handlersRef.current = handlers;
+  });
 
   useEffect(() => {
     let eventSource: EventSource | null = null;
@@ -73,9 +76,10 @@ export function useSSE(handlers: Record<string, SSEHandler>): void {
  */
 export function useSSEEvent(eventName: string, callback: SSEHandler): void {
   const callbackRef = useRef(callback);
-  callbackRef.current = callback;
 
-  const handlers = useRef({ [eventName]: (data: unknown) => callbackRef.current(data) });
+  useEffect(() => {
+    callbackRef.current = callback;
+  });
 
-  useSSE(handlers.current);
+  useSSE({ [eventName]: (data: unknown) => callbackRef.current(data) });
 }

@@ -249,7 +249,7 @@ test("T8: PARTNER_VRAKOVISTE — /partner/orders loads (empty state OK)", async 
   console.log("T8 — Page errors:", pageErrors);
 
   expect(resp?.status()).toBe(200);
-  expect(hasOrderContent || bodyText?.length > 100).toBeTruthy();
+  expect(hasOrderContent || (bodyText?.length ?? 0) > 100).toBeTruthy();
   expect(pageErrors.length).toBe(0);
 });
 
