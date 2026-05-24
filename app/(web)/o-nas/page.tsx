@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { prisma } from "@/lib/prisma";
-import { companyInfo } from "@/lib/company-info";
 import { pageCanonical } from "@/lib/canonical";
 
 export const revalidate = 86400;
@@ -79,40 +78,11 @@ const values = [
 /*  Page                                                               */
 /* ------------------------------------------------------------------ */
 
-const orgJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: companyInfo.name,
-  url: companyInfo.web.url,
-  logo: companyInfo.web.logo,
-  description:
-    "CarMakléř je moderní platforma pro prodej a nákup vozidel přes síť ověřených makléřů v celé České republice.",
-  foundingDate: "2024",
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: companyInfo.address.street,
-    addressLocality: companyInfo.address.city,
-    postalCode: companyInfo.address.zip,
-    addressCountry: "CZ",
-  },
-  contactPoint: {
-    "@type": "ContactPoint",
-    telephone: companyInfo.contact.phoneJsonLd,
-    contactType: "customer service",
-    areaServed: "CZ",
-    availableLanguage: "Czech",
-  },
-};
-
 export default async function ONasPage() {
   const [stats, team] = await Promise.all([getStats(), getTeamMembers()]);
 
   return (
     <main>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
-      />
       <Breadcrumbs
         items={[
           { label: "Domů", href: "/" },
