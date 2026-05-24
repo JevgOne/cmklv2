@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { companyInfo } from "@/lib/company-info";
 import { generateWebSiteJsonLd, generateFaqJsonLd } from "@/lib/seo";
 
 export const revalidate = 3600;
@@ -213,30 +212,6 @@ const HOMEPAGE_FAQ = [
   { question: "Je CarMakléř zdarma?", answer: "Ano, služba je bez poplatků předem. Provizi 5% (min. 25 000 Kč) platíte až po úspěšném prodeji." },
 ];
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: companyInfo.name,
-  url: companyInfo.web.url,
-  logo: companyInfo.web.logo,
-  description:
-    "Prodejte nebo kupte auto bezpečně přes síť ověřených makléřů. Rychle, transparentně a bez starostí.",
-  contactPoint: {
-    "@type": "ContactPoint",
-    telephone: companyInfo.contact.phoneJsonLd,
-    contactType: "customer service",
-    areaServed: "CZ",
-    availableLanguage: "Czech",
-  },
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: companyInfo.address.street,
-    addressLocality: companyInfo.address.city,
-    postalCode: companyInfo.address.zip,
-    addressCountry: "CZ",
-  },
-};
-
 export default async function HomePage() {
   const [cars, brokers, testimonials] = await Promise.all([
     getFeaturedCars(),
@@ -250,10 +225,6 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-screen">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: generateWebSiteJsonLd() }}

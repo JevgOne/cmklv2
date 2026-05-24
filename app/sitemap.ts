@@ -34,12 +34,11 @@ export async function generateSitemaps() {
   return SITEMAP_IDS.map((_, i) => ({ id: i }));
 }
 
-export default async function sitemap({
-  id,
-}: {
-  id: number;
-}): Promise<MetadataRoute.Sitemap> {
-  const sitemapType: SitemapId | undefined = SITEMAP_IDS[id];
+export default async function sitemap(
+  props: { id: Promise<number> },
+): Promise<MetadataRoute.Sitemap> {
+  const id = await props.id;
+  const sitemapType: SitemapId | undefined = SITEMAP_IDS[Number(id)];
 
   switch (sitemapType) {
     case "static":

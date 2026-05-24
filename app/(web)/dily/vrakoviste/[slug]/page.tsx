@@ -11,7 +11,6 @@ import {
   generateBreadcrumbJsonLd,
   generateStoreJsonLd,
   generateItemListJsonLd,
-  generateOrganizationJsonLd,
 } from "@/lib/seo";
 import { BASE_URL } from "@/lib/seo-data";
 import { pageCanonical } from "@/lib/canonical";
@@ -223,14 +222,14 @@ export default async function VrakovisteLandingPage({ params }: PageProps) {
     parts.map((p) => `${BASE_URL}/dily/${p.slug}`),
   );
 
-  const organizationJsonLd = generateOrganizationJsonLd();
+
 
   return (
     <main className="min-h-screen bg-gray-50">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: storeJsonLd }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: itemListJsonLd }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: organizationJsonLd }} />
+
 
       {/* Breadcrumbs */}
       <nav aria-label="Breadcrumb" className="bg-white border-b border-gray-100">

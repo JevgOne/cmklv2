@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
-  generateOrganizationJsonLd,
   generatePartsItemListJsonLd,
   generateFaqPageJsonLd,
   generateBreadcrumbJsonLd,
@@ -100,7 +99,7 @@ export default async function PartsBrandModelPage({
     }))
   );
   const faqJsonLd = generateFaqPageJsonLd(seo.faq);
-  const organizationJsonLd = generateOrganizationJsonLd();
+
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: "Domů", url: `${BASE_URL}` },
     { name: "Díly", url: `${BASE_URL}/dily` },
@@ -115,10 +114,6 @@ export default async function PartsBrandModelPage({
 
   return (
     <main className="min-h-screen bg-gray-50">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: organizationJsonLd }}
-      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: itemListJsonLd }}

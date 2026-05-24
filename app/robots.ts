@@ -44,6 +44,6 @@ export default function robots(): MetadataRoute.Robots {
       { userAgent: "Applebot-Extended", allow: "/" },
       { userAgent: "GoogleOther", allow: "/" },
     ],
-    sitemap: `${BASE_URL}/sitemap.xml`,
+    sitemap: Array.from({ length: 9 }, (_, i) => `${BASE_URL}/sitemap/${i}.xml`),
   };
 }
