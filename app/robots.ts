@@ -26,6 +26,10 @@ export default function robots(): MetadataRoute.Robots {
           "/reset-hesla/",
           "/zapomenute-heslo",
           "/notifikace/",
+          "/moje-inzeraty/",
+          "/shop/moje-objednavky/",
+          "/dily/moje-objednavky/",
+          "/hledat",
         ],
       },
       // AI crawlers — explicitly allowed for GEO/AIEO

@@ -19,17 +19,29 @@ const NABIDKA_FAQ = [
 
 export const revalidate = 300; // ISR: 5 minut
 
-export const metadata: Metadata = {
-  title: "Nabídka vozidel",
-  description:
-    "Prohlédněte si nabídku prověřených ojetých vozidel od ověřených makléřů i soukromých prodejců. Filtry, řazení a snadné vyhledávání.",
-  openGraph: {
-    title: "Nabídka vozidel",
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string>>;
+}): Promise<Metadata> {
+  const params = await searchParams;
+  const hasFilters = Object.keys(params).length > 0;
+
+  return {
+    title: hasFilters
+      ? "Filtrovaná nabídka vozidel"
+      : "Nabídka vozidel",
     description:
-      "Prověřená ojetá vozidla od makléřů i soukromých prodejců. Snadné vyhledávání s filtry.",
-  },
-  alternates: pageCanonical("/nabidka"),
-};
+      "Prohlédněte si nabídku prověřených ojetých vozidel od ověřených makléřů i soukromých prodejců. Filtry, řazení a snadné vyhledávání.",
+    openGraph: {
+      title: "Nabídka vozidel",
+      description:
+        "Prověřená ojetá vozidla od makléřů i soukromých prodejců. Snadné vyhledávání s filtry.",
+    },
+    alternates: pageCanonical("/nabidka"),
+    ...(hasFilters && { robots: { index: false, follow: true } }),
+  };
+}
 
 /* ------------------------------------------------------------------ */
 /*  Page                                                               */

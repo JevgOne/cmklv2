@@ -10,6 +10,7 @@ import { ProductDetailTabs } from "./ProductDetailTabs";
 import { AddToCartButton } from "./AddToCartButton";
 import { prisma } from "@/lib/prisma";
 import { generateBreadcrumbJsonLd } from "@/lib/seo";
+import { pageCanonical } from "@/lib/canonical";
 import { getCategoryLabel, getConditionLabel } from "@/lib/parts-categories";
 import type { PartCategory, PartCondition } from "@/types/parts";
 
@@ -30,9 +31,7 @@ export async function generateMetadata({
     description:
       part.description?.slice(0, 155) ||
       `Kupte ${part.name} za ${price} Kč na CarMakléř. Kategorie: ${getCategoryLabel(part.category as PartCategory)}.`,
-    alternates: {
-      canonical: `https://carmakler.cz/dily/${slug}`,
-    },
+    alternates: pageCanonical(`/dily/${slug}`),
   };
 }
 

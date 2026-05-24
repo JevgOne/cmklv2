@@ -4,6 +4,7 @@ import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { Card } from "@/components/ui/Card";
 import { StkPriceCalc } from "@/components/web/StkPriceCalc";
 import type { Metadata } from "next";
+import { pageCanonical } from "@/lib/canonical";
 
 export const revalidate = 600; // 10min — detail page
 
@@ -19,6 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `STK stanice ${capitalized} — kde na STK v ${capitalized}`,
     description: `Seznam STK stanic v ${capitalized} s recenzemi a hodnocením. Najděte nejbližší STK stanici, zjistěte čekací doby a objednejte se online.`,
+    alternates: pageCanonical(`/stk/mesto/${city}`),
   };
 }
 
