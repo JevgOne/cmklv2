@@ -30,11 +30,11 @@ export async function generateMetadata({
   return {
     title: hasFilters
       ? "Filtrovaná nabídka vozidel"
-      : "Nabídka vozidel",
+      : "Ojetá vozidla na prodej — prověřená auta od makléřů",
     description:
       "Prohlédněte si nabídku prověřených ojetých vozidel od ověřených makléřů i soukromých prodejců. Filtry, řazení a snadné vyhledávání.",
     openGraph: {
-      title: "Nabídka vozidel",
+      title: "Ojetá vozidla na prodej — prověřená auta od makléřů",
       description:
         "Prověřená ojetá vozidla od makléřů i soukromých prodejců. Snadné vyhledávání s filtry.",
     },

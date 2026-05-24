@@ -10,8 +10,8 @@ let cachedLogo: string | null = null;
 
 export async function getLogoBase64(): Promise<string> {
   if (cachedLogo) return cachedLogo;
-  const logoData = await readFile(join(process.cwd(), "public/brand/logo-white.png"));
-  cachedLogo = `data:image/png;base64,${logoData.toString("base64")}`;
+  const logoData = await readFile(join(process.cwd(), "public/brand/logo-white.svg"));
+  cachedLogo = `data:image/svg+xml;base64,${logoData.toString("base64")}`;
   return cachedLogo;
 }
 
