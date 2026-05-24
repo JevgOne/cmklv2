@@ -356,8 +356,23 @@ export function generateOrganizationJsonLd(): string {
     foundingDate: "2025",
     sameAs: [
       "https://www.facebook.com/carmakler",
+      "https://www.instagram.com/carmakler",
       "https://www.linkedin.com/company/carmakler",
+      "https://www.youtube.com/@carmakler",
     ],
+    knowsAbout: [
+      "ojetá vozidla",
+      "prodej aut",
+      "autodíly",
+      "technická kontrola",
+      "autoservisy",
+      "financování vozidel",
+      "pojištění aut",
+    ],
+    areaServed: {
+      "@type": "Country",
+      name: "Česká republika",
+    },
     address: {
       "@type": "PostalAddress",
       addressCountry: "CZ",
