@@ -4,7 +4,6 @@ import { Card } from "@/components/ui/Card";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { BrokerCard, type BrokerCardBroker } from "@/components/web/BrokerCard";
 import { prisma } from "@/lib/prisma";
-import { generateItemListJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
 
 export const revalidate = 3600; // ISR: 1 hodina
@@ -87,9 +86,18 @@ export default async function MakleriPage() {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: generateItemListJsonLd(
-              brokers.map((b) => `https://carmakler.cz/profil/${b.slug}`)
-            ),
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              name: "Ověření automakléři CarMakléř",
+              numberOfItems: brokers.length,
+              itemListElement: brokers.slice(0, 20).map((b, i) => ({
+                "@type": "ListItem",
+                position: i + 1,
+                url: `https://carmakler.cz/profil/${b.slug}`,
+                name: `${b.firstName} ${b.lastName}`,
+              })),
+            }),
           }}
         />
       )}
