@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 import { headers } from "next/headers";
 import type { SubdomainType } from "@/lib/subdomain";
+import { generateOrganizationJsonLd } from "@/lib/seo";
 
 import { MainNavbar } from "@/components/main/Navbar";
 import { MainFooter } from "@/components/main/Footer";
@@ -53,6 +54,10 @@ export default async function WebLayout({
 
   return (
     <CompareProvider>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: generateOrganizationJsonLd() }}
+      />
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[300] focus:px-4 focus:py-2 focus:bg-orange-600 focus:text-white focus:rounded-lg focus:text-sm focus:font-semibold focus:no-underline"
