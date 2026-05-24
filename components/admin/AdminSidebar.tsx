@@ -103,6 +103,15 @@ const navSections: NavSection[] = [
     roles: ["ADMIN", "BACKOFFICE", "MANAGER"],
   },
   {
+    title: "SEO",
+    items: [
+      { id: "seo-dashboard", href: "/admin/seo", icon: "🔍", label: "Dashboard" },
+      { id: "seo-metadata", href: "/admin/seo/metadata", icon: "📋", label: "Metadata" },
+      { id: "seo-audit", href: "/admin/seo/audit", icon: "📊", label: "Audit" },
+    ],
+    roles: ["ADMIN"],
+  },
+  {
     title: "OBSAH",
     items: [
       { id: "team", href: "/admin/team", icon: "👥", label: "Tým" },
