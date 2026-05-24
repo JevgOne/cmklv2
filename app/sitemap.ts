@@ -1,309 +1,125 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
-import { BRANDS, TOP_MODELS, BODY_TYPES, PRICE_RANGES, CITIES, PARTS_CATEGORIES, PARTS_BRANDS, PARTS_MODELS_BY_BRAND } from "@/lib/seo-data";
+import {
+  BRANDS,
+  TOP_MODELS,
+  BODY_TYPES,
+  PRICE_RANGES,
+  CITIES,
+  PARTS_CATEGORIES,
+  PARTS_BRANDS,
+  PARTS_MODELS_BY_BRAND,
+} from "@/lib/seo-data";
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://carmakler.cz";
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // Statické stránky
-  const staticPages: MetadataRoute.Sitemap = [
-    {
-      url: BASE_URL,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 1,
-    },
-    {
-      url: `${BASE_URL}/nabidka`,
-      lastModified: new Date(),
-      changeFrequency: "hourly",
-      priority: 0.9,
-    },
-    {
-      url: `${BASE_URL}/chci-prodat`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${BASE_URL}/makleri`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: `${BASE_URL}/inzerce`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: `${BASE_URL}/shop`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.7,
-    },
-    {
-      url: `${BASE_URL}/sluzby/proverka`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${BASE_URL}/sluzby/financovani`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${BASE_URL}/sluzby/pojisteni`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${BASE_URL}/recenze`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.6,
-    },
-    {
-      url: `${BASE_URL}/o-nas`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
-      url: `${BASE_URL}/kariera`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.5,
-    },
-    {
-      url: `${BASE_URL}/blog`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.8,
-    },
-    {
-      url: `${BASE_URL}/kontakt`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
-      url: `${BASE_URL}/cenik`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${BASE_URL}/sluzby`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${BASE_URL}/pro-maklere`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${BASE_URL}/autoservisy`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: `${BASE_URL}/stk`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    // Informační SEO stránky
-    {
-      url: `${BASE_URL}/jak-prodat-auto`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${BASE_URL}/kolik-stoji-moje-auto`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
+// Fixed date for static/landing pages — update when content changes (STOP-5)
+const STATIC_LAST_MODIFIED = new Date("2026-05-01");
+
+const SITEMAP_IDS = [
+  "static",
+  "vehicles",
+  "listings",
+  "parts",
+  "brokers",
+  "blog",
+  "services",
+  "partners",
+  "landing-pages",
+] as const;
+
+type SitemapId = (typeof SITEMAP_IDS)[number];
+
+export async function generateSitemaps() {
+  return SITEMAP_IDS.map((_, i) => ({ id: i }));
+}
+
+export default async function sitemap({
+  id,
+}: {
+  id: number;
+}): Promise<MetadataRoute.Sitemap> {
+  const sitemapType: SitemapId | undefined = SITEMAP_IDS[id];
+
+  switch (sitemapType) {
+    case "static":
+      return getStaticPages();
+    case "vehicles":
+      return getVehiclePages();
+    case "listings":
+      return getListingPages();
+    case "parts":
+      return getPartPages();
+    case "brokers":
+      return getBrokerPages();
+    case "blog":
+      return getBlogPages();
+    case "services":
+      return getServicePages();
+    case "partners":
+      return getPartnerPages();
+    case "landing-pages":
+      return getLandingPages();
+    default:
+      return [];
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Static pages
+// ---------------------------------------------------------------------------
+function getStaticPages(): MetadataRoute.Sitemap {
+  return [
+    { url: BASE_URL, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "daily", priority: 1 },
+    { url: `${BASE_URL}/nabidka`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "hourly", priority: 0.9 },
+    { url: `${BASE_URL}/chci-prodat`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${BASE_URL}/makleri`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${BASE_URL}/inzerce`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${BASE_URL}/shop`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "daily", priority: 0.7 },
+    { url: `${BASE_URL}/sluzby/proverka`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE_URL}/sluzby/financovani`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE_URL}/sluzby/pojisteni`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE_URL}/recenze`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "weekly", priority: 0.6 },
+    { url: `${BASE_URL}/o-nas`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${BASE_URL}/kariera`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "weekly", priority: 0.5 },
+    { url: `${BASE_URL}/blog`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "daily", priority: 0.8 },
+    { url: `${BASE_URL}/kontakt`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${BASE_URL}/cenik`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE_URL}/sluzby`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE_URL}/pro-maklere`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE_URL}/autoservisy`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${BASE_URL}/stk`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "weekly", priority: 0.7 },
+    // Informacni SEO stranky
+    { url: `${BASE_URL}/jak-prodat-auto`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE_URL}/kolik-stoji-moje-auto`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "monthly", priority: 0.8 },
     // Pravni stranky
-    {
-      url: `${BASE_URL}/obchodni-podminky`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.4,
-    },
-    {
-      url: `${BASE_URL}/ochrana-osobnich-udaju`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.4,
-    },
-    {
-      url: `${BASE_URL}/reklamacni-rad`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.4,
-    },
-    {
-      url: `${BASE_URL}/zasady-cookies`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.4,
-    },
-    // Chybějící veřejné stránky
-    {
-      url: `${BASE_URL}/jak-to-funguje`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${BASE_URL}/marketplace`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: `${BASE_URL}/marketplace/apply`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
-      url: `${BASE_URL}/inzerce/katalog`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.8,
-    },
-    {
-      url: `${BASE_URL}/shop/katalog`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.7,
-    },
-    {
-      url: `${BASE_URL}/dily/katalog`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.7,
-    },
-    {
-      url: `${BASE_URL}/shop/vraceni-zbozi`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.4,
-    },
-    {
-      url: `${BASE_URL}/shop/reklamace`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.4,
-    },
-    {
-      url: `${BASE_URL}/nabidka/porovnani`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.5,
-    },
+    { url: `${BASE_URL}/obchodni-podminky`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${BASE_URL}/ochrana-osobnich-udaju`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${BASE_URL}/reklamacni-rad`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${BASE_URL}/zasady-cookies`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "monthly", priority: 0.4 },
+    // Dalsi verejne stranky
+    { url: `${BASE_URL}/jak-to-funguje`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE_URL}/marketplace`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${BASE_URL}/marketplace/apply`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${BASE_URL}/inzerce/katalog`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "daily", priority: 0.8 },
+    { url: `${BASE_URL}/shop/katalog`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "daily", priority: 0.7 },
+    { url: `${BASE_URL}/dily/katalog`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "daily", priority: 0.7 },
+    { url: `${BASE_URL}/shop/vraceni-zbozi`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${BASE_URL}/shop/reklamace`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${BASE_URL}/nabidka/porovnani`, lastModified: STATIC_LAST_MODIFIED, changeFrequency: "weekly", priority: 0.5 },
   ];
+}
 
-  // SEO landing pages — značky (16)
-  const brandPages: MetadataRoute.Sitemap = BRANDS.map((brand) => ({
-    url: `${BASE_URL}/nabidka/${brand.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.8,
-  }));
-
-  // SEO landing pages — modely (12)
-  const modelPages: MetadataRoute.Sitemap = TOP_MODELS.map((model) => ({
-    url: `${BASE_URL}/nabidka/${model.brandSlug}/${model.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.7,
-  }));
-
-  // SEO landing pages — kategorie karoserií (7)
-  const bodyTypePages: MetadataRoute.Sitemap = BODY_TYPES.map((bt) => ({
-    url: `${BASE_URL}/nabidka/${bt.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.7,
-  }));
-
-  // SEO landing pages — cenové rozsahy (5)
-  const pricePages: MetadataRoute.Sitemap = PRICE_RANGES.map((pr) => ({
-    url: `${BASE_URL}/nabidka/${pr.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.7,
-  }));
-
-  // SEO landing pages — města (8)
-  const cityPages: MetadataRoute.Sitemap = CITIES.map((city) => ({
-    url: `${BASE_URL}/nabidka/${city.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.7,
-  }));
-
-  // SEO landing pages — díly kategorie (11)
-  const partsCategoryPages: MetadataRoute.Sitemap = PARTS_CATEGORIES.map((cat) => ({
-    url: `${BASE_URL}/dily/kategorie/${cat.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "monthly" as const,
-    priority: 0.6,
-  }));
-
-  // SEO landing pages — díly značky (8)
-  const partsBrandPages: MetadataRoute.Sitemap = PARTS_BRANDS.map((brand) => ({
-    url: `${BASE_URL}/dily/znacka/${brand.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "monthly" as const,
-    priority: 0.6,
-  }));
-
-  // SEO landing pages — díly značka+model (#87b 3-segment routing, ~24)
-  const partsModelPages: MetadataRoute.Sitemap = PARTS_BRANDS.flatMap((brand) =>
-    (PARTS_MODELS_BY_BRAND[brand.slug] || []).map((model) => ({
-      url: `${BASE_URL}/dily/znacka/${brand.slug}/${model.slug}`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    }))
-  );
-
-  // SEO landing pages — díly značka+model+rok (#87b 3-segment routing, ~72)
-  const partsModelYearPages: MetadataRoute.Sitemap = PARTS_BRANDS.flatMap(
-    (brand) =>
-      (PARTS_MODELS_BY_BRAND[brand.slug] || []).flatMap((model) =>
-        (model.topYears ?? [2015, 2018, 2020]).map((year) => ({
-          url: `${BASE_URL}/dily/znacka/${brand.slug}/${model.slug}/${year}`,
-          lastModified: new Date(),
-          changeFrequency: "monthly" as const,
-          priority: 0.6,
-        }))
-      )
-  );
-
-  // Dynamické stránky — vozidla
-  let vehiclePages: MetadataRoute.Sitemap = [];
+// ---------------------------------------------------------------------------
+// Dynamic: Vehicles
+// ---------------------------------------------------------------------------
+async function getVehiclePages(): Promise<MetadataRoute.Sitemap> {
   try {
     const vehicles = await prisma.vehicle.findMany({
       where: { status: "ACTIVE" },
       select: { slug: true, updatedAt: true },
     });
-
-    vehiclePages = vehicles
+    return vehicles
       .filter((v) => v.slug)
       .map((v) => ({
         url: `${BASE_URL}/nabidka/${v.slug}`,
@@ -312,140 +128,40 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.8,
       }));
   } catch {
-    // DB nedostupná — statické stránky stačí
+    return [];
   }
+}
 
-  // Dynamické stránky — makléři
-  let brokerPages: MetadataRoute.Sitemap = [];
+// ---------------------------------------------------------------------------
+// Dynamic: Listings (inzerce)
+// ---------------------------------------------------------------------------
+async function getListingPages(): Promise<MetadataRoute.Sitemap> {
   try {
-    const brokers = await prisma.user.findMany({
-      where: { role: "BROKER", status: "ACTIVE" },
+    const listings = await prisma.listing.findMany({
+      where: { status: "ACTIVE" },
       select: { slug: true, updatedAt: true },
     });
-
-    brokerPages = brokers
-      .filter((b) => b.slug)
-      .map((b) => ({
-        url: `${BASE_URL}/profil/${b.slug}`,
-        lastModified: b.updatedAt,
-        changeFrequency: "weekly" as const,
-        priority: 0.6,
-      }));
-  } catch {
-    // DB nedostupná
-  }
-
-  // Dynamické stránky — hashtag landing pages (>= 2 aktivní brokeři)
-  let tagPages: MetadataRoute.Sitemap = [];
-  try {
-    const tags = await prisma.tag.findMany({
-      where: { users: { some: { role: "BROKER", status: "ACTIVE" } } },
-      select: {
-        slug: true,
-        updatedAt: true,
-        _count: {
-          select: {
-            users: { where: { role: "BROKER", status: "ACTIVE" } },
-          },
-        },
-      },
-    });
-
-    tagPages = tags
-      .filter((t) => t._count.users >= 2)
-      .map((t) => ({
-        url: `${BASE_URL}/makleri/${t.slug}`,
-        lastModified: t.updatedAt,
-        changeFrequency: "weekly" as const,
-        priority: 0.6,
-      }));
-  } catch {
-    // DB nedostupná
-  }
-
-  // Dynamické stránky — vrakoviště (partner landing pages, #87a SEO MVP)
-  let partnerPages: MetadataRoute.Sitemap = [];
-  try {
-    const partners = await prisma.partner.findMany({
-      where: { status: "AKTIVNI_PARTNER", type: "VRAKOVISTE" },
-      select: { slug: true, updatedAt: true },
-    });
-
-    partnerPages = partners.map((p) => ({
-      url: `${BASE_URL}/dily/vrakoviste/${p.slug}`,
-      lastModified: p.updatedAt,
-      changeFrequency: "weekly" as const,
-      priority: 0.6,
-    }));
-  } catch {
-    // DB nedostupná
-  }
-
-  // Dynamické stránky — blog články
-  let blogPages: MetadataRoute.Sitemap = [];
-  try {
-    const articles = await prisma.article.findMany({
-      where: { status: "PUBLISHED" },
-      select: { slug: true, updatedAt: true },
-    });
-
-    blogPages = articles.map((a) => ({
-      url: `${BASE_URL}/blog/${a.slug}`,
-      lastModified: a.updatedAt,
-      changeFrequency: "weekly" as const,
+    return listings.map((l) => ({
+      url: `${BASE_URL}/inzerce/katalog/${l.slug}`,
+      lastModified: l.updatedAt,
+      changeFrequency: "daily" as const,
       priority: 0.7,
     }));
   } catch {
-    // DB nedostupná
+    return [];
   }
+}
 
-  // Dynamické stránky — autoservisy + STK
-  let servisPages: MetadataRoute.Sitemap = [];
-  try {
-    const servisy = await prisma.autoServis.findMany({
-      where: { isPublished: true },
-      select: { slug: true, updatedAt: true, categories: true },
-    });
-
-    servisPages = servisy.map((s) => ({
-      url: s.categories.includes("stk-emise")
-        ? `${BASE_URL}/stk/${s.slug}`
-        : `${BASE_URL}/autoservisy/${s.slug}`,
-      lastModified: s.updatedAt,
-      changeFrequency: "weekly" as const,
-      priority: 0.6,
-    }));
-  } catch {
-    // DB nedostupná
-  }
-
-  // Dynamické stránky — autobazary (partner landing pages)
-  let bazarPages: MetadataRoute.Sitemap = [];
-  try {
-    const bazars = await prisma.partner.findMany({
-      where: { status: "AKTIVNI_PARTNER", type: "AUTOBAZAR" },
-      select: { slug: true, updatedAt: true },
-    });
-
-    bazarPages = bazars.map((b) => ({
-      url: `${BASE_URL}/bazar/${b.slug}`,
-      lastModified: b.updatedAt,
-      changeFrequency: "weekly" as const,
-      priority: 0.6,
-    }));
-  } catch {
-    // DB nedostupná
-  }
-
-  // Dynamické stránky — díly + shop produkty (Part model)
-  let partPages: MetadataRoute.Sitemap = [];
+// ---------------------------------------------------------------------------
+// Dynamic: Parts (dily + shop)
+// ---------------------------------------------------------------------------
+async function getPartPages(): Promise<MetadataRoute.Sitemap> {
   try {
     const parts = await prisma.part.findMany({
       where: { status: "ACTIVE" },
       select: { slug: true, updatedAt: true },
     });
-
-    partPages = parts
+    return parts
       .filter((p) => p.slug)
       .map((p) => ({
         url: `${BASE_URL}/dily/${p.slug}`,
@@ -454,29 +170,219 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.7,
       }));
   } catch {
-    // DB nedostupná
+    return [];
   }
+}
 
-  // Dynamické stránky — inzeráty (aktivní listings)
-  let listingPages: MetadataRoute.Sitemap = [];
+// ---------------------------------------------------------------------------
+// Dynamic: Brokers + tag pages
+// ---------------------------------------------------------------------------
+async function getBrokerPages(): Promise<MetadataRoute.Sitemap> {
   try {
-    const listings = await prisma.listing.findMany({
-      where: { status: "ACTIVE" },
+    const [brokers, tags] = await Promise.all([
+      prisma.user.findMany({
+        where: { role: "BROKER", status: "ACTIVE" },
+        select: { slug: true, updatedAt: true },
+      }),
+      prisma.tag.findMany({
+        where: { users: { some: { role: "BROKER", status: "ACTIVE" } } },
+        select: {
+          slug: true,
+          updatedAt: true,
+          _count: {
+            select: {
+              users: { where: { role: "BROKER", status: "ACTIVE" } },
+            },
+          },
+        },
+      }),
+    ]);
+
+    const brokerEntries: MetadataRoute.Sitemap = brokers
+      .filter((b) => b.slug)
+      .map((b) => ({
+        url: `${BASE_URL}/profil/${b.slug}`,
+        lastModified: b.updatedAt,
+        changeFrequency: "weekly" as const,
+        priority: 0.6,
+      }));
+
+    const tagEntries: MetadataRoute.Sitemap = tags
+      .filter((t) => t._count.users >= 2)
+      .map((t) => ({
+        url: `${BASE_URL}/makleri/${t.slug}`,
+        lastModified: t.updatedAt,
+        changeFrequency: "weekly" as const,
+        priority: 0.6,
+      }));
+
+    return [...brokerEntries, ...tagEntries];
+  } catch {
+    return [];
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Dynamic: Blog articles
+// ---------------------------------------------------------------------------
+async function getBlogPages(): Promise<MetadataRoute.Sitemap> {
+  try {
+    const articles = await prisma.article.findMany({
+      where: { status: "PUBLISHED" },
       select: { slug: true, updatedAt: true },
     });
-
-    listingPages = listings.map((l) => ({
-      url: `${BASE_URL}/inzerce/katalog/${l.slug}`,
-      lastModified: l.updatedAt,
-      changeFrequency: "daily" as const,
+    return articles.map((a) => ({
+      url: `${BASE_URL}/blog/${a.slug}`,
+      lastModified: a.updatedAt,
+      changeFrequency: "weekly" as const,
       priority: 0.7,
     }));
   } catch {
-    // DB nedostupná
+    return [];
   }
+}
+
+// ---------------------------------------------------------------------------
+// Dynamic: Services (autoservisy + STK)
+// ---------------------------------------------------------------------------
+async function getServicePages(): Promise<MetadataRoute.Sitemap> {
+  try {
+    const servisy = await prisma.autoServis.findMany({
+      where: { isPublished: true },
+      select: { slug: true, updatedAt: true, categories: true },
+    });
+    return servisy.map((s) => ({
+      url: s.categories.includes("stk-emise")
+        ? `${BASE_URL}/stk/${s.slug}`
+        : `${BASE_URL}/autoservisy/${s.slug}`,
+      lastModified: s.updatedAt,
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    }));
+  } catch {
+    return [];
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Dynamic: Partners (vrakoviste + autobazary)
+// ---------------------------------------------------------------------------
+async function getPartnerPages(): Promise<MetadataRoute.Sitemap> {
+  try {
+    const [vrakoviste, bazary] = await Promise.all([
+      prisma.partner.findMany({
+        where: { status: "AKTIVNI_PARTNER", type: "VRAKOVISTE" },
+        select: { slug: true, updatedAt: true },
+      }),
+      prisma.partner.findMany({
+        where: { status: "AKTIVNI_PARTNER", type: "AUTOBAZAR" },
+        select: { slug: true, updatedAt: true },
+      }),
+    ]);
+
+    const vrakovisteEntries: MetadataRoute.Sitemap = vrakoviste.map((p) => ({
+      url: `${BASE_URL}/dily/vrakoviste/${p.slug}`,
+      lastModified: p.updatedAt,
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    }));
+
+    const bazarEntries: MetadataRoute.Sitemap = bazary.map((b) => ({
+      url: `${BASE_URL}/bazar/${b.slug}`,
+      lastModified: b.updatedAt,
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    }));
+
+    return [...vrakovisteEntries, ...bazarEntries];
+  } catch {
+    return [];
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Landing pages (brand/model/body-type/price/city + parts LP)
+// ---------------------------------------------------------------------------
+function getLandingPages(): MetadataRoute.Sitemap {
+  // Znacky (16)
+  const brandPages: MetadataRoute.Sitemap = BRANDS.map((brand) => ({
+    url: `${BASE_URL}/nabidka/${brand.slug}`,
+    lastModified: STATIC_LAST_MODIFIED,
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }));
+
+  // Modely (12)
+  const modelPages: MetadataRoute.Sitemap = TOP_MODELS.map((model) => ({
+    url: `${BASE_URL}/nabidka/${model.brandSlug}/${model.slug}`,
+    lastModified: STATIC_LAST_MODIFIED,
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  // Kategorie karoserii (7)
+  const bodyTypePages: MetadataRoute.Sitemap = BODY_TYPES.map((bt) => ({
+    url: `${BASE_URL}/nabidka/${bt.slug}`,
+    lastModified: STATIC_LAST_MODIFIED,
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  // Cenove rozsahy (5)
+  const pricePages: MetadataRoute.Sitemap = PRICE_RANGES.map((pr) => ({
+    url: `${BASE_URL}/nabidka/${pr.slug}`,
+    lastModified: STATIC_LAST_MODIFIED,
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  // Mesta (8)
+  const cityPages: MetadataRoute.Sitemap = CITIES.map((city) => ({
+    url: `${BASE_URL}/nabidka/${city.slug}`,
+    lastModified: STATIC_LAST_MODIFIED,
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  // Dily kategorie (11)
+  const partsCategoryPages: MetadataRoute.Sitemap = PARTS_CATEGORIES.map((cat) => ({
+    url: `${BASE_URL}/dily/kategorie/${cat.slug}`,
+    lastModified: STATIC_LAST_MODIFIED,
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
+  // Dily znacky (8)
+  const partsBrandPages: MetadataRoute.Sitemap = PARTS_BRANDS.map((brand) => ({
+    url: `${BASE_URL}/dily/znacka/${brand.slug}`,
+    lastModified: STATIC_LAST_MODIFIED,
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
+  // Dily znacka+model (~24)
+  const partsModelPages: MetadataRoute.Sitemap = PARTS_BRANDS.flatMap((brand) =>
+    (PARTS_MODELS_BY_BRAND[brand.slug] || []).map((model) => ({
+      url: `${BASE_URL}/dily/znacka/${brand.slug}/${model.slug}`,
+      lastModified: STATIC_LAST_MODIFIED,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    }))
+  );
+
+  // Dily znacka+model+rok (~72)
+  const partsModelYearPages: MetadataRoute.Sitemap = PARTS_BRANDS.flatMap((brand) =>
+    (PARTS_MODELS_BY_BRAND[brand.slug] || []).flatMap((model) =>
+      (model.topYears ?? [2015, 2018, 2020]).map((year) => ({
+        url: `${BASE_URL}/dily/znacka/${brand.slug}/${model.slug}/${year}`,
+        lastModified: STATIC_LAST_MODIFIED,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      }))
+    )
+  );
 
   return [
-    ...staticPages,
     ...brandPages,
     ...modelPages,
     ...bodyTypePages,
@@ -486,14 +392,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...partsBrandPages,
     ...partsModelPages,
     ...partsModelYearPages,
-    ...vehiclePages,
-    ...brokerPages,
-    ...tagPages,
-    ...partnerPages,
-    ...bazarPages,
-    ...listingPages,
-    ...blogPages,
-    ...partPages,
-    ...servisPages,
   ];
 }
