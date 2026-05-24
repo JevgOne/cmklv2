@@ -1170,6 +1170,46 @@ model SeoContent {
   @@index([brand])
 }
 
+// Per-page SEO metadata overrides (admin-editable).
+// DB is override, code is fallback — both must work (STOP-1).
+model SeoPageMeta {
+  id String @id @default(cuid())
+
+  // Page identification
+  pagePath String @unique // URL path, e.g. "/nabidka", "/blog", "/stk"
+  pageType String // "STATIC", "DYNAMIC_LIST", "DYNAMIC_DETAIL", "LP"
+  section  String // "vehicles", "parts", "blog", "stk", "services"...
+
+  // Metadata overrides (null = use code default)
+  title       String?
+  description String?
+
+  // Canonical override
+  canonical String?
+  noIndex   Boolean @default(false)
+
+  // OG overrides
+  ogTitle       String?
+  ogDescription String?
+  ogImageUrl    String? // Custom OG image (null = auto-generated)
+
+  // Schema tracking
+  schemaTypesJson String? // JSON: schema type names ["BreadcrumbList", "FAQPage"]
+
+  // Audit trail
+  lastAuditedAt DateTime?
+  auditStatus   String? // "OK", "WARNING", "ERROR"
+  auditNotes    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([section])
+  @@index([pageType])
+  @@index([auditStatus])
+  @@map("seo_page_meta")
+}
+
 model Order {
   id          String  @id @default(cuid())
   orderNumber String  @unique
