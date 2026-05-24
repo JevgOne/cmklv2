@@ -6,7 +6,7 @@
  */
 
 export const companyInfo = {
-  name: "CarMakler",
+  name: "CarMakléř",
   legalName: "CarMakler s.r.o.",
   ico: "21957151",
   dic: "CZ21957151",

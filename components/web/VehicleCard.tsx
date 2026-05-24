@@ -48,7 +48,7 @@ export const VehicleCard = memo(function VehicleCard({ car, className }: Vehicle
     <Link href={href} className="no-underline block">
       <Card hover className={`group ${className ?? ""}`}>
         {/* Image */}
-        <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
+        <div className="relative aspect-4/3 min-h-48 overflow-hidden bg-gray-100">
           <Image
             src={car.photo}
             alt={car.name}

@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { ServisyList } from "@/components/web/autoservisy/ServisyList";
 import { MapListView } from "@/components/web/map/MapListView";
-import { generateFaqJsonLd } from "@/lib/seo";
+import { generateFaqJsonLd, generateBreadcrumbJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
 
 export const revalidate = 3600; // 1h — catalog page
@@ -82,6 +82,15 @@ export default async function AutoservisyPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(AUTOSERVISY_FAQ) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: generateBreadcrumbJsonLd([
+            { name: "Domů", url: "https://carmakler.cz" },
+            { name: "Autoservisy", url: "https://carmakler.cz/autoservisy" },
+          ]),
+        }}
       />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <Breadcrumbs items={[{ label: "Domů", href: "/" }, { label: "Autoservisy" }]} />

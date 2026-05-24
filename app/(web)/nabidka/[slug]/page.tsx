@@ -45,7 +45,7 @@ export async function generateMetadata({
   });
 
   if (vehicle) {
-    const name = `${vehicle.brand} ${vehicle.model}${vehicle.variant ? " " + vehicle.variant : ""}`;
+    const name = [vehicle.brand, vehicle.model, vehicle.variant].filter(Boolean).map(s => s!.trim()).join(" ");
     const price = new Intl.NumberFormat("cs-CZ").format(vehicle.price);
     return {
       title: `${name} (${vehicle.year}) — ${price} Kč`,
@@ -65,7 +65,7 @@ export async function generateMetadata({
   });
 
   if (listing) {
-    const name = `${listing.brand} ${listing.model}${listing.variant ? " " + listing.variant : ""}`;
+    const name = [listing.brand, listing.model, listing.variant].filter(Boolean).map(s => s!.trim()).join(" ");
     const price = new Intl.NumberFormat("cs-CZ").format(listing.price);
     return {
       title: `${name} (${listing.year}) — ${price} Kč`,
