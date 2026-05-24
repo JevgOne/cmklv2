@@ -533,10 +533,20 @@ export interface LocalBusinessJsonLdData {
   priceRange?: string;
 }
 
-export function generateLocalBusinessJsonLd(biz: LocalBusinessJsonLdData): string {
+/**
+ * AutoDealer JSON-LD — for /bazar/[slug] pages.
+ * Schema.org: AutoDealer > AutomotiveBusiness > LocalBusiness.
+ */
+export function generateAutoDealerJsonLd(biz: LocalBusinessJsonLdData): string {
+  // Reuse LocalBusiness builder with AutoDealer type
+  const base = JSON.parse(generateLocalBusinessJsonLd(biz, "AutoDealer"));
+  return JSON.stringify(base);
+}
+
+export function generateLocalBusinessJsonLd(biz: LocalBusinessJsonLdData, typeOverride?: string): string {
   const jsonLd: Record<string, unknown> = {
     "@context": "https://schema.org",
-    "@type": "AutomotiveBusiness",
+    "@type": typeOverride ?? "AutomotiveBusiness",
     name: biz.name,
     description: biz.description,
     url: biz.url,

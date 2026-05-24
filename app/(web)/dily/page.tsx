@@ -94,6 +94,19 @@ export default async function DilyPage() {
     slug: cat.value.toLowerCase(),
   }));
 
+  const categoryListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Kategorie autodílů",
+    numberOfItems: categories.length,
+    itemListElement: categories.map((cat, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `https://carmakler.cz/dily/katalog?category=${cat.slug.toUpperCase()}`,
+      name: cat.title,
+    })),
+  };
+
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -127,6 +140,10 @@ export default async function DilyPage() {
 
   return (
     <div className="min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(categoryListJsonLd) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}

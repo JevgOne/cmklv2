@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/Card";
 import type { Metadata } from "next";
 
 export const revalidate = 600; // 10min — detail page
-import { generateLocalBusinessJsonLd, generateBreadcrumbJsonLd } from "@/lib/seo";
+import { generateAutoDealerJsonLd, generateBreadcrumbJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
 
 interface Props {
@@ -89,7 +89,7 @@ export default async function BazarProfilePage({ params }: Props) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: generateLocalBusinessJsonLd({
+          __html: generateAutoDealerJsonLd({
             name: partner.name,
             description: partner.description || `Autobazar ${partner.name} — ověřený partner CarMakléř.`,
             url: `https://carmakler.cz/bazar/${slug}`,

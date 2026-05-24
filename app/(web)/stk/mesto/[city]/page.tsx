@@ -5,6 +5,8 @@ import { Card } from "@/components/ui/Card";
 import { StkPriceCalc } from "@/components/web/StkPriceCalc";
 import type { Metadata } from "next";
 import { pageCanonical } from "@/lib/canonical";
+import { generateBreadcrumbJsonLd } from "@/lib/seo";
+import { BASE_URL } from "@/lib/seo-data";
 
 export const revalidate = 600; // 10min — detail page
 
@@ -51,8 +53,52 @@ export default async function StkCityPage({ params }: Props) {
 
   const capitalized = cityName.charAt(0).toUpperCase() + cityName.slice(1);
 
+  const stkItemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `STK stanice ${capitalized}`,
+    numberOfItems: servisy.length,
+    itemListElement: servisy.map((s, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `${BASE_URL}/stk/${s.slug}`,
+      name: s.name,
+      item: {
+        "@type": "LocalBusiness",
+        name: s.name,
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: s.city,
+          ...(s.address && { streetAddress: s.address }),
+          addressCountry: "CZ",
+        },
+        ...(s.averageRating > 0 && {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: s.averageRating,
+            reviewCount: s.reviewCount,
+          },
+        }),
+      },
+    })),
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(stkItemListJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: generateBreadcrumbJsonLd([
+            { name: "Domů", url: BASE_URL },
+            { name: "STK stanice", url: `${BASE_URL}/stk` },
+            { name: capitalized, url: `${BASE_URL}/stk/mesto/${city}` },
+          ]),
+        }}
+      />
       <Breadcrumbs
         items={[
           { label: "Domů", href: "/" },

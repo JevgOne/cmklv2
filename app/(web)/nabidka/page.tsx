@@ -227,16 +227,20 @@ export default async function NabidkaPage({
 
   const catalogJsonLd = {
     "@context": "https://schema.org",
-    "@type": "ItemList",
+    "@type": "CollectionPage",
     name: "Nabídka vozidel — CarMakléř",
     description: "Prověřená ojetá vozidla od ověřených makléřů i soukromých prodejců.",
-    numberOfItems: total,
-    itemListElement: vehicles.slice(0, 10).map((car, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      url: `https://carmakler.cz/nabidka/${car.slug}`,
-      name: car.name,
-    })),
+    url: "https://carmakler.cz/nabidka",
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: total,
+      itemListElement: vehicles.slice(0, 10).map((car, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: `https://carmakler.cz/nabidka/${car.slug}`,
+        name: car.name,
+      })),
+    },
   };
 
   return (

@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { pageCanonical } from "@/lib/canonical";
 import { BASE_URL } from "@/lib/seo-data";
+import { generateBreadcrumbJsonLd } from "@/lib/seo";
 import { NewsletterSignup } from "@/components/web/blog/NewsletterSignup";
 
 export const revalidate = 3600;
@@ -105,11 +106,37 @@ export default async function BlogPage({
     },
   };
 
+  const articleListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Nejnovější články",
+    numberOfItems: articles.length,
+    itemListElement: articles.slice(0, 10).map((article, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `${BASE_URL}/blog/${article.slug}`,
+      name: article.title,
+    })),
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleListJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: generateBreadcrumbJsonLd([
+            { name: "Domů", url: `${BASE_URL}` },
+            { name: "Blog", url: `${BASE_URL}/blog` },
+          ]),
+        }}
       />
 
       <div className="max-w-7xl mx-auto px-4 py-8">
