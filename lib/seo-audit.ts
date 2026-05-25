@@ -97,8 +97,8 @@ export function auditPage(meta: AuditablePage): AuditIssue[] {
     });
   }
 
-  // WARNING: Missing OG title (for non-static shareable pages)
-  if (!meta.ogTitle && meta.pageType !== "STATIC") {
+  // WARNING: Missing OG title — only if title is also missing (OG falls back to title)
+  if (!meta.ogTitle && !meta.title && meta.pageType !== "STATIC") {
     issues.push({
       pagePath: p,
       severity: "WARNING",
