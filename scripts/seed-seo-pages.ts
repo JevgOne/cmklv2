@@ -339,8 +339,8 @@ const PAGES: PageDef[] = [
     pagePath: `/nabidka/${pr.slug}`,
     pageType: "LP",
     section: "vehicles",
-    title: `Auta ${pr.name} — prověřená vozidla | CarMakléř`,
-    description: `Ojetá vozidla v cenové kategorii ${pr.name.toLowerCase()}. Ověřená historie a profesionální makléřský servis.`,
+    title: `Auta ${pr.label} — prověřená vozidla | CarMakléř`,
+    description: `Ojetá vozidla v cenové kategorii ${pr.label.toLowerCase()}. Ověřená historie a profesionální makléřský servis.`,
   })),
 
   // ── LP: Parts categories ──
