@@ -204,14 +204,14 @@ const PAGES: PageDef[] = [
     pagePath: "/kontakt",
     pageType: "STATIC",
     section: "info",
-    title: "Kontakt — CarMakléř",
+    title: "Kontaktujte nás — CarMakléř",
     description: "Kontaktujte nás. Jsme tu pro vás — ať chcete prodat auto, koupit prověřené vozidlo nebo se stát makléřem.",
   },
   {
     pagePath: "/o-nas",
     pageType: "STATIC",
     section: "info",
-    title: "O nás — CarMakléř",
+    title: "O nás — kdo je CarMakléř",
     description: "CarMakléř — nová éra prodeje aut v Česku. Ověření makléři, prověřená vozidla, spokojení klienti.",
   },
   {

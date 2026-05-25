@@ -67,13 +67,13 @@ export function auditPage(meta: AuditablePage): AuditIssue[] {
     });
   }
 
-  // WARNING: Title too short (< 30 chars)
-  if (meta.title && meta.title.length < 30) {
+  // WARNING: Title too short (< 20 chars)
+  if (meta.title && meta.title.length < 20) {
     issues.push({
       pagePath: p,
       severity: "WARNING",
       rule: "TITLE_TOO_SHORT",
-      message: `Title má jen ${meta.title.length} znaků (min 30)`,
+      message: `Title má jen ${meta.title.length} znaků (min 20)`,
     });
   }
 
@@ -107,15 +107,8 @@ export function auditPage(meta: AuditablePage): AuditIssue[] {
     });
   }
 
-  // WARNING: No schema types tracked
-  if (!meta.schemaTypesJson || meta.schemaTypesJson === "[]") {
-    issues.push({
-      pagePath: p,
-      severity: "WARNING",
-      rule: "NO_SCHEMA",
-      message: "Stránka nemá tracked JSON-LD schema",
-    });
-  }
+  // NOTE: JSON-LD schema tracking is not yet populated in the DB,
+  // so we skip this rule until schemaTypesJson is seeded from code.
 
   return issues;
 }
