@@ -6,6 +6,8 @@
  * Uses upsert with empty update — STOP-1: never overwrites existing overrides.
  */
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 import {
   BRANDS,
   BODY_TYPES,
@@ -16,7 +18,11 @@ import {
   PARTS_MODELS_BY_BRAND,
 } from "../lib/seo-data";
 
-const prisma = new PrismaClient();
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) throw new Error("DATABASE_URL not set");
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 interface PageDef {
   pagePath: string;
