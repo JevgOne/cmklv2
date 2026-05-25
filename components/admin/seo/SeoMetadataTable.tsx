@@ -104,7 +104,7 @@ export function SeoMetadataTable() {
   const [editingCell, setEditingCell] = useState<{ id: string; field: "title" | "description" } | null>(null);
   const [editValue, setEditValue] = useState("");
   const editRef = useRef<HTMLTextAreaElement>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const fetchPages = useCallback(async () => {
     setLoading(true);
