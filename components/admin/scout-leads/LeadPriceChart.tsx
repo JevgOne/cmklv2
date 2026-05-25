@@ -181,22 +181,22 @@ export function LeadPriceChart({ buckets, stats, sources }: LeadPriceChartProps)
             {stats.mean.toLocaleString("cs-CZ")} Kč
           </div>
         </div>
-        <div className="bg-gray-50 rounded-lg p-3">
-          <div className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold">
+        <div className="bg-green-50 rounded-lg p-3">
+          <div className="text-[10px] uppercase tracking-wider text-green-600 font-semibold">
             Cenové pásmo
           </div>
-          <div className="text-sm font-bold text-gray-700 tabular-nums">
+          <div className="text-sm font-bold text-green-700 tabular-nums">
             {formatPrice(stats.min)} – {formatPrice(stats.max)} Kč
           </div>
         </div>
-        <div className="bg-gray-50 rounded-lg p-3">
-          <div className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold">
-            Srovnáno
+        <div className="bg-orange-50 rounded-lg p-3">
+          <div className="text-[10px] uppercase tracking-wider text-orange-600 font-semibold">
+            Vzorek
           </div>
-          <div className="text-lg font-bold text-gray-700 tabular-nums">
-            {stats.count} <span className="text-sm font-normal text-gray-500">vozů</span>
+          <div className="text-lg font-bold text-orange-700 tabular-nums">
+            {stats.count} <span className="text-sm font-normal text-orange-500">vozů</span>
           </div>
-          <div className="text-[10px] text-gray-400">Levnější než {stats.percentile} % nabídek</div>
+          <div className="text-[10px] text-orange-400">Levnější než {stats.percentile} % nabídek</div>
         </div>
       </div>
     </Card>
