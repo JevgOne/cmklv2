@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { cache } from "react";
 import { notFound } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
 import { BASE_URL } from "@/lib/seo-data";
@@ -8,12 +10,9 @@ import { generatePersonJsonLd, generateBreadcrumbJsonLd } from "@/lib/seo";
 import { ROLE_LABELS } from "@/lib/role-labels";
 import { getSkillTagCounts } from "@/lib/reputation/skill-tags";
 import { getBrokerRatingBreakdown, getBrokerDetailedRatings } from "@/lib/broker-reviews";
-import dynamic from "next/dynamic";
+import { ProfileHeader } from "./ProfileHeader";
+import { ProfileTabs } from "./ProfileClient";
 import type { ProfileData } from "./ProfileClient";
-const ProfileClient = dynamic(
-  () => import("./ProfileClient").then((m) => ({ default: m.ProfileClient })),
-  { loading: () => <div className="min-h-screen animate-pulse bg-gray-50" /> }
-);
 
 export const revalidate = 300;
 
@@ -313,16 +312,20 @@ export default async function ProfilePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const data = await getProfileData(slug);
+  const [data, session] = await Promise.all([
+    getProfileData(slug),
+    getServerSession(authOptions),
+  ]);
 
   if (!data) notFound();
 
   const { user } = data;
   const fullName = `${user.firstName} ${user.lastName}`;
   const roleLabel = user.jobTitle || ROLE_LABELS[user.role] || "Profil";
+  const isOwner = !!session?.user?.id && session.user.id === user.id;
 
   return (
-    <>
+    <main className="min-h-screen bg-gray-50 pb-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -351,7 +354,8 @@ export default async function ProfilePage({
           ]),
         }}
       />
-      <ProfileClient initialData={data} slug={slug} />
-    </>
+      <ProfileHeader data={data} isOwner={isOwner} />
+      <ProfileTabs slug={slug} role={user.role} />
+    </main>
   );
 }

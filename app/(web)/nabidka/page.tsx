@@ -118,9 +118,8 @@ export default async function NabidkaPage({
     ? [{ isPremium: "desc" as const }, { price: "desc" as const }]
     : [{ isPremium: "desc" as const }, { createdAt: "desc" as const }];
 
-  // Fetch enough records for current page from each table
-  // We need page*limit per table to guarantee correct cross-table pagination
-  const fetchLimit = page * limit;
+  // Proper skip/take pagination per table
+  const offset = (page - 1) * limit;
 
   // Fetch both Vehicle and Listing counts
   const [dbVehicles, vehicleTotal, dbListings, listingTotal] = await Promise.all([
@@ -133,7 +132,8 @@ export default async function NabidkaPage({
         },
       },
       orderBy: vehicleOrderBy,
-      take: fetchLimit,
+      skip: offset,
+      take: limit,
     }),
     prisma.vehicle.count({ where: vehicleWhere }),
     prisma.listing.findMany({
@@ -145,7 +145,8 @@ export default async function NabidkaPage({
         },
       },
       orderBy: listingOrderBy,
-      take: fetchLimit,
+      skip: offset,
+      take: limit,
     }),
     prisma.listing.count({ where: listingWhere }),
   ]);
@@ -220,9 +221,8 @@ export default async function NabidkaPage({
     allCards.sort((a, b) => parseInt(b.price.replace(/\s/g, ""), 10) - parseInt(a.price.replace(/\s/g, ""), 10));
   }
 
-  // Paginate the merged results
-  const skip = (page - 1) * limit;
-  const vehicles = allCards.slice(skip, skip + limit);
+  // Trim to page size (skip/take already applied at DB level)
+  const vehicles = allCards.slice(0, limit);
   const totalPages = Math.ceil(total / limit);
 
   const catalogJsonLd = {

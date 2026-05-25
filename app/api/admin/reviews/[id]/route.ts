@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
-const ALLOWED_ROLES = ["ADMIN", "BACKOFFICE"];
+const ALLOWED_ROLES = ["ADMIN", "BACKOFFICE", "MANAGER"];
 
 const reviewUpdateSchema = z.object({
   authorName: z.string().min(2).max(100).optional(),
