@@ -107,8 +107,15 @@ export function auditPage(meta: AuditablePage): AuditIssue[] {
     });
   }
 
-  // NOTE: JSON-LD schema tracking is not yet populated in the DB,
-  // so we skip this rule until schemaTypesJson is seeded from code.
+  // WARNING: No schema types tracked
+  if (!meta.schemaTypesJson || meta.schemaTypesJson === "[]") {
+    issues.push({
+      pagePath: p,
+      severity: "WARNING",
+      rule: "NO_SCHEMA",
+      message: "Stránka nemá tracked JSON-LD schema",
+    });
+  }
 
   return issues;
 }
