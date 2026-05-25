@@ -139,15 +139,19 @@ export default async function BlogPage({
         }}
       />
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <Breadcrumbs items={[{ label: "Domů", href: "/" }, { label: "Blog" }]} />
+      <div className="bg-gradient-to-b from-orange-50 to-white">
+        <div className="max-w-7xl mx-auto px-4 pt-8 pb-4">
+          <Breadcrumbs items={[{ label: "Domů", href: "/" }, { label: "Blog" }]} />
 
-        <h1 className="text-3xl md:text-4xl font-extrabold mt-6 mb-2">
-          Blog <span className="text-orange-500">&</span> Magazín
-        </h1>
-        <p className="text-gray-500 mb-8 max-w-2xl">
-          Rady, tipy, recenze a analýzy z automobilového světa. Vše, co potřebujete vědět o nákupu a prodeji aut.
-        </p>
+          <h1 className="text-3xl md:text-4xl font-extrabold mt-6 mb-2">
+            Blog <span className="text-orange-500">&</span> Magazín
+          </h1>
+          <p className="text-gray-500 mb-4 max-w-2xl">
+            Rady, tipy, recenze a analýzy z automobilového světa. Vše, co potřebujete vědět o nákupu a prodeji aut.
+          </p>
+        </div>
+      </div>
+      <div className="max-w-7xl mx-auto px-4 py-8">
 
         {/* Featured article */}
         {featured && (

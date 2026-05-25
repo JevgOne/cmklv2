@@ -224,6 +224,7 @@ export interface GlobalSearchResponse {
   vehicles: GlobalSearchItem[];
   parts: GlobalSearchItem[];
   services: GlobalSearchItem[];
+  articles: GlobalSearchItem[];
   totalByType: Record<string, number>;
   suggestions: string[];
 }
@@ -236,14 +237,15 @@ export async function globalSearch(
   const tsQuery = sanitizeQuery(query);
 
   if (!tsQuery) {
-    return { vehicles: [], parts: [], services: [], totalByType: {}, suggestions: [] };
+    return { vehicles: [], parts: [], services: [], articles: [], totalByType: {}, suggestions: [] };
   }
 
-  const [vehicles, listings, parts, services] = await Promise.all([
+  const [vehicles, listings, parts, services, articles] = await Promise.all([
     type === "all" || type === "vehicles" ? searchVehiclesGlobal(tsQuery, limitPerType) : [],
     type === "all" || type === "vehicles" ? searchListingsGlobal(tsQuery, limitPerType) : [],
     type === "all" || type === "parts" ? searchPartsGlobal(tsQuery, limitPerType) : [],
     type === "all" || type === "services" ? searchServicesGlobal(tsQuery, limitPerType) : [],
+    type === "all" || type === "articles" ? searchArticlesGlobal(tsQuery, limitPerType) : [],
   ]);
 
   // Merge vehicles + listings, sort by rank, limit
@@ -257,10 +259,12 @@ export async function globalSearch(
     vehicles: mergedVehicles,
     parts,
     services,
+    articles,
     totalByType: {
       vehicles: vehicles.length + listings.length,
       parts: parts.length,
       services: services.length,
+      articles: articles.length,
     },
     suggestions,
   };
@@ -404,6 +408,34 @@ async function searchServicesGlobal(tsQuery: string, limit: number): Promise<Glo
     url: `/autoservisy/${s.slug}`,
     image: s.logo,
     rating: s.averageRating,
+    rank: 0.1,
+  }));
+}
+
+async function searchArticlesGlobal(tsQuery: string, limit: number): Promise<GlobalSearchItem[]> {
+  const cleaned = tsQuery.replace(/:?\*/g, "").replace(/\s*&\s*/g, " ").trim();
+  if (!cleaned) return [];
+
+  const rows = await prisma.article.findMany({
+    where: {
+      status: "PUBLISHED",
+      OR: [
+        { title: { contains: cleaned, mode: "insensitive" } },
+        { excerpt: { contains: cleaned, mode: "insensitive" } },
+      ],
+    },
+    include: { category: { select: { name: true } } },
+    orderBy: { publishedAt: "desc" },
+    take: limit,
+  });
+
+  return rows.map((a) => ({
+    id: a.id,
+    type: "article" as const,
+    title: a.title,
+    subtitle: a.category?.name ?? "Blog",
+    url: `/blog/${a.slug}`,
+    image: a.coverImage,
     rank: 0.1,
   }));
 }

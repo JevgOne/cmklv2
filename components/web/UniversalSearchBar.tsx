@@ -19,6 +19,7 @@ interface SearchResults {
   vehicles: SearchItem[];
   parts: SearchItem[];
   services: SearchItem[];
+  articles: SearchItem[];
   suggestions?: string[];
 }
 
@@ -26,6 +27,7 @@ const TYPE_LABELS: Record<string, string> = {
   vehicles: "Vozidla",
   parts: "Autodíly",
   services: "Autoservisy",
+  articles: "Články",
 };
 
 export function UniversalSearchBar({ onClose }: { onClose?: () => void }) {
@@ -98,7 +100,7 @@ export function UniversalSearchBar({ onClose }: { onClose?: () => void }) {
 
   // Flatten results for keyboard nav
   const allItems: SearchItem[] = results
-    ? [...results.vehicles, ...results.parts, ...results.services]
+    ? [...results.vehicles, ...results.parts, ...results.services, ...results.articles]
     : [];
 
   function handleKeyDown(e: React.KeyboardEvent) {
@@ -120,7 +122,7 @@ export function UniversalSearchBar({ onClose }: { onClose?: () => void }) {
     }
   }
 
-  const hasResults = results && (results.vehicles.length > 0 || results.parts.length > 0 || results.services.length > 0);
+  const hasResults = results && (results.vehicles.length > 0 || results.parts.length > 0 || results.services.length > 0 || results.articles.length > 0);
   let flatIndex = 0;
 
   return (
@@ -155,7 +157,7 @@ export function UniversalSearchBar({ onClose }: { onClose?: () => void }) {
           role="listbox"
           className="mt-2 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden max-h-[70vh] overflow-y-auto"
         >
-          {(["vehicles", "parts", "services"] as const).map((category) => {
+          {(["vehicles", "parts", "services", "articles"] as const).map((category) => {
             const items = results[category];
             if (items.length === 0) return null;
 
@@ -185,7 +187,7 @@ export function UniversalSearchBar({ onClose }: { onClose?: () => void }) {
                         />
                       ) : (
                         <div className="w-12 h-12 rounded-lg bg-gray-100 shrink-0 flex items-center justify-center text-gray-300 text-lg">
-                          {item.type === "vehicle" || item.type === "listing" ? "🚗" : item.type === "part" ? "🔧" : "🏪"}
+                          {item.type === "vehicle" || item.type === "listing" ? "🚗" : item.type === "part" ? "🔧" : item.type === "article" ? "📝" : "🏪"}
                         </div>
                       )}
                       <div className="flex-1 min-w-0">

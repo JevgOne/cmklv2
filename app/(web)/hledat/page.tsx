@@ -4,6 +4,8 @@ import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { Card } from "@/components/ui/Card";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 interface Props {
   searchParams: Promise<{ q?: string; typ?: string }>;
 }
@@ -21,12 +23,14 @@ const TYPE_LABELS: Record<string, string> = {
   vehicles: "Vozidla",
   parts: "Autodíly",
   services: "Autoservisy",
+  articles: "Články",
 };
 
 const TYPE_ICONS: Record<string, string> = {
   vehicles: "🚗",
   parts: "🔧",
   services: "🏪",
+  articles: "📝",
 };
 
 export default async function SearchPage({ searchParams }: Props) {
@@ -59,16 +63,17 @@ export default async function SearchPage({ searchParams }: Props) {
     );
   }
 
-  const type = typ === "vozidla" ? "vehicles" : typ === "dily" ? "parts" : typ === "servisy" ? "services" : "all";
+  const type = typ === "vozidla" ? "vehicles" : typ === "dily" ? "parts" : typ === "servisy" ? "services" : typ === "clanky" ? "articles" : "all";
   const results = await globalSearch(q, { limitPerType: type === "all" ? 5 : 20, type });
 
   const categories = [
     { key: "vehicles" as const, items: results.vehicles },
     { key: "parts" as const, items: results.parts },
     { key: "services" as const, items: results.services },
+    { key: "articles" as const, items: results.articles },
   ].filter((c) => c.items.length > 0);
 
-  const totalResults = results.vehicles.length + results.parts.length + results.services.length;
+  const totalResults = results.vehicles.length + results.parts.length + results.services.length + results.articles.length;
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
@@ -95,7 +100,7 @@ export default async function SearchPage({ searchParams }: Props) {
           {categories.map((c) => (
             <Link
               key={c.key}
-              href={`/hledat?q=${encodeURIComponent(q)}&typ=${c.key === "vehicles" ? "vozidla" : c.key === "parts" ? "dily" : "servisy"}`}
+              href={`/hledat?q=${encodeURIComponent(q)}&typ=${c.key === "vehicles" ? "vozidla" : c.key === "parts" ? "dily" : c.key === "services" ? "servisy" : "clanky"}`}
               className="px-3 py-1.5 text-sm rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 no-underline transition"
             >
               {TYPE_LABELS[c.key]} ({c.items.length})
