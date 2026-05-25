@@ -11,6 +11,8 @@ import { BrokerStats } from "@/components/pwa/profile/BrokerStats";
 import { NotificationSettings } from "@/components/pwa/profile/NotificationSettings";
 import { QuickModeToggle } from "@/components/pwa/profile/QuickModeToggle";
 
+
+export const dynamic = "force-dynamic";
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
 

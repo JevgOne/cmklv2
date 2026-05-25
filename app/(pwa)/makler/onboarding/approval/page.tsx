@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ApprovalWaiting } from "./ApprovalWaiting";
 
+
+export const dynamic = "force-dynamic";
 export default async function OnboardingApprovalPage() {
   const session = await getServerSession(authOptions);
 

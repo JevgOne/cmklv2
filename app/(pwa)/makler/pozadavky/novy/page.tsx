@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { CreateWorkflowForm } from "@/components/pwa/workflow/CreateWorkflowForm";
 
+
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Nový požadavek | Carmakler",
   description: "Vytvoření nového workflow požadavku.",

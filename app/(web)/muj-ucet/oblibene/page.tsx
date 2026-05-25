@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { FavoritesList } from "@/components/web/FavoritesList";
 
+
+export const dynamic = "force-dynamic";
 export default async function OblibenePage() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/login");

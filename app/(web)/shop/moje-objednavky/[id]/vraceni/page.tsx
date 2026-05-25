@@ -6,6 +6,8 @@ import { ReturnForm } from "@/components/web/ReturnForm";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 
+
+export const dynamic = "force-dynamic";
 export default async function VraceniPage({
   params,
 }: {

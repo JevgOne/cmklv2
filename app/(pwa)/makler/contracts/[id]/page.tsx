@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/Button";
 import { StatusPill } from "@/components/ui/StatusPill";
 import Link from "next/link";
 
+
+export const dynamic = "force-dynamic";
 export default async function ContractDetailPage({
   params,
 }: {

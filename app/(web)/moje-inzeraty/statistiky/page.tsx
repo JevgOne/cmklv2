@@ -7,6 +7,8 @@ import { DealerFunnel } from "@/components/web/dealer/DealerFunnel";
 import { TopVehiclesChart } from "@/components/web/dealer/TopVehiclesChart";
 import type { Metadata } from "next";
 
+
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Statistiky — Dealer CRM",
   robots: { index: false, follow: false },

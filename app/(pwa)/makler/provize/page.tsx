@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { BrokerPayoutsContent } from "@/components/pwa/BrokerPayoutsContent";
 
+
+export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Provize | Carmakler",
 };

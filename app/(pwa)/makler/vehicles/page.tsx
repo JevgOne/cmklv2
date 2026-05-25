@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { VehiclesList } from "@/components/pwa/vehicles/VehiclesList";
 
+
+export const dynamic = "force-dynamic";
 export default async function VehiclesPage() {
   const session = await getServerSession(authOptions);
 

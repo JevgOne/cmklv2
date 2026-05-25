@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { ManagerNotificationPreferences } from "@/components/admin/ManagerNotificationPreferences";
 
+
+export const dynamic = "force-dynamic";
 export default async function ManagerNotificationsPage() {
   const session = await getServerSession(authOptions);
 

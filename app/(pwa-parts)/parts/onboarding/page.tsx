@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
+
+export const dynamic = "force-dynamic";
 const STEP_ROUTES: Record<number, string> = {
   1: "/parts/onboarding/profile",
   2: "/parts/onboarding/documents",

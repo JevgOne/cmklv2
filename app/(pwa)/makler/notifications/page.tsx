@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NotificationsInbox } from "@/components/pwa/notifications/NotificationsInbox";
 
+
+export const dynamic = "force-dynamic";
 const TAKE = 20;
 
 export default async function NotificationsPage() {

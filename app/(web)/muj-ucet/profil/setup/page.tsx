@@ -4,6 +4,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { ProfileSetupWizard } from "@/components/web/ProfileSetupWizard";
 
+
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Nastavit profil",
   robots: { index: false, follow: false },

@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { CommissionsView } from "@/components/pwa/commissions/CommissionsView";
 
+
+export const dynamic = "force-dynamic";
 export default async function CommissionsPage() {
   const session = await getServerSession(authOptions);
 

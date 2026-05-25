@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { BrokerReviewsManager } from "@/components/admin/BrokerReviewsManager";
 
+
+export const dynamic = "force-dynamic";
 export default async function AdminBrokerReviewsPage() {
   const reviews = await prisma.brokerReview.findMany({
     orderBy: { createdAt: "desc" },

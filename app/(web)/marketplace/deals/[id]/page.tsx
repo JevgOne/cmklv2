@@ -5,6 +5,8 @@ import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { DealDetailClient } from "@/components/web/marketplace/DealDetailClient";
 
+
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Detail flipu | Marketplace",
   robots: { index: false, follow: false },

@@ -4,6 +4,8 @@ import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { ListingDetailManager } from "@/components/web/ListingDetailManager";
 
+
+export const dynamic = "force-dynamic";
 export default async function ListingDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/login");

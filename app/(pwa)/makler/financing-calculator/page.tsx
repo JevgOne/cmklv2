@@ -3,6 +3,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { FinancingCalculator } from "@/components/pwa/gamification/FinancingCalculator";
 
+
+export const dynamic = "force-dynamic";
 export default async function FinancingCalculatorPage() {
   const session = await getServerSession(authOptions);
 

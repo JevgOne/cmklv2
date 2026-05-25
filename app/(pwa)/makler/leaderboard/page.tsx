@@ -6,6 +6,8 @@ import { LeaderboardTable } from "@/components/pwa/gamification/LeaderboardTable
 import { canAccess, getNextLevelInfo } from "@/lib/feature-gates";
 import { LockedFeatureCard } from "@/components/pwa/LockedFeatureCard";
 
+
+export const dynamic = "force-dynamic";
 export default async function LeaderboardPage() {
   const session = await getServerSession(authOptions);
 

@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { SettingsContent } from "@/components/pwa/SettingsContent";
 
+
+export const dynamic = "force-dynamic";
 export default async function SettingsPage() {
   const session = await getServerSession(authOptions);
 

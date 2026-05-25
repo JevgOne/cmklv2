@@ -8,6 +8,8 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
 
+
+export const dynamic = "force-dynamic";
 export default async function MessagesPage() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/login");

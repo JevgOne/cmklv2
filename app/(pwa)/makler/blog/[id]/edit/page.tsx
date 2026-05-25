@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { redirect, notFound } from "next/navigation";
 import { BrokerArticleEditor } from "./BrokerArticleEditor";
 
+
+export const dynamic = "force-dynamic";
 export default async function BrokerEditArticlePage({
   params,
 }: {

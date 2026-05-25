@@ -9,6 +9,8 @@ import { NotificationBell } from "@/components/web/marketplace/NotificationBell"
 import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
 
+
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Realizátor Dashboard | Marketplace",
   alternates: pageCanonical("/marketplace/dealer"),

@@ -10,6 +10,8 @@ import { calculateStarProgress, REGION_THRESHOLDS, STAR_LEVELS } from "@/lib/gam
 import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
 
+
+export const dynamic = "force-dynamic";
 export default async function StatsPage() {
   const session = await getServerSession(authOptions);
 

@@ -6,6 +6,8 @@ import { prisma } from "@/lib/prisma";
 import { InquiryActions } from "@/components/pwa/messages/InquiryActions";
 import { EmptyState } from "@/components/ui/EmptyState";
 
+
+export const dynamic = "force-dynamic";
 export default async function VehicleInquiriesPage({
   params,
 }: {

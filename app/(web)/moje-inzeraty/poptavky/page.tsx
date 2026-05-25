@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { DealerInquiryInbox } from "@/components/web/dealer/DealerInquiryInbox";
 import type { Metadata } from "next";
 
+
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Poptávky — Dealer CRM",
   robots: { index: false, follow: false },

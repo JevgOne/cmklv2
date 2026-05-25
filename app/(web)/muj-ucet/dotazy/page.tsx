@@ -6,6 +6,8 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 
+
+export const dynamic = "force-dynamic";
 function formatDate(date: Date): string {
   return date.toLocaleDateString("cs-CZ", {
     day: "numeric",

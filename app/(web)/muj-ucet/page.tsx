@@ -8,6 +8,8 @@ import { Card } from "@/components/ui/Card";
 import { ProfileCompletenessBar } from "@/components/profile/ProfileCompletenessBar";
 import type { ProfileCompletenessInput } from "@/lib/profile-completeness";
 
+
+export const dynamic = "force-dynamic";
 export default async function MujUcetPage() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/login");

@@ -9,6 +9,8 @@ import { StatusPill } from "@/components/ui/StatusPill";
 import { TrustScore } from "@/components/ui/TrustScore";
 import { VehicleComments } from "@/components/admin/vehicles/VehicleComments";
 
+
+export const dynamic = "force-dynamic";
 const conditionLabels: Record<string, string> = {
   NEW: "Nové",
   LIKE_NEW: "Jako nové",

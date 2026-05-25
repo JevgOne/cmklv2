@@ -16,6 +16,8 @@ import { UnlockProgressSection } from "@/components/pwa/dashboard/UnlockProgress
 import { WorkflowWidget } from "@/components/pwa/dashboard/WorkflowWidget";
 import { canAccess, getNextLevelInfo } from "@/lib/feature-gates";
 
+
+export const dynamic = "force-dynamic";
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
 

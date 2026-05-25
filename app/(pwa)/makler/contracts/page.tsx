@@ -6,6 +6,8 @@ import { ContractsList } from "@/components/pwa/contracts/ContractsList";
 import { canAccess, getNextLevelInfo } from "@/lib/feature-gates";
 import { LockedFeatureCard } from "@/components/pwa/LockedFeatureCard";
 
+
+export const dynamic = "force-dynamic";
 export default async function ContractsPage() {
   const session = await getServerSession(authOptions);
 

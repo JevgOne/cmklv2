@@ -3,6 +3,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { ContractWizard } from "@/components/pwa/contracts/ContractWizard";
 
+
+export const dynamic = "force-dynamic";
 export default async function NewContractPage() {
   const session = await getServerSession(authOptions);
 

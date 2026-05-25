@@ -5,6 +5,8 @@ import { prisma } from "@/lib/prisma";
 import { VehicleDetailHub } from "@/components/pwa/vehicles/VehicleDetailHub";
 import { VehicleComments } from "@/components/pwa/vehicles/VehicleComments";
 
+
+export const dynamic = "force-dynamic";
 export default async function VehicleDetailPage({
   params,
 }: {

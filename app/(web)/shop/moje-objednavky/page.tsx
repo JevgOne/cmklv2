@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/Button";
 import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
 
+
+export const dynamic = "force-dynamic";
 type OrderTrackerStatus = "NEW" | "CONFIRMED" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 
 function mapToTrackerStatus(apiStatus: string): OrderTrackerStatus {

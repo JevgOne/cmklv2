@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import Image from "next/image";
 import { ProfileForm } from "@/components/admin/ProfileForm";
 
+
+export const dynamic = "force-dynamic";
 const roleLabels: Record<string, string> = {
   ADMIN: "Administrátor",
   BACKOFFICE: "BackOffice",

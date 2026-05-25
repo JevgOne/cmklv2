@@ -6,6 +6,8 @@ import { canAccess, getNextLevelInfo } from "@/lib/feature-gates";
 import { LockedFeatureCard } from "@/components/pwa/LockedFeatureCard";
 import { MaterialsContent } from "@/components/pwa/materials/MaterialsContent";
 
+
+export const dynamic = "force-dynamic";
 export default async function MaterialsPage() {
   const session = await getServerSession(authOptions);
 

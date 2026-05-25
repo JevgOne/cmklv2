@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { SignatureFlow } from "@/components/pwa/contracts/SignatureFlow";
 
+
+export const dynamic = "force-dynamic";
 export default async function SignContractPage({
   params,
 }: {

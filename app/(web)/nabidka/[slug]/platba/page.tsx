@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { PaymentPageContent } from "./PaymentPageContent";
 
+
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Platba za vozidlo",
   description: "Bezpečná platba za vozidlo přes CarMakléř",

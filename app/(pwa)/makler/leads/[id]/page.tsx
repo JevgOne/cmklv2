@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/Button";
 import { LeadActions } from "@/components/pwa/leads/LeadActions";
 import Link from "next/link";
 
+
+export const dynamic = "force-dynamic";
 const statusLabels: Record<string, { label: string; variant: "new" | "verified" | "pending" | "top" | "rejected" | "default" }> = {
   NEW: { label: "Nový", variant: "new" },
   ASSIGNED: { label: "Přijatý", variant: "verified" },
