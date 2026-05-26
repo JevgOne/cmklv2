@@ -182,6 +182,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const CREATE_ROLES = ["BROKER", "MANAGER", "REGIONAL_DIRECTOR", "ADMIN"];
+    if (!CREATE_ROLES.includes(session.user.role)) {
+      return NextResponse.json(
+        { error: "Nemáte oprávnění vytvářet vozidla" },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json();
     const data = createVehicleSchema.parse(body);
 
