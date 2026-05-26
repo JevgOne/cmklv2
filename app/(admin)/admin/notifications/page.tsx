@@ -8,7 +8,7 @@ import { NotificationsPageContent } from "@/components/admin/NotificationsPageCo
 export const dynamic = "force-dynamic";
 export default async function AdminNotificationsPage() {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id || !["ADMIN", "BACKOFFICE", "MANAGER", "REGIONAL_DIRECTOR", "BROKER"].includes(session.user.role)) {
+  if (!session?.user?.id || !["ADMIN", "BACKOFFICE", "MANAGER", "REGIONAL_DIRECTOR"].includes(session.user.role)) {
     redirect("/login");
   }
 

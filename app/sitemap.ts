@@ -232,6 +232,7 @@ async function getBlogPages(): Promise<MetadataRoute.Sitemap> {
         select: { slug: true, updatedAt: true },
       }),
       prisma.articleCategory.findMany({
+        where: { articles: { some: { status: "PUBLISHED" } } },
         select: { slug: true, createdAt: true },
       }),
     ]);
