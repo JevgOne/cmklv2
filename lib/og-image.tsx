@@ -1,3 +1,4 @@
+import { ImageResponse } from "next/og";
 import { readFile } from "fs/promises";
 import { join } from "path";
 
@@ -37,6 +38,32 @@ export async function getOutfitFonts() {
 export async function ogImageOptions() {
   const fonts = await getOutfitFonts();
   return { ...OG_SIZE, fonts };
+}
+
+/**
+ * Factory for simple landing page OG images.
+ * Returns an async function suitable as default export in opengraph-image.tsx.
+ * Usage: `export default createLandingOgImage("Ojetá", "Škoda", "Octavia, Fabia — prověřená auta");`
+ */
+export function createLandingOgImage(prefix: string, highlight: string, subtitle: string) {
+  return async function Image() {
+    const logo = await getLogoBase64();
+    const options = await ogImageOptions();
+    return new ImageResponse(
+      (
+        <OgLayout logo={logo}>
+          <div style={{ display: "flex", fontSize: 48, fontWeight: 800, color: "white", textAlign: "center", lineHeight: 1.2 }}>
+            {prefix ? <span>{prefix} </span> : null}
+            <span style={{ color: ORANGE, marginLeft: prefix ? 14 : 0 }}>{highlight}</span>
+          </div>
+          <div style={{ display: "flex", fontSize: 22, color: "rgba(255,255,255,0.7)", marginTop: 20, textAlign: "center" }}>
+            {subtitle}
+          </div>
+        </OgLayout>
+      ),
+      options,
+    );
+  };
 }
 
 /**
