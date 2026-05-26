@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSessionOrMobileToken } from "@/lib/auth-mobile";
 import { prisma } from "@/lib/prisma";
 
 const PARTNER_ROLES = ["PARTNER_BAZAR", "PARTNER_VRAKOVISTE"];
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSessionOrMobileToken(request);
     if (!session?.user || !PARTNER_ROLES.includes(session.user.role)) {
       return NextResponse.json({ error: "Nemate opravneni" }, { status: 403 });
     }
