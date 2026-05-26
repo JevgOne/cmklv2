@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSessionOrMobileToken } from "@/lib/auth-mobile";
 import { prisma } from "@/lib/prisma";
 import { updateLeadStatusSchema } from "@/lib/validators/lead";
 
@@ -10,7 +9,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSessionOrMobileToken(request);
     if (!session?.user) {
       return NextResponse.json({ error: "Nepřihlášen" }, { status: 401 });
     }

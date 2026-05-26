@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSessionOrMobileToken } from "@/lib/auth-mobile";
 import { prisma } from "@/lib/prisma";
 
 /* ------------------------------------------------------------------ */
@@ -30,7 +29,7 @@ export async function GET(request: NextRequest) {
     const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "12", 10)));
 
     // Admin/backoffice může vidět všechny statusy
-    const session = await getServerSession(authOptions);
+    const session = await getSessionOrMobileToken(request);
     const isAdmin =
       session?.user?.role === "ADMIN" || session?.user?.role === "BACKOFFICE";
 
@@ -174,7 +173,7 @@ function generateSlug(brand: string, model: string, year: number): string {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSessionOrMobileToken(request);
     if (!session?.user?.id) {
       return NextResponse.json(
         { error: "Přístup odepřen. Přihlaste se." },

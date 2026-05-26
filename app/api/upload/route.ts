@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSessionOrMobileToken } from "@/lib/auth-mobile";
 import { uploadToServer } from "@/lib/upload";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
@@ -32,7 +31,7 @@ const PRESETS: Record<string, { folder: string; allowedTypes: string[]; watermar
  */
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSessionOrMobileToken(request);
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Neprihlaseny" }, { status: 401 });
     }
