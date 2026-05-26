@@ -157,8 +157,12 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // CSRF: Origin check pro API mutation requesty
+  // Skip CSRF for Bearer token auth (mobile app) — no cookies = no CSRF risk
   if (pathname.startsWith("/api/") && isMutationRequest(request.method)) {
-    if (!WEBHOOK_PATHS.some(p => pathname.startsWith(p))) {
+    const authHeader = request.headers.get("authorization");
+    const hasBearerToken = authHeader?.startsWith("Bearer ");
+
+    if (!hasBearerToken && !WEBHOOK_PATHS.some(p => pathname.startsWith(p))) {
       const origin = request.headers.get("origin");
       const referer = request.headers.get("referer");
       const requestOrigin = origin || (referer ? new URL(referer).origin : null);
