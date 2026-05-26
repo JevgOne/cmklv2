@@ -1,17 +1,16 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSessionOrMobileToken } from "@/lib/auth-mobile";
 import { prisma } from "@/lib/prisma";
 
 const ACTIVATE_ROLES = ["MANAGER", "REGIONAL_DIRECTOR", "ADMIN"];
 
 // PUT /api/admin/brokers/[id]/activate — aktivace makléře (ONBOARDING → ACTIVE)
 export async function PUT(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSessionOrMobileToken(request);
 
     if (!session?.user) {
       return NextResponse.json({ error: "Nepřihlášen" }, { status: 401 });

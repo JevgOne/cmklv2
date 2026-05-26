@@ -1,17 +1,16 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSessionOrMobileToken } from "@/lib/auth-mobile";
 import { prisma } from "@/lib/prisma";
 
 const ALLOWED_ROLES = ["MANAGER", "REGIONAL_DIRECTOR", "ADMIN", "BACKOFFICE"];
 
 // POST /api/admin/brokers/[id]/reject — zamítnutí makléře v onboardingu
 export async function POST(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSessionOrMobileToken(request);
 
     if (!session?.user) {
       return NextResponse.json({ error: "Nepřihlášen" }, { status: 401 });

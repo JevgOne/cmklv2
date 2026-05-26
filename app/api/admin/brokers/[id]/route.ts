@@ -1,17 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSessionOrMobileToken } from "@/lib/auth-mobile";
 import { prisma } from "@/lib/prisma";
 
 const ALLOWED_ROLES = ["ADMIN", "BACKOFFICE", "MANAGER", "REGIONAL_DIRECTOR"];
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSessionOrMobileToken(request);
     if (!session?.user || !ALLOWED_ROLES.includes(session.user.role)) {
       return NextResponse.json({ error: "Nemáte oprávnění" }, { status: 403 });
     }
@@ -75,7 +74,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSessionOrMobileToken(request);
     if (!session?.user || !EDIT_ROLES.includes(session.user.role)) {
       return NextResponse.json({ error: "Nemáte oprávnění" }, { status: 403 });
     }
