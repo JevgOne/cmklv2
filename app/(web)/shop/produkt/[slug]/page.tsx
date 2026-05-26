@@ -12,6 +12,7 @@ import { prisma } from "@/lib/prisma";
 import { generateBreadcrumbJsonLd, generateFaqJsonLd } from "@/lib/seo";
 import { FAQ } from "@/components/web/FAQ";
 import { pageCanonical } from "@/lib/canonical";
+import { getPageMeta } from "@/lib/seo-meta";
 import { getCategoryLabel, getConditionLabel } from "@/lib/parts-categories";
 import type { PartCategory, PartCondition } from "@/types/parts";
 
@@ -32,12 +33,8 @@ export async function generateMetadata({
     part.description?.slice(0, 155) ||
     `Kupte ${part.name} za ${price} Kč na CarMakléř. Kategorie: ${getCategoryLabel(part.category as PartCategory)}.`;
 
-  return {
-    title,
-    description,
-    alternates: pageCanonical(`/dily/${slug}`),
-    openGraph: { title, description },
-  };
+  const meta = await getPageMeta(`/shop/produkt/${slug}`, { title, description });
+  return { ...meta, alternates: pageCanonical(`/dily/${slug}`) };
 }
 
 const SHOP_DETAIL_FAQ = [

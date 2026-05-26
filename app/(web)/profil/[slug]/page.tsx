@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
+import { getPageMeta } from "@/lib/seo-meta";
 import { BASE_URL } from "@/lib/seo-data";
 import { generatePersonJsonLd } from "@/lib/seo";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
@@ -294,13 +295,16 @@ export async function generateMetadata({
     user.bio?.slice(0, 155) ||
     `Profil ${roleLabel.toLowerCase()} ${fullName}${user.city ? " z " + user.city : ""}. Aktivní vozidla, recenze a kontakt.`;
 
-  return {
+  const meta = await getPageMeta(`/profil/${slug}`, {
     title: `${fullName} — ${roleLabel}`,
     description,
-    alternates: pageCanonical(`/profil/${slug}`),
+    ogTitle: `${fullName} — CarMakléř`,
+    ogDescription: description,
+  });
+  return {
+    ...meta,
     openGraph: {
-      title: `${fullName} — CarMakléř`,
-      description,
+      ...(meta.openGraph as object),
       url: `${BASE_URL}/profil/${slug}`,
       type: "profile",
     },

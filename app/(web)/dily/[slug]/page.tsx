@@ -9,6 +9,7 @@ import { ProductDetailTabs } from "@/app/(web)/shop/produkt/[slug]/ProductDetail
 import { AddToCartButton } from "@/app/(web)/shop/produkt/[slug]/AddToCartButton";
 import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
+import { getPageMeta } from "@/lib/seo-meta";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { FAQ } from "@/components/web/FAQ";
 import { getPartToVehicleBridge } from "@/lib/seo-crosslinks";
@@ -50,12 +51,7 @@ export async function generateMetadata({
     part.description?.slice(0, 155) ||
     `Kupte ${part.name} za ${price} Kč na CarMakléř. Kategorie: ${getCategoryLabel(part.category as PartCategory)}.`;
 
-  return {
-    title,
-    description,
-    alternates: pageCanonical(`/dily/${slug}`),
-    openGraph: { title, description },
-  };
+  return getPageMeta(`/dily/${slug}`, { title, description });
 }
 
 function Stars({ count }: { count: number }) {

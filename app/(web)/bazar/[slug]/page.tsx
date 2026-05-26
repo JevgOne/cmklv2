@@ -10,6 +10,7 @@ import { generateAutoDealerJsonLd, generateFaqJsonLd } from "@/lib/seo";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { FAQ } from "@/components/web/FAQ";
 import { pageCanonical } from "@/lib/canonical";
+import { getPageMeta } from "@/lib/seo-meta";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -27,12 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = `${partner.name} — ověřený partner`;
   const description = partner.description || `Autobazar ${partner.name} v ${partner.city || "ČR"} — ověřený partner CarMakléř.`;
 
-  return {
-    title,
-    description,
-    alternates: pageCanonical(`/bazar/${slug}`),
-    openGraph: { title, description },
-  };
+  return getPageMeta(`/bazar/${slug}`, { title, description });
 }
 
 const BAZAR_DETAIL_FAQ = [

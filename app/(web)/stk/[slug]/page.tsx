@@ -10,6 +10,7 @@ import { StkInfoCard } from "@/components/web/StkInfoCard";
 import { StkPriceCalc } from "@/components/web/StkPriceCalc";
 import { FAQ } from "@/components/web/FAQ";
 import { pageCanonical } from "@/lib/canonical";
+import { getPageMeta } from "@/lib/seo-meta";
 import { generateBreadcrumbJsonLd, generateFaqJsonLd } from "@/lib/seo";
 import type { Metadata } from "next";
 
@@ -25,12 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = `${servis.name} — STK stanice ${servis.city}`;
   const description = `${servis.name} — STK stanice ${servis.city}. ${servis.reviewCount} recenzí, hodnocení ${servis.averageRating}★${servis.stkWaitDays != null ? `, čekací doba ${servis.stkWaitDays} dní` : ""}. Najděte ověřenou STK stanici na CarMakléř.`;
 
-  return {
-    title,
-    description,
-    alternates: pageCanonical(`/stk/${slug}`),
-    openGraph: { title, description },
-  };
+  return getPageMeta(`/stk/${slug}`, { title, description });
 }
 
 const STK_DETAIL_FAQ = [

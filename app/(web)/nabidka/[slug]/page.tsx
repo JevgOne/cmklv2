@@ -30,6 +30,7 @@ import { prisma } from "@/lib/prisma";
 import { listingTypeLabels } from "@/lib/listings";
 import type { VehicleData } from "@/components/web/VehicleCard";
 import { pageCanonical } from "@/lib/canonical";
+import { getPageMeta } from "@/lib/seo-meta";
 import { getVehicleToServicesBridge, getVehicleToPartsBridge } from "@/lib/seo-crosslinks";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 
@@ -49,15 +50,12 @@ export async function generateMetadata({
   if (vehicle) {
     const name = [vehicle.brand, vehicle.model, vehicle.variant].filter(Boolean).map(s => s!.trim()).join(" ");
     const price = new Intl.NumberFormat("cs-CZ").format(vehicle.price);
-    return {
+    return getPageMeta(`/nabidka/${slug}`, {
       title: `${name} (${vehicle.year}) — ${price} Kč`,
       description: `${name}, rok ${vehicle.year}, cena ${price} Kč.${vehicle.city ? ` ${vehicle.city}.` : ""} Prověřené vozidlo na CarMakléř.`,
-      alternates: pageCanonical(`/nabidka/${slug}`),
-      openGraph: {
-        title: `${name} — ${price} Kč`,
-        description: `${name}, rok ${vehicle.year}. Prověřené vozidlo od makléře.`,
-      },
-    };
+      ogTitle: `${name} — ${price} Kč`,
+      ogDescription: `${name}, rok ${vehicle.year}. Prověřené vozidlo od makléře.`,
+    });
   }
 
   // Try Listing
@@ -69,15 +67,12 @@ export async function generateMetadata({
   if (listing) {
     const name = [listing.brand, listing.model, listing.variant].filter(Boolean).map(s => s!.trim()).join(" ");
     const price = new Intl.NumberFormat("cs-CZ").format(listing.price);
-    return {
+    return getPageMeta(`/nabidka/${slug}`, {
       title: `${name} (${listing.year}) — ${price} Kč`,
       description: `${name}, rok ${listing.year}, cena ${price} Kč.${listing.city ? ` ${listing.city}.` : ""} Inzerát na CarMakléř.`,
-      alternates: pageCanonical(`/nabidka/${slug}`),
-      openGraph: {
-        title: `${name} — ${price} Kč`,
-        description: `${name}, rok ${listing.year}. Vozidlo na CarMakléř.`,
-      },
-    };
+      ogTitle: `${name} — ${price} Kč`,
+      ogDescription: `${name}, rok ${listing.year}. Vozidlo na CarMakléř.`,
+    });
   }
 
   notFound();

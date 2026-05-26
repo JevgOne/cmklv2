@@ -7,6 +7,7 @@ import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { pageCanonical } from "@/lib/canonical";
+import { getPageMeta } from "@/lib/seo-meta";
 import { generateBreadcrumbJsonLd } from "@/lib/seo";
 import DOMPurify from "isomorphic-dompurify";
 import { BASE_URL } from "@/lib/seo-data";
@@ -46,15 +47,12 @@ export async function generateMetadata({
   const title = article.seoTitle || article.title;
   const description = article.seoDescription || article.excerpt || "";
 
-  return {
+  return getPageMeta(`/blog/${slug}`, {
     title,
     description,
-    openGraph: {
-      title: `${title} | CarMakléř Blog`,
-      description,
-    },
-    alternates: pageCanonical(`/blog/${slug}`),
-  };
+    ogTitle: `${title} | CarMakléř Blog`,
+    ogDescription: description,
+  });
 }
 
 function formatDate(date: Date): string {

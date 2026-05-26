@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
+import { getPageMeta } from "@/lib/seo-meta";
 import { BASE_URL } from "@/lib/seo-data";
 
 import { formatPrice, formatRelativeCz, parseCities } from "@/lib/utils";
@@ -55,16 +56,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     { count, totalSoldVehicles: 0, topLevelCount: 0, activeVehicles: 0 }
   );
 
-  return {
+  const meta = await getPageMeta(`/makleri/${slug}`, {
     title: `${copy.h1} — Carmakléř`,
     description: copy.subheadline,
-    alternates: pageCanonical(`/makleri/${slug}`),
-    openGraph: {
-      title: copy.h1,
-      description: copy.subheadline,
-    },
-    robots:
-      count < MIN_BROKERS_FOR_INDEX ? { index: false, follow: true } : undefined,
+    ogTitle: copy.h1,
+    ogDescription: copy.subheadline,
+  });
+  return {
+    ...meta,
+    ...(count < MIN_BROKERS_FOR_INDEX && { robots: { index: false, follow: true } }),
   };
 }
 

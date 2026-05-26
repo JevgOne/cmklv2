@@ -8,6 +8,7 @@ import { ServisReviewSection } from "@/components/web/autoservisy/ServisReviewSe
 export const revalidate = 3600; // 1h — detail page
 import { FAQ } from "@/components/web/FAQ";
 import { pageCanonical } from "@/lib/canonical";
+import { getPageMeta } from "@/lib/seo-meta";
 import { generateBreadcrumbJsonLd, generateFaqJsonLd } from "@/lib/seo";
 import type { Metadata } from "next";
 
@@ -25,12 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? servis.description.slice(0, 160)
     : `${servis.name} — ${servis.city}. ${servis.reviewCount} recenzí, hodnocení ${servis.averageRating}★. Najděte ověřený autoservis na CarMakléř.`;
 
-  return {
-    title,
-    description,
-    alternates: pageCanonical(`/autoservisy/${slug}`),
-    openGraph: { title, description },
-  };
+  return getPageMeta(`/autoservisy/${slug}`, { title, description });
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
