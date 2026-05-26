@@ -7,6 +7,7 @@ import { ScrollToFormButton } from "@/components/web/ScrollToFormButton";
 
 export const revalidate = 86400; // 24h — static info page
 import { pageCanonical } from "@/lib/canonical";
+import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Kariéra",
@@ -66,14 +67,10 @@ const positions = [
 export default function KarieraPage() {
   return (
     <main>
-      {/* Breadcrumb */}
-      <nav aria-label="Breadcrumb" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <ol className="flex items-center gap-2 text-sm text-gray-500">
-          <li><Link href="/" className="hover:text-orange-500 transition-colors no-underline">Domů</Link></li>
-          <li>/</li>
-          <li className="text-gray-900 font-medium">Kariéra</li>
-        </ol>
-      </nav>
+      <Breadcrumbs items={[
+        { label: "Domů", href: "/" },
+        { label: "Kariéra" },
+      ]} />
 
       {/* Hero */}
       <section className="bg-gradient-to-br from-gray-900 to-gray-950 py-12 sm:py-16 md:py-28">

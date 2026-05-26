@@ -10,6 +10,7 @@ import { prisma } from "@/lib/prisma";
 import { PART_CATEGORIES } from "@/lib/parts-categories";
 import { generateWebPageJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
+import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Shop — autodíly a příslušenství",
@@ -143,6 +144,11 @@ export default async function ShopPage() {
           }),
         }}
       />
+      <Breadcrumbs items={[
+        { label: "Domů", href: "/" },
+        { label: "E-shop" },
+      ]} />
+
       {/* ============================================================ */}
       {/* Hero                                                          */}
       {/* ============================================================ */}

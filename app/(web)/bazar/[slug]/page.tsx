@@ -6,7 +6,8 @@ import { Card } from "@/components/ui/Card";
 import type { Metadata } from "next";
 
 export const revalidate = 600; // 10min — detail page
-import { generateAutoDealerJsonLd, generateBreadcrumbJsonLd } from "@/lib/seo";
+import { generateAutoDealerJsonLd } from "@/lib/seo";
+import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { pageCanonical } from "@/lib/canonical";
 
 interface Props {
@@ -80,16 +81,11 @@ export default async function BazarProfilePage({ params }: Props) {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: generateBreadcrumbJsonLd([
-            { name: "Domů", url: "https://carmakler.cz" },
-            { name: "Bazary", url: "https://carmakler.cz/nabidka" },
-            { name: partner.name, url: `https://carmakler.cz/bazar/${slug}` },
-          ]),
-        }}
-      />
+      <Breadcrumbs items={[
+        { label: "Domů", href: "/" },
+        { label: "Autobazary", href: "/nabidka" },
+        { label: partner.name },
+      ]} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

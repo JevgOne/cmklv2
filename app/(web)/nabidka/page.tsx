@@ -9,6 +9,7 @@ import { prisma } from "@/lib/prisma";
 import type { VehicleData } from "@/components/web/VehicleCard";
 import { pageCanonical } from "@/lib/canonical";
 import { generateFaqJsonLd } from "@/lib/seo";
+import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { fuelLabels, transmissionLabels } from "@/lib/vehicle-labels";
 
 const NABIDKA_FAQ = [
@@ -253,6 +254,11 @@ export default async function NabidkaPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(NABIDKA_FAQ) }}
       />
+      <Breadcrumbs items={[
+        { label: "Domů", href: "/" },
+        { label: "Nabídka" },
+      ]} />
+
       {/* ============================================================ */}
       {/* Hero strip                                                    */}
       {/* ============================================================ */}

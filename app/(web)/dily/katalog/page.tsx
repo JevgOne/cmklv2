@@ -6,6 +6,7 @@ import { PartsFilters } from "@/components/web/PartsFilters";
 import { PartRequestForm } from "@/components/web/PartRequestForm";
 import { Button } from "@/components/ui/Button";
 import { pageCanonical } from "@/lib/canonical";
+import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 
 export const revalidate = 300;
 
@@ -153,6 +154,12 @@ export default async function DilyKatalogPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(catalogJsonLd) }}
       />
+
+      <Breadcrumbs items={[
+        { label: "Domů", href: "/" },
+        { label: "Autodíly", href: "/dily" },
+        { label: "Katalog" },
+      ]} />
 
       {/* Header */}
       <section className="bg-white border-b border-gray-200">

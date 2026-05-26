@@ -5,7 +5,7 @@ import { ProductCard } from "@/components/web/ProductCard";
 import { PartsFilters } from "@/components/web/PartsFilters";
 import { Button } from "@/components/ui/Button";
 import { pageCanonical } from "@/lib/canonical";
-import { generateBreadcrumbJsonLd } from "@/lib/seo";
+import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 
 export const revalidate = 300;
 
@@ -136,16 +136,11 @@ export default async function KatalogPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(catalogJsonLd) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: generateBreadcrumbJsonLd([
-            { name: "Domů", url: "https://carmakler.cz" },
-            { name: "Shop", url: "https://carmakler.cz/shop" },
-            { name: "Katalog", url: "https://carmakler.cz/shop/katalog" },
-          ]),
-        }}
-      />
+      <Breadcrumbs items={[
+        { label: "Domů", href: "/" },
+        { label: "E-shop", href: "/shop" },
+        { label: "Katalog" },
+      ]} />
 
       {/* Header */}
       <section className="bg-white border-b border-gray-200">

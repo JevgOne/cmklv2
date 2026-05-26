@@ -6,7 +6,8 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
 import { BASE_URL } from "@/lib/seo-data";
-import { generatePersonJsonLd, generateBreadcrumbJsonLd } from "@/lib/seo";
+import { generatePersonJsonLd } from "@/lib/seo";
+import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { ROLE_LABELS } from "@/lib/role-labels";
 import { getSkillTagCounts } from "@/lib/reputation/skill-tags";
 import { getBrokerRatingBreakdown, getBrokerDetailedRatings } from "@/lib/broker-reviews";
@@ -344,16 +345,11 @@ export default async function ProfilePage({
           }),
         }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: generateBreadcrumbJsonLd([
-            { name: "Domů", url: BASE_URL },
-            { name: "Makléři", url: `${BASE_URL}/makleri` },
-            { name: fullName, url: `${BASE_URL}/profil/${slug}` },
-          ]),
-        }}
-      />
+      <Breadcrumbs items={[
+        { label: "Domů", href: "/" },
+        { label: "Makléři", href: "/makleri" },
+        { label: fullName },
+      ]} />
       <ProfileHeader data={data} isOwner={isOwner} />
       <ProfileTabs slug={slug} role={user.role} />
     </main>

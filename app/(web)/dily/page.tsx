@@ -8,6 +8,7 @@ import { ProductCard } from "@/components/web/ProductCard";
 import { prisma } from "@/lib/prisma";
 import { PART_CATEGORIES } from "@/lib/parts-categories";
 import { pageCanonical } from "@/lib/canonical";
+import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 
 export const revalidate = 3600;
 
@@ -148,6 +149,11 @@ export default async function DilyPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
+      <Breadcrumbs items={[
+        { label: "Domů", href: "/" },
+        { label: "Autodíly" },
+      ]} />
+
       {/* Hero */}
       <section className="bg-gradient-to-b from-orange-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-20 text-center">

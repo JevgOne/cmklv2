@@ -7,6 +7,7 @@ import { ReviewList } from "@/components/web/ReviewList";
 
 import { ReviewForm } from "@/components/web/ReviewForm";
 import { pageCanonical } from "@/lib/canonical";
+import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Recenze zákazníků",
@@ -35,14 +36,10 @@ export default async function RecenzePage() {
 
   return (
     <main>
-      {/* Breadcrumb */}
-      <nav aria-label="Breadcrumb" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <ol className="flex items-center gap-2 text-sm text-gray-500">
-          <li><Link href="/" className="hover:text-orange-500 transition-colors no-underline">Domů</Link></li>
-          <li>/</li>
-          <li className="text-gray-900 font-medium">Recenze</li>
-        </ol>
-      </nav>
+      <Breadcrumbs items={[
+        { label: "Domů", href: "/" },
+        { label: "Recenze" },
+      ]} />
 
       {/* Header */}
       <section className="py-10 sm:py-16 md:py-20 bg-gray-50">

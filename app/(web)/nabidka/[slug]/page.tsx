@@ -30,6 +30,8 @@ import { prisma } from "@/lib/prisma";
 import { listingTypeLabels } from "@/lib/listings";
 import type { VehicleData } from "@/components/web/VehicleCard";
 import { pageCanonical } from "@/lib/canonical";
+import { getVehicleToServicesBridge, getVehicleToPartsBridge } from "@/lib/seo-crosslinks";
+import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 
 export async function generateMetadata({
   params,
@@ -477,30 +479,8 @@ export default async function VehicleDetailPage({
     url: `https://carmakler.cz/nabidka/${slug}`,
   };
 
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Domů",
-        item: "https://carmakler.cz",
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Nabídka",
-        item: "https://carmakler.cz/nabidka",
-      },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: vehicleName,
-        item: `https://carmakler.cz/nabidka/${slug}`,
-      },
-    ],
-  };
+  const cityBridgeLinks = vehicle.city ? getVehicleToServicesBridge(vehicle.city) : [];
+  const partsBridgeLinks = getVehicleToPartsBridge({ brandSlug: vehicle.brand.toLowerCase(), brandName: vehicle.brand });
 
   return (
     <>
@@ -508,28 +488,12 @@ export default async function VehicleDetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(vehicleJsonLd) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
       <div className="min-h-screen bg-gray-50">
-      {/* Breadcrumb */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
-        <nav aria-label="Breadcrumb" className="text-sm text-gray-500 flex items-center gap-2 overflow-hidden">
-          <Link href="/" className="hover:text-gray-900 transition-colors">
-            Domů
-          </Link>
-          <span>/</span>
-          <Link
-            href="/nabidka"
-            className="hover:text-gray-900 transition-colors"
-          >
-            Nabídka
-          </Link>
-          <span>/</span>
-          <span className="text-gray-900 font-medium truncate">{vehicleName}</span>
-        </nav>
-      </div>
+      <Breadcrumbs items={[
+        { label: "Domů", href: "/" },
+        { label: "Nabídka", href: "/nabidka" },
+        { label: vehicleName },
+      ]} />
 
       {/* ============================================================ */}
       {/* Top section: Gallery + Info Panel                             */}
@@ -927,6 +891,20 @@ export default async function VehicleDetailPage({
             </div>
           </Link>
         </div>
+        {(cityBridgeLinks.length > 0 || partsBridgeLinks.length > 0) && (
+          <div className="flex flex-wrap gap-x-6 gap-y-2 mt-4 text-sm">
+            {cityBridgeLinks.map((link) => (
+              <Link key={link.href} href={link.href} className="text-orange-500 hover:text-orange-600 no-underline font-medium">
+                {link.label}
+              </Link>
+            ))}
+            {partsBridgeLinks.map((link) => (
+              <Link key={link.href} href={link.href} className="text-orange-500 hover:text-orange-600 no-underline font-medium">
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
     </div>
     </>
@@ -1080,15 +1058,8 @@ function renderListingDetail(listing: ListingWithRelations, slug: string, active
     url: `https://carmakler.cz/nabidka/${slug}`,
   };
 
-  const listingBreadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Domů", item: "https://carmakler.cz" },
-      { "@type": "ListItem", position: 2, name: "Nabídka", item: "https://carmakler.cz/nabidka" },
-      { "@type": "ListItem", position: 3, name, item: `https://carmakler.cz/nabidka/${slug}` },
-    ],
-  };
+  const listingCityBridge = listing.city ? getVehicleToServicesBridge(listing.city) : [];
+  const listingPartsBridge = getVehicleToPartsBridge({ brandSlug: listing.brand.toLowerCase(), brandName: listing.brand });
 
   return (
     <>
@@ -1096,21 +1067,12 @@ function renderListingDetail(listing: ListingWithRelations, slug: string, active
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(listingJsonLd) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(listingBreadcrumbJsonLd) }}
-      />
       <div className="min-h-screen bg-gray-50">
-      {/* Breadcrumb */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
-        <nav aria-label="Breadcrumb" className="text-sm text-gray-500 flex items-center gap-2 overflow-hidden">
-          <Link href="/" className="hover:text-gray-900 transition-colors">Domů</Link>
-          <span>/</span>
-          <Link href="/nabidka" className="hover:text-gray-900 transition-colors">Nabídka</Link>
-          <span>/</span>
-          <span className="text-gray-900 font-medium truncate">{name}</span>
-        </nav>
-      </div>
+      <Breadcrumbs items={[
+        { label: "Domů", href: "/" },
+        { label: "Nabídka", href: "/nabidka" },
+        { label: name },
+      ]} />
 
       {/* Gallery + Info */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
@@ -1293,6 +1255,20 @@ function renderListingDetail(listing: ListingWithRelations, slug: string, active
             </Card>
           </Link>
         </div>
+        {(listingCityBridge.length > 0 || listingPartsBridge.length > 0) && (
+          <div className="flex flex-wrap gap-x-6 gap-y-2 mt-4 text-sm">
+            {listingCityBridge.map((link) => (
+              <Link key={link.href} href={link.href} className="text-orange-500 hover:text-orange-600 no-underline font-medium">
+                {link.label}
+              </Link>
+            ))}
+            {listingPartsBridge.map((link) => (
+              <Link key={link.href} href={link.href} className="text-orange-500 hover:text-orange-600 no-underline font-medium">
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Recommended parts for this vehicle */}

@@ -9,7 +9,8 @@ import { ProductDetailTabs } from "@/app/(web)/shop/produkt/[slug]/ProductDetail
 import { AddToCartButton } from "@/app/(web)/shop/produkt/[slug]/AddToCartButton";
 import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
-import { generateBreadcrumbJsonLd } from "@/lib/seo";
+import { Breadcrumbs } from "@/components/web/Breadcrumbs";
+import { getPartToVehicleBridge } from "@/lib/seo-crosslinks";
 import { getCategoryLabel, getConditionLabel } from "@/lib/parts-categories";
 import type { PartCategory, PartCondition } from "@/types/parts";
 
@@ -187,12 +188,9 @@ export default async function DilyDetailPage({
   };
 
   const categoryLabel = getCategoryLabel(part.category as PartCategory);
-  const breadcrumbItems = [
-    { name: "Domů", url: "https://carmakler.cz" },
-    { name: "Díly", url: "https://carmakler.cz/dily" },
-    { name: categoryLabel, url: `https://carmakler.cz/dily/katalog?kategorie=${part.category.toLowerCase()}` },
-    { name: part.name, url: `https://carmakler.cz/dily/${part.slug || part.id}` },
-  ];
+  const vehicleBridgeLinks = compatibleBrands.length > 0
+    ? getPartToVehicleBridge({ brandSlug: compatibleBrands[0].toLowerCase().replace(/\s+/g, "-"), brandName: compatibleBrands[0] })
+    : [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -200,26 +198,12 @@ export default async function DilyDetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: generateBreadcrumbJsonLd(breadcrumbItems) }}
-      />
-      {/* Breadcrumbs */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm text-gray-500">
-            <Link href="/dily" className="hover:text-orange-500 transition-colors no-underline text-gray-500">
-              Díly
-            </Link>
-            <span>/</span>
-            <Link href="/dily/katalog" className="hover:text-orange-500 transition-colors no-underline text-gray-500">
-              Katalog
-            </Link>
-            <span>/</span>
-            <span className="text-gray-900 font-medium">{part.name}</span>
-          </nav>
-        </div>
-      </div>
+      <Breadcrumbs items={[
+        { label: "Domů", href: "/" },
+        { label: "Autodíly", href: "/dily" },
+        { label: categoryLabel, href: `/dily/katalog?kategorie=${part.category.toLowerCase()}` },
+        { label: part.name },
+      ]} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12">
@@ -447,12 +431,15 @@ export default async function DilyDetailPage({
               Prohlédněte si nabídku vozidel {compatibleBrands[0]} nebo najděte další díly pro tuto značku.
             </p>
             <div className="flex flex-wrap gap-3">
-              <Link
-                href={`/nabidka/${compatibleBrands[0].toLowerCase().replace(/\s+/g, "-")}`}
-                className="inline-flex items-center px-4 py-2 rounded-lg bg-white text-sm font-medium text-gray-700 hover:text-orange-600 border border-gray-200 hover:border-orange-300 transition-all no-underline"
-              >
-                Vozidla {compatibleBrands[0]}
-              </Link>
+              {vehicleBridgeLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="inline-flex items-center px-4 py-2 rounded-lg bg-white text-sm font-medium text-gray-700 hover:text-orange-600 border border-gray-200 hover:border-orange-300 transition-all no-underline"
+                >
+                  {link.label}
+                </Link>
+              ))}
               <Link
                 href={`/dily/znacka/${compatibleBrands[0].toLowerCase().replace(/\s+/g, "-").normalize("NFD").replace(/[\u0300-\u036f]/g, "")}`}
                 className="inline-flex items-center px-4 py-2 rounded-lg bg-white text-sm font-medium text-gray-700 hover:text-orange-600 border border-gray-200 hover:border-orange-300 transition-all no-underline"

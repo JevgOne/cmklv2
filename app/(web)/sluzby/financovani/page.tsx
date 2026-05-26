@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ServicePage } from "@/components/web/ServicePage";
 import { FinancovaniCalc } from "@/components/web/FinancovaniCalc";
-import { generateServiceJsonLd, generateFaqJsonLd, generateBreadcrumbJsonLd } from "@/lib/seo";
+import { generateServiceJsonLd, generateFaqJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
 
 export const revalidate = 86400; // 24h — static info page
@@ -101,16 +101,6 @@ export default function FinancovaniPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(faq) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: generateBreadcrumbJsonLd([
-            { name: "Domů", url: "https://carmakler.cz" },
-            { name: "Služby", url: "https://carmakler.cz/sluzby" },
-            { name: "Financování", url: "https://carmakler.cz/sluzby/financovani" },
-          ]),
-        }}
       />
       <ServicePage
         hero={{

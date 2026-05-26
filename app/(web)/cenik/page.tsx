@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { pageCanonical } from "@/lib/canonical";
 import { generateFaqJsonLd } from "@/lib/seo";
+import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 
 export const revalidate = 86400; // 24h — static info page
 
@@ -65,6 +66,11 @@ export default function CenikPage() {
       dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(CENIK_FAQ) }}
     />
     <div className="min-h-screen bg-gray-50">
+      <Breadcrumbs items={[
+        { label: "Domů", href: "/" },
+        { label: "Ceník" },
+      ]} />
+
       {/* Hero */}
       <section className="bg-white border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 text-center">

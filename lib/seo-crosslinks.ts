@@ -66,3 +66,50 @@ export const SERVICE_CROSS_LINKS: CrossLink[] = [
   { label: "Financování", href: "/sluzby/financovani" },
   { label: "Pojištění vozidla", href: "/sluzby/pojisteni" },
 ];
+
+/**
+ * Bridge links from vehicle detail page to services in the same city.
+ */
+export function getVehicleToServicesBridge(city: string): CrossLink[] {
+  const slug = city.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "-");
+  return [
+    { label: `Autoservisy v ${city}`, href: `/autoservisy/mesto/${slug}` },
+    { label: `STK stanice v ${city}`, href: `/stk/mesto/${slug}` },
+  ];
+}
+
+/**
+ * Bridge links from service/STK detail pages to vehicles in the same city.
+ */
+export function getServiceToVehicleBridge(city: string): CrossLink[] {
+  const slug = city.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "-");
+  return [
+    { label: `Ojetá vozidla ${city}`, href: `/nabidka/${slug}` },
+  ];
+}
+
+/**
+ * Bridge links from part detail page to compatible vehicles.
+ */
+export function getPartToVehicleBridge(options: {
+  brandSlug?: string;
+  brandName?: string;
+  modelSlug?: string;
+  modelName?: string;
+}): CrossLink[] {
+  const links: CrossLink[] = [];
+  if (!options.brandSlug || !options.brandName) return links;
+
+  if (options.modelSlug && options.modelName) {
+    links.push({
+      label: `Ojetá ${options.brandName} ${options.modelName}`,
+      href: `/nabidka/${options.brandSlug}/${options.modelSlug}`,
+    });
+  }
+  links.push({
+    label: `Ojeté vozy ${options.brandName}`,
+    href: `/nabidka/${options.brandSlug}`,
+  });
+
+  return links;
+}
