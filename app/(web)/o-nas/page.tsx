@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
+import { FAQ } from "@/components/web/FAQ";
 import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
-import { generateOrganizationJsonLd, generateWebPageJsonLd } from "@/lib/seo";
+import { generateOrganizationJsonLd, generateWebPageJsonLd, generateFaqJsonLd } from "@/lib/seo";
 import { BASE_URL } from "@/lib/seo-data";
 
 export const revalidate = 86400;
@@ -52,6 +53,25 @@ async function getTeamMembers() {
     return [];
   }
 }
+
+const O_NAS_FAQ = [
+  {
+    question: "Co je CarMakléř?",
+    answer: "CarMakléř je česká platforma pro prodej a nákup aut přes síť certifikovaných makléřů. Kombinujeme osobní přístup makléře s moderní technologií pro bezpečný a pohodlný prodej.",
+  },
+  {
+    question: "Jak CarMakléř zajišťuje bezpečnost?",
+    answer: "Každé vozidlo procházíme prověrkou historie (CEBIA), ověřujeme stav a dokumentaci. Makléři jsou proškolení a certifikovaní. Platba probíhá bezpečně přes náš systém.",
+  },
+  {
+    question: "Kolik makléřů má CarMakléř?",
+    answer: "Naše síť pokrývá celou Českou republiku. Počet aktivních makléřů průběžně roste — aktuální číslo najdete na této stránce.",
+  },
+  {
+    question: "Proč zvolit CarMakléř místo přímého prodeje?",
+    answer: "Makléř prodá auto za tržní cenu (ne výkupní), postará se o vše od fotky po přepis a vy ušetříte čas i starosti. Platíte jen provizi z úspěšného prodeje.",
+  },
+];
 
 const values = [
   {
@@ -213,6 +233,17 @@ export default async function ONasPage() {
               </Card>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-12 sm:py-16 lg:py-20">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(O_NAS_FAQ) }}
+          />
+          <FAQ items={O_NAS_FAQ} title="Často kladené otázky" />
         </div>
       </section>
 

@@ -3,8 +3,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
+import { FAQ } from "@/components/web/FAQ";
 import { prisma } from "@/lib/prisma";
-import { generateWebPageJsonLd } from "@/lib/seo";
+import { generateWebPageJsonLd, generateFaqJsonLd } from "@/lib/seo";
 import { pageCanonical } from "@/lib/canonical";
 
 export const revalidate = 3600;
@@ -63,6 +64,29 @@ const benefits = [
     icon: "📱",
     title: "Z mobilu i z počítače",
     desc: "Nafoťte auto na parkovišti a inzerát je online ještě dřív, než nasednete",
+  },
+];
+
+const INZERCE_FAQ = [
+  {
+    question: "Kolik stojí podání inzerátu na CarMakléř?",
+    answer: "Základní inzerát pro soukromé prodejce je zdarma. Prémiové zvýraznění a další služby jsou za příplatek. Autobazary a dealeři mají paušální ceník podle počtu inzerátů.",
+  },
+  {
+    question: "Jak dlouho trvá zveřejnění inzerátu?",
+    answer: "Inzerát je zveřejněn ihned po vyplnění formuláře. Pokud přidáte fotografie a kompletní popis, váš inzerát bude atraktivnější a prodej rychlejší.",
+  },
+  {
+    question: "Jaké informace potřebuji k podání inzerátu?",
+    answer: "Značku, model, rok výroby, nájezd, stav, cenu a alespoň 5 kvalitních fotografií. Čím více detailů poskytnete, tím rychleji auto prodáte.",
+  },
+  {
+    question: "Mohu inzerát kdykoli upravit nebo smazat?",
+    answer: "Ano, po přihlášení do svého účtu můžete inzerát kdykoli upravit, pozastavit nebo smazat. Změny se projeví okamžitě.",
+  },
+  {
+    question: "Jaký je rozdíl mezi inzerátem a prodejem přes makléře?",
+    answer: "Při inzerci prodáváte sami — komunikujete se zájemci, děláte prohlídky a řešíte papíry. Makléř vše vyřeší za vás za provizi 5 % z prodejní ceny. Obě možnosti najdete na CarMakléř.",
   },
 ];
 
@@ -436,6 +460,19 @@ export default async function InzercePage() {
               Zobrazit všechny inzeráty &rarr;
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* FAQ                                                           */}
+      {/* ============================================================ */}
+      <section className="py-16 md:py-20">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(INZERCE_FAQ) }}
+          />
+          <FAQ items={INZERCE_FAQ} title="Často kladené otázky" />
         </div>
       </section>
 

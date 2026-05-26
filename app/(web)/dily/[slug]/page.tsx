@@ -10,11 +10,28 @@ import { AddToCartButton } from "@/app/(web)/shop/produkt/[slug]/AddToCartButton
 import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
+import { FAQ } from "@/components/web/FAQ";
 import { getPartToVehicleBridge } from "@/lib/seo-crosslinks";
+import { generateFaqJsonLd } from "@/lib/seo";
 import { getCategoryLabel, getConditionLabel } from "@/lib/parts-categories";
 import type { PartCategory, PartCondition } from "@/types/parts";
 
 export const revalidate = 86400;
+
+const DIL_DETAIL_FAQ = [
+  {
+    question: "Jak ověřím kompatibilitu dílu s mým vozidlem?",
+    answer: "Zadejte VIN vašeho vozidla do vyhledávače na CarMakléř. Systém automaticky zobrazí kompatibilní díly pro váš vůz.",
+  },
+  {
+    question: "Jaká je záruka na použité díly?",
+    answer: "Na použité díly poskytujeme zákonnou záruku. Každý díl je popsán s uvedením stavu, původu a případných vad.",
+  },
+  {
+    question: "Jak probíhá doručení dílu?",
+    answer: "Díly zasíláme přepravní službou po celé ČR. Standardní dodání trvá 2-5 pracovních dnů. Možnost osobního odběru u dodavatele.",
+  },
+];
 
 export async function generateMetadata({
   params,
@@ -422,6 +439,15 @@ export default async function DilyDetailPage({
             </div>
           </section>
         )}
+
+        {/* FAQ */}
+        <section className="mt-12">
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(DIL_DETAIL_FAQ) }}
+          />
+          <FAQ items={DIL_DETAIL_FAQ} title="Často kladené otázky" />
+        </section>
 
         {/* Cross-links */}
         {compatibleBrands.length > 0 && (

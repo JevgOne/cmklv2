@@ -6,8 +6,9 @@ import { Card } from "@/components/ui/Card";
 import type { Metadata } from "next";
 
 export const revalidate = 600; // 10min — detail page
-import { generateAutoDealerJsonLd } from "@/lib/seo";
+import { generateAutoDealerJsonLd, generateFaqJsonLd } from "@/lib/seo";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
+import { FAQ } from "@/components/web/FAQ";
 import { pageCanonical } from "@/lib/canonical";
 
 interface Props {
@@ -33,6 +34,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: { title, description },
   };
 }
+
+const BAZAR_DETAIL_FAQ = [
+  {
+    question: "Je tento autobazar ověřený?",
+    answer: "Ano, všichni partnerští autobazary na CarMakléř jsou ověření. Kontrolujeme obchodní rejstřík, recenze zákazníků a historii spolupráce.",
+  },
+  {
+    question: "Jakou záruku nabízí autobazar?",
+    answer: "Zákonná záruka na ojetá vozidla je 12 měsíců. Někteří bazary nabízejí rozšířenou záruku — konkrétní podmínky najdete v nabídce vozidla.",
+  },
+  {
+    question: "Mohu auto před koupí prověřit?",
+    answer: "Ano, doporučujeme si nechat vozidlo prověřit přes službu Prověrka vozidla na CarMakléř nebo u nezávislého technika.",
+  },
+];
 
 export default async function BazarProfilePage({ params }: Props) {
   const { slug } = await params;
@@ -219,6 +235,15 @@ export default async function BazarProfilePage({ params }: Props) {
             ))}
           </div>
         )}
+      </div>
+
+      {/* FAQ */}
+      <div className="mb-8">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(BAZAR_DETAIL_FAQ) }}
+        />
+        <FAQ items={BAZAR_DETAIL_FAQ} title="Často kladené otázky" />
       </div>
 
       {/* Contact */}

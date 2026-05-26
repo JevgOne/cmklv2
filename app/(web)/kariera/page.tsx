@@ -8,6 +8,8 @@ import { ScrollToFormButton } from "@/components/web/ScrollToFormButton";
 export const revalidate = 86400; // 24h — static info page
 import { pageCanonical } from "@/lib/canonical";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
+import { FAQ } from "@/components/web/FAQ";
+import { generateFaqJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Kariéra",
@@ -57,6 +59,29 @@ const positions = [
     title: "Regionální manažer",
     location: "Celá ČR",
     desc: "Řiďte tým makléřů a rozvíjejte region. Zodpovídejte za výkon, kvalitu služeb a růst v přiděleném regionu.",
+  },
+];
+
+const KARIERA_FAQ = [
+  {
+    question: "Jak se stát automakléřem u CarMakléř?",
+    answer: "Vyplňte přihlášku na této stránce. Po schválení absolvujete online školení a získáte přístup k naší platformě, nástrojům a školícím materiálům.",
+  },
+  {
+    question: "Kolik si vydělám jako automakléř?",
+    answer: "Výdělek závisí na počtu prodejů. Provize makléře se pohybuje od 40 000 do 80 000 Kč měsíčně. Není strop — čím více prodáte, tím více vyděláte.",
+  },
+  {
+    question: "Potřebuji předchozí zkušenosti?",
+    answer: "Ne, předchozí zkušenosti v automotive nejsou nutné. Poskytujeme kompletní školení, nástroje a mentoring od zkušených makléřů.",
+  },
+  {
+    question: "Jaký je pracovní úvazek?",
+    answer: "Spolupracujeme na OSVČ/IČO. Pracujete kdy chcete a kolik chcete. Flexibilita je jednou z hlavních výhod práce automakléře.",
+  },
+  {
+    question: "Jaké nástroje dostanu k dispozici?",
+    answer: "Přístup k mobilní aplikaci s AI asistentem, CRM systém, šablony smluv, inzerci na všech portálech, školení a podporu od regionálního manažera.",
   },
 ];
 
@@ -153,6 +178,17 @@ export default function KarieraPage() {
           <div id="kariera-form">
             <CareerForm />
           </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-12 sm:py-16">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(KARIERA_FAQ) }}
+          />
+          <FAQ items={KARIERA_FAQ} title="Často kladené otázky" />
         </div>
       </section>
 

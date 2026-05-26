@@ -6,8 +6,9 @@ import { Card } from "@/components/ui/Card";
 import { ServisReviewSection } from "@/components/web/autoservisy/ServisReviewSection";
 
 export const revalidate = 3600; // 1h — detail page
+import { FAQ } from "@/components/web/FAQ";
 import { pageCanonical } from "@/lib/canonical";
-import { generateBreadcrumbJsonLd } from "@/lib/seo";
+import { generateBreadcrumbJsonLd, generateFaqJsonLd } from "@/lib/seo";
 import type { Metadata } from "next";
 
 interface Props {
@@ -43,6 +44,21 @@ const CATEGORY_LABELS: Record<string, string> = {
   lakovna: "Lakování",
   tuning: "Tuning",
 };
+
+const AUTOSERVIS_DETAIL_FAQ = [
+  {
+    question: "Jak se objednat do autoservisu?",
+    answer: "Kontaktujte servis telefonicky nebo přes kontaktní formulář na této stránce. Doporučujeme objednat se předem pro kratší čekací dobu.",
+  },
+  {
+    question: "Jak fungují recenze na CarMakléř?",
+    answer: "Recenze píší skuteční zákazníci po návštěvě servisu. Hodnotí kvalitu práce, cenu, rychlost a komunikaci. Průměr se počítá ze všech hodnocení.",
+  },
+  {
+    question: "Poskytuje servis záruku na opravy?",
+    answer: "Většina servisů poskytuje záruku na provedené práce. Konkrétní podmínky se liší — doporučujeme se zeptat přímo servisu před opravou.",
+  },
+];
 
 function Stars({ rating, size = "text-lg" }: { rating: number; size?: string }) {
   return (
@@ -314,6 +330,15 @@ export default async function ServisDetailPage({ params }: Props) {
               </Link>
             </Card>
           </div>
+        </div>
+
+        {/* FAQ */}
+        <div className="mt-8">
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(AUTOSERVIS_DETAIL_FAQ) }}
+          />
+          <FAQ items={AUTOSERVIS_DETAIL_FAQ} title="Často kladené otázky" />
         </div>
       </div>
     </>

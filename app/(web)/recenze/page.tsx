@@ -6,8 +6,10 @@ import { prisma } from "@/lib/prisma";
 import { ReviewList } from "@/components/web/ReviewList";
 
 import { ReviewForm } from "@/components/web/ReviewForm";
+import { FAQ } from "@/components/web/FAQ";
 import { pageCanonical } from "@/lib/canonical";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
+import { generateFaqJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Recenze zákazníků",
@@ -22,6 +24,25 @@ export const metadata: Metadata = {
 };
 
 export const revalidate = 3600;
+
+const RECENZE_FAQ = [
+  {
+    question: "Jak CarMakléř sbírá recenze?",
+    answer: "Po dokončení transakce zasíláme klientům výzvu k hodnocení. Recenze jsou ověřené — hodnotit může pouze klient, který skutečně využil naše služby.",
+  },
+  {
+    question: "Jsou recenze na CarMakléř pravdivé?",
+    answer: "Ano, každá recenze pochází od ověřeného klienta. Nemazeme negativní recenze a nezveřejňujeme falešné pozitivní. Průměrné hodnocení odpovídá skutečné spokojenosti.",
+  },
+  {
+    question: "Mohu napsat recenzi na konkrétního makléře?",
+    answer: "Ano, po dokončení transakce můžete ohodnotit jak celkový servis CarMakléř, tak konkrétního makléře, se kterým jste spolupracovali.",
+  },
+  {
+    question: "Co dělá CarMakléř s negativními recenzemi?",
+    answer: "Každou negativní recenzi prověřujeme a kontaktujeme klienta. Řešíme problémy a snažíme se najít řešení. Transparentnost je náš klíčový princip.",
+  },
+];
 
 export default async function RecenzePage() {
   const reviews = await prisma.review.findMany({
@@ -88,6 +109,17 @@ export default async function RecenzePage() {
           <div className={reviews.length > 0 ? "mt-12" : ""} id="formular">
             <ReviewForm />
           </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-12 sm:py-16">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(RECENZE_FAQ) }}
+          />
+          <FAQ items={RECENZE_FAQ} title="Často kladené otázky" />
         </div>
       </section>
 

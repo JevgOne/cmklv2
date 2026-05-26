@@ -9,7 +9,8 @@ import { ProductCard } from "@/components/web/ProductCard";
 import { ProductDetailTabs } from "./ProductDetailTabs";
 import { AddToCartButton } from "./AddToCartButton";
 import { prisma } from "@/lib/prisma";
-import { generateBreadcrumbJsonLd } from "@/lib/seo";
+import { generateBreadcrumbJsonLd, generateFaqJsonLd } from "@/lib/seo";
+import { FAQ } from "@/components/web/FAQ";
 import { pageCanonical } from "@/lib/canonical";
 import { getCategoryLabel, getConditionLabel } from "@/lib/parts-categories";
 import type { PartCategory, PartCondition } from "@/types/parts";
@@ -38,6 +39,21 @@ export async function generateMetadata({
     openGraph: { title, description },
   };
 }
+
+const SHOP_DETAIL_FAQ = [
+  {
+    question: "Jak dlouho trvá doručení?",
+    answer: "Standardní doručení trvá 2-5 pracovních dnů. U vybraných produktů nabízíme expresní doručení do 24 hodin.",
+  },
+  {
+    question: "Mohu zboží vrátit?",
+    answer: "Ano, do 14 dnů od převzetí můžete zboží vrátit bez udání důvodu. Díl musí být v původním stavu a obalu. Reklamace řešíme do 30 dnů.",
+  },
+  {
+    question: "Jaké platební metody přijímáte?",
+    answer: "Platba kartou online, bankovním převodem nebo dobírkou. Při platbě předem ušetříte na poštovném.",
+  },
+];
 
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                             */
@@ -459,6 +475,14 @@ export default async function ProductDetailPage({
             </div>
           </section>
         )}
+        {/* FAQ */}
+        <section className="mt-12">
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(SHOP_DETAIL_FAQ) }}
+          />
+          <FAQ items={SHOP_DETAIL_FAQ} title="Často kladené otázky" />
+        </section>
       </div>
     </div>
   );

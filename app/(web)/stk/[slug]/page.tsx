@@ -8,8 +8,9 @@ import { ServisReviewSection } from "@/components/web/autoservisy/ServisReviewSe
 export const revalidate = 600; // 10min — detail page
 import { StkInfoCard } from "@/components/web/StkInfoCard";
 import { StkPriceCalc } from "@/components/web/StkPriceCalc";
+import { FAQ } from "@/components/web/FAQ";
 import { pageCanonical } from "@/lib/canonical";
-import { generateBreadcrumbJsonLd } from "@/lib/seo";
+import { generateBreadcrumbJsonLd, generateFaqJsonLd } from "@/lib/seo";
 import type { Metadata } from "next";
 
 interface Props {
@@ -31,6 +32,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: { title, description },
   };
 }
+
+const STK_DETAIL_FAQ = [
+  {
+    question: "Co potřebuji na STK?",
+    answer: "Velký technický průkaz (osvědčení o registraci), malý technický průkaz a platné povinné ručení. Vozidlo musí být čisté a bez zjevných závad.",
+  },
+  {
+    question: "Kolik stojí STK a emise?",
+    answer: "Osobní automobil (M1): technická prohlídka 800 Kč + emise 400 Kč = celkem 1 200 Kč. Ceny se liší podle kategorie vozidla.",
+  },
+  {
+    question: "Jak dlouho trvá STK kontrola?",
+    answer: "Samotná technická kontrola trvá přibližně 30-45 minut. S čekáním počítejte 1-2 hodiny v závislosti na vytíženosti stanice.",
+  },
+];
 
 function Stars({ rating, size = "text-lg" }: { rating: number; size?: string }) {
   return (
@@ -272,6 +288,15 @@ export default async function StkDetailPage({ params }: Props) {
               </Link>
             </Card>
           </div>
+        </div>
+
+        {/* FAQ */}
+        <div className="mt-8">
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(STK_DETAIL_FAQ) }}
+          />
+          <FAQ items={STK_DETAIL_FAQ} title="Často kladené otázky" />
         </div>
       </div>
     </>

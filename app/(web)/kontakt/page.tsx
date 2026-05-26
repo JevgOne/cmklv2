@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
+import { FAQ } from "@/components/web/FAQ";
 import { ContactPageForm } from "@/components/web/ContactPageForm";
+import { generateFaqJsonLd } from "@/lib/seo";
 
 export const revalidate = 86400; // 24h — static info page
 import { companyInfo } from "@/lib/company-info";
@@ -19,6 +21,25 @@ export const metadata: Metadata = {
   },
   alternates: pageCanonical("/kontakt"),
 };
+
+const KONTAKT_FAQ = [
+  {
+    question: "Jak se mohu spojit s CarMakléř?",
+    answer: "Napište nám na info@carmakler.cz nebo použijte kontaktní formulář. Odpovídáme do 24 hodin v pracovní dny.",
+  },
+  {
+    question: "Kde sídlí CarMakléř?",
+    answer: "CarMakléř je česká platforma působící po celé České republice. Naši makléři jsou k dispozici ve všech krajích.",
+  },
+  {
+    question: "Jaké jsou provozní hodiny zákaznické podpory?",
+    answer: "Zákaznická podpora je k dispozici v pracovní dny od 8:00 do 18:00. E-maily zpracováváme průběžně.",
+  },
+  {
+    question: "Mohu se domluvit na osobní schůzce?",
+    answer: "Ano, můžete se domluvit s konkrétním makléřem na osobní schůzce. Kontaktujte makléře přímo přes jeho profil na CarMakléř.",
+  },
+];
 
 const branches = companyInfo.branches;
 
@@ -151,6 +172,17 @@ export default function KontaktPage() {
               </Card>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-12 sm:py-16">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: generateFaqJsonLd(KONTAKT_FAQ) }}
+          />
+          <FAQ items={KONTAKT_FAQ} title="Často kladené otázky" />
         </div>
       </section>
 
