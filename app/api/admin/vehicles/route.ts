@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSessionOrMobileToken } from "@/lib/auth-mobile";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSessionOrMobileToken(request);
 
     if (!session?.user) {
       return NextResponse.json({ error: "Nepřihlášen" }, { status: 401 });
@@ -16,7 +15,13 @@ export async function GET() {
       return NextResponse.json({ error: "Nemáte oprávnění" }, { status: 403 });
     }
 
+    const { searchParams } = new URL(request.url);
+    const status = searchParams.get("status");
+    const where: Record<string, unknown> = {};
+    if (status) where.status = status.toUpperCase();
+
     const vehicles = await prisma.vehicle.findMany({
+      where,
       include: {
         broker: {
           select: {
@@ -88,7 +93,7 @@ const createVehicleSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSessionOrMobileToken(request);
     if (!session?.user) {
       return NextResponse.json({ error: "Nepřihlášen" }, { status: 401 });
     }

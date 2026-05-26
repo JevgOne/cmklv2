@@ -1,18 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSessionOrMobileToken } from "@/lib/auth-mobile";
 import { prisma } from "@/lib/prisma";
 
 const ALLOWED_ROLES = ["ADMIN", "BACKOFFICE", "MANAGER"];
 const DELETE_ROLES = ["ADMIN", "BACKOFFICE"];
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSessionOrMobileToken(request);
     if (!session?.user || !ALLOWED_ROLES.includes(session.user.role)) {
       return NextResponse.json({ error: "Nemáte oprávnění" }, { status: 403 });
     }
@@ -23,9 +22,10 @@ export async function GET(
       where: { id },
       include: {
         broker: {
-          select: { firstName: true, lastName: true, email: true, phone: true },
+          select: { id: true, firstName: true, lastName: true, email: true, phone: true },
         },
         images: { orderBy: { order: "asc" } },
+        vehicleChangeLog: { orderBy: { createdAt: "desc" }, take: 10 },
       },
     });
 
@@ -33,7 +33,18 @@ export async function GET(
       return NextResponse.json({ error: "Vozidlo nenalezeno" }, { status: 404 });
     }
 
-    return NextResponse.json({ vehicle });
+    const { vehicleChangeLog, ...rest } = vehicle;
+    return NextResponse.json({
+      vehicle: {
+        ...rest,
+        changeLog: vehicleChangeLog.map((log) => ({
+          id: log.id,
+          action: `${log.field}: ${log.oldValue} → ${log.newValue}`,
+          details: log.reason,
+          createdAt: log.createdAt,
+        })),
+      },
+    });
   } catch (error) {
     console.error("GET /api/admin/vehicles/[id] error:", error);
     return NextResponse.json({ error: "Interní chyba serveru" }, { status: 500 });
@@ -53,7 +64,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSessionOrMobileToken(request);
     if (!session?.user || !ALLOWED_ROLES.includes(session.user.role)) {
       return NextResponse.json({ error: "Nemáte oprávnění" }, { status: 403 });
     }
@@ -117,11 +128,11 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSessionOrMobileToken(request);
     if (!session?.user || !DELETE_ROLES.includes(session.user.role)) {
       return NextResponse.json({ error: "Nemáte oprávnění" }, { status: 403 });
     }
