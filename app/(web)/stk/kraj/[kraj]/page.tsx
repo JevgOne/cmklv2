@@ -44,10 +44,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? "STK stanice Praha | Carmakler"
     : `STK stanice ${regionName} kraj | Carmakler`;
 
+  const description = `Seznam STK stanic v ${regionName === "Hlavní město Praha" ? "Praze" : `${regionName} kraji`} s recenzemi a hodnocením. Najděte nejbližší STK stanici, zjistěte čekací doby a objednejte se online.`;
+
   return {
     title,
-    description: `Seznam STK stanic v ${regionName === "Hlavní město Praha" ? "Praze" : `${regionName} kraji`} s recenzemi a hodnocením. Najděte nejbližší STK stanici, zjistěte čekací doby a objednejte se online.`,
+    description,
     alternates: pageCanonical(`/stk/kraj/${kraj}`),
+    openGraph: { title, description },
   };
 }
 

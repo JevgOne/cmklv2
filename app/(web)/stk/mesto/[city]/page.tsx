@@ -19,10 +19,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const cityName = decodeURIComponent(city);
   const capitalized = cityName.charAt(0).toUpperCase() + cityName.slice(1);
 
+  const title = `STK stanice ${capitalized} — kde na STK v ${capitalized}`;
+  const description = `Seznam STK stanic v ${capitalized} s recenzemi a hodnocením. Najděte nejbližší STK stanici, zjistěte čekací doby a objednejte se online.`;
+
   return {
-    title: `STK stanice ${capitalized} — kde na STK v ${capitalized}`,
-    description: `Seznam STK stanic v ${capitalized} s recenzemi a hodnocením. Najděte nejbližší STK stanici, zjistěte čekací doby a objednejte se online.`,
+    title,
+    description,
     alternates: pageCanonical(`/stk/mesto/${city}`),
+    openGraph: { title, description },
   };
 }
 

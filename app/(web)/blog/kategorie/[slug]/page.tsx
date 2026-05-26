@@ -25,12 +25,16 @@ export async function generateMetadata({
 
   if (!category) return { title: "Kategorie nenalezena" };
 
+  const title = `${category.name} — Blog`;
+  const description =
+    category.description ||
+    `Články z kategorie ${category.name} na CarMakléř blogu.`;
+
   return {
-    title: `${category.name} — Blog`,
-    description:
-      category.description ||
-      `Články z kategorie ${category.name} na CarMakléř blogu.`,
+    title,
+    description,
     alternates: pageCanonical(`/blog/kategorie/${slug}`),
+    openGraph: { title, description },
   };
 }
 

@@ -54,10 +54,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? "Autoservisy Praha | Carmakler"
     : `Autoservisy ${regionName} kraj | Carmakler`;
 
+  const description = `Ověřené autoservisy v ${regionName === "Hlavní město Praha" ? "Praze" : `${regionName} kraji`} s recenzemi od skutečných zákazníků. Autorizované i nezávislé servisy, hodnocení kvality a cen.`;
+
   return {
     title,
-    description: `Ověřené autoservisy v ${regionName === "Hlavní město Praha" ? "Praze" : `${regionName} kraji`} s recenzemi od skutečných zákazníků. Autorizované i nezávislé servisy, hodnocení kvality a cen.`,
+    description,
     alternates: pageCanonical(`/autoservisy/kraj/${kraj}`),
+    openGraph: { title, description },
   };
 }
 

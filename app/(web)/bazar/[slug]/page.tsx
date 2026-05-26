@@ -22,10 +22,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!partner) return { title: "Partner nenalezen" };
 
+  const title = `${partner.name} — ověřený partner`;
+  const description = partner.description || `Autobazar ${partner.name} v ${partner.city || "ČR"} — ověřený partner CarMakléř.`;
+
   return {
-    title: `${partner.name} — ověřený partner`,
-    description: partner.description || `Autobazar ${partner.name} v ${partner.city || "ČR"} — ověřený partner CarMakléř.`,
+    title,
+    description,
     alternates: pageCanonical(`/bazar/${slug}`),
+    openGraph: { title, description },
   };
 }
 

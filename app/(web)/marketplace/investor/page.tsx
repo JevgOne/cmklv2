@@ -11,7 +11,12 @@ import { pageCanonical } from "@/lib/canonical";
 
 export const metadata: Metadata = {
   title: "Investor Dashboard | Marketplace",
+  description: "Přehled investičních příležitostí a správa portfolia na Marketplace.",
   alternates: pageCanonical("/marketplace/investor"),
+  openGraph: {
+    title: "Investor Dashboard | Marketplace",
+    description: "Přehled investičních příležitostí a správa portfolia na Marketplace.",
+  },
 };
 
 export const dynamic = "force-dynamic";

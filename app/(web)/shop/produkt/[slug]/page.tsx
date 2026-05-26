@@ -26,12 +26,16 @@ export async function generateMetadata({
   });
   if (!part) return { title: "Díl nenalezen" };
   const price = new Intl.NumberFormat("cs-CZ").format(part.price);
+  const title = `${part.name} — ${price} Kč | Shop`;
+  const description =
+    part.description?.slice(0, 155) ||
+    `Kupte ${part.name} za ${price} Kč na CarMakléř. Kategorie: ${getCategoryLabel(part.category as PartCategory)}.`;
+
   return {
-    title: `${part.name} — ${price} Kč | Shop`,
-    description:
-      part.description?.slice(0, 155) ||
-      `Kupte ${part.name} za ${price} Kč na CarMakléř. Kategorie: ${getCategoryLabel(part.category as PartCategory)}.`,
+    title,
+    description,
     alternates: pageCanonical(`/dily/${slug}`),
+    openGraph: { title, description },
   };
 }
 

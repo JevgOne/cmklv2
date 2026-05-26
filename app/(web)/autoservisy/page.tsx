@@ -20,6 +20,11 @@ export const metadata: Metadata = {
   description:
     "Najděte ověřený autoservis s reálnými recenzemi. Autorizované i nezávislé servisy, spolupráce s pojišťovnami. Hodnocení od skutečných zákazníků.",
   alternates: pageCanonical("/autoservisy"),
+  openGraph: {
+    title: "Autoservisy — ověřené recenze",
+    description:
+      "Najděte ověřený autoservis s reálnými recenzemi. Autorizované i nezávislé servisy, spolupráce s pojišťovnami. Hodnocení od skutečných zákazníků.",
+  },
 };
 
 const CATEGORY_OPTIONS = [

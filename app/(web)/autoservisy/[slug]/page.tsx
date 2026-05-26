@@ -19,12 +19,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const servis = await prisma.autoServis.findUnique({ where: { slug } });
   if (!servis) return { title: "Servis nenalezen" };
 
+  const title = `${servis.name} — autoservis ${servis.city}`;
+  const description = servis.description
+    ? servis.description.slice(0, 160)
+    : `${servis.name} — ${servis.city}. ${servis.reviewCount} recenzí, hodnocení ${servis.averageRating}★. Najděte ověřený autoservis na CarMakléř.`;
+
   return {
-    title: `${servis.name} — autoservis ${servis.city}`,
-    description: servis.description
-      ? servis.description.slice(0, 160)
-      : `${servis.name} — ${servis.city}. ${servis.reviewCount} recenzí, hodnocení ${servis.averageRating}★. Najděte ověřený autoservis na CarMakléř.`,
+    title,
+    description,
     alternates: pageCanonical(`/autoservisy/${slug}`),
+    openGraph: { title, description },
   };
 }
 

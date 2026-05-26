@@ -22,6 +22,11 @@ export const metadata: Metadata = {
   description:
     "Seznam STK stanic v ČR s recenzemi, čekacími dobami a cenami. Najděte nejbližší STK stanici a objednejte se online.",
   alternates: pageCanonical("/stk"),
+  openGraph: {
+    title: "STK stanice — najděte nejbližší stanici technické kontroly",
+    description:
+      "Seznam STK stanic v ČR s recenzemi, čekacími dobami a cenami. Najděte nejbližší STK stanici a objednejte se online.",
+  },
 };
 
 export default async function StkListPage() {

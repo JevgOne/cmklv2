@@ -21,10 +21,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const servis = await prisma.autoServis.findUnique({ where: { slug } });
   if (!servis) return { title: "STK stanice nenalezena" };
 
+  const title = `${servis.name} — STK stanice ${servis.city}`;
+  const description = `${servis.name} — STK stanice ${servis.city}. ${servis.reviewCount} recenzí, hodnocení ${servis.averageRating}★${servis.stkWaitDays != null ? `, čekací doba ${servis.stkWaitDays} dní` : ""}. Najděte ověřenou STK stanici na CarMakléř.`;
+
   return {
-    title: `${servis.name} — STK stanice ${servis.city}`,
-    description: `${servis.name} — STK stanice ${servis.city}. ${servis.reviewCount} recenzí, hodnocení ${servis.averageRating}★${servis.stkWaitDays != null ? `, čekací doba ${servis.stkWaitDays} dní` : ""}. Najděte ověřenou STK stanici na CarMakléř.`,
+    title,
+    description,
     alternates: pageCanonical(`/stk/${slug}`),
+    openGraph: { title, description },
   };
 }
 

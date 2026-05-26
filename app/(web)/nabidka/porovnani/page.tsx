@@ -8,6 +8,10 @@ export const metadata: Metadata = {
   title: "Porovnání vozidel",
   description: "Porovnejte až 3 vozidla vedle sebe. Srovnání ceny, parametrů, výbavy a stavu.",
   alternates: pageCanonical("/nabidka/porovnani"),
+  openGraph: {
+    title: "Porovnání vozidel",
+    description: "Porovnejte až 3 vozidla vedle sebe. Srovnání ceny, parametrů, výbavy a stavu.",
+  },
 };
 
 const webPageJsonLd = generateWebPageJsonLd({

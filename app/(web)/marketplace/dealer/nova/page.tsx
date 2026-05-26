@@ -9,6 +9,11 @@ export const metadata: Metadata = {
     "Vytvořte novou investiční příležitost na Marketplace. Zadejte detaily vozu, kalkulaci nákladů a očekávaný zisk.",
   alternates: pageCanonical("/marketplace/dealer/nova"),
   robots: { index: false, follow: true },
+  openGraph: {
+    title: "Nová příležitost | Realizátor | Marketplace",
+    description:
+      "Vytvořte novou investiční příležitost na Marketplace. Zadejte detaily vozu, kalkulaci nákladů a očekávaný zisk.",
+  },
 };
 
 export default function NewOpportunityPage() {

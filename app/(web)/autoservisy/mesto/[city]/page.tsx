@@ -29,10 +29,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const cityName = decodeURIComponent(city);
   const capitalized = cityName.charAt(0).toUpperCase() + cityName.slice(1);
 
+  const title = `Autoservisy ${capitalized} — ověřené recenze | Carmakler`;
+  const description = `Seznam autoservisů v ${capitalized} s recenzemi od skutečných zákazníků. Najděte ověřený autoservis, porovnejte hodnocení a ceny.`;
+
   return {
-    title: `Autoservisy ${capitalized} — ověřené recenze | Carmakler`,
-    description: `Seznam autoservisů v ${capitalized} s recenzemi od skutečných zákazníků. Najděte ověřený autoservis, porovnejte hodnocení a ceny.`,
+    title,
+    description,
     alternates: pageCanonical(`/autoservisy/mesto/${city}`),
+    openGraph: { title, description },
   };
 }
 

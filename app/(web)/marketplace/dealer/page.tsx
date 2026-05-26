@@ -13,7 +13,12 @@ import { pageCanonical } from "@/lib/canonical";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Realizátor Dashboard | Marketplace",
+  description: "Správa vašich nabídek a příležitostí na Marketplace.",
   alternates: pageCanonical("/marketplace/dealer"),
+  openGraph: {
+    title: "Realizátor Dashboard | Marketplace",
+    description: "Správa vašich nabídek a příležitostí na Marketplace.",
+  },
 };
 
 async function getDealerData() {
