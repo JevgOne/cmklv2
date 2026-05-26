@@ -1,12 +1,22 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { rateLimit } from "@/lib/rate-limit";
 
 // GET /api/invitations/[token] — ověření tokenu pozvánky
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ token: string }> }
 ) {
   try {
+    const ip = request.headers.get("x-forwarded-for") || "unknown";
+    const { success } = rateLimit(`invitation:${ip}`, 20, 60 * 1000);
+    if (!success) {
+      return NextResponse.json(
+        { error: "Příliš mnoho požadavků" },
+        { status: 429 }
+      );
+    }
+
     const { token } = await params;
 
     const invitation = await prisma.invitation.findUnique({

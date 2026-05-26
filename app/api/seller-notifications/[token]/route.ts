@@ -8,16 +8,26 @@ import {
   SELLER_EVENT_TYPES,
   sellerNotificationPreferenceSchema,
 } from "@/lib/validators/notifications";
+import { rateLimit } from "@/lib/rate-limit";
 
 /**
  * GET /api/seller-notifications/[token]
  * Nacte notifikacni preference prodejce podle tokenu (bez auth — token je autorizace)
  */
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ token: string }> }
 ) {
   try {
+    const ip = request.headers.get("x-forwarded-for") || "unknown";
+    const { success } = rateLimit(`seller-notif:${ip}`, 20, 60 * 1000);
+    if (!success) {
+      return NextResponse.json(
+        { error: "Příliš mnoho požadavků" },
+        { status: 429 }
+      );
+    }
+
     const { token } = await params;
 
     const seller = await getSellerPreferences(token);

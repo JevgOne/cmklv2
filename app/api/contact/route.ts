@@ -9,7 +9,7 @@ const contactSchema = z.object({
   name: z.string().min(1, "Jméno je povinné"),
   phone: z.string().min(1, "Telefon je povinný"),
   email: z.string().email("Neplatný email"),
-  message: z.string().optional(),
+  message: z.string().max(2000, "Zpráva je příliš dlouhá").optional(),
   vehicleId: z.string().optional(),
   brokerId: z.string().optional(),
   city: z.string().optional(),

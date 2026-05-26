@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { verifyIco } from "@/lib/ares";
+import { rateLimit } from "@/lib/rate-limit";
 
 const querySchema = z.object({
   ico: z.string().min(1, "IČO je povinné"),
@@ -8,6 +9,15 @@ const querySchema = z.object({
 
 export async function GET(request: Request) {
   try {
+    const ip = request.headers.get("x-forwarded-for") || "unknown";
+    const { success } = rateLimit(`ares:${ip}`, 10, 60 * 1000);
+    if (!success) {
+      return NextResponse.json(
+        { error: "Příliš mnoho požadavků. Zkuste to později." },
+        { status: 429 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const { ico } = querySchema.parse({ ico: searchParams.get("ico") });
 
