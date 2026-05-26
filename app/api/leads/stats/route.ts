@@ -27,9 +27,10 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const [total, assigned, contacted, vehicleAdded, rejected, expired] =
+    const [total, newLeads, assigned, contacted, vehicleAdded, rejected, expired] =
       await Promise.all([
         prisma.lead.count({ where }),
+        prisma.lead.count({ where: { ...where, status: "NEW" } }),
         prisma.lead.count({ where: { ...where, status: "ASSIGNED" } }),
         prisma.lead.count({ where: { ...where, status: "CONTACTED" } }),
         prisma.lead.count({ where: { ...where, status: "VEHICLE_ADDED" } }),
@@ -62,6 +63,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       total,
+      new: newLeads,
       assigned,
       contacted,
       vehicleAdded,
