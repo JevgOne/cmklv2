@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSessionOrMobileToken } from "@/lib/auth-mobile";
 import { prisma } from "@/lib/prisma";
 
 /* ------------------------------------------------------------------ */
@@ -8,11 +7,11 @@ import { prisma } from "@/lib/prisma";
 /* ------------------------------------------------------------------ */
 
 export async function PUT(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSessionOrMobileToken(request);
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
     }

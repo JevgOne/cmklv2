@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSessionOrMobileToken } from "@/lib/auth-mobile";
 import { prisma } from "@/lib/prisma";
 import { updateOpportunitySchema } from "@/lib/validators/marketplace";
 import { calculateDealScore } from "@/lib/marketplace/deal-score";
@@ -19,11 +18,11 @@ const ADMIN_ROLES = ["ADMIN", "BACKOFFICE"];
 /* ------------------------------------------------------------------ */
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSessionOrMobileToken(request);
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
     }
@@ -125,7 +124,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSessionOrMobileToken(request);
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
     }
