@@ -37,13 +37,26 @@ export async function createNotification({
     },
   });
 
-  // Fire-and-forget push notification
-  sendPushToUser(userId, title, body, link).catch(() => {});
+  // Fire-and-forget push notification with mobile-specific route
+  const mobileLink = getMobileRoute(type, link);
+  sendPushToUser(userId, title, body, mobileLink).catch(() => {});
 
   return notification;
 }
 
-async function sendPushToUser(userId: string, title: string, body: string, link?: string) {
+function getMobileRoute(type: string, webLink?: string): string | undefined {
+  const routeBuilder = NOTIFICATION_ROUTE_MAP[type];
+  if (!routeBuilder) return undefined;
+
+  // Extract entity ID (UUID) from web link path segments
+  const entityId = webLink
+    ?.split("/")
+    .find((seg) => /^[0-9a-f-]{36}$|^c[a-z0-9]{24,}$/i.test(seg));
+
+  return routeBuilder(entityId);
+}
+
+async function sendPushToUser(userId: string, title: string, body: string, mobileLink?: string) {
   const tokens = await prisma.pushToken.findMany({
     where: { userId },
     select: { token: true },
@@ -56,7 +69,7 @@ async function sendPushToUser(userId: string, title: string, body: string, link?
     sound: "default" as const,
     title,
     body,
-    data: { link: link ?? undefined },
+    data: { link: mobileLink ?? undefined },
   }));
 
   await fetch("https://exp.host/--/api/v2/push/send", {
