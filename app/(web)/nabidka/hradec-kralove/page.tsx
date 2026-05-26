@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { VehicleLandingPage } from "@/components/web/VehicleLandingPage";
-import { generateBreadcrumbJsonLd, generateFaqJsonLd } from "@/lib/seo";
+import { generateBreadcrumbJsonLd, generateFaqJsonLd, generateWebPageJsonLd } from "@/lib/seo";
 import { CITIES, BASE_URL, BRANDS, BODY_TYPES, PRICE_RANGES } from "@/lib/seo-data";
 import { notFound } from "next/navigation";
 import { pageCanonical } from "@/lib/canonical";
@@ -26,6 +26,15 @@ export default function Page() {
     { name: city.name, url: `${BASE_URL}/nabidka/${city.slug}` },
   ]);
   const faqJsonLd = generateFaqJsonLd(city.faqItems);
+  const webPageJsonLd = generateWebPageJsonLd({
+    name: `Ojeté vozy ${city.inLocative}`,
+    description: city.description,
+    url: `${BASE_URL}/nabidka/${city.slug}`,
+    about: [
+      { name: city.name, type: "City" },
+      { name: "Ojeté automobily", type: "Thing" },
+    ],
+  });
 
   const relatedLinks = [
     ...CITIES.filter((c) => c.slug !== city.slug).map((c) => ({
@@ -79,7 +88,7 @@ export default function Page() {
         { name: "Nabídka", href: "/nabidka" },
         { name: city.name, href: `/nabidka/${city.slug}` },
       ]}
-      jsonLdScripts={[breadcrumbJsonLd, faqJsonLd]}
+      jsonLdScripts={[breadcrumbJsonLd, faqJsonLd, webPageJsonLd]}
       ctaHeading={`Chcete prodat auto ${city.inLocative}?`}
       relatedLinks={relatedLinks}
       filterHref={`/nabidka?city=${encodeURIComponent(city.name)}`}

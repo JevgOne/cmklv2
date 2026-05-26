@@ -3,6 +3,8 @@ import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { ApplyForm } from "@/components/web/marketplace/ApplyForm";
 import { Alert } from "@/components/ui/Alert";
 import { pageCanonical } from "@/lib/canonical";
+import { generateWebPageJsonLd } from "@/lib/seo";
+import { BASE_URL } from "@/lib/seo-data";
 
 export const metadata: Metadata = {
   title: "Žádost o přístup | Marketplace",
@@ -36,6 +38,11 @@ export default async function MarketplaceApplyPage({ searchParams }: Props) {
 
   return (
     <main>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: generateWebPageJsonLd({
+        name: "Žádost o přístup k Marketplace",
+        description: "Vyplňte žádost o přístup k marketplace. Investujte do aut nebo nabízejte flip příležitosti.",
+        url: `${BASE_URL}/marketplace/apply`,
+      }) }} />
       <Breadcrumbs
         items={[
           { label: "Domů", href: "/" },

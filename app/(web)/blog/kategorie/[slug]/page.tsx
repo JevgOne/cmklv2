@@ -7,6 +7,8 @@ import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { pageCanonical } from "@/lib/canonical";
+import { generateWebPageJsonLd, generateItemListJsonLd } from "@/lib/seo";
+import { BASE_URL } from "@/lib/seo-data";
 
 export const revalidate = 3600;
 
@@ -76,8 +78,16 @@ export default async function BlogCategoryPage({
 
   const totalPages = Math.ceil(total / perPage);
 
+  const articleUrls = articles.map((a) => `${BASE_URL}/blog/${a.slug}`);
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: generateWebPageJsonLd({
+        name: `${category.name} — Blog CarMakléř`,
+        description: category.description || `Články z kategorie ${category.name}`,
+        url: `${BASE_URL}/blog/kategorie/${slug}`,
+      }) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: generateItemListJsonLd(articleUrls) }} />
       <Breadcrumbs
         items={[
           { label: "Domů", href: "/" },

@@ -4,6 +4,8 @@ import { Card } from "@/components/ui/Card";
 import { Breadcrumbs } from "@/components/web/Breadcrumbs";
 import { prisma } from "@/lib/prisma";
 import { pageCanonical } from "@/lib/canonical";
+import { generateOrganizationJsonLd, generateWebPageJsonLd } from "@/lib/seo";
+import { BASE_URL } from "@/lib/seo-data";
 
 export const revalidate = 86400;
 
@@ -83,6 +85,16 @@ export default async function ONasPage() {
 
   return (
     <main>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: generateOrganizationJsonLd() }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: generateWebPageJsonLd({
+        name: "O nás — CarMakléř",
+        description: "CarMakléř — nová éra prodeje aut v Česku. Ověření makléři, prověřená vozidla, spokojení klienti.",
+        url: `${BASE_URL}/o-nas`,
+        about: [
+          { name: "CarMakléř", type: "Organization", url: BASE_URL },
+          { name: "Prodej automobilů", type: "Thing" },
+        ],
+      }) }} />
       <Breadcrumbs
         items={[
           { label: "Domů", href: "/" },
