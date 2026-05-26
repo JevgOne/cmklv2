@@ -31,6 +31,7 @@ interface PageDef {
   title: string;
   description: string;
   ogTitle?: string;
+  schemaTypesJson?: string;
 }
 
 const PAGES: PageDef[] = [

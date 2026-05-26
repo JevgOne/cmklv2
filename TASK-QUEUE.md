@@ -6294,7 +6294,7 @@ Vytvořit kompletní sadu PDF šablon a prezentací v jednotném vizuálním sty
 
 ## TASK-043: Blog/Magazín — AI-asistovaný content + články makléřů
 Priorita: 2
-Stav: backlog
+Stav: hotovo
 Projekt: /Users/zen/Projects/cmklv2/cmklv2
 
 ### Kompletní zadání:
@@ -6465,7 +6465,7 @@ Připravit TecDoc service layer, env variables, API wrapper. Čeká na registrac
 
 ## TASK-NEW-008: PWA Guided Vehicle Onboarding — Standardizovaný nábor vozidel
 Priorita: 1
-Stav: zpracovává se (plánovač)
+Stav: hotovo
 Datum: 2026-05-22
 
 ### Zadání:
@@ -6477,7 +6477,7 @@ Plán: `.claude-context/tasks/plan-pwa-guided-onboarding.md`
 
 ## TASK-NEW-009: Interní Workflow Systém — Požadavky, úkoly, komunikace
 Priorita: 1
-Stav: zpracovává se (plánovač)
+Stav: hotovo
 Datum: 2026-05-22
 
 ### Zadání:
