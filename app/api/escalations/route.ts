@@ -12,14 +12,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Nepřihlášen" }, { status: 401 });
     }
 
-    const ESCALATION_ROLES = ["BROKER", "MANAGER", "REGIONAL_DIRECTOR", "ADMIN"];
-    if (!ESCALATION_ROLES.includes(session.user.role)) {
-      return NextResponse.json(
-        { error: "Nemáte oprávnění vytvářet eskalace" },
-        { status: 403 }
-      );
-    }
-
     const body = await request.json();
     const parsed = createEscalationSchema.safeParse(body);
     if (!parsed.success) {

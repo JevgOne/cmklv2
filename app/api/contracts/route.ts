@@ -99,14 +99,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const CONTRACT_ROLES = ["BROKER", "MANAGER", "ADMIN"];
-    if (!CONTRACT_ROLES.includes(session.user.role)) {
-      return NextResponse.json(
-        { error: "Nemáte oprávnění vytvářet smlouvy" },
-        { status: 403 }
-      );
-    }
-
     const body = await request.json();
     const data = createContractSchema.parse(body);
 
