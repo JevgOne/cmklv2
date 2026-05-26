@@ -45,11 +45,28 @@ export async function GET() {
         sellerPhone: true,
         sellerEmail: true,
         status: true,
+        viewCount: true,
+        images: {
+          where: { isPrimary: true },
+          take: 1,
+          select: { url: true },
+        },
+        _count: {
+          select: { inquiries: true },
+        },
       },
       orderBy: { updatedAt: "desc" },
     });
 
-    return NextResponse.json({ vehicles });
+    const formatted = vehicles.map((v) => ({
+      ...v,
+      primaryImage: v.images[0]?.url ?? null,
+      inquiryCount: v._count.inquiries,
+      images: undefined,
+      _count: undefined,
+    }));
+
+    return NextResponse.json({ vehicles: formatted });
   } catch (error) {
     console.error("GET /api/broker/vehicles error:", error);
     return NextResponse.json(
