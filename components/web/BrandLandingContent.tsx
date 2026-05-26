@@ -7,7 +7,7 @@ import {
   generateBrandItemListJsonLd,
 } from "@/lib/seo";
 import type { BrandData } from "@/lib/seo-data";
-import { BASE_URL, BRANDS, BODY_TYPES, PRICE_RANGES, TOP_MODELS } from "@/lib/seo-data";
+import { BASE_URL, BRANDS, CITIES, BODY_TYPES, PRICE_RANGES, TOP_MODELS } from "@/lib/seo-data";
 import { getVehicleToPartsBridge } from "@/lib/seo-crosslinks";
 
 interface BrandLandingContentProps {
@@ -52,6 +52,10 @@ export function BrandLandingContent({ brand }: BrandLandingContentProps) {
   const otherBrands = BRANDS.filter((b) => b.slug !== brand.slug).slice(0, 8);
 
   const relatedLinks = [
+    ...CITIES.map((c) => ({
+      label: `${brand.displayName} ${c.inLocative}`,
+      href: `/nabidka/${brand.slug}/${c.slug}`,
+    })),
     ...otherBrands.map((b) => ({
       label: `Ojeté ${b.displayName}`,
       href: `/nabidka/${b.slug}`,

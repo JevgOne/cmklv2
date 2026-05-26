@@ -6,6 +6,7 @@ import {
   BODY_TYPES,
   PRICE_RANGES,
   CITIES,
+  YEAR_RANGES,
   PARTS_CATEGORIES,
   PARTS_BRANDS,
   PARTS_MODELS_BY_BRAND,
@@ -455,12 +456,32 @@ function getLandingPages(): MetadataRoute.Sitemap {
     )
   );
 
+  // Brand+City (128)
+  const brandCityPages: MetadataRoute.Sitemap = BRANDS.flatMap((brand) =>
+    CITIES.map((city) => ({
+      url: `${BASE_URL}/nabidka/${brand.slug}/${city.slug}`,
+      lastModified: STATIC_LAST_MODIFIED,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    }))
+  );
+
+  // Rocniky (10)
+  const yearPages: MetadataRoute.Sitemap = YEAR_RANGES.map((y) => ({
+    url: `${BASE_URL}/nabidka/rok/${y.slug}`,
+    lastModified: STATIC_LAST_MODIFIED,
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
   return [
     ...brandPages,
     ...modelPages,
     ...bodyTypePages,
     ...pricePages,
     ...cityPages,
+    ...brandCityPages,
+    ...yearPages,
     ...partsCategoryPages,
     ...partsBrandPages,
     ...partsModelPages,

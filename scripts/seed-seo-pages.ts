@@ -433,10 +433,11 @@ async function seedDynamicPages() {
 
   // Listings → /nabidka/{slug}
   const listings = await prisma.listing.findMany({
-    where: { status: "ACTIVE", slug: { not: null } },
+    where: { status: "ACTIVE" },
     select: { slug: true },
   });
   for (const l of listings) {
+    if (!l.slug) continue;
     await register(`/nabidka/${l.slug}`, "listings");
   }
   console.log(`  Listings: ${listings.length} checked`);
@@ -488,7 +489,7 @@ async function seedDynamicPages() {
 
   // Partners (autobazary) → /bazar/{slug}
   const partners = await prisma.partner.findMany({
-    where: { status: "AKTIVNI_PARTNER", type: "AUTOBAZAR", slug: { not: null } },
+    where: { status: "AKTIVNI_PARTNER", type: "AUTOBAZAR" },
     select: { slug: true },
   });
   for (const p of partners) {

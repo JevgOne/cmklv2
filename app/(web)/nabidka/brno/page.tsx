@@ -42,6 +42,10 @@ export default function Page() {
       href: `/nabidka/${c.slug}`,
     })),
     ...BRANDS.slice(0, 6).map((b) => ({
+      label: `${b.displayName} ${city.inLocative}`,
+      href: `/nabidka/${b.slug}/${city.slug}`,
+    })),
+    ...BRANDS.slice(0, 6).map((b) => ({
       label: `Ojeté ${b.displayName}`,
       href: `/nabidka/${b.slug}`,
     })),

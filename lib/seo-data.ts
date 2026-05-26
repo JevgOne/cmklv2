@@ -1828,6 +1828,182 @@ export function getValidYearsForModel(brandSlug: string, modelSlug: string): num
   return Array.from(allYears).sort();
 }
 
+// Brand + City FAQ generator
+export function generateBrandCityFaqItems(brand: BrandData, city: CityData): FaqItem[] {
+  return [
+    {
+      question: `Kde koupím ojetou ${brand.displayName} ${city.inLocative}?`,
+      answer: `Na CarMakler najdete prověřené ojeté vozy ${brand.displayName} ${city.inLocative}. Naši makléři ${city.inLocative} znají lokální trh a pomohou vám vybrat ideální ${brand.displayName}. Každé vozidlo prochází kontrolou CEBIA a fyzickou prohlídkou.`,
+    },
+    {
+      question: `Kolik stojí ojetá ${brand.displayName} ${city.inLocative}?`,
+      answer: `Ceny ojetých vozů ${brand.displayName} ${city.inLocative} se pohybují ${brand.avgPriceRange}. Cena závisí na modelu, ročníku, stavu a výbavě. Na CarMakler nabízíme bezplatné ocenění vozu makléřem.`,
+    },
+    {
+      question: `Jaké modely ${brand.displayName} jsou nejpopulárnější ${city.inLocative}?`,
+      answer: `Mezi nejpopulárnější ojeté modely ${brand.displayName} patří ${brand.topModels.map((m) => m.name).join(", ")}. ${city.inLocative.charAt(0).toUpperCase() + city.inLocative.slice(1)} je nejširší výběr u modelů ${brand.topModels.slice(0, 2).map((m) => m.name).join(" a ")}.`,
+    },
+    {
+      question: `Nabízíte financování ojeté ${brand.displayName} ${city.inLocative}?`,
+      answer: `Ano, spolupracujeme s předními bankami a leasingovými společnostmi. Financování nákupu ojeté ${brand.displayName} ${city.inLocative} vyřídíme přímo přes CarMakler s výhodnou úrokovou sazbou.`,
+    },
+  ];
+}
+
+// Year landing page data
+export interface YearData {
+  year: number;
+  slug: string;
+  label: string;
+  description: string;
+  faqItems: FaqItem[];
+  aiSnippet: string;
+  quickFacts: string[];
+}
+
+export const YEAR_RANGES: YearData[] = [
+  {
+    year: 2025,
+    slug: "2025",
+    label: "Ojetá auta 2025",
+    description: "Ojetá auta ročník 2025 jsou prakticky nová vozidla s minimálním nájezdem a plnou zárukou výrobce. Ideální volba pro ty, kdo chtějí nové auto za nižší cenu.",
+    aiSnippet: "Ojetá auta ročník 2025 jsou prakticky nová vozidla s plnou zárukou výrobce a průměrným nájezdem do 15 000 km. Průměrná úspora oproti novému vozu: 15–25 %. Na CarMakler najdete prověřené vozy 2025 od ověřených makléřů.",
+    quickFacts: ["Průměrný nájezd: do 15 000 km", "Úspora oproti novému: 15–25 %", "Plná záruka výrobce", "Nejnovější bezpečnostní systémy"],
+    faqItems: [
+      { question: "Vyplatí se koupit ojeté auto z roku 2025?", answer: "Ano, vozy z roku 2025 jsou prakticky nové s plnou zárukou a úsporou 15–25 % oproti novému vozu. Mají minimální nájezd a nejnovější technologie." },
+      { question: "Kolik stojí ojetá auta z roku 2025?", answer: "Ceny závisí na značce a modelu. Kompaktní vozy od 350 000 Kč, SUV od 600 000 Kč, prémiové vozy od 900 000 Kč." },
+      { question: "Na co si dát pozor při koupi auta z roku 2025?", answer: "Ověřte, zda vůz nebyl havarovaný, zkontrolujte servisní historii a zda je stále platná záruka výrobce. Naši makléři toto vše prověří." },
+      { question: "Jaké značky jsou nejlepší koupí z roku 2025?", answer: "Nejlepší poměr ceny a kvality nabízí Škoda, Hyundai a Kia. V prémiovém segmentu BMW a Mercedes-Benz s nejvyšší depreciací." },
+    ],
+  },
+  {
+    year: 2024,
+    slug: "2024",
+    label: "Ojetá auta 2024",
+    description: "Ojetá auta ročník 2024 nabízí moderní technologie s výraznou úsporou oproti novému vozu. Většina má zbývající záruku výrobce.",
+    aiSnippet: "Ojetá auta ročník 2024 nabízí moderní technologie a úsporu 20–30 % oproti novému vozu. Průměrný nájezd 15 000–30 000 km. Většina vozů má zbývající záruku výrobce. Nejprodávanější ojetiny 2024: Škoda Octavia, VW Golf, Hyundai Tucson.",
+    quickFacts: ["Průměrný nájezd: 15 000–30 000 km", "Úspora oproti novému: 20–30 %", "Zbývající záruka výrobce", "Moderní asistenční systémy"],
+    faqItems: [
+      { question: "Vyplatí se koupit ojeté auto z roku 2024?", answer: "Rozhodně ano. Úspora 20–30 % oproti novému vozu při minimálním opotřebení. Většina vozů má zbývající záruku výrobce 1–2 roky." },
+      { question: "Kolik stojí ojetá auta z roku 2024?", answer: "Kompaktní vozy od 280 000 Kč, SUV od 450 000 Kč, prémiové vozy od 700 000 Kč. Ceny závisí na značce, modelu a výbavě." },
+      { question: "Na co si dát pozor při koupi auta z roku 2024?", answer: "Prověřte historii vozu (CEBIA), zkontrolujte zbývající záruku a servisní knížku. Ověřte, zda nejde o ex-leasingový vůz s vysokým nájezdem." },
+      { question: "Jaké značky jsou nejlepší koupí z roku 2024?", answer: "Škoda a Hyundai nabízí nejlepší poměr cena/výbava. Toyota a Mazda vynikají spolehlivostí. BMW a Audi mají nejvyšší depreciaci." },
+    ],
+  },
+  {
+    year: 2023,
+    slug: "2023",
+    label: "Ojetá auta 2023",
+    description: "Ojetá auta ročník 2023 představují sweet spot — moderní technologie, rozumný nájezd a výrazná úspora oproti novému vozu.",
+    aiSnippet: "Ojetá auta ročník 2023 představují sweet spot na trhu ojetin — moderní technologie, nájezd 20 000–50 000 km a úspora 25–35 % oproti novému vozu. Nejprodávanější: Škoda Octavia, VW Passat, Hyundai Tucson. Většina má zbývající záruku.",
+    quickFacts: ["Průměrný nájezd: 20 000–50 000 km", "Úspora oproti novému: 25–35 %", "Sweet spot: moderní tech za rozumnou cenu", "Zbývající záruka u většiny vozů"],
+    faqItems: [
+      { question: "Vyplatí se koupit ojeté auto z roku 2023?", answer: "Rok 2023 je ideální sweet spot — moderní technologie, přijatelný nájezd a úspora 25–35 %. Většina vozů má ještě zbývající záruku." },
+      { question: "Kolik stojí ojetá auta z roku 2023?", answer: "Kompaktní vozy od 220 000 Kč, SUV od 380 000 Kč, prémiové vozy od 550 000 Kč." },
+      { question: "Na co si dát pozor při koupi auta z roku 2023?", answer: "Zkontrolujte servisní historii, nájezd a historii havárií. U vozů z roku 2023 je důležité ověřit, zda nebyl vůz taxíkem nebo služebním s vysokým nájezdem." },
+      { question: "Jaké značky jsou nejlepší koupí z roku 2023?", answer: "Škoda Octavia a Kodiaq, VW Golf a Tiguan, Hyundai Tucson — nejlepší poměr ceny, spolehlivosti a vybavení." },
+    ],
+  },
+  {
+    year: 2022,
+    slug: "2022",
+    label: "Ojetá auta 2022",
+    description: "Ojetá auta ročník 2022 nabízí aktuální design, moderní motory a úsporu 30–40 % oproti novému vozu.",
+    aiSnippet: "Ojetá auta ročník 2022 nabízí aktuální design a moderní motory s úsporou 30–40 %. Průměrný nájezd 30 000–70 000 km. Rok 2022 byl poznamenán čipovou krizí — vozů bylo vyrobeno méně, což drží vyšší ceny.",
+    quickFacts: ["Průměrný nájezd: 30 000–70 000 km", "Úspora oproti novému: 30–40 %", "Čipová krize: méně vyrobených vozů", "Aktuální design a motory"],
+    faqItems: [
+      { question: "Vyplatí se koupit ojeté auto z roku 2022?", answer: "Ano. Vozy 2022 nabízí moderní technologie s úsporou 30–40 %. Kvůli čipové krizi jich bylo vyrobeno méně, takže drží hodnotu lépe." },
+      { question: "Kolik stojí ojetá auta z roku 2022?", answer: "Kompaktní vozy od 180 000 Kč, SUV od 320 000 Kč, prémiové vozy od 450 000 Kč." },
+      { question: "Na co si dát pozor při koupi auta z roku 2022?", answer: "Ověřte kompletní servisní historii a zkontrolujte, zda nebyly vynechány servisní prohlídky. U dieselů kontrolujte stav DPF filtru." },
+      { question: "Jaké značky jsou nejlepší koupí z roku 2022?", answer: "Toyota a Mazda — nejspolehlivější. Škoda a Hyundai — nejlepší poměr cena/výbava. BMW řady 3 — nejvyšší depreciace v prémiu." },
+    ],
+  },
+  {
+    year: 2021,
+    slug: "2021",
+    label: "Ojetá auta 2021",
+    description: "Ojetá auta ročník 2021 jsou populární volba s dobrým poměrem ceny a stáří. Vozy mají za sebou 4–5 let provozu a ověřenou spolehlivost.",
+    aiSnippet: "Ojetá auta ročník 2021 nabízí ověřenou spolehlivost po 4–5 letech provozu s úsporou 35–45 % oproti novému vozu. Nájezd typicky 40 000–80 000 km. U většiny značek končí základní záruka — důležitá je servisní historie.",
+    quickFacts: ["Průměrný nájezd: 40 000–80 000 km", "Úspora oproti novému: 35–45 %", "4–5 let provozu: ověřená spolehlivost", "Končí základní záruka výrobce"],
+    faqItems: [
+      { question: "Vyplatí se koupit ojeté auto z roku 2021?", answer: "Ano, vozy z roku 2021 mají ověřenou spolehlivost a úsporu 35–45 %. Důležitá je kompletní servisní historie, protože končí základní záruka." },
+      { question: "Kolik stojí ojetá auta z roku 2021?", answer: "Kompaktní vozy od 150 000 Kč, SUV od 280 000 Kč, prémiové vozy od 380 000 Kč." },
+      { question: "Na co si dát pozor při koupi auta z roku 2021?", answer: "Prověřte servisní historii, stav brzd a pneumatik, funkčnost klimatizace. U automatických převodovek zkontrolujte plynulost řazení." },
+      { question: "Jaké značky jsou nejlepší koupí z roku 2021?", answer: "Škoda Octavia IV, Hyundai Tucson nový, VW Golf 8 — moderní platformy s ověřenou spolehlivostí." },
+    ],
+  },
+  {
+    year: 2020,
+    slug: "2020",
+    label: "Ojetá auta 2020",
+    description: "Ojetá auta ročník 2020 představují přechod na nové generace mnoha modelů. COVID rok přinesl nižší nájezdy a lepší stav vozidel.",
+    aiSnippet: "Rok 2020 přinesl nové generace Octavia IV, Golf 8 a Tucson. COVID lockdowny způsobily nižší nájezdy — vozy 2020 mají často lepší stav. Úspora oproti novému: 40–50 %. Průměrný nájezd 50 000–90 000 km.",
+    quickFacts: ["Průměrný nájezd: 50 000–90 000 km", "Úspora oproti novému: 40–50 %", "COVID rok: nižší nájezdy, lepší stav", "Nové generace: Octavia IV, Golf 8"],
+    faqItems: [
+      { question: "Vyplatí se koupit ojeté auto z roku 2020?", answer: "Výborná volba. COVID lockdowny způsobily nižší nájezdy, takže vozy 2020 jsou často v lepším stavu. Úspora 40–50 % oproti novému." },
+      { question: "Kolik stojí ojetá auta z roku 2020?", answer: "Kompaktní vozy od 130 000 Kč, SUV od 240 000 Kč, prémiové vozy od 320 000 Kč." },
+      { question: "Na co si dát pozor při koupi auta z roku 2020?", answer: "Zkontrolujte, zda nebyl vůz dlouho stojící (COVID) — baterie, brzdy, pneumatiky. Ověřte servisní historii a pravidelnost prohlídek." },
+      { question: "Jaké značky jsou nejlepší koupí z roku 2020?", answer: "Škoda Octavia IV (první rok nové generace), Toyota Corolla, Hyundai i30 — spolehlivé a cenově dostupné." },
+    ],
+  },
+  {
+    year: 2019,
+    slug: "2019",
+    label: "Ojetá auta 2019",
+    description: "Ojetá auta ročník 2019 nabízí výborný poměr ceny a kvality. Poslední předcovidový ročník s běžnými nájezdy a širokou nabídkou na trhu.",
+    aiSnippet: "Ročník 2019 je poslední předcovidový — běžné nájezdy, široká nabídka na trhu. Úspora 45–55 % oproti novému vozu. Nájezd typicky 60 000–100 000 km. Nejprodávanější: Škoda Octavia III FL, VW Golf 7.5, Hyundai Tucson.",
+    quickFacts: ["Průměrný nájezd: 60 000–100 000 km", "Úspora oproti novému: 45–55 %", "Poslední předcovidový ročník", "Široká nabídka na trhu"],
+    faqItems: [
+      { question: "Vyplatí se koupit ojeté auto z roku 2019?", answer: "Ano, 2019 je výborný ročník. Poslední předcovidový rok s normálními nájezdy. Úspora 45–55 % oproti novému vozu a široký výběr na trhu." },
+      { question: "Kolik stojí ojetá auta z roku 2019?", answer: "Kompaktní vozy od 110 000 Kč, SUV od 200 000 Kč, prémiové vozy od 280 000 Kč." },
+      { question: "Na co si dát pozor při koupi auta z roku 2019?", answer: "Zkontrolujte stav rozvodu (u řetězových motorů), DPF u dieselů, stav podvozku. Ověřte pravidelnost servisních prohlídek." },
+      { question: "Jaké značky jsou nejlepší koupí z roku 2019?", answer: "Škoda Octavia III FL, VW Passat B8, Toyota Corolla, Mazda 3 — ověřené modely s dobrým hodnocením spolehlivosti." },
+    ],
+  },
+  {
+    year: 2018,
+    slug: "2018",
+    label: "Ojetá auta 2018",
+    description: "Ojetá auta ročník 2018 jsou cenově velmi atraktivní s nájezdem kolem 80 000–120 000 km. Dobrá volba pro rozpočtově orientované kupující.",
+    aiSnippet: "Ojetá auta ročník 2018 jsou cenově velmi atraktivní. Nájezd typicky 80 000–120 000 km, úspora 50–60 % oproti novému vozu. Důležité: u dieselů kontrolujte stav emisního systému (DPF, AdBlue). Rok 2018 přinesl přísnější emise WLTP.",
+    quickFacts: ["Průměrný nájezd: 80 000–120 000 km", "Úspora oproti novému: 50–60 %", "Nové emise WLTP od září 2018", "Cenově velmi atraktivní"],
+    faqItems: [
+      { question: "Vyplatí se koupit ojeté auto z roku 2018?", answer: "Pro rozpočtově orientované kupující ano. Úspora 50–60 % oproti novému vozu. Vozy mají 7–8 let, ale při správné údržbě jsou plně funkční." },
+      { question: "Kolik stojí ojetá auta z roku 2018?", answer: "Kompaktní vozy od 90 000 Kč, SUV od 170 000 Kč, prémiové vozy od 220 000 Kč." },
+      { question: "Na co si dát pozor při koupi auta z roku 2018?", answer: "U dieselů stav DPF a AdBlue systému. U benzínů opotřebení rozvodu. Obecně stav podvozku, koroze a pravidelnost servisu." },
+      { question: "Jaké značky jsou nejlepší koupí z roku 2018?", answer: "Škoda Octavia III, Toyota Auris/Corolla, Mazda CX-5 — ověřeně spolehlivé s rozumnými náklady na údržbu." },
+    ],
+  },
+  {
+    year: 2017,
+    slug: "2017",
+    label: "Ojetá auta 2017",
+    description: "Ojetá auta ročník 2017 nabízí solidní technologie za zlomek původní ceny. Ideální pro první auto nebo ekonomickou dopravu.",
+    aiSnippet: "Ojetá auta ročník 2017 za zlomek původní ceny — úspora 55–65 %. Nájezd typicky 90 000–140 000 km. Ideální jako první auto nebo ekonomická denní doprava. Důležitý je stav podvozku a pravidelnost servisu.",
+    quickFacts: ["Průměrný nájezd: 90 000–140 000 km", "Úspora oproti novému: 55–65 %", "Ideální jako první auto", "Solidní technologie za zlomek ceny"],
+    faqItems: [
+      { question: "Vyplatí se koupit ojeté auto z roku 2017?", answer: "Pro ekonomicky orientované kupující a jako první auto ano. Úspora 55–65 %. Důležitá je servisní historie a stav podvozku." },
+      { question: "Kolik stojí ojetá auta z roku 2017?", answer: "Kompaktní vozy od 75 000 Kč, SUV od 140 000 Kč, prémiové vozy od 180 000 Kč." },
+      { question: "Na co si dát pozor při koupi auta z roku 2017?", answer: "Stav podvozku (koroze), opotřebení brzdových kotoučů, stav pneumatik, funkčnost klimatizace. U vysokých nájezdů kontrola motoru." },
+      { question: "Jaké značky jsou nejlepší koupí z roku 2017?", answer: "Škoda Fabia III, Toyota Yaris, Hyundai i30 — nízké provozní náklady a dobrá dostupnost dílů." },
+    ],
+  },
+  {
+    year: 2016,
+    slug: "2016",
+    label: "Ojetá auta 2016",
+    description: "Ojetá auta ročník 2016 patří mezi nejdostupnější na trhu. Ideální pro ty, kdo hledají spolehlivou dopravu za minimální investici.",
+    aiSnippet: "Ojetá auta ročník 2016 patří mezi nejdostupnější na trhu — úspora 60–70 % oproti původní ceně. Nájezd typicky 100 000–160 000 km. Klíčové je vybrat spolehlivou značku a model s kompletní servisní historií.",
+    quickFacts: ["Průměrný nájezd: 100 000–160 000 km", "Úspora oproti původní ceně: 60–70 %", "Nejdostupnější cenová hladina", "Klíčová servisní historie a stav"],
+    faqItems: [
+      { question: "Vyplatí se koupit ojeté auto z roku 2016?", answer: "Pro minimální investici ano. Úspora 60–70 % oproti původní ceně. Vozy mají 10 let, proto je klíčová servisní historie a fyzický stav." },
+      { question: "Kolik stojí ojetá auta z roku 2016?", answer: "Kompaktní vozy od 60 000 Kč, SUV od 110 000 Kč, prémiové vozy od 150 000 Kč." },
+      { question: "Na co si dát pozor při koupi auta z roku 2016?", answer: "Koroze podvozku, opotřebení motoru a převodovky, stav elektroniky. U dieselů funkčnost DPF. Prověrka CEBIA je nezbytná." },
+      { question: "Jaké značky jsou nejlepší koupí z roku 2016?", answer: "Toyota (jakýkoliv model), Škoda Octavia III, Mazda 3/CX-5 — dlouhodobě nejspolehlivější značky se solidní zůstatkovou hodnotou." },
+    ],
+  },
+];
+
 // Slugs for route resolution
 export const ALL_BRAND_SLUGS = BRANDS.map((b) => b.slug);
 export const ALL_BODY_TYPE_SLUGS = BODY_TYPES.map((b) => b.slug);
