@@ -25,7 +25,7 @@ export async function GET(
           select: { id: true, firstName: true, lastName: true, email: true, phone: true },
         },
         images: { orderBy: { order: "asc" } },
-        vehicleChangeLog: { orderBy: { createdAt: "desc" }, take: 10 },
+        changeLog: { orderBy: { createdAt: "desc" }, take: 10 },
       },
     });
 
@@ -33,11 +33,11 @@ export async function GET(
       return NextResponse.json({ error: "Vozidlo nenalezeno" }, { status: 404 });
     }
 
-    const { vehicleChangeLog, ...rest } = vehicle;
+    const { changeLog: rawChangeLog, ...rest } = vehicle;
     return NextResponse.json({
       vehicle: {
         ...rest,
-        changeLog: vehicleChangeLog.map((log) => ({
+        changeLog: rawChangeLog.map((log) => ({
           id: log.id,
           action: `${log.field}: ${log.oldValue} → ${log.newValue}`,
           details: log.reason,
