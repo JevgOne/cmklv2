@@ -374,8 +374,8 @@ const PAGES: PageDef[] = [
   ),
 ];
 
-async function main() {
-  console.log(`Seeding ${PAGES.length} SeoPageMeta records...`);
+async function seedStaticPages() {
+  console.log(`Seeding ${PAGES.length} static/LP SeoPageMeta records...`);
 
   let created = 0;
   let updated = 0;
@@ -387,11 +387,9 @@ async function main() {
     });
 
     if (!existing) {
-      // New page — create with all data
       await prisma.seoPageMeta.create({ data: page });
       created++;
     } else if (!existing.title && !existing.description) {
-      // Existing but empty — fill in defaults
       await prisma.seoPageMeta.update({
         where: { pagePath: page.pagePath },
         data: {
@@ -406,7 +404,104 @@ async function main() {
     }
   }
 
-  console.log(`Done: ${created} created, ${updated} updated (was empty), ${skipped} skipped (already has data).`);
+  console.log(`Static/LP: ${created} created, ${updated} updated, ${skipped} skipped.`);
+}
+
+async function seedDynamicPages() {
+  console.log("\nSeeding dynamic detail pages from DB...");
+  let created = 0;
+  let skipped = 0;
+
+  async function register(pagePath: string, section: string) {
+    const existing = await prisma.seoPageMeta.findUnique({ where: { pagePath } });
+    if (existing) { skipped++; return; }
+    await prisma.seoPageMeta.create({
+      data: { pagePath, pageType: "DYNAMIC_DETAIL", section },
+    });
+    created++;
+  }
+
+  // Vehicles → /nabidka/{slug}
+  const vehicles = await prisma.vehicle.findMany({
+    where: { status: "ACTIVE", slug: { not: null } },
+    select: { slug: true },
+  });
+  for (const v of vehicles) {
+    await register(`/nabidka/${v.slug}`, "vehicles");
+  }
+  console.log(`  Vehicles: ${vehicles.length} checked`);
+
+  // Listings → /nabidka/{slug}
+  const listings = await prisma.listing.findMany({
+    where: { status: "ACTIVE", slug: { not: null } },
+    select: { slug: true },
+  });
+  for (const l of listings) {
+    await register(`/nabidka/${l.slug}`, "listings");
+  }
+  console.log(`  Listings: ${listings.length} checked`);
+
+  // Parts → /dily/{slug} + /shop/produkt/{slug}
+  const parts = await prisma.part.findMany({
+    where: { status: "ACTIVE" },
+    select: { slug: true, id: true },
+  });
+  for (const p of parts) {
+    const slug = p.slug || p.id;
+    await register(`/dily/${slug}`, "parts");
+    await register(`/shop/produkt/${slug}`, "parts");
+  }
+  console.log(`  Parts: ${parts.length} checked`);
+
+  // Articles → /blog/{slug}
+  const articles = await prisma.article.findMany({
+    where: { status: "PUBLISHED" },
+    select: { slug: true },
+  });
+  for (const a of articles) {
+    await register(`/blog/${a.slug}`, "blog");
+  }
+  console.log(`  Articles: ${articles.length} checked`);
+
+  // AutoServisy → /autoservisy/{slug} + STK → /stk/{slug}
+  const servisy = await prisma.autoServis.findMany({
+    where: { isPublished: true },
+    select: { slug: true, categories: true },
+  });
+  for (const s of servisy) {
+    await register(`/autoservisy/${s.slug}`, "services");
+    if (s.categories.includes("stk-emise")) {
+      await register(`/stk/${s.slug}`, "stk");
+    }
+  }
+  console.log(`  AutoServisy + STK: ${servisy.length} checked`);
+
+  // Brokers → /profil/{slug}
+  const brokers = await prisma.user.findMany({
+    where: { role: "BROKER", status: "ACTIVE", slug: { not: null } },
+    select: { slug: true },
+  });
+  for (const b of brokers) {
+    await register(`/profil/${b.slug}`, "brokers");
+  }
+  console.log(`  Brokers: ${brokers.length} checked`);
+
+  // Partners (autobazary) → /bazar/{slug}
+  const partners = await prisma.partner.findMany({
+    where: { status: "AKTIVNI_PARTNER", type: "AUTOBAZAR", slug: { not: null } },
+    select: { slug: true },
+  });
+  for (const p of partners) {
+    await register(`/bazar/${p.slug}`, "partners");
+  }
+  console.log(`  Partners: ${partners.length} checked`);
+
+  console.log(`Dynamic pages: ${created} created, ${skipped} skipped (already exist).`);
+}
+
+async function main() {
+  await seedStaticPages();
+  await seedDynamicPages();
 }
 
 main()
