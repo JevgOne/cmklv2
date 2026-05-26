@@ -226,16 +226,31 @@ async function getBrokerPages(): Promise<MetadataRoute.Sitemap> {
 // ---------------------------------------------------------------------------
 async function getBlogPages(): Promise<MetadataRoute.Sitemap> {
   try {
-    const articles = await prisma.article.findMany({
-      where: { status: "PUBLISHED" },
-      select: { slug: true, updatedAt: true },
-    });
-    return articles.map((a) => ({
+    const [articles, categories] = await Promise.all([
+      prisma.article.findMany({
+        where: { status: "PUBLISHED" },
+        select: { slug: true, updatedAt: true },
+      }),
+      prisma.articleCategory.findMany({
+        select: { slug: true, createdAt: true },
+      }),
+    ]);
+
+    const articleEntries: MetadataRoute.Sitemap = articles.map((a) => ({
       url: `${BASE_URL}/blog/${a.slug}`,
       lastModified: a.updatedAt,
       changeFrequency: "weekly" as const,
       priority: 0.7,
     }));
+
+    const categoryEntries: MetadataRoute.Sitemap = categories.map((c) => ({
+      url: `${BASE_URL}/blog/kategorie/${c.slug}`,
+      lastModified: c.createdAt,
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    }));
+
+    return [...articleEntries, ...categoryEntries];
   } catch {
     return [];
   }
@@ -244,13 +259,22 @@ async function getBlogPages(): Promise<MetadataRoute.Sitemap> {
 // ---------------------------------------------------------------------------
 // Dynamic: Services (autoservisy + STK)
 // ---------------------------------------------------------------------------
+// 14 regions matching generateStaticParams in stk/kraj and autoservisy/kraj pages
+const SERVICE_REGIONS = [
+  "praha", "stredocesky", "jihocesky", "plzensky", "karlovarsky",
+  "ustecky", "liberecky", "kralovehradecky", "pardubicky", "vysocina",
+  "jihomoravsky", "olomoucky", "zlinsky", "moravskoslezsky",
+];
+
 async function getServicePages(): Promise<MetadataRoute.Sitemap> {
   try {
     const servisy = await prisma.autoServis.findMany({
       where: { isPublished: true },
-      select: { slug: true, updatedAt: true, categories: true },
+      select: { slug: true, updatedAt: true, categories: true, city: true },
     });
-    return servisy.map((s) => ({
+
+    // Detail pages (existing)
+    const detailPages: MetadataRoute.Sitemap = servisy.map((s) => ({
       url: s.categories.includes("stk-emise")
         ? `${BASE_URL}/stk/${s.slug}`
         : `${BASE_URL}/autoservisy/${s.slug}`,
@@ -258,6 +282,55 @@ async function getServicePages(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly" as const,
       priority: 0.6,
     }));
+
+    // Regional pages: 14 kraje × 2 (STK + autoservisy) = 28 URLs
+    const stkKrajPages: MetadataRoute.Sitemap = SERVICE_REGIONS.map((kraj) => ({
+      url: `${BASE_URL}/stk/kraj/${kraj}`,
+      lastModified: STATIC_LAST_MODIFIED,
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    }));
+
+    const autoservisyKrajPages: MetadataRoute.Sitemap = SERVICE_REGIONS.map((kraj) => ({
+      url: `${BASE_URL}/autoservisy/kraj/${kraj}`,
+      lastModified: STATIC_LAST_MODIFIED,
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    }));
+
+    // City pages: distinct cities from published services
+    const allCities = new Set<string>();
+    const stkCities = new Set<string>();
+
+    for (const s of servisy) {
+      const cityLower = s.city.toLowerCase();
+      allCities.add(cityLower);
+      if (s.categories.includes("stk-emise")) {
+        stkCities.add(cityLower);
+      }
+    }
+
+    const stkMestoPages: MetadataRoute.Sitemap = Array.from(stkCities).map((city) => ({
+      url: `${BASE_URL}/stk/mesto/${encodeURIComponent(city)}`,
+      lastModified: STATIC_LAST_MODIFIED,
+      changeFrequency: "weekly" as const,
+      priority: 0.5,
+    }));
+
+    const autoservisyMestoPages: MetadataRoute.Sitemap = Array.from(allCities).map((city) => ({
+      url: `${BASE_URL}/autoservisy/mesto/${encodeURIComponent(city)}`,
+      lastModified: STATIC_LAST_MODIFIED,
+      changeFrequency: "weekly" as const,
+      priority: 0.5,
+    }));
+
+    return [
+      ...detailPages,
+      ...stkKrajPages,
+      ...autoservisyKrajPages,
+      ...stkMestoPages,
+      ...autoservisyMestoPages,
+    ];
   } catch {
     return [];
   }
