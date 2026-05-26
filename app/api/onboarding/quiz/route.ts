@@ -1,6 +1,5 @@
-import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { NextRequest, NextResponse } from "next/server";
+import { getSessionOrMobileToken } from "@/lib/auth-mobile";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
@@ -33,9 +32,9 @@ const CORRECT_ANSWERS: Record<number, number> = {
 const TOTAL_QUESTIONS = Object.keys(CORRECT_ANSWERS).length;
 
 // POST /api/onboarding/quiz — odeslání odpovědí kvízu
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSessionOrMobileToken(request);
 
     if (!session?.user) {
       return NextResponse.json({ error: "Nepřihlášen" }, { status: 401 });

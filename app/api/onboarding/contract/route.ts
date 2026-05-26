@@ -1,15 +1,14 @@
-import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { NextRequest, NextResponse } from "next/server";
+import { getSessionOrMobileToken } from "@/lib/auth-mobile";
 import { prisma } from "@/lib/prisma";
 import { contractSignSchema } from "@/lib/validators/onboarding";
 import { generateBrokerAgreement } from "@/lib/contract-templates/broker-agreement";
 import { z } from "zod";
 
 // GET /api/onboarding/contract — načtení obsahu smlouvy pro preview
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSessionOrMobileToken(request);
 
     if (!session?.user) {
       return NextResponse.json({ error: "Nepřihlášen" }, { status: 401 });
@@ -73,9 +72,9 @@ export async function GET() {
 }
 
 // POST /api/onboarding/contract — podpis smlouvy (krok 5)
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSessionOrMobileToken(request);
 
     if (!session?.user) {
       return NextResponse.json({ error: "Nepřihlášen" }, { status: 401 });
