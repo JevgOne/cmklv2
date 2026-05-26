@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { OgLayout, OG_SIZE, getLogoBase64, ogImageOptions } from "@/lib/og-image";
+import { OgLayout, OG_SIZE, ORANGE, getLogoBase64, ogImageOptions } from "@/lib/og-image";
 
 export const runtime = "nodejs";
 export const alt = "CarMakléř — kompletní automobilová platforma";
@@ -24,7 +24,7 @@ export default async function Image() {
           }}
         >
           <span>Kompletní automobilová </span>
-          <span style={{ color: "#F97316", marginLeft: 12 }}>platforma</span>
+          <span style={{ color: ORANGE, marginLeft: 12 }}>platforma</span>
         </div>
         <div
           style={{
