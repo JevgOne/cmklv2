@@ -103,6 +103,7 @@ export async function GET(
         ...opportunity,
         dealer: dealerData,
         totalNeeded: opportunity.purchasePrice + opportunity.repairCost,
+        confirmedFunding: opportunity.fundedAmount,
         investments,
       },
     });
