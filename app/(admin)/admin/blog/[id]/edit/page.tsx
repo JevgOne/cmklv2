@@ -12,7 +12,7 @@ export default async function AdminBlogEditPage({
   params: Promise<{ id: string }>;
 }) {
   const session = await getServerSession(authOptions);
-  if (!session?.user || !["ADMIN", "BACKOFFICE", "BROKER"].includes(session.user.role)) {
+  if (!session?.user || !["ADMIN", "BACKOFFICE"].includes(session.user.role)) {
     redirect("/admin/dashboard");
   }
 
