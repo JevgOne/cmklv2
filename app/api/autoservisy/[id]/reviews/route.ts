@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { rateLimit } from "@/lib/rate-limit";
 
 const reviewSchema = z.object({
   authorName: z.string().min(2).max(100),
@@ -47,6 +48,12 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const { success } = rateLimit(`servis-review:${ip}`, 3, 10 * 60 * 1000);
+  if (!success) {
+    return NextResponse.json({ error: "Příliš mnoho požadavků" }, { status: 429 });
+  }
+
   const { id } = await params;
 
   const servis = await prisma.autoServis.findUnique({ where: { id } });

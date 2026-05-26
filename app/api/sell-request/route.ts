@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { assignRegionByCity, roundRobinAssignBroker } from "@/lib/lead-management";
 import { createNotification } from "@/lib/notifications";
+import { rateLimit } from "@/lib/rate-limit";
 
 const sellRequestSchema = z.object({
   brand: z.string().min(1, "Značka je povinná"),
@@ -19,6 +20,12 @@ const sellRequestSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    const { success } = rateLimit(`sell-request:${ip}`, 3, 5 * 60 * 1000);
+    if (!success) {
+      return NextResponse.json({ error: "Příliš mnoho požadavků" }, { status: 429 });
+    }
+
     const body = await request.json();
     const data = sellRequestSchema.parse(body);
 

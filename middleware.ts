@@ -137,8 +137,40 @@ function shouldSkipSiteAuth(pathname: string): boolean {
   return SKIP_SITE_AUTH.some((prefix) => pathname.startsWith(prefix));
 }
 
+// CSRF: Origin header check pro mutation requesty
+const isDev = process.env.NODE_ENV === "development";
+const ALLOWED_ORIGINS = [
+  process.env.NEXT_PUBLIC_APP_URL || "https://carmakler.cz",
+  "https://www.carmakler.cz",
+  "https://inzerce.carmakler.cz",
+  "https://shop.carmakler.cz",
+  "https://marketplace.carmakler.cz",
+  ...(isDev ? ["http://localhost:3000"] : []),
+];
+const WEBHOOK_PATHS = ["/api/stripe/webhook", "/api/payments/webhook", "/api/csp-report"];
+
+function isMutationRequest(method: string): boolean {
+  return ["POST", "PUT", "PATCH", "DELETE"].includes(method);
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // CSRF: Origin check pro API mutation requesty
+  if (pathname.startsWith("/api/") && isMutationRequest(request.method)) {
+    if (!WEBHOOK_PATHS.some(p => pathname.startsWith(p))) {
+      const origin = request.headers.get("origin");
+      const referer = request.headers.get("referer");
+      const requestOrigin = origin || (referer ? new URL(referer).origin : null);
+
+      if (requestOrigin && !ALLOWED_ORIGINS.some(ao => requestOrigin.startsWith(ao))) {
+        return new NextResponse(
+          JSON.stringify({ error: "CSRF check failed" }),
+          { status: 403, headers: { "Content-Type": "application/json" } }
+        );
+      }
+    }
+  }
 
   // Site-wide password ochrana — jen pokud je SITE_PASSWORD nastaveno v env
   const sitePassword = process.env.SITE_PASSWORD || null;

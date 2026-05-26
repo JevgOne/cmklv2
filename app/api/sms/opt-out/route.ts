@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { rateLimit } from "@/lib/rate-limit";
 
 const optOutSchema = z.object({
   phone: z
@@ -20,6 +21,12 @@ const optOutSchema = z.object({
  */
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    const { success } = rateLimit(`sms-optout:${ip}`, 5, 15 * 60 * 1000);
+    if (!success) {
+      return NextResponse.json({ error: "Příliš mnoho požadavků" }, { status: 429 });
+    }
+
     const body = await request.json();
     const parsed = optOutSchema.safeParse(body);
 

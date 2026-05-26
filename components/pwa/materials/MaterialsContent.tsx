@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import DOMPurify from "dompurify";
 import { Card } from "@/components/ui/Card";
 
 export function MaterialsContent() {
@@ -70,7 +71,7 @@ export function MaterialsContent() {
           <div>
             <div
               className="border border-gray-200 rounded-xl p-4 mb-3 bg-white"
-              dangerouslySetInnerHTML={{ __html: signatureHtml }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(signatureHtml) }}
             />
             <div className="flex gap-2">
               <button

@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { pageCanonical } from "@/lib/canonical";
 import { generateBreadcrumbJsonLd } from "@/lib/seo";
+import DOMPurify from "isomorphic-dompurify";
 import { BASE_URL } from "@/lib/seo-data";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -294,7 +295,11 @@ export default async function BlogArticlePage({
         <div className="bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 p-6 md:p-10 mb-10">
           <article
             className="prose prose-lg max-w-none prose-headings:font-bold prose-headings:text-gray-900 prose-a:text-orange-500 prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-blockquote:border-orange-400 prose-blockquote:bg-orange-50/50 prose-blockquote:rounded-r-xl prose-blockquote:py-1 prose-li:marker:text-orange-400"
-            dangerouslySetInnerHTML={{ __html: article.content }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(article.content, {
+              ALLOWED_TAGS: ["h1","h2","h3","h4","h5","h6","p","br","strong","em","a","ul","ol","li","img","blockquote","pre","code","table","thead","tbody","tr","th","td","figure","figcaption","div","span","hr"],
+              ALLOWED_ATTR: ["href","src","alt","title","class","id","target","rel","width","height","loading"],
+              ALLOW_DATA_ATTR: false,
+            }) }}
           />
 
           {/* Tags */}

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendEmail, RESEND_FROM } from "@/lib/resend";
 import { z } from "zod";
+import { rateLimit } from "@/lib/rate-limit";
 
 const subscribeSchema = z.object({
   email: z.string().email("Neplatný email"),
@@ -12,6 +13,12 @@ const subscribeSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    const { success } = rateLimit(`newsletter:${ip}`, 3, 10 * 60 * 1000);
+    if (!success) {
+      return NextResponse.json({ error: "Příliš mnoho požadavků" }, { status: 429 });
+    }
+
     const body = await request.json();
     const data = subscribeSchema.parse(body);
 

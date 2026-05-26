@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { flagListingManually } from "@/lib/listing-flagging";
+import { rateLimit } from "@/lib/rate-limit";
 
 /* ------------------------------------------------------------------ */
 /*  POST /api/listings/[id]/flag — Nahlásit inzerát (bez auth)         */
@@ -13,8 +14,15 @@ const flagSchema = z.object({
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
+
 ) {
   try {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    const { success } = rateLimit(`listing-flag:${ip}`, 3, 10 * 60 * 1000);
+    if (!success) {
+      return NextResponse.json({ error: "Příliš mnoho požadavků" }, { status: 429 });
+    }
+
     const { id } = await params;
     const body = await request.json();
     const data = flagSchema.parse(body);
