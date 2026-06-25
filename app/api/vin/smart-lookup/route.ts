@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSessionOrMobileToken } from "@/lib/auth-mobile";
 import { prisma } from "@/lib/prisma";
 import { decodeWithVincario, decodeWithNhtsa } from "@/lib/vin-decoder";
 import { orderCebiaReport } from "@/lib/cebia";
@@ -20,7 +19,7 @@ export async function GET(request: NextRequest) {
 
   try {
     // Auth check
-    const session = await getServerSession(authOptions);
+    const session = await getSessionOrMobileToken(request);
     if (!session?.user?.id) {
       return NextResponse.json(
         { error: "Přístup odepřen. Přihlaste se." },

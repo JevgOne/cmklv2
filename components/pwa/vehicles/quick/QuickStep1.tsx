@@ -103,9 +103,13 @@ export function QuickStep1() {
 
     fetch(`/api/vin/check-duplicate?vin=${vin}`, { signal: controller.signal })
       .then((res) => res.json())
-      .then((data: { exists: boolean; vehicle?: DuplicateInfo }) => {
+      .then((data: { exists: boolean; canReuse?: boolean; vehicle?: DuplicateInfo }) => {
         if (data.exists && data.vehicle) {
-          setDuplicate(data.vehicle);
+          if (data.canReuse) {
+            setDuplicate(null);
+          } else {
+            setDuplicate(data.vehicle);
+          }
         } else {
           setDuplicate(null);
         }

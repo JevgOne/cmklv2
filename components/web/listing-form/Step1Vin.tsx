@@ -36,22 +36,23 @@ export function Step1Vin({ data, updateData, onNext }: Step1Props) {
         return;
       }
 
+      const decoded = result.data;
       updateData({
         vinDecoded: true,
-        vinData: result,
-        brand: result.brand || data.brand,
-        model: result.model || data.model,
-        variant: result.variant || data.variant,
-        year: result.year ? String(result.year) : data.year,
-        fuelType: result.fuelType || data.fuelType,
-        transmission: result.transmission || data.transmission,
-        enginePower: result.enginePower ? String(result.enginePower) : data.enginePower,
-        engineCapacity: result.engineCapacity ? String(result.engineCapacity) : data.engineCapacity,
-        bodyType: result.bodyType || data.bodyType,
-        drivetrain: result.drivetrain || data.drivetrain,
-        doorsCount: result.doorsCount ? String(result.doorsCount) : data.doorsCount,
-        seatsCount: result.seatsCount ? String(result.seatsCount) : data.seatsCount,
-        equipment: result.equipment || data.equipment,
+        vinData: decoded,
+        brand: decoded.brand || data.brand,
+        model: decoded.model || data.model,
+        variant: decoded.variant || data.variant,
+        year: decoded.year ? String(decoded.year) : data.year,
+        fuelType: decoded.fuelType || data.fuelType,
+        transmission: decoded.transmission || data.transmission,
+        enginePower: decoded.enginePower ? String(decoded.enginePower) : data.enginePower,
+        engineCapacity: decoded.engineCapacity ? String(decoded.engineCapacity) : data.engineCapacity,
+        bodyType: decoded.bodyType || data.bodyType,
+        drivetrain: decoded.drivetrain || data.drivetrain,
+        doorsCount: decoded.doorsCount ? String(decoded.doorsCount) : data.doorsCount,
+        seatsCount: decoded.seatsCount ? String(decoded.seatsCount) : data.seatsCount,
+        equipment: decoded.equipment || data.equipment,
       });
     } catch {
       setError("Chyba při dekódování VIN. Zkuste to znovu.");
