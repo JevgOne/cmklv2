@@ -167,7 +167,9 @@ export async function middleware(request: NextRequest) {
       const referer = request.headers.get("referer");
       const requestOrigin = origin || (referer ? new URL(referer).origin : null);
 
-      if (requestOrigin && !ALLOWED_ORIGINS.some(ao => requestOrigin === ao)) {
+      const isAllowed = ALLOWED_ORIGINS.some(ao => requestOrigin === ao)
+        || (isDev && requestOrigin?.startsWith("http://localhost:"));
+      if (requestOrigin && !isAllowed) {
         return new NextResponse(
           JSON.stringify({ error: "CSRF check failed" }),
           { status: 403, headers: { "Content-Type": "application/json" } }
