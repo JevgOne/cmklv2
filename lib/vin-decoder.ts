@@ -14,23 +14,37 @@ export async function decodeVin(vin: string): Promise<VinDecoderResult> {
   const apiKey = process.env.VINDECODER_API_KEY;
   const apiSecret = process.env.VINDECODER_API_SECRET;
 
+  if (!apiKey || !apiSecret) {
+    console.warn("[VIN] Vincario credentials MISSING — skipping to NHTSA fallback");
+  }
+
   if (apiKey && apiSecret) {
     try {
       const result = await decodeWithVincario(normalized, apiKey, apiSecret);
+      console.log(
+        "[VIN] Vincario result for %s: brand=%s, model=%s, year=%s",
+        normalized, result.brand, result.model, result.year
+      );
       if (result.brand) {
         return result;
       }
+      console.warn("[VIN] Vincario returned no brand for %s — trying NHTSA", normalized);
     } catch (err) {
-      console.warn("Vincario API selhalo, zkouším NHTSA fallback:", err);
+      console.warn("[VIN] Vincario FAILED for %s:", normalized, err);
     }
   }
 
   // Fallback na NHTSA vPIC API (free, no key)
+  console.log("[VIN] Using NHTSA fallback for %s", normalized);
   try {
-    return await decodeWithNhtsa(normalized);
+    const result = await decodeWithNhtsa(normalized);
+    console.log(
+      "[VIN] NHTSA result for %s: brand=%s, model=%s, year=%s",
+      normalized, result.brand, result.model, result.year
+    );
+    return result;
   } catch (err) {
-    console.warn("NHTSA fallback selhalo:", err);
-    // Vrátit minimální výsledek — UI nabídne manuální zadání
+    console.warn("[VIN] NHTSA ALSO FAILED for %s:", normalized, err);
     return { vin: normalized };
   }
 }
@@ -46,7 +60,7 @@ interface VincarioResponse {
   }>;
 }
 
-function createSecretHash(vin: string, apiKey: string, apiSecret: string): string {
+export function createSecretHash(vin: string, apiKey: string, apiSecret: string): string {
   const input = `${vin}|${apiKey}|${apiSecret}`;
   return crypto.createHash("sha1").update(input, "utf8").digest("hex").substring(0, 10);
 }
@@ -73,13 +87,18 @@ export async function decodeWithVincario(
     }
 
     const json: VincarioResponse = await response.json();
+    console.log(
+      "[VIN:Vincario] Raw response: %d entries, labels: %s",
+      json.decode?.length ?? 0,
+      json.decode?.map((e) => e.label).join(", ") ?? "NONE"
+    );
     return normalizeVincario(vin, json);
   } finally {
     clearTimeout(timeout);
   }
 }
 
-function normalizeVincario(
+export function normalizeVincario(
   vin: string,
   data: VincarioResponse
 ): VinDecoderResult {
@@ -90,38 +109,55 @@ function normalizeVincario(
     map.set(entry.label.toLowerCase(), entry.value);
   }
 
-  const strVal = (key: string): string | undefined => {
-    const v = map.get(key);
-    return typeof v === "string" && v.length > 0 ? v : undefined;
-  };
-
-  const numVal = (key: string): number | undefined => {
-    const v = map.get(key);
-    if (typeof v === "number") return v;
-    if (typeof v === "string") {
-      const parsed = parseInt(v, 10);
-      return isNaN(parsed) ? undefined : parsed;
+  // Multi-key fallback — tries each key in order, returns first match
+  const strVal = (...keys: string[]): string | undefined => {
+    for (const key of keys) {
+      const v = map.get(key);
+      if (typeof v === "string" && v.length > 0) return v;
     }
     return undefined;
   };
 
-  return {
+  const numVal = (...keys: string[]): number | undefined => {
+    for (const key of keys) {
+      const v = map.get(key);
+      if (typeof v === "number") return v;
+      if (typeof v === "string") {
+        const parsed = parseInt(v, 10);
+        if (!isNaN(parsed)) return parsed;
+      }
+    }
+    return undefined;
+  };
+
+  const result: VinDecoderResult = {
     vin,
-    brand: strVal("make"),
-    model: strVal("model"),
-    variant: strVal("trim"),
-    year: numVal("model year"),
-    fuelType: strVal("fuel type"),
-    transmission: strVal("transmission"),
-    enginePower: numVal("engine power (kw)") ?? numVal("power"),
-    engineCapacity: numVal("engine displacement (ccm)") ?? numVal("displacement"),
-    bodyType: strVal("body type") ?? strVal("body"),
-    drivetrain: strVal("drive type") ?? strVal("driven wheels"),
-    color: undefined,
-    doorsCount: numVal("number of doors"),
-    seatsCount: numVal("number of seats"),
+    brand: strVal("make", "make name", "manufacturer"),
+    model: strVal("model", "model name"),
+    variant: strVal("trim", "trim level", "series", "version"),
+    year: numVal("model year", "production year", "year"),
+    fuelType: normalizeFuelType(strVal("fuel type", "fuel type - primary", "fuel")),
+    transmission: normalizeTransmission(strVal("transmission", "transmission type", "gearbox")),
+    enginePower: numVal("engine power (kw)", "engine power - kw", "power (kw)", "power kw", "power"),
+    engineCapacity: numVal("engine displacement (ccm)", "engine displacement - ccm", "displacement (ccm)", "displacement ccm", "displacement"),
+    bodyType: normalizeBodyType(strVal("body type", "body style", "body")),
+    drivetrain: normalizeDriveType(strVal("drive type", "driven wheels", "drive")),
+    color: strVal("color", "exterior color"),
+    doorsCount: numVal("number of doors", "doors"),
+    seatsCount: numVal("number of seats", "seats"),
     raw: Object.fromEntries(map),
   };
+
+  // Diagnostika: logovat pokud chybí kritická pole i přes neprázdnou response
+  if (entries.length > 0 && !result.brand) {
+    console.warn(
+      "[Vincario] Missing brand for VIN %s. Labels received: %s",
+      vin,
+      entries.map((e) => e.label).join(", ")
+    );
+  }
+
+  return result;
 }
 
 // ============================================
@@ -160,7 +196,7 @@ export async function decodeWithNhtsa(vin: string): Promise<VinDecoderResult> {
   }
 }
 
-function normalizeNhtsa(
+export function normalizeNhtsa(
   vin: string,
   data: { Results?: Array<Record<string, string | null>> }
 ): VinDecoderResult {
@@ -245,7 +281,7 @@ function normalizeNhtsa(
 // VIN Year Decode (position 10)
 // ============================================
 
-function decodeYearFromVin(vin: string): number | undefined {
+export function decodeYearFromVin(vin: string): number | undefined {
   if (vin.length < 10) return undefined;
   const code = vin[9];
   const yearMap: Record<string, number> = {
